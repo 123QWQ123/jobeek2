@@ -1,10 +1,39 @@
 <template>
   <div id="nav">
     <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+    <router-link to="/about">About</router-link> |
+    <template v-if="isLoggedIn">
+      <router-link to="/user">User</router-link> |
+      <a @click.prevent="logout()">Logout</a>
+    </template>
+    <template v-else>
+      <router-link to="/login">Login</router-link>
+    </template>
   </div>
   <router-view />
 </template>
+
+<script>
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+
+export default {
+  setup () {
+    const router = useRouter();
+    const store = useStore();
+
+    return {
+      isLoggedIn: computed(() => store.getters.isAuthenticated),
+
+      logout: () => {
+        store.dispatch('logout');
+        router.push('/login');
+      },
+    }
+  }
+}
+</script>
 
 <style>
 #app {
