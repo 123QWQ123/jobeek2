@@ -27,10 +27,18 @@ const store = createStore({
   },
 
   actions: {
-    login({ commit }, form) {
-      axios.get('/sanctum/csrf-cookie').then(() => {
-        axios.post('/api/auth/login', form).then(({ data }) => commit('setUser', data))
-      });
+    async login({ commit }, form) {
+      await axios.get('/sanctum/csrf-cookie');
+
+      return new Promise((resolve, reject) => {
+        axios
+          .post('/api/auth/login', form)
+          .then(({ data }) => {
+            commit('setUser', data);
+            resolve();
+          })
+          .catch(error => reject(error.response.data))
+      })
     },
 
     logout({ commit }) {

@@ -1,5 +1,10 @@
 # Jobeek2.0
 
+## TODO
+
+- Авторизованым пользователям нечего делать на странице /login, /register
+- axios.interceptors проверка просроченной куки
+- css стиль для ошибки валидации
 
 
 ## Getting started
