@@ -29,13 +29,13 @@ const store = createStore({
   actions: {
     login({ commit }, form) {
       axios.get('/sanctum/csrf-cookie').then(() => {
-        axios.post('/login', form).then(({ data }) => commit('setUser', data))
+        axios.post('/api/auth/login', form).then(({ data }) => commit('setUser', data))
       });
     },
 
     logout({ commit }) {
-      axios.post('/logout').then(() => commit('logout'));
-    }
+      axios.post('/api/auth/logout').then(() => commit('logout'));
+    },
   },
 
   modules: {},

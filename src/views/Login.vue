@@ -1,7 +1,7 @@
 <template>
   <form @submit.prevent="submit()">
     <div>
-      <input v-model="form.email" type="text" placeholder="E-mail">
+      <input v-model="form.phone" type="text" placeholder="Phone">
     </div>
 
     <div>
@@ -21,8 +21,8 @@ export default {
     const store = useStore();
 
     const form  = reactive({
-      email: 'admin@jobeek.me',
-      password: 'password',
+      phone: '12345678910',
+      password: '3604',
     });
 
     return {
