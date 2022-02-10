@@ -1,0 +1,45 @@
+@import "common/reset";
+
+
+@import "untils/variables";
+@import "mixins/mixins";
+
+
+// Blocks
+@import "common/global";
+@import "common/header";
+@import "common/footer";
+@import "common/ui";
+
+// Components
+
+
+// Sections
+
+@import "sections/main-section";
+@import "sections/place-section";
+@import "sections/vacancy-section";
+@import "sections/companies-section";
+@import "sections/work-section";
+@import "sections/search-section";
+@import "sections/enter-page";
+@import "sections/about-page";
+@import "sections/responses-section";
+@import "sections/create-resume";
+@import "sections/resume-page";
+@import "sections/advice-page";
+@import "sections/advice-single";
+@import "sections/lk-profile";
+@import "sections/favorites";
+@import "sections/lk-vacansy";
+@import "sections/lk-messages";
+@import "sections/create-subscribe-page";
+
+
+
+// Widgets
+
+@import "widget/search-form-widget";
+
+//  Always at the end
+@import "common/media";

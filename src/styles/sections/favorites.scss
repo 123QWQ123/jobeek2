@@ -1,0 +1,303 @@
+.notification.no-ic-bg {
+    background-image: url('~@/assets/img/svg/star.svg');
+    background-position: top 0 left 0;
+    background-repeat: no-repeat;
+
+    &:after {
+        width: 64px;
+        height: 71px;
+        background-image: url('~@/assets/img/svg/star-shape.svg');
+        bottom: 0;
+        top: auto;
+    }
+
+    &:before {
+        display: none;
+    }
+}
+
+.notification {
+    min-height: 143px;
+}
+
+.favorites-page .pt {
+    padding-top: 40px;
+}
+
+.favorites-page .notification {
+    margin-bottom: 60px;
+}
+
+.favorites-page .lk-page-title {
+    margin-bottom: 32px;
+}
+
+.favorites-card {
+    padding: 24px;
+    background: #FFFFFF;
+    box-shadow: 0px 0px 20px rgba(28, 27, 98, 0.04);
+    border-radius: 12px;
+}
+
+.favorites-card-footer-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.favorites-card-footer {
+
+    padding-top: 24px;
+    border-top: 1px solid #ECECEC;
+
+    .group  {
+        display: flex;
+    }
+
+    .group-action + .group-action {
+        margin-left: 12px;
+    }
+
+    .ic-btn {
+        width: 45px;
+        min-width: 45px;
+        height: 45px;
+    }
+
+    .button-md {
+        font-size: 18px;
+    }
+}
+
+
+.favorites-list-container  {
+    padding-bottom: 80px;
+}
+
+.favorites-list li:not(:last-child) {
+    margin-bottom: 24px;
+}
+
+
+.favorites-card-head  {
+    display: flex;
+    justify-content: space-between;
+
+
+    .salary  {
+        font-size: 24px;
+        line-height: 33px;
+        text-align: right;
+        color: #0A2540;
+    }
+}
+
+
+.favorites-card .company{
+    padding: 0;
+    border: none;
+    display: flex;
+
+    a {
+        display: block;
+        font-weight: 600;
+        font-size: 20px;
+        line-height: 27px;
+        color: #5375FD;
+        margin-bottom: 4px;
+    }
+
+    span {
+        color: #78757E;
+    }
+}
+
+.favorites-card-body  {
+    padding-top: 20px;
+    padding-bottom: 24px;
+
+    p {
+        font-weight: normal;
+        font-size: 16px;
+        line-height: 22px;
+        color: #78757E;
+    }
+}
+
+.time-location {
+    display: flex;
+    margin-bottom: 12px;
+
+    span {
+        font-size: 16px;
+        line-height: 22px;
+        color: #78757E;
+        margin-right: 12px;
+    }
+
+    strong {
+        font-size: 16px;
+        line-height: 22px;
+        color: #0A2540;
+    }
+}
+
+
+.favorites-page .work-section {
+    padding-top: 80px;
+}
+
+
+@media (max-width: 960px) {
+    .favorites-page .notification {
+        background-size: 100px;
+        background-position: left 0 center;
+    }
+
+    .notification .notification-button {
+        font-size: 16px;
+        white-space: nowrap;
+    }
+}
+
+
+@media (max-width: $mb) {
+    .favorites-card-head {
+        flex-direction: column;
+        align-items: flex-start;
+
+        .salary {
+            margin-top: 20px;
+        }
+    }
+
+    .favorites-card-head .salary {
+        font-size: 19px;
+        line-height: 24px;
+    }
+
+    .favorites-card-head .salary {
+        font-size: 18px;
+        line-height: 24px;
+    }
+
+    .favorites-card-body p {
+        font-size: 14px;
+    }
+
+    .favorites-card {
+        padding: 15px;
+    }
+
+    .favorites-card-footer .button-md {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 577px) {
+    .favorites-card-footer-row {
+        flex-direction: column;
+
+        .group + .group {
+            margin-top: 20px;
+        }
+
+        .params-box {
+            left: 0;
+        }
+    }
+
+
+    .notification, .favorites-page .notification {
+        background-image: none;
+    }
+
+    .favorites-card-footer .group:nth-child(1) {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .favorites-card-footer .group:nth-child(1) .group-action + .group-action {
+        margin-left: 0;
+        margin-top: 12px;
+    }
+
+    .favorites-card-footer .btn {
+        width: 100%;
+    }
+
+    .favorites-card .company a {
+        font-size: 16px;
+        line-height: 18px;
+    }
+
+    .favorites-card .company .company-logo {
+        margin-right: 12px;
+    }
+}
+
+
+.fav-btn.active {
+    background: rgba(255, 201, 85, 0.1);
+    border-color: rgba(255, 201, 85, 0.1);
+
+    svg path {
+        fill: #FFC955;
+        stroke: #FFC955;
+    }
+}
+
+.params-box .group {
+    flex-direction: column;
+}
+
+.params-box {
+    z-index: 2;
+}
+
+
+.telephones-row {
+    padding: 12px 20px;
+    background: rgba(83, 117, 253, 0.05);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: none;
+
+
+    ul {
+        display: flex;
+
+        li:not(:last-child) {
+            margin-right: 32px;
+            margin-left: 0;
+            margin-bottom: 0;
+        }
+    }
+}
+
+.tel {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 22px;
+    color: #5375FD;
+    margin: 0;
+
+
+    img {
+        margin-right: 12px;
+        width: 24px;
+        min-width: 24px;
+    }
+}
+
+.favorites-card--footer-only {
+    padding-top: 0;
+    margin-bottom: 24px;
+    padding-bottom: 17px;
+
+    .favorites-card-footer {
+        border-top: none;
+        padding-top: 18px;
+    }
+}

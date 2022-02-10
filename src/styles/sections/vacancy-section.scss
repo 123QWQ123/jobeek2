@@ -1,0 +1,99 @@
+
+
+.vacancy-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-column-gap: 20px;
+    grid-row-gap: 20px;
+}
+
+
+.vacancy-card {
+    background: #FFFFFF;
+    border: 1px solid #ECECEC;
+    box-sizing: border-box;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  
+    .company  {
+      margin-bottom: 20px;
+    }
+  
+    .vacancy-card-body  {
+      padding: 20px 24px 16px 24px;
+    }
+  
+    .vacancy-card-title {
+      display: block;
+      font-weight: bold;
+      font-size: 18px;
+      line-height: 120%;
+      color: #0A2540;
+      margin-bottom: 6px;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  
+    .vacancy-card-dop-info {
+      display: block;
+      font-weight: normal;
+      font-size: 16px;
+      line-height: 22px;
+      color: #0A2540;
+    } 
+  
+    .vacancy-card-footer {
+      border-top: 1px solid #ECECEC;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+    }
+
+    .button-md {
+      padding: 6px 18px;
+      font-size: 14px;
+    }
+  
+    &:hover {
+      border-color: #CBCBCB;
+      opacity: 1;
+
+    }
+  }
+
+
+
+  @media (min-width: 768px) {
+    .vacancy-card:hover {
+      .btn {
+        background: #5375FD;  
+        color: #fff;
+        border: 1px solid #5375FD;
+      }
+
+    }
+  }
+
+
+  @media (max-width: $tb) {
+    .vacancy-list .swiper-slide {
+      max-width: 80%;
+      height: auto;
+    }
+  }
+
+  @media (max-width: $mb) {
+    .vacancy-list .swiper-slide {
+      max-width: 90%;
+    }
+
+    .vacancy-card .vacancy-card-body, .vacancy-card .vacancy-card-footer {
+      padding: 15px;
+    }
+  }

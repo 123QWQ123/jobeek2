@@ -1,0 +1,79 @@
+.work-section {
+    padding-bottom: 100px;
+  }
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-column-gap: 20px;
+    grid-row-gap: 20px;
+}
+
+.tile-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 20px 24px 15px;
+    background: #FFFFFF;
+    border: 1px solid #ECECEC;
+    box-sizing: border-box;
+    border-radius: 12px;
+    min-height: 130px;
+
+    &-title {
+        font-weight: bold;
+        font-size: 18px;
+        line-height: 120%;
+        color: #0A2540;
+        margin-bottom: 6px;
+    }
+
+    &-dop-info {
+        display: block;
+        font-weight: normal;
+        font-size: 16px;
+        line-height: 22px;
+        color: #0A2540;
+    }
+
+    &-count {
+        display: block;
+        font-weight: bold;
+        font-size: 18px;
+        line-height: 25px;
+        color: #5375FD;
+        margin-top: auto;
+    }
+
+    &:hover {
+        border-color: #CBCBCB;
+    }
+}
+
+@media (max-width: $tb) {
+    .cards-grid {
+        display:  flex !important;
+        grid-column-gap: 0;
+        grid-row-gap: 0;
+    }
+
+    .cards-grid {
+        flex-direction: row !important;
+    }
+
+    .cards-grid .swiper-slide {
+        margin-top: 0 !important;
+        margin-bottom: 20px !important;
+        max-width: 60%;
+    }
+
+    .work-section {
+        padding-bottom: 50px;
+    }
+}
+
+@media (max-width: 577px) {
+    .tile-card {
+        padding: 15px;
+    }
+}

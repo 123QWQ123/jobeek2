@@ -1,0 +1,128 @@
+.place-section {
+    padding-top: 70px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-column-gap: 20px;
+    grid-row-gap: 20px;
+
+    &--t2 {
+        grid-template-columns:  56.92% 1fr;
+        grid-column-gap: 30px;
+        grid-row-gap: 30px;
+        padding-top: 41px;
+    }
+}
+
+.place-card {
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+    background: #FFFFFF;
+    border: 1px solid #ECECEC;
+    box-sizing: border-box;
+    border-radius: 12px;
+    background-position: bottom 0 right 0;
+    background-repeat: no-repeat;
+
+    .place-card-title {
+        font-weight: 800;
+        font-size: 20px;
+        line-height: 27px;
+        color: #0A2540;
+        margin-bottom: 12px;
+    }
+
+    .place-card-descr {
+        font-weight: 400;
+        font-size: 18px;
+        line-height: 25px;
+        color: #78757E;
+        max-width: 371px;
+        margin-bottom: 32px;
+
+        strong {
+            color: #0A2540;
+            font-weight: 600;
+        }
+    }
+
+    &--resume  .place-card-descr {
+        max-width: 320px;
+    }
+
+    .btn {
+        margin-top: auto;
+    }
+
+    &:hover {
+        opacity: 1;
+        border-color: #CBCBCB;
+    }
+
+}
+
+.place-section--t2 .place-card .place-card-title {
+    font-size: 25px;
+    line-height: 28px;
+}
+
+
+.place-card--vacancy  {
+    background-image: url('~@/assets/img/svg/vacansy.svg');
+}
+
+.place-card--resume {
+    background-image: url('~@/assets/img/svg/resume.svg');
+}
+
+
+.place-card--place-resume {
+    background-image: url('~@/assets/img/svg/place-resume.svg');
+}
+
+
+.place-card--premium {
+    background-image: url('~@/assets/img/svg/crown.svg');
+
+    .place-card-descr {
+        max-width: 275px;
+    }
+}
+
+
+@media (max-width: $tb) {
+
+    .place-section {
+        padding-top: 50px;
+    }
+
+    .place-card {
+        padding: 30px 20px;
+        background-size: 180px;
+    }
+
+
+    .place-card .place-card-descr {
+        max-width: 340px;
+    }
+}
+
+
+@media (max-width: $mb) {
+    .place-section {
+        grid-template-columns: 100%;
+    }
+
+    .place-card .place-card-descr {
+        font-size: 16px;
+        line-height: 22px;
+        margin-bottom: 25px;
+    }
+}
+
+
+@media (max-width: 577px) {
+    .place-card {
+        background-image: none;
+    }
+}

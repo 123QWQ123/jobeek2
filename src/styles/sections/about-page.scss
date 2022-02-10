@@ -1,0 +1,134 @@
+.about-page {
+    padding-bottom: 150px;
+}
+
+.about-page-main-image {
+    background-image: url('~@/assets/img/OBJECTS.svg');
+    background-position: top 0 center;
+    background-repeat: no-repeat;
+    background-color: #5375FD;
+    border-radius: 0px 0px 0px 40px;
+}
+
+.about-page-main {
+    display: grid;
+    grid-template-columns: 649px 1fr;
+    grid-column-gap: 52px;
+}
+
+
+.about-page-main-text  {
+    padding-top: 100px;
+    padding-bottom: 90px;
+
+    h1 {
+        font-weight: bold;
+        font-size: 32px;
+        line-height: 44px;
+        color: #0A2540;
+        margin-bottom: 24px;
+    }
+
+    p {
+        font-weight: normal;
+        font-size: 18px;
+        line-height: 150%;
+        color: #78757E;
+
+        & + p {
+            margin-top: 17px;
+        }
+    }
+}
+
+.features {
+    margin-top: 140px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 99px;
+    grid-row-gap: 102px;
+}
+
+
+.features-card {
+    h2 {
+        position: relative;
+        font-weight: 600;
+        font-size: 24px;
+        line-height: 140%;
+        color: #0A2540;
+        margin-bottom: 8px;
+
+        span {
+            position: relative;
+
+            &:after {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                background: #FFC955;
+                z-index: -1;
+            }
+        }
+    }
+
+    p {
+        font-weight: normal;
+        font-size: 16px;
+        line-height: 140%;
+        color: #78757E;
+    }
+}
+
+.about-page  + .main-footer {
+    border-top: 1px solid #ECECEC;
+}
+
+@media (max-width: $tb) {
+    .about-page-main-image {
+        display: none;
+    }
+
+    .about-page-main {
+        grid-template-columns: 100%;
+    }
+
+    .about-page-main-text {
+        padding-top: 60px;
+        padding-bottom: 50px;
+    }
+
+    .features {
+        margin-top: 50px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-column-gap: 60px;
+        grid-row-gap: 60px;
+    }
+
+    .about-page {
+        padding-bottom: 60px;
+    }
+
+
+}
+
+
+@media (max-width: $mb) {
+    .features {
+        grid-template-columns: 1fr;
+    }
+
+    .about-page-main-text h1 {
+        font-size: 25px;
+    }
+
+    .about-page-main-text {
+        padding-top: 50px;
+    }
+}
