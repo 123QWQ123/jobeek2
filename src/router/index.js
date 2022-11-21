@@ -4,6 +4,7 @@ import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
 import User from "../views/User.vue";
+import Results from "../views/Results.vue";
 
 const routes = [
   {
@@ -35,7 +36,12 @@ const routes = [
     path: "/register",
     name: "Register",
     component: Register,
-  }
+  },
+  {
+    path: "/results",
+    name: "Results",
+    component: Results,
+  },
 ];
 
 const router = createRouter({
@@ -44,9 +50,9 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth)) {
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
     if (!store.getters.isAuthenticated) {
-      next('/login');
+      next("/login");
       return;
     }
   }

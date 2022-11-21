@@ -1,10 +1,8 @@
-<template>
-  Hello, {{ name }}
-</template>
+<template>Hello, {{ name }}</template>
 
 <script>
-import { computed } from 'vue';
-import { useStore } from 'vuex';
+import { computed } from "vue";
+import { useStore } from "vuex";
 
 export default {
   setup() {
@@ -12,7 +10,7 @@ export default {
 
     return {
       name: computed(() => store.state.user.name),
-    }
-  }
-}
+    };
+  },
+};
 </script>
