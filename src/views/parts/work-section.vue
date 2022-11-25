@@ -3,8 +3,7 @@
     <div class="section-head">
       <h2 class="section-title">Работа и вакансии в Москве</h2>
       <a class="more" href="#">
-        Все <span>вакансии</span
-        ><svg
+        Все <span>вакансии</span><svg
           width="24"
           height="25"
           viewBox="0 0 24 25"

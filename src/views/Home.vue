@@ -12,13 +12,13 @@
               <input type="text" name="name" id="name" placeholder="Какую вакансию вы ищете?" autocomplete="off">
             </div>
             <div class="input-wrap has-label">
-              <label for="salary">Желаемая зарплата </label><select class="n-select" name="salary" id="salary" style="display: none;">
-              <option data-display="Выберите зарплату">Nothing</option>
+              <label for="salary">Желаемая зарплата </label><select class="n-select" name="salary" id="salary">
+              <option data-display="Выберите зарплату">Желаемая зарплата</option>
               <option value="1">Some option</option>
               <option value="2">Another option</option>
               <option value="3" disabled="">A disabled option</option>
               <option value="4">Potato</option>
-            </select><div class="nice-select n-select" tabindex="0"><span class="current">Выберите зарплату</span><ul class="list"><li data-value="Nothing" data-display="Выберите зарплату" class="option selected">Nothing</li><li data-value="1" class="option">Some option</li><li data-value="2" class="option">Another option</li><li data-value="3" class="option disabled">A disabled option</li><li data-value="4" class="option">Potato</li></ul></div>
+            </select>
             </div>
             <div class="input-wrap has-icon"><img class="icon" src="@/assets/img/svg/location.svg" alt="#">
               <input type="text" name="city" placeholder="Город" autocomplete="off">
