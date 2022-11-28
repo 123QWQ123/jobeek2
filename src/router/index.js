@@ -4,7 +4,7 @@ import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
 import User from "../views/User.vue";
-import Results from "../views/Results.vue";
+import Results from "../views/search/Results.vue";
 
 const routes = [
   {
@@ -53,6 +53,12 @@ router.beforeEach((to, from, next) => {
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     if (!store.getters.isAuthenticated) {
       next("/login");
+      return;
+    }
+  }
+  if (to.matched.some((record) => record.path === '/')) {
+    if (!store.getters.isAuthenticated) {
+      next("/results");
       return;
     }
   }

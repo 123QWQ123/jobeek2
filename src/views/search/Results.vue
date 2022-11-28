@@ -1,0 +1,246 @@
+<template>
+  <search></search>
+  <main class="main results-page" role="main">
+    <div class="results-page-content">
+      <div class="wrapper">
+        <div class="search-head">
+          <div class="col">
+            <div class="search-item">Повар</div>
+            <div class="found-count">Найдено 1 234 вакансий</div>
+          </div>
+          <div class="col">
+            <form class="sort" action="#">
+              <span>Сортировать:</span
+              ><select
+                class="d-select"
+                name="sort"
+                id="sort"
+                style="display: none"
+              >
+                <option data-display="По зарплате">По зарплате</option>
+                <option value="1">Some option</option>
+                <option value="2">Another option</option>
+                <option value="3" disabled="">A disabled option</option>
+                <option value="4">Potato</option>
+              </select>
+              <div class="nice-select d-select" tabindex="0">
+                <span class="current">По зарплате</span>
+                <ul class="list">
+                  <li
+                    data-value="По зарплате"
+                    data-display="По зарплате"
+                    class="option selected"
+                  >
+                    По зарплате
+                  </li>
+                  <li data-value="1" class="option">Some option</li>
+                  <li data-value="2" class="option">Another option</li>
+                  <li data-value="3" class="option disabled">
+                    A disabled option
+                  </li>
+                  <li data-value="4" class="option">Potato</li>
+                </ul>
+              </div>
+            </form>
+          </div>
+        </div>
+        <button class="mob-get-aside-btn">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            version="1.1"
+            width="20"
+            height="20"
+            viewBox="0 0 256 256"
+            xml:space="preserve"
+          >
+            <desc>Created with Fabric.js 1.7.22</desc>
+            <defs></defs>
+            <g transform="translate(128 128) scale(0.72 0.72)" style="">
+              <g
+                style="
+                  stroke: none;
+                  stroke-width: 0;
+                  stroke-dasharray: none;
+                  stroke-linecap: butt;
+                  stroke-linejoin: miter;
+                  stroke-miterlimit: 10;
+                  fill: none;
+                  fill-rule: nonzero;
+                  opacity: 1;
+                "
+                transform="translate(-175.05 -175.05000000000004) scale(3.89 3.89)"
+              >
+                <path
+                  d="M 15.205 90 c -1.104 0 -2 -0.896 -2 -2 V 55.115 c 0 -1.104 0.896 -2 2 -2 s 2 0.896 2 2 V 88 C 17.205 89.104 16.31 90 15.205 90 z"
+                  style="
+                    stroke: none;
+                    stroke-width: 1;
+                    stroke-dasharray: none;
+                    stroke-linecap: butt;
+                    stroke-linejoin: miter;
+                    stroke-miterlimit: 10;
+                    fill: rgb(0, 0, 0);
+                    fill-rule: nonzero;
+                    opacity: 1;
+                  "
+                  transform=" matrix(1 0 0 1 0 0) "
+                  stroke-linecap="round"
+                ></path>
+                <path
+                  d="M 74.795 59.357 c -1.104 0 -2 -0.896 -2 -2 V 2 c 0 -1.104 0.896 -2 2 -2 s 2 0.896 2 2 v 55.357 C 76.795 58.462 75.899 59.357 74.795 59.357 z"
+                  style="
+                    stroke: none;
+                    stroke-width: 1;
+                    stroke-dasharray: none;
+                    stroke-linecap: butt;
+                    stroke-linejoin: miter;
+                    stroke-miterlimit: 10;
+                    fill: rgb(0, 0, 0);
+                    fill-rule: nonzero;
+                    opacity: 1;
+                  "
+                  transform=" matrix(1 0 0 1 0 0) "
+                  stroke-linecap="round"
+                ></path>
+                <path
+                  d="M 45 90 c -1.104 0 -2 -0.896 -2 -2 V 27.922 c 0 -1.104 0.896 -2 2 -2 s 2 0.896 2 2 V 88 C 47 89.104 46.104 90 45 90 z"
+                  style="
+                    stroke: none;
+                    stroke-width: 1;
+                    stroke-dasharray: none;
+                    stroke-linecap: butt;
+                    stroke-linejoin: miter;
+                    stroke-miterlimit: 10;
+                    fill: rgb(0, 0, 0);
+                    fill-rule: nonzero;
+                    opacity: 1;
+                  "
+                  transform=" matrix(1 0 0 1 0 0) "
+                  stroke-linecap="round"
+                ></path>
+                <path
+                  d="M 45 29.922 c -5.464 0 -9.91 -4.445 -9.91 -9.91 s 4.445 -9.91 9.91 -9.91 c 5.465 0 9.91 4.445 9.91 9.91 S 50.465 29.922 45 29.922 z M 45 14.103 c -3.259 0 -5.91 2.651 -5.91 5.91 s 2.651 5.91 5.91 5.91 s 5.91 -2.651 5.91 -5.91 S 48.259 14.103 45 14.103 z"
+                  style="
+                    stroke: none;
+                    stroke-width: 1;
+                    stroke-dasharray: none;
+                    stroke-linecap: butt;
+                    stroke-linejoin: miter;
+                    stroke-miterlimit: 10;
+                    fill: rgb(0, 0, 0);
+                    fill-rule: nonzero;
+                    opacity: 1;
+                  "
+                  transform=" matrix(1 0 0 1 0 0) "
+                  stroke-linecap="round"
+                ></path>
+                <path
+                  d="M 15.205 57.115 c -5.464 0 -9.91 -4.445 -9.91 -9.91 c 0 -5.464 4.445 -9.91 9.91 -9.91 s 9.91 4.445 9.91 9.91 C 25.115 52.67 20.669 57.115 15.205 57.115 z M 15.205 41.295 c -3.259 0 -5.91 2.651 -5.91 5.91 s 2.651 5.91 5.91 5.91 s 5.91 -2.651 5.91 -5.91 S 18.464 41.295 15.205 41.295 z"
+                  style="
+                    stroke: none;
+                    stroke-width: 1;
+                    stroke-dasharray: none;
+                    stroke-linecap: butt;
+                    stroke-linejoin: miter;
+                    stroke-miterlimit: 10;
+                    fill: rgb(0, 0, 0);
+                    fill-rule: nonzero;
+                    opacity: 1;
+                  "
+                  transform=" matrix(1 0 0 1 0 0) "
+                  stroke-linecap="round"
+                ></path>
+                <path
+                  d="M 74.795 75.177 c -5.464 0 -9.909 -4.445 -9.909 -9.91 c 0 -5.464 4.445 -9.909 9.909 -9.909 c 5.465 0 9.91 4.445 9.91 9.909 C 84.705 70.731 80.26 75.177 74.795 75.177 z M 74.795 59.357 c -3.259 0 -5.909 2.65 -5.909 5.909 s 2.65 5.91 5.909 5.91 s 5.91 -2.651 5.91 -5.91 S 78.054 59.357 74.795 59.357 z"
+                  style="
+                    stroke: none;
+                    stroke-width: 1;
+                    stroke-dasharray: none;
+                    stroke-linecap: butt;
+                    stroke-linejoin: miter;
+                    stroke-miterlimit: 10;
+                    fill: rgb(0, 0, 0);
+                    fill-rule: nonzero;
+                    opacity: 1;
+                  "
+                  transform=" matrix(1 0 0 1 0 0) "
+                  stroke-linecap="round"
+                ></path>
+                <path
+                  d="M 15.205 41.295 c -1.104 0 -2 -0.896 -2 -2 V 2 c 0 -1.104 0.896 -2 2 -2 s 2 0.896 2 2 v 37.295 C 17.205 40.4 16.31 41.295 15.205 41.295 z"
+                  style="
+                    stroke: none;
+                    stroke-width: 1;
+                    stroke-dasharray: none;
+                    stroke-linecap: butt;
+                    stroke-linejoin: miter;
+                    stroke-miterlimit: 10;
+                    fill: rgb(0, 0, 0);
+                    fill-rule: nonzero;
+                    opacity: 1;
+                  "
+                  transform=" matrix(1 0 0 1 0 0) "
+                  stroke-linecap="round"
+                ></path>
+                <path
+                  d="M 45 14.103 c -1.104 0 -2 -0.896 -2 -2 V 2 c 0 -1.104 0.896 -2 2 -2 s 2 0.896 2 2 v 10.103 C 47 13.207 46.104 14.103 45 14.103 z"
+                  style="
+                    stroke: none;
+                    stroke-width: 1;
+                    stroke-dasharray: none;
+                    stroke-linecap: butt;
+                    stroke-linejoin: miter;
+                    stroke-miterlimit: 10;
+                    fill: rgb(0, 0, 0);
+                    fill-rule: nonzero;
+                    opacity: 1;
+                  "
+                  transform=" matrix(1 0 0 1 0 0) "
+                  stroke-linecap="round"
+                ></path>
+                <path
+                  d="M 74.795 90 c -1.104 0 -2 -0.896 -2 -2 V 73.177 c 0 -1.104 0.896 -2 2 -2 s 2 0.896 2 2 V 88 C 76.795 89.104 75.899 90 74.795 90 z"
+                  style="
+                    stroke: none;
+                    stroke-width: 1;
+                    stroke-dasharray: none;
+                    stroke-linecap: butt;
+                    stroke-linejoin: miter;
+                    stroke-miterlimit: 10;
+                    fill: rgb(0, 0, 0);
+                    fill-rule: nonzero;
+                    opacity: 1;
+                  "
+                  transform=" matrix(1 0 0 1 0 0) "
+                  stroke-linecap="round"
+                ></path>
+              </g>
+            </g></svg
+          >Фильтры
+        </button>
+        <div class="aside-container">
+          <filter-container></filter-container>
+          <content-container></content-container>
+        </div>
+      </div>
+    </div>
+  </main>
+</template>
+
+<script>
+import Search from "@/views/parts/search.vue";
+import Filter from "@/views/search/filter.vue";
+import Content from "@/views/search/content.vue";
+
+export default {
+  name: "results",
+  components: {
+    "filter-container": Filter,
+    "content-container": Content,
+    Search,
+  },
+};
+</script>
+
+<style scoped></style>

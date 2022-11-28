@@ -2,11 +2,13 @@
   <header v-if="!this.isAuthenticated()" class="main-header">
     <div class="header-wrapper">
       <div class="logo">
-        <img src="@/assets/img/jobeek-dark.svg" alt="#">
+        <img src="@/assets/img/jobeek-dark.svg" alt="#" />
       </div>
       <div class="header-actions">
         <a class="btn button-xs sign-in-btn" href="/login" role="link">Войти</a>
-        <a class="btn button-xl sign-up-btn" href="/register" role="link">Зарегистрироваться </a>
+        <a class="btn button-xl sign-up-btn" href="/register" role="link"
+          >Зарегистрироваться
+        </a>
       </div>
     </div>
   </header>
@@ -16,88 +18,15 @@
         <div class="logo">
           <img src="@/assets/img/jobeek-white.svg" alt="#" />
         </div>
-        <form
-          class="search-form search-form--widget"
-          action="#"
-          role="form"
-          autocomplete="off"
-        >
-          <div class="search-row">
-            <div class="input-wrap has-icon has-label">
-              <img class="icon" src="@/assets/img/svg/search.svg" alt="#" />
-              <input
-                type="text"
-                name="name"
-                id="name"
-                placeholder="Какую вакансию вы ищете?"
-                autocomplete="off"
-              />
-            </div>
-            <div class="input-wrap has-label">
-              <select
-                class="n-select"
-                name="salary"
-                id="salary"
-                style="display: none"
-              >
-                <option data-display="Выберите зарплату">Nothing</option>
-                <option value="1">Some option</option>
-                <option value="2">Another option</option>
-                <option value="3" disabled="">A disabled option</option>
-                <option value="4">Potato</option>
-              </select>
-              <div class="nice-select n-select" tabindex="0">
-                <span class="current">Выберите зарплату</span>
-                <ul class="list">
-                  <li
-                    data-value="Nothing"
-                    data-display="Выберите зарплату"
-                    class="option selected"
-                  >
-                    Nothing
-                  </li>
-                  <li data-value="1" class="option">Some option</li>
-                  <li data-value="2" class="option">Another option</li>
-                  <li data-value="3" class="option disabled">
-                    A disabled option
-                  </li>
-                  <li data-value="4" class="option">Potato</li>
-                </ul>
-              </div>
-            </div>
-            <div class="input-wrap has-icon">
-              <img
-                class="icon"
-                src="@/assets/img/svg/location.svg"
-                alt="#"
-              />
-              <input
-                type="text"
-                name="city"
-                placeholder="Город"
-                autocomplete="off"
-              />
-            </div>
-            <div class="input-wrap has-icon">
-              <img
-                class="icon"
-                src="@/assets/img/svg/location.svg"
-                alt="#"
-              />
-              <input
-                type="text"
-                name="country"
-                placeholder="Страна"
-                autocomplete="off"
-              />
-            </div>
-            <button class="button-xl submit-search-form" type="submit">
-              Поиск
-            </button>
-          </div>
-        </form>
+
+        <span v-if="this.isShow">
+          <search></search>
+        </span>
+
         <div class="profile-action">
-          <a class="tel" :href="'tel:+' + this.user().phone">+{{ this.user().phone }}</a>
+          <a class="tel" :href="'tel:+' + this.user().phone"
+            >+{{ this.user().phone }}</a
+          >
           <button class="profile-button" type="button">
             <svg
               width="46"
@@ -187,7 +116,7 @@
             <li>
               <a href="#">
                 <span
-                >Отклики
+                  >Отклики
                   <div class="count">12</div></span
                 ></a
               >
@@ -232,19 +161,29 @@
 
 <script>
 import { mapGetters } from "vuex";
+import Search from "@/views/parts/search.vue";
 
 export default {
   name: "Header",
+  components: {Search},
   data() {
     return {
       login: true,
+      isShow: true,
+      routeName: "",
     };
-  },
-  mounted() {
-    console.log(this.isAuthenticated());
   },
   methods: {
     ...mapGetters("user", ["isAuthenticated", "user"]),
+    currentRoute() {
+      this.$nextTick(() => {
+        this.routeName = this.$route.name;
+        this.isShow = this.$route.name !== "Results";
+      });
+    },
+  },
+  watch: {
+    $route: "currentRoute",
   },
 };
 </script>
