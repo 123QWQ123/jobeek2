@@ -15,7 +15,6 @@
                 class="d-select"
                 name="sort"
                 id="sort"
-                style="display: none"
               >
                 <option data-display="По зарплате">По зарплате</option>
                 <option value="1">Some option</option>
@@ -23,24 +22,6 @@
                 <option value="3" disabled="">A disabled option</option>
                 <option value="4">Potato</option>
               </select>
-              <div class="nice-select d-select" tabindex="0">
-                <span class="current">По зарплате</span>
-                <ul class="list">
-                  <li
-                    data-value="По зарплате"
-                    data-display="По зарплате"
-                    class="option selected"
-                  >
-                    По зарплате
-                  </li>
-                  <li data-value="1" class="option">Some option</li>
-                  <li data-value="2" class="option">Another option</li>
-                  <li data-value="3" class="option disabled">
-                    A disabled option
-                  </li>
-                  <li data-value="4" class="option">Potato</li>
-                </ul>
-              </div>
             </form>
           </div>
         </div>

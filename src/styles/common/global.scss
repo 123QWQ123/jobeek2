@@ -299,10 +299,6 @@ img {
   &--down svg {
     transform: rotate(90deg);
   }
-  
-  span {
-  	padding: 0 10px;
-  }
 
   svg {
     margin-left: 8px;
@@ -419,6 +415,7 @@ img {
   border-color: #5375FD;
   width: 8px;
   height: 8px;
+  right: 21px;
 }
 
 .input-wrap input {
@@ -891,7 +888,7 @@ img {
   cursor: pointer;
 }
 
-.check-block .checkbox .checkbox-mask {
+.check-block .checkbox .checkbox-mask, .check-block .checkbox .radio-mask {
   position: absolute;
   top: 0;
   left: 0;
@@ -914,7 +911,11 @@ img {
   background: #EFF2F5;
 }
 
-.check-block .checkbox .checkbox-mask img {
+.check-block .checkbox .radio-mask  {
+  border-radius: 50%;
+}
+
+.check-block .checkbox .checkbox-mask img, .check-block .checkbox .radio-mask img {
   opacity: 0;
   -webkit-transition: opacity .3s ease;
   -o-transition: opacity .3s ease;
@@ -925,8 +926,28 @@ img {
   background: #5375FD;
 }
 
+
+.check-block .checkbox input:checked ~ .radio-mask {
+  background: #5375FD;
+  &:after {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #fff;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
 .check-block .checkbox input:checked ~ .checkbox-mask img {
   opacity: 1;
+}
+
+.check-block .checkbox input:checked ~ .radio-mask img {
+  opacity: 0;
 }
 
 .check-block label {

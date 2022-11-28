@@ -50,11 +50,11 @@
     .input-wrap  {
         height: 100%;
         border-right: 1px solid #CBCBCB;
-
+        
 
         &.has-icon input {
             padding-left: 48px;
-
+            
         }
 
         input {
@@ -106,14 +106,14 @@
         display: flex;
         height: 100%;
         align-items: center;
-
+        
             white-space: nowrap;
             overflow: hidden;
             width: calc(100% - 10px);
 
     }
 
-
+    
 }
 
 
@@ -132,7 +132,7 @@ body .main-section-mob {
     body .main-section-mob {
         display: block;
     }
-
+    
 }
 
 @media (max-width: $tb) {
@@ -145,7 +145,7 @@ body .main-section-mob {
         padding: 60px 15px 40px;
     }
 
-
+    
 
 }
 
@@ -173,12 +173,12 @@ body .main-section-mob {
         padding-left: 48px;
     }
 
-
+    
 }
 
 
 @media (max-width: $mb) {
-
+    
 
     .main-section {
         padding-bottom: 50px;
