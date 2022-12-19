@@ -4,7 +4,11 @@
       <div class="logo">
         <img src="../assets/img/jobeek-dark.svg" alt="#" />
       </div>
-      <form v-if="codeConfirmation" @submit.prevent="confirmCode()" class="enter-form">
+      <form
+        v-if="codeConfirmation"
+        @submit.prevent="confirmCode"
+        class="enter-form"
+      >
         <h1>Регистрация</h1>
         <div class="i-wrap">
           <input v-model="code" type="text" placeholder="Код подтверждения" />
@@ -24,11 +28,9 @@
             </label>
           </div>
         </div>
-        <button class="btn button-accent" type="submit">
-          Подтвердить код
-        </button>
+        <button class="btn button-accent" type="submit">Подтвердить код</button>
       </form>
-      <form v-else @submit.prevent="sendCode()" class="enter-form">
+      <form v-else @submit.prevent="sendCode" class="enter-form">
         <h1>Регистрация</h1>
         <div class="i-wrap">
           <phone-field v-model:phone="phone" />
@@ -60,15 +62,15 @@
 </template>
 
 <script>
-import axios from 'axios';
-import { computed, ref } from 'vue'
-import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
+import axios from "axios";
+import { computed, ref } from "vue";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 import PhoneField from "../components/PhoneField";
 
 export default {
   components: {
-    "phone-field": PhoneField
+    "phone-field": PhoneField,
   },
 
   setup() {
@@ -76,44 +78,48 @@ export default {
     const router = useRouter();
 
     const codeConfirmation = ref(false);
-    const phone = ref('');
-    const code = ref('');
+    const phone = ref("");
+    const code = ref("");
     const errors = ref([]);
-    const confirmationSession = ref('');
+    const confirmationSession = ref("");
 
     const unformattedPhone = computed(() => {
-      return phone.value.replace(/\D/g, '');
-    })
+      return phone.value.replace(/\D/g, "");
+    });
 
     const sendCode = () => {
       axios
-        .post('/api/auth/register', { phone: unformattedPhone.value })
+        .post("/api/auth/register", { phone: unformattedPhone.value })
         .then(({ data }) => {
           codeConfirmation.value = true;
           confirmationSession.value = data.data.session;
         })
-        .catch(({response}) => errors.value = response.data.errors);
-    }
+        .catch(({ response }) => (errors.value = response.data.errors));
+    };
 
     const confirmCode = () => {
       axios
-        .post('/api/auth/register/confirm', {
+        .post("/api/auth/register/confirm", {
           phone: unformattedPhone.value,
           session: confirmationSession.value,
-          code: code.value
+          code: code.value,
         })
         .then(() => {
-          store.dispatch('login', { phone: unformattedPhone.value, password: code.value })
-            .then(() => router.push('/'))
-            .catch(response => errors.value = response.errors);
+          store
+            .dispatch("login", {
+              phone: unformattedPhone.value,
+              password: code.value,
+            })
+            .then(() => router.push("/"))
+            .catch((response) => (errors.value = response.errors));
         })
-        .catch(({response}) => errors.value = response.data.errors);
-    }
+        .catch(({ response }) => (errors.value = response.data.errors));
+    };
 
     const back = () => {
       codeConfirmation.value = false;
-      code.value = '';
-    }
+      code.value = "";
+    };
 
     return {
       codeConfirmation,
@@ -123,7 +129,7 @@ export default {
       sendCode,
       confirmCode,
       back,
-    }
-  }
-}
+    };
+  },
+};
 </script>
