@@ -1,0 +1,40 @@
+<template>
+  <div class="layout">
+    <header class="header" v-if="hasHeaderSlot">
+      <slot name="header"></slot>
+    </header>
+    <the-header v-else></the-header>
+    <main class="main container mt-5 mb-3">
+      <NuxtPage />
+
+      <!-- <template #error="{ error }">
+          <div>
+            <p>
+              Oh no, something broke when loading the lesson!
+              <code>{{ error }}</code>
+            </p>
+            <p>
+              <NuxtLink class="hover:cursor-pointer" to="/"> Go to / </NuxtLink>
+            </p>
+          </div>
+        </template> -->
+    </main>
+
+    <!-- <footer class="footer" v-if="hasFooterSlot">
+    <slot name="footer"></slot>
+  </footer> -->
+  </div>
+</template>
+
+<script>
+export default {
+  computed: {
+    hasHeaderSlot() {
+      return !!this.$slots.header;
+    },
+    hasFooterSlot() {
+      return !!this.$slots.footer;
+    },
+  },
+};
+</script>
