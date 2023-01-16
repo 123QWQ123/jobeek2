@@ -2,7 +2,9 @@
 export default defineNuxtConfig({
   ssr: false,
   css: [
-    '~/assets/bootstrap5/app.scss'
+    // '~/assets/bootstrap5/app.scss',
+    '~/assets/styles/app.css',
+    '~/assets/styles/nice-select.css'
   ],
   modules: [
     'nuxt3-vuex',

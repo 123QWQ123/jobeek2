@@ -1,6 +1,8 @@
 
 <script setup>
-import { storeToRefs } from "pinia";
+definePageMeta({
+  layout: 'custom'
+})
 import { useAuthStore } from "~~/store/auth";
 
 const auth = useAuthStore();
@@ -81,69 +83,99 @@ async function onSubmit() {
     <base-modal :show="!!state.success" title="Success">
       <p>{{ state.success }}</p>
     </base-modal>
-
-    <div class="col-md-6 offset-md-3">
-      <h2 class="text-center text-dark mt-5">Login Form({{ isAuthed }})</h2>
-      <div class="text-center mb-5 text-dark">Made with bootstrap</div>
-      <div class="card my-5">
-        <form
-          class="card-body cardbody-color p-lg-5"
-          @submit.prevent="onSubmit"
-        >
-          <div class="text-center">
-            <NuxtLink to="/">
-              <img
-                src="https://cdn.pixabay.com/photo/2016/03/31/19/56/avatar-1295397__340.png"
-                class="
-                  w-25
-                  img-fluid
-                  profile-image-pic
-                  img-thumbnail
-                  rounded-circle
-                  my-3
-                "
-                width="200px"
-                alt="profile"
-              />
-            </NuxtLink>
+    <main class="main enter-page sign-in" role="main">
+      <div class="enter-page-content">
+        <NuxtLink to="/" class="logo"> <img src="~/assets/img/jobeek-dark.svg" alt="#"></NuxtLink>
+        <form class="enter-form" action="#">
+          <h1>Вход</h1>
+          <div class="i-wrap">
+            <input type="tel" name="tel" placeholder="Номер телефона" />
           </div>
-
-          <div class="mb-3">
-            <input
-              type="text"
-              class="form-control"
-              :class="{ 'is-invalid': !state.email.isValid }"
-              @focusin="clearValidity('email')"
-              id="email"
-              aria-describedby="emailHelp"
-              placeholder="Email"
-              v-model.trim="state.email.val"
-            />
+          <div class="i-wrap">
+            <input type="password" name="pass" placeholder="Пароль" />
           </div>
-          <div class="mb-3">
-            <input
-              type="password"
-              class="form-control"
-              :class="{ 'is-invalid': !state.password.isValid }"
-              @focusin="clearValidity('password')"
-              id="password"
-              placeholder="password"
-              v-model.trim="state.password.val"
-            />
+          <div class="note"> <img src="~/assets/img/svg/i.svg" alt="#">
+            <p>Если вы не устанавливали пароль, используйте SMS код который получили на телефон во время активации.</p>
           </div>
-          <div class="text-center">
-            <button type="submit" class="btn btn-primary px-5 mb-5 w-100">
-              Login
-            </button>
+          <div class="help-box">
+            <div class="check-block">
+              <div class="checkbox">
+                <input type="checkbox" id="agree" />
+                <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
+              </div>
+              <label for="agree">Запомнить меня</label>
+            </div>  <a href="#">Забыли пароль?       </a>
           </div>
-          <div id="emailHelp" class="form-text text-center mb-5 text-dark">
-            Not Registered?
-            <NuxtLink :to="{ name: 'sign-up' }" class="text-dark fw-bold">
-              Create an Account</NuxtLink
-            >
-          </div>
+          <button class="btn button-accent" type="button">Войти</button>
         </form>
+        <div class="f-prompt">Еще нет аккаунта? <NuxtLink :to="{name: 'sign-up'}">Зарегистрируйтесь!</NuxtLink></div>
       </div>
-    </div>
+    </main>
   </div>
 </template>
+
+<!--    <div class="col-md-6 offset-md-3">-->
+<!--      <h2 class="text-center text-dark mt-5">Login Form({{ isAuthed }})</h2>-->
+<!--      <div class="text-center mb-5 text-dark">Made with bootstrap</div>-->
+<!--      <div class="card my-5">-->
+<!--        <form-->
+<!--          class="card-body cardbody-color p-lg-5"-->
+<!--          @submit.prevent="onSubmit"-->
+<!--        >-->
+<!--          <div class="text-center">-->
+<!--            <NuxtLink to="/">-->
+<!--              <img-->
+<!--                src="https://cdn.pixabay.com/photo/2016/03/31/19/56/avatar-1295397__340.png"-->
+<!--                class="-->
+<!--                  w-25-->
+<!--                  img-fluid-->
+<!--                  profile-image-pic-->
+<!--                  img-thumbnail-->
+<!--                  rounded-circle-->
+<!--                  my-3-->
+<!--                "-->
+<!--                width="200px"-->
+<!--                alt="profile"-->
+<!--              />-->
+<!--            </NuxtLink>-->
+<!--          </div>-->
+
+<!--          <div class="mb-3">-->
+<!--            <input-->
+<!--              type="text"-->
+<!--              class="form-control"-->
+<!--              :class="{ 'is-invalid': !state.email.isValid }"-->
+<!--              @focusin="clearValidity('email')"-->
+<!--              id="email"-->
+<!--              aria-describedby="emailHelp"-->
+<!--              placeholder="Email"-->
+<!--              v-model.trim="state.email.val"-->
+<!--            />-->
+<!--          </div>-->
+<!--          <div class="mb-3">-->
+<!--            <input-->
+<!--              type="password"-->
+<!--              class="form-control"-->
+<!--              :class="{ 'is-invalid': !state.password.isValid }"-->
+<!--              @focusin="clearValidity('password')"-->
+<!--              id="password"-->
+<!--              placeholder="password"-->
+<!--              v-model.trim="state.password.val"-->
+<!--            />-->
+<!--          </div>-->
+<!--          <div class="text-center">-->
+<!--            <button type="submit" class="btn btn-primary px-5 mb-5 w-100">-->
+<!--              Login-->
+<!--            </button>-->
+<!--          </div>-->
+<!--          <div id="emailHelp" class="form-text text-center mb-5 text-dark">-->
+<!--            Not Registered?-->
+<!--            <NuxtLink :to="{ name: 'sign-up' }" class="text-dark fw-bold">-->
+<!--              Create an Account</NuxtLink-->
+<!--            >-->
+<!--          </div>-->
+<!--        </form>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--  -->

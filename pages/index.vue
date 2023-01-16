@@ -1,8 +1,15 @@
 <script setup>
-// definePageMeta({
-//   layout: "custom",
-// });
+definePageMeta({
+  layout: 'index'
+})
 </script>
 <template>
-  <div>Index</div>
+  <div>
+    <HomeMainSection/>
+    <HomePlaceSection/>
+    <HomeVacancySection/>
+    <HomeCompaniesSection/>
+    <HomeWorkSection/>
+    <HomeSearchSection/>
+  </div>
 </template>

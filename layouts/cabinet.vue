@@ -3,8 +3,8 @@
     <header class="header" v-if="hasHeaderSlot">
       <slot name="header"></slot>
     </header>
-    <the-header v-else></the-header>
-    <main class="main" role="main">
+    <ThePersonalCabinetHeader v-else></ThePersonalCabinetHeader>
+
       <NuxtPage />
       <!-- <template #error="{ error }">
           <div>
@@ -17,7 +17,6 @@
             </p>
           </div>
         </template> -->
-    </main>
 
     <footer class="footer" v-if="hasFooterSlot">
       <slot name="footer"></slot>
