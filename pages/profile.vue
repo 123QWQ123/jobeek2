@@ -1,36 +1,53 @@
+
+<script setup>
+definePageMeta({
+  layout: "cabinet"
+});
+
+// const state = reactive({
+//   first_name: {
+//     val: '',
+//     isValid: true,
+//   },
+//   last_name: {
+//     val: '',
+//     isValid: true,
+//   },
+// })
+
+
+const state = reactive({
+  first_name: {
+    val: "",
+    isValid: true,
+  },
+  last_name: {
+    val: "",
+    isValid: true,
+  },
+  birth_day: {
+    val: "",
+    isValid: true,
+  },
+  birth_month: {
+    val: "",
+    isValid: true,
+  },
+  birth_year: {
+    val: "",
+    isValid: true,
+  },
+  isFormValid: true,
+  isLoading: true,
+  error: null,
+  success: null,
+});
+
+</script>
+
 <template>
   <main class="main cabinet profile-page bg-wrapper" role="main">
-    <div class="main-section main-section-mob">
-      <div class="wrapper wrapper--xl">
-        <form class="search-form" action="#" role="form" autocomplete="off">
-          <div class="search-row">
-            <div class="input-wrap has-icon has-label"><img class="icon" src="~/assets/img/svg/search.svg"
-                                                            alt="#">
-              <label for="name">Названии вакансии </label>
-              <input type="text" name="name" id="name" placeholder="Какую вакансию вы ищете?"
-                     autocomplete="off">
-            </div>
-            <div class="input-wrap has-label">
-              <label for="salary">Желаемая зарплата </label>
-              <select class="n-select" name="salary" id="salary">
-                <option data-display="Выберите зарплату">Nothing</option>
-                <option value="1">Some option</option>
-                <option value="2">Another option</option>
-                <option value="3" disabled>A disabled option</option>
-                <option value="4">Potato</option>
-              </select>
-            </div>
-            <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">
-              <input type="text" name="city" placeholder="Город" autocomplete="off">
-            </div>
-            <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">
-              <input type="text" name="country" placeholder="Страна" autocomplete="off">
-            </div>
-            <button class="button-accent submit-search-form" type="submit">Поиск </button>
-          </div>
-        </form>
-      </div>
-    </div>
+<!--    <PersonalCabinetSearchMobile />-->
     <div class="has-sidebar has-sidebar--v2 wrapper wrapper-1290">
       <div class="content">
         <div class="w-box w-box--main">
@@ -44,7 +61,8 @@
                 <div class="photo">
                   <input type="file" name="photo" id="photo"><img src="~/assets/img/photo.png" alt="#">
                   <div class="photo-actions">
-                    <button class="photo-action redact" type="button"><svg width="28"
+                    <button class="photo-action redact" type="button">
+                      <svg width="28"
                                                                            height="28" viewBox="0 0 28 28" fill="none"
                                                                            xmlns="http://www.w3.org/2000/svg">
                       <path d="M3.5 24.5H24.5" stroke="#D2D2D2" stroke-width="1.5"
@@ -71,34 +89,36 @@
               <label for="name">Имя и фамилия <b>*</b></label>
               <div class="input-wrapper">
                 <div class="c2">
-                  <input type="text" placeholder="Имя" id="name" required>
-                  <input type="text" placeholder="Фамилия" id="surname" required>
+                  <input type="text" placeholder="Имя" id="name" required v-model="state.first_name.val">
+                  <input type="text" placeholder="Фамилия" id="surname" required v-model="state.last_name.val">
                 </div>
               </div>
             </div>
             <div class="input-row">
               <label>Дата рождения <b>*</b></label>
               <div class="input-wrapper">
-                <div class="c3"><select class="d-select" name="birth-day" id="birth-day">
-                  <option data-display="День">Nothing</option>
-                  <option value="1">Some option</option>
-                  <option value="2">Another option</option>
-                  <option value="3" disabled>A disabled option</option>
-                  <option value="4">Potato</option>
-                </select>
-                  <select class="d-select" name="birth-month" id="birth-month">
-                    <option data-display="Месяц">Nothing</option>
-                    <option value="1">Some option</option>
-                    <option value="2">Another option</option>
-                    <option value="3" disabled>A disabled option</option>
-                    <option value="4">Potato</option>
+                <div class="c3">
+                  <select class="d-select" name="birth-day" id="birth-day" v-model="state.birth_day.val">
+                    <option data-display="День">-</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
                   </select>
-                  <select class="d-select" name="birth-year" id="birth-year">
-                    <option data-display="Год">Nothing</option>
-                    <option value="1">Some option</option>
-                    <option value="2">Another option</option>
-                    <option value="3" disabled>A disabled option</option>
-                    <option value="4">Potato</option>
+                  <select class="d-select" name="birth-month" id="birth-month" v-model="state.birth_month.val">
+                    <option data-display="Месяц">-</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                  </select>
+
+                  <select class="d-select" name="birth-year" id="birth-year" v-model="state.birth_year.val">
+                    <option data-display="Год">-</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
                   </select>
                 </div>
               </div>
@@ -140,10 +160,6 @@
     </div>
   </main>
 </template>
-
-<script setup>
-
-</script>
 
 <style scoped>
 

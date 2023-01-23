@@ -1,6 +1,7 @@
 <script setup>
 definePageMeta({
-  layout: 'custom'
+  layout: 'custom',
+  middleware: ["guest"]
 })
 import { useAuthStore } from "~~/store/auth";
 
@@ -13,18 +14,15 @@ const isLoading = ref(true);
 const error = ref(null);
 
 const state = reactive({
-  email: {
+  phone: {
     val: "",
     isValid: true,
   },
-  password: {
-    val: "",
+  i_agree: {
+    val: false,
     isValid: true,
   },
-  passwordConfirmation: {
-    val: "",
-    isValid: true,
-  },
+
 });
 
 function clearValidity(input) {
@@ -33,18 +31,12 @@ function clearValidity(input) {
 }
 
 function validateForm() {
-  if (state.email.val === "") {
-    state.email.isValid = false;
+  if (state.phone.val === "") {
+    state.phone.isValid = false;
     isFormValid.value = false;
   }
-
-  if (state.password.val === "" || state.password.val.length < 6) {
-    state.password.isValid = false;
-    isFormValid.value = false;
-  }
-
-  if (state.password.val !== state.passwordConfirmation.val) {
-    state.passwordConfirmation.isValid = false;
+  if (state.i_agree.val !== true) {
+    state.i_agree.isValid = false;
     isFormValid.value = false;
   }
 }
@@ -52,16 +44,18 @@ function validateForm() {
 const router = useRouter();
 
 const onSubmit = async () => {
+  console.log(state.i_agree);
   validateForm();
   if (isFormValid.value) {
     const response = await signUp({
-      email: state.email.val,
-      password: state.password.val,
+      phone: state.phone.val,
+      i_agree: state.i_agree.val,
     });
-    if (response.error && response.error.message) {
-      this.error = response.error.message;
+
+    if (response.error && response.message) {
+      this.error = response.message;
     } else {
-      router.replace({ name: "coaches-register" });
+      router.replace({ name: "profile" });
     }
   }
 };
@@ -75,21 +69,21 @@ const onSubmit = async () => {
     <main class="main enter-page sign-up" role="main">
       <div class="enter-page-content">
         <NuxtLink to="/" class="logo"> <img src="~/assets/img/jobeek-dark.svg" alt="#"></NuxtLink>
-        <form class="enter-form" action="#">
+        <form class="enter-form" @submit.prevent="onSubmit">
           <h1>Регистрация</h1>
           <div class="i-wrap">
-            <input type="tel" name="tel" placeholder="Номер телефона">
+            <input type="tel" name="tel" placeholder="Номер телефона" @focusout="clearValidity('phone')">
           </div>
           <div class="help-box">
-            <div class="check-block">
+            <div class="check-block " :class="{ 'border-bottom border-danger': !state.i_agree.isValid }">
               <div class="checkbox">
-                <input type="checkbox" id="agree">
+                <input type="checkbox" id="agree" v-model="state.i_agree.val" @focusout="clearValidity('i_agree')">
                 <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
               </div>
               <label for="agree">Согласен с <a href="#">правилами обработки персональных данных</a></label>
             </div>
           </div>
-          <button class="btn button-accent" type="button">Зарегистрироваться</button>
+          <button class="btn button-accent" type="submit">Зарегистрироваться</button>
         </form>
         <div class="f-prompt">Уже есть аккаунт? <NuxtLink :to="{name: 'sign-in'}">Войдите!</NuxtLink>  </div>
       </div>
@@ -97,78 +91,3 @@ const onSubmit = async () => {
 
   </div>
 </template>
-
-<!--<div class="col-md-6 offset-md-3">-->
-<!--<h2 class="text-center text-dark mt-5">Sign up Form</h2>-->
-<!--<div class="text-center mb-5 text-dark">Made with bootstrap</div>-->
-<!--<div class="card my-5">-->
-<!--  <form-->
-<!--      class="card-body cardbody-color p-lg-5"-->
-<!--      @submit.prevent="onSubmit"-->
-<!--  >-->
-<!--    <div class="text-center">-->
-<!--      <NuxtLink to="/">-->
-<!--        <img-->
-<!--            src="https://cdn.pixabay.com/photo/2016/03/31/19/56/avatar-1295397__340.png"-->
-<!--            class="-->
-<!--                  w-25-->
-<!--                  img-fluid-->
-<!--                  profile-image-pic-->
-<!--                  img-thumbnail-->
-<!--                  rounded-circle-->
-<!--                  my-3-->
-<!--                "-->
-<!--            width="200px"-->
-<!--            alt="profile"-->
-<!--        />-->
-<!--      </NuxtLink>-->
-<!--    </div>-->
-
-<!--    <div class="mb-3">-->
-<!--      <input-->
-<!--          type="text"-->
-<!--          class="form-control"-->
-<!--          :class="{ 'is-invalid': !state.email.isValid }"-->
-<!--          @focusin="clearValidity('email')"-->
-<!--          id="email"-->
-<!--          aria-describedby="emailHelp"-->
-<!--          placeholder="Email"-->
-<!--          v-model.trim="state.email.val"-->
-<!--      />-->
-<!--    </div>-->
-<!--    <div class="mb-3">-->
-<!--      <input-->
-<!--          type="password"-->
-<!--          class="form-control"-->
-<!--          :class="{ 'is-invalid': !state.password.isValid }"-->
-<!--          @focusin="clearValidity('password')"-->
-<!--          id="password"-->
-<!--          placeholder="password"-->
-<!--          v-model.trim="state.password.val"-->
-<!--      />-->
-<!--    </div>-->
-<!--    <div class="mb-3">-->
-<!--      <input-->
-<!--          type="password"-->
-<!--          class="form-control"-->
-<!--          :class="{ 'is-invalid': !state.passwordConfirmation.isValid }"-->
-<!--          @focusin="clearValidity('passwordConfirmation')"-->
-<!--          id="confirmation_password"-->
-<!--          placeholder="confirmation_password"-->
-<!--          v-model.trim="state.passwordConfirmation.val"-->
-<!--      />-->
-<!--    </div>-->
-<!--    <div class="text-center">-->
-<!--      <button type="submit" class="btn btn-primary px-5 mb-5 w-100">-->
-<!--        Login-->
-<!--      </button>-->
-<!--    </div>-->
-<!--    <div id="emailHelp" class="form-text text-center mb-5 text-dark">-->
-<!--      Have an account?-->
-<!--      <router-link :to="{ name: 'sign-in' }" class="text-dark fw-bold">-->
-<!--        Sign in</router-link-->
-<!--      >-->
-<!--    </div>-->
-<!--  </form>-->
-<!--</div>-->
-<!--</div>-->

@@ -25,7 +25,8 @@
             <button class="button-xl submit-search-form" type="submit">Поиск   </button>
           </div>
         </form>
-        <div class="profile-action"> <a class="tel" href="tel: +7 994 992 32 32">+7 994 992 32 32</a>
+        <div class="profile-action" v-if="isAuthed">
+          <a class="tel" :href="`tel: ${phone}`">{{ phone }}</a>
           <button class="profile-button" type="button"><svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="46" height="46" rx="8" fill="#6886FF"/>
             <path d="M7.45898 31.111L39.4902 31.111C39.9999 31.111 40.4888 31.3134 40.8492 31.6739C41.2096 32.0343 41.4121 32.5231 41.4121 33.0328C41.4121 33.5425 41.2096 34.0314 40.8492 34.3918C40.4888 34.7522 39.9999 34.9547 39.4902 34.9547H7.45898C7.2066 34.9547 6.95669 34.905 6.72351 34.8084C6.49034 34.7118 6.27848 34.5703 6.10001 34.3918C5.92155 34.2133 5.77999 34.0015 5.6834 33.7683C5.58682 33.5351 5.53711 33.2852 5.53711 33.0328C5.53711 32.7805 5.58682 32.5305 5.6834 32.2974C5.77999 32.0642 5.92155 31.8523 6.10001 31.6739C6.27848 31.4954 6.49034 31.3538 6.72351 31.2573C6.95669 31.1607 7.2066 31.111 7.45898 31.111Z" fill="#FDDE2E"/>
@@ -40,6 +41,16 @@
             <path d="M36.5318 20.5277C36.5395 20.395 36.5746 20.2653 36.635 20.1469C36.6953 20.0285 36.7796 19.9239 36.8825 19.8397C36.9853 19.7555 37.1045 19.6936 37.2325 19.6578C37.3605 19.622 37.4946 19.6132 37.6262 19.6318C37.7578 19.6505 37.884 19.6963 37.9971 19.7663C38.1101 19.8362 38.2073 19.9289 38.2827 20.0384C38.3581 20.1478 38.4099 20.2718 38.4349 20.4023C38.4599 20.5328 38.4576 20.6672 38.4281 20.7967C38.4204 20.9294 38.3853 21.0591 38.3249 21.1775C38.2646 21.2959 38.1803 21.4006 38.0775 21.4847C37.9746 21.5689 37.8554 21.6309 37.7274 21.6667C37.5994 21.7024 37.4654 21.7113 37.3338 21.6926C37.2022 21.6739 37.0759 21.6281 36.9629 21.5582C36.8499 21.4882 36.7526 21.3955 36.6772 21.2861C36.6019 21.1766 36.55 21.0527 36.525 20.9221C36.5 20.7916 36.5023 20.6573 36.5318 20.5277Z" fill="#FDDE2E"/>
           </svg>
           </button>
+          <button class="exit-button" type="button" @click="logout">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
+              <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="header-actions" v-else>
+          <NuxtLink class="btn button-xs sign-in-btn" :to="{name: 'sign-in'}" role="link">Войти</NuxtLink>
+          <NuxtLink class="btn button-xl sign-up-btn" :to="{name: 'sign-up'}" role="link">Зарегистрироваться </NuxtLink>
         </div>
       </div>
     </div>
@@ -89,13 +100,10 @@
 import { useAuthStore } from "~~/store/auth";
 
 const auth = useAuthStore();
-const { tryLogin, logout } = auth;
-
-onBeforeMount(() => {
-  tryLogin();
-});
+const { logout } = auth;
 
 const isAuthed = computed(() => auth.isAuthed);
+const phone = computed(() => auth.user.phone);
 </script>
 
 <style scoped>
