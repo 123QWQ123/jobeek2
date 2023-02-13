@@ -1,6 +1,7 @@
 <script setup>
 definePageMeta({
-  layout: 'cabinet'
+  layout: 'cabinet',
+  middleware: ["auth"]
 })
 </script>
 <template>

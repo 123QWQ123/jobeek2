@@ -1,3 +1,11 @@
+
+<script setup>
+definePageMeta({
+  layout: "cabinet",
+});
+</script>
+
+
 <template>
   <main class="main cabinet responses-page bg-wrapper" role="main">
     <PersonalCabinetSearchMobile/>
@@ -262,10 +270,6 @@
     </div>
   </main>
 </template>
-
-<script setup>
-
-</script>
 
 <style scoped>
 

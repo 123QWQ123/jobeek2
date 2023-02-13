@@ -1,16 +1,20 @@
 <template>
-  <button class="btn btn-primary" :class="classes" :type="type" v-if="!to">
-    <slot></slot>
-  </button>
   <NuxtLink
+      v-if="to"
     class="btn btn-primary text-white"
     :class="classes"
-    v-else
     :to="to"
     :link="link"
   >
     <slot></slot>
   </NuxtLink>
+  <button
+      v-else
+      class="btn btn-primary"
+      :class="classes"
+      :type="type">
+    <slot></slot>
+  </button>
 </template>
 
 <script>
@@ -26,7 +30,7 @@ export default {
     },
     to: {
       required: false,
-      default: "/",
+      default: null,
     },
     link: {
       required: false,

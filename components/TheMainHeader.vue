@@ -1,20 +1,34 @@
 <template>
   <header class="main-header">
     <div class="header-wrapper header-wrapper--fxstart">
-      <div class="logo"> <img src="~/assets/img/jobeek-dark.svg" alt="#"></div>
-      <div class="theme-checker-box checker-box">
+      <div class="logo">
+        <NuxtLink to="/">
+          <img src="~/assets/img/jobeek-dark.svg" alt="#">
+        </NuxtLink>
+      </div>
+      <div class="theme-checker-box checker-box" @click="toggleUserMode">
         <span class="v v1 active" title="Соискатель">Соискатель</span>
-        <div class="theme-checker">
-          <input type="checkbox" id="employer">
+        <div class="theme-checker" >
+          <input type="checkbox" id="employer" :checked="isEmployer" >
           <div class="theme-checker-ui">
             <div class="circle"> </div>
           </div>
         </div>
         <span class="v v2" title="Работодатель">Работодатель</span>
       </div>
-      <div class="header-actions"> <a class="btn button-xs sign-in-btn" href="/sign-in.html"
-                                      role="link">Войти</a><a class="btn button-xl sign-up-btn" href="/sign-up.html"
-                                                              role="link">Зарегистрироваться </a></div>
+      <div class="header-actions" v-if="isAuthed">
+        <NuxtLink class="btn button-xs sign-in-btn" :to="{name: 'profile'}" role="link">{{ user.phone }}</NuxtLink>
+        <button class="exit-button" type="button" @click="logout">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
+            <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="header-actions" v-else>
+        <a class="btn button-xs sign-in-btn" href="/sign-in.html" role="link">Войти</a>
+        <a class="btn button-xl sign-up-btn" href="/sign-up.html" role="link">Зарегистрироваться </a>
+      </div>
     </div>
   </header>
 </template>
@@ -23,13 +37,15 @@
 import { useAuthStore } from "~~/store/auth";
 
 const auth = useAuthStore();
-const { tryLogin, logout } = auth;
+const { tryLogin, logout, toggleUserMode } = auth;
 
 onBeforeMount(() => {
   tryLogin();
 });
 
 const isAuthed = computed(() => auth.isAuthed);
+const isEmployer = computed(() => auth.isEmployer);
+const user = computed(() => auth.user);
 </script>
 
 <style scoped>
