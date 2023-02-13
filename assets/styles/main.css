@@ -1267,7 +1267,7 @@ img {
     margin-bottom: 20px; }
 
 .main-section {
-    background-image: url("~/assets/img/bg.jpg");
+    background-image: url("../img/bg.jpg");
     background-position: top 0 center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -1501,16 +1501,16 @@ body .main-section-mob {
     line-height: 28px; }
 
 .place-card--vacancy {
-    background-image: url("~/assets/img/svg/vacansy.svg"); }
+    background-image: url("../img/svg/vacansy.svg"); }
 
 .place-card--resume {
-    background-image: url("~/assets/img/svg/resume.svg"); }
+    background-image: url("../img/svg/resume.svg"); }
 
 .place-card--place-resume {
-    background-image: url("~/assets/img/svg/place-resume.svg"); }
+    background-image: url("../img/svg/place-resume.svg"); }
 
 .place-card--premium {
-    background-image: url("~/assets/img/svg/crown.svg"); }
+    background-image: url("../img/svg/crown.svg"); }
 .place-card--premium .place-card-descr {
     max-width: 275px; }
 
@@ -1766,12 +1766,12 @@ body .main-section-mob {
     background-color: #f5ebe1; }
 
 .sign-in {
-    background-image: url("~/assets/img/sign-in.svg");
+    background-image: url("../img/sign-in.svg");
     background-position: right 40px bottom 52px;
     background-repeat: no-repeat; }
 
 .sign-up {
-    background-image: url("~/assets/img/sign-up.svg");
+    background-image: url("../img/sign-up.svg");
     background-position: right 28px bottom 66px;
     background-repeat: no-repeat; }
 
@@ -1908,7 +1908,7 @@ body .main-section-mob {
     padding-bottom: 150px; }
 
 .about-page-main-image {
-    background-image: url("~/assets/img/OBJECTS.svg");
+    background-image: url("../img/OBJECTS.svg");
     background-position: top 0 center;
     background-repeat: no-repeat;
     background-color: #5375FD;
@@ -2411,7 +2411,8 @@ body .main-section-mob {
     -o-object-fit: cover;
     object-fit: cover; }
 .dwld-photo .photo input {
-    display: none; }
+    display: none;
+}
 
 .photo-actions {
     position: absolute;
@@ -2683,7 +2684,7 @@ body .main-section-mob {
     bottom: 0;
     height: 123px;
     width: 199px;
-    background-image: url("~/assets/img/svg/shape1.svg");
+    background-image: url("../img/svg/shape1.svg");
     background-position: left 0 bottom 0;
     background-repeat: no-repeat; }
 .notification:after {
@@ -2693,7 +2694,7 @@ body .main-section-mob {
     top: 0;
     height: 143px;
     width: 178px;
-    background-image: url("~/assets/img/svg/shape2.svg");
+    background-image: url("../img/svg/shape2.svg");
     background-position: right 0 top 0;
     background-repeat: no-repeat; }
 .notification .notification-button {
@@ -3273,9 +3274,6 @@ body .main-section-mob {
 .params-box .group .check-block:not(:last-child) {
     margin-bottom: 24px; }
 
-.params-button-container:hover .params-box {
-    display: block; }
-
 .selector-group .option + .option {
     margin-left: 40px; }
 
@@ -3734,7 +3732,7 @@ body .main-section-mob {
     -webkit-box-shadow: 0px 0px 20px rgba(28, 27, 98, 0.04);
     box-shadow: 0px 0px 20px rgba(28, 27, 98, 0.04);
     border-radius: 12px;
-    background-image: url("~/assets/img/svg/crown-bg.svg");
+    background-image: url("../img/svg/crown-bg.svg");
     background-position: right 0 bottom 0;
     background-repeat: no-repeat; }
 .premium-col .title {
@@ -3786,13 +3784,13 @@ body .main-section-mob {
         margin-bottom: 0; } }
 
 .notification.no-ic-bg {
-    background-image: url("~/assets/img/svg/star.svg");
+    background-image: url("../img/svg/star.svg");
     background-position: top 0 left 0;
     background-repeat: no-repeat; }
 .notification.no-ic-bg:after {
     width: 64px;
     height: 71px;
-    background-image: url("~/assets/img/svg/star-shape.svg");
+    background-image: url("../img/svg/star-shape.svg");
     bottom: 0;
     top: auto; }
 .notification.no-ic-bg:before {
@@ -4923,7 +4921,7 @@ svg.progress {
     -webkit-transform: translateY(-50%);
     -ms-transform: translateY(-50%);
     transform: translateY(-50%);
-    background-image: url("~/assets/img/svg/Close-Square.svg");
+    background-image: url("../img/svg/Close-Square.svg");
     background-position: center center;
     background-repeat: no-repeat; }
 .select2-container--default .select2-selection--multiple .select2-selection__choice__remove span {
@@ -5404,7 +5402,7 @@ svg.progress {
     right: 0;
     width: 24px;
     height: 24px;
-    background-image: url("~/assets/img/svg/Arrow-Down3.svg");
+    background-image: url("../img/svg/Arrow-Down3.svg");
     background-position: center center;
     background-size: contain;
     background-repeat: no-repeat; }

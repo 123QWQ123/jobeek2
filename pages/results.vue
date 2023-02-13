@@ -5,7 +5,7 @@ definePageMeta({
 </script>
 <template>
   <div>
-    <SearchForm></SearchForm>
-    <SearchResults></SearchResults>
+<!--    <SearchForm></SearchForm>-->
+<!--    <SearchResults></SearchResults>-->
   </div>
 </template>

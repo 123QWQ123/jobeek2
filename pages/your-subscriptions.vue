@@ -1,3 +1,10 @@
+<script setup>
+
+definePageMeta({
+  layout: "cabinet",
+});
+</script>
+
 <template>
   <main class="main cabinet subs-page" role="main">
     <PersonalCabinetSearchMobile />
@@ -497,8 +504,6 @@
   </main>
 </template>
 
-<script setup>
-</script>
 
 <style scoped>
 </style>
