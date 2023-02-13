@@ -8,13 +8,8 @@
             <div class="input-wrap has-icon has-label"><img class="icon" src="~/assets/img/svg/search.svg" alt="#">
               <input type="text" name="name" id="name" placeholder="Какую вакансию вы ищете?" autocomplete="off">
             </div>
-            <div class="input-wrap has-label"><select class="n-select" name="salary" id="salary">
-              <option data-display="Выберите зарплату">Nothing</option>
-              <option value="1">Some option</option>
-              <option value="2">Another option</option>
-              <option value="3" disabled>A disabled option</option>
-              <option value="4">Potato</option>
-            </select>
+            <div class="input-wrap has-label">
+              <CustomSelect :options="searchOptions" v-model="selectedType" @change="onChange"></CustomSelect>
             </div>
             <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">
               <input type="text" name="city" placeholder="Город" autocomplete="off">
@@ -26,7 +21,7 @@
           </div>
         </form>
         <div class="profile-action" v-if="isAuthed">
-          <a class="tel" :href="`tel: ${phone}`">{{ phone }}</a>
+          <a class="tel" :href="`tel: ${user.phone}`">{{ user.phone }}</a>
           <button class="profile-button" type="button"><svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="46" height="46" rx="8" fill="#6886FF"/>
             <path d="M7.45898 31.111L39.4902 31.111C39.9999 31.111 40.4888 31.3134 40.8492 31.6739C41.2096 32.0343 41.4121 32.5231 41.4121 33.0328C41.4121 33.5425 41.2096 34.0314 40.8492 34.3918C40.4888 34.7522 39.9999 34.9547 39.4902 34.9547H7.45898C7.2066 34.9547 6.95669 34.905 6.72351 34.8084C6.49034 34.7118 6.27848 34.5703 6.10001 34.3918C5.92155 34.2133 5.77999 34.0015 5.6834 33.7683C5.58682 33.5351 5.53711 33.2852 5.53711 33.0328C5.53711 32.7805 5.58682 32.5305 5.6834 32.2974C5.77999 32.0642 5.92155 31.8523 6.10001 31.6739C6.27848 31.4954 6.49034 31.3538 6.72351 31.2573C6.95669 31.1607 7.2066 31.111 7.45898 31.111Z" fill="#FDDE2E"/>
@@ -54,56 +49,31 @@
         </div>
       </div>
     </div>
-    <div class="lk-header-nav">
-      <div class="header-wrapper">
-        <button class="hamburger" type="button">
-          <span class="hamburger-box">
-            <span class="hamburger-inner"></span>
-          </span>
-        </button>
-        <nav class="main-navigation">
-          <button class="close-menu-button">
-            <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1.38919 0.000268166L0 1.36792L21.5661 22.5996L22.9553 21.232L1.38919 0.000268166Z" fill="#2C373E"/>
-              <path d="M23.0005 1.76829L21.6113 0.400635L0.0452116 21.6323L1.4344 23L23.0005 1.76829Z" fill="#2C373E"/>
-            </svg>
-          </button>
-          <ul>
-            <li> <a class="active" href="#"> <span>Главная</span></a></li>
-            <li> <a href="#"> <span>Отклики
-                    <div class="count">12</div></span></a></li>
-            <li> <a href="#"> <span>Резюме</span></a></li>
-            <li> <a href="#"> <span>Вакансии</span></a></li>
-            <li> <a href="#"> <span>Избранные</span></a></li>
-            <li> <a href="#"> <span>Подписки</span></a></li>
-            <li> <a href="#"> <span>Сообщения</span></a></li>
-            <li> <a href="#"> <span>Советы</span></a></li>
-            <li> <a href="#"> <span>Курсы       </span></a></li>
-          </ul>
-        </nav>
-        <div class="theme-checker-box checker-box">
-          <span class="v v1 active" title="Соискатель">Соискатель</span>
-          <div class="theme-checker">
-            <input type="checkbox" id="employer">
-            <div class="theme-checker-ui">
-              <div class="circle"> </div>
-            </div>
-          </div>
-          <span class="v v2" title="Работодатель">Работодатель</span>
-        </div>
-      </div>
-    </div>
+    <LkNavbar></LkNavbar>
   </div>
 </template>
 
 <script setup>
 import { useAuthStore } from "~~/store/auth";
 
+const searchOptions = [
+  {value: 'vacancies', name: 'Вакансии'},
+  {value: 'resumes', name: 'Резюме'},
+]
+
+
 const auth = useAuthStore();
-const { logout } = auth;
+const { logout, toggleUserMode } = auth;
 
 const isAuthed = computed(() => auth.isAuthed);
-const phone = computed(() => auth.user.phone);
+const isEmployer = computed(() => auth.isEmployer);
+const user = computed(() => auth.user);
+
+const selectedType = ref('vacancies');
+
+function onChange(selectedOption) {
+  console.log(selectedOption)
+}
 </script>
 
 <style scoped>

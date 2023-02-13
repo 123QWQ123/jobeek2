@@ -29,12 +29,12 @@
               </div>
               <div class="l-wrap">
                 <label for="zp">{{item.name}}</label>
-<!--                <span class="count">1 200</span>-->
+                <!--                <span class="count">1 200</span>-->
               </div>
             </div>
           </div>
-<!--          <button class="more-filters" data-default-text="Еще 25"-->
-<!--                  data-hide-text="Скрыть">Еще 25 </button>-->
+          <!--          <button class="more-filters" data-default-text="Еще 25"-->
+          <!--                  data-hide-text="Скрыть">Еще 25 </button>-->
         </div>
       </div>
       <div class="filter-box" :class="{'open': salaryFilterClass}">
@@ -93,10 +93,10 @@
               </div>
             </div>
           </div>
-<!--          <button class="more-filters" data-default-text="Еще 25"-->
-<!--                  data-hide-text="Скрыть">-->
-<!--            Еще 25-->
-<!--          </button>-->
+          <!--          <button class="more-filters" data-default-text="Еще 25"-->
+          <!--                  data-hide-text="Скрыть">-->
+          <!--            Еще 25-->
+          <!--          </button>-->
         </div>
       </div>
       <div class="filter-box" :class="{'open': employmentTypeFilterClass}">
@@ -111,7 +111,7 @@
             </div>
             <div class="l-wrap">
               <label for="t1">Полная занятость</label>
-<!--              <span class="count">1 200</span>-->
+              <!--              <span class="count">1 200</span>-->
             </div>
           </div>
           <div class="check-block">
@@ -121,7 +121,7 @@
             </div>
             <div class="l-wrap">
               <label for="t1">Частичная занятость </label>
-<!--              <span class="count">1 200</span>-->
+              <!--              <span class="count">1 200</span>-->
             </div>
           </div>
           <div class="check-block">
@@ -131,7 +131,7 @@
             </div>
             <div class="l-wrap">
               <label for="t1">Стажировка </label>
-<!--              <span class="count">1 200</span>-->
+              <!--              <span class="count">1 200</span>-->
             </div>
           </div>
           <div class="check-block">
@@ -141,7 +141,7 @@
             </div>
             <div class="l-wrap">
               <label for="t1">Удаленная</label>
-<!--              <span class="count">1 200</span>-->
+              <!--              <span class="count">1 200</span>-->
             </div>
           </div>
           <div class="check-block">
@@ -151,7 +151,7 @@
             </div>
             <div class="l-wrap">
               <label for="t1">В офис</label>
-<!--              <span class="count">1 200</span>-->
+              <!--              <span class="count">1 200</span>-->
             </div>
           </div>
         </div>

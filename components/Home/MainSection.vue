@@ -1,11 +1,6 @@
 <script setup>
-  const selectedSalary = ref("");
-  const salaryOptions = [
-    {id: 1, text: '10K-30K'},
-    {id: 2, text: '31K-50K'},
-    {id: 3, text: '51K-100K'},
-    {id: 4, text: '100K+'},
-  ]
+
+  import SalarySelectInForm from "../SalarySelectInForm";
 
   const onChange = (e) => {
     console.log(e)
@@ -30,17 +25,8 @@
                    autocomplete="off">
           </div>
           <div class="input-wrap has-label">
-            <label for="salary">Желаемая зарплата </label>
-            <Select2 v-model="selectedSalary" :options="salaryOptions" @change="onChange($event)" @select="onSelect($event)" />
-
-<!--            <select class="n-select" name="salary"-->
-<!--                                                                  id="salary">-->
-<!--            <option data-display="Выберите зарплату">Nothing</option>-->
-<!--            <option value="1">Some option</option>-->
-<!--            <option value="2">Another option</option>-->
-<!--            <option value="3" disabled>A disabled option</option>-->
-<!--            <option value="4">Potato</option>-->
-<!--          </select>-->
+            <label for="salary">Желаемая зарплата</label>
+            <SalarySelectInForm @change="onChange"></SalarySelectInForm>
           </div>
           <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">
             <input type="text" name="city" placeholder="Город" autocomplete="off">

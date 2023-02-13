@@ -10,9 +10,10 @@ const public_routes = [
 ];
 export default defineNuxtRouteMiddleware((to, from) => {
     const authStore = useAuthStore();
+    console.log(to.path);
     if (protected_routes.includes(to.path)) {
-        const user = computed(() => authStore.user);
-        if (user.value) {
+        const isAuthed = computed(() => authStore.isAuthed);
+        if (isAuthed.value) {
             return;
         }else{
             return navigateTo("/sign-in");

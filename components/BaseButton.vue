@@ -30,7 +30,7 @@ export default {
     },
     to: {
       required: false,
-      default: "/",
+      default: null,
     },
     link: {
       required: false,

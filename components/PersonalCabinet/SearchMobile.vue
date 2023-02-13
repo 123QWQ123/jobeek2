@@ -10,14 +10,8 @@
                    autocomplete="off">
           </div>
           <div class="input-wrap has-label">
-            <label for="salary">Желаемая зарплата </label><select class="n-select" name="salary"
-                                                                  id="salary">
-            <option data-display="Выберите зарплату">Nothing</option>
-            <option value="1">Some option</option>
-            <option value="2">Another option</option>
-            <option value="3" disabled>A disabled option</option>
-            <option value="4">Potato</option>
-          </select>
+            <label for="salary">Желаемая зарплата </label>
+            <SalarySelectInForm @change="onChange"></SalarySelectInForm>
           </div>
           <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">
             <input type="text" name="city" placeholder="Город" autocomplete="off">
@@ -34,6 +28,9 @@
 
 <script setup>
 
+const onChange = () => {
+
+}
 </script>
 
 <style scoped>
