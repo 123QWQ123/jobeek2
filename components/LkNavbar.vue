@@ -17,14 +17,14 @@
           <li>
             <NuxtLink to="/"> <span>Главная</span></NuxtLink>
           </li>
-          <li>
+          <li v-if="isEmployer">
             <NuxtLink :to="{name: 'your-responses'}"><span>Отклики<div class="count">12</div></span></NuxtLink>
           </li>
           <li v-if="!isEmployer">
-            <NuxtLink :to="{name: 'your-resumes'}"> <span>Резюме</span></NuxtLink>
+            <NuxtLink :to="{name: 'your-resumes'}"> <span>Мои резюме</span></NuxtLink>
           </li>
           <li v-if="isEmployer">
-            <NuxtLink :to="{name: 'your-vacancies'}"> <span>Вакансии</span></NuxtLink>
+            <NuxtLink :to="{name: 'your-vacancies'}"> <span>Мои вакансии</span></NuxtLink>
           </li>
           <li>
             <NuxtLink :to="{name: 'your-favorites'}"> <span>Избранные</span></NuxtLink>
@@ -43,16 +43,7 @@
           </li>
         </ul>
       </nav>
-      <div class="theme-checker-box checker-box" @click="toggleUserMode">
-        <span class="v v1 " :class="{'active' : !isEmployer}" title="Соискатель">Соискатель</span>
-        <div class="theme-checker" >
-          <input type="checkbox" id="employer" :checked="isEmployer" >
-          <div class="theme-checker-ui">
-            <div class="circle"> </div>
-          </div>
-        </div>
-        <span class="v v2" :class="{'active' : isEmployer}" title="Работодатель">Работодатель</span>
-      </div>
+      <ModeSwitcher></ModeSwitcher>
     </div>
   </div>
 </template>
@@ -62,7 +53,7 @@
 import { useAuthStore } from "~~/store/auth";
 
 const auth = useAuthStore();
-const { logout, toggleUserMode } = auth;
+const { logout } = auth;
 
 const isAuthed = computed(() => auth.isAuthed);
 const isEmployer = computed(() => auth.isEmployer);
@@ -81,4 +72,5 @@ export default {
 .router-link-exact-active:after {
   background: #5375FD;
 }
+
 </style>

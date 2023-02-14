@@ -50,9 +50,7 @@ export const useAuthStore = defineStore('auth', {
       }
     },
     async signUp(payload) {
-      console.log(payload)
       const CONFIG = useRuntimeConfig();
-      console.log(CONFIG.public.apiBase);
       let url = CONFIG.public.apiBase + 'auth/register';
       try {
         await this.verify();
@@ -111,9 +109,7 @@ export const useAuthStore = defineStore('auth', {
       // }
     },
     async confirmConfirmationCode(payload) {
-      console.log(payload)
       const CONFIG = useRuntimeConfig();
-      console.log(CONFIG.public.apiBase);
       let url = CONFIG.public.apiBase + 'auth/register/confirm';
       await this.verify();
       try {
@@ -147,8 +143,8 @@ export const useAuthStore = defineStore('auth', {
       }
     },
     async tryLogin() {
+
       const CONFIG = useRuntimeConfig();
-      console.log(CONFIG.public.apiBase);
       let url = CONFIG.public.apiBase + 'auth/profile';
       const token = localStorage.getItem('token');
       // const userId = localStorage.getItem('userId');
@@ -195,9 +191,7 @@ export const useAuthStore = defineStore('auth', {
 
     async signIn(payload) {
       const CONFIG = useRuntimeConfig();
-      console.log(CONFIG.public.apiBase);
       let url = CONFIG.public.apiBase + 'auth/login';
-
       try {
         await this.verify();
         const response = await axios.post(

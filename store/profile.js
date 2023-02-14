@@ -33,13 +33,11 @@ export const useProfileStore = defineStore('profile', {
     async getUser(payload) {
       const CONFIG = useRuntimeConfig();
       let url = CONFIG.public.apiBase + 'auth/profile';
-
       let token;
       if (typeof window !== 'undefined') {
         token = localStorage.getItem('token')
       }
       try {
-        console.log(token);
         const response = await axios.get(
             url,
             {
@@ -49,17 +47,19 @@ export const useProfileStore = defineStore('profile', {
               }
             },
         );
-        console.log(response);
         if ('data' in response){
           this.user = response.data.data.user;
           this.seeker = this.user?.seeker;
-          if (this.seeker){
-            this.seeker.phone = this.user?.phone;
-            this.seeker.email = this.user?.email;
+          if (!this.seeker){
+            this.seeker = {};
           }
+          this.seeker.phone = this.user?.phone;
+          this.seeker.email = this.user?.email;
           this.employer = this.user?.employer;
-          if (this.employer)
-            this.employer.phone = this.user?.phone;
+          if (!this.employer)
+            this.employer = {};
+          this.employer.phone = this.user?.phone;
+
         }
       }catch (error){
         console.log(error);

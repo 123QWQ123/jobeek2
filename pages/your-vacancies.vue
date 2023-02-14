@@ -12,7 +12,7 @@ definePageMeta({
   <main class="main cabinet subs-page" role="main">
     <PersonalCabinetSearchMobile />
     <div class="bg-wrapper pt">
-      <YourResumesList></YourResumesList>
+      <YourVacanciesList></YourVacanciesList>
     </div>
     <div class="bg-wrapper bt">
       <HomeWorkSection></HomeWorkSection>

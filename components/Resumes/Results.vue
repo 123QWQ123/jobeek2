@@ -4,8 +4,8 @@
       <div class="wrapper">
         <div class="search-head">
           <div class="col">
-            <div class="search-item">Повар</div>
-            <div class="found-count">Найдено 1 234 вакансий</div>
+<!--            <div class="search-item">Повар</div>-->
+            <div class="found-count">Найдено 1 234 резюме</div>
           </div>
           <div class="col">
             <form class="sort" action="#"> <span>Сортировать:</span>

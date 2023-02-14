@@ -3,7 +3,6 @@ import Swal from "sweetalert2";
 
 definePageMeta({
   layout: 'custom',
-  middleware: ["guest"]
 })
 useHead({
   title: "Регистрация",

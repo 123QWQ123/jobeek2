@@ -198,7 +198,7 @@
           </div>
         </li>
       </ul>
-      <NuxtLink class="create-button" type="link" :to="{name: 'create-vacancy'}" >Создать резюме</NuxtLink>
+      <NuxtLink class="create-button" type="link" :to="{name: 'create-vacancy'}" >Создать вакансию</NuxtLink>
     </div>
   </div>
 </template>

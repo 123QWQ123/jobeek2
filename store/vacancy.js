@@ -16,7 +16,6 @@ export const useVacancyStore = defineStore('vacancy', {
   actions: {
     async getRegions(payload) {
       const CONFIG = useRuntimeConfig();
-      console.log(CONFIG.public.apiBase);
       let url = CONFIG.public.apiBase + 'area/regions';
 
       let token;
@@ -36,7 +35,6 @@ export const useVacancyStore = defineStore('vacancy', {
               }
             },
         );
-        console.log(response)
         if ('data' in response.data){
           this.regions = response.data.data.regions;
           return {
@@ -65,7 +63,6 @@ export const useVacancyStore = defineStore('vacancy', {
     },
     async getSpecializations(payload) {
       const CONFIG = useRuntimeConfig();
-      console.log(CONFIG.public.apiBase);
       let url = CONFIG.public.apiBase + 'vacancies/specialization_in_city';
 
       let token;
@@ -73,7 +70,6 @@ export const useVacancyStore = defineStore('vacancy', {
         token = localStorage.getItem('token')
       }
       try {
-
         const response = await axios.get(
             url,
             payload,
