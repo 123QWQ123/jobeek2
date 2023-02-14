@@ -44,4 +44,7 @@ export default {
 .current{
   color: #0A2540;
 }
+.d-select{
+  background: none;
+}
 </style>

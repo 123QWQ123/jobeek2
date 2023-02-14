@@ -1,8 +1,3 @@
-<script setup>
-definePageMeta({
-  layout: 'index'
-})
-</script>
 <template>
   <div>
     <HomeMainSection/>
@@ -13,3 +8,9 @@ definePageMeta({
     <HomeSearchSection/>
   </div>
 </template>
+
+<script setup>
+definePageMeta({
+  layout: 'main'
+})
+</script>

@@ -6,17 +6,8 @@
           <img src="~/assets/img/jobeek-dark.svg" alt="#">
         </NuxtLink>
       </div>
-      <div class="theme-checker-box checker-box" @click="toggleUserMode">
-        <span class="v v1 active" title="Соискатель">Соискатель</span>
-        <div class="theme-checker" >
-          <input type="checkbox" id="employer" :checked="isEmployer" >
-          <div class="theme-checker-ui">
-            <div class="circle"> </div>
-          </div>
-        </div>
-        <span class="v v2" title="Работодатель">Работодатель</span>
-      </div>
       <div class="header-actions" v-if="isAuthed">
+        <ModeSwitcher class="me-3"></ModeSwitcher>
         <NuxtLink class="btn button-xs sign-in-btn" :to="{name: 'profile'}" role="link">{{ user.phone }}</NuxtLink>
         <button class="exit-button" type="button" @click="logout">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
@@ -26,8 +17,8 @@
         </button>
       </div>
       <div class="header-actions" v-else>
-        <a class="btn button-xs sign-in-btn" href="/sign-in.html" role="link">Войти</a>
-        <a class="btn button-xl sign-up-btn" href="/sign-up.html" role="link">Зарегистрироваться </a>
+        <NuxtLink class="btn button-xs sign-in-btn" :to="{'name': 'sign-in'}" role="link">Войти</NuxtLink>
+        <NuxtLink class="btn button-xl sign-up-btn" :to="{'name': 'sign-up'}" role="link">Зарегистрироваться</NuxtLink>
       </div>
     </div>
   </header>
@@ -37,11 +28,7 @@
 import { useAuthStore } from "~~/store/auth";
 
 const auth = useAuthStore();
-const { tryLogin, logout, toggleUserMode } = auth;
-
-onBeforeMount(() => {
-  tryLogin();
-});
+const { logout } = auth;
 
 const isAuthed = computed(() => auth.isAuthed);
 const isEmployer = computed(() => auth.isEmployer);

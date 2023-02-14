@@ -42,10 +42,13 @@
       </div>
     </div>
     <div class="input-row">
-      <label for="email">Электронная почта</label>
-      <div class="input-wrapper">
+      <label for="email">Электронная почта <b>*</b></label>
+      <div class="input-wrapper position-relative">
         <input type="email" placeholder="Электронная почта" id="email" v-model="state.email.val" />
-        <a class="btn bg-info btn-sm">Потверждать</a>
+        <a class="btn bg-info btn-sm position-absolute end-0 top-0 mt-2 me-2">Потверждать</a>
+      </div>
+      <div class="text-success d-block" v-if="state.email.is_sent">
+        {{ "Вам выслано емейл с код подтверждением, подтвердите ваш емейл." }}
       </div>
       <div class="text-danger d-block" v-if="errors.email">
         {{ errors.email }}
