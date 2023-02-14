@@ -11,7 +11,7 @@ definePageMeta({
         <form class="create-resume" action="" name="create-resume ">
           <div class="w-box w-box--main w-box-resume">
             <div class="w-box-head">
-              <h1 class="title">Создание подписки</h1>
+              <h1 class="title">Создание резюме</h1>
               <div class="descr">Получайте уведомления о новых вакансиях по созданному запросу</div>
             </div>
             <div class="w-box-body">

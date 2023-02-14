@@ -2096,7 +2096,9 @@ body .main-section-mob {
 .message-item .col-date {
     width: 90px;
     min-width: 90px;
-    margin-right: 20px; }
+    margin-right: 20px;
+    flex: none !important;
+}
 .message-item .col-date .date, .message-item .col-date .time {
     font-size: 16px;
     line-height: 22px;

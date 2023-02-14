@@ -2,11 +2,28 @@
 
   import SalarySelectInForm from "../SalarySelectInForm";
 
+  const form = ref({
+    keyword: "",
+    city: "",
+    country: "",
+    salary: "0",
+  })
   const onChange = (e) => {
     console.log(e)
   }
   const onSelect = (e) => {
     console.log(e)
+  }
+
+  const router = useRouter();
+  const route = useRoute();
+
+  onMounted(() => {
+    form.value = {...route.query};
+  })
+
+  const onSearchSubmit = (e) => {
+    router.push({name: 'search-vacancies', query: form.value});
   }
 </script>
 <template>
@@ -16,23 +33,27 @@
         <h1 class="title">Поиск вакансий</h1><span>Lorem ipsum dolor sit amet, consectetur adipiscing
                             elit. Id.</span>
       </div>
-      <form class="search-form" action="#" role="form" autocomplete="off">
+      <form class="search-form" @submit.prevent="onSearchSubmit" role="form" autocomplete="off">
         <div class="search-row">
-          <div class="input-wrap has-icon has-label"><img class="icon" src="~/assets/img/svg/search.svg"
-                                                          alt="#">
+          <div class="input-wrap has-icon has-label">
+            <img class="icon" src="~/assets/img/svg/search.svg" alt="#" />
             <label for="name">Названии вакансии </label>
-            <input type="text" name="name" id="name" placeholder="Какую вакансию вы ищете?"
-                   autocomplete="off">
+            <input type="text"
+                   v-model="form.keyword"
+                   name="name" id="name"
+                   placeholder="Какую вакансию вы ищете?"
+                   autocomplete="off" />
           </div>
           <div class="input-wrap has-label">
             <label for="salary">Желаемая зарплата</label>
-            <SalarySelectInForm @change="onChange"></SalarySelectInForm>
+            <SalarySelectInForm v-model="form.salary" @change="onChange"></SalarySelectInForm>
+          </div>
+          <div class="input-wrap has-icon">
+            <img class="icon" src="~/assets/img/svg/location.svg" alt="#" />
+            <input v-model="form.country" type="text" name="country" placeholder="Страна" autocomplete="off" />
           </div>
           <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">
-            <input type="text" name="city" placeholder="Город" autocomplete="off">
-          </div>
-          <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">
-            <input type="text" name="country" placeholder="Страна" autocomplete="off">
+            <input v-model="form.city" type="text" name="city" placeholder="Город" autocomplete="off">
           </div>
           <button class="button-accent submit-search-form" type="submit">Поиск </button>
         </div>
