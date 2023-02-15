@@ -1,5 +1,4 @@
 <script setup>
-import {useVacancyStore} from "../../store/vacancy";
 import {useAuthStore} from "../../store/auth";
 import {navigateTo} from "nuxt/app";
 

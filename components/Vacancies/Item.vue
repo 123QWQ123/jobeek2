@@ -5,8 +5,12 @@
         <div class="company">
           <div class="company-logo"><img src="~/assets/img/logos/megafon.svg" alt="#">
           </div>
-          <div class="company-name"> <a href="#"> Продавец-консультант и рабоник
-            зала</a><span class="count">Мегафон</span></div>
+          <div class="company-name">
+            <NuxtLink :to="{name: 'vacancies-slug', params: {slug: props.id}}">
+            Продавец-консультант и рабоник зала
+            </NuxtLink>
+            <span class="count">Мегафон</span>
+          </div>
         </div>
         <div class="salary">От 1 000 000 ₽ </div>
       </div>
@@ -116,6 +120,8 @@ const isDropdownOpen = ref(false);
 const toggleDropDown = (e) => {
   isDropdownOpen.value = !isDropdownOpen.value;
 }
+
+const props = defineProps(['id']);
 </script>
 
 <style scoped>
