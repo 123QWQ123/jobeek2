@@ -38,7 +38,7 @@
     <div class="input-row">
       <label for="phone">Телефон</label>
       <div class="input-wrapper">
-        <input type="text" disabled placeholder="Телефон" id="phone" v-model="state.phone.val" />
+        <input ref="phoneInputElement" type="text" disabled placeholder="Телефон" id="phone" v-model="state.phone.val" />
       </div>
     </div>
     <div class="input-row">
@@ -53,8 +53,18 @@
       <div class="text-danger d-block" v-if="errors.email">
         {{ errors.email }}
       </div>
-
     </div>
+
+    <div class="input-row">
+      <label for="email">Пароль<b>*</b></label>
+      <div class="input-wrapper position-relative">
+        <input type="password" id="password" v-model="state.password.val" />
+      </div>
+      <div class="text-danger d-block" v-if="errors.password">
+        {{ errors.password }}
+      </div>
+    </div>
+
     <div class="input-row">
       <div class="input-wrapper">
         <base-button type="submit">Сохранить</base-button>
@@ -70,6 +80,7 @@ const CONFIG = useRuntimeConfig();
 import {storeToRefs} from "pinia";
 import Swal from "sweetalert2";
 import {useRuntimeConfig} from "nuxt/app";
+import IMask from "imask";
 const profileStore = useProfileStore();
 
 const {getUser} = profileStore;
@@ -95,19 +106,35 @@ const state = reactive({
     val: "",
     isValid: true,
   },
+  password: {
+    val: "",
+    isValid: true,
+  },
   isFormValid: true,
   isLoading: true,
   error: null,
   success: null,
 });
 
+const phoneInputElement = ref();
+const phoneMask = ref(null);
 watch(employer, (new_value) => {
   for (const [key, value] of Object.entries(new_value)) {
     if (state.hasOwnProperty(key)){
+      if (key === 'phone'){
+        state[key].val = value;
+        setTimeout(() => {
+          phoneMask.value = new IMask(phoneInputElement.value, {
+            mask: "+{7}(000)000-00-00",
+          });
+        }, 0)
+        continue;
+      }
       state[key].val = value;
     }
   }
 })
+
 
 // /assets/images/avatar.png
 const photoUrl = computed(() => {
@@ -148,6 +175,10 @@ const validate = () => {
     state.logo_url.isValid = false;
     state.isFormValid = false;
   }
+  if (state.password.val === "" || state.password.val.length < 8) {
+    state.password.isValid = false;
+    state.isFormValid = false;
+  }
 }
 const errors = ref({});
 const {update} = profileStore;
@@ -184,6 +215,11 @@ const handleSubmit = async (e) => {
 
 </script>
 
+<style>
+input[type="text"]:disabled {
+  background: #ccc;
+}
+</style>
 <style scoped>
 
 #photo{

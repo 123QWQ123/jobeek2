@@ -5,9 +5,12 @@ definePageMeta({
   layout: "cabinet",
 });
 
-// onMounted(() => {
-//   navigateTo({name: 'advice-category', params: {category: 'popular'}});
-// })
+const route = useRoute();
+onMounted(() => {
+  if (route.name === 'advice'){
+    navigateTo({name: 'advice-category', params: {category: 'popular'}});
+  }
+})
 
 </script>
 <template>

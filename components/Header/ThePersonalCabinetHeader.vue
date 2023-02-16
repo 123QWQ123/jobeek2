@@ -9,6 +9,7 @@ const isAuthed = computed(() => auth.isAuthed);
 const isEmployer = computed(() => auth.isEmployer);
 const user = computed(() => auth.user);
 
+
 const searchOptions = [
   {value: 'vacancies', name: 'Вакансии'},
   {value: 'resumes', name: 'Резюме'},
@@ -42,7 +43,7 @@ function onChange(selectedOption) {
         <NuxtLink class="logo" to="/"> <img src="~/assets/img/jobeek-white.svg" alt="#"></NuxtLink>
         <CabinetHeaderSearchForm></CabinetHeaderSearchForm>
         <div class="profile-action" v-if="isAuthed">
-          <NuxtLink class="btn button-xs sign-in-btn ms-4" :to="{name: 'profile'}" role="link">{{ user.phone }}</NuxtLink>
+          <NuxtLink class="btn button-xs sign-in-btn ms-4" :to="{name: 'profile'}" role="link">{{ user?.phone }}</NuxtLink>
           <button class="profile-button" type="button"><svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="46" height="46" rx="8" fill="#6886FF"/>
             <path d="M7.45898 31.111L39.4902 31.111C39.9999 31.111 40.4888 31.3134 40.8492 31.6739C41.2096 32.0343 41.4121 32.5231 41.4121 33.0328C41.4121 33.5425 41.2096 34.0314 40.8492 34.3918C40.4888 34.7522 39.9999 34.9547 39.4902 34.9547H7.45898C7.2066 34.9547 6.95669 34.905 6.72351 34.8084C6.49034 34.7118 6.27848 34.5703 6.10001 34.3918C5.92155 34.2133 5.77999 34.0015 5.6834 33.7683C5.58682 33.5351 5.53711 33.2852 5.53711 33.0328C5.53711 32.7805 5.58682 32.5305 5.6834 32.2974C5.77999 32.0642 5.92155 31.8523 6.10001 31.6739C6.27848 31.4954 6.49034 31.3538 6.72351 31.2573C6.95669 31.1607 7.2066 31.111 7.45898 31.111Z" fill="#FDDE2E"/>
@@ -70,7 +71,7 @@ function onChange(selectedOption) {
         </div>
       </div>
     </div>
-    <LkNavbar></LkNavbar>
+    <HeaderLkNavbar></HeaderLkNavbar>
   </div>
 </template>
 
