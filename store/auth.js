@@ -26,7 +26,9 @@ export const useAuthStore = defineStore('auth', {
   },
   actions: {
     toggleUserMode() {
+      console.log(this.isEmployerMode)
       this.isEmployerMode = !this.isEmployerMode;
+      console.log(this.isEmployerMode)
     },
     setUser(payload) {
       this.user = payload;
@@ -108,7 +110,100 @@ export const useAuthStore = defineStore('auth', {
       //   this.isAuthed = true;
       // }
     },
-    async confirmConfirmationCode(payload) {
+    async sendRecoveryCode(payload) {
+      const CONFIG = useRuntimeConfig();
+      let url = CONFIG.public.apiBase + 'auth/register';
+      try {
+        await this.verify();
+
+        const response = await axios.post(
+            url,
+            payload,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              }
+            },
+        );
+        if ('data' in response){
+          return {
+            status: 'success',
+            data: response.data.data
+          };
+        }else{
+          return {
+            status: 'error',
+            data: response.message
+          };
+        }
+      }catch (error){
+        console.log(error);
+        if ('data' in error.response){
+          return {
+            status: 'error',
+            data: error.response.data
+          };
+        }
+        return {
+          status: 'error',
+          message: error.message,
+        };
+      }
+      // const resData = await response;
+      // const expiresIn = resData.expiresIn * 1000;
+      // const expirationDate = new Date().getTime() + expiresIn;
+      //
+      // localStorage.setItem('token', resData.idToken);
+      // localStorage.setItem('userId', resData.localId);
+      // localStorage.setItem('tokenExpirationDate', expirationDate);
+      //
+      // timer = setTimeout(() => {
+      //   this.autoLogout();
+      // }, expiresIn);
+
+      // if (response.ok) {
+      //   this.setUser({
+      //     token: resData.idToken,
+      //     userId: resData.localId,
+      //   });
+      //   this.isAuthed = true;
+      // }
+    },
+    async confirmPhoneCode(payload) {
+      const CONFIG = useRuntimeConfig();
+      let url = CONFIG.public.apiBase + 'auth/register/confirm';
+      await this.verify();
+      try {
+
+        const response = await axios.post(
+            url,
+            payload,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              }
+            },
+        );
+        console.log(response)
+        return {
+          status: 'success',
+          data: response.data.data
+        };
+      }catch (error){
+        console.log(error);
+        if ('data' in error.response){
+          return {
+            status: 'error',
+            data: error.response.data
+          };
+        }
+        return {
+          status: 'error',
+          message: error.message,
+        };
+      }
+    },
+    async recoverPasswordCode(payload) {
       const CONFIG = useRuntimeConfig();
       let url = CONFIG.public.apiBase + 'auth/register/confirm';
       await this.verify();
@@ -143,7 +238,6 @@ export const useAuthStore = defineStore('auth', {
       }
     },
     async tryLogin() {
-
       const CONFIG = useRuntimeConfig();
       let url = CONFIG.public.apiBase + 'auth/profile';
       const token = localStorage.getItem('token');

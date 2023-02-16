@@ -41,9 +41,8 @@ console.log(route.params.category);
 const quantity = ref(3);
 </script>
 
-<style scoped>
-
-.router-link-exact-active{
-  color: var(--bs-link-hover-color);
+<style>
+.router-link-active{
+  color: var(--bs-link-hover-color) !important;
 }
 </style>

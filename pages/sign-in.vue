@@ -142,7 +142,8 @@ function close(){
                 <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
               </div>
               <label for="agree">Запомнить меня</label>
-            </div>  <a href="#">Забыли пароль?       </a>
+            </div>
+            <NuxtLink :to="{name: 'forgot-password'}">Забыли пароль?</NuxtLink>
           </div>
           <button class="btn button-accent" type="submit">Войти</button>
         </form>

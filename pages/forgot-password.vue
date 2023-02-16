@@ -4,14 +4,15 @@ import Swal from "sweetalert2";
 definePageMeta({
   layout: 'custom',
 })
+const title = ref("Востановление пароля");
 useHead({
-  title: "Регистрация",
+  title: title,
 });
 import { useAuthStore } from "~~/store/auth";
 
 const authStore = useAuthStore();
 
-const { signUp, confirmPhoneCode } = authStore;
+const { sendRecoveryCode, recoverPasswordCode } = authStore;
 
 const isAuthed = computed(() => authStore.isAuthed);
 
@@ -26,10 +27,6 @@ onBeforeMount(() => {
 const state = reactive({
   phone: {
     val: "",
-    isValid: true,
-  },
-  i_agree: {
-    val: false,
     isValid: true,
   },
   code: {
@@ -52,11 +49,6 @@ function validateForm() {
     state.phone.isValid = false;
     state.isFormValid = false;
   }
-  if (state.i_agree.val !== true) {
-    state.i_agree.isValid = false;
-    state.isFormValid = false;
-  }
-  console.log(state);
 }
 
 const router = useRouter();
@@ -64,14 +56,16 @@ const router = useRouter();
 const isRegisterTab = ref(true);
 const isConfirmTab = ref(false);
 
+watch(isConfirmTab, () => {
+  title.value = "Потверждения телефона";
+})
+
 const onSubmit = async () => {
   // console.log(isFormValid.value, state.i_agree);
   validateForm();
   if (state.isFormValid) {
-    console.log(1);
-    const response = await signUp({
+    const response = await sendRecoveryCode({
       phone: state.phone.val,
-      i_agree: state.i_agree.val,
     });
 
     if (response.status === 'success'){
@@ -89,10 +83,8 @@ const onSubmit = async () => {
 };
 
 const onSMSSubmit = async () => {
-  const response = await confirmPhoneCode({
+  const response = await recoverPasswordCode({
     phone: state.phone.val,
-    session: state.session,
-    code: state.code.val,
   });
 
   console.log(response);
@@ -136,29 +128,20 @@ function close(){
       <div class="enter-page-content">
         <NuxtLink to="/" class="logo"> <img src="~/assets/img/jobeek-dark.svg" alt="#"></NuxtLink>
         <form class="enter-form" @submit.prevent="onSubmit" v-if="isRegisterTab">
-          <h1>Регистрация</h1>
+          <h1>{{ title }}</h1>
           <div class="i-wrap">
             <input type="tel" name="tel" v-model="state.phone.val" placeholder="Номер телефона" @focusout="clearValidity('phone')">
           </div>
-          <div class="help-box">
-            <div class="check-block " :class="{ 'border-bottom border-danger': !state.i_agree.isValid }">
-              <div class="checkbox">
-                <input type="checkbox" id="agree" v-model="state.i_agree.val" @focusout="clearValidity('i_agree')">
-                <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
-              </div>
-              <label for="agree">Согласен с <a href="#">правилами обработки персональных данных</a></label>
-            </div>
-          </div>
-          <button class="btn button-accent" type="submit">Зарегистрироваться</button>
+          <button class="btn button-accent" type="submit">Отпрваить</button>
         </form>
         <form v-if="isConfirmTab" class="enter-form" @submit.prevent="onSMSSubmit" >
-          <h1>Потверждения телефона</h1>
+          <h1></h1>
           <div class="i-wrap">
             <input type="number" name="code" v-model="state.code.val" placeholder="Код потверждения" @focusout="clearValidity('code')">
           </div>
           <button class="btn button-accent" type="submit">Подтвердить</button>
         </form>
-        <div class="f-prompt">Уже есть аккаунт? <NuxtLink :to="{name: 'sign-in'}">Войдите!</NuxtLink>  </div>
+        <div class="f-prompt">Хотите войти? <NuxtLink :to="{name: 'sign-in'}">Войдите!</NuxtLink>  </div>
       </div>
     </main>
 
