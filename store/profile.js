@@ -30,9 +30,17 @@ export const useProfileStore = defineStore('profile', {
   },
   actions: {
 
-    async getUser(payload) {
+    async getUser(payload = "") {
+
       const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + 'auth/profile';
+
+      const authStore = useAuthStore();
+
+      const {isEmployer} = authStore;
+      let url = CONFIG.public.apiBase + 'seeker/profile';
+      if (isEmployer){
+        url = CONFIG.public.apiBase + 'employee/profile';
+      }
       let token;
       if (typeof window !== 'undefined') {
         token = localStorage.getItem('token')
@@ -47,12 +55,12 @@ export const useProfileStore = defineStore('profile', {
               }
             },
         );
+        console.log(response.data);
         if ('data' in response){
-          this.user = response.data.data.user;
+          this.user = response.data.data;
           this.seeker = this.user?.seeker;
-          if (!this.seeker){
+          if (!this.seeker)
             this.seeker = {};
-          }
           this.seeker.phone = this.user?.phone;
           this.seeker.email = this.user?.email;
           this.employer = this.user?.employer;
@@ -99,7 +107,6 @@ export const useProfileStore = defineStore('profile', {
         };
       }
     },
-
     async getPublicCities(payload) {
       const CONFIG = useRuntimeConfig();
 
@@ -136,16 +143,9 @@ export const useProfileStore = defineStore('profile', {
       }
     },
 
-    async update(payload) {
+    async updateSeeker(payload) {
       const CONFIG = useRuntimeConfig();
-      const authStore = useAuthStore();
-      const {isEmployer} = authStore;
-      let url = CONFIG.public.apiBase + 'auth/profile/update?type=employer';
-
-      if (!isEmployer){
-        url = CONFIG.public.apiBase + 'auth/profile/update?type=seeker';
-      }
-
+      let url = CONFIG.public.apiBase + 'seeker/profile';
       let token;
       if (typeof window !== 'undefined') {
         token = localStorage.getItem('token')
@@ -161,6 +161,7 @@ export const useProfileStore = defineStore('profile', {
               }
             },
         );
+        console.log(response);
         if ('data' in response){
           this.user = response.data.data.user;
           return {
@@ -169,13 +170,24 @@ export const useProfileStore = defineStore('profile', {
         }
       }catch (error){
         console.log(error);
-        if ("response" in  error && error.response.data?.errors){
+
+        console.log(1)
+        if ("response" in  error && error.response.data && error.response.data.errors){
           return {
             status: 'error',
             message: error.message,
             errors: error.response.data.errors,
           };
         }
+
+        console.log(2)
+        if ("response" in  error && error.response.data && "message" in  error.response.data){
+          return {
+            status: 'error',
+            message: error.response.data.message,
+          };
+        }
+        console.log(3)
         return {
           status: 'error',
           message: error.message,
