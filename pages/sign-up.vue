@@ -12,7 +12,7 @@ import { useAuthStore } from "~~/store/auth";
 
 const authStore = useAuthStore();
 
-const { signUp, confirmPhoneCode } = authStore;
+const { signUp, confirmPhoneCode, tryLogin } = authStore;
 
 const isAuthed = computed(() => authStore.isAuthed);
 
@@ -57,7 +57,6 @@ function validateForm() {
     state.i_agree.isValid = false;
     state.isFormValid = false;
   }
-  console.log(state);
 }
 
 const router = useRouter();
@@ -71,7 +70,6 @@ const onSubmit = async () => {
   if (state.isFormValid) {
     const response = await signUp({
       phone: phoneMask.value.unmaskedValue,
-      i_agree: state.i_agree.val,
     });
 
     if (response.status === 'success'){
@@ -84,7 +82,7 @@ const onSubmit = async () => {
       } else {
         Swal.fire({
           title: 'Ошибка!',
-          text: response.data.message,
+          text: response.message,
           icon: "error",
           confirmButtonText: 'ОК'
         });
@@ -102,7 +100,8 @@ const onSMSSubmit = async () => {
 
   console.log(response);
   if (response.status === 'success'){
-    navigateTo({name: 'sign-in'});
+    await tryLogin(response.data.token);
+    navigateTo({name: 'profile'});
   }else{
     if ( 'errors' in response && response.message) {
       Swal.fire({
@@ -134,7 +133,7 @@ onMounted(( ) => {
     mask: "+{7}(000)000-00-00",
   });
   phoneInputElement.value.addEventListener("input", () => {});
-})
+});
 </script>
 
 <template>
@@ -174,7 +173,7 @@ onMounted(( ) => {
             </span>
             <span class="col-auto px-3" type="button" disabled>
                 Не получили код?
-                <a class="link link-primary ">
+                <a class="link link-primary " @click="onSubmit">
                   Отправить еще раз
                 </a>
               </span>

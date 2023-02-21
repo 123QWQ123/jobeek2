@@ -9,7 +9,7 @@
         </div>
         <div class="input-wrap has-label">
           <label for="salary">Желаемая зарплата </label>
-          <SalarySelectInForm v-model="form.salary"></SalarySelectInForm>
+          <HeaderSalarySelectInForm v-model="form.salary"></HeaderSalarySelectInForm>
         </div>
         <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">
           <input v-model="form.city" type="text" name="city" placeholder="Город" autocomplete="off">
@@ -24,6 +24,8 @@
 </template>
 
 <script setup>
+import Header from "../Courses/Header";
+
 const onChange = (data) => {
   console.log(data);
 }

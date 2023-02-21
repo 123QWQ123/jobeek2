@@ -43,8 +43,6 @@ const state = reactive({
 });
 
 function clearValidity(input) {
-  console.log(input)
-  console.log(state);
   state[input].isValid = true;
   state.isFormValid = true;
 }

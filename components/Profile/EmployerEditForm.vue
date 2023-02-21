@@ -38,7 +38,7 @@
     <div class="input-row">
       <label for="phone">Телефон</label>
       <div class="input-wrapper">
-        <input ref="phoneInputElement" type="text" disabled placeholder="Телефон" id="phone" v-model="state.phone.val" />
+        <input ref="phoneInputElement" disabled type="text" id="phone" v-model="state.phone.val" />
       </div>
     </div>
     <div class="input-row">
@@ -115,6 +115,12 @@ const state = reactive({
   error: null,
   success: null,
 });
+
+watch(state, () => {
+  if (phoneMask.value){
+    phoneMask.value.updateValue();
+  }
+})
 
 const phoneInputElement = ref();
 const phoneMask = ref(null);

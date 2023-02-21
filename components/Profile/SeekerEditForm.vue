@@ -249,7 +249,7 @@ const validate = () => {
   }
 }
 const errors = ref({});
-const {update} = profileStore;
+const {updateSeeker} = profileStore;
 const handleSubmit = async (e) => {
   console.log(state);
   validate();
@@ -257,15 +257,18 @@ const handleSubmit = async (e) => {
 
   const data = {
     photo_url: state.photo_url.val,
+    _method: 'put',
     first_name: state.first_name.val,
     last_name: state.last_name.val,
     email: state.email.val,
     pub_country_id: state.pub_country_id.val,
     pub_city_id: state.pub_city_id.val,
+    password: state.password.val,
+    password_confirmation: state.password.val,
     birth_date: moment(state.birth_date.val).format("YYYY-MM-DD"),
   };
 
-  const resData = await update(data);
+  const resData = await updateSeeker(data);
 
   console.log(resData);
 
@@ -281,6 +284,12 @@ const handleSubmit = async (e) => {
     if (resData?.errors){
       errors.value = {...resData.errors};
     }
+    Swal.fire({
+      title: 'Ошибка!',
+      text: resData.message,
+      icon: 'error',
+      confirmButtonText: 'ОК'
+    });
   }
   console.log(resData);
 
