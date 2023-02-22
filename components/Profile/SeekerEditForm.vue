@@ -72,8 +72,9 @@
     <div class="input-row">
       <label for="email">Электронная почта<b>*</b></label>
       <div class="input-wrapper position-relative">
-        <input type="email" placeholder="Электронная почта" id="email" v-model="state.email.val" />
-        <a v-if="isConfirmButton" @click="confirmEmail" class="badge bg-primary position-absolute fs-6 end-0 top-0 p-2 px-2 mt-2 me-2">Потверждать</a>
+        <input type="email" placeholder="Электронная почта" id="email" v-model="state.email.val" v-if="!state.email_to_verify.val" />
+        <input type="email" placeholder="Электронная почта" id="email_to_verify" v-else v-model="state.email_to_verify.val" />
+        <a v-if="isConfirmButton" @click="onEmailConfirm" class="badge bg-primary position-absolute fs-6 end-0 top-0 p-2 px-2 mt-2 me-2">Потверждать</a>
         <a v-else-if="isCheckButton" @click="checkEmailConfirmation" if="isConfirmButton" class="badge bg-primary btn-sm fs-6 position-absolute end-0 top-0 p-2 px-2 mt-2 me-2">Проверить</a>
         <span v-else class="badge bg-success fs-6 position-absolute end-0 top-0 p-2 px-2 mt-2 me-2">Потвержден</span>
       </div>
@@ -149,6 +150,10 @@ const state = reactive({
     isValid: true,
   },
   email: {
+    val: "",
+    isValid: true,
+  },
+  email_to_verify: {
     val: "",
     isValid: true,
   },
@@ -255,12 +260,14 @@ const handleSubmit = async (e) => {
   validate();
   errors.value = {};
 
+  const email = state.email_to_verify.val ? state.email_to_verify.val : state.email.val;
+
   const data = {
     photo_url: state.photo_url.val,
     _method: 'put',
     first_name: state.first_name.val,
     last_name: state.last_name.val,
-    email: state.email.val,
+    email: email,
     pub_country_id: state.pub_country_id.val,
     pub_city_id: state.pub_city_id.val,
     password: state.password.val,
@@ -298,15 +305,22 @@ const handleSubmit = async (e) => {
 const isConfirmButton = ref(true);
 const isCheckButton = ref(false);
 
-const confirmEmail = () => {
-  isConfirmButton.value = false;
-  isCheckButton.value = true;
-}
-const checkEmailConfirmation = () => {
-  isConfirmButton.value = false;
-  isCheckButton.value = false;
-}
+const {confirmEmail, checkEmailConfirmation} = profileStore;
+const onEmailConfirm = async() => {
+  const email = state.email_to_verify.val ? state.email_to_verify.val : state.email.val;
+  const resData = await confirmEmail({email});
+  if (resData.status === 'success'){
+    Swal.fire({
+      title: 'Успешно!',
+      text: resData.message,
+      icon: 'success',
+      confirmButtonText: 'ОК'
+    });
+    isConfirmButton.value = false;
+    isCheckButton.value = true;
+  }
 
+}
 </script>
 
 <style>

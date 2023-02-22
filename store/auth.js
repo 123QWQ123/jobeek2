@@ -53,8 +53,6 @@ export const useAuthStore = defineStore('auth', {
       const CONFIG = useRuntimeConfig();
       let url = CONFIG.public.apiBase + 'auth/register';
       try {
-        await this.verify();
-
         const response = await axios.post(
             url,
             payload,
@@ -112,9 +110,7 @@ export const useAuthStore = defineStore('auth', {
     async confirmPhoneCode(payload) {
       const CONFIG = useRuntimeConfig();
       let url = CONFIG.public.apiBase + 'auth/register/confirm';
-      await this.verify();
       try {
-
         const response = await axios.post(
             url,
             payload,
@@ -148,11 +144,10 @@ export const useAuthStore = defineStore('auth', {
       }
     },
     async sendRecoveryCode(payload) {
-      const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + 'auth/register';
-      try {
-        await this.verify();
 
+      const CONFIG = useRuntimeConfig();
+      let url = CONFIG.public.apiBase + 'auth/forgot-password';
+      try {
         const response = await axios.post(
             url,
             payload,
@@ -162,6 +157,8 @@ export const useAuthStore = defineStore('auth', {
               }
             },
         );
+        console.log(response);
+
         if ('data' in response){
           return {
             status: 'success',
@@ -208,8 +205,40 @@ export const useAuthStore = defineStore('auth', {
     },
     async recoverPasswordCode(payload) {
       const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + 'auth/register/confirm';
-      await this.verify();
+      let url = CONFIG.public.apiBase + 'auth/check-reset-password-code';
+      try {
+
+        const response = await axios.post(
+            url,
+            payload,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              }
+            },
+        );
+        console.log(response)
+        return {
+          status: 'success',
+          data: response.data.data
+        };
+      }catch (error){
+        console.log(error);
+        if ('data' in error.response){
+          return {
+            status: 'error',
+            data: error.response.data
+          };
+        }
+        return {
+          status: 'error',
+          message: error.message,
+        };
+      }
+    },
+    async resetPassword(payload) {
+      const CONFIG = useRuntimeConfig();
+      let url = CONFIG.public.apiBase + 'auth/reset-password';
       try {
 
         const response = await axios.post(

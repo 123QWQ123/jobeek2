@@ -1,7 +1,7 @@
 
 <script setup>
 
-import {useAuthStore} from "../store/auth";
+import {useAuthStore} from "../../store/auth";
 import {storeToRefs} from "pinia";
 
 definePageMeta({
