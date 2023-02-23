@@ -225,10 +225,9 @@ export const useProfileStore = defineStore('profile', {
       try {
         const response = await axios.post(
             url,
-            {...payload, _method: 'put'},
+            payload,
             {
               headers: {
-                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
               }
             },

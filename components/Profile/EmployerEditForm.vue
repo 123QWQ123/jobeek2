@@ -97,6 +97,10 @@ const state = reactive({
     val: "",
     isValid: true,
   },
+  logo: {
+    val: "",
+    isValid: true,
+  },
   logo_url: {
     val: "",
     isValid: true,
@@ -170,13 +174,12 @@ const clearPhotoUrl = () => {
 
 const {upload} = profileStore;
 const handleUploadFile = async (e) => {
-  const formData = new FormData();
-  formData.append("image", photoElement.value.files[0]);
-  const response =  await upload(formData);
-
-  if (response.status === 'success'){
-    state.logo_url.val =  response.path;
-  }
+  state.logo.val = photoElement.value.files[0];
+  // const response =  await upload(formData);
+  //
+  // if (response.status === 'success'){
+  //   state.logo_url.val =  response.path;
+  // }
 }
 
 const validate = () => {
@@ -221,15 +224,14 @@ const handleSubmit = async (e) => {
   validate();
   errors.value = {};
 
-  const data = {
-    logo_url: state.logo_url.val,
-    company_name: state.company_name.val,
-    email: state.email.val,
-    password: state.password.val,
-    password_confirmation: state.password.val,
-  };
-
-  const resData = await updateEmployer(data);
+  const formData = new FormData();
+  formData.append("logo", state.logo.val);
+  formData.append("company_name", state.company_name.val);
+  formData.append("email", state.email.val);
+  formData.append("password", state.password.val);
+  formData.append("password_confirmation", state.password.val);
+  formData.append("_method", 'put');
+  const resData = await updateEmployer(formData);
   if (resData.status === 'success'){
     await getUser();
     Swal.fire({
