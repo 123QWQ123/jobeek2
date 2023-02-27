@@ -106,11 +106,13 @@
 import {useProfileStore} from "../../store/profile";
 const CONFIG = useRuntimeConfig();
 
+// const {emit} = defineEmits('input');
 import {storeToRefs} from "pinia";
 import moment from "moment";
 import Swal from "sweetalert2";
 import {useRuntimeConfig} from "nuxt/app";
 import IMask from "imask";
+import {useImageAsUrl} from "../../composables/useImageAsUrl";
 const profileStore = useProfileStore();
 
 const {getUser} = profileStore;
@@ -140,6 +142,11 @@ const state = reactive({
   pub_city_id: {
     val: "",
     isValid: true,
+  },
+  photo: {
+    val: "",
+    isValid: true,
+    base64: "",
   },
   photo_url: {
     val: "",
@@ -197,10 +204,15 @@ const {countryOptions, cityOptions} = storeToRefs(profileStore);
 
 const country = computed(() => state.pub_country_id.val);
 const photoUrl = computed(() => {
-  if (state.photo_url.val){
+  if (state.photo.base64){
+    return state.photo.base64;
+  } else if (state.photo_url.val){
     return CONFIG.public.base + state.photo_url.val;
-  }else return CONFIG.public.base + '/assets/images/avatar.png'
+  } else return CONFIG.public.base + '/assets/images/avatar.png';
 });
+
+
+
 watch(country, (new_value) => {
   getPublicCities({country_id: new_value});
 });
@@ -218,16 +230,15 @@ const clearPhotoUrl = () => {
 
 const {upload} = profileStore;
 const handleUploadFile = async (e) => {
-  console.log(e);
-  console.log(photoElement.value.files);
-  const formData = new FormData();
-  formData.append("image", photoElement.value.files[0]);
-  const response =  await upload(formData);
-
-  if (response.status === 'success'){
-    state.photo_url.val =  response.path;
+  state.photo.val = photoElement.value.files[0];
+  const file = photoElement.value.files;
+  if (file && file[0]) {
+    let reader = new FileReader
+    reader.onload = e => {
+      state.photo.base64 = e.target.result
+    }
+    reader.readAsDataURL(file[0])
   }
-  console.log(response);
 }
 
 const validate = () => {
@@ -256,30 +267,28 @@ const validate = () => {
 const errors = ref({});
 const {updateSeeker} = profileStore;
 const handleSubmit = async (e) => {
-  console.log(state);
   validate();
   errors.value = {};
 
   const email = state.email_to_verify.val ? state.email_to_verify.val : state.email.val;
 
-  const data = {
-    photo_url: state.photo_url.val,
-    _method: 'put',
-    first_name: state.first_name.val,
-    last_name: state.last_name.val,
-    email: email,
-    pub_country_id: state.pub_country_id.val,
-    pub_city_id: state.pub_city_id.val,
-    password: state.password.val,
-    password_confirmation: state.password.val,
-    birth_date: moment(state.birth_date.val).format("YYYY-MM-DD"),
-  };
 
-  const resData = await updateSeeker(data);
+  const formData = new FormData();
+  formData.append("photo", state.photo.val);
+  formData.append("first_name", state.first_name.val);
+  formData.append("last_name", state.last_name.val);
+  formData.append("email", email);
+  formData.append("pub_country_id", state.pub_country_id.val);
+  formData.append("pub_city_id", state.pub_city_id.val);
+  formData.append("birth_date", moment(state.birth_date.val).format("YYYY-MM-DD"));
+  formData.append("password", state.password.val);
+  formData.append("password_confirmation", state.password.val);
+  formData.append("_method", 'put');
 
-  console.log(resData);
+  const resData = await updateSeeker(formData);
 
   if (resData.status === 'success'){
+    await getUser();
     Swal.fire({
       title: 'Успешно!',
       text: resData.message,

@@ -174,10 +174,9 @@ export const useProfileStore = defineStore('profile', {
       try {
         const response = await axios.post(
             url,
-            {...payload, _method: 'put'},
+            payload,
             {
               headers: {
-                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
               }
             },
@@ -266,6 +265,52 @@ export const useProfileStore = defineStore('profile', {
       }
     },
 
+    async sendMessage(payload) {
+      const CONFIG = useRuntimeConfig();
+      let url = CONFIG.public.apiBase + 'support';
+      let token;
+      if (typeof window !== 'undefined') {
+        token = localStorage.getItem('token')
+      }
+      try {
+        const response = await axios.post(
+            url,
+            payload,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              }
+            },
+        );
+        console.log(response.data);
+        if ('data' in response){
+          return {
+            status: 'success',
+            message: response.data.message
+          }
+        }
+      }catch (error){
+        if ("response" in  error && error.response.data && error.response.data.errors){
+          return {
+            status: 'error',
+            message: error.message,
+            errors: error.response.data.errors,
+          };
+        }
+        if ("response" in  error && error.response.data && "message" in  error.response.data){
+          return {
+            status: 'error',
+            message: error.response.data.message,
+          };
+        }
+        console.log(3)
+        return {
+          status: 'error',
+          message: error.message,
+        };
+      }
+    },
     async confirmEmail(payload) {
       const CONFIG = useRuntimeConfig();
       let url = CONFIG.public.apiBase + 'profile/email/confirmation';

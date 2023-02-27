@@ -1,5 +1,6 @@
 <template>
-  <li>
+
+  <li >
     <div class="resume-card">
       <div class="resume-card-body">
         <div class="resume-card-body-col">
@@ -32,7 +33,7 @@
         <div class="resume-filled-progress">
           <span>Заполнено 45%</span>
           <div class="progress-container" data-progress="45">
-            <div class="progress" style="width: 45%;"> </div>
+            <div class="progress"></div>
           </div>
         </div>
         <div class="mini-notification">
@@ -170,7 +171,7 @@
               </div>
             </div>
           </div>
-          <button @click="onMessage" class="resume-action button-md write-message">
+          <button class="resume-action button-md write-message">
             Написать сообщение
           </button>
           <button class="resume-action button-md">
@@ -183,15 +184,6 @@
 </template>
 
 <script setup>
-const onMessage = (e) => {
-  console.log(e);
-}
-const onEdit = (e) => {
-  console.log(e)
-}
-const onDelete = (e) => {
-  console.log(e)
-}
 </script>
 
 <style scoped>

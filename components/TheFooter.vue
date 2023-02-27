@@ -26,7 +26,7 @@
           <h5 class="col-title">Информация</h5>
           <ul>
             <li><NuxtLink :to="{name: 'profile'}">Личный кабинет</NuxtLink></li>
-            <li><a href="https://reg.jobeek.me/rules.pdf">Помощь</a></li>
+            <li><NuxtLink :to="{name: 'support'}">Помощь</NuxtLink></li>
             <li><a href="https://reg.jobeek.me/rules.pdf">Пользовательское соглашение</a></li>
             <li><a href="https://reg.jobeek.me/default-jobeek/control">Отмена премиума</a></li>
           </ul>

@@ -10,6 +10,7 @@ export const useVacancyStore = defineStore('vacancy', {
     return {
       list: [],
       specializations: [],
+      industries: [],
       regions: [],
     }
   },
@@ -64,6 +65,51 @@ export const useVacancyStore = defineStore('vacancy', {
     async getSpecializations(payload) {
       const CONFIG = useRuntimeConfig();
       let url = CONFIG.public.apiBase + 'vacancies/specialization_in_city';
+
+      let token;
+      if (typeof window !== 'undefined') {
+        token = localStorage.getItem('token')
+      }
+      try {
+        const response = await axios.get(
+            url,
+            payload,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              }
+            },
+        );
+        if ('data' in response.data){
+          this.specializations = response.data.data;
+          return {
+            status: 'success',
+            data: response.data.data
+          };
+        }else{
+          return {
+            status: 'success',
+            data: response.data
+          };
+        }
+      }catch (error){
+        console.log(error);
+        if ('data' in error.response){
+          return {
+            status: 'error',
+            data: error.response.data
+          };
+        }
+        return {
+          status: 'error',
+          message: error.message,
+        };
+      }
+    },
+    async getIndustries(payload) {
+      const CONFIG = useRuntimeConfig();
+      let url = CONFIG.public.apiBase + 'specializations';
 
       let token;
       if (typeof window !== 'undefined') {

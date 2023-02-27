@@ -100,6 +100,7 @@ const state = reactive({
   logo: {
     val: "",
     isValid: true,
+    base64: "",
   },
   logo_url: {
     val: "",
@@ -159,10 +160,14 @@ watch(employer, (new_value) => {
 
 // /assets/images/avatar.png
 const photoUrl = computed(() => {
-  if (state.logo_url.val){
+  if (state.logo.base64){
+    return state.logo.base64;
+  } else if (state.logo_url.val){
     return CONFIG.public.base + state.logo_url.val;
-  }else return CONFIG.public.base + '/assets/images/company.png'
+  } else return CONFIG.public.base + '/assets/images/avatar.png';
 });
+
+
 const photoElement = ref();
 
 const openFileBrowser = () => {
@@ -173,13 +178,17 @@ const clearPhotoUrl = () => {
 }
 
 const {upload} = profileStore;
+
 const handleUploadFile = async (e) => {
   state.logo.val = photoElement.value.files[0];
-  // const response =  await upload(formData);
-  //
-  // if (response.status === 'success'){
-  //   state.logo_url.val =  response.path;
-  // }
+  const file = photoElement.value.files;
+  if (file && file[0]) {
+    let reader = new FileReader
+    reader.onload = e => {
+      state.logo.base64 = e.target.result
+    }
+    reader.readAsDataURL(file[0])
+  }
 }
 
 const validate = () => {

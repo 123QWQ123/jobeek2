@@ -9,33 +9,6 @@
           <div class="labels-list-box">
             <ul class="labels-list">
               <li> <a class="label" href="#">IT, интернет, связь</a></li>
-              <li> <a class="label" href="#">Промышленность, производство </a></li>
-              <li> <a class="label" href="#">IT, интернет, связь </a></li>
-              <li> <a class="label" href="#">Некомерческие организации, волонтерство </a></li>
-              <li> <a class="label" href="#">IT, интернет, связь </a></li>
-              <li> <a class="label" href="#">Промышленность, производство </a></li>
-              <li> <a class="label" href="#">IT, интернет, связь</a></li>
-              <li> <a class="label" href="#">IT, интернет, связь </a></li>
-              <li> <a class="label" href="#">IT, интернет, связь </a></li>
-              <li> <a class="label" href="#">Некомерческие организации, волонтерство </a></li>
-              <li> <a class="label" href="#">Промышленность, производство </a></li>
-              <li> <a class="label" href="#">IT, интернет, связь </a></li>
-              <li> <a class="label" href="#">IT, интернет, связь </a></li>
-              <li> <a class="label" href="#">Некомерческие организации, волонтерство </a></li>
-              <li> <a class="label" href="#">IT, интернет, связь </a></li>
-              <li> <a class="label" href="#">IT, интернет, связь </a></li>
-              <li> <a class="label" href="#">IT, интернет, связь </a></li>
-              <li> <a class="label" href="#">Промышленность, производство </a></li>
-              <li> <a class="label" href="#">Некомерческие организации, волонтерство </a></li>
-              <li> <a class="label" href="#">IT, интернет, связь </a></li>
-              <li data-hidden="true"> <a class="label" href="#">IT, интернет, связь </a></li>
-              <li data-hidden="true"> <a class="label" href="#">IT, интернет, связь </a></li>
-              <li data-hidden="true"> <a class="label" href="#">IT, интернет, связь </a></li>
-              <li data-hidden="true"> <a class="label" href="#">Промышленность, производство </a>
-              </li>
-              <li data-hidden="true"> <a class="label" href="#">Некомерческие организации,
-                волонтерство </a></li>
-              <li data-hidden="true"> <a class="label" href="#">IT, интернет, связь </a></li>
             </ul>
           </div>
           <button class="more more--down">
