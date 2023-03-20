@@ -42,10 +42,13 @@
       </div>
     </div>
     <div class="input-row">
-      <label for="email">Электронная почта <b>*</b></label>
+      <label for="email">Электронная почта<b>*</b></label>
       <div class="input-wrapper position-relative">
-        <input type="email" placeholder="Электронная почта" id="email" v-model="state.email.val" />
-        <a class="btn bg-info btn-sm position-absolute end-0 top-0 mt-2 me-2">Потверждать</a>
+        <input type="email" placeholder="Электронная почта" id="email" v-model="state.email.val" v-if="!state.email_to_verify.val" />
+        <input type="email" placeholder="Электронная почта" id="email_to_verify" v-else v-model="state.email_to_verify.val" />
+        <a v-if="state.email_to_verify.val" @click="onEmailConfirm" class="badge bg-primary position-absolute fs-6 end-0 top-0 p-2 px-2 mt-2 me-2">Потверждать</a>
+        <a v-else-if="isCheckButton" @click="checkEmailConfirmation" if="isConfirmButton" class="badge bg-primary btn-sm fs-6 position-absolute end-0 top-0 p-2 px-2 mt-2 me-2">Проверить</a>
+        <span v-else class="badge bg-success fs-6 position-absolute end-0 top-0 p-2 px-2 mt-2 me-2">Потвержден</span>
       </div>
       <div class="text-success d-block" v-if="state.email.is_sent">
         {{ "Вам выслано емейл с код подтверждением, подтвердите ваш емейл." }}
@@ -106,6 +109,10 @@ const state = reactive({
     val: "",
     isValid: true,
   },
+  email_to_verify: {
+    val: "",
+    isValid: true,
+  },
   password: {
     val: "",
     isValid: true,
@@ -121,6 +128,10 @@ watch(state, () => {
     phoneMask.value.updateValue();
   }
 })
+
+
+const isConfirmButton = ref(true);
+const isCheckButton = ref(false);
 
 const phoneInputElement = ref();
 const phoneMask = ref(null);
@@ -186,8 +197,26 @@ const validate = () => {
     state.isFormValid = false;
   }
 }
+
+const {confirmEmail} = useProfileStore();
+const onEmailConfirm = async() => {
+  const email = state.email_to_verify.val ? state.email_to_verify.val : state.email.val;
+  const resData = await confirmEmail({email});
+  if (resData.status === 'success'){
+    Swal.fire({
+      title: 'Успешно!',
+      text: resData.message,
+      icon: 'success',
+      confirmButtonText: 'ОК'
+    });
+    isConfirmButton.value = false;
+    isCheckButton.value = true;
+  }
+
+}
+
 const errors = ref({});
-const {update} = profileStore;
+const {updateEmployer} = profileStore;
 const handleSubmit = async (e) => {
   validate();
   errors.value = {};
@@ -196,13 +225,13 @@ const handleSubmit = async (e) => {
     logo_url: state.logo_url.val,
     company_name: state.company_name.val,
     email: state.email.val,
+    password: state.password.val,
+    password_confirmation: state.password.val,
   };
 
-  const resData = await update(data, 'employer');
-
-  console.log(resData);
-
+  const resData = await updateEmployer(data);
   if (resData.status === 'success'){
+    await getUser();
     Swal.fire({
       title: 'Успешно!',
       text: resData.message,

@@ -9,10 +9,12 @@ useHead({
   title: title,
 });
 import { useAuthStore } from "~~/store/auth";
+import IMask from "imask";
+import {navigateTo} from "nuxt/app";
 
 const authStore = useAuthStore();
 
-const { sendRecoveryCode, recoverPasswordCode } = authStore;
+const { recoverPasswordCode } = authStore;
 
 const isAuthed = computed(() => authStore.isAuthed);
 
@@ -33,11 +35,29 @@ const state = reactive({
     val: null,
     isValid: true,
   },
-  session: null,
+  password: {
+    val: null,
+    isValid: true,
+  },
+  password_confirmation: {
+    val: null,
+    isValid: true,
+  },
+  token: null,
   isFormValid: true,
   error: null,
   success: null,
 });
+
+
+const phoneInputElement = ref();
+const phoneMask = ref(null);
+onMounted(( ) => {
+  phoneMask.value = new IMask(phoneInputElement.value, {
+    mask: "+{7}(000)000-00-00",
+  });
+  phoneInputElement.value.addEventListener("input", () => {});
+})
 
 function clearValidity(input) {
   state[input].isValid = true;
@@ -53,12 +73,15 @@ function validateForm() {
 
 const router = useRouter();
 
-const isRegisterTab = ref(true);
-const isConfirmTab = ref(false);
-
-watch(isConfirmTab, () => {
-  title.value = "Потверждения телефона";
+const tabs = reactive({
+  isRegisterTab: true,
+  isConfirmTab: false,
+  isResetTab: false,
 })
+
+// watch(isConfirmTab, () => {
+//   title.value = "Потверждения телефона";
+// })
 
 const onSubmit = async () => {
   // console.log(isFormValid.value, state.i_agree);
@@ -68,28 +91,81 @@ const onSubmit = async () => {
       phone: state.phone.val,
     });
 
+    console.log(response);
     if (response.status === 'success'){
-      isConfirmTab.value = true;
-      isRegisterTab.value = false;
-      state.session = response.data.session;
+      state.token = response.data.token;
+      tabs.isConfirmTab = true;
+      tabs.isRegisterTab = false;
+      tabs.isResetTab = false;
     }else{
-      if ( 'errors' in response && response.message) {
-        state.error = response.errors.phone[0];
+      if (response.data && 'errors' in response.data) {
+        Swal.fire({
+          title: 'Ошибка!',
+          text: response.data.errors.phone[0],
+          icon: "error",
+          confirmButtonText: 'ОК'
+        });
       } else {
-        state.error = response.message;
+        Swal.fire({
+          title: 'Ошибка!',
+          text: response.data.message,
+          icon: "error",
+          confirmButtonText: 'ОК'
+        });
       }
     }
   }
 };
 
+const {sendRecoveryCode} = authStore;
 const onSMSSubmit = async () => {
+  console.log(state.code.val);
   const response = await recoverPasswordCode({
     phone: state.phone.val,
+    code: state.code.val,
+    token: state.token,
   });
 
   console.log(response);
   if (response.status === 'success'){
-    navigateTo({name: 'sign-in'});
+    state.token = response.data.token;
+    console.log(response.data.token);
+    tabs.isConfirmTab = false;
+    tabs.isRegisterTab = false;
+    tabs.isResetTab = true;
+    // isRegisterTab.value = false;
+  }else{
+    if ( 'errors' in response && response.message) {
+      Swal.fire({
+        title: 'Ошибка!',
+        text: response.data.message,
+        icon: "error",
+        confirmButtonText: 'ОК'
+      });
+    } else {
+      Swal.fire({
+        title: 'Ошибка!',
+        text: response.data.message,
+        icon: "error",
+        confirmButtonText: 'ОК'
+      });
+    }
+  }
+};
+//
+const {resetPassword} = authStore;
+const onPasswordSubmit = async () => {
+  const response = await resetPassword({
+    phone: state.phone.val,
+    code: state.code.val,
+    token: state.token,
+    password: state.password.val,
+    password_confirmation: state.password_confirmation.val,
+  });
+
+  console.log(response);
+  if (response.status === 'success'){
+    navigateTo({name: 'sign-in'})
   }else{
     if ( 'errors' in response && response.message) {
       Swal.fire({
@@ -127,19 +203,36 @@ function close(){
     <main class="main enter-page sign-up" role="main">
       <div class="enter-page-content">
         <NuxtLink to="/" class="logo"> <img src="~/assets/img/jobeek-dark.svg" alt="#"></NuxtLink>
-        <form class="enter-form" @submit.prevent="onSubmit" v-if="isRegisterTab">
+        <form class="enter-form" v-if="tabs.isRegisterTab">
           <h1>{{ title }}</h1>
           <div class="i-wrap">
-            <input type="tel" name="tel" v-model="state.phone.val" placeholder="Номер телефона" @focusout="clearValidity('phone')">
+            <input type="tel" ref="phoneInputElement" name="tel" v-model="state.phone.val" placeholder="Номер телефона" @focusout="clearValidity('phone')">
+
           </div>
-          <button class="btn button-accent" type="submit">Отпрваить</button>
+          <button class="btn button-accent" type="button" @click="onSubmit">Отправить</button>
         </form>
-        <form v-if="isConfirmTab" class="enter-form" @submit.prevent="onSMSSubmit" >
-          <h1></h1>
+        <form v-else-if="tabs.isConfirmTab" class="enter-form" >
           <div class="i-wrap">
             <input type="number" name="code" v-model="state.code.val" placeholder="Код потверждения" @focusout="clearValidity('code')">
           </div>
-          <button class="btn button-accent" type="submit">Подтвердить</button>
+          <div class="note">
+            <img src="~/assets/img/svg/i.svg" alt="#">
+            <p>На номер +{{state.phone.val}} отправлен код восстановления пароля.</p>
+          </div>
+          <button class="btn button-accent" type="button" @click="onSMSSubmit">Подтвердить</button>
+        </form>
+        <form v-else-if="tabs.isResetTab" class="enter-form" >
+          <div class="i-wrap">
+            <input type="text" name="password" v-model="state.password.val" placeholder="Пароль" @focusout="clearValidity('password')">
+          </div>
+          <div class="i-wrap">
+            <input type="text" name="password_confirmation" v-model="state.password_confirmation.val" placeholder="Повторите пароль" @focusout="clearValidity('password_confirmation')">
+          </div>
+          <div class="note">
+            <img src="~/assets/img/svg/i.svg" alt="#">
+            <p>Устаноните новый для аккаунта +{{state.phone.val}}</p>
+          </div>
+          <button class="btn button-accent" type="button" @click="onPasswordSubmit">Подтвердить</button>
         </form>
         <div class="f-prompt">Хотите войти? <NuxtLink :to="{name: 'sign-in'}">Войдите!</NuxtLink>  </div>
       </div>
