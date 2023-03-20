@@ -9,6 +9,8 @@ export const useAuthStore = defineStore('auth', {
   state: () => {
     return {
       user: null,
+      employer: null,
+      seeker: null,
       isAuthed: false,
       isEmployerMode: false,
     }
@@ -272,6 +274,7 @@ export const useAuthStore = defineStore('auth', {
     async tryLogin(token = "") {
       const CONFIG = useRuntimeConfig();
       let url = CONFIG.public.apiBase + 'seeker/profile';
+      let url2 = CONFIG.public.apiBase + 'employer/profile';
       if (!token)
         token = localStorage.getItem('token');
       // const userId = localStorage.getItem('userId');
@@ -290,9 +293,25 @@ export const useAuthStore = defineStore('auth', {
               },
           );
           this.user = response.data.data;
+          this.seeker = this.user;
           this.isAuthed = true;
+
+          const response2 = await axios.get(
+              url2,
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`
+                }
+              },
+          );
+          this.user = {...response2.data.data};
+          this.employer = this.user;
+
+
         }catch (error){
-          console.log(error);
+          // console.log(error);
+          console.log('UnAuthorized');
           // this.logout();
         }
 
@@ -308,7 +327,6 @@ export const useAuthStore = defineStore('auth', {
       // timer = setTimeout(function () {
       //   this.autoLogout();
       // }, expiresIn);
-
     },
 
     clearAuth() {

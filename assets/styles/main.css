@@ -3273,8 +3273,8 @@ body .main-section-mob {
 .params-box .group .check-block:not(:last-child) {
     margin-bottom: 24px; }
 
-.params-button-container:hover .params-box {
-    display: block; }
+/*.params-button-container:hover .params-box {*/
+/*    display: block; }*/
 
 .selector-group .option + .option {
     margin-left: 40px; }
@@ -8985,8 +8985,8 @@ body .main-section-mob {
 .params-box .group .check-block:not(:last-child) {
     margin-bottom: 24px; }
 
-.params-button-container:hover .params-box {
-    display: block; }
+/*.params-button-container:hover .params-box {*/
+/*    display: block; }*/
 
 .selector-group .option + .option {
     margin-left: 40px; }

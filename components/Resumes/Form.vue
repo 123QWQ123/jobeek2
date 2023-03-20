@@ -24,7 +24,6 @@
 </template>
 
 <script setup>
-import Header from "../Courses/Header";
 
 const onChange = (data) => {
   console.log(data);

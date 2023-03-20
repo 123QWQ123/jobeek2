@@ -1,6 +1,6 @@
 <template>
   <div class="input-row">
-    <label for="income">Какой доход вы рассматриваете (₽)?</label>
+    <label for="income">Какой ЗП вы предложите (₽)?</label>
     <div class="row-container">
       <div class="c2">
         <div class="input-wrapper">
@@ -35,21 +35,14 @@
           </ul>
         </div>
       </div>
-      <div class="check-block">
-        <div class="checkbox">
-          <input type="checkbox" id="show-no-salary" checked>
-          <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
-        </div>
-        <label for="show-no-salary">Не показывать без зарплаты</label>
-      </div>
     </div>
   </div>
-  <div class="input-row">
-    <label for="company">Компания</label>
-    <div class="input-wrapper">
-      <input type="text" id="company">
-    </div>
-  </div>
+<!--  <div class="input-row">-->
+<!--    <label for="company">Компания</label>-->
+<!--    <div class="input-wrapper">-->
+<!--      <input type="text" id="company">-->
+<!--    </div>-->
+<!--  </div>-->
 </template>
 
 <script setup>

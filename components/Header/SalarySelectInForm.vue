@@ -1,16 +1,26 @@
 <template>
-  <CustomSelect v-model="selectedSalary" :options="salaryOptions"></CustomSelect>
+  <CustomSelect v-model="selectedSalary" :options="salaryOptions" @change="onChange"></CustomSelect>
 </template>
 
 <script setup>
-const salaryOptions = [
-  {value: 0, name: 'Все'},
-  {value: 1, name: '10K-30K'},
-  {value: 2, name: '31K-50K'},
-  {value: 3, name: '51K-100K'},
-  {value: 4, name: '100K+'},
-];
+import {useSalaryOptions} from "../../composables/useSalaryOptions";
 
-const selectedSalary = ref(0);
+const props = defineProps(['modelValue', 'currency']);
+const emit = defineEmits(['update:modelValue']);
+const {modelValue: salary} = props;
+
+const selectedSalary = ref(salary.id);
+
+const salaryOptionsData = useSalaryOptions()
+const salaryOptions = ref(salaryOptionsData);
+
+const onChange = (id) => {
+  let selectedOptionID = salaryOptionsData.findIndex(item => item.value === parseInt(id));
+  if (selectedOptionID === -1){
+    return;
+  }
+  const selectedOption = salaryOptionsData[selectedOptionID];
+  emit('update:modelValue', selectedOption);
+}
 
 </script>
