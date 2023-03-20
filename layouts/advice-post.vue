@@ -1,25 +1,20 @@
-<script setup>
-import {navigateTo} from "nuxt/app";
-
-definePageMeta({
-  layout: "cabinet",
-});
-
-onMounted(() => {
-  navigateTo({name: 'advice-category', params: {category: 'popular'}});
-})
-
-</script>
 <template>
+  <div className="layout">
+    <header className="header" v-if="hasHeaderSlot">
+      <slot name="header"></slot>
+    </header>
+    <ThePersonalCabinetHeader v-else></ThePersonalCabinetHeader>
+
+
     <main class="main cabinet advice-page bg-wrapper" role="main">
       <div class="tabs tabs-row wrapper wrapper-1290">
         <ul>
-          <li> <NuxtLink exact-active-class="advice" :to="{name: 'advice-category', params: {category: 'popular'}}">Популярное</NuxtLink></li>
-          <li> <NuxtLink exact-active-class="advice" :to="{name: 'advice-category', params: {category: 'resume'}}">Резюме</NuxtLink></li>
-          <li> <NuxtLink exact-active-class="advice" :to="{name: 'advice-category', params: {category: 'seeking-jobs'}}">Поиск работы</NuxtLink></li>
-          <li> <NuxtLink exact-active-class="advice" :to="{name: 'advice-category', params: {category: 'interviews'}}">Собеседования</NuxtLink></li>
-          <li> <NuxtLink exact-active-class="advice" :to="{name: 'advice-category', params: {category: 'about-money'}}">Про деньги</NuxtLink></li>
-          <li> <NuxtLink exact-active-class="advice" :to="{name: 'advice-category', params: {category: 'career'}}">Карьера</NuxtLink></li>
+          <li> <NuxtLink :to="{name: 'advice-category', params: {category: 'popular'}}">Популярное</NuxtLink></li>
+          <li> <NuxtLink :to="{name: 'advice-category', params: {category: 'resume'}}">Резюме</NuxtLink></li>
+          <li> <NuxtLink :to="{name: 'advice-category', params: {category: 'seeking-jobs'}}">Поиск работы</NuxtLink></li>
+          <li> <NuxtLink :to="{name: 'advice-category', params: {category: 'interviews'}}">Собеседования</NuxtLink></li>
+          <li> <NuxtLink :to="{name: 'advice-category', params: {category: 'about-money'}}">Про деньги</NuxtLink></li>
+          <li> <NuxtLink :to="{name: 'advice-category', params: {category: 'career'}}">Карьера</NuxtLink></li>
         </ul>
       </div>
       <div class="main-section main-section-mob">
@@ -53,17 +48,39 @@ onMounted(() => {
           </form>
         </div>
       </div>
-      <NuxtLayout name="custom">
         <div class="articles-grid-container wrapper wrapper-1290">
-            <NuxtPage ></NuxtPage>
+          <NuxtPage/>
         </div>
-      </NuxtLayout>
     </main>
 
+    <!-- <template #error="{ error }">
+        <div>
+          <p>
+            Oh no, something broke when loading the lesson!
+            <code>{{ error }}</code>
+          </p>
+          <p>
+            <NuxtLink class="hover:cursor-pointer" to="/"> Go to / </NuxtLink>
+          </p>
+        </div>
+      </template> -->
+
+    <footer className="footer" v-if="hasFooterSlot">
+      <slot name="footer"></slot>
+    </footer>
+    <the-footer v-else></the-footer>
+  </div>
 </template>
 
-<style scoped>
-.router-link-exact-active{
-color: var(--bs-link-hover-color) !important;
-}
-</style>
+<script>
+export default {
+  computed: {
+    hasHeaderSlot() {
+      return !!this.$slots.header;
+    },
+    hasFooterSlot() {
+      return !!this.$slots.footer;
+    },
+  },
+};
+</script>

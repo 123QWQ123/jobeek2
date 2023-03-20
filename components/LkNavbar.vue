@@ -69,7 +69,7 @@ export default {
 </script>
 
 <style scoped>
-.router-link-exact-active:after {
+.router-link-active:after {
   background: #5375FD;
 }
 
