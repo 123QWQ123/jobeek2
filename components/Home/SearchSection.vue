@@ -8,7 +8,7 @@
         <div class="divided-box-content">
           <div class="labels-list-box">
             <ul class="labels-list">
-              <li> <a class="label" href="#">IT, интернет, связь</a></li>
+              <li> <a class="label" href="#" v-for="item in industries">{{ item.name }}</a></li>
             </ul>
           </div>
           <button class="more more--down">
@@ -46,3 +46,17 @@
     </div>
   </section>
 </template>
+
+<script setup>
+
+import {useVacancyStore} from "../../store/vacancy";
+
+const industries = ref([]);
+
+const {getIndustries} = useVacancyStore();
+
+onMounted(async () =>{
+  industries.value = await getIndustries();
+})
+
+</script>

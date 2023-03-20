@@ -2,37 +2,81 @@
   <div class="input-row">
     <label for="industry">Отрасль</label>
     <div class="input-wrapper">
-      <Select2 v-model="myValue" :options="myOptions" :settings="{ multiple: true }" @change="myChangeEvent($event)" @select="mySelectEvent($event)" />
+      <Select2 v-model="myField" :options="industryOptions" :settings="{ multiple: true }" @change="onFieldChange" @select="onFieldChange" />
     </div>
   </div>
   <div class="input-row">
     <label for="locations">Города, области, страны</label>
     <div class="input-wrapper">
-      <Select2 v-model="myValue2" :options="myOptions2" :settings="{ multiple: true }" @change="myChangeEvent($event)" @select="mySelectEvent($event)" />
+      <SelectWithSearch v-model="myCountrySearch" :options="areaOptions" @input="onAreaChange" />
     </div>
   </div>
 </template>
 
 <script setup>
 
-const myChangeEvent = (event) => {
-  console.log("myChangeEvent: ", event);
+import {useVacancyStore} from "../../store/vacancy";
+import CustomSelect from "../UI/CustomSelect";
+import SelectWithSearch from "../UI/SelectWithSearch";
+
+const onFieldChange = (event) => {
+  // console.log(event);
+  // console.log("myChangeEvent: ", event);
 }
-const mySelectEvent = (e) => {
-  console.log("mySelectEvent: ", event);
+const onAreaChange = (areaSearch) => {
+  if (areaSearch.length >= 2){
+    getAreas({search: areaSearch});
+  }
 }
-const myOptions = [
-  {id: 1, text: 'apple'},
-  {id: 2, text: 'berry'},
-  {id: 3, text: 'cherry'},
-]
-const myOptions2 = [
-  {id: 1, text: 'apple'},
-  {id: 2, text: 'berry'},
-  {id: 3, text: 'cherry'},
-]
-const myValue = ref();
-const myValue2 = ref();
+const onAreaSelect = (e) => {
+  console.log(e);
+}
+
+const vacancyStore = useVacancyStore();
+
+const {getIndustries, industries, countries, getAreas, cities} = vacancyStore;
+
+onMounted(async() => {
+  await getIndustries();
+})
+
+// await getAreas();
+// await getCountries();
+// await getRegions();
+
+const industryOptions = ref([]);
+watch(
+    () => vacancyStore.industries,
+    (newValues) => {
+      industryOptions.value = newValues.map(item => {
+        return {id: item.id, text: item.title};
+      });
+    }
+);
+
+const areaOptions = ref([]);
+watch(
+    () => vacancyStore.areas,
+    (newValues) => {
+      console.log(newValues)
+      areaOptions.value = newValues.map(item => {
+        return {value: item.id, name: item?.c_name + ',' + item?.r_name + ',' + item?.city_name};
+      });
+    }
+);
+
+
+const myField = ref();
+const myCountrySearch = ref("");
+
+watch(myCountrySearch, (newValue) => {
+  console.log(newValue);
+  if (newValue.length >= 2){
+    getAreas({search: newValue});
+  }
+})
+
+
 </script>
 
 <style>

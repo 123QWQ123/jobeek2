@@ -1,5 +1,5 @@
 <template>
-  <form class="search-form search-form--widget" action="#" role="form" autocomplete="off">
+  <form class="search-form search-form--widget" action="#" role="form" autocomplete="off" @submit.prevent="onSubmit">
     <div class="search-row">
       <div v-if="isEmployer" class="input-wrap has-icon has-label"><img class="icon" src="~/assets/img/svg/search.svg" alt="#">
         <input type="text" name="name" id="keyword" placeholder="Какой специалист вы ищете?" autocomplete="off">
@@ -21,6 +21,7 @@
 
 <script setup>
 import { useAuthStore } from "~~/store/auth";
+import {navigateTo} from "nuxt/app";
 
 const auth = useAuthStore();
 const { logout, toggleUserMode } = auth;
@@ -38,6 +39,16 @@ const onChange = (e) => {
 }
 const onSelect = (e) => {
   console.log(e)
+}
+
+const onSubmit  = (e) => {
+  console.log(e);
+
+  if (isEmployer.value){
+    navigateTo({name: 'search-resumes', query: {...form.value}});
+  }else{
+    navigateTo({name: 'search-vacancies', query: {...form.value}});
+  }
 }
 
 const router = useRouter();

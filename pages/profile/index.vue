@@ -11,6 +11,13 @@ definePageMeta({
 const authStore = useAuthStore();
 const {isEmployer} = storeToRefs(authStore);
 
+
+const route = useRoute();
+
+const error = computed(() => {
+  return route.query.message_text;
+});
+
 </script>
 
 <template>
@@ -18,6 +25,12 @@ const {isEmployer} = storeToRefs(authStore);
 <!--    <PersonalCabinetSearchMobile />-->
     <div class="has-sidebar has-sidebar--v2 wrapper wrapper-1290">
       <div class="content">
+        <div class="w-box w-box--main" v-if="error">
+          <div class="w-box-head bg-danger ">
+            <h1 class="title text-light">Ошибка</h1>
+            <p class="descr text-light">Вам обязательно заполнить данные профиля!</p>
+          </div>
+        </div>
         <div class="w-box w-box--main">
           <div class="w-box-head">
             <h1 class="title">Профиль</h1>

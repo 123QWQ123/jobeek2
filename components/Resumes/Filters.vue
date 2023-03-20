@@ -162,7 +162,7 @@ const salaryRanges = ref([
   { name: 'От 100 000 ₽', value: 'from_100000' },
 ]);
 
-const specializationsItems = computed(() => vacancyStore.specializations)
+const specializationsItems = computed(() => vacancyStore.industries)
 const specializations = ref(specializationsItems)
 
 
@@ -179,27 +179,20 @@ onMounted(() => {
 });
 
 const handleRegionClick = (region) => {
-  console.log(region);
   const selectedItem = regions.value.find(item => item.id === region);
   if (selectedItem)
     selectedItem.is_checked = !selectedItem.is_checked;
-  console.log(selectedItem);
 
 }
 const handleSpeciliazationClick = (specialization) => {
-  console.log(specialization);
   const selectedItem = specializations.value.find(item => item.id === specialization);
   if (selectedItem)
     selectedItem.is_checked = !selectedItem.is_checked;
-  console.log(selectedItem);
-
 }
 const handleSalaryRangeClick = (salaryRange) => {
-  console.log(salaryRange);
   const selectedItem = salaryRanges.value.find(item => item.value === salaryRange);
   if (selectedItem)
     selectedItem.is_checked = !selectedItem.is_checked;
-  console.log(selectedItem);
 }
 
 </script>

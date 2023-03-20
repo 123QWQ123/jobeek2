@@ -1,1 +1,11 @@
 @import "main.css";
+
+.right_aligned{
+  left: unset;
+  right: 0px;
+  width: auto !important;
+}
+
+.check-block label{
+  white-space: nowrap;
+}

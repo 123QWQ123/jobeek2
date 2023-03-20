@@ -16,7 +16,7 @@
     </div>
     <div class="resume-list-container">
       <ul class="resume-list">
-        <YourVacanciesItem v-for="i in quantity" :key="i"></YourVacanciesItem>
+        <YourVacanciesItem v-for="item in my_vacancies" :key="item.id" :item="item"></YourVacanciesItem>
       </ul>
       <NuxtLink class="create-button" type="link" :to="{name: 'create-vacancy'}" >Создать вакансию</NuxtLink>
     </div>
@@ -24,7 +24,13 @@
 </template>
 
 <script setup>
-const quantity = ref(2);
+import {useVacancyStore} from "../../store/vacancy";
+import {storeToRefs} from "pinia";
+
+const vacancyStore = useVacancyStore();
+const {my_vacancies} = storeToRefs(vacancyStore);
+
+console.log(my_vacancies);
 </script>
 
 <style scoped>
