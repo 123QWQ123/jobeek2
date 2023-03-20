@@ -5,8 +5,8 @@ export default defineNuxtConfig({
     apiSecret: "123",
     // Keys within public, will be also exposed to the client-side
     public: {
-      apiBase: process.env.BACKEND_HOST_API || "http://jobeek.api/api/",
-      base: process.env.BACKEND_HOST || "http://jobeek.api/",
+      apiBase: process.env.BACKEND_HOST_API || "https://api.jobeek.online/api/",
+      base: process.env.BACKEND_HOST || "https://api.jobeek.online/",
     }
   },
   ssr: false,
@@ -15,7 +15,10 @@ export default defineNuxtConfig({
     '~/assets/styles/nice-select.css',
     '~/assets/styles/app.scss',
   ],
-
+  components: [
+    '~/components',
+    '~/components/UI'
+  ],
   modules: [
     'nuxt3-vuex',
     [
@@ -42,6 +45,17 @@ export default defineNuxtConfig({
     //   }
     // ]
   ],
+  // auth: {
+  //   strategies: {
+  //     local: {
+  //       endpoints: {
+  //         login: { url: 'login', method: 'post', propertyName: 'data.token' },
+  //         user: { url: 'me', method: 'get', propertyName: 'data' },
+  //         logout: false
+  //       }
+  //     }
+  //   }
+  // },
   app: {
     pageTransition: { name: 'layout', mode: 'out-in' }
   },
