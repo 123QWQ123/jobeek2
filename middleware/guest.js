@@ -1,8 +1,5 @@
 import {useAuthStore} from "~/store/auth";
 
-const protected_routes = [
-    '/profile',
-];
 const public_routes = [
     '/sign-up',
     '/sign-up/confirm',
@@ -10,12 +7,13 @@ const public_routes = [
 ];
 export default defineNuxtRouteMiddleware((to, from) => {
     const authStore = useAuthStore();
-    if (protected_routes.includes(to.path)) {
+    if (public_routes.includes(to.path)) {
         const user = computed(() => authStore.user);
+        console.log(user);
         if (user.value) {
-            return;
-        }else{
-            return navigateTo("/sign-in");
+            return navigateTo('/profile');
         }
+        return;
     }
+    return;
 },)

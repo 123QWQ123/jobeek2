@@ -9,8 +9,7 @@ export const useAuthStore = defineStore('auth', {
   state: () => {
     return {
       user: null,
-      isAuthed: false,
-      isEmployerMode: false,
+      isAuthed: false
     }
   },
   getters: {
@@ -19,41 +18,19 @@ export const useAuthStore = defineStore('auth', {
     },
     userId(state) {
       return state.user?.userId;
-    },
-    isEmployer(state) {
-      return state.isEmployerMode;
     }
   },
   actions: {
-    toggleUserMode() {
-      this.isEmployerMode = !this.isEmployerMode;
-    },
     setUser(payload) {
       this.user = payload;
     },
-    async verify(){
-      const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.base + 'sanctum/csrf-cookie';
-
-      try {
-        const response = await axios.get(url, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-      }catch (error){
-        if ('data' in error){
-          return error.response.data;
-        }
-        return error;
-      }
-    },
     async signUp(payload) {
+      console.log(payload)
       const CONFIG = useRuntimeConfig();
+      console.log(CONFIG.public.apiBase);
       let url = CONFIG.public.apiBase + 'auth/register';
+      await this.verify();
       try {
-        await this.verify();
 
         const response = await axios.post(
             url,
@@ -64,29 +41,11 @@ export const useAuthStore = defineStore('auth', {
               }
             },
         );
-        if ('data' in response){
-          return {
-            status: 'success',
-            data: response.data.data
-          };
-        }else{
-          return {
-            status: 'error',
-            data: response.message
-          };
-        }
+        console.log(response)
       }catch (error){
-        console.log(error);
-        if ('data' in error.response){
-          return {
-            status: 'error',
-            data: error.response.data
-          };
-        }
-        return {
-          status: 'error',
-          message: error.message,
-        };
+        // console.log(error);
+
+        return error.response.data;
       }
       // const resData = await response;
       // const expiresIn = resData.expiresIn * 1000;
@@ -108,43 +67,10 @@ export const useAuthStore = defineStore('auth', {
       //   this.isAuthed = true;
       // }
     },
-    async confirmConfirmationCode(payload) {
-      const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + 'auth/register/confirm';
-      await this.verify();
-      try {
 
-        const response = await axios.post(
-            url,
-            payload,
-            {
-              headers: {
-                'Content-Type': 'application/json',
-              }
-            },
-        );
-        console.log(response)
-        return {
-          status: 'success',
-          data: response.data.data
-        };
-      }catch (error){
-        console.log(error);
-        if ('data' in error.response){
-          return {
-            status: 'error',
-            data: error.response.data
-          };
-        }
-        return {
-          status: 'error',
-          message: error.message,
-        };
-      }
-    },
     async tryLogin() {
-
       const CONFIG = useRuntimeConfig();
+      console.log(CONFIG.public.apiBase);
       let url = CONFIG.public.apiBase + 'auth/profile';
       const token = localStorage.getItem('token');
       // const userId = localStorage.getItem('userId');
@@ -162,7 +88,7 @@ export const useAuthStore = defineStore('auth', {
                 }
               },
           );
-          this.setUser(response.data.data.user);
+          this.setUser(response.data.data);
           this.isAuthed = true;
         }catch (error){
           this.logout();
@@ -189,11 +115,25 @@ export const useAuthStore = defineStore('auth', {
       // localStorage.removeItem('tokenExpirationDate');
     },
 
+    async verify(){
+      const CONFIG = useRuntimeConfig();
+      let url = CONFIG.public.base + 'sanctum/csrf-cookie';
+
+      const response = await axios.get(url, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    },
+
     async signIn(payload) {
       const CONFIG = useRuntimeConfig();
+      console.log(CONFIG.public.apiBase);
       let url = CONFIG.public.apiBase + 'auth/login';
+
+      await this.verify();
       try {
-        await this.verify();
+
         const response = await axios.post(
             url,
             payload,
@@ -204,16 +144,14 @@ export const useAuthStore = defineStore('auth', {
             },
         );
         const resData = response.data.data;
+        console.log(resData)
         if (response.status === 200) {
           localStorage.setItem('token', resData.token);
           this.setUser({
             user: resData.user,
           });
           this.isAuthed = true;
-          return {
-            status: 'success',
-            data: this.user
-          };
+          return this.user;
         }
         // const expiresIn = resData.expiresIn * 1000;
         // const expirationDate = new Date().getTime() + expiresIn;
@@ -226,30 +164,14 @@ export const useAuthStore = defineStore('auth', {
         // }, expiresIn);
 
       }catch (error){
-        if (error.response && 'data' in error.response){
-          if ('errors' in error.response.data){
-            return {
-              status: 'error',
-              message: error.response.data.message,
-              errors: error.response.data.errors,
-            };
-          }else{
-            return {
-              status: 'error',
-              message: error.response.message
-            };
-          }
-
-        }
-        return {
-          status: 'error',
-          message: error.message,
-        };
+        console.log(error);
+        return error.response.data;
       }
 
 
 
     },
+
     autoLogout() {
       this.logout();
     },

@@ -13,8 +13,6 @@ const authStore = useAuthStore();
 const {tryLogin} = authStore;
 await tryLogin();
 
-onBeforeMount(async () => {
-});
 </script>
 
 <style>

@@ -1,8 +1,7 @@
 <script setup>
-import Swal from "sweetalert2";
-
 definePageMeta({
   layout: 'custom',
+  middleware: ["guest"]
 });
 
 useHead({
@@ -53,10 +52,12 @@ function validateForm() {
     state.phone.isValid = false;
     state.isFormValid = false;
   }
+
   if (state.password.val === "" || state.password.val.length < 1) {
     state.password.isValid = false;
     state.isFormValid = false;
   }
+
   if ( !(state.remember_me.val === false  || state.remember_me.val === true)) {
     state.remember_me.isValid = false;
     state.isFormValid = false;
@@ -68,27 +69,18 @@ const route = useRoute();
 async function onSubmit() {
   validateForm();
   if (state.isFormValid) {
-    let response;
-    try {
-        response = await signIn({
-        phone: state.phone.val,
-        password: state.password.val,
-        remember_me: state.remember_me.val,
-      });
-
-    }catch (error) {
-      state.error = error.message;
-    }
-    if (response.status === 'error' && response.message) {
-      Swal.fire({
-        title: 'Ошибка!',
-        text: response.message,
-        icon: "error",
-        confirmButtonText: 'ОК'
-      });
+    const response = await signIn({
+      phone: state.phone.val,
+      password: state.password.val,
+      remember_me: state.remember_me.val,
+    });
+    console.log(response);
+    if (response.errors && response.message) {
+      state.error = response.message;
       return;
     }
     const route_name = route.query.redirect;
+    state.success = "You signed in";
     setTimeout(() => {
       if (route_name) {
         router.replace({ name: route_name });
@@ -102,15 +94,14 @@ async function onSubmit() {
 
 function close(){
   state.error = null;
-  state.success = null;
 }
 </script>
 
 <template>
   <div class="row">
-<!--    <base-modal :show="!!state.error" title="Error occured" :type="'error'" @close="close">-->
-<!--      <p>{{ state.error }}</p>-->
-<!--    </base-modal>-->
+    <base-modal :show="!!state.error" title="Error occured" :type="'error'" @close="close">
+      <p>{{ state.error }}</p>
+    </base-modal>
 
     <base-modal :show="!!state.success" title="Success" @close="close">
       <p>{{ state.success }}</p>
@@ -123,13 +114,13 @@ function close(){
           <div class="i-wrap has-validation">
             <input type="tel" name="tel" placeholder="Номер телефона" v-model="state.phone.val" @focusout="clearValidity('phone')" />
             <div :style="{display: 'none'}" class="text-danger" :class="{'d-block': !state.phone.isValid}">
-              Введите правильный номер телефона
+              Enter a valid phone
             </div>
           </div>
           <div class="i-wrap">
             <input type="password" name="pass" placeholder="Пароль" v-model="state.password.val" @focusout="clearValidity('password')" />
             <div :style="{display: 'none'}" class="text-danger" :class="{'d-block': !state.password.isValid}">
-              Введите правильный пароль
+              Enter a valid phone
             </div>
           </div>
           <div class="note"> <img src="~/assets/img/svg/i.svg" alt="#">
@@ -138,7 +129,7 @@ function close(){
           <div class="help-box">
             <div class="check-block">
               <div class="checkbox">
-                <input type="checkbox" id="remember_me"  v-model="state.remember_me.val" />
+                <input type="checkbox" id="remember_me"  v-model="state.remember_me" />
                 <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
               </div>
               <label for="agree">Запомнить меня</label>
