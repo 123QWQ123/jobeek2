@@ -29,12 +29,12 @@
               </div>
               <div class="l-wrap">
                 <label for="zp">{{item.name}}</label>
-                <!--                <span class="count">1 200</span>-->
+<!--                <span class="count">1 200</span>-->
               </div>
             </div>
           </div>
-          <!--          <button class="more-filters" data-default-text="Еще 25"-->
-          <!--                  data-hide-text="Скрыть">Еще 25 </button>-->
+<!--          <button class="more-filters" data-default-text="Еще 25"-->
+<!--                  data-hide-text="Скрыть">Еще 25 </button>-->
         </div>
       </div>
       <div class="filter-box" :class="{'open': salaryFilterClass}">
@@ -93,10 +93,10 @@
               </div>
             </div>
           </div>
-          <!--          <button class="more-filters" data-default-text="Еще 25"-->
-          <!--                  data-hide-text="Скрыть">-->
-          <!--            Еще 25-->
-          <!--          </button>-->
+<!--          <button class="more-filters" data-default-text="Еще 25"-->
+<!--                  data-hide-text="Скрыть">-->
+<!--            Еще 25-->
+<!--          </button>-->
         </div>
       </div>
       <div class="filter-box" :class="{'open': employmentTypeFilterClass}">
@@ -111,7 +111,7 @@
             </div>
             <div class="l-wrap">
               <label for="t1">Полная занятость</label>
-              <!--              <span class="count">1 200</span>-->
+<!--              <span class="count">1 200</span>-->
             </div>
           </div>
           <div class="check-block">
@@ -121,7 +121,7 @@
             </div>
             <div class="l-wrap">
               <label for="t1">Частичная занятость </label>
-              <!--              <span class="count">1 200</span>-->
+<!--              <span class="count">1 200</span>-->
             </div>
           </div>
           <div class="check-block">
@@ -131,7 +131,7 @@
             </div>
             <div class="l-wrap">
               <label for="t1">Стажировка </label>
-              <!--              <span class="count">1 200</span>-->
+<!--              <span class="count">1 200</span>-->
             </div>
           </div>
           <div class="check-block">
@@ -141,7 +141,7 @@
             </div>
             <div class="l-wrap">
               <label for="t1">Удаленная</label>
-              <!--              <span class="count">1 200</span>-->
+<!--              <span class="count">1 200</span>-->
             </div>
           </div>
           <div class="check-block">
@@ -151,7 +151,35 @@
             </div>
             <div class="l-wrap">
               <label for="t1">В офис</label>
-              <!--              <span class="count">1 200</span>-->
+<!--              <span class="count">1 200</span>-->
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="filter-box">
+        <div class="filter-box-handle"> <strong>Дополнительные параметры</strong><img
+            src="~/assets/img/svg/Arrow-Down.svg" alt="#"></div>
+        <div class="filter-box-body">
+          <div class="check-block-list">
+            <div class="check-block">
+              <div class="checkbox">
+                <input type="checkbox" id="t3" checked>
+                <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#">
+                </div>
+              </div>
+              <div class="l-wrap">
+                <label for="t3">Тип 1</label><span class="count">1 200</span>
+              </div>
+            </div>
+            <div class="check-block">
+              <div class="checkbox">
+                <input type="checkbox" id="t4">
+                <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#">
+                </div>
+              </div>
+              <div class="l-wrap">
+                <label for="t4">Тип 2</label><span class="count">200</span>
+              </div>
             </div>
           </div>
         </div>
@@ -167,7 +195,8 @@ import {useVacancyStore} from "../../store/vacancy";
 const vacancyStore = useVacancyStore();
 
 const {getSpecializations, getRegions} = vacancyStore;
-
+await getRegions();
+await getSpecializations();
 const regions = computed(() => vacancyStore.regions)
 const specializations = computed(() => vacancyStore.specializations)
 
@@ -175,13 +204,6 @@ const regionFilterClass = ref(true);
 const salaryFilterClass = ref(true);
 const specializationFilterClass = ref(true);
 const employmentTypeFilterClass = ref(true);
-
-
-onMounted(() => {
-  getRegions();
-  getSpecializations();
-});
-
 
 </script>
 
