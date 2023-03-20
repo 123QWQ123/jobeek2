@@ -26,9 +26,7 @@ export const useAuthStore = defineStore('auth', {
   },
   actions: {
     toggleUserMode() {
-      console.log(this.isEmployerMode)
       this.isEmployerMode = !this.isEmployerMode;
-      console.log(this.isEmployerMode)
     },
     setUser(payload) {
       this.user = payload;
@@ -256,7 +254,9 @@ export const useAuthStore = defineStore('auth', {
                 }
               },
           );
-          this.setUser(response.data.data.user);
+          console.log(response.data.data);
+          this.user = response.data.data.user;
+          // this.setUser(response.data.data.user);
           this.isAuthed = true;
         }catch (error){
           this.logout();
@@ -300,9 +300,11 @@ export const useAuthStore = defineStore('auth', {
         const resData = response.data.data;
         if (response.status === 200) {
           localStorage.setItem('token', resData.token);
-          this.setUser({
-            user: resData.user,
-          });
+          console.log(resData.user);
+          this.user = resData.user;
+          // this.setUser({
+          //   user: resData.user,
+          // });
           this.isAuthed = true;
           return {
             status: 'success',

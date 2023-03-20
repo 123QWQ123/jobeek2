@@ -1,4 +1,6 @@
 <script setup>
+import Swal from "sweetalert2";
+
 definePageMeta({
   layout: 'custom',
 });
@@ -8,6 +10,7 @@ useHead({
 })
 
 import { useAuthStore } from "~~/store/auth";
+import IMask from "imask";
 
 const auth = useAuthStore();
 const isAuthed = computed(() => auth.isAuthed);
@@ -51,12 +54,10 @@ function validateForm() {
     state.phone.isValid = false;
     state.isFormValid = false;
   }
-
   if (state.password.val === "" || state.password.val.length < 1) {
     state.password.isValid = false;
     state.isFormValid = false;
   }
-
   if ( !(state.remember_me.val === false  || state.remember_me.val === true)) {
     state.remember_me.isValid = false;
     state.isFormValid = false;
@@ -68,18 +69,26 @@ const route = useRoute();
 async function onSubmit() {
   validateForm();
   if (state.isFormValid) {
-    const response = await signIn({
-      phone: state.phone.val,
-      password: state.password.val,
-      remember_me: state.remember_me.val,
-    });
-    console.log(response);
-    if (response.errors && response.message) {
-      state.error = response.message;
+    let response;
+    try {
+        response = await signIn({
+        phone: phoneMask.value.unmaskedValue,
+        password: state.password.val,
+      });
+
+    }catch (error) {
+      state.error = error.message;
+    }
+    if (response.status === 'error' && response.message) {
+      Swal.fire({
+        title: 'Ошибка!',
+        text: response.message,
+        icon: "error",
+        confirmButtonText: 'ОК'
+      });
       return;
     }
     const route_name = route.query.redirect;
-    state.success = "You signed in";
     setTimeout(() => {
       if (route_name) {
         router.replace({ name: route_name });
@@ -91,16 +100,25 @@ async function onSubmit() {
 
 }
 
+const phoneInputElement = ref();
+const phoneMask = ref(null);
+onMounted(( ) => {
+  phoneMask.value = new IMask(phoneInputElement.value, {
+    mask: "+{7}(000)000-00-00",
+  });
+  phoneInputElement.value.addEventListener("input", () => {});
+})
 function close(){
   state.error = null;
+  state.success = null;
 }
 </script>
 
 <template>
   <div class="row">
-    <base-modal :show="!!state.error" title="Error occured" :type="'error'" @close="close">
-      <p>{{ state.error }}</p>
-    </base-modal>
+<!--    <base-modal :show="!!state.error" title="Error occured" :type="'error'" @close="close">-->
+<!--      <p>{{ state.error }}</p>-->
+<!--    </base-modal>-->
 
     <base-modal :show="!!state.success" title="Success" @close="close">
       <p>{{ state.success }}</p>
@@ -111,15 +129,15 @@ function close(){
         <form class="enter-form" @submit.prevent="onSubmit">
           <h1>Вход</h1>
           <div class="i-wrap has-validation">
-            <input type="tel" name="tel" placeholder="Номер телефона" v-model="state.phone.val" @focusout="clearValidity('phone')" />
+            <input ref="phoneInputElement" type="tel" name="tel" placeholder="Номер телефона" v-model="state.phone.val" @focusout="clearValidity('phone')" />
             <div :style="{display: 'none'}" class="text-danger" :class="{'d-block': !state.phone.isValid}">
-              Enter a valid phone
+              Введите правильный номер телефона
             </div>
           </div>
           <div class="i-wrap">
             <input type="password" name="pass" placeholder="Пароль" v-model="state.password.val" @focusout="clearValidity('password')" />
             <div :style="{display: 'none'}" class="text-danger" :class="{'d-block': !state.password.isValid}">
-              Enter a valid phone
+              Введите правильный пароль
             </div>
           </div>
           <div class="note"> <img src="~/assets/img/svg/i.svg" alt="#">
@@ -128,7 +146,7 @@ function close(){
           <div class="help-box">
             <div class="check-block">
               <div class="checkbox">
-                <input type="checkbox" id="remember_me"  v-model="state.remember_me" />
+                <input type="checkbox" id="remember_me"  v-model="state.remember_me.val" />
                 <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
               </div>
               <label for="agree">Запомнить меня</label>

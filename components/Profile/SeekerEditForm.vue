@@ -66,20 +66,31 @@
     <div class="input-row">
       <label for="phone">Телефон</label>
       <div class="input-wrapper">
-        <input type="text" disabled placeholder="Телефон" id="phone" v-model="state.phone.val" />
+        <input type="text" ref="phoneInputElement" disabled placeholder="Телефон" id="phone" v-model="state.phone.val" />
       </div>
     </div>
     <div class="input-row">
-      <label for="email">Электронная почта</label>
+      <label for="email">Электронная почта<b>*</b></label>
       <div class="input-wrapper position-relative">
         <input type="email" placeholder="Электронная почта" id="email" v-model="state.email.val" />
-        <a class="btn bg-info btn-sm position-absolute end-0 top-0 mt-2 me-2">Потверждать</a>
+        <a v-if="isConfirmButton" @click="confirmEmail" class="badge bg-primary position-absolute fs-6 end-0 top-0 p-2 px-2 mt-2 me-2">Потверждать</a>
+        <a v-else-if="isCheckButton" @click="checkEmailConfirmation" if="isConfirmButton" class="badge bg-primary btn-sm fs-6 position-absolute end-0 top-0 p-2 px-2 mt-2 me-2">Проверить</a>
+        <span v-else class="badge bg-success fs-6 position-absolute end-0 top-0 p-2 px-2 mt-2 me-2">Потвержден</span>
       </div>
       <div class="text-success d-block" v-if="state.email.is_sent">
         {{ "Вам выслано емейл с код подтверждением, подтвердите ваш емейл." }}
       </div>
       <div class="text-danger d-block" v-if="errors.email">
         {{ errors.email }}
+      </div>
+    </div>
+    <div class="input-row">
+      <label for="password">Пароль<b>*</b></label>
+      <div class="input-wrapper position-relative">
+        <input type="password" id="password" v-model="state.password.val" />
+      </div>
+      <div class="text-danger d-block" v-if="errors.password">
+        {{ errors.password }}
       </div>
     </div>
     <div class="input-row">
@@ -98,6 +109,7 @@ import {storeToRefs} from "pinia";
 import moment from "moment";
 import Swal from "sweetalert2";
 import {useRuntimeConfig} from "nuxt/app";
+import IMask from "imask";
 const profileStore = useProfileStore();
 
 const {getUser} = profileStore;
@@ -140,18 +152,32 @@ const state = reactive({
     val: "",
     isValid: true,
   },
+  password: {
+    val: "",
+    isValid: true,
+  },
   isFormValid: true,
   isLoading: true,
   error: null,
   success: null,
 });
-
+const phoneInputElement = ref();
+const phoneMask = ref(null);
 watch(seeker, (new_value) => {
   for (const [key, value] of Object.entries(new_value)) {
     if (state.hasOwnProperty(key)){
       if (key === 'birth_date'){
         const formatted = moment(value, "YYYY-MM-DD");
         state[key].val = formatted;
+        continue;
+      }
+      if (key === 'phone'){
+        state[key].val = value;
+        setTimeout(() => {
+          phoneMask.value = new IMask(phoneInputElement.value, {
+            mask: "+{7}(000)000-00-00",
+          });
+        }, 0)
         continue;
       }
       state[key].val = value;
@@ -216,6 +242,11 @@ const validate = () => {
     state.birth_date.isValid = false;
     state.isFormValid = false;
   }
+
+  if (state.password.val === "" || state.password.val.length < 8) {
+    state.password.isValid = false;
+    state.isFormValid = false;
+  }
 }
 const errors = ref({});
 const {update} = profileStore;
@@ -255,12 +286,31 @@ const handleSubmit = async (e) => {
 
 }
 
+const isConfirmButton = ref(true);
+const isCheckButton = ref(false);
+
+const confirmEmail = () => {
+  isConfirmButton.value = false;
+  isCheckButton.value = true;
+}
+const checkEmailConfirmation = () => {
+  isConfirmButton.value = false;
+  isCheckButton.value = false;
+}
+
 </script>
+
+<style>
+input[type="text"]:disabled {
+  background: #ccc;
+}
+</style>
 
 <style scoped>
 
 #photo{
   cursor: pointer;
 }
+
 
 </style>

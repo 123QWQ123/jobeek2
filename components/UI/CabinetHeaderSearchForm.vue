@@ -7,7 +7,7 @@
       <div v-else class="input-wrap has-icon has-label"><img class="icon" src="~/assets/img/svg/search.svg" alt="#">
         <input type="text" name="name" id="keyword" placeholder="Какую вакансию вы ищете?" autocomplete="off">
       </div>
-      <SalarySelectInForm v-model="form.salary" @change="onChange"></SalarySelectInForm>
+      <HeaderSalarySelectInForm v-model="form.salary" @change="onChange"></HeaderSalarySelectInForm>
       <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">
         <input type="text" name="city" placeholder="Город" autocomplete="off">
       </div>

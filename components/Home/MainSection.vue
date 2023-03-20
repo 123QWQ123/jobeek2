@@ -1,6 +1,6 @@
 <script setup>
 
-  import SalarySelectInForm from "../SalarySelectInForm";
+  import SalarySelectInForm from "../Header/SalarySelectInForm";
 
   const form = ref({
     keyword: "",
