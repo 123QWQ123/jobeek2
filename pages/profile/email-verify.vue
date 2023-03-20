@@ -1,0 +1,68 @@
+
+<script setup>
+
+import {useAuthStore} from "../../store/auth";
+import {storeToRefs} from "pinia";
+import {useProfileStore} from "../../store/profile";
+import Swal from "sweetalert2";
+import {navigateTo} from "nuxt/app";
+
+definePageMeta({
+  layout: "cabinet"
+});
+
+const authStore = useAuthStore();
+const profileStore = useProfileStore();
+
+const {isEmployer} = storeToRefs(authStore);
+
+const route = useRoute();
+const isSuccess = ref("-");
+const {code, email} = route.query;
+
+const {verifyEmailConfirmation} = profileStore;
+
+onMounted(async() => {
+  const resData = await verifyEmailConfirmation({code, email});
+  if (resData.status === 'success'){
+
+    isSuccess.value = true;
+
+    Swal.fire({
+      title: 'Успешно!',
+      text: resData.message,
+      icon: 'success',
+      confirmButtonText: 'ОК'
+    });
+
+    setTimeout(() => {
+      navigateTo({name:'profile'});
+    }, 5000)
+  }else{
+    isSuccess.value = false;
+
+    navigateTo({name:'404'});
+  }
+});
+console.log(code, email);
+
+</script>
+
+<template>
+  <main class="main cabinet profile-page bg-wrapper" role="main">
+    <div class="wrapper">
+        <div class="w-box" v-if="isSuccess">
+          <div class="w-box-head">
+            <h1 class="title">Ваш эмаил подтержден!</h1>
+          </div>
+          <div class="w-box-body">
+            <p>Через 5 секунд редиректится!</p>
+          </div>
+      </div>
+    </div>
+  </main>
+</template>
+
+<style scoped>
+
+</style>

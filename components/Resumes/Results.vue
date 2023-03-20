@@ -64,8 +64,8 @@
           Фильтры
         </button>
         <div class="aside-container">
-          <VacanciesFilters></VacanciesFilters>
-          <VacanciesList></VacanciesList>
+          <ResumesFilters></ResumesFilters>
+          <ResumesList></ResumesList>
         </div>
       </div>
     </div>

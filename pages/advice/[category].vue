@@ -1,5 +1,5 @@
 <template>
-  <ul class="articles-grid">
+  <ul class="articles-grid" v-if="$route.name == 'advice-category'">
     <li v-for="i in quantity">
       <NuxtLink class="article-card" :active-class="'advice'" :to="{name: 'advice-category-slug', params: {category: route.params.category, slug: i}}">
         <div class="article-card-photo"> <img src="~/assets/img/unsplash_jrh5lAq-mIs.jpg" alt="#"></div>
@@ -22,6 +22,9 @@
     >
     </paginate>
   </ul>
+  <div v-else>
+    <NuxtPage/>
+  </div>
 </template>
 
 <script setup>
@@ -41,9 +44,8 @@ console.log(route.params.category);
 const quantity = ref(3);
 </script>
 
-<style scoped>
-
-.router-link-exact-active{
-  color: var(--bs-link-hover-color);
+<style>
+.router-link-active{
+  color: var(--bs-link-hover-color) !important;
 }
 </style>

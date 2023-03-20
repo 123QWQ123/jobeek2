@@ -66,20 +66,32 @@
     <div class="input-row">
       <label for="phone">Телефон</label>
       <div class="input-wrapper">
-        <input type="text" disabled placeholder="Телефон" id="phone" v-model="state.phone.val" />
+        <input type="text" ref="phoneInputElement" disabled placeholder="Телефон" id="phone" v-model="state.phone.val" />
       </div>
     </div>
     <div class="input-row">
-      <label for="email">Электронная почта</label>
+      <label for="email">Электронная почта<b>*</b></label>
       <div class="input-wrapper position-relative">
-        <input type="email" placeholder="Электронная почта" id="email" v-model="state.email.val" />
-        <a class="btn bg-info btn-sm position-absolute end-0 top-0 mt-2 me-2">Потверждать</a>
+        <input type="email" placeholder="Электронная почта" id="email" v-model="state.email.val" v-if="!state.email_to_verify.val" />
+        <input type="email" placeholder="Электронная почта" id="email_to_verify" v-else v-model="state.email_to_verify.val" />
+        <a v-if="isConfirmButton" @click="onEmailConfirm" class="badge bg-primary position-absolute fs-6 end-0 top-0 p-2 px-2 mt-2 me-2">Потверждать</a>
+        <a v-else-if="isCheckButton" @click="checkEmailConfirmation" if="isConfirmButton" class="badge bg-primary btn-sm fs-6 position-absolute end-0 top-0 p-2 px-2 mt-2 me-2">Проверить</a>
+        <span v-else class="badge bg-success fs-6 position-absolute end-0 top-0 p-2 px-2 mt-2 me-2">Потвержден</span>
       </div>
       <div class="text-success d-block" v-if="state.email.is_sent">
         {{ "Вам выслано емейл с код подтверждением, подтвердите ваш емейл." }}
       </div>
       <div class="text-danger d-block" v-if="errors.email">
         {{ errors.email }}
+      </div>
+    </div>
+    <div class="input-row">
+      <label for="password">Пароль<b>*</b></label>
+      <div class="input-wrapper position-relative">
+        <input type="password" id="password" v-model="state.password.val" />
+      </div>
+      <div class="text-danger d-block" v-if="errors.password">
+        {{ errors.password }}
       </div>
     </div>
     <div class="input-row">
@@ -94,10 +106,13 @@
 import {useProfileStore} from "../../store/profile";
 const CONFIG = useRuntimeConfig();
 
+// const {emit} = defineEmits('input');
 import {storeToRefs} from "pinia";
 import moment from "moment";
 import Swal from "sweetalert2";
 import {useRuntimeConfig} from "nuxt/app";
+import IMask from "imask";
+import {useImageAsUrl} from "../../composables/useImageAsUrl";
 const profileStore = useProfileStore();
 
 const {getUser} = profileStore;
@@ -128,6 +143,11 @@ const state = reactive({
     val: "",
     isValid: true,
   },
+  photo: {
+    val: "",
+    isValid: true,
+    base64: "",
+  },
   photo_url: {
     val: "",
     isValid: true,
@@ -140,18 +160,36 @@ const state = reactive({
     val: "",
     isValid: true,
   },
+  email_to_verify: {
+    val: "",
+    isValid: true,
+  },
+  password: {
+    val: "",
+    isValid: true,
+  },
   isFormValid: true,
   isLoading: true,
   error: null,
   success: null,
 });
-
+const phoneInputElement = ref();
+const phoneMask = ref(null);
 watch(seeker, (new_value) => {
   for (const [key, value] of Object.entries(new_value)) {
     if (state.hasOwnProperty(key)){
       if (key === 'birth_date'){
         const formatted = moment(value, "YYYY-MM-DD");
         state[key].val = formatted;
+        continue;
+      }
+      if (key === 'phone'){
+        state[key].val = value;
+        setTimeout(() => {
+          phoneMask.value = new IMask(phoneInputElement.value, {
+            mask: "+{7}(000)000-00-00",
+          });
+        }, 0)
         continue;
       }
       state[key].val = value;
@@ -166,10 +204,15 @@ const {countryOptions, cityOptions} = storeToRefs(profileStore);
 
 const country = computed(() => state.pub_country_id.val);
 const photoUrl = computed(() => {
-  if (state.photo_url.val){
+  if (state.photo.base64){
+    return state.photo.base64;
+  } else if (state.photo_url.val){
     return CONFIG.public.base + state.photo_url.val;
-  }else return CONFIG.public.base + '/assets/images/avatar.png'
+  } else return CONFIG.public.base + '/assets/images/avatar.png';
 });
+
+
+
 watch(country, (new_value) => {
   getPublicCities({country_id: new_value});
 });
@@ -187,16 +230,15 @@ const clearPhotoUrl = () => {
 
 const {upload} = profileStore;
 const handleUploadFile = async (e) => {
-  console.log(e);
-  console.log(photoElement.value.files);
-  const formData = new FormData();
-  formData.append("image", photoElement.value.files[0]);
-  const response =  await upload(formData);
-
-  if (response.status === 'success'){
-    state.photo_url.val =  response.path;
+  state.photo.val = photoElement.value.files[0];
+  const file = photoElement.value.files;
+  if (file && file[0]) {
+    let reader = new FileReader
+    reader.onload = e => {
+      state.photo.base64 = e.target.result
+    }
+    reader.readAsDataURL(file[0])
   }
-  console.log(response);
 }
 
 const validate = () => {
@@ -216,29 +258,37 @@ const validate = () => {
     state.birth_date.isValid = false;
     state.isFormValid = false;
   }
+
+  if (state.password.val === "" || state.password.val.length < 8) {
+    state.password.isValid = false;
+    state.isFormValid = false;
+  }
 }
 const errors = ref({});
-const {update} = profileStore;
+const {updateSeeker} = profileStore;
 const handleSubmit = async (e) => {
-  console.log(state);
   validate();
   errors.value = {};
 
-  const data = {
-    photo_url: state.photo_url.val,
-    first_name: state.first_name.val,
-    last_name: state.last_name.val,
-    email: state.email.val,
-    pub_country_id: state.pub_country_id.val,
-    pub_city_id: state.pub_city_id.val,
-    birth_date: moment(state.birth_date.val).format("YYYY-MM-DD"),
-  };
+  const email = state.email_to_verify.val ? state.email_to_verify.val : state.email.val;
 
-  const resData = await update(data);
 
-  console.log(resData);
+  const formData = new FormData();
+  formData.append("photo", state.photo.val);
+  formData.append("first_name", state.first_name.val);
+  formData.append("last_name", state.last_name.val);
+  formData.append("email", email);
+  formData.append("pub_country_id", state.pub_country_id.val);
+  formData.append("pub_city_id", state.pub_city_id.val);
+  formData.append("birth_date", moment(state.birth_date.val).format("YYYY-MM-DD"));
+  formData.append("password", state.password.val);
+  formData.append("password_confirmation", state.password.val);
+  formData.append("_method", 'put');
+
+  const resData = await updateSeeker(formData);
 
   if (resData.status === 'success'){
+    await getUser();
     Swal.fire({
       title: 'Успешно!',
       text: resData.message,
@@ -250,17 +300,49 @@ const handleSubmit = async (e) => {
     if (resData?.errors){
       errors.value = {...resData.errors};
     }
+    Swal.fire({
+      title: 'Ошибка!',
+      text: resData.message,
+      icon: 'error',
+      confirmButtonText: 'ОК'
+    });
   }
   console.log(resData);
 
 }
 
+const isConfirmButton = ref(true);
+const isCheckButton = ref(false);
+
+const {confirmEmail, checkEmailConfirmation} = profileStore;
+const onEmailConfirm = async() => {
+  const email = state.email_to_verify.val ? state.email_to_verify.val : state.email.val;
+  const resData = await confirmEmail({email});
+  if (resData.status === 'success'){
+    Swal.fire({
+      title: 'Успешно!',
+      text: resData.message,
+      icon: 'success',
+      confirmButtonText: 'ОК'
+    });
+    isConfirmButton.value = false;
+    isCheckButton.value = true;
+  }
+
+}
 </script>
+
+<style>
+input[type="text"]:disabled {
+  background: #ccc;
+}
+</style>
 
 <style scoped>
 
 #photo{
   cursor: pointer;
 }
+
 
 </style>

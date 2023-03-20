@@ -3,7 +3,7 @@
 <script>
 export default {
   name: "SelectWithSearch",
-  emits: ['change', 'update:modelValue'],
+  emits: ['change', 'update:modelValue', 'input'],
   props: ['options', 'modelValue', 'label'],
   setup(props, {emit}){
     const isOpen = ref(false);
@@ -24,7 +24,7 @@ export default {
       if (e.target.classList.contains('option')){
         isOpen.value = false;
         emit("change", e.target.dataset.value);
-        emit("update:modelValue", e.target.dataset.value);
+        // emit("update:modelValue", e.target.dataset.value);
       }
     }
 
@@ -32,6 +32,8 @@ export default {
 
     const onChangeHandler = (e) => {
       searchInput.value = e.target.textContent;
+      // emit("input", searchInput.value);
+      emit("update:modelValue", searchInput.value);
       const typedName = e.target.textContent.toLowerCase();
       if (typedName === ""){
         options.value = props.options;

@@ -1,5 +1,6 @@
 <script setup>
 import Swal from "sweetalert2";
+import IMask from 'imask';
 
 definePageMeta({
   layout: 'custom',
@@ -11,7 +12,7 @@ import { useAuthStore } from "~~/store/auth";
 
 const authStore = useAuthStore();
 
-const { signUp, confirmConfirmationCode } = authStore;
+const { signUp, confirmPhoneCode, tryLogin } = authStore;
 
 const isAuthed = computed(() => authStore.isAuthed);
 
@@ -56,7 +57,6 @@ function validateForm() {
     state.i_agree.isValid = false;
     state.isFormValid = false;
   }
-  console.log(state);
 }
 
 const router = useRouter();
@@ -65,13 +65,11 @@ const isRegisterTab = ref(true);
 const isConfirmTab = ref(false);
 
 const onSubmit = async () => {
-  // console.log(isFormValid.value, state.i_agree);
+  state.phone.val = phoneMask.value.unmaskedValue;
   validateForm();
   if (state.isFormValid) {
-    console.log(1);
     const response = await signUp({
-      phone: state.phone.val,
-      i_agree: state.i_agree.val,
+      phone: phoneMask.value.unmaskedValue,
     });
 
     if (response.status === 'success'){
@@ -79,17 +77,22 @@ const onSubmit = async () => {
       isRegisterTab.value = false;
       state.session = response.data.session;
     }else{
-      if ( 'errors' in response && response.message) {
-        state.error = response.errors.phone[0];
+      if (response.data && 'errors' in response.data && response.data.message) {
+        state.error = response.data.errors.phone[0];
       } else {
-        state.error = response.message;
+        Swal.fire({
+          title: 'Ошибка!',
+          text: response.message,
+          icon: "error",
+          confirmButtonText: 'ОК'
+        });
       }
     }
   }
 };
 
 const onSMSSubmit = async () => {
-  const response = await confirmConfirmationCode({
+  const response = await confirmPhoneCode({
     phone: state.phone.val,
     session: state.session,
     code: state.code.val,
@@ -97,7 +100,8 @@ const onSMSSubmit = async () => {
 
   console.log(response);
   if (response.status === 'success'){
-    navigateTo({name: 'sign-in'});
+    await tryLogin(response.data.token);
+    navigateTo({name: 'profile'});
   }else{
     if ( 'errors' in response && response.message) {
       Swal.fire({
@@ -121,6 +125,15 @@ const onSMSSubmit = async () => {
 function close(){
   state.error = null;
 }
+
+const phoneInputElement = ref();
+const phoneMask = ref(null);
+onMounted(( ) => {
+  phoneMask.value = new IMask(phoneInputElement.value, {
+    mask: "+{7}(000)000-00-00",
+  });
+  phoneInputElement.value.addEventListener("input", () => {});
+});
 </script>
 
 <template>
@@ -138,7 +151,7 @@ function close(){
         <form class="enter-form" @submit.prevent="onSubmit" v-if="isRegisterTab">
           <h1>Регистрация</h1>
           <div class="i-wrap">
-            <input type="tel" name="tel" v-model="state.phone.val" placeholder="Номер телефона" @focusout="clearValidity('phone')">
+            <input type="tel" name="tel" ref="phoneInputElement" v-model="state.phone.val" placeholder="Номер телефона" @focusout="clearValidity('phone')">
           </div>
           <div class="help-box">
             <div class="check-block " :class="{ 'border-bottom border-danger': !state.i_agree.isValid }">
@@ -152,11 +165,20 @@ function close(){
           <button class="btn button-accent" type="submit">Зарегистрироваться</button>
         </form>
         <form v-if="isConfirmTab" class="enter-form" @submit.prevent="onSMSSubmit" >
-          <h1>Регистрация</h1>
+          <h1>Потверждения телефона</h1>
           <div class="i-wrap">
             <input type="number" name="code" v-model="state.code.val" placeholder="Код потверждения" @focusout="clearValidity('code')">
+            <span class="text-success mt-1 py-2 px-3" type="button" disabled>
+              Мы вам отправили код потверждения на телефон. Введите код!
+            </span>
+            <span class="col-auto px-3" type="button" disabled>
+                Не получили код?
+                <a class="link link-primary " @click="onSubmit">
+                  Отправить еще раз
+                </a>
+              </span>
           </div>
-          <button class="btn button-accent" type="submit">Подтвердить</button>
+          <button class="btn button-accent mt-4" type="submit">Подтвердить</button>
         </form>
         <div class="f-prompt">Уже есть аккаунт? <NuxtLink :to="{name: 'sign-in'}">Войдите!</NuxtLink>  </div>
       </div>

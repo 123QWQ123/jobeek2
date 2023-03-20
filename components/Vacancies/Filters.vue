@@ -44,32 +44,24 @@
         </div>
         <div class="filter-box-body">
           <div class="check-block-list">
-            <div class="check-block">
-              <div class="checkbox">
-                <input type="radio" id="zp" name="salary" checked>
-                <div class="radio-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
-              </div>
-              <div class="l-wrap">
-                <label for="zp">С указанной зп</label><span class="count">1
-                                                        200</span>
-              </div>
-            </div>
-            <div class="check-block">
+            <!--            <div class="check-block">-->
+            <!--              <div class="checkbox">-->
+            <!--                <input type="radio" id="zp" name="salary" checked>-->
+            <!--                <div class="radio-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>-->
+            <!--              </div>-->
+            <!--              <div class="l-wrap">-->
+            <!--                <label for="zp">С указанной зп</label><span class="count">1-->
+            <!--                                                        200</span>-->
+            <!--              </div>-->
+            <!--            </div>-->
+            <div v-for="item in salaryOptions"  class="check-block">
               <div class="checkbox">
                 <input type="radio" id="21k" name="salary">
                 <div class="radio-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
               </div>
               <div class="l-wrap">
-                <label for="21k">От 20 000 ₽</label><span class="count">200</span>
-              </div>
-            </div>
-            <div class="check-block">
-              <div class="checkbox">
-                <input type="radio" id="20k" name="salary">
-                <div class="radio-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
-              </div>
-              <div class="l-wrap">
-                <label for="20k">От 20 000 ₽</label><span class="count">200</span>
+                <label :for="item.name" >{{item.name}} ₽</label>
+                <!--                <span class="count">200</span>-->
               </div>
             </div>
           </div>
@@ -163,8 +155,9 @@
 <script setup>
 
 import {useVacancyStore} from "../../store/vacancy";
-
+import {useSalaryOptions} from "../../composables/useSalaryOptions";
 const vacancyStore = useVacancyStore();
+const salaryOptions = useSalaryOptions();
 
 const {getSpecializations, getRegions} = vacancyStore;
 

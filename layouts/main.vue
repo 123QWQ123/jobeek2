@@ -3,9 +3,9 @@
     <header class="header" v-if="hasHeaderSlot">
       <slot name="header"></slot>
     </header>
-    <the-main-header v-else></the-main-header>
+    <HeaderTheMainHeader v-else></HeaderTheMainHeader>
     <main class="main" role="main">
-      <NuxtPage />
+      <NuxtPage :key="$route.fullPath" />
       <!-- <template #error="{ error }">
           <div>
             <p>
