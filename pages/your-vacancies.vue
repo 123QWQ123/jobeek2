@@ -5,6 +5,8 @@ import WorkSection from "../components/Home/WorkSection";
 definePageMeta({
   layout: "cabinet",
 });
+
+
 </script>
 <template>
   <main class="main cabinet subs-page" role="main">
