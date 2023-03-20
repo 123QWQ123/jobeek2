@@ -3,7 +3,7 @@
     <header className="header" v-if="hasHeaderSlot">
       <slot name="header"></slot>
     </header>
-    <ThePersonalCabinetHeader v-else></ThePersonalCabinetHeader>
+    <HeaderThePersonalCabinetHeader v-else></HeaderThePersonalCabinetHeader>
 
 
     <main class="main cabinet advice-page bg-wrapper" role="main">

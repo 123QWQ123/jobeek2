@@ -9,6 +9,8 @@ export const useAuthStore = defineStore('auth', {
   state: () => {
     return {
       user: null,
+      employer: null,
+      seeker: null,
       isAuthed: false,
       isEmployerMode: false,
     }
@@ -53,8 +55,6 @@ export const useAuthStore = defineStore('auth', {
       const CONFIG = useRuntimeConfig();
       let url = CONFIG.public.apiBase + 'auth/register';
       try {
-        await this.verify();
-
         const response = await axios.post(
             url,
             payload,
@@ -64,6 +64,103 @@ export const useAuthStore = defineStore('auth', {
               }
             },
         );
+        if ('data' in response){
+          console.log(response)
+          return {
+            status: 'success',
+            data: response.data.data
+          };
+        }else{
+          return {
+            status: 'error',
+            data: response.message
+          };
+        }
+      }catch (error){
+        console.log(error);
+        if (error.response && 'data' in error.response){
+          return {
+            status: 'error',
+            data: error.response.data
+          };
+        }
+        return {
+          status: 'error',
+          message: error.message,
+        };
+      }
+      // const resData = await response;
+      // const expiresIn = resData.expiresIn * 1000;
+      // const expirationDate = new Date().getTime() + expiresIn;
+      //
+      // localStorage.setItem('token', resData.idToken);
+      // localStorage.setItem('userId', resData.localId);
+      // localStorage.setItem('tokenExpirationDate', expirationDate);
+      //
+      // timer = setTimeout(() => {
+      //   this.autoLogout();
+      // }, expiresIn);
+
+      // if (response.ok) {
+      //   this.setUser({
+      //     token: resData.idToken,
+      //     userId: resData.localId,
+      //   });
+      //   this.isAuthed = true;
+      // }
+    },
+    async confirmPhoneCode(payload) {
+      const CONFIG = useRuntimeConfig();
+      let url = CONFIG.public.apiBase + 'auth/register/confirm';
+      try {
+        const response = await axios.post(
+            url,
+            payload,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              }
+            },
+        );
+        console.log(response)
+        if ('token' in response.data?.data){
+          console.log(response.data?.data);
+          localStorage.setItem('token', response.data?.data.token);
+        }
+        return {
+          status: 'success',
+          data: response.data.data
+        };
+      }catch (error){
+        console.log(error);
+        if ('data' in error.response){
+          return {
+            status: 'error',
+            data: error.response.data
+          };
+        }
+        return {
+          status: 'error',
+          message: error.message,
+        };
+      }
+    },
+    async sendRecoveryCode(payload) {
+
+      const CONFIG = useRuntimeConfig();
+      let url = CONFIG.public.apiBase + 'auth/forgot-password';
+      try {
+        const response = await axios.post(
+            url,
+            payload,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              }
+            },
+        );
+        console.log(response);
+
         if ('data' in response){
           return {
             status: 'success',
@@ -108,10 +205,9 @@ export const useAuthStore = defineStore('auth', {
       //   this.isAuthed = true;
       // }
     },
-    async confirmConfirmationCode(payload) {
+    async recoverPasswordCode(payload) {
       const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + 'auth/register/confirm';
-      await this.verify();
+      let url = CONFIG.public.apiBase + 'auth/check-reset-password-code';
       try {
 
         const response = await axios.post(
@@ -142,11 +238,45 @@ export const useAuthStore = defineStore('auth', {
         };
       }
     },
-    async tryLogin() {
-
+    async resetPassword(payload) {
       const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + 'auth/profile';
-      const token = localStorage.getItem('token');
+      let url = CONFIG.public.apiBase + 'auth/reset-password';
+      try {
+
+        const response = await axios.post(
+            url,
+            payload,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              }
+            },
+        );
+        console.log(response)
+        return {
+          status: 'success',
+          data: response.data.data
+        };
+      }catch (error){
+        console.log(error);
+        if ('data' in error.response){
+          return {
+            status: 'error',
+            data: error.response.data
+          };
+        }
+        return {
+          status: 'error',
+          message: error.message,
+        };
+      }
+    },
+    async tryLogin(token = "") {
+      const CONFIG = useRuntimeConfig();
+      let url = CONFIG.public.apiBase + 'seeker/profile';
+      let url2 = CONFIG.public.apiBase + 'employer/profile';
+      if (!token)
+        token = localStorage.getItem('token');
       // const userId = localStorage.getItem('userId');
       // const tokenExpirationDate = localStorage.getItem('tokenExpirationDate');
       // const expiresIn = tokenExpirationDate - new Date().getTime();
@@ -162,10 +292,27 @@ export const useAuthStore = defineStore('auth', {
                 }
               },
           );
-          this.setUser(response.data.data.user);
+          this.user = response.data.data;
+          this.seeker = this.user;
           this.isAuthed = true;
+
+          const response2 = await axios.get(
+              url2,
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`
+                }
+              },
+          );
+          this.user = {...response2.data.data};
+          this.employer = this.user;
+
+
         }catch (error){
-          this.logout();
+          // console.log(error);
+          console.log('UnAuthorized');
+          // this.logout();
         }
 
         return;
@@ -180,7 +327,6 @@ export const useAuthStore = defineStore('auth', {
       // timer = setTimeout(function () {
       //   this.autoLogout();
       // }, expiresIn);
-
     },
 
     clearAuth() {
@@ -206,9 +352,11 @@ export const useAuthStore = defineStore('auth', {
         const resData = response.data.data;
         if (response.status === 200) {
           localStorage.setItem('token', resData.token);
-          this.setUser({
-            user: resData.user,
-          });
+          console.log(resData.user);
+          this.user = resData.user;
+          // this.setUser({
+          //   user: resData.user,
+          // });
           this.isAuthed = true;
           return {
             status: 'success',

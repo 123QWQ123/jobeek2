@@ -1,21 +1,22 @@
 <template>
   <form class="search-form" @submit.prevent="onSearchSubmit" role="form" autocomplete="off">
+    <PageLoader v-if="isLoading"/>
     <div class="wrapper">
       <div class="search-row">
         <div class="input-wrap has-icon has-label"><img class="icon" src="~/assets/img/svg/search.svg" alt="#">
           <label for="name">Названии вакансии </label>
-          <input v-model="form.keyword" type="text" name="name" id="name" placeholder="Какую вакансию вы ищете?"
+          <input v-model="form.name" type="text" name="name" id="name" placeholder="Какую вакансию вы ищете?"
                  autocomplete="off">
         </div>
         <div class="input-wrap has-label">
-          <label for="salary">Желаемая зарплата </label>
-          <SalarySelectInForm v-model="form.salary"></SalarySelectInForm>
+          <label for="salary">Желаемая зарплата</label>
+          <HeaderSalarySelectInForm v-model="form.salary"></HeaderSalarySelectInForm>
         </div>
         <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">
           <input v-model="form.city" type="text" name="city" placeholder="Город" autocomplete="off">
         </div>
         <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">
-          <input v-model="form.country" type="text" name="country" placeholder="Страна" autocomplete="off">
+          <input v-model="form.region" type="text" name="region" placeholder="Регион" autocomplete="off">
         </div>
         <button class="button-accent submit-search-form" type="submit">Поиск </button>
       </div>
@@ -24,26 +25,40 @@
 </template>
 
 <script setup>
+import {useVacancyStore} from "../../store/vacancy";
+import {useVacancyForm} from "../../composables/useVacancyForm";
+const vacancyStore = useVacancyStore();
+const route = useRoute();
+const router = useRouter();
+
+const form = ref(useVacancyForm(route.query, true))
+
 const onChange = (data) => {
   console.log(data);
 }
-const form = ref({
-  keyword: "",
-  city: "",
-  country: "",
-  salary: "0",
-})
+const {getVacancies} = vacancyStore;
+const vacancies = computed(() => vacancyStore.vacancies);
 
-const router = useRouter();
-const route = useRoute();
+const {salary, city, country, search} = route.query;
 
-onMounted(() => {
-  form.value = {...route.query};
-})
+const isLoading = ref(false);
+onMounted(async() => {
+  isLoading.value = true;
+  if (vacancies.value.length === 0){
+    const formParams = useVacancyForm(form.value, false);
+    await getVacancies(formParams);
+  }
+  isLoading.value = false;
+});
 
-const onSearchSubmit = (e) => {
-  console.log(form.value);
-  router.push({name: 'search-vacancies', query: form.value});
+
+const {clearVacancies} = vacancyStore;
+const onSearchSubmit = async(e) => {
+  isLoading.value = true;
+  clearVacancies();
+  const params = useVacancyForm(form.value, false);
+  router.replace({name: 'search-vacancies', query: params});
+  isLoading.value = false;
 }
 </script>
 

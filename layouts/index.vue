@@ -3,7 +3,7 @@
     <header class="header" v-if="hasHeaderSlot">
       <slot name="header"></slot>
     </header>
-    <the-header v-else></the-header>
+    <HeaderTheHeader v-else></HeaderTheHeader>
     <main class="main" role="main">
       <NuxtPage />
       <!-- <template #error="{ error }">

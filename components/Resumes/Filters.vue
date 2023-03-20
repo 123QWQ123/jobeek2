@@ -24,11 +24,11 @@
           <div class="check-block-list">
             <div class="check-block" v-for="item in regions">
               <div class="checkbox">
-                <input type="radio" id="region" name="region" checked>
+                <input type="radio" :checked="item?.is_checked">
                 <div class="radio-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
               </div>
-              <div class="l-wrap">
-                <label for="zp">{{item.name}}</label>
+              <div class="l-wrap" @click="handleRegionClick(item.id)">
+                <label>{{item.name}}</label>
                 <!--                <span class="count">1 200</span>-->
               </div>
             </div>
@@ -44,32 +44,16 @@
         </div>
         <div class="filter-box-body">
           <div class="check-block-list">
-            <div class="check-block">
+            <div class="check-block" v-for="item in salaryRanges">
               <div class="checkbox">
-                <input type="radio" id="zp" name="salary" checked>
+                <input type="radio" :checked="item?.is_checked"/>
                 <div class="radio-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
               </div>
-              <div class="l-wrap">
-                <label for="zp">С указанной зп</label><span class="count">1
-                                                        200</span>
-              </div>
-            </div>
-            <div class="check-block">
-              <div class="checkbox">
-                <input type="radio" id="21k" name="salary">
-                <div class="radio-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
-              </div>
-              <div class="l-wrap">
-                <label for="21k">От 20 000 ₽</label><span class="count">200</span>
-              </div>
-            </div>
-            <div class="check-block">
-              <div class="checkbox">
-                <input type="radio" id="20k" name="salary">
-                <div class="radio-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
-              </div>
-              <div class="l-wrap">
-                <label for="20k">От 20 000 ₽</label><span class="count">200</span>
+              <div class="l-wrap" @click="handleSalaryRangeClick(item.value)">
+                <label >
+                  {{item.name}}
+                </label>
+<!--                <span class="count">1 200</span>-->
               </div>
             </div>
           </div>
@@ -83,13 +67,13 @@
           <div class="check-block-list">
             <div v-for="item in specializations" :key="item.title" class="check-block">
               <div class="checkbox">
-                <input type="checkbox" id="s1" checked>
+                <input type="checkbox" :checked="item?.is_checked">
                 <div class="checkbox-mask">
                   <img src="~/assets/img/svg/check.svg" alt="#" />
                 </div>
               </div>
-              <div class="l-wrap">
-                <label for="s1">{{ item.title }}</label>
+              <div class="l-wrap" @click="handleSpeciliazationClick(item.id)">
+                <label >{{ item.title }}</label>
               </div>
             </div>
           </div>
@@ -168,8 +152,20 @@ const vacancyStore = useVacancyStore();
 
 const {getSpecializations, getRegions} = vacancyStore;
 
-const regions = computed(() => vacancyStore.regions)
-const specializations = computed(() => vacancyStore.specializations)
+const regionsItems = computed(() => vacancyStore.regions);
+
+const regions = ref(regionsItems);
+const salaryRanges = ref([
+  { name: 'С указанной зп', value: 'with_specified_salary' },
+  { name: 'От 20 000 ₽', value: 'from_20000' },
+  { name: 'От 50 000 ₽', value: 'from_50000' },
+  { name: 'От 100 000 ₽', value: 'from_100000' },
+]);
+
+const specializationsItems = computed(() => vacancyStore.industries)
+const specializations = ref(specializationsItems)
+
+
 
 const regionFilterClass = ref(true);
 const salaryFilterClass = ref(true);
@@ -182,6 +178,22 @@ onMounted(() => {
   getSpecializations();
 });
 
+const handleRegionClick = (region) => {
+  const selectedItem = regions.value.find(item => item.id === region);
+  if (selectedItem)
+    selectedItem.is_checked = !selectedItem.is_checked;
+
+}
+const handleSpeciliazationClick = (specialization) => {
+  const selectedItem = specializations.value.find(item => item.id === specialization);
+  if (selectedItem)
+    selectedItem.is_checked = !selectedItem.is_checked;
+}
+const handleSalaryRangeClick = (salaryRange) => {
+  const selectedItem = salaryRanges.value.find(item => item.value === salaryRange);
+  if (selectedItem)
+    selectedItem.is_checked = !selectedItem.is_checked;
+}
 
 </script>
 

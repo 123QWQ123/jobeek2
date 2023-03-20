@@ -170,7 +170,7 @@
               </div>
             </div>
           </div>
-          <button class="resume-action button-md write-message">
+          <button @click="onMessage" class="resume-action button-md write-message">
             Написать сообщение
           </button>
           <button class="resume-action button-md">
@@ -182,9 +182,15 @@
   </li>
 </template>
 
-<script>
-export default {
-  name: "Item.vue"
+<script setup>
+const onMessage = (e) => {
+  console.log(e);
+}
+const onEdit = (e) => {
+  console.log(e)
+}
+const onDelete = (e) => {
+  console.log(e)
 }
 </script>
 

@@ -4,12 +4,12 @@
       <div class="wrapper">
         <div class="search-head">
           <div class="col">
-            <div class="search-item">Повар</div>
-            <div class="found-count">Найдено 1 234 вакансий</div>
+            <div class="search-item">{{ search_keyword }}</div>
+            <div class="found-count">Найдено {{vueNumberFormat(total, {})}} вакансий</div>
           </div>
           <div class="col">
             <form class="sort" action="#"> <span>Сортировать:</span>
-              <CustomSelect v-model="sorting" :options="sortingOptions" class="bg-white"></CustomSelect>
+              <CustomSelect v-model="sorting" :options="sortingOptions" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
             </form>
           </div>
         </div>
@@ -74,15 +74,29 @@
 
 <script setup>
 import CustomSelect from "../UI/CustomSelect";
+import {useVacancyStore} from "../../store/vacancy";
+import {storeToRefs} from "pinia";
 
+const vacancyStore = useVacancyStore();
+const {total} = storeToRefs(vacancyStore);
+const route = useRoute();
+const {name: search_keyword} = route.query;
 const sorting = ref(1);
 const sortingOptions = ref([
-  {name: 'по ЗП', value: 1},
-  {name: 'по тип', value: 2},
+  {name: 'По соответствию', value: 1},
+  {name: 'По дате', value: 2},
+  {name: 'По убыванию зарплат', value: 3},
+  {name: 'По возрастанию зарплаты', value: 4},
 ]);
 
 const onChange = (data) => {
   console.log(data);
+}
+
+const listStyles = {
+  'left': 'unset',
+  'right': 0,
+  'width': 'auto !important'
 }
 </script>
 
@@ -92,5 +106,7 @@ const onChange = (data) => {
   align-items: baseline;
   justify-content: end;
 }
+
+
 
 </style>

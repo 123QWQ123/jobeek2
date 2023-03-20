@@ -11,7 +11,7 @@
           </div>
           <div class="input-wrap has-label">
             <label for="salary">Желаемая зарплата </label>
-            <SalarySelectInForm @change="onChange"></SalarySelectInForm>
+<!--            <HeaderSalarySelectInForm @change="onChange"></HeaderSalarySelectInForm>-->
           </div>
           <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">
             <input type="text" name="city" placeholder="Город" autocomplete="off">
