@@ -7,10 +7,15 @@
             <div class="search-item">{{ search_keyword }}</div>
             <div class="found-count">Найдено {{vueNumberFormat(total, {})}} вакансий</div>
           </div>
-          <div class="col">
-            <form class="sort" action="#"> <span>Сортировать:</span>
-              <CustomSelect v-model="sorting" :options="sortingOptions" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
-            </form>
+          <div class="col d-flex justify-content-end">
+            <div class="d-inline-flex">
+              <form class="sort mx-1 mr-2" action="#"> <span>Валюта:</span>
+                <CustomSelect v-model="currency" :options="currencyOptions" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
+              </form>
+              <form class="sort mx-1" action="#"> <span>Сортировать:</span>
+                <CustomSelect v-model="sorting" :options="sortingOptions" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
+              </form>
+            </div>
           </div>
         </div>
         <button class="mob-get-aside-btn">
@@ -81,6 +86,12 @@ const vacancyStore = useVacancyStore();
 const {total} = storeToRefs(vacancyStore);
 const route = useRoute();
 const {name: search_keyword} = route.query;
+const currency = ref(1);
+const currencyOptions = ref([
+  {name: '₽ - RUB', value: 1},
+  {name: '$ - USD', value: 2},
+  {name: '€ - EUR', value: 3},
+]);
 const sorting = ref(1);
 const sortingOptions = ref([
   {name: 'По соответствию', value: 1},

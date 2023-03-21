@@ -19,6 +19,7 @@ export const useVacancyStore = defineStore('vacancy', {
       countries: [],
       regions: [],
       cities: [],
+      work_types: [],
     }
   },
   actions: {
@@ -239,6 +240,51 @@ export const useVacancyStore = defineStore('vacancy', {
           return {
             status: 'success',
             data: response.data.data
+          };
+        }else{
+          return {
+            status: 'success',
+            data: response.data
+          };
+        }
+      }catch (error){
+        console.log(error);
+        if ('data' in error.response){
+          return {
+            status: 'error',
+            data: error.response.data
+          };
+        }
+        return {
+          status: 'error',
+          message: error.message,
+        };
+      }
+    },
+    async getWorkTypes(payload) {
+      const CONFIG = useRuntimeConfig();
+      let url = CONFIG.public.apiBase + 'dictionaries?group=work_type';
+
+      let token;
+      if (typeof window !== 'undefined') {
+        token = localStorage.getItem('token')
+      }
+      try {
+        const response = await axios.get(
+            url,
+            payload,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              }
+            },
+        );
+        if ('data' in response.data){
+          this.work_types = response.data.data.work_type;
+          return {
+            status: 'success',
+            data: response.data.data.work_type
           };
         }else{
           return {
