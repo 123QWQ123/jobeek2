@@ -173,6 +173,10 @@ const prepareRegions = (items, custom_items) => {
 watch(() => vacancyStore.regions, prepareRegions);
 onMounted(async () => {
   await getRegions();
+
+  if (selectedRegions.value.length > 0){
+    isMore.value = true;
+  }
 });
 
 
