@@ -26,12 +26,12 @@
     </div>
     <div v-else class="filter-box-body">
       <div class="check-block-list" >
-        <div class="check-block" v-for="item in regions">
-          <div class="checkbox">
-            <input type="checkbox" >
+        <div class="check-block" v-for="item in groupedRegions">
+          <div class="checkbox" v-if="!item.is_header">
+            <input type="checkbox" :checked="item.is_checked" @change="toggleRegion(item.id)" >
             <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
           </div>
-          <div class="l-wrap">
+          <div class="l-wrap" v-if="!item.is_header">
             <label>{{item.name}}</label>
           </div>
         </div>
@@ -40,7 +40,6 @@
         Еще {{ totalRegions }}
       </button>
     </div>
-    {{selectedRegions}}
   </div>
 </template>
 
@@ -59,11 +58,10 @@ const regions = ref([]);
 const totalRegions = computed(() => regions.value.length - 5);
 const regionFilterClass = ref(true);
 const isMore = ref(false);
-const toggleMore = () => isMore.value = !isMore.value;
 const groupedRegions = ref([]);
 
+const toggleMore = () => isMore.value = !isMore.value;
 const onSearch = (e) => {
-  console.log(e.target.value);
   const search = e.target.value;
   let regionItems = [];
   if (search != ''){

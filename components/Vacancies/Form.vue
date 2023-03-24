@@ -12,7 +12,8 @@
           <label for="salary">Желаемая зарплата</label>
           <HeaderSalarySelectInForm v-model="form.salary"></HeaderSalarySelectInForm>
         </div>
-        <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">
+        <div class="input-wrap has-icon">
+          <img class="icon" src="~/assets/img/svg/location.svg" alt="#">
           <input v-model="form.city" type="text" name="city" placeholder="Город" autocomplete="off">
         </div>
         <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">
