@@ -31,7 +31,7 @@ const vacancyStore = useVacancyStore();
 const route = useRoute();
 const router = useRouter();
 
-const form = ref(useVacancyForm(route.query, true))
+const form = ref(useVacancyForm());
 
 const onChange = (data) => {
   console.log(data);
@@ -45,8 +45,9 @@ const isLoading = ref(false);
 onMounted(async() => {
   isLoading.value = true;
   if (vacancies.value.length === 0){
-    const formParams = useVacancyForm(form.value, false);
-    await getVacancies(formParams);
+    const formParams = useVacancyForm(form.value, 'backend');
+    console.log(formParams);
+    await getVacancies({...formParams});
   }
   isLoading.value = false;
 });
@@ -56,7 +57,9 @@ const {clearVacancies} = vacancyStore;
 const onSearchSubmit = async(e) => {
   isLoading.value = true;
   clearVacancies();
-  const params = useVacancyForm(form.value, false);
+  console.log(form.value);
+  const params = useVacancyForm(form.value, 'front');
+  console.log(params);
   router.replace({name: 'search-vacancies', query: params});
   isLoading.value = false;
 }

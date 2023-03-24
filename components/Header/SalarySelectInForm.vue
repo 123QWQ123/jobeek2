@@ -20,7 +20,11 @@ const onChange = (id) => {
     return;
   }
   const selectedOption = salaryOptionsData[selectedOptionID];
-  emit('update:modelValue', selectedOption);
+  emit('update:modelValue', {
+    id: selectedOptionID,
+    from: selectedOption.min,
+    to: selectedOption.max,
+  });
 }
 
 </script>

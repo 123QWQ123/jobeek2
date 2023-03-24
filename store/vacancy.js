@@ -71,6 +71,7 @@ export const useVacancyStore = defineStore('vacancy', {
       }
     },
     async getVacancies(payload, add = false) {
+      console.log(payload);
       const CONFIG = useRuntimeConfig();
       let url = CONFIG.public.apiBase + 'vacancies/search';
 
@@ -91,20 +92,21 @@ export const useVacancyStore = defineStore('vacancy', {
         );
         if ('data' in response && 'items' in response.data){
           if (add){
-            this.vacancies = this.vacancies.concat(this.vacancies);
+            this.vacancies = this.vacancies.concat(response.data.items);
+            this.current_page++;
           }else{
             this.vacancies = response.data.items;
+            this.current_page = 1;
           }
-          this.total = response.data.total;
-          this.current_page = response.data.current_page;
+          this.total = response.data.found;
           return {
             status: 'success',
-            data: response.data
+            data: response.data.items
           };
         }else{
           return {
             status: 'success',
-            data: response.data
+            data: response.data.items
           };
         }
       }catch (error){

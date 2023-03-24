@@ -1,31 +1,3 @@
-<script setup>
-
-  import SalarySelectInForm from "../Header/SalarySelectInForm";
-
-  const form = ref({
-    keyword: "",
-    city: "",
-    country: "",
-    salary: "0",
-  })
-  const onChange = (e) => {
-    console.log(e)
-  }
-  const onSelect = (e) => {
-    console.log(e)
-  }
-
-  const router = useRouter();
-  const route = useRoute();
-
-  onMounted(() => {
-    form.value = {...route.query};
-  })
-
-  const onSearchSubmit = (e) => {
-    router.push({name: 'search-vacancies', query: form.value});
-  }
-</script>
 <template>
   <div class="main-section">
     <div class="wrapper wrapper--xl">
@@ -61,3 +33,27 @@
     </div>
   </div>
 </template>
+<script setup>
+
+  import SalarySelectInForm from "../Header/SalarySelectInForm";
+  import {useVacancyForm} from "../../composables/useVacancyForm";
+
+  const form = ref(useVacancyForm());
+  const onChange = (e) => {
+    console.log(e)
+  }
+  const onSelect = (e) => {
+    console.log(e)
+  }
+
+  const router = useRouter();
+  const route = useRoute();
+
+  // onMounted(() => {
+  //   form.value = {...route.query};
+  // })
+
+  const onSearchSubmit = (e) => {
+    router.push({name: 'search-vacancies', query: form.value});
+  }
+</script>

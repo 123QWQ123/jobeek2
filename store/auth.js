@@ -307,15 +307,13 @@ export const useAuthStore = defineStore('auth', {
           );
           this.user = {...response2.data.data};
           this.employer = this.user;
-
-
+          return;
         }catch (error){
-          // console.log(error);
+          console.log(error);
           console.log('UnAuthorized');
           // this.logout();
         }
 
-        return;
       }
       this.setUser(null);
       this.isAuthed = false;
@@ -342,21 +340,13 @@ export const useAuthStore = defineStore('auth', {
         await this.verify();
         const response = await axios.post(
             url,
-            payload,
-            {
-              headers: {
-                'Content-Type': 'application/json',
-              }
-            },
+            payload
         );
         const resData = response.data.data;
         if (response.status === 200) {
           localStorage.setItem('token', resData.token);
           console.log(resData.user);
           this.user = resData.user;
-          // this.setUser({
-          //   user: resData.user,
-          // });
           this.isAuthed = true;
           return {
             status: 'success',

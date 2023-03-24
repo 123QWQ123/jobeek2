@@ -28,35 +28,8 @@ export default defineNuxtConfig({
         disableVuex: true
       },
     ],
-    // [
-    //   '@nuxtjs/firebase',
-    //   {
-    //     config: {
-    //       apiKey: '<apiKey>',
-    //       authDomain: '<authDomain>',
-    //       projectId: '<projectId>',
-    //       storageBucket: '<storageBucket>',
-    //       messagingSenderId: '<messagingSenderId>',
-    //       appId: '<appId>',
-    //       measurementId: '<measurementId>'
-    //     },
-    //     services: {
-    //       auth: true // Just as example. Can be any other service.
-    //     }
-    //   }
-    // ]
+
   ],
-  // auth: {
-  //   strategies: {
-  //     local: {
-  //       endpoints: {
-  //         login: { url: 'login', method: 'post', propertyName: 'data.token' },
-  //         user: { url: 'me', method: 'get', propertyName: 'data' },
-  //         logout: false
-  //       }
-  //     }
-  //   }
-  // },
   app: {
     pageTransition: { name: 'layout', mode: 'out-in' }
   },

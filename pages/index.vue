@@ -13,4 +13,8 @@
 definePageMeta({
   layout: 'main'
 })
+
+useHead({
+  title: "Jobeek - все для вашего удобства",
+})
 </script>
