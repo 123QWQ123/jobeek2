@@ -59,7 +59,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
         city: data?.city ?? params?.city ?? null,
         currency: data?.currency ?? params.currency ?? 'RUR',
         salary: selectedSalary,
-        order_by: data?.order_by ?? params.order_by ?? 'relevance',
+        order_by: data?.order_by ?? params.order_by ?? null,
     };
 
     if (data === null){
@@ -72,7 +72,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
         regions: data.regions ?? null,
         city: data.city ?? null,
         currency: 'RUR',
-        order_by: 'relevance',
+        order_by: null,
         salary: {
             from: null,
             to: null,

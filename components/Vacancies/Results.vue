@@ -120,8 +120,6 @@ const onChangeCurrency = (currency) => {
   console.log(currency);
   form.value.currency = currency;
   isLoading.value = true;
-  clearVacancies();
-  console.log(form.value);
   const params = useVacancyForm(form.value, 'front');
   console.log(params);
   router.replace({name: 'search-vacancies', query: params});

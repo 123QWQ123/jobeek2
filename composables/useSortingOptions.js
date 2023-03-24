@@ -1,6 +1,6 @@
 export function useSortingOptions() {
     return [
-        {value: 'relevance', name: 'По соответствию'},
+        {value: null, name: 'По соответствию'},
         {value: 'date_asc', name: 'От старых к новым'},
         {value: 'date_desc', name: 'От новых к старым'},
         {value: 'salary_asc', name: 'По убыванию зарплат'},
