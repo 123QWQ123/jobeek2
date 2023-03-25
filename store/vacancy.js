@@ -4,6 +4,7 @@ import {useRuntimeConfig} from "nuxt/app";
 import { defineStore, acceptHMRUpdate } from "pinia";
 import axios from "axios";
 import {useAuthStore} from "~/store/auth";
+import useApi from "~/hooks/useApi";
 
 export const useVacancyStore = defineStore('vacancy', {
   state: () => {
@@ -25,24 +26,20 @@ export const useVacancyStore = defineStore('vacancy', {
   actions: {
     async getAreas(payload) {
       console.log(payload);
-      const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + 'area';
+
 
       let token;
       if (typeof window !== 'undefined') {
         token = localStorage.getItem('token')
       }
       try {
-        const response = await axios.get(
-            url,
-            {params: payload},
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-              }
-            },
-        );
+        const response = useApi('area', {
+          'method': 'get',
+          header: {params: payload}
+        });
+
+        console.log(response)
+
         if ('data' in response){
           console.log(response.data);
           this.areas = response.data;
