@@ -79,30 +79,30 @@ async function onSubmit() {
   validateForm();
   console.log(state.isFormValid);
   if (state.isFormValid) {
-    let response;
-    try {
-      response = await sendMessage({
-          email: state.email.val,
-          phone: phoneMask.value.unmaskedValue,
-          message: state.message.val,
-      });
-      resetForm();
+    const response = await sendMessage({
+      email: state.email.val,
+      phone: phoneMask.value.unmaskedValue,
+      message: state.message.val,
+    });
+    console.log(response);
+    if (response.status === 'success'){
       Swal.fire({
         title: 'Успешно!',
         text: response.message,
         icon: "success",
         confirmButtonText: 'ОК'
       });
-    }catch (error) {
-      state.error = error.message;
+      resetForm();
+    }else{
       Swal.fire({
         title: 'Ошибка!',
-        text: error.message,
+        text: response.message,
         icon: "error",
         confirmButtonText: 'ОК'
       });
       return;
     }
+
     if (response.status === 'error' && response.message) {
       Swal.fire({
         title: 'Ошибка!',

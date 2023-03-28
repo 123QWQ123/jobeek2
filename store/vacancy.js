@@ -25,330 +25,85 @@ export const useVacancyStore = defineStore('vacancy', {
   },
   actions: {
     async getAreas(payload) {
-      console.log(payload);
-
-
-      let token;
-      if (typeof window !== 'undefined') {
-        token = localStorage.getItem('token')
+      const {data} = useApi('area', {
+        method: 'get',
+        payload
+      });
+      if (data){
+        this.areas = data;
       }
-      try {
-        const response = useApi('area', {
-          'method': 'get',
-          header: {params: payload}
-        });
-
-        console.log(response)
-
-        if ('data' in response){
-          console.log(response.data);
-          this.areas = response.data;
-          return {
-            status: 'success',
-            data: response.data
-          };
-        }else{
-          return {
-            status: 'success',
-            data: response.data
-          };
-        }
-      }catch (error){
-        console.log(error);
-        if ('data' in error.response){
-          return {
-            status: 'error',
-            data: error.response.data
-          };
-        }
-        return {
-          status: 'error',
-          message: error.message,
-        };
-      }
+      return data;
     },
     async getVacancies(payload, add = false) {
       console.log(payload);
-      const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + 'vacancies/search';
-
-      let token;
-      if (typeof window !== 'undefined') {
-        token = localStorage.getItem('token')
-      }
-      try {
-        const response = await axios.get(
-            url,
-            {params: payload},
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-              }
-            },
-        );
-        if ('data' in response && 'items' in response.data){
-          if (add){
-            this.vacancies = this.vacancies.concat(response.data.items);
-            this.current_page++;
-          }else{
-            this.vacancies = response.data.items;
-            this.current_page = 1;
-          }
-          this.total = response.data.found;
-          return {
-            status: 'success',
-            data: response.data.items
-          };
+      const {data} = await useApi('vacancies/search', {
+        method: 'get',
+        payload
+      });
+      if (data && 'items' in data){
+        if (add){
+          this.vacancies = this.vacancies.concat(data.items);
+          this.current_page++;
         }else{
-          return {
-            status: 'success',
-            data: response.data.items
-          };
+          this.vacancies = data.items;
+          this.current_page = 1;
         }
-      }catch (error){
-        console.log(error);
-        if ('data' in error.response){
-          return {
-            status: 'error',
-            data: error.response.data
-          };
-        }
-        return {
-          status: 'error',
-          message: error.message,
-        };
+        this.total = data.found;
       }
+      return data;
     },
     async clearVacancies() {
       this.vacancies = [];
     },
     async getMyVacancies(payload) {
-      const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + 'employer/vacancies';
-
-      let token;
-      if (typeof window !== 'undefined') {
-        token = localStorage.getItem('token')
+      const {data} = await useApi('vacancies/search', {
+        method: 'get',
+        payload
+      });
+      if ('data' in data){
+        this.my_vacancies = data.data;
       }
-      try {
-        const response = await axios.get(
-            url,
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-              }
-            },
-        );
-        if ('data' in response){
-          console.log(response.data);
-          this.my_vacancies = response.data.data;
-          return {
-            status: 'success',
-            data: response.data
-          };
-        }else{
-          return {
-            status: 'success',
-            data: response.data
-          };
-        }
-      }catch (error){
-        console.log(error);
-        if ('data' in error.response){
-          return {
-            status: 'error',
-            data: error.response.data
-          };
-        }
-        return {
-          status: 'error',
-          message: error.message,
-        };
-      }
+      return data;
     },
-    async getRegions(payload) {
-      const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + 'area/regions';
-
-      let token;
-      if (typeof window !== 'undefined') {
-        // Perform localStorage action
-        token = localStorage.getItem('token')
+    async getRegions(payload = {}) {
+      const {data} = await useApi('area/regions', {
+        method: 'get',
+        payload
+      });
+      if (data){
+        this.regions = data.data.regions;
       }
-      try {
-
-        const response = await axios.get(
-            url,
-            payload,
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-              }
-            },
-        );
-        if ('data' in response.data){
-          this.regions = response.data.data.regions;
-          return {
-            status: 'success',
-            data: response.data.data
-          };
-        }else{
-          return {
-            status: 'success',
-            data: response.data
-          };
-        }
-      }catch (error){
-        console.log(error);
-        if ('data' in error.response){
-          return {
-            status: 'error',
-            data: error.response.data
-          };
-        }
-        return {
-          status: 'error',
-          message: error.message,
-        };
-      }
+      return data;
     },
     async getSpecializations(payload) {
-      const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + 'specializations';
-
-      let token;
-      if (typeof window !== 'undefined') {
-        token = localStorage.getItem('token')
+      const {data} = await useApi('specializations', {
+        method: 'get',
+        payload
+      });
+      if (data){
+        this.specializations = data.data;
       }
-      try {
-        const response = await axios.get(
-            url,
-            payload,
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-              }
-            },
-        );
-        if ('data' in response.data){
-          this.specializations = response.data.data;
-          return {
-            status: 'success',
-            data: response.data.data
-          };
-        }else{
-          return {
-            status: 'success',
-            data: response.data
-          };
-        }
-      }catch (error){
-        console.log(error);
-        if ('data' in error.response){
-          return {
-            status: 'error',
-            data: error.response.data
-          };
-        }
-        return {
-          status: 'error',
-          message: error.message,
-        };
-      }
+      return data;
     },
     async getWorkTypes(payload) {
-      const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + 'dictionaries?group=work_type';
-
-      let token;
-      if (typeof window !== 'undefined') {
-        token = localStorage.getItem('token')
+      const {data} = await useApi('dictionaries?group=work_type', {
+        method: 'get',
+        payload
+      });
+      if (data){
+        this.work_types = data.data.work_type;
       }
-      try {
-        const response = await axios.get(
-            url,
-            payload,
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-              }
-            },
-        );
-        if ('data' in response.data){
-          this.work_types = response.data.data.work_type;
-          return {
-            status: 'success',
-            data: response.data.data.work_type
-          };
-        }else{
-          return {
-            status: 'success',
-            data: response.data
-          };
-        }
-      }catch (error){
-        console.log(error);
-        if ('data' in error.response){
-          return {
-            status: 'error',
-            data: error.response.data
-          };
-        }
-        return {
-          status: 'error',
-          message: error.message,
-        };
-      }
+      return data;
     },
     async getIndustries(payload) {
-      const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + 'industries';
-
-      let token;
-      if (typeof window !== 'undefined') {
-        token = localStorage.getItem('token')
+      const {data} = await useApi('industries', {
+        method: 'get',
+        payload
+      });
+      if (data){
+        this.industries = data.data;
       }
-      try {
-        const response = await axios.get(
-            url,
-            payload,
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-              }
-            },
-        );
-        if ('data' in response.data){
-          this.industries = response.data.data;
-          return {
-            status: 'success',
-            data: response.data.data
-          };
-        }else{
-          return {
-            status: 'success',
-            data: response.data
-          };
-        }
-      }catch (error){
-        console.log(error);
-        if ('data' in error.response){
-          return {
-            status: 'error',
-            data: error.response.data
-          };
-        }
-        return {
-          status: 'error',
-          message: error.message,
-        };
-      }
+      return data;
     },
 
   },
