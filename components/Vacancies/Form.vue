@@ -19,7 +19,7 @@
         </div>
         <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">
 
-          <SelectWithSearch :options="regionOptions" v-model="form.region"/>
+          <SelectWithSearch :options="regionOptions" v-model="form.region" :listStyles="regionListStyles" :listItemStyles="regionListItemStyles"/>
 <!--          <input v-model="form.region" type="text" name="region" placeholder="Регион" autocomplete="off">-->
         </div>
         <button class="button-accent submit-search-form" type="submit">Поиск </button>
@@ -31,6 +31,7 @@
 <script setup>
 import {useVacancyStore} from "../../store/vacancy";
 import {useVacancyForm} from "../../composables/useVacancyForm";
+import {storeToRefs} from "pinia";
 const vacancyStore = useVacancyStore();
 const route = useRoute();
 const router = useRouter();
@@ -45,17 +46,37 @@ const vacancies = computed(() => vacancyStore.vacancies);
 
 const {salary, city, country, search} = route.query;
 
+const regionListStyles = {
+  left: 'unset',
+  right: '0px',
+  width: 'auto !important',
+  maxWidth: '20rem',
+  minWidth: '8rem',
+}
+
+const regionListItemStyles = {
+  width: 'auto !important',
+  whiteSpace: 'pre-wrap',
+
+}
 
 const regionOptions = ref([]);
 
-const regions = await getRegions();
+const {regions} = storeToRefs(vacancyStore);
+
+onMounted(async() => {
+  await getRegions();
+  console.log(regions);
+  regionOptions.value = regions.value.map((item) => ({value: item.id, name: item.name}));
+})
+
 const isLoading = ref(false);
 onMounted(async() => {
   isLoading.value = true;
   if (vacancies.value.length === 0){
     const formParams = useVacancyForm(form.value, 'backend');
     console.log(formParams);
-    await getVacancies({...formParams});
+    // await getVacancies({...formParams});
   }
   isLoading.value = false;
 });

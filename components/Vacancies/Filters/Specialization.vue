@@ -15,7 +15,7 @@
             </div>
           </div>
           <div class="l-wrap">
-            <label for="s1">{{ item.title }}</label>
+            <label for="s1">{{ item.name }}</label>
           </div>
         </div>
 
