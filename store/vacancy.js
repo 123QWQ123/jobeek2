@@ -75,6 +75,17 @@ export const useVacancyStore = defineStore('vacancy', {
       }
       return data;
     },
+    async getCities(payload = {}) {
+      console.log(payload)
+      const {data} = await useApi('area/cities', {
+        method: 'get',
+        payload
+      });
+      if (data){
+        this.cities = data.data.cities;
+      }
+      return data;
+    },
     async getSpecializations(payload) {
       const {data} = await useApi('specializations', {
         method: 'get',

@@ -16,7 +16,8 @@
         <button class="clear-all">Очистить все</button>
       </div>
 
-      <VacanciesFiltersRegion/>
+      <VacanciesFiltersRegion v-if="isRegionMode"/>
+      <VacanciesFiltersCity v-else />
       <VacanciesFiltersSalary/>
       <VacanciesFiltersSpecialization/>
       <VacanciesFiltersWorkType/>
@@ -27,7 +28,19 @@
 <script setup>
 
 import {useVacancyStore} from "../../store/vacancy";
+import {useRoute} from "nuxt/app";
 const vacancyStore = useVacancyStore();
+
+const route = useRoute();
+
+const isRegionMode = computed(() => {
+  console.log(route.query.regions)
+  if (route.query.regions instanceof Array){
+    return true;
+  }
+  return false;
+})
+  // console.log(route.query.regions)
 
 </script>
 

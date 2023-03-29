@@ -19,7 +19,7 @@
         </div>
         <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">
 
-          <SelectWithSearch :options="regionOptions" v-model="form.region" :listStyles="regionListStyles" :listItemStyles="regionListItemStyles"/>
+          <SelectWithSearch :options="regionOptions" v-model="form.region" :listStyles="regionListStyles" @change="onRegionChange" :listItemStyles="regionListItemStyles"/>
 <!--          <input v-model="form.region" type="text" name="region" placeholder="Регион" autocomplete="off">-->
         </div>
         <button class="button-accent submit-search-form" type="submit">Поиск </button>
@@ -38,7 +38,7 @@ const router = useRouter();
 
 const form = ref(useVacancyForm());
 
-const onChange = (data) => {
+const onRegionChange = (data) => {
   console.log(data);
 }
 const {getVacancies, getRegions} = vacancyStore;
@@ -66,8 +66,11 @@ const {regions} = storeToRefs(vacancyStore);
 
 onMounted(async() => {
   await getRegions();
-  console.log(regions);
-  regionOptions.value = regions.value.map((item) => ({value: item.id, name: item.name}));
+  const items = regions.value.map((item) => ({value: item.id, name: item.name}));
+  items.unshift({
+    value: '*', name: 'Все'
+  });
+  regionOptions.value = items;
 })
 
 const isLoading = ref(false);

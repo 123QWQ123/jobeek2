@@ -34,9 +34,15 @@ const selectedOption = ref({});
 const selectedValue = computed(() => props.modelValue);
 const selectedItem = computed(() =>{
   if (options.value){
-    return options.value.find(
+    let selectedItem = options.value.find(
         item => String(props.modelValue) === String(item.value)
     )
+
+    if (selectedItem){
+      return selectedItem;
+    }
+
+    return options.value[0];
   }
 });
 
@@ -44,12 +50,21 @@ const selectedItem = computed(() =>{
 watch(
     selectedValue,
     (newValue) => {
-      const selectedItem = props.options.find(
-          (item) => String(newValue) === String(item.value)
-      );
-      if (selectedItem){
-        selectedOption.value = selectedItem;
+      let selectedOptionItem;
+      if (selectedValue){
+        const selectedItem = props.options.find(
+            (item) => String(newValue) === String(item.value)
+        );
+        if (selectedItem){
+          selectedOption.value = selectedItem;
+          selectedOptionItem = selectedItem;
+        }
+      }else{
+        selectedOption.value = props.options[0];
+        selectedOptionItem = props.options[0]
       }
+
+      emit('change', selectedOptionItem);
     });
 
 const label = computed(() => selectedOption?.value?.name);
@@ -60,6 +75,7 @@ function onClick(e){
   if (e.target.classList.contains('option')){
     const selectedOptionValue =  e.target.dataset.value;
     const selectedOptionItem = options.value.find(item => item.value === selectedOptionValue);
+    emit('change', selectedOptionItem)
     isOpen.value = false;
     emit("update:modelValue", e.target.dataset.value);
   }
