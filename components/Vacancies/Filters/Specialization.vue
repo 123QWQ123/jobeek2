@@ -7,7 +7,7 @@
       <div class="check-block-list">
 
 
-        <div v-for="item in specializations" :key="item.title" class="check-block">
+        <div v-for="item in firstItems" :key="item.name" class="check-block">
           <div class="checkbox">
             <input type="checkbox" id="s1" checked>
             <div class="checkbox-mask">
@@ -35,7 +35,7 @@
                 </div>
                 <div class="filter-tree-selector-popup">
                   <div class="filter-tree-selector-popup-content">
-                    <VacanciesFiltersSpecializationItem v-for="item in specializations" :item="item" :key="item.id"/>
+                    <VacanciesFiltersSpecializationItem v-for="item in groupedSpecs" :item="item" :key="item.id"/>
                   </div>
                 </div>
                 <div class="filter-modal-error filter-modal-error_hidden"></div>
@@ -71,13 +71,70 @@
 <script setup>
 
 import {useVacancyStore} from "../../../store/vacancy";
-import Vacancies from "../../../pages/search/vacancies";
+import {storeToRefs} from "pinia";
 
 const vacancyStore = useVacancyStore();
 
 const {getSpecializations} = vacancyStore;
+const {specializations} = storeToRefs(vacancyStore)
+// const specializations = computed(() => vacancyStore.specializations);
 
-const specializations = computed(() => vacancyStore.specializations)
+const groupedSpecs = ref([]);
+
+const firstItems = ref([]);
+watch(
+    () => vacancyStore.specializations,
+    (newValues) => {
+
+      if (!newValues || newValues.length  < 1){
+        return;
+      }
+      for (let i = 0; i < 5; i++){
+        let item = newValues[i];
+        firstItems.value.push({
+          id: item.id,
+          name: item.title,
+          is_checked: false
+        });
+      }
+
+      const groupItems = [];
+      for (let i = 0; i < newValues.length; i++){
+        const item = newValues[i];
+        if (item && !item.parent_id){
+
+          groupItems.push({
+            id: item.id,
+            name: item.title,
+            is_checked: false,
+            items: []
+          })
+        }
+      }
+
+
+      for (let i = 0; i < groupItems.length; i++){
+        const item = groupItems[i];
+        for (let j = 0; j < newValues.length; j++){
+          const sub_item = newValues[j];
+          if (sub_item && sub_item.parent_id){
+            if (sub_item.parent_id === item.id){
+              groupItems[i].items.push({
+                id: sub_item.id,
+                name: sub_item.title,
+                is_checked: false,
+              })
+            }
+          }
+        }
+      }
+
+      groupedSpecs.value = groupItems;
+
+      console.log(groupedSpecs.value.length)
+})
+
+
 
 const isModalOpen = ref(true);
 
@@ -182,11 +239,6 @@ onMounted(() => {
 .filter-form-spacer{
   margin: 0.2rem 0.5rem;
 }
-.filter-input-text-wrapper {
-  display: inline-block;
-  width: 100%;
-  position: relative;
-}
 .filter-input-text {
   line-height: 1.43;
   font-size: 14px;
@@ -202,7 +254,6 @@ onMounted(() => {
   -moz-appearance: none;
   -webkit-tap-highlight-color: transparent;
   background-color: #fff;
-  line-height: 38px;
   border: 1px solid #babdbf;
 }
 
@@ -222,43 +273,11 @@ onMounted(() => {
   padding-right: 15px;
   padding-top: 10px;
 }
-.filter-tree-selector-item, .filter-tree-selector-item_has-children-has-action, .filter-tree-selector-item_no-children {
-  border-width: 0;
-}
-.filter-tree-selector-item_has-children-has-action {
-  margin-left: 2px;
-}
-.filter-form-item {
-  margin: 10px 0;
-}
-.filter-tree-selector-content {
-  display: table;
-}
-.filter-tree-selector-item-spacer {
-  display: table-cell;
-  padding-right: 9px;
-  vertical-align: top;
-}
 .check-block{
 }
-.check-block .expanded{
-  transform: rotateZ(90deg);
-}
 @media (min-width: 1020px){
-  .filter-form-item {
-    margin-top: 0;
-  }
-}
-.filter-tree-selector__items {
-  padding-left: 25px;
-}
-.filter-tree-selector-item_has-children-has-action>.filter-tree-selector__items>.filter-tree-selector-item_no-children {
-  margin-left: 27px;
-}
-.filter-tree-selector-item, .filter-tree-selector-item_has-children-has-action, .filter-tree-selector-item_no-children {
-  border-width: 0;
-}
 
+}
 .filter-modal-error {
   height: auto;
   overflow: hidden;

@@ -3,19 +3,19 @@
     <div class="filter-form-item">
       <div class="filter-tree-selector-content">
         <div class="check-block" >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-right cursor-pointer expanded" viewBox="0 0 16 16">
+          <svg @click="toggle" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-right cursor-pointer " :class="{expanded: isOpen}" viewBox="0 0 16 16">
             <path d="M6 12.796V3.204L11.481 8 6 12.796zm.659.753 5.48-4.796a1 1 0 0 0 0-1.506L6.66 2.451C6.011 1.885 5 2.345 5 3.204v9.592a1 1 0 0 0 1.659.753z"/>
           </svg>
           <div class="checkbox ms-1">
             <input type="checkbox" id="IT">
             <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
           </div>
-          <label for="IT">Информационные технологии, интернет, телеком</label>
+          <label for="IT">{{ item.name }}</label>
         </div>
       </div>
     </div>
-    <div class="filter-tree-selector__items">
-      <div class="filter-tree-selector-item filter-tree-selector-item_no-children" >
+    <div class="filter-tree-selector__items" v-if="isOpen">
+      <div class="filter-tree-selector-item filter-tree-selector-item_no-children" v-for="sub_item in item.items" :key="sub_item.id">
         <div class="filter-form-item">
           <div class="filter-tree-selector-content">
             <div class="check-block">
@@ -23,20 +23,7 @@
                 <input type="checkbox" id="internet">
                 <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
               </div>
-              <label for="internet">Internet</label>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="filter-tree-selector-item filter-tree-selector-item_no-children" >
-        <div class="filter-form-item">
-          <div class="filter-tree-selector-content">
-            <div class="check-block">
-              <div class="checkbox">
-                <input type="checkbox" id="internet">
-                <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
-              </div>
-              <label for="internet">Internet</label>
+              <label for="internet">{{sub_item.name}}</label>
             </div>
           </div>
         </div>
@@ -46,20 +33,26 @@
 </template>
 
 <script setup>
-
+const {item} = defineProps(['item'])
 import {useVacancyStore} from "../../../store/vacancy";
-import Vacancies from "../../../pages/search/vacancies";
+
+// console.log(item)
 
 const vacancyStore = useVacancyStore();
 
 const specializations = computed(() => vacancyStore.specializations)
 
-const isOpen = ref(true);
+const isOpen = ref(false);
+
+const toggle = () => isOpen.value = !isOpen.value;
 
 </script>
 
 <style>
 
+.check-block .expanded{
+  transform: rotateZ(90deg);
+}
 .filter-tree-selector-item, .filter-tree-selector-item_has-children-has-action, .filter-tree-selector-item_no-children {
   border-width: 0;
 }
@@ -71,11 +64,6 @@ const isOpen = ref(true);
 }
 .filter-tree-selector-content {
   display: table;
-}
-.filter-tree-selector-item-spacer {
-  display: table-cell;
-  padding-right: 9px;
-  vertical-align: top;
 }
 .check-block{
 }
