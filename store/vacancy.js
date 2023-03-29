@@ -103,7 +103,7 @@ export const useVacancyStore = defineStore('vacancy', {
       if (data){
         this.industries = data.data;
       }
-      return data;
+      return data.data;
     },
 
   },

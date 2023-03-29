@@ -7,6 +7,7 @@
           <label for="name">Названии вакансии </label>
           <input v-model="form.name" type="text" name="name" id="name" placeholder="Какую вакансию вы ищете?"
                  autocomplete="off">
+
         </div>
         <div class="input-wrap has-label">
           <label for="salary">Желаемая зарплата</label>
@@ -17,7 +18,9 @@
           <input v-model="form.city" type="text" name="city" placeholder="Город" autocomplete="off">
         </div>
         <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">
-          <input v-model="form.region" type="text" name="region" placeholder="Регион" autocomplete="off">
+
+          <SelectWithSearch :options="regionOptions" v-model="form.region"/>
+<!--          <input v-model="form.region" type="text" name="region" placeholder="Регион" autocomplete="off">-->
         </div>
         <button class="button-accent submit-search-form" type="submit">Поиск </button>
       </div>
@@ -37,11 +40,15 @@ const form = ref(useVacancyForm());
 const onChange = (data) => {
   console.log(data);
 }
-const {getVacancies} = vacancyStore;
+const {getVacancies, getRegions} = vacancyStore;
 const vacancies = computed(() => vacancyStore.vacancies);
 
 const {salary, city, country, search} = route.query;
 
+
+const regionOptions = ref([]);
+
+const regions = await getRegions();
 const isLoading = ref(false);
 onMounted(async() => {
   isLoading.value = true;

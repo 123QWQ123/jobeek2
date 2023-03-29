@@ -11,7 +11,7 @@
             <img class="icon" src="~/assets/img/svg/search.svg" alt="#" />
             <label for="name">Названии вакансии </label>
             <input type="text"
-                   v-model="form.keyword"
+                   v-model="form.name"
                    name="name" id="name"
                    placeholder="Какую вакансию вы ищете?"
                    autocomplete="off" />
@@ -20,12 +20,13 @@
             <label for="salary">Желаемая зарплата</label>
             <SalarySelectInForm v-model="form.salary" @change="onChange"></SalarySelectInForm>
           </div>
-          <div class="input-wrap has-icon">
-            <img class="icon" src="~/assets/img/svg/location.svg" alt="#" />
-            <input v-model="form.country" type="text" name="country" placeholder="Страна" autocomplete="off" />
-          </div>
           <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">
             <input v-model="form.city" type="text" name="city" placeholder="Город" autocomplete="off">
+          </div>
+
+          <div class="input-wrap has-icon">
+            <img class="icon" src="~/assets/img/svg/location.svg" alt="#" />
+            <input v-model="region" type="text" name="region" placeholder="Регион" autocomplete="off" />
           </div>
           <button class="button-accent submit-search-form" type="submit">Поиск </button>
         </div>
@@ -46,12 +47,14 @@
     console.log(e)
   }
 
+  const region = ref(null);
   const router = useRouter();
   const route = useRoute();
 
-  // onMounted(() => {
-  //   form.value = {...route.query};
-  // })
+  const regionOptions = ref([]);
+
+  onMounted(() => {
+  })
 
   const onSearchSubmit = (e) => {
     router.push({name: 'search-vacancies', query: form.value});

@@ -57,6 +57,8 @@ const {getIndustries} = useVacancyStore();
 
 onMounted(async () =>{
   industries.value = await getIndustries();
+
+  console.log(industries)
 })
 
 </script>

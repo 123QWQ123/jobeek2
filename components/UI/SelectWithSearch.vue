@@ -4,7 +4,17 @@
 export default {
   name: "SelectWithSearch",
   emits: ['change', 'update:modelValue', 'input'],
-  props: ['options', 'modelValue', 'label'],
+  props: {
+    options: {
+      required: true,
+    },
+    label: {
+      required: false,
+    },
+    modelValue: {
+      required: true
+    }
+  },
   setup(props, {emit}){
     const isOpen = ref(false);
     const options = ref(props.options);

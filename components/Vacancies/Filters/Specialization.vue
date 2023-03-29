@@ -136,7 +136,7 @@ watch(
 
 
 
-const isModalOpen = ref(true);
+const isModalOpen = ref(false);
 
 const toggleModal = () => isModalOpen.value = !isModalOpen.value;
 const specializationFilterClass = ref(true);
