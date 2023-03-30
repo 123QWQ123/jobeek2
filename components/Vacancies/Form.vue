@@ -19,7 +19,7 @@
         </div>
         <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">
 
-          <SelectWithSearch :options="regionOptions" v-model="form.region" :listStyles="regionListStyles" @change="onRegionChange" :listItemStyles="regionListItemStyles"/>
+          <SelectWithSearch :options="regionOptions" v-model="region" :listStyles="regionListStyles" @change="onRegionChange" :listItemStyles="regionListItemStyles"/>
 <!--          <input v-model="form.region" type="text" name="region" placeholder="Регион" autocomplete="off">-->
         </div>
         <button class="button-accent submit-search-form" type="submit">Поиск </button>
@@ -36,10 +36,20 @@ const vacancyStore = useVacancyStore();
 const route = useRoute();
 const router = useRouter();
 
-const form = ref(useVacancyForm());
+const region = ref('*');
 
-const onRegionChange = (data) => {
-  console.log(data);
+const form = ref(useVacancyForm());
+if (form.value.regions.length === 1){
+  region.value = form.value.regions[0];
+}
+const onRegionChange = (regionItem) => {
+  console.log(regionItem);
+  if (regionItem.value === '*'){
+    form.value.regions = [];
+  }else{
+    form.value.regions = [regionItem.value];
+  }
+
 }
 const {getVacancies, getRegions} = vacancyStore;
 const vacancies = computed(() => vacancyStore.vacancies);
@@ -92,7 +102,7 @@ const onSearchSubmit = async(e) => {
   console.log(form.value);
   const params = useVacancyForm(form.value, 'front');
   console.log(params);
-  // router.replace({name: 'search-vacancies', query: params});
+  router.replace({name: 'search-vacancies', query: params});
   isLoading.value = false;
 }
 </script>

@@ -21,12 +21,18 @@ const props = defineProps({
   },
   modelValue: {
     required: true
+  },
+  selected: {
+    required: false
   }
-})
+});
+
 const isOpen = ref(false);
 const options = ref(props.options);
 watch(props, (newProps) => {
   options.value = newProps.options;
+
+  selectedOption.value = options.value.find(item => String(item.value) === String(props.modelValue));
 });
 
 
@@ -39,7 +45,6 @@ const selectedItem = computed(() =>{
     return options.value[0];
   }
 });
-
 
 function onClick(e){
   if (e.target.classList.contains('current') || e.target.classList.contains('nice-select')){
@@ -60,8 +65,6 @@ const searchInput = ref("");
 const onChangeHandler = (e) => {
   searchInput.value = e.target.textContent;
   isOpen.value = true;
-  // emit("input", searchInput.value);
-  // emit("update:modelValue", searchInput.value);
   const typedName = e.target.textContent.toLowerCase();
   if (typedName === ""){
     options.value = props.options;
