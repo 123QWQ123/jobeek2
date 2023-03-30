@@ -1,12 +1,12 @@
 <template>
-  <div class="filter-tree-selector-item filter-tree-selector-item_has-children-has-action" data-qa="filter-tree-selector-item filter-tree-selector-item-category-19 filter-tree-selector-item-expanded">
+  <div class="filter-tree-selector-item filter-tree-selector-item_has-children-has-action">
     <div class="filter-form-item">
       <div class="filter-tree-selector-content">
         <div class="check-block" >
           <svg @click="toggle" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-right cursor-pointer " :class="{expanded: isOpen}" viewBox="0 0 16 16">
             <path d="M6 12.796V3.204L11.481 8 6 12.796zm.659.753 5.48-4.796a1 1 0 0 0 0-1.506L6.66 2.451C6.011 1.885 5 2.345 5 3.204v9.592a1 1 0 0 0 1.659.753z"/>
           </svg>
-          <div class="checkbox ms-1">
+          <div class="checkbox ms-1" @click="selectToggle">
             <input type="checkbox" id="IT">
             <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
           </div>
@@ -20,7 +20,7 @@
           <div class="filter-tree-selector-content">
             <div class="check-block">
               <div class="checkbox">
-                <input type="checkbox" id="internet">
+                <input :checked="sub_item.is_checked" type="checkbox" id="internet">
                 <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
               </div>
               <label for="internet">{{sub_item.name}}</label>
@@ -33,10 +33,17 @@
 </template>
 
 <script setup>
-const {item} = defineProps(['item'])
+const props = defineProps(['item'])
 import {useVacancyStore} from "../../../store/vacancy";
 
 // console.log(item)
+
+
+const item = ref(props.item);
+
+watch(item, (newValue) => {
+  console.log(newValue);
+});
 
 const vacancyStore = useVacancyStore();
 
@@ -45,6 +52,15 @@ const specializations = computed(() => vacancyStore.specializations)
 const isOpen = ref(false);
 
 const toggle = () => isOpen.value = !isOpen.value;
+const selectToggle = () => {
+  let is_checked = !item.value.is_checked;
+  const sub_items = item.value.items.map(item => {
+    item.is_checked = is_checked;
+    return item;
+  });
+  item.value = {...item.value, is_checked: is_checked, items: sub_items};
+  console.log(sub_items);
+};
 
 </script>
 

@@ -13,8 +13,9 @@ export const useProfileStore = defineStore('profile', {
       seeker: null,
       employer: null,
       specializations: [],
-      pub_countries: [],
-      pub_cities: [],
+      countries: [],
+      regions: [],
+      cities: [],
     }
   },
   getters: {
@@ -30,7 +31,36 @@ export const useProfileStore = defineStore('profile', {
     },
   },
   actions: {
-
+    async getCountries(payload = {}) {
+      const {data} = await useApi('area/countries', {
+        method: 'get',
+        payload
+      });
+      if (data){
+        this.countries = data.data.countries;
+      }
+      return data;
+    },
+    async getRegions(payload = {}) {
+      const {data} = await useApi('area/regions', {
+        method: 'get',
+        payload
+      });
+      if (data){
+        this.regions = data.data.regions;
+      }
+      return data;
+    },
+    async getCities(payload = {}) {
+      const {data} = await useApi('area/cities', {
+        method: 'get',
+        payload
+      });
+      if (data){
+        this.cities = data.data.cities;
+      }
+      return data;
+    },
     async getUser(payload = "") {
 
       const {isEmployer} = useAuthStore();
@@ -63,7 +93,6 @@ export const useProfileStore = defineStore('profile', {
       return data;
     },
     async updateSeeker(payload) {
-
       const {data} = await useApi('seeker/profile', {
         method: 'post',
         payload
