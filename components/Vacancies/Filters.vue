@@ -16,11 +16,12 @@
         <button class="clear-all">Очистить все</button>
       </div>
 
-      <VacanciesFiltersRegion v-if="isRegionMode"/>
-      <VacanciesFiltersCity v-else />
-      <VacanciesFiltersSalary/>
-      <VacanciesFiltersSpecialization/>
-      <VacanciesFiltersWorkType/>
+      <VacanciesFiltersRegion v-if="isRegionMode" @onFormChange="onFormChange"/>
+      <VacanciesFiltersCity v-else @onFormChange="onFormChange" />
+      <VacanciesFiltersSalary @onFormChange="onFormChange"/>
+      <VacanciesFiltersSpecialization @onFormChange="onFormChange"/>
+      <VacanciesFiltersWorkType @onFormChange="onFormChange"/>
+      <VacanciesFiltersSchedule @onFormChange="onFormChange"/>
     </div>
   </aside>
 </template>
@@ -28,10 +29,14 @@
 <script setup>
 
 import {useVacancyStore} from "../../store/vacancy";
-import {useRoute} from "nuxt/app";
+import {useRoute, useRouter} from "nuxt/app";
+import {useVacancyForm} from "../../composables/useVacancyForm";
 const vacancyStore = useVacancyStore();
 
 const route = useRoute();
+const router = useRouter();
+
+const form = ref(useVacancyForm());
 
 const isRegionMode = computed(() => {
   console.log(route.query.regions)
@@ -39,7 +44,21 @@ const isRegionMode = computed(() => {
     return true;
   }
   return false;
-})
+});
+
+const {clearVacancies, getVacancies} = vacancyStore;
+const onFormChange = (filter_name, filter_value) => {
+  console.log(filter_name, filter_value);
+
+  form.value[filter_name] = filter_value;
+  // isLoading.value = true;
+  // clearVacancies();
+  console.log(form.value);
+  const params = useVacancyForm(form.value, 'front');
+  console.log(params);
+  router.push({query: params});
+  // isLoading.value = false;
+}
   // console.log(route.query.regions)
 
 </script>

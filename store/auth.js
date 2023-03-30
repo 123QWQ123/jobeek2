@@ -309,7 +309,6 @@ export const useAuthStore = defineStore('auth', {
           this.employer = this.user;
           return;
         }catch (error){
-          console.log(error);
           console.log('UnAuthorized');
           // this.logout();
         }
@@ -345,7 +344,6 @@ export const useAuthStore = defineStore('auth', {
         const resData = response.data.data;
         if (response.status === 200) {
           localStorage.setItem('token', resData.token);
-          console.log(resData.user);
           this.user = resData.user;
           this.isAuthed = true;
           return {

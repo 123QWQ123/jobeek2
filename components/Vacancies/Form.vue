@@ -92,7 +92,7 @@ const onSearchSubmit = async(e) => {
   console.log(form.value);
   const params = useVacancyForm(form.value, 'front');
   console.log(params);
-  router.replace({name: 'search-vacancies', query: params});
+  // router.replace({name: 'search-vacancies', query: params});
   isLoading.value = false;
 }
 </script>

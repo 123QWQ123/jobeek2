@@ -112,6 +112,9 @@ function close(){
 </template>
 
 <style scoped>
+.list{
+  max-height: 0vh;
+}
 .current{
   color: #0A2540;
   width: 100%;

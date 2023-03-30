@@ -50,7 +50,6 @@ import {useVacancyForm} from "../../../composables/useVacancyForm";
 
 const vacancyStore = useVacancyStore();
 
-const {getRegions} = vacancyStore;
 
 const search = ref("");
 const regions = ref([]);
@@ -75,7 +74,7 @@ const onSearch = (e) => {
     });
   }
   groupedRegions.value = regionItems;
-  prepareRegions(regionItems);
+  prepare(regionItems);
 };
 
 const form = ref(useVacancyForm());
@@ -116,7 +115,7 @@ const submitSearch = () => {
   isLoading.value = false;
 }
 
-const prepareRegions = (items, custom_items) => {
+const prepare = (items, custom_items) => {
 
   let regionItems = items;
   if (!items){
@@ -170,10 +169,16 @@ const prepareRegions = (items, custom_items) => {
 
 };
 
-watch(() => vacancyStore.regions, prepareRegions);
-onMounted(async () => {
-  await getRegions();
 
+watch(() => vacancyStore.regions, prepare);
+const {getRegions} = vacancyStore;
+onMounted(async () => {
+  console.log(vacancyStore.regions);
+  if (vacancyStore.regions.length === 0){
+    await getRegions();
+  }else{
+    prepare(null, vacancyStore.regions);
+  }
   if (selectedRegions.value.length > 0){
     isMore.value = true;
   }

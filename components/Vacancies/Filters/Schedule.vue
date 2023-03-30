@@ -1,7 +1,7 @@
 <template>
   <div class="filter-box" :class="{'open': filterClass}">
     <div class="filter-box-handle" @click="filterClass = !filterClass">
-      <strong>Тип занятости</strong>
+      <strong>Рабочий график</strong>
       <img src="~/assets/img/svg/Arrow-Down.svg" alt="#">
     </div>
 
@@ -36,8 +36,8 @@ const filterItems = ref([]);
 const toggleMore = () => isMore.value = !isMore.value;
 
 const form = ref(useVacancyForm());
-console.log(form.value.work_types);
-const selectedFilterItems = ref(form.value.work_types);
+console.log(form.value.schedules);
+const selectedFilterItems = ref(form.value.schedules);
 
 const toggle = (id) => {
   filterItems.value.map((item, key) => {
@@ -54,17 +54,11 @@ const toggle = (id) => {
     }
     return item;
   });
-  form.value.work_types = selectedFilterItems.value;
+  form.value.schedules = selectedFilterItems.value;
   submitSearch();
 };
 
 
-const  isLoading = ref(false);
-const {clearVacancies} = vacancyStore;
-const router  = useRouter();
-const submitSearch = () => {
-  emit('onFormChange', 'work_types', selectedFilterItems.value);
-}
 
 const prepare = (items, custom_items) => {
 
@@ -89,16 +83,22 @@ const prepare = (items, custom_items) => {
   });
 };
 
-watch(() => vacancyStore.work_types, prepare);
-const {getWorkTypes} = vacancyStore;
+watch(() => vacancyStore.schedules, prepare);
+const {getSchedules} = vacancyStore;
 onMounted(async () => {
-  if (vacancyStore.work_types.length === 0){
-    await getWorkTypes();
+  if (vacancyStore.schedules.length === 0){
+    await getSchedules();
   }else{
-    prepare(null, vacancyStore.work_types);
+    prepare(null, vacancyStore.schedules);
   }
 });
 
+const  isLoading = ref(false);
+const {clearVacancies} = vacancyStore;
+const router  = useRouter();
+const submitSearch = () => {
+  emit('onFormChange', 'schedules', selectedFilterItems.value);
+}
 
 </script>
 

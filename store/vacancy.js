@@ -21,6 +21,7 @@ export const useVacancyStore = defineStore('vacancy', {
       regions: [],
       cities: [],
       work_types: [],
+      schedules: [],
     }
   },
   actions: {
@@ -103,6 +104,16 @@ export const useVacancyStore = defineStore('vacancy', {
       });
       if (data){
         this.work_types = data.data.work_type;
+      }
+      return data;
+    },
+    async getSchedules(payload = {}) {
+      const {data} = await useApi('dictionaries?group=schedule', {
+        method: 'get',
+        payload
+      });
+      if (data){
+        this.schedules = data.data.schedule;
       }
       return data;
     },

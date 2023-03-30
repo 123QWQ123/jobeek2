@@ -1,7 +1,7 @@
 <template>
   <div class="filter-box" :class="{'open': regionFilterClass}">
     <div class="filter-box-handle" @click="regionFilterClass = !regionFilterClass">
-      <strong>Городов</strong>
+      <strong>Регион</strong>
       <img src="~/assets/img/svg/Arrow-Down.svg" alt="#">
     </div>
 
@@ -47,9 +47,9 @@
 
 import {useVacancyStore} from "../../../store/vacancy";
 import {useVacancyForm} from "../../../composables/useVacancyForm";
-import {useRoute} from "nuxt/app";
 
 const vacancyStore = useVacancyStore();
+
 
 const search = ref("");
 const regions = ref([]);
@@ -64,17 +64,17 @@ const onSearch = (e) => {
   const search = e.target.value;
   let regionItems = [];
   if (search != ''){
-    regionItems = vacancyStore.cities.filter((item, key) => {
+    regionItems = vacancyStore.regions.filter((item, key) => {
       return item.name.toLowerCase().includes(search.toLowerCase());
     });
 
   }else{
-    regionItems = vacancyStore.cities.filter((item, key) => {
+    regionItems = vacancyStore.regions.filter((item, key) => {
       return item.name.toLowerCase().includes(search.toLowerCase());
     });
   }
   groupedRegions.value = regionItems;
-  prepareRegions(regionItems);
+  prepare(regionItems);
 };
 
 const form = ref(useVacancyForm());
@@ -115,7 +115,7 @@ const submitSearch = () => {
   isLoading.value = false;
 }
 
-const prepareRegions = (items, custom_items) => {
+const prepare = (items, custom_items) => {
 
   let regionItems = items;
   if (!items){
@@ -170,23 +170,16 @@ const prepareRegions = (items, custom_items) => {
 };
 
 const {getCities} = vacancyStore;
-
-watch(() => vacancyStore.cities, prepareRegions);
-
-const route = useRoute();
-
-const regionID = ref(route.query.regions);
-
-
+watch(() => vacancyStore.cities, prepare);
 onMounted(async () => {
-  console.log(regionID)
-  if (regionID.value){
-    const res = await getCities({region_id: regionID.value});
-
-    console.log(res);
-    if (selectedRegions.value.length > 0){
-      isMore.value = true;
-    }
+  console.log(vacancyStore.regions);
+  if (vacancyStore.cities.length === 0){
+    await getCities();
+  }else{
+    prepare(null, vacancyStore.cities);
+  }
+  if (selectedRegions.value.length > 0){
+    isMore.value = true;
   }
 });
 
