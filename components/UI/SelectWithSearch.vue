@@ -30,53 +30,27 @@ watch(props, (newProps) => {
 });
 
 
-const selectedOption = ref({});
-const selectedValue = computed(() => props.modelValue);
+const selectedOption = ref(null);
 const selectedItem = computed(() =>{
-  if (options.value){
-    let selectedItem = options.value.find(
-        item => String(props.modelValue) === String(item.value)
-    )
-
-    if (selectedItem){
-      return selectedItem;
+  if (options.value.length){
+    if (selectedOption.value){
+      return selectedOption;
     }
-
     return options.value[0];
   }
 });
 
 
-watch(
-    selectedValue,
-    (newValue) => {
-      let selectedOptionItem;
-      if (selectedValue){
-        const selectedItem = props.options.find(
-            (item) => String(newValue) === String(item.value)
-        );
-        if (selectedItem){
-          selectedOption.value = selectedItem;
-          selectedOptionItem = selectedItem;
-        }
-      }else{
-        selectedOption.value = props.options[0];
-        selectedOptionItem = props.options[0]
-      }
-
-      emit('change', selectedOptionItem);
-    });
-
-const label = computed(() => selectedOption?.value?.name);
 function onClick(e){
   if (e.target.classList.contains('current') || e.target.classList.contains('nice-select')){
     isOpen.value = !isOpen.value;
   }
   if (e.target.classList.contains('option')){
-    const selectedOptionValue =  e.target.dataset.value;
-    const selectedOptionItem = options.value.find(item => item.value === selectedOptionValue);
-    emit('change', selectedOptionItem)
     isOpen.value = false;
+    const selectedOptionValue =  e.target.dataset.value;
+    const selectedOptionItem = options.value.find(item => String(item.value) === selectedOptionValue);
+    selectedOption.value = selectedOptionItem;
+    emit('change', selectedOptionItem)
     emit("update:modelValue", e.target.dataset.value);
   }
 }
@@ -85,6 +59,7 @@ const searchInput = ref("");
 
 const onChangeHandler = (e) => {
   searchInput.value = e.target.textContent;
+  isOpen.value = true;
   // emit("input", searchInput.value);
   // emit("update:modelValue", searchInput.value);
   const typedName = e.target.textContent.toLowerCase();
@@ -103,7 +78,7 @@ function close(){
 </script>
 <template>
   <div v-click-outside="close" onfocusout="close" class="nice-select n-select d-select" :class="{'open' : isOpen}" tabindex="0" @click.prevent="onClick">
-    <span class="current" contenteditable="true" @keyup="onChangeHandler">{{ selectedItem?.name }}</span>
+    <span class="current" contenteditable="true" @keyup="onChangeHandler">{{ !isOpen ? (selectedItem?.name ?? selectedItem?.value.name) : searchInput }}</span>
     <ul class="list" :style="listStyles">
       <li v-for="item in options" :key="item.value" :data-value="item.value" class="option" :style="listItemStyles">{{ item.name }}</li>
     </ul>
