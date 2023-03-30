@@ -15,7 +15,7 @@
             </div>
           </div>
           <div class="l-wrap">
-            <label for="s1">{{ item.title }}</label>
+            <label for="s1">{{ item.name }}</label>
           </div>
         </div>
 
@@ -136,7 +136,7 @@ watch(
 
 
 
-const isModalOpen = ref(true);
+const isModalOpen = ref(false);
 
 const toggleModal = () => isModalOpen.value = !isModalOpen.value;
 const specializationFilterClass = ref(true);

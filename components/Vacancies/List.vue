@@ -43,7 +43,7 @@ const loadMore = async() => {
   isLoading.value = true;
   const params = useVacancyForm(form.value, 'backend');
   const res = await getVacancies({...params, page: parseInt(current_page.value) + 1}, true);
-  if (res.data.length < 1){
+  if (res.items.length < 1){
     isMore.value = false;
     Swal.fire({
       title: 'Больше вакансий не найдено!',
