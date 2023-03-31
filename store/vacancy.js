@@ -83,6 +83,7 @@ export const useVacancyStore = defineStore('vacancy', {
         payload
       });
       if (data){
+        console.log(data)
         this.cities = data.data.cities;
       }
       return data;

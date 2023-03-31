@@ -28,6 +28,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
 
 
     let regions = [];
+    let cities = [];
     let work_types = [];
     let schedules = [];
     if (!data){
@@ -36,6 +37,13 @@ export function useVacancyForm(data = null, to_ = 'front') {
                 regions = params.regions.map(item => parseInt(item));
             }else{
                 regions = [parseInt(params.regions)];
+            }
+        }
+        if (params.cities){
+            if (params.cities instanceof Array){
+                regions = params.cities.map(item => parseInt(item));
+            }else{
+                regions = [parseInt(params.cities)];
             }
         }
         if (params.work_types){
@@ -55,6 +63,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
     }
     if (data){
         regions = Array.from(data.regions);
+        cities = Array.from(data.cities);
         work_types = Array.from(data.work_types);
         schedules = Array.from(data.schedules);
     }
@@ -64,6 +73,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
         name: data?.name ?? params?.name,
         country: data?.country ?? params?.country ?? 1,
         regions: regions,
+        cities: cities,
         work_types: work_types,
         schedules: schedules,
         city: data?.city ?? params?.city ?? null,
@@ -80,7 +90,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
         name: data.name ?? null,
         country: data.country?? null,
         regions: data.regions ?? null,
-        city: data.city ?? null,
+        cities: data.cities ?? null,
         currency: 'RUR',
         order_by: null,
         salary: {
@@ -94,6 +104,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
         country: null,
         city: null,
         regions: null,
+        cities: null,
         currency: null,
         salary: null,
         order_by: null,
@@ -109,6 +120,9 @@ export function useVacancyForm(data = null, to_ = 'front') {
         if (data.country !== '') front_params.country = data.country;
         if (data.regions instanceof Array){
             front_params.regions = Array.from(data.regions);
+        }
+        if (data.cities instanceof Array){
+            front_params.cities = Array.from(data.cities);
         }
         if (data.work_types instanceof Array){
             front_params.work_types = Array.from(data.work_types);
@@ -135,6 +149,9 @@ export function useVacancyForm(data = null, to_ = 'front') {
         }
         if (data.regions instanceof Array){
             back_params.regions = Array.from(data.regions);
+        }
+        if (data.cities instanceof Array){
+            back_params.cities = Array.from(data.cities);
         }
         if (data.work_types instanceof Array){
             back_params.work_types = Array.from(data.work_types);

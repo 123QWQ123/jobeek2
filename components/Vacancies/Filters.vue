@@ -15,9 +15,9 @@
       <div class="filter-head"> <strong>Фильтры</strong>
         <button class="clear-all">Очистить все</button>
       </div>
-
+      {{ isRegionMode }}
       <VacanciesFiltersRegion v-if="isRegionMode" @onFormChange="onFormChange"/>
-      <VacanciesFiltersCity v-else @onFormChange="onFormChange" />
+      <VacanciesFiltersCity :selected-region="selectedRegion" v-else @onFormChange="onFormChange" />
       <VacanciesFiltersSalary @onFormChange="onFormChange"/>
       <VacanciesFiltersSpecialization @onFormChange="onFormChange"/>
       <VacanciesFiltersWorkType @onFormChange="onFormChange"/>
@@ -38,12 +38,16 @@ const router = useRouter();
 
 const form = ref(useVacancyForm());
 
-const isRegionMode = computed(() => {
-  console.log(route.query.regions)
-  if (route.query.regions instanceof Array){
-    return true;
+const selectedRegion = computed(() => {
+  if (form.value.regions.length === 1){
+    return form.value.regions[0];
   }
-  return false;
+});
+const isRegionMode = computed(() => {
+  if (form.value.regions.length === 1){
+    return false;
+  }
+  return true;
 });
 
 const {clearVacancies, getVacancies} = vacancyStore;
