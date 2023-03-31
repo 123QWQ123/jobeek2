@@ -27,16 +27,17 @@
 </template>
 
 <script setup>
-
+console.log('filters');
 import {useVacancyStore} from "../../store/vacancy";
 import {useRoute, useRouter} from "nuxt/app";
 import {useVacancyForm} from "../../composables/useVacancyForm";
 const vacancyStore = useVacancyStore();
 
+const form = ref(useVacancyForm());
+console.log(form.value);
 const route = useRoute();
 const router = useRouter();
 
-const form = ref(useVacancyForm());
 
 const selectedRegion = computed(() => {
   if (form.value.regions.length === 1){

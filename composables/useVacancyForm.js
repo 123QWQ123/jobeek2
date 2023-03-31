@@ -41,9 +41,9 @@ export function useVacancyForm(data = null, to_ = 'front') {
         }
         if (params.cities){
             if (params.cities instanceof Array){
-                regions = params.cities.map(item => parseInt(item));
+                cities = params.cities.map(item => parseInt(item));
             }else{
-                regions = [parseInt(params.cities)];
+                cities = [parseInt(params.cities)];
             }
         }
         if (params.work_types){
