@@ -23,15 +23,14 @@
 </template>
 
 <script setup>
+const emit = defineEmits(['onFormChange'])
 
 import {useSalaryOptions} from "../../../composables/useSalaryOptions";
 import {useVacancyStore} from "../../../store/vacancy";
 import {useVacancyForm} from "../../../composables/useVacancyForm";
 const vacancyStore = useVacancyStore();
 const salaryOptions = ref(useSalaryOptions());
-
 const form = ref(useVacancyForm());
-console.log(form.value);
 
 const isChecked = (current) => {
   const selectedSalary = form.value.salary;
@@ -46,25 +45,16 @@ const isLoading = ref(false);
 const router = useRouter();
 const {getVacancies, clearVacancies} = vacancyStore;
 const onChange = async(id) => {
-  console.log(id)
   let selectedOptionID = salaryOptions.value.findIndex(item => item.value === id);
   if (selectedOptionID === -1){
     return;
   }
   const selectedOption = salaryOptions.value[selectedOptionID];
-  form.value.salary = {
+  emit('onFormChange', 'salary', {
     id: selectedOptionID,
     from: selectedOption.min,
     to: selectedOption.max,
-  };
-
-  isLoading.value = true;
-  clearVacancies();
-  console.log(form.value);
-  const params = useVacancyForm(form.value, 'front');
-  console.log(params);
-  router.replace({name: 'search-vacancies', query: params});
-  isLoading.value = false;
+  });
 }
 
 

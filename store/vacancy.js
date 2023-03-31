@@ -22,6 +22,8 @@ export const useVacancyStore = defineStore('vacancy', {
       cities: [],
       work_types: [],
       schedules: [],
+      experiences: [],
+      part_times: [],
     }
   },
   actions: {
@@ -115,6 +117,26 @@ export const useVacancyStore = defineStore('vacancy', {
       });
       if (data){
         this.schedules = data.data.schedule;
+      }
+      return data;
+    },
+    async getExperiences(payload = {}) {
+      const {data} = await useApi('dictionaries?group=experience', {
+        method: 'get',
+        payload
+      });
+      if (data){
+        this.experiences = data.data.experience;
+      }
+      return data;
+    },
+    async getPartTimes(payload = {}) {
+      const {data} = await useApi('dictionaries?group=part_time', {
+        method: 'get',
+        payload
+      });
+      if (data){
+        this.part_times = data.data.part_time;
       }
       return data;
     },

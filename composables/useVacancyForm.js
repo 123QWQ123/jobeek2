@@ -31,6 +31,8 @@ export function useVacancyForm(data = null, to_ = 'front') {
     let cities = [];
     let work_types = [];
     let schedules = [];
+    let experiences = [];
+    let part_times = [];
     if (!data){
         if (params.regions){
             if (params.regions instanceof Array){
@@ -60,12 +62,28 @@ export function useVacancyForm(data = null, to_ = 'front') {
                 schedules = [parseInt(params.schedules)];
             }
         }
+        if (params.experiences){
+            if (params.experiences instanceof Array){
+                experiences = params.experiences.map(item => parseInt(item));
+            }else{
+                experiences = [parseInt(params.experiences)];
+            }
+        }
+        if (params.part_times){
+            if (params.part_times instanceof Array){
+                part_times = params.part_times.map(item => parseInt(item));
+            }else{
+                part_times = [parseInt(params.part_time)];
+            }
+        }
     }
     if (data){
         regions = Array.from(data.regions);
         cities = Array.from(data.cities);
         work_types = Array.from(data.work_types);
         schedules = Array.from(data.schedules);
+        experiences = Array.from(data.experiences);
+        part_times = Array.from(data.part_times);
     }
 
 
@@ -76,6 +94,8 @@ export function useVacancyForm(data = null, to_ = 'front') {
         cities: cities,
         work_types: work_types,
         schedules: schedules,
+        experiences: experiences,
+        part_times: part_times,
         city: data?.city ?? params?.city ?? null,
         currency: data?.currency ?? params.currency ?? 'RUR',
         salary: selectedSalary,
@@ -130,6 +150,12 @@ export function useVacancyForm(data = null, to_ = 'front') {
         if (data.schedules instanceof Array){
             front_params.schedules = Array.from(data.schedules);
         }
+        if (data.experiences instanceof Array){
+            front_params.experiences = Array.from(data.experiences);
+        }
+        if (data.part_times instanceof Array){
+            front_params.part_times = Array.from(data.part_times);
+        }
 
         if (data.city !== '') front_params.city = data.city;
 
@@ -158,6 +184,12 @@ export function useVacancyForm(data = null, to_ = 'front') {
         }
         if (data.schedules instanceof Array){
             back_params.schedules = Array.from(data.schedules);
+        }
+        if (data.experiences instanceof Array){
+            back_params.experiences = Array.from(data.experiences);
+        }
+        if (data.part_times instanceof Array){
+            back_params.part_time = Array.from(data.part_times);
         }
         if (data.city){
             back_params.city = data.city;

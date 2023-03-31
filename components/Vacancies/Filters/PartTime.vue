@@ -1,7 +1,7 @@
 <template>
   <div class="filter-box" :class="{'open': filterClass}">
     <div class="filter-box-handle" @click="filterClass = !filterClass">
-      <strong>График работы</strong>
+      <strong>Подработка</strong>
       <img src="~/assets/img/svg/Arrow-Down.svg" alt="#">
     </div>
 
@@ -36,7 +36,7 @@ const filterItems = ref([]);
 const toggleMore = () => isMore.value = !isMore.value;
 
 const form = ref(useVacancyForm());
-const selectedFilterItems = ref(form.value.schedules);
+const selectedFilterItems = ref(form.value.part_times);
 
 const toggle = (id) => {
   filterItems.value.map((item, key) => {
@@ -53,7 +53,7 @@ const toggle = (id) => {
     }
     return item;
   });
-  form.value.schedules = selectedFilterItems.value;
+  form.value.part_times = selectedFilterItems.value;
   submitSearch();
 };
 
@@ -82,13 +82,13 @@ const prepare = (items, custom_items) => {
   });
 };
 
-watch(() => vacancyStore.schedules, prepare);
-const {getSchedules} = vacancyStore;
+watch(() => vacancyStore.part_times, prepare);
+const {getPartTimes} = vacancyStore;
 onMounted(async () => {
-  if (vacancyStore.schedules.length === 0){
-    await getSchedules();
+  if (vacancyStore.part_times.length === 0){
+    await getPartTimes();
   }else{
-    prepare(null, vacancyStore.schedules);
+    prepare(null, vacancyStore.part_times);
   }
 });
 
@@ -96,7 +96,7 @@ const  isLoading = ref(false);
 const {clearVacancies} = vacancyStore;
 const router  = useRouter();
 const submitSearch = () => {
-  emit('onFormChange', 'schedules', selectedFilterItems.value);
+  emit('onFormChange', 'part_times', selectedFilterItems.value);
 }
 
 </script>

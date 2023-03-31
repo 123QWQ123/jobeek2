@@ -50,7 +50,7 @@ import {useVacancyForm} from "../../../composables/useVacancyForm";
 
 const vacancyStore = useVacancyStore();
 
-
+const appliedRegion = ref(null);
 const search = ref("");
 const cities = ref([]);
 
@@ -82,7 +82,7 @@ console.log(form.value.cities)
 const selectedCities = ref(form.value.cities);
 
 const toggleRegion = (id) => {
-  const regionItems = groupedFilterItems.value.map((item, key) => {
+  const items = groupedFilterItems.value.map((item, key) => {
     if(item.id === id){
       item.is_checked = !item.is_checked;
       if (!selectedCities.value.includes(item.id) && item.is_checked){
@@ -97,7 +97,7 @@ const toggleRegion = (id) => {
     return item;
   });
 
-  groupedFilterItems.value = regionItems;
+  groupedFilterItems.value = items;
 
   form.value.cities = selectedCities.value;
 
@@ -175,9 +175,9 @@ const prepare = (items, custom_items) => {
 const {getCities} = vacancyStore;
 watch(() => vacancyStore.cities, prepare);
 onMounted(async () => {
-  console.log(vacancyStore.cities);
-  if (vacancyStore.cities.length === 0){
+  if (vacancyStore.cities.length === 0 || parseInt(selectedRegion) !== parseInt(appliedRegion.value)){
     await getCities({region_id: selectedRegion});
+    appliedRegion.value = selectedRegion;
   }else{
     prepare(null, vacancyStore.cities);
   }

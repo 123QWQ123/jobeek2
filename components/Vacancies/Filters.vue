@@ -1,5 +1,19 @@
 <template>
   <aside class="aside">
+    <div class="filter-container">
+      <div class="filter-head"> <strong>Фильтры</strong>
+        <button class="clear-all">Очистить все</button>
+      </div>
+      <VacanciesFiltersRegion :is-city-mode="isCityMode" :selected-country="1" @onFormChange="onFormChange"/>
+      {{ isCityMode }}
+      <VacanciesFiltersCity v-if="isCityMode" :selected-region="selectedRegion" @onFormChange="onFormChange" />
+      <VacanciesFiltersSpecialization @onFormChange="onFormChange"/>
+      <VacanciesFiltersPartTime @onFormChange="onFormChange"/>
+      <VacanciesFiltersExperience @onFormChange="onFormChange"/>
+      <VacanciesFiltersSalary @onFormChange="onFormChange"/>
+      <VacanciesFiltersWorkType @onFormChange="onFormChange"/>
+      <VacanciesFiltersSchedule @onFormChange="onFormChange"/>
+    </div>
     <button class="close-aside">
       <svg xmlns="http://www.w3.org/2000/svg"
            xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px"
@@ -11,18 +25,6 @@
           </g>
       </svg>
     </button>
-    <div class="filter-container">
-      <div class="filter-head"> <strong>Фильтры</strong>
-        <button class="clear-all">Очистить все</button>
-      </div>
-      {{ isRegionMode }}
-      <VacanciesFiltersRegion v-if="isRegionMode" @onFormChange="onFormChange"/>
-      <VacanciesFiltersCity :selected-region="selectedRegion" v-else @onFormChange="onFormChange" />
-      <VacanciesFiltersSalary @onFormChange="onFormChange"/>
-      <VacanciesFiltersSpecialization @onFormChange="onFormChange"/>
-      <VacanciesFiltersWorkType @onFormChange="onFormChange"/>
-      <VacanciesFiltersSchedule @onFormChange="onFormChange"/>
-    </div>
   </aside>
 </template>
 
@@ -44,11 +46,11 @@ const selectedRegion = computed(() => {
     return form.value.regions[0];
   }
 });
-const isRegionMode = computed(() => {
+const isCityMode = computed(() => {
   if (form.value.regions.length === 1){
-    return false;
+    return true;
   }
-  return true;
+  return false;
 });
 
 const {clearVacancies, getVacancies} = vacancyStore;

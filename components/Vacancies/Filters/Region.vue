@@ -44,7 +44,8 @@
 </template>
 
 <script setup>
-
+const {isCityMode} = defineProps(['isCityMode']);
+const emit = defineEmits(['onFormChange']);
 import {useVacancyStore} from "../../../store/vacancy";
 import {useVacancyForm} from "../../../composables/useVacancyForm";
 
@@ -108,11 +109,7 @@ const  isLoading = ref(false);
 const {clearVacancies} = vacancyStore;
 const router  = useRouter();
 const submitSearch = () => {
-  isLoading.value = true;
-  clearVacancies();
-  const params = useVacancyForm(form.value, 'front');
-  router.replace({name: 'search-vacancies', query: params});
-  isLoading.value = false;
+  emit('onFormChange', 'regions', selectedRegions.value);
 }
 
 const prepare = (items, custom_items) => {
@@ -179,7 +176,7 @@ onMounted(async () => {
   }else{
     prepare(null, vacancyStore.regions);
   }
-  if (selectedRegions.value.length > 0){
+  if (selectedRegions.value.length > 1){
     isMore.value = true;
   }
 });

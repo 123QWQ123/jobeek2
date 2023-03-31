@@ -67,7 +67,6 @@ const submitSearch = () => {
 }
 
 const prepare = (items, custom_items) => {
-
   let unsortedItems = items;
   if (!items){
     unsortedItems = custom_items;
