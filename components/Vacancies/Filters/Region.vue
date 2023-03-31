@@ -1,7 +1,7 @@
 <template>
   <div class="filter-box" :class="{'open': regionFilterClass}">
     <div class="filter-box-handle" @click="regionFilterClass = !regionFilterClass">
-      <strong>Регион</strong>
+      <strong>Regions({{selectedCountry}})</strong>
       <img src="~/assets/img/svg/Arrow-Down.svg" alt="#">
     </div>
 
@@ -10,7 +10,18 @@
         <input type="search" v-model="search" @keyup.prevent="onSearch" @input="onSearch">
       </div>
       <div class="check-block-list with_scroll" :class="{'all-visible': isMore}">
-        <div class="check-block" v-for="item in groupedRegions" :class="{'is_header': item.is_header}">
+        <div class="check-block" v-for="item in selectedRegionItems">
+          <div class="checkbox">
+            <input type="checkbox" :checked="true" @change="toggleRegion(item.id)">
+            <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
+          </div>
+          <div class="l-wrap">
+            <label>{{item.name}}</label>
+          </div>
+        </div>
+      </div>
+      <div class="check-block-list with_scroll" :class="{'all-visible': isMore}">
+        <div class="check-block" v-for="item in groupedFilterItems" :class="{'is_header': item.is_header}">
           <div class="checkbox" v-if="!item.is_header">
             <input type="checkbox" :checked="item.is_checked" @change="toggleRegion(item.id)">
             <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
@@ -26,7 +37,7 @@
     </div>
     <div v-else class="filter-box-body">
       <div class="check-block-list" >
-        <div class="check-block" v-for="item in groupedRegions">
+        <div class="check-block" v-for="item in groupedFilterItems">
           <div class="checkbox" v-if="!item.is_header">
             <input type="checkbox" :checked="item.is_checked" @change="toggleRegion(item.id)" >
             <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
@@ -37,69 +48,72 @@
         </div>
       </div>
       <button class="more-filters" data-default-text="Еще 25" data-hide-text="Показат" @click="toggleMore">
-        Еще {{ totalRegions }}
+        Еще {{ total }}
       </button>
     </div>
   </div>
 </template>
 
 <script setup>
-const {isCityMode} = defineProps(['isCityMode']);
-const emit = defineEmits(['onFormChange']);
+const {selectedCountry} = defineProps(['selectedCountry'])
 import {useVacancyStore} from "../../../store/vacancy";
 import {useVacancyForm} from "../../../composables/useVacancyForm";
 
 const vacancyStore = useVacancyStore();
 
-
+const appliedCountry = ref(1);
 const search = ref("");
 const regions = ref([]);
 
-const totalRegions = computed(() => regions.value.length - 5);
+const total = computed(() => regions.value.length - 5);
 const regionFilterClass = ref(true);
 const isMore = ref(false);
-const groupedRegions = ref([]);
+const groupedFilterItems = ref([]);
+const selectedRegionItems = ref([]);
+
+const form = ref(useVacancyForm());
+const selectedItems = ref(form.value.regions);
 
 const toggleMore = () => isMore.value = !isMore.value;
 const onSearch = (e) => {
   const search = e.target.value;
-  let regionItems = [];
+  let items = [];
   if (search != ''){
-    regionItems = vacancyStore.regions.filter((item, key) => {
+    items = vacancyStore.regions.filter((item, key) => {
       return item.name.toLowerCase().includes(search.toLowerCase());
     });
 
   }else{
-    regionItems = vacancyStore.regions.filter((item, key) => {
+    items = vacancyStore.regions.filter((item, key) => {
       return item.name.toLowerCase().includes(search.toLowerCase());
     });
   }
-  groupedRegions.value = regionItems;
-  prepare(regionItems);
+  selectedItems.value = items;
+  prepare(items);
 };
 
-const form = ref(useVacancyForm());
-const selectedRegions = ref(form.value.regions);
 
 const toggleRegion = (id) => {
-  const regionItems = groupedRegions.value.map((item, key) => {
+  const items = groupedFilterItems.value.map((item, key) => {
     if(item.id === id){
       item.is_checked = !item.is_checked;
-      if (!selectedRegions.value.includes(item.id) && item.is_checked){
-        selectedRegions.value.push(item.id);
+
+      if (!selectedItems.value.includes(item.id) && item.is_checked){
+        selectedItems.value.push(item.id);
       }else{
-        if (selectedRegions.value.includes(item.id) && item.is_checked === false){
-          selectedRegions.value = selectedRegions.value.filter(sub => sub !== item.id);
+        if (selectedItems.value.includes(item.id) && item.is_checked === false){
+          selectedItems.value = selectedItems.value.filter(sub => sub !== item.id);
         }
       }
+
       return item;
     }
     return item;
   });
 
-  groupedRegions.value = regionItems;
+  groupedFilterItems.value = items;
 
-  form.value.regions = selectedRegions.value;
+  form.value.cities = selectedItems.value;
 
   submitSearch();
 };
@@ -109,22 +123,26 @@ const  isLoading = ref(false);
 const {clearVacancies} = vacancyStore;
 const router  = useRouter();
 const submitSearch = () => {
-  emit('onFormChange', 'regions', selectedRegions.value);
+  isLoading.value = true;
+  clearVacancies();
+  const params = useVacancyForm(form.value, 'front');
+  router.replace({name: 'search-vacancies', query: params});
+  isLoading.value = false;
 }
 
 const prepare = (items, custom_items) => {
 
-  let regionItems = items;
+  let filterItems = items;
   if (!items){
-    regionItems = custom_items;
+    filterItems = custom_items;
   }
 
-  if (regionItems.length < 1){
-    groupedRegions.value = [];
+  if (filterItems.length < 1){
+    groupedFilterItems.value = [];
     return;
   }
 
-  regionItems = regionItems.sort(function (a, b) {
+  filterItems = filterItems.sort(function (a, b) {
     if (a.name < b.name) {
       return -1;
     }
@@ -133,50 +151,50 @@ const prepare = (items, custom_items) => {
     }
     return 0;
   });
-  regions.value = regionItems;
-  groupedRegions.value = [];
+  regions.value = filterItems;
+  groupedFilterItems.value = [];
   regions.value.map((item, key) => {
     const firstLetter = item.name.charAt(0);
-    let nextFirstLetter;
-    if (regions.value[key+1] !== undefined){
-      nextFirstLetter = regions.value[key+1].name.charAt(0);
-    }
     if (key === 0){
-      groupedRegions.value.push({
+      groupedFilterItems.value.push({
         id: firstLetter,
         name: firstLetter,
         is_header: true
       });
+    }else{
+      let prevFirstLetter;
+      if (regions.value[key-1] !== undefined){
+        prevFirstLetter = regions.value[key-1].name.charAt(0);
+      }
+      if (firstLetter !== prevFirstLetter){
+        groupedFilterItems.value.push({
+          id: firstLetter,
+          name: firstLetter,
+          is_header: true
+        });
+      }
     }
 
-    if (firstLetter !== nextFirstLetter){
-      groupedRegions.value.push({
-        id: firstLetter,
-        name: firstLetter,
-        is_header: true
-      });
-    }
-    groupedRegions.value.push({
+    groupedFilterItems.value.push({
       id: item.id,
       name: item.name,
       is_header: false,
-      is_checked: selectedRegions.value.includes(item.id)
+      is_checked: selectedItems.value.includes(item.id)
     });
   });
 
 };
 
-
-watch(() => vacancyStore.regions, prepare);
 const {getRegions} = vacancyStore;
+watch(() => vacancyStore.regions, prepare);
 onMounted(async () => {
-  console.log(vacancyStore.regions);
-  if (vacancyStore.regions.length === 0){
-    await getRegions();
+  if (vacancyStore.regions.length === 0 || parseInt(selectedCountry) !== parseInt(appliedCountry.value)){
+    await getRegions({country_id: selectedCountry});
+    appliedCountry.value = selectedCountry;
   }else{
     prepare(null, vacancyStore.regions);
   }
-  if (selectedRegions.value.length > 1){
+  if (selectedItems.value.length > 0){
     isMore.value = true;
   }
 });

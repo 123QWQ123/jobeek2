@@ -6,7 +6,7 @@
           <span class="filter-modal-title">Специализации</span>
           <div class="filter-tree-selector-popup-search">
             <fieldset class="input-wrapper">
-              <input placeholder="Быстрый поиск" type="search" class="filter-input-text" v-model="searchInput">
+              <input placeholder="Быстрый поиск" type="search" class="filter-input-text" v-model="searchInput" @input="onSearch">
             </fieldset>
           </div>
         </div>
@@ -37,65 +37,79 @@
 </template>
 
 <script setup>
-const {isOpen} = defineProps(['isOpen']);
+const {isOpen, items: specializations} = defineProps({
+  items: {
+    required: true,
+  },
+  isOpen: {
+    required: false,
+  }
+});
 const emit = defineEmits({
   toggle: {
     required: true
   }
 });
-import {useVacancyStore} from "../../../store/vacancy";
-import {storeToRefs} from "pinia";
-
-const vacancyStore = useVacancyStore();
 
 const searchInput = ref("");
-const {getSpecializations} = vacancyStore;
-const {specializations} = storeToRefs(vacancyStore);
 
 const groupedSpecs = ref([]);
-watch(
-    specializations,
-    (newValues) => {
 
-      const groupItems = [];
-      for (let i = 0; i < newValues.length; i++){
-        const item = newValues[i];
-        if (item && !item.parent_id){
+const onSearch = () => {
+  console.log(specializations);
+  prepare(specializations);
+}
+const prepare = (newValues) => {
+  const groupItems = [];
+  for (let i = 0; i < newValues.length; i++){
+    const item = newValues[i];
 
-          groupItems.push({
-            id: item.id,
-            name: item.title,
-            is_checked: false,
-            items: []
-          })
+      let has_match = true;
+      if (item && !item.parent_id){
+        if (searchInput.value != "" && !item.title.toLowerCase().includes(searchInput.value)){
+          has_match = false;
         }
+        groupItems.push({
+          id: item.id,
+          name: item.title,
+          is_checked: false,
+          has_match,
+          items: []
+        })
       }
 
+  }
 
-      for (let i = 0; i < groupItems.length; i++){
-        const item = groupItems[i];
-        for (let j = 0; j < newValues.length; j++){
-          const sub_item = newValues[j];
-          if (sub_item && sub_item.parent_id){
-            if (sub_item.parent_id === item.id){
-              groupItems[i].items.push({
-                id: sub_item.id,
-                name: sub_item.title,
-                is_checked: false,
-              })
-            }
-          }
-        }
-      }
+  console.log(groupItems);
 
-      groupedSpecs.value = groupItems;
-})
+  // for (let i = 0; i < groupItems.length; i++){
+  //   const item = groupItems[i];
+  //   for (let j = 0; j < newValues.length; j++){
+  //     const sub_item = newValues[j];
+  //     if (sub_item && sub_item.parent_id){
+  //       if (sub_item.parent_id === item.id){
+  //         if (searchInput.value != "" && !sub_item.title.toLowerCase().includes(searchInput.value)){
+  //           continue;
+  //         }
+  //         groupItems[i].items.push({
+  //           id: sub_item.id,
+  //           name: sub_item.title,
+  //           is_checked: false,
+  //         })
+  //       }
+  //     }
+  //   }
+  // }
 
-const close = () => emit('toggle');
+  groupedSpecs.value = groupItems.filter(item => item.has_match);
+}
 
 onMounted(() => {
-  getSpecializations();
-});
+  prepare(specializations);
+})
+
+
+const close = () => emit('toggle');
 
 </script>
 
