@@ -4,6 +4,8 @@
       <div class="filter-modal">
         <div class="filter-modal-header">
           <span class="filter-modal-title">Специализации</span>
+          <br/>
+          {{selectedSpecs}}
           <div class="filter-tree-selector-popup-search">
             <fieldset class="input-wrapper">
               <input placeholder="Быстрый поиск" type="search" class="filter-input-text" v-model="searchInput" @input="onSearch">
@@ -12,10 +14,15 @@
         </div>
         <div class="filter-tree-selector-popup">
           <div class="filter-tree-selector-popup-content" v-if="isSearching">
-            <VacanciesFiltersSpecializationItem v-for="item in groupedSpecs" :item="item" :items="item.items" :key="item.id" :is-open="true"/>
+            <VacanciesFiltersSpecializationItem v-for="item in groupedSpecs" :item="item" :items="item.items" :key="item.id" :is-open="true"
+                                                @set="updateSelectedSpecs"
+
+            />
           </div>
           <div class="filter-tree-selector-popup-content" v-else>
-            <VacanciesFiltersSpecializationItem v-for="item in groupedSpecs" :item="item" :items="item.items" :key="item.id"/>
+            <VacanciesFiltersSpecializationItem v-for="item in groupedSpecs" :item="item" :items="item.items" :key="item.id"
+                                                @set="updateSelectedSpecs"
+            />
           </div>
         </div>
         <div class="filter-modal-error filter-modal-error_hidden"></div>
@@ -40,18 +47,31 @@
 </template>
 
 <script setup>
-const {isOpen, items: specializations} = defineProps({
+const {isOpen, items: specializations, modelValue: selected_ids} = defineProps({
   items: {
     required: true,
   },
   isOpen: {
     required: false,
+  },
+  modelValue: {
+    required: true,
   }
 });
 const emit = defineEmits({
   toggle: {
     required: true
+  },
+  'update:modelValue': {
+    required: true
   }
+});
+const selectedSpecs = ref({});
+
+watch(selectedSpecs, (newValues) => {
+  let ids = [];
+  Object.keys(newValues).map((item_id) => ids = ids.concat(newValues[item_id]));
+  emit('update:modelValue', ids);
 });
 
 const searchInput = ref("");
@@ -60,26 +80,27 @@ const isSearching = computed(() => {
   if (searchInput.value === ""){
     return false;
   } return true;
-})
-const matchedSpecs = ref([]);
+});
 const groupedSpecs = ref([]);
 
 const onSearch = () => {
   prepare(specializations);
 }
-const prepare = (newValues) => {
+const prepare = (newValues, is_first = false) => {
   const groupItems = [];
-  const matchingSpecs = [];
-  console.log(isSearching.value);
 
     for (let i = 0; i < newValues.length; i++){
       const item = newValues[i];
 
+      let is_checked = false;
       if (item && !item.parent_id){
+        if (Array.from(selected_ids).includes(item.id)){
+          is_checked = true;
+        }
         groupItems.push({
           id: item.id,
           name: item.title,
-          is_checked: false,
+          is_checked,
           items: []
         })
       }
@@ -95,12 +116,16 @@ const prepare = (newValues) => {
           if (!sub_item.title.toLowerCase().includes(searchInput.value.toLowerCase())) continue;
         }
 
+        let is_checked = false;
         if (sub_item && sub_item.parent_id){
           if (sub_item.parent_id === item.id){
+            if (Array.from(selected_ids).includes(sub_item.id)){
+              is_checked = true;
+            }
             groupItems[i].items.push({
               id: sub_item.id,
               name: sub_item.title,
-              is_checked: false,
+              is_checked,
             })
           }
         }
@@ -118,6 +143,12 @@ onMounted(() => {
   prepare(specializations);
 })
 
+
+const updateSelectedSpecs = (id, newSelections) => {
+  const newItems = {...selectedSpecs.value};
+  newItems[id] = newSelections;
+  selectedSpecs.value = newItems;
+};
 
 const close = () => emit('toggle');
 

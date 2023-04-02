@@ -5,7 +5,7 @@
         <button class="clear-all">Очистить все</button>
       </div>
 
-      <VacanciesFiltersSpecialization @onFormChange="onFormChange"/>
+      <VacanciesFiltersSpecialization @onFormChange="onFormChange" :selected-ids="form.professional_roles"/>
 
       <VacanciesFiltersRegion :is-city-mode="isCityMode" :selected-country="form.country" @onFormChange="onFormChange"/>
       <VacanciesFiltersCity v-if="isCityMode" :selected-region="selectedRegion" @onFormChange="onFormChange" />
@@ -37,10 +37,8 @@ import {useVacancyForm} from "../../composables/useVacancyForm";
 const vacancyStore = useVacancyStore();
 
 const form = ref(useVacancyForm());
-console.log(form.value);
 const route = useRoute();
 const router = useRouter();
-
 
 const selectedRegion = computed(() => {
   if (form.value.regions.length === 1){
@@ -57,17 +55,13 @@ const isCityMode = computed(() => {
 const {clearVacancies, getVacancies} = vacancyStore;
 const onFormChange = (filter_name, filter_value) => {
   console.log(filter_name, filter_value);
-
   form.value[filter_name] = filter_value;
-  // isLoading.value = true;
-  // clearVacancies();
   console.log(form.value);
   const params = useVacancyForm(form.value, 'front');
   console.log(params);
   router.push({query: params});
   // isLoading.value = false;
 }
-  // console.log(route.query.regions)
 
 </script>
 

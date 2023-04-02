@@ -7,21 +7,21 @@
       <div class="check-block-list">
 
 
-        <div v-for="item in firstItems" :key="item.name" class="check-block">
+        <div v-for="item in firstItems" :key="item.name" class="check-block" @click="toggleSelect(item.id)">
           <div class="checkbox">
-            <input type="checkbox" :id="item.name"  :checked="item.is_checked" >
+            <input type="checkbox" :id="item.id"   :checked="item.is_checked" >
             <div class="checkbox-mask">
               <img src="~/assets/img/svg/check.svg" alt="#" />
             </div>
           </div>
           <div class="l-wrap">
-            <label for="s1">{{ item.name }}</label>
+            <label :for="item.id">{{ item.name }}</label>
           </div>
         </div>
 
       </div>
 
-      <VacanciesFiltersSpecializationModal v-if="isModalOpen" :is-open="isModalOpen" @toggle="toggleModal" v-model="selectedSpecs" :items="specializations"/>
+      <VacanciesFiltersSpecializationModal v-if="isModalOpen" :is-open="isModalOpen" @toggle="toggleModal" v-model="selectedSpecs" :items="specializations" />
 
       <button class="more-filters" @click="toggleModal" >
         Выбрать
@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-
+const {selectedIds} = defineProps(['selected-ids']);
 import {useVacancyStore} from "../../../store/vacancy";
 import {storeToRefs} from "pinia";
 
@@ -41,12 +41,13 @@ const {getSpecializations} = vacancyStore;
 const {specializations} = storeToRefs(vacancyStore)
 
 const isModalOpen = ref(false);
-const selectedSpecs = ref({
-  items: [],
-  children:[]
-});
+const selectedSpecs = ref(selectedIds);
+console.log(selectedSpecs);
 
 const toggleModal = () => isModalOpen.value = !isModalOpen.value;
+const toggleSelect = (id) => {
+  console.log(id);
+};
 
 const firstItems = ref([]);
 watch(

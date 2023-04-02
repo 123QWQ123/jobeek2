@@ -7,8 +7,6 @@
             <path d="M6 12.796V3.204L11.481 8 6 12.796zm.659.753 5.48-4.796a1 1 0 0 0 0-1.506L6.66 2.451C6.011 1.885 5 2.345 5 3.204v9.592a1 1 0 0 0 1.659.753z"/>
           </svg>
 
-<!--          {{item.is_checked}} - {{isHalfChecked}}-->
-
           <div class="checkbox ms-1" @click="selectToggle" :title="item.is_checked + '-' + isHalfChecked">
             <input type="checkbox" :id="item.id" :checked="item.is_checked" :class="{'is_half_checked': isHalfChecked}">
             <div class="checkbox-mask">
@@ -39,6 +37,7 @@
 </template>
 
 <script setup>
+const emit = defineEmits(['set'])
 const props = defineProps({
   item: {
     required: true,
@@ -49,21 +48,29 @@ const props = defineProps({
   isOpen: {
     required: false,
     default: false
-  }
+  },
+  isHalfChecked: {
+    required: false,
+  },
 })
 import {useVacancyStore} from "../../../store/vacancy";
 
 const item = ref(props.item);
 const items = ref(props.items);
-const isHalfChecked = ref(props.isHalfChecked ?? false);
 const isOpen = ref(props.isOpen);
+const selected_ids = items.value.filter(item => item.is_checked).map(item => item.id);
+const isHalfChecked = ref(selected_ids.length > 0 && selected_ids.length !== items.value.length);
+if (selected_ids.length === items.value.length){
+  item.value.is_checked = true;
+}
+const selectedSubSpecs = ref(selected_ids);
 
 watchEffect(() => item.value = props.item);
 watchEffect(() => items.value = props.items);
-watchEffect(() => isHalfChecked.value = props.isHalfChecked);
+// watchEffect(() => isHalfChecked.value = props.isHalfChecked);
 
-watch(item, (newValue) => {
-  console.log(newValue);
+watch(selectedSubSpecs, (newValue, oldValue) => {
+  emit('set', props.item.id, newValue);
 });
 
 const vacancyStore = useVacancyStore();
@@ -72,24 +79,37 @@ const vacancyStore = useVacancyStore();
 const toggle = () => isOpen.value = !isOpen.value;
 const selectToggle = () => {
   let is_checked = !item.value.is_checked;
+
+  if (is_checked){
+    selectedSubSpecs.value = items.value.map(spec => spec.id);
+  }else{
+    selectedSubSpecs.value = [];
+    isHalfChecked.value = false;
+  }
   const sub_items = items.value.map(sub_item => {
     sub_item.is_checked = is_checked;
     return sub_item;
   });
   items.value = sub_items;
   item.value = {...item.value, is_checked: is_checked};
-  console.log(sub_items);
 }
 
 const selectSubToggle = (sub_id) => {
+  const dynSelectedItems = [...selectedSubSpecs.value];
   const sub_items = items.value.map(sub_item => {
     const dyn_sub_item = {...sub_item};
     if (dyn_sub_item.id === sub_id){
       dyn_sub_item.is_checked = !dyn_sub_item.is_checked;
+      if (dyn_sub_item.is_checked){
+        dynSelectedItems.push(dyn_sub_item.id)
+      }else{
+        const findIndex = dynSelectedItems.findIndex(id => id === dyn_sub_item.id);
+        if (findIndex !== -1)
+          dynSelectedItems.splice(findIndex, 1);
+      }
     }
     return dyn_sub_item;
   });
-
   let is_any_checked = sub_items.some(sub_item => sub_item.is_checked === true);
   let is_all_checked = !sub_items.some(sub_item => sub_item.is_checked === false);
 
