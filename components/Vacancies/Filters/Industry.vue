@@ -1,7 +1,7 @@
 <template>
   <div class="filter-box" :class="{'open': filterClass}">
     <div class="filter-box-handle" @click="filterClass = !filterClass">
-      <strong>Специализации</strong>
+      <strong>Отрасль компании</strong>
       <img src="~/assets/img/svg/Arrow-Down.svg" alt="#"></div>
     <div class="filter-box-body">
       <div class="check-block-list">
@@ -45,7 +45,7 @@ const selectedSpecs = ref(selectedIds);
 const firstItems = ref([]);
 
 watch(selectedSpecs, (newValues) => {
-  emit('onFormChange', 'professional_roles', newValues);
+  emit('onFormChange', 'industries', newValues);
 })
 console.log(selectedSpecs);
 

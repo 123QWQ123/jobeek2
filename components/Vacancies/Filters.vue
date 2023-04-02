@@ -5,6 +5,7 @@
         <button class="clear-all">Очистить все</button>
       </div>
 
+      <VacanciesFiltersIndustry @onFormChange="onFormChange" :selected-ids="form.industries"/>
       <VacanciesFiltersSpecialization @onFormChange="onFormChange" :selected-ids="form.professional_roles"/>
 
       <VacanciesFiltersRegion :is-city-mode="isCityMode" :selected-country="form.country" @onFormChange="onFormChange"/>

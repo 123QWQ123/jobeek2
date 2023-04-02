@@ -14,12 +14,11 @@
           <HeaderSalarySelectInForm v-model="form.salary"></HeaderSalarySelectInForm>
         </div>
         <div class="input-wrap has-icon">
-          <img class="icon" src="~/assets/img/svg/location.svg" alt="#">
-          <input v-model="form.city" type="text" name="city" placeholder="Город" autocomplete="off">
+          <SelectWithSearch :options="cityOptions" v-model="city" :listStyles="searchSelectStyles" @change="onCityChange" :listItemStyles="searchSelectItemStyles"/>
         </div>
         <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">
 
-          <SelectWithSearch :options="regionOptions" v-model="region" :listStyles="regionListStyles" @change="onRegionChange" :listItemStyles="regionListItemStyles"/>
+          <SelectWithSearch :options="regionOptions" v-model="region" :listStyles="searchSelectStyles" @change="onRegionChange" :listItemStyles="searchSelectItemStyles"/>
 <!--          <input v-model="form.region" type="text" name="region" placeholder="Регион" autocomplete="off">-->
         </div>
         <button class="button-accent submit-search-form" type="submit">Поиск </button>
@@ -37,24 +36,30 @@ const route = useRoute();
 const router = useRouter();
 
 const region = ref('*');
+const city = ref('*');
 
 const form = ref(useVacancyForm());
 if (form.value.regions.length === 1){
   region.value = form.value.regions[0];
 }
 const onRegionChange = (regionItem) => {
-  console.log(regionItem);
   if (regionItem.value === '*'){
     form.value.regions = [];
   }else{
     form.value.regions = [regionItem.value];
   }
-
 }
-const {getVacancies, getRegions} = vacancyStore;
+const onCityChange = (regionItem) => {
+  if (regionItem.value === '*'){
+    form.value.regions = [];
+  }else{
+    form.value.regions = [regionItem.value];
+  }
+}
+const {getVacancies, getRegions, getCities} = vacancyStore;
 const vacancies = computed(() => vacancyStore.vacancies);
 
-const {salary, city, country, search} = route.query;
+// const {salary, city, country, search} = route.query;
 
 const regionListStyles = {
   left: 'unset',
@@ -63,16 +68,23 @@ const regionListStyles = {
   maxWidth: '20rem',
   minWidth: '8rem',
 }
+const searchSelectStyles = {
+  left: 'unset',
+  right: '0px',
+  width: 'auto !important',
+  maxWidth: '20rem',
+  minWidth: '8rem',
+}
 
-const regionListItemStyles = {
+const searchSelectItemStyles = {
   width: 'auto !important',
   whiteSpace: 'pre-wrap',
-
 }
 
 const regionOptions = ref([]);
+const cityOptions = ref([]);
 
-const {regions} = storeToRefs(vacancyStore);
+const {regions, cities} = storeToRefs(vacancyStore);
 
 onMounted(async() => {
   await getRegions({country_id: form.value.country});
@@ -81,6 +93,19 @@ onMounted(async() => {
     value: '*', name: 'Все'
   });
   regionOptions.value = items;
+
+});
+
+watch(region, async(newRegion) => {
+  if (region.value !== '*'){
+    await getCities({region_id: newRegion});
+    console.log(cities.value);
+    const c_items = cities.value.map((item) => ({value: item.id, name: item.name}));
+    c_items.unshift({
+      value: '*', name: 'Все'
+    });
+    cityOptions.value = c_items;
+  }
 })
 
 const isLoading = ref(false);
@@ -88,7 +113,7 @@ onMounted(async() => {
   isLoading.value = true;
   if (vacancies.value.length === 0){
     const formParams = useVacancyForm(form.value, 'backend');
-    console.log(formParams);
+    // console.log(formParams);
     // await getVacancies({...formParams});
   }
   isLoading.value = false;

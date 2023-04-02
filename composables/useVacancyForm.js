@@ -34,6 +34,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
     let experiences = [];
     let part_times = [];
     let professional_roles = [];
+    let industries = [];
     if (!data){
         if (params.regions){
             if (params.regions instanceof Array){
@@ -85,6 +86,13 @@ export function useVacancyForm(data = null, to_ = 'front') {
                 professional_roles = [parseInt(params.professional_roles)];
             }
         }
+        if (params.industries){
+            if (params.industries instanceof Array){
+                industries = params.industries.map(item => parseInt(item));
+            }else{
+                industries = [parseInt(params.industries)];
+            }
+        }
     }
     if (data){
         regions = Array.from(data.regions);
@@ -96,6 +104,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
         experiences = Array.from(data.experiences);
         part_times = Array.from(data.part_times);
         professional_roles = Array.from(data.professional_roles);
+        industries = Array.from(data.industries);
     }
 
 
@@ -109,6 +118,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
         experiences: experiences,
         part_times: part_times,
         professional_roles: professional_roles,
+        industries: industries,
         city: data?.city ?? params?.city ?? null,
         currency: data?.currency ?? params.currency ?? 'RUR',
         salary: selectedSalary,
@@ -172,6 +182,9 @@ export function useVacancyForm(data = null, to_ = 'front') {
         if (data.professional_roles instanceof Array){
             front_params.professional_roles = Array.from(data.professional_roles);
         }
+        if (data.industries instanceof Array){
+            front_params.industries = Array.from(data.industries);
+        }
 
         if (data.city !== '') front_params.city = data.city;
 
@@ -209,6 +222,9 @@ export function useVacancyForm(data = null, to_ = 'front') {
         }
         if (data.professional_roles instanceof Array){
             back_params.professional_roles = Array.from(data.professional_roles);
+        }
+        if (data.industries instanceof Array){
+            back_params.industries = Array.from(data.industries);
         }
         if (data.city){
             back_params.city = data.city;

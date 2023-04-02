@@ -185,7 +185,6 @@ const prepare = (items, custom_items) => {
 const {getRegions} = vacancyStore;
 watch(() => vacancyStore.regions, prepare);
 onMounted(async () => {
-  console.log(vacancyStore.regions);
   if (vacancyStore.regions.length === 0 || parseInt(selectedCountry) !== parseInt(appliedCountry.value)){
     await getRegions({country_id: selectedCountry});
     appliedCountry.value = selectedCountry;
