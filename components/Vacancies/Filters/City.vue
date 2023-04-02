@@ -114,8 +114,6 @@ const submitSearch = () => {
 }
 
 const prepare = (items, custom_items) => {
-
-  console.log(items)
   let filterItems = items;
   if (!items){
     filterItems = custom_items;
@@ -172,9 +170,8 @@ const prepare = (items, custom_items) => {
 const {getCities} = vacancyStore;
 watch(() => vacancyStore.cities, prepare);
 onMounted(async () => {
-  console.log(parseInt(selectedRegion), parseInt(appliedRegion.value));
   if (vacancyStore.cities.length === 0 || parseInt(selectedRegion) !== parseInt(appliedRegion.value)){
-    await getCities({region_id: selectedRegion});
+    await getCities({region_ids: [selectedRegion]});
     appliedRegion.value = selectedRegion;
   }else{
     prepare(null, vacancyStore.cities);
