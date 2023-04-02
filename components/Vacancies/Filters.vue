@@ -4,9 +4,11 @@
       <div class="filter-head"> <strong>Фильтры</strong>
         <button class="clear-all">Очистить все</button>
       </div>
+
+      <VacanciesFiltersSpecialization @onFormChange="onFormChange"/>
+
       <VacanciesFiltersRegion :is-city-mode="isCityMode" :selected-country="form.country" @onFormChange="onFormChange"/>
       <VacanciesFiltersCity v-if="isCityMode" :selected-region="selectedRegion" @onFormChange="onFormChange" />
-      <VacanciesFiltersSpecialization @onFormChange="onFormChange"/>
       <VacanciesFiltersPartTime @onFormChange="onFormChange"/>
       <VacanciesFiltersExperience @onFormChange="onFormChange"/>
       <VacanciesFiltersSalary @onFormChange="onFormChange"/>

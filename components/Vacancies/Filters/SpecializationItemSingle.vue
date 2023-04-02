@@ -15,7 +15,7 @@
       </div>
     </div>
     <div class="filter-tree-selector__items" v-if="isOpen">
-      <div class="filter-tree-selector-item filter-tree-selector-item_no-children" v-for="sub_item in items" :key="sub_item.id">
+      <div class="filter-tree-selector-item filter-tree-selector-item_no-children" v-for="sub_item in item.items" :key="sub_item.id">
         <div class="filter-form-item">
           <div class="filter-tree-selector-content">
             <div class="check-block">
@@ -33,25 +33,13 @@
 </template>
 
 <script setup>
-const props = defineProps({
-  item: {
-    required: true,
-  },
-  items: {
-    required: true,
-  },
-  isOpen: {
-    required: false,
-    default: false
-  }
-})
+const props = defineProps(['item'])
 import {useVacancyStore} from "../../../store/vacancy";
 
-const item = ref(props.item);
-const items = ref(props.items);
+// console.log(item)
 
-watchEffect(() => item.value = props.item);
-watchEffect(() => items.value = props.items);
+
+const item = ref(props.item);
 
 watch(item, (newValue) => {
   console.log(newValue);
@@ -59,7 +47,7 @@ watch(item, (newValue) => {
 
 const vacancyStore = useVacancyStore();
 
-const isOpen = ref(props.isOpen);
+const isOpen = ref(true);
 
 const toggle = () => isOpen.value = !isOpen.value;
 const selectToggle = () => {

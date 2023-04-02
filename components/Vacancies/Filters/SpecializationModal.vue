@@ -11,8 +11,11 @@
           </div>
         </div>
         <div class="filter-tree-selector-popup">
-          <div class="filter-tree-selector-popup-content">
-            <VacanciesFiltersSpecializationItem v-for="item in groupedSpecs" :item="item" :key="item.id"/>
+          <div class="filter-tree-selector-popup-content" v-if="isSearching">
+            <VacanciesFiltersSpecializationItem v-for="item in groupedSpecs" :item="item" :items="item.items" :key="item.id" :is-open="true"/>
+          </div>
+          <div class="filter-tree-selector-popup-content" v-else>
+            <VacanciesFiltersSpecializationItem v-for="item in groupedSpecs" :item="item" :items="item.items" :key="item.id"/>
           </div>
         </div>
         <div class="filter-modal-error filter-modal-error_hidden"></div>
@@ -53,55 +56,62 @@ const emit = defineEmits({
 
 const searchInput = ref("");
 
+const isSearching = computed(() => {
+  if (searchInput.value === ""){
+    return false;
+  } return true;
+})
+const matchedSpecs = ref([]);
 const groupedSpecs = ref([]);
 
 const onSearch = () => {
-  console.log(specializations);
   prepare(specializations);
 }
 const prepare = (newValues) => {
   const groupItems = [];
-  for (let i = 0; i < newValues.length; i++){
-    const item = newValues[i];
+  const matchingSpecs = [];
+  console.log(isSearching.value);
 
-      let has_match = true;
+    for (let i = 0; i < newValues.length; i++){
+      const item = newValues[i];
+
       if (item && !item.parent_id){
-        if (searchInput.value != "" && !item.title.toLowerCase().includes(searchInput.value)){
-          has_match = false;
-        }
         groupItems.push({
           id: item.id,
           name: item.title,
           is_checked: false,
-          has_match,
           items: []
         })
       }
+    }
 
-  }
+    for (let i = 0; i < groupItems.length; i++){
+      const item = groupItems[i];
+      for (let j = 0; j < newValues.length; j++){
+        const sub_item = newValues[j];
+        if (!sub_item.parent_id) continue;
 
-  console.log(groupItems);
+        if (isSearching){
+          if (!sub_item.title.toLowerCase().includes(searchInput.value.toLowerCase())) continue;
+        }
 
-  // for (let i = 0; i < groupItems.length; i++){
-  //   const item = groupItems[i];
-  //   for (let j = 0; j < newValues.length; j++){
-  //     const sub_item = newValues[j];
-  //     if (sub_item && sub_item.parent_id){
-  //       if (sub_item.parent_id === item.id){
-  //         if (searchInput.value != "" && !sub_item.title.toLowerCase().includes(searchInput.value)){
-  //           continue;
-  //         }
-  //         groupItems[i].items.push({
-  //           id: sub_item.id,
-  //           name: sub_item.title,
-  //           is_checked: false,
-  //         })
-  //       }
-  //     }
-  //   }
-  // }
+        if (sub_item && sub_item.parent_id){
+          if (sub_item.parent_id === item.id){
+            groupItems[i].items.push({
+              id: sub_item.id,
+              name: sub_item.title,
+              is_checked: false,
+            })
+          }
+        }
+      }
+    }
+    if (isSearching){
+      groupedSpecs.value = groupItems.filter(spec => spec.items.length);
+    }else{
+      groupedSpecs.value = groupItems;
+    }
 
-  groupedSpecs.value = groupItems.filter(item => item.has_match);
 }
 
 onMounted(() => {
