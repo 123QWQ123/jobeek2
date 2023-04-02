@@ -120,7 +120,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
         professional_roles: professional_roles,
         industries: industries,
         city: data?.city ?? params?.city ?? null,
-        currency: data?.currency ?? params.currency ?? 'RUR',
+        currency: data?.currency ?? params.currency ?? 'RUB',
         salary: selectedSalary,
         order_by: data?.order_by ?? params.order_by ?? null,
     };
@@ -134,7 +134,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
         country: data.country?? null,
         regions: data.regions ?? null,
         cities: data.cities ?? null,
-        currency: 'RUR',
+        currency: 'RUB',
         order_by: null,
         salary: {
             from: null,
