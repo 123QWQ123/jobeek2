@@ -41,6 +41,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
                 regions = [parseInt(params.regions)];
             }
         }
+
         if (params.cities){
             if (params.cities instanceof Array){
                 cities = params.cities.map(item => parseInt(item));
@@ -79,7 +80,9 @@ export function useVacancyForm(data = null, to_ = 'front') {
     }
     if (data){
         regions = Array.from(data.regions);
-        cities = Array.from(data.cities);
+        if (regions.length === 1){
+            cities = Array.from(data.cities);
+        }
         work_types = Array.from(data.work_types);
         schedules = Array.from(data.schedules);
         experiences = Array.from(data.experiences);
@@ -141,7 +144,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
         if (data.regions instanceof Array){
             front_params.regions = Array.from(data.regions);
         }
-        if (data.cities instanceof Array){
+        if (front_params.regions.length === 1 && data.cities instanceof Array){
             front_params.cities = Array.from(data.cities);
         }
         if (data.work_types instanceof Array){

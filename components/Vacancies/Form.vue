@@ -75,7 +75,7 @@ const regionOptions = ref([]);
 const {regions} = storeToRefs(vacancyStore);
 
 onMounted(async() => {
-  await getRegions();
+  await getRegions({country_id: form.value.country});
   const items = regions.value.map((item) => ({value: item.id, name: item.name}));
   items.unshift({
     value: '*', name: 'Все'

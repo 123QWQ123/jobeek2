@@ -44,7 +44,8 @@
 </template>
 
 <script setup>
-const {selectedRegion} = defineProps(['selectedRegion'])
+const emit = defineEmits(['onFormChange']);
+const {selectedRegion} = defineProps(['selectedRegion']);
 import {useVacancyStore} from "../../../store/vacancy";
 import {useVacancyForm} from "../../../composables/useVacancyForm";
 
@@ -73,23 +74,23 @@ const onSearch = (e) => {
       return item.name.toLowerCase().includes(search.toLowerCase());
     });
   }
-  selectedCities.value = items;
+  selectedItems.value = items;
   prepare(items);
 };
 
 const form = ref(useVacancyForm());
 console.log(form.value.cities)
-const selectedCities = ref(form.value.cities);
+const selectedItems = ref(form.value.cities);
 
 const toggleRegion = (id) => {
   const items = groupedFilterItems.value.map((item, key) => {
     if(item.id === id){
       item.is_checked = !item.is_checked;
-      if (!selectedCities.value.includes(item.id) && item.is_checked){
-        selectedCities.value.push(item.id);
+      if (!selectedItems.value.includes(item.id) && item.is_checked){
+        selectedItems.value.push(item.id);
       }else{
-        if (selectedCities.value.includes(item.id) && item.is_checked === false){
-          selectedCities.value = selectedCities.value.filter(sub => sub !== item.id);
+        if (selectedItems.value.includes(item.id) && item.is_checked === false){
+          selectedItems.value = selectedItems.value.filter(sub => sub !== item.id);
         }
       }
       return item;
@@ -99,7 +100,7 @@ const toggleRegion = (id) => {
 
   groupedFilterItems.value = items;
 
-  form.value.cities = selectedCities.value;
+  form.value.cities = selectedItems.value;
 
   submitSearch();
 };
@@ -109,11 +110,7 @@ const  isLoading = ref(false);
 const {clearVacancies} = vacancyStore;
 const router  = useRouter();
 const submitSearch = () => {
-  isLoading.value = true;
-  clearVacancies();
-  const params = useVacancyForm(form.value, 'front');
-  router.replace({name: 'search-vacancies', query: params});
-  isLoading.value = false;
+  emit('onFormChange', 'regions', selectedItems.value);
 }
 
 const prepare = (items, custom_items) => {
@@ -166,7 +163,7 @@ const prepare = (items, custom_items) => {
       id: item.id,
       name: item.name,
       is_header: false,
-      is_checked: selectedCities.value.includes(item.id)
+      is_checked: selectedItems.value.includes(item.id)
     });
   });
 
@@ -175,13 +172,14 @@ const prepare = (items, custom_items) => {
 const {getCities} = vacancyStore;
 watch(() => vacancyStore.cities, prepare);
 onMounted(async () => {
+  console.log(parseInt(selectedRegion), parseInt(appliedRegion.value));
   if (vacancyStore.cities.length === 0 || parseInt(selectedRegion) !== parseInt(appliedRegion.value)){
     await getCities({region_id: selectedRegion});
     appliedRegion.value = selectedRegion;
   }else{
     prepare(null, vacancyStore.cities);
   }
-  if (selectedCities.value.length > 0){
+  if (selectedItems.value.length > 0){
     isMore.value = true;
   }
 });
