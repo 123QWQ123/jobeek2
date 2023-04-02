@@ -5,7 +5,6 @@
         <div class="filter-modal-header">
           <span class="filter-modal-title">Специализации</span>
           <br/>
-          {{selectedSpecs}}
           <div class="filter-tree-selector-popup-search">
             <fieldset class="input-wrapper">
               <input placeholder="Быстрый поиск" type="search" class="filter-input-text" v-model="searchInput" @input="onSearch">
@@ -29,10 +28,12 @@
         <div class="filter-modal-footer mt-3">
           <div class="filter-tree-selector-popup-footer">
             <div class="filter-form-spacer">
-              <button @click="close" class="btn button-xs sign-in-btn" type="button"><span>Отменить</span></button>
+              <button @click="close" class="btn button-xs sign-in-btn" type="button">
+                <span>Отменить</span>
+              </button>
             </div>
             <div class="filter-form-spacer">
-              <button class="btn button-accent" type="button">
+              <button class="btn button-accent" type="button" @click="apply">
                 <span>Выбрать</span>
               </button>
             </div>
@@ -68,12 +69,11 @@ const emit = defineEmits({
 });
 const selectedSpecs = ref({});
 
-watch(selectedSpecs, (newValues) => {
+const apply = () => {
   let ids = [];
-  Object.keys(newValues).map((item_id) => ids = ids.concat(newValues[item_id]));
+  Object.keys(selectedSpecs.value).map((item_id) => ids = ids.concat(selectedSpecs.value[item_id]));
   emit('update:modelValue', ids);
-});
-
+}
 const searchInput = ref("");
 
 const isSearching = computed(() => {
