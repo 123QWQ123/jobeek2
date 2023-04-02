@@ -114,7 +114,7 @@ onMounted(async() => {
   if (vacancies.value.length === 0){
     const formParams = useVacancyForm(form.value, 'backend');
     // console.log(formParams);
-    // await getVacancies({...formParams});
+    await getVacancies({...formParams});
   }
   isLoading.value = false;
 });
