@@ -112,7 +112,6 @@ import moment from "moment";
 import Swal from "sweetalert2";
 import {useRuntimeConfig} from "nuxt/app";
 import IMask from "imask";
-import {useImageAsUrl} from "../../composables/useImageAsUrl";
 const profileStore = useProfileStore();
 
 const {getUser} = profileStore;
@@ -197,8 +196,8 @@ watch(seeker, (new_value) => {
   }
 })
 
-const {getPublicCountries, getPublicCities} = profileStore;
-await getPublicCountries();
+// const {getCountries, getPublicCities} = profileStore;
+// // await getPublicCountries();
 
 const {countryOptions, cityOptions} = storeToRefs(profileStore);
 
@@ -214,7 +213,7 @@ const photoUrl = computed(() => {
 
 
 watch(country, (new_value) => {
-  getPublicCities({country_id: new_value});
+  // getPublicCities({country_id: new_value});
 });
 
 const photoElement = ref();

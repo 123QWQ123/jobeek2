@@ -12,11 +12,11 @@
           <label for="salary">Желаемая зарплата</label>
           <HeaderSalarySelectInForm v-model="form.salary"></HeaderSalarySelectInForm>
         </div>
-        <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">
-          <input v-model="form.city" type="text" name="city" placeholder="Город" autocomplete="off">
+        <div class="input-wrap has-icon">
+          <SelectWithSearch :options="cityOptions" v-model="city" :listStyles="searchSelectStyles" @change="onCityChange" :listItemStyles="searchSelectItemStyles"/>
         </div>
         <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">
-          <input v-model="form.region" type="text" name="region" placeholder="Регион" autocomplete="off">
+          <SelectWithSearch :options="regionOptions" v-model="region" :listStyles="searchSelectStyles" @change="onRegionChange" :listItemStyles="searchSelectItemStyles"/>
         </div>
         <button class="button-accent submit-search-form" type="submit">Поиск </button>
       </div>
@@ -27,27 +27,80 @@
 <script setup>
 import {useVacancyStore} from "../../store/vacancy";
 import {useVacancyForm} from "../../composables/useVacancyForm";
+import {storeToRefs} from "pinia";
 const vacancyStore = useVacancyStore();
 const route = useRoute();
 const router = useRouter();
 
-const form = ref(useVacancyForm(route.query, true))
+const region = ref(null);
+const city = ref('*');
 
-const onChange = (data) => {
-  console.log(data);
+const form = ref(useVacancyForm());
+
+const onRegionChange = (regionItem) => {
+  if (regionItem.value === '*'){
+    form.value.regions = [];
+  }else{
+    form.value.regions = [regionItem.value];
+  }
 }
-const {getVacancies} = vacancyStore;
+const onCityChange = (regionItem) => {
+  if (regionItem.value === '*'){
+    form.value.regions = [];
+  }else{
+    form.value.regions = [regionItem.value];
+  }
+}
+const {getVacancies, getRegions, getCities} = vacancyStore;
 const vacancies = computed(() => vacancyStore.vacancies);
 
-const {salary, city, country, search} = route.query;
+const searchSelectItemStyles = {
+  width: 'auto !important',
+  whiteSpace: 'pre-wrap',
+}
+
+const {regions, cities} = storeToRefs(vacancyStore);
+const regionOptions = ref([]);
+const cityOptions = ref([]);
+
+const prepareCities = () => {
+  console.log(cities.value);
+  const c_items = cities.value.map((item) => ({value: item.id, name: item.name}));
+  c_items.unshift({
+    value: '*', name: 'Все'
+  });
+  cityOptions.value = c_items;
+}
+
+watch(region, async(newRegion) => {
+  if (region.value !== '*'){
+    await getCities({region_ids: [newRegion]});
+  }
+  prepareCities();
+});
+
+onMounted(async() => {
+  if (form.value.regions.length === 1){
+    region.value = form.value.regions[0];
+  }
+  await getRegions({country_ids: [form.value.country]});
+  const items = regions.value.map((item) => ({value: item.id, name: item.name}));
+  items.unshift({
+    value: '*', name: 'Все'
+  });
+  regionOptions.value = items;
+});
+
+
 
 const isLoading = ref(false);
 onMounted(async() => {
   isLoading.value = true;
   if (vacancies.value.length === 0){
-    const formParams = useVacancyForm(form.value, false);
-    await getVacancies(formParams);
+    const formParams = useVacancyForm(form.value, 'backend');
+    await getVacancies({...formParams});
   }
+
   isLoading.value = false;
 });
 
@@ -56,10 +109,30 @@ const {clearVacancies} = vacancyStore;
 const onSearchSubmit = async(e) => {
   isLoading.value = true;
   clearVacancies();
-  const params = useVacancyForm(form.value, false);
+  console.log(form.value);
+  const params = useVacancyForm(form.value, 'front');
+  console.log(params);
   router.replace({name: 'search-vacancies', query: params});
   isLoading.value = false;
 }
+
+
+
+const regionListStyles = {
+  left: 'unset',
+  right: '0px',
+  width: 'auto !important',
+  maxWidth: '20rem',
+  minWidth: '8rem',
+}
+const searchSelectStyles = {
+  left: 'unset',
+  right: '0px',
+  width: 'auto !important',
+  maxWidth: '20rem',
+  minWidth: '8rem',
+}
+
 </script>
 
 <style scoped>
