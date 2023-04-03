@@ -24,7 +24,9 @@ export function useVacancyForm(data = null, to_ = 'front') {
         selectedSalary = data.salary;
     }else{
         selectedSalary = useFindSalary(params?.salary, true);
+
     }
+
 
 
     let regions = [];
@@ -35,6 +37,25 @@ export function useVacancyForm(data = null, to_ = 'front') {
     let part_times = [];
     let professional_roles = [];
     let industries = [];
+
+    if (to_ === 'reset'){
+
+        return {
+            name: "",
+            country: 1,
+            regions: regions,
+            cities: cities,
+            work_types: work_types,
+            schedules: schedules,
+            experiences: experiences,
+            part_times: part_times,
+            professional_roles: professional_roles,
+            industries: industries,
+            currency: 'RUB',
+            salary: useFindSalary(params?.salary, false),
+            order_by: null,
+        };
+    }
     if (!data){
         if (params.regions){
             if (params.regions instanceof Array){
@@ -119,7 +140,6 @@ export function useVacancyForm(data = null, to_ = 'front') {
         part_times: part_times,
         professional_roles: professional_roles,
         industries: industries,
-        city: data?.city ?? params?.city ?? null,
         currency: data?.currency ?? params.currency ?? 'RUB',
         salary: selectedSalary,
         order_by: data?.order_by ?? params.order_by ?? null,

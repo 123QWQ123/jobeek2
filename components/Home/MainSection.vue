@@ -18,7 +18,8 @@
           </div>
           <div class="input-wrap has-label">
             <label for="salary">Желаемая зарплата</label>
-            <SalarySelectInForm v-model="form.salary" @change="onChange"></SalarySelectInForm>
+            <HeaderSalarySelectInForm v-model="form.salary"></HeaderSalarySelectInForm>
+<!--            <SalarySelectInForm v-model="form.salary" @change="onChange"></SalarySelectInForm>-->
           </div>
           <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">
             <input v-model="form.city" type="text" name="city" placeholder="Город" autocomplete="off">
@@ -57,6 +58,8 @@
   })
 
   const onSearchSubmit = (e) => {
-    router.push({name: 'search-vacancies', query: form.value});
+    const params = useVacancyForm(form.value, 'front');
+    console.log(params);
+    router.push({name: 'search-vacancies', query: params});
   }
 </script>

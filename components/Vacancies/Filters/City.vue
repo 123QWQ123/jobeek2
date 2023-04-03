@@ -1,7 +1,7 @@
 <template>
   <div class="filter-box" :class="{'open': regionFilterClass}">
     <div class="filter-box-handle" @click="regionFilterClass = !regionFilterClass">
-      <strong>Cities({{selectedRegion}})</strong>
+      <strong>Города</strong>
       <img src="~/assets/img/svg/Arrow-Down.svg" alt="#">
     </div>
 
@@ -36,7 +36,7 @@
           </div>
         </div>
       </div>
-      <button class="more-filters" data-default-text="Еще 25" data-hide-text="Показат" @click="toggleMore">
+      <button class="more-filters" @click="toggleMore" v-if="total > 0">
         Еще {{ total }}
       </button>
     </div>
@@ -55,7 +55,13 @@ const appliedRegion = ref(null);
 const search = ref("");
 const cities = ref([]);
 
-const total = computed(() => cities.value.length - 5);
+const total = computed(() => {
+  if (cities.value.length > 5){
+    return cities.value.length - 5;
+  }else{
+    return 0;
+  }
+});
 const regionFilterClass = ref(true);
 const isMore = ref(false);
 const groupedFilterItems = ref([]);

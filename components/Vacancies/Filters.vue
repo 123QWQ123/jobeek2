@@ -2,7 +2,7 @@
   <aside class="aside">
     <div class="filter-container">
       <div class="filter-head"> <strong>Фильтры</strong>
-        <button class="clear-all">Очистить все</button>
+        <button class="clear-all" @click="resetFilters">Очистить все</button>
       </div>
 
       <VacanciesFiltersIndustry @onFormChange="onFormChange" :selected-ids="form.industries"/>
@@ -38,8 +38,10 @@ import {useVacancyForm} from "../../composables/useVacancyForm";
 const vacancyStore = useVacancyStore();
 
 const form = ref(useVacancyForm());
+
 const route = useRoute();
 const router = useRouter();
+
 
 const selectedRegion = computed(() => {
   if (form.value.regions.length === 1){
@@ -54,6 +56,13 @@ const isCityMode = computed(() => {
 });
 
 const {clearVacancies, getVacancies} = vacancyStore;
+
+const resetFilters = () => {
+  const params = useVacancyForm(null, 'reset');
+  form.value = params;
+  const resetParams = useVacancyForm(form.value, 'front');
+  router.push({query: resetParams});
+}
 const onFormChange = (filter_name, filter_value) => {
   console.log(filter_name, filter_value);
   form.value[filter_name] = filter_value;
