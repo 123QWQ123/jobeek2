@@ -38,14 +38,17 @@
     <div class="input-row">
       <label for="phone">Телефон</label>
       <div class="input-wrapper">
-        <input type="text" disabled placeholder="Телефон" id="phone" v-model="state.phone.val" />
+        <input ref="phoneInputElement" disabled type="text" id="phone" v-model="state.phone.val" />
       </div>
     </div>
     <div class="input-row">
-      <label for="email">Электронная почта <b>*</b></label>
+      <label for="email">Электронная почта<b>*</b></label>
       <div class="input-wrapper position-relative">
-        <input type="email" placeholder="Электронная почта" id="email" v-model="state.email.val" />
-        <a class="btn bg-info btn-sm position-absolute end-0 top-0 mt-2 me-2">Потверждать</a>
+        <input type="email" placeholder="Электронная почта" id="email" v-model="state.email.val" v-if="!state.email_to_verify.val" />
+        <input type="email" placeholder="Электронная почта" id="email_to_verify" v-else v-model="state.email_to_verify.val" />
+        <a v-if="state.email_to_verify.val" @click="onEmailConfirm" class="badge bg-primary position-absolute fs-6 end-0 top-0 p-2 px-2 mt-2 me-2">Потверждать</a>
+        <a v-else-if="isCheckButton" @click="checkEmailConfirmation" if="isConfirmButton" class="badge bg-primary btn-sm fs-6 position-absolute end-0 top-0 p-2 px-2 mt-2 me-2">Проверить</a>
+        <span v-else class="badge bg-success fs-6 position-absolute end-0 top-0 p-2 px-2 mt-2 me-2">Потвержден</span>
       </div>
       <div class="text-success d-block" v-if="state.email.is_sent">
         {{ "Вам выслано емейл с код подтверждением, подтвердите ваш емейл." }}
@@ -53,8 +56,18 @@
       <div class="text-danger d-block" v-if="errors.email">
         {{ errors.email }}
       </div>
-
     </div>
+
+    <div class="input-row">
+      <label for="email">Пароль<b>*</b></label>
+      <div class="input-wrapper position-relative">
+        <input type="password" id="password" v-model="state.password.val" />
+      </div>
+      <div class="text-danger d-block" v-if="errors.password">
+        {{ errors.password }}
+      </div>
+    </div>
+
     <div class="input-row">
       <div class="input-wrapper">
         <base-button type="submit">Сохранить</base-button>
@@ -70,6 +83,7 @@ const CONFIG = useRuntimeConfig();
 import {storeToRefs} from "pinia";
 import Swal from "sweetalert2";
 import {useRuntimeConfig} from "nuxt/app";
+import IMask from "imask";
 const profileStore = useProfileStore();
 
 const {getUser} = profileStore;
@@ -83,6 +97,11 @@ const state = reactive({
     val: "",
     isValid: true,
   },
+  logo: {
+    val: "",
+    isValid: true,
+    base64: "",
+  },
   logo_url: {
     val: "",
     isValid: true,
@@ -95,26 +114,60 @@ const state = reactive({
     val: "",
     isValid: true,
   },
+  email_to_verify: {
+    val: "",
+    isValid: true,
+  },
+  password: {
+    val: "",
+    isValid: true,
+  },
   isFormValid: true,
   isLoading: true,
   error: null,
   success: null,
 });
 
+watch(state, () => {
+  if (phoneMask.value){
+    phoneMask.value.updateValue();
+  }
+})
+
+
+const isConfirmButton = ref(true);
+const isCheckButton = ref(false);
+
+const phoneInputElement = ref();
+const phoneMask = ref(null);
 watch(employer, (new_value) => {
   for (const [key, value] of Object.entries(new_value)) {
     if (state.hasOwnProperty(key)){
+      if (key === 'phone'){
+        state[key].val = value;
+        setTimeout(() => {
+          phoneMask.value = new IMask(phoneInputElement.value, {
+            mask: "+{7}(000)000-00-00",
+          });
+        }, 0)
+        continue;
+      }
       state[key].val = value;
     }
   }
 })
 
+
 // /assets/images/avatar.png
 const photoUrl = computed(() => {
-  if (state.logo_url.val){
+  if (state.logo.base64){
+    return state.logo.base64;
+  } else if (state.logo_url.val){
     return CONFIG.public.base + state.logo_url.val;
-  }else return CONFIG.public.base + '/assets/images/company.png'
+  } else return CONFIG.public.base + '/assets/images/avatar.png';
 });
+
+
 const photoElement = ref();
 
 const openFileBrowser = () => {
@@ -125,13 +178,16 @@ const clearPhotoUrl = () => {
 }
 
 const {upload} = profileStore;
-const handleUploadFile = async (e) => {
-  const formData = new FormData();
-  formData.append("image", photoElement.value.files[0]);
-  const response =  await upload(formData);
 
-  if (response.status === 'success'){
-    state.logo_url.val =  response.path;
+const handleUploadFile = async (e) => {
+  state.logo.val = photoElement.value.files[0];
+  const file = photoElement.value.files;
+  if (file && file[0]) {
+    let reader = new FileReader
+    reader.onload = e => {
+      state.logo.base64 = e.target.result
+    }
+    reader.readAsDataURL(file[0])
   }
 }
 
@@ -148,24 +204,45 @@ const validate = () => {
     state.logo_url.isValid = false;
     state.isFormValid = false;
   }
+  if (state.password.val === "" || state.password.val.length < 8) {
+    state.password.isValid = false;
+    state.isFormValid = false;
+  }
 }
+
+const {confirmEmail} = useProfileStore();
+const onEmailConfirm = async() => {
+  const email = state.email_to_verify.val ? state.email_to_verify.val : state.email.val;
+  const resData = await confirmEmail({email});
+  if (resData.status === 'success'){
+    Swal.fire({
+      title: 'Успешно!',
+      text: resData.message,
+      icon: 'success',
+      confirmButtonText: 'ОК'
+    });
+    isConfirmButton.value = false;
+    isCheckButton.value = true;
+  }
+
+}
+
 const errors = ref({});
-const {update} = profileStore;
+const {updateEmployer} = profileStore;
 const handleSubmit = async (e) => {
   validate();
   errors.value = {};
 
-  const data = {
-    logo_url: state.logo_url.val,
-    company_name: state.company_name.val,
-    email: state.email.val,
-  };
-
-  const resData = await update(data, 'employer');
-
-  console.log(resData);
-
+  const formData = new FormData();
+  formData.append("logo", state.logo.val);
+  formData.append("company_name", state.company_name.val);
+  formData.append("email", state.email.val);
+  formData.append("password", state.password.val);
+  formData.append("password_confirmation", state.password.val);
+  formData.append("_method", 'put');
+  const resData = await updateEmployer(formData);
   if (resData.status === 'success'){
+    await getUser();
     Swal.fire({
       title: 'Успешно!',
       text: resData.message,
@@ -184,6 +261,11 @@ const handleSubmit = async (e) => {
 
 </script>
 
+<style>
+input[type="text"]:disabled {
+  background: #ccc;
+}
+</style>
 <style scoped>
 
 #photo{

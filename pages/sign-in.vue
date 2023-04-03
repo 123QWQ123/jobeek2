@@ -10,6 +10,7 @@ useHead({
 })
 
 import { useAuthStore } from "~~/store/auth";
+import IMask from "imask";
 
 const auth = useAuthStore();
 const isAuthed = computed(() => auth.isAuthed);
@@ -42,8 +43,6 @@ const state = reactive({
 });
 
 function clearValidity(input) {
-  console.log(input)
-  console.log(state);
   state[input].isValid = true;
   state.isFormValid = true;
 }
@@ -71,9 +70,8 @@ async function onSubmit() {
     let response;
     try {
         response = await signIn({
-        phone: state.phone.val,
+        phone: phoneMask.value.unmaskedValue,
         password: state.password.val,
-        remember_me: state.remember_me.val,
       });
 
     }catch (error) {
@@ -100,6 +98,14 @@ async function onSubmit() {
 
 }
 
+const phoneInputElement = ref();
+const phoneMask = ref(null);
+onMounted(( ) => {
+  phoneMask.value = new IMask(phoneInputElement.value, {
+    mask: "+{7}(000)000-00-00",
+  });
+  phoneInputElement.value.addEventListener("input", () => {});
+})
 function close(){
   state.error = null;
   state.success = null;
@@ -121,7 +127,7 @@ function close(){
         <form class="enter-form" @submit.prevent="onSubmit">
           <h1>Вход</h1>
           <div class="i-wrap has-validation">
-            <input type="tel" name="tel" placeholder="Номер телефона" v-model="state.phone.val" @focusout="clearValidity('phone')" />
+            <input ref="phoneInputElement" type="tel" name="tel" placeholder="Номер телефона" v-model="state.phone.val" @focusout="clearValidity('phone')" />
             <div :style="{display: 'none'}" class="text-danger" :class="{'d-block': !state.phone.isValid}">
               Введите правильный номер телефона
             </div>
@@ -142,7 +148,8 @@ function close(){
                 <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
               </div>
               <label for="agree">Запомнить меня</label>
-            </div>  <a href="#">Забыли пароль?       </a>
+            </div>
+            <NuxtLink :to="{name: 'forgot-password'}">Забыли пароль?</NuxtLink>
           </div>
           <button class="btn button-accent" type="submit">Войти</button>
         </form>
