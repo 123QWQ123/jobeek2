@@ -94,8 +94,9 @@
             </div>
           </div>
         </div>
-        <VacanciesSingleHHContent v-if="provider === 'hh'"></VacanciesSingleHHContent>
-        <VacanciesSingleHHContent v-if="provider === 'superjob'"></VacanciesSingleHHContent>
+        {{vacancy}}
+        <VacanciesSingleHHContent  v-if="provider === 'hh'" :item="vacancy"></VacanciesSingleHHContent>
+        <VacanciesSingleSuperjobContent  v-if="provider === 'superjob'" :item="vacancy"></VacanciesSingleSuperjobContent>
         <h2 class="lk-page-title">Похожие вакансии</h2>
         <div class="favorites-list-container">
 <!--          <VacanciesSingleLikeList></VacanciesSingleLikeList>-->
@@ -109,11 +110,23 @@
 
 <script setup>
 
+import {storeToRefs} from "pinia";
+import {useVacancyStore} from "../../../store/vacancy";
 const route = useRoute();
-console.log(route);
+const vacancyStore = useVacancyStore();
+const {getVacancy} = vacancyStore;
+const {vacancy} = storeToRefs(vacancyStore);
+console.log(vacancy);
 
 const {slug} = route.params;
 const {provider} = route.query;
+const vacancyData = await getVacancy(slug, {provider});
+
+const pageTitle = computed(() => vacancyData?.name + " - Jobeek");
+
+useHead({
+  title: pageTitle.value,
+})
 
 console.log(slug, provider);
 

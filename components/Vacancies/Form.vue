@@ -83,7 +83,7 @@ onMounted(async() => {
   if (form.value.regions.length === 1){
     region.value = form.value.regions[0];
   }
-  await getRegions({country_ids: [form.value.country]});
+  // await getRegions({country_id: form.value.countries[0]});
   const items = regions.value.map((item) => ({value: item.id, name: item.name}));
   items.unshift({
     value: '*', name: 'Все'

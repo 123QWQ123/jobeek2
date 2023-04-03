@@ -6,7 +6,7 @@
           <div class="company-logo"><img :src="item.logo" alt="#">
           </div>
           <div class="company-name">
-            <NuxtLink :to="{name: 'vacancies-slug', params: {slug: item.id}, query: {provider: 'superjob'}}">
+            <NuxtLink :to="{name: 'vacancies-slug', params: {slug: item.id}, query: {provider: 'hh'}}">
               {{ item.name }}
             </NuxtLink>
             <span class="count">{{ item.company }}</span>
