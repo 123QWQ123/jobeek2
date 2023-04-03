@@ -4,6 +4,7 @@ import {useRuntimeConfig} from "nuxt/app";
 import { defineStore, acceptHMRUpdate } from "pinia";
 import axios from "axios";
 import {useAuthStore} from "~/store/auth";
+import useApi from "~/hooks/useApi";
 
 export const useAreaStore = defineStore('area', {
   state: () => {
@@ -15,39 +16,15 @@ export const useAreaStore = defineStore('area', {
   },
   actions: {
     async getRegions(payload) {
-      const CONFIG = useRuntimeConfig();
-      console.log(CONFIG.public.apiBase);
-      let url = CONFIG.public.apiBase + 'area/regions';
-
-      let token;
-      if (typeof window !== 'undefined') {
-        // Perform localStorage action
-        token = localStorage.getItem('token')
+      const {data} = await useApi('area/regions', {
+        method: 'get',
+        payload
+      });
+      if (data) {
+        this.regions = data.data.regions;
       }
-      try {
-
-        const response = await axios.get(
-            url,
-            payload,
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-              }
-            },
-        );
-        console.log(response)
-        if ('data' in response.data){
-          this.regions = response.data.data.regions;
-        }
-      }catch (error){
-        this.regions = []
-        return {
-          status: 'error',
-          message: error.message,
-        };
-      }
-    },
+      return data;
+    }
   },
 })
 

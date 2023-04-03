@@ -1,4 +1,4 @@
-@import "main.css";
+//@import "main.css";
 
 .right_aligned{
   left: unset;
@@ -8,4 +8,8 @@
 
 .check-block label{
   white-space: nowrap;
+}
+
+.cursor-pointer{
+  cursor: pointer;
 }

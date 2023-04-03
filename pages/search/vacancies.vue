@@ -5,6 +5,9 @@ import {navigateTo} from "nuxt/app";
 definePageMeta({
   layout: 'main'
 });
+useHead({
+  title: "Поиск вакансий - Jobeek",
+})
 
 const authStore = useAuthStore();
 

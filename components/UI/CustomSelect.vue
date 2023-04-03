@@ -20,7 +20,6 @@ export default {
   const options = computed(() => props.options);
   const selectedValue = computed(() => props.modelValue);
   const selectedOption = ref({});
-
   const selectedItem = props.options.find(
       (item) => String(selectedValue.value) === String(item.value)
   );

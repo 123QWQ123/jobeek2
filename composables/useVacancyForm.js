@@ -1,82 +1,268 @@
 import {useSalaryOptions} from "~/composables/useSalaryOptions";
+import {useRoute} from "nuxt/app";
+import {useFindSalary} from "~/composables/useFindSalary";
+import {useFindCurrency} from "~/composables/useFindCurrency";
 
-export function useVacancyForm(form, to_form = false) {
-    const salaryOptions = useSalaryOptions();
-
-    const form_data = {
-        name: form.name,
-        country: form.country,
-        region: form.region,
-        city: form.city,
-        salary: {
-            currency: 'Rub',
-            id: 0,
-            min: null,
-            max: null,
-        },
+export function useVacancyForm(data = null, to_ = 'front') {
+    // console.log(data, to_);
+    // data is form_data by default or null if this is first of calling
+    // to_ = front|backend
+    const removeNull = (obj) => {
+        Object.keys(obj).forEach(k =>
+            (obj[k] && typeof obj[k] === 'object') && removeNull(obj[k]) ||
+            (!obj[k] && obj[k] !== undefined) && delete obj[k]
+        );
+        return obj;
     };
 
-    const url_data = {
-        name: form.name,
-        country: form.country,
-        city: form.city,
-        salary: null,
-    };
-    if (!!!form && to_form){
-        return form_data;
+    const route = useRoute();
+
+    const params = route.query;
+
+    let selectedSalary = null;
+    if (data){
+        selectedSalary = data.salary;
+    }else{
+        selectedSalary = useFindSalary(params?.salary, true);
+
     }
-    if (!!!form && !to_form){
-        return url_data;
+
+
+
+    let regions = [];
+    let cities = [];
+    let work_types = [];
+    let schedules = [];
+    let experiences = [];
+    let part_times = [];
+    let professional_roles = [];
+    let industries = [];
+
+    if (to_ === 'reset'){
+
+        return {
+            name: "",
+            country: 1,
+            regions: regions,
+            cities: cities,
+            work_types: work_types,
+            schedules: schedules,
+            experiences: experiences,
+            part_times: part_times,
+            professional_roles: professional_roles,
+            industries: industries,
+            currency: 'RUB',
+            salary: useFindSalary(params?.salary, false),
+            order_by: null,
+        };
     }
-
-    if (to_form){
-        if (form.salary && form.salary !== ""){
-            if (form.salary.includes('-')){
-                const salary_values = form.salary.split("-");
-                const min = parseInt(salary_values[0]);
-                const max = parseInt(salary_values[1]);
-
-                let selectedSalaryOptionID = salaryOptions.findIndex(item => item.min === min && item.max === max);
-                if (selectedSalaryOptionID === -1){
-                    selectedSalaryOptionID = salaryOptions.findIndex((item) => {
-                        if (item.hasOwnProperty('max') && item.hasOwnProperty('min')){
-                            if (item.min >= min || item.max <= max){
-                                return true;
-                            }
-                        }
-                    });
-                }
-                let selectedSalaryOption = null;
-                if (selectedSalaryOptionID !== -1){
-                    selectedSalaryOption = salaryOptions[selectedSalaryOptionID]
-                }
-
-                form_data.salary.min = min;
-                form_data.salary.max = max;
-                form_data.salary.id = selectedSalaryOptionID;
+    if (!data){
+        if (params.regions){
+            if (params.regions instanceof Array){
+                regions = params.regions.map(item => parseInt(item));
             }else{
-                form_data.salary = {
-                    min: parseInt(form.salary),
-                    max: null
-                };
+                regions = [parseInt(params.regions)];
+            }
+        }
+
+        if (params.cities){
+            if (params.cities instanceof Array){
+                cities = params.cities.map(item => parseInt(item));
+            }else{
+                cities = [parseInt(params.cities)];
+            }
+        }
+        if (params.work_types){
+            if (params.work_types instanceof Array){
+                work_types = params.work_types.map(item => parseInt(item));
+            }else{
+                work_types = [parseInt(params.work_types)];
+            }
+        }
+        if (params.schedules){
+            if (params.schedules instanceof Array){
+                schedules = params.schedules.map(item => parseInt(item));
+            }else{
+                schedules = [parseInt(params.schedules)];
+            }
+        }
+        if (params.experiences){
+            if (params.experiences instanceof Array){
+                experiences = params.experiences.map(item => parseInt(item));
+            }else{
+                experiences = [parseInt(params.experiences)];
+            }
+        }
+        if (params.part_times){
+            if (params.part_times instanceof Array){
+                part_times = params.part_times.map(item => parseInt(item));
+            }else{
+                part_times = [parseInt(params.part_time)];
+            }
+        }
+        if (params.professional_roles){
+            if (params.professional_roles instanceof Array){
+                professional_roles = params.professional_roles.map(item => parseInt(item));
+            }else{
+                professional_roles = [parseInt(params.professional_roles)];
+            }
+        }
+        if (params.industries){
+            if (params.industries instanceof Array){
+                industries = params.industries.map(item => parseInt(item));
+            }else{
+                industries = [parseInt(params.industries)];
             }
         }
     }
-
-    if (!to_form){
-        if (form.salary.hasOwnProperty('min' && form.salary.min)){
-            url_data.salary = form.salary.min + '-';
+    if (data){
+        regions = Array.from(data.regions);
+        if (regions.length === 1){
+            cities = Array.from(data.cities);
         }
-        if (form.salary.hasOwnProperty('max') && form.salary.max){
-            url_data.salary = '-' + form.salary.max;
-        }
-
-        if (form.salary.hasOwnProperty('min') && form.salary.min && form.salary.hasOwnProperty('max') && form.salary.max){
-            url_data.salary = form.salary.min + '-' + form.salary.max;
-        }
+        work_types = Array.from(data.work_types);
+        schedules = Array.from(data.schedules);
+        experiences = Array.from(data.experiences);
+        part_times = Array.from(data.part_times);
+        professional_roles = Array.from(data.professional_roles);
+        industries = Array.from(data.industries);
     }
-    if (to_form){
+
+
+    const form_data = {
+        name: data?.name ?? params?.name,
+        country: data?.country ?? params?.country ?? 1,
+        regions: regions,
+        cities: cities,
+        work_types: work_types,
+        schedules: schedules,
+        experiences: experiences,
+        part_times: part_times,
+        professional_roles: professional_roles,
+        industries: industries,
+        currency: data?.currency ?? params.currency ?? 'RUB',
+        salary: selectedSalary,
+        order_by: data?.order_by ?? params.order_by ?? null,
+    };
+
+    if (data === null){
         return form_data;
     }
-    return url_data;
+
+    const back_params = {
+        name: data.name ?? null,
+        country: data.country?? null,
+        regions: data.regions ?? null,
+        cities: data.cities ?? null,
+        currency: 'RUB',
+        order_by: null,
+        salary: {
+            from: null,
+            to: null,
+        },
+    };
+    //
+    const front_params = {
+        name: null,
+        country: null,
+        city: null,
+        regions: null,
+        cities: null,
+        currency: null,
+        salary: null,
+        order_by: null,
+    };
+
+    if (to_ === 'front'){
+        if (data.name){
+            front_params.name = data.name;
+        }
+        if (data.name !== '') front_params.name = data.name;
+        if (data.order_by !== '') front_params.order_by = data.order_by;
+        if (data.currency !== '') front_params.currency = data.currency;
+        if (data.country !== '') front_params.country = data.country;
+        if (data.regions instanceof Array){
+            front_params.regions = Array.from(data.regions);
+        }
+        if (front_params.regions.length === 1 && data.cities instanceof Array){
+            front_params.cities = Array.from(data.cities);
+        }
+        if (data.work_types instanceof Array){
+            front_params.work_types = Array.from(data.work_types);
+        }
+        if (data.schedules instanceof Array){
+            front_params.schedules = Array.from(data.schedules);
+        }
+        if (data.experiences instanceof Array){
+            front_params.experiences = Array.from(data.experiences);
+        }
+        if (data.part_times instanceof Array){
+            front_params.part_times = Array.from(data.part_times);
+        }
+        if (data.professional_roles instanceof Array){
+            front_params.professional_roles = Array.from(data.professional_roles);
+        }
+        if (data.industries instanceof Array){
+            front_params.industries = Array.from(data.industries);
+        }
+
+        if (data.city !== '') front_params.city = data.city;
+
+        if (data.salary.from || data.salary.to){
+            front_params.salary = data.salary.from + '-' + data.salary.to;
+        }
+        if (data.salary.id  === null || data.salary.id === 0) delete front_params.salary;
+
+        return removeNull(front_params);
+    }
+    if (to_ === 'backend'){
+        if (data.name){
+            back_params.name = data.name;
+        }
+        if (data.country){
+            back_params.country = data.country;
+        }
+        if (data.regions instanceof Array){
+            back_params.regions = Array.from(data.regions);
+        }
+        if (data.cities instanceof Array){
+            back_params.cities = Array.from(data.cities);
+        }
+        if (data.work_types instanceof Array){
+            back_params.work_types = Array.from(data.work_types);
+        }
+        if (data.schedules instanceof Array){
+            back_params.schedules = Array.from(data.schedules);
+        }
+        if (data.experiences instanceof Array){
+            back_params.experiences = Array.from(data.experiences);
+        }
+        if (data.part_times instanceof Array){
+            back_params.part_time = Array.from(data.part_times);
+        }
+        if (data.professional_roles instanceof Array){
+            back_params.professional_roles = Array.from(data.professional_roles);
+        }
+        if (data.industries instanceof Array){
+            back_params.industries = Array.from(data.industries);
+        }
+        if (data.city){
+            back_params.city = data.city;
+        }
+        if (data.currency){
+            back_params.currency = data.currency;
+        }
+        if (data.order_by){
+            back_params.order_by = data.order_by;
+        }
+
+        if (data.salary.from){
+            back_params.salary.from = data.salary.from;
+        }
+        if (data.salary.to){
+            back_params.salary.to = data.salary.to;
+        }
+        console.log(back_params);
+        return removeNull(back_params);
+    }
 }
