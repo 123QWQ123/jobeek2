@@ -24,6 +24,7 @@ export const useVacancyStore = defineStore('vacancy', {
       schedules: [],
       experiences: [],
       part_times: [],
+      metros: [],
     }
   },
   actions: {
@@ -147,6 +148,16 @@ export const useVacancyStore = defineStore('vacancy', {
       });
       if (data){
         this.industries = data.data;
+      }
+      return data.data;
+    },
+    async getMetros(payload) {
+      const {data} = await useApi('metro', {
+        method: 'get',
+        payload
+      });
+      if (data){
+        this.metros = data.data;
       }
       return data.data;
     },

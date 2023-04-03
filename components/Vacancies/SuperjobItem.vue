@@ -12,8 +12,8 @@
             <span class="count">{{ item.company }}</span>
           </div>
         </div>
-        <div class="salary" v-if="item.salary_from">От {{vueNumberFormat(item.salary_from, {})}} ₽ </div>
-        <div class="salary" v-else>До {{vueNumberFormat(item.salary_to, {})}} ₽ </div>
+        <div class="salary" v-if="item.salary_from">От {{vueNumberFormat(item.salary_from, {})}} {{ item.currency }} </div>
+        <div class="salary" v-else>До {{vueNumberFormat(item.salary_to, {})}} {{ item.currency }} </div>
       </div>
       <div class="favorites-card-body">
         <div class="time-location"><span>{{ moment(item.published_date).format('hh:mm') }}</span><strong>{{ item.city }}</strong></div>

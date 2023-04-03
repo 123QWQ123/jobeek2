@@ -12,27 +12,14 @@
             <span class="count">{{ item.company }}</span>
           </div>
         </div>
-        <div class="salary" v-if="item.salary_from">От {{vueNumberFormat(item.salary_from, {})}} ₽ </div>
-        <div class="salary" v-else>До {{vueNumberFormat(item.salary_to, {})}} ₽ </div>
+        <div class="salary" v-if="item.salary_from">От {{vueNumberFormat(item.salary_from, {})}} {{ item.currency }} </div>
+        <div class="salary" v-else>До {{vueNumberFormat(item.salary_to, {})}} {{ item.currency }} </div>
       </div>
       <div class="favorites-card-body">
         <div class="time-location"><span>{{ moment(item.published_date).format('hh:mm') }}</span><strong>{{ item.city }}</strong></div>
         <p>          {{item.description}}        </p>
       </div>
       <div class="favorites-card-footer">
-        <div class="favorites-card-footer-row telephones-row">
-          <ul>
-            <li> <a class="tel" href="tel: +7 800 550 11 00"> <img
-                src="~/assets/img/svg/carbon_phone.svg" alt="#">+7 800 550 11 00
-            </a></li>
-            <li> <a class="tel" href="tel: +7 800 550 11 00"> <img
-                src="~/assets/img/svg/carbon_phone.svg" alt="#">+7 800 550 11 00
-            </a></li>
-            <li> <a class="tel" href="tel: +7 800 550 11 00"> <img
-                src="~/assets/img/svg/akar-icons_whatsapp-fill.svg" alt="#">+7
-              800 550 11 00 </a></li>
-          </ul>
-        </div>
         <div class="favorites-card-footer-row">
           <div class="group">
             <button class="group-action btn button-md"> Откликнуться</button>
@@ -57,6 +44,7 @@
 import moment from "moment";
 const isFavorite = ref(false);
 const isDropdownOpen = ref(false);
+
 const toggleFavorite = (e) => {
   isFavorite.value = !isFavorite.value;
 }

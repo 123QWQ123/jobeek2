@@ -29,6 +29,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
 
 
 
+    let metros = [];
     let regions = [];
     let cities = [];
     let work_types = [];
@@ -43,6 +44,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
         return {
             name: "",
             country: 1,
+            metros: metros,
             regions: regions,
             cities: cities,
             work_types: work_types,
@@ -57,6 +59,14 @@ export function useVacancyForm(data = null, to_ = 'front') {
         };
     }
     if (!data){
+        if (params.metros){
+            if (params.metros instanceof Array){
+                metros = params.metros.map(item => parseInt(item));
+            }else{
+                metros = [parseInt(params.metros)];
+            }
+        }
+
         if (params.regions){
             if (params.regions instanceof Array){
                 regions = params.regions.map(item => parseInt(item));
@@ -116,6 +126,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
         }
     }
     if (data){
+        metros = Array.from(data.metros);
         regions = Array.from(data.regions);
         if (regions.length === 1){
             cities = Array.from(data.cities);
@@ -132,6 +143,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
     const form_data = {
         name: data?.name ?? params?.name,
         country: data?.country ?? params?.country ?? 1,
+        metros: metros,
         regions: regions,
         cities: cities,
         work_types: work_types,
@@ -153,6 +165,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
         name: data.name ?? null,
         country: data.country?? null,
         regions: data.regions ?? null,
+        metros: data.metros ?? null,
         cities: data.cities ?? null,
         currency: 'RUB',
         order_by: null,
@@ -183,6 +196,9 @@ export function useVacancyForm(data = null, to_ = 'front') {
         if (data.country !== '') front_params.country = data.country;
         if (data.regions instanceof Array){
             front_params.regions = Array.from(data.regions);
+        }
+        if (data.metros instanceof Array){
+            front_params.metros = Array.from(data.metros);
         }
         if (front_params.regions.length === 1 && data.cities instanceof Array){
             front_params.cities = Array.from(data.cities);
@@ -221,6 +237,9 @@ export function useVacancyForm(data = null, to_ = 'front') {
         }
         if (data.country){
             back_params.country = data.country;
+        }
+        if (data.metros instanceof Array){
+            back_params.metros = Array.from(data.metros);
         }
         if (data.regions instanceof Array){
             back_params.regions = Array.from(data.regions);
