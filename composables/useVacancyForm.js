@@ -239,7 +239,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
             back_params.country = data.country;
         }
         if (data.metros instanceof Array){
-            back_params.metros = Array.from(data.metros);
+            back_params.metro = Array.from(data.metros);
         }
         if (data.regions instanceof Array){
             back_params.regions = Array.from(data.regions);
