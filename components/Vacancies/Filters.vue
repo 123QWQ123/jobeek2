@@ -61,16 +61,12 @@ const resetFilters = () => {
   const params = useVacancyForm(null, 'reset');
   form.value = params;
   const resetParams = useVacancyForm(form.value, 'front');
-  router.push({query: resetParams});
+  router.replace({query: resetParams});
 }
 const onFormChange = (filter_name, filter_value) => {
-  console.log(filter_name, filter_value);
   form.value[filter_name] = filter_value;
-  console.log(form.value);
   const params = useVacancyForm(form.value, 'front');
-  console.log(params);
-  router.push({query: params});
-  // isLoading.value = false;
+  router.replace({query: params});
 }
 
 </script>

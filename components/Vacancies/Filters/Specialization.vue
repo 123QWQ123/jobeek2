@@ -45,6 +45,7 @@ const selectedSpecs = ref(selectedIds);
 const firstItems = ref([]);
 
 watch(selectedSpecs, (newValues) => {
+  console.log(selectedSpecs);
   emit('onFormChange', 'professional_roles', newValues);
 })
 console.log(selectedSpecs);
