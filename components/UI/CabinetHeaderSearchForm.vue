@@ -62,5 +62,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-
+.search-form--widget{
+  display: block;
+}
 </style>

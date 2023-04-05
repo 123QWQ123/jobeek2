@@ -68,7 +68,7 @@ const vacancyStore = useVacancyStore();
 const appliedCountry = ref(1);
 const search = ref("");
 const metros = ref([]);
-watch(metros, (newValue) => console.log(newValue));
+// watch(metros, (newValue) => console.log(newValue));
 
 const total = computed(() => {
   if (metros.value.length > 5){

@@ -31,7 +31,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
 
     let metros = [];
     let regions = [];
-    let countries = [];
+    let countries = [1];
     let cities = [];
     let work_types = [];
     let schedules = [];

@@ -55,7 +55,9 @@
 </template>
 
 <script setup>
-const {selectedCountry} = defineProps(['selectedCountry']);
+const props = defineProps(['selectedCountry']);
+const {selectedCountry} = props;
+console.log(selectedCountry);
 const emit = defineEmits(['onFormChange'])
 import {useVacancyStore} from "../../../store/vacancy";
 import {useVacancyForm} from "../../../composables/useVacancyForm";
@@ -192,6 +194,7 @@ const {getRegions} = vacancyStore;
 watch(() => vacancyStore.regions, prepare);
 onMounted(async () => {
   if (vacancyStore.regions.length === 0 || parseInt(selectedCountry) !== parseInt(appliedCountry.value)){
+    console.log(1)
     await getRegions({country_id: selectedCountry});
     appliedCountry.value = selectedCountry;
   }else{

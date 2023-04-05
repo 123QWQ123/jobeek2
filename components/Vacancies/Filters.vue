@@ -9,7 +9,7 @@
       <VacanciesFiltersIndustry @onFormChange="onFormChange" :selected-ids="form.industries"/>
       <VacanciesFiltersSpecialization @onFormChange="onFormChange" :selected-ids="form.professional_roles"/>
 
-      <VacanciesFiltersRegion :is-city-mode="isCityMode" :selected-country="form.country" @onFormChange="onFormChange"/>
+      <VacanciesFiltersRegion :is-city-mode="isCityMode" :selected-country="selectedCountry" @onFormChange="onFormChange"/>
       <VacanciesFiltersCity v-if="isCityMode" :selected-region="selectedRegion" @onFormChange="onFormChange" />
       <VacanciesFiltersPartTime @onFormChange="onFormChange"/>
       <VacanciesFiltersExperience @onFormChange="onFormChange"/>
@@ -44,6 +44,13 @@ const route = useRoute();
 const router = useRouter();
 
 
+const selectedCountry = computed(() => {
+  if (form.value.countries.length === 1){
+    return form.value.countries[0];
+  }
+
+  return 1;
+});
 const selectedRegion = computed(() => {
   if (form.value.regions.length === 1){
     return form.value.regions[0];

@@ -82,6 +82,7 @@ export const useVacancyStore = defineStore('vacancy', {
       return data;
     },
     async getRegions(payload = {}) {
+      console.log(payload)
       const {data} = await useApi('area/regions', {
         method: 'get',
         payload

@@ -32,10 +32,12 @@ const vacancyStore = useVacancyStore();
 const route = useRoute();
 const router = useRouter();
 
+
 const region = ref(null);
 const city = ref('*');
 
 const form = ref(useVacancyForm());
+
 
 const onRegionChange = (regionItem) => {
   if (regionItem.value === '*'){
@@ -64,7 +66,6 @@ const regionOptions = ref([]);
 const cityOptions = ref([]);
 
 const prepareCities = () => {
-  console.log(cities.value);
   const c_items = cities.value.map((item) => ({value: item.id, name: item.name}));
   c_items.unshift({
     value: '*', name: 'Все'
@@ -72,18 +73,33 @@ const prepareCities = () => {
   cityOptions.value = c_items;
 }
 
+const page = useRoute();
+
 watch(region, async(newRegion) => {
+
   if (region.value !== '*'){
     await getCities({region_ids: [newRegion]});
   }
   prepareCities();
 });
 
+
+const country = computed(() => {
+  if (form.value.countries.length === 0){
+    return form.value.countries[0];
+  } else return 1;
+});
+console.log(country)
 onMounted(async() => {
+  if (page.name === 'vacancies-slug'){
+    if (country.value){
+      await getRegions({country_id: [1]});
+      country.value = 1;
+    }
+  }
   if (form.value.regions.length === 1){
     region.value = form.value.regions[0];
   }
-  // await getRegions({country_id: form.value.countries[0]});
   const items = regions.value.map((item) => ({value: item.id, name: item.name}));
   items.unshift({
     value: '*', name: 'Все'
@@ -92,13 +108,14 @@ onMounted(async() => {
 });
 
 
-
 const isLoading = ref(false);
 onMounted(async() => {
   isLoading.value = true;
-  if (vacancies.value.length === 0){
-    const formParams = useVacancyForm(form.value, 'backend');
-    await getVacancies({...formParams});
+  if (page.name === 'search-vacancies'){
+    if (vacancies.value.length === 0){
+      const formParams = useVacancyForm(form.value, 'backend');
+      await getVacancies({...formParams});
+    }
   }
 
   isLoading.value = false;
