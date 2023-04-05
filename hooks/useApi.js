@@ -52,6 +52,7 @@ const useApi = async(method, options = {}) => {
                 },
             );
         }
+        console.log(response);
         if ('data' in response){
             return {
                 status: 'success',

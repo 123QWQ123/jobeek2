@@ -91,11 +91,8 @@ const country = computed(() => {
 });
 console.log(country)
 onMounted(async() => {
-  if (page.name === 'vacancies-slug'){
-    if (country.value){
-      await getRegions({country_id: [1]});
-      country.value = 1;
-    }
+  if (country.value){
+    await getRegions({country_id: [country.value]});
   }
   if (form.value.regions.length === 1){
     region.value = form.value.regions[0];

@@ -20,12 +20,12 @@ export const useProfileStore = defineStore('profile', {
   },
   getters: {
     countryOptions(){
-        return this.pub_countries.map((item) => {
+        return this.countries.map((item) => {
           return {name: item.name, value: item.id}
         });
     },
     cityOptions: (state) => {
-        return state.pub_cities.map((item) => {
+        return state.cities.map((item) => {
           return {name: item.name, value: item.id}
         });
     },
@@ -88,30 +88,29 @@ export const useProfileStore = defineStore('profile', {
       });
       if (data){
         this.employer = data.data;
-        this.user = {phone: this.seeker.phone};
+        this.user = {phone: this.employer.phone};
       }
       return data;
     },
     async updateSeeker(payload) {
-      const {data} = await useApi('seeker/profile', {
+      const response = await useApi('seeker/profile', {
         method: 'post',
         payload
       });
-      console.log(data);
-      if (data){
-        this.user = data.data.user;
+      if ('data' in response.data && 'user' in response.data.data){
+        this.user = response.data.data;
       }
-      return data;
+      return response;
     },
     async updateEmployer(payload) {
-      const {data} = await useApi('employer/profile', {
+      const response = await useApi('employer/profile', {
         method: 'post',
         payload
       });
-      if (data){
-        this.user = data.data.user;
+      if ('data' in response){
+        this.user = response.data.data;
       }
-      return data;
+      return response;
     },
 
     async sendMessage(payload) {
