@@ -16,9 +16,12 @@ const authStore = useAuthStore();
 const vacancyStore = useVacancyStore();
 
 const isEmployer = computed(() => authStore.isEmployer);
+const user = computed(() => authStore.user);
+const employer = computed(() => authStore.employer);
 
 const isLoading = ref(false);
 watch(isEmployer, (new_value) => {
+  console.log(new_value);
   if (new_value){
     navigateTo({name: 'your-vacancies'});
   }
@@ -28,9 +31,11 @@ const route = useRoute();
 const {getMyVacancies} = vacancyStore;
 const {my_vacancies} = storeToRefs(vacancyStore);
 onMounted(async() => {
+  console.log(isEmployer.value);
   if (isEmployer.value){
     navigateTo({name: 'your-vacancies'});
   }
+  console.log(user, employer);
   isLoading.value = true;
   if (my_vacancies.value.length === 0){
     await getMyVacancies();
