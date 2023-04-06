@@ -1,5 +1,5 @@
 <template>
-  <form class="w-box-body" @submit.prevent="handleSubmit" :style="{overflowY: 'hidden'}">
+  <form class="w-box-body" @submit.prevent="handleSubmit">
     <div class="input-row">
       <label for="photo">Фото</label>
       <div class="dwld-photo">
@@ -59,7 +59,7 @@
       <div class="input-wrapper mt-2">
         <SelectWithSearch :options="cityOptions" v-model="state.pub_city_id.val"></SelectWithSearch>
       </div>
-      <div class="text-danger d-block" v-if="errors.pub_city_id || errors.pub_country_id">
+      <div class="text-danger d-block" v-if="errors.pub_city_id">
         Вам нужно выбрать город проживания!
       </div>
     </div>
@@ -120,7 +120,9 @@ const {seeker} = storeToRefs(profileStore);
 
 onMounted(async() => {
   await getUser();
+
 });
+
 const state = reactive({
   first_name: {
     val: "",
@@ -172,9 +174,16 @@ const state = reactive({
   error: null,
   success: null,
 });
+
+
+watch(() => state.pub_country_id.val, async(newCountry) => {
+  console.log(newCountry);
+
+})
+
 const phoneInputElement = ref();
 const phoneMask = ref(null);
-watch(seeker, (new_value) => {
+watch(seeker, async(new_value) => {
   for (const [key, value] of Object.entries(new_value)) {
     if (state.hasOwnProperty(key)){
       if (key === 'birth_date'){
@@ -196,8 +205,8 @@ watch(seeker, (new_value) => {
   }
 })
 
-// const {getCountries, getPublicCities} = profileStore;
-// // await getPublicCountries();
+const {getCountries, getCities} = profileStore;
+await getCountries();
 
 const {countryOptions, cityOptions} = storeToRefs(profileStore);
 
@@ -213,7 +222,8 @@ const photoUrl = computed(() => {
 
 
 watch(country, (new_value) => {
-  // getPublicCities({country_id: new_value});
+  console.log(new_value);
+  getCities({country_id: new_value});
 });
 
 const photoElement = ref();
@@ -270,7 +280,6 @@ const handleSubmit = async (e) => {
   errors.value = {};
 
   const email = state.email_to_verify.val ? state.email_to_verify.val : state.email.val;
-
 
   const formData = new FormData();
   formData.append("photo", state.photo.val);

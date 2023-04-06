@@ -172,7 +172,7 @@ export const useVacancyStore = defineStore('vacancy', {
       if (data){
         this.metros = data.data;
       }
-      return data.data;
+      return data;
     },
 
   },
