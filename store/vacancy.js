@@ -72,7 +72,7 @@ export const useVacancyStore = defineStore('vacancy', {
       this.vacancies = [];
     },
     async getMyVacancies(payload) {
-      const {data} = await useApi('vacancies/search', {
+      const {data} = await useApi('employer/vacancies', {
         method: 'get',
         payload
       });

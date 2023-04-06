@@ -1,15 +1,21 @@
 <template>
-  <div class="theme-checker-box checker-box" @click="toggle" v-if="isAuthed">
-    <span class="v v1 " :class="{'active' : !isEmployer}" title="Соискатель">Соискатель</span>
-    <div class="theme-checker" >
-      <input type="checkbox" id="employer" :checked="isEmployer" >
-      <div class="theme-checker-ui">
-        <div class="circle"> </div>
+  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Understood</button>
+        </div>
       </div>
     </div>
-    <span class="v v2" :class="{'active' : isEmployer}" title="Работодатель">Работодатель</span>
   </div>
-
 </template>
 <script setup>
 import { useAuthStore } from "~~/store/auth";

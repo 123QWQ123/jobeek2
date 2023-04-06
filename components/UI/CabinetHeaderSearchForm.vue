@@ -123,18 +123,6 @@ onMounted(async() => {
 
 
 const isLoading = ref(false);
-onMounted(async() => {
-  isLoading.value = true;
-  if (page.name === 'search-vacancies'){
-    if (vacancies.value.length === 0){
-      const formParams = useVacancyForm(form.value, 'backend');
-      await getVacancies({...formParams});
-    }
-  }
-
-  isLoading.value = false;
-});
-
 
 const {clearVacancies} = vacancyStore;
 const onSubmit = async(e) => {

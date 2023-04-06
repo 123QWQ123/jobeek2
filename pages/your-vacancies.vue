@@ -58,6 +58,8 @@ onMounted(async() => {
     </div>
     <HomeSearchSection></HomeSearchSection>
 
-
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+      Launch static backdrop modal
+    </button>
   </main>
 </template>
