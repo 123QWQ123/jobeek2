@@ -4,7 +4,7 @@
     <div class="content">
       <div class="vacancy-single">
         <div class="vacancy-single-head">
-          <h1 class="title">{{ item.name }}</h1>
+          <h1 class="title">{{ item?.name }}</h1>
           <div class="adress">
             <span>{{ item.address }}</span>
           </div>
