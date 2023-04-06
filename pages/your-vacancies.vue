@@ -36,6 +36,9 @@ onMounted(async() => {
     navigateTo({name: 'your-vacancies'});
   }
   console.log(user, employer);
+  if (employer && employer.is_completed){
+
+  }
   isLoading.value = true;
   if (my_vacancies.value.length === 0){
     await getMyVacancies();
@@ -54,5 +57,7 @@ onMounted(async() => {
       <HomeWorkSection></HomeWorkSection>
     </div>
     <HomeSearchSection></HomeSearchSection>
+
+
   </main>
 </template>
