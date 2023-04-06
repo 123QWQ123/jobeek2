@@ -4,16 +4,16 @@
       <div class="main-section-title">
         <h1 class="title">Поиск вакансий</h1><span>Lorem ipsum dolor sit amet, consectetur adipiscing
                             elit. Id.</span>
+
       </div>
-
-
+      <SearchForm/>
     </div>
   </div>
 </template>
 <script setup>
 
-  import SalarySelectInForm from "../Header/SalarySelectInForm";
   import {useVacancyForm} from "../../composables/useVacancyForm";
+  import Vacancies from "../../pages/search/vacancies";
 
   const form = ref(useVacancyForm());
   const onChange = (e) => {
