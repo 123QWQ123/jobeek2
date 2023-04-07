@@ -8,12 +8,10 @@
           <div class="adress">
             <span>{{ item.address }}</span>
           </div>
-          <div class="requirements">{{item.experience && item.experience + ","}}  {{item.education && item.education + ','}} {{item.work_type}}</div>
+          <div class="requirements">{{item.experience && item.experience + ","}}  {{item.education && item.education + ','}} {{item.work_type}}, {{moment.unix(item.published_date).format("YYYY.MM.DD")}}</div>
           <div class="salary">{{ vueNumberFormat(item.salary_from, {}) }} — {{ vueNumberFormat(item.salary_to, {}) }} руб./месяц     </div>
         </div>
-        <div class="vacancy-single-body">
-          {{item.description}}
-        </div>
+        <div class="vacancy-single-body" v-html="item.description"></div>
         <div class="vacancy-single-footer">
           <button class="btn button-accent button-accent--ts-bigger">Откликнуться</button>
         </div>
@@ -23,7 +21,7 @@
       <div class="company-col sticky-item">
         <div class="company-logo"><img :src="item.logo" alt="#"></div>
         <h3 class="title">{{ item.company }}</h3>
-        <div class="count">{{ item?.open_vacancies ?? 0 }} вакансии</div>
+        <div class="count">{{ item.open_vacancies ?? 0 }} вакансии</div>
       </div>
     </aside>
   </div>
@@ -36,6 +34,13 @@ const {item} = defineProps({
     required: true
   }
 });
+const pageTitle = computed(() => item.name + " - Jobeek");
+
+useHead({
+  title: pageTitle
+});
+
+
 
 console.log(item);
 </script>

@@ -55,6 +55,8 @@ const city = ref('*');
 
 const form = ref(useVacancyForm());
 
+console.log(form);
+
 
 const onRegionChange = (regionItem) => {
   if (regionItem.value === '*'){

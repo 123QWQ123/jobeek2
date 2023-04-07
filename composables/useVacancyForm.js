@@ -41,7 +41,6 @@ export function useVacancyForm(data = null, to_ = 'front') {
     let industries = [];
 
     if (to_ === 'reset'){
-
         return {
             name: "",
             countries: countries,
@@ -133,7 +132,9 @@ export function useVacancyForm(data = null, to_ = 'front') {
             }
         }
     }
+    console.log(data, params);
     if (data){
+        console.log(data.metros);
         metros = Array.from(data.metros);
         countries = Array.from(data.countries);
         regions = Array.from(data.regions);
@@ -148,6 +149,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
         industries = Array.from(data.industries);
     }
 
+    console.log(metros);
 
     const form_data = {
         name: data?.name ?? params?.name,
@@ -189,6 +191,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
         country: null,
         city: null,
         regions: null,
+        metros: null,
         cities: null,
         currency: null,
         salary: null,

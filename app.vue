@@ -16,6 +16,9 @@ await tryLogin();
 </script>
 
 <style>
+.layout{
+  overflow-y: hidden;
+}
 .modal {
   display: flex;
   background: rgba(0, 0, 0, 0.15);

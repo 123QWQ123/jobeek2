@@ -21,7 +21,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-console.log(props.modelValue);
+// console.log(props.modelValue);
 
 const years = ref([]);
 const year = ref(0);

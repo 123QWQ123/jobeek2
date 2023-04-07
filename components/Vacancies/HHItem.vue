@@ -43,18 +43,9 @@
 <script setup>
 import moment from "moment";
 const isFavorite = ref(false);
-const isDropdownOpen = ref(false);
 
 const toggleFavorite = (e) => {
   isFavorite.value = !isFavorite.value;
-}
-const toggleDropDown = (e) => {
-  isDropdownOpen.value = !isDropdownOpen.value;
-}
-const closeContextMenu = (e) => {
-  if (!e.target.classList.contains('params-button')){
-    isDropdownOpen.value = false;
-  }
 }
 
 const props = defineProps(['item']);

@@ -1,5 +1,6 @@
 <template>
   <form class="w-box-body" @submit.prevent="handleSubmit" :style="{overflowY: 'hidden'}">
+    <PageLoader v-if="state.isLoading" />
     <div class="input-row">
       <label for="photo">Фото</label>
       <div class="dwld-photo">
@@ -123,7 +124,7 @@ const state = reactive({
     isValid: true,
   },
   isFormValid: true,
-  isLoading: true,
+  isLoading: false,
   error: null,
   success: null,
 });
@@ -212,6 +213,7 @@ const validate = () => {
 
 const {confirmEmail} = useProfileStore();
 const onEmailConfirm = async() => {
+  state.isLoading = true;
   const email = state.email_to_verify.val ? state.email_to_verify.val : state.email.val;
   const resData = await confirmEmail({email});
   if (resData.status === 'success'){
@@ -223,6 +225,7 @@ const onEmailConfirm = async() => {
     });
     isConfirmButton.value = false;
     isCheckButton.value = true;
+    state.isLoading = false;
   }
 
 }
@@ -230,6 +233,7 @@ const onEmailConfirm = async() => {
 const errors = ref({});
 const {updateEmployer} = profileStore;
 const handleSubmit = async (e) => {
+  state.isLoading = true;
   validate();
   errors.value = {};
 
@@ -249,11 +253,13 @@ const handleSubmit = async (e) => {
       icon: 'success',
       confirmButtonText: 'ОК'
     });
+    state.isLoading = false;
   }else{
     console.log(resData.errors);
     if (resData?.errors){
       errors.value = {...resData.errors};
     }
+    state.isLoading = false;
   }
   console.log(resData);
 
