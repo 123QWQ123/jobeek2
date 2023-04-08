@@ -5,6 +5,7 @@
         <button class="clear-all" @click="resetFilters">Очистить все</button>
       </div>
 
+<!--      <VacanciesFiltersEducation @onFormChange="onFormChange"/>-->
       <VacanciesFiltersMetro @onFormChange="onFormChange" :selected-ids="form.metros"/>
       <VacanciesFiltersIndustry @onFormChange="onFormChange" :selected-ids="form.industries"/>
       <VacanciesFiltersSpecialization @onFormChange="onFormChange" :selected-ids="form.professional_roles"/>

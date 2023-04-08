@@ -24,6 +24,7 @@ export const useVacancyStore = defineStore('vacancy', {
       cities: [],
       work_types: [],
       schedules: [],
+      educations: [],
       experiences: [],
       part_times: [],
       metros: [],
@@ -134,6 +135,16 @@ export const useVacancyStore = defineStore('vacancy', {
       }
       return data;
     },
+    async getEducations(payload = {}) {
+      const {data} = await useApi('dictionaries?group=education', {
+        method: 'get',
+        payload
+      });
+      if (data){
+        this.educations = data.data.education;
+      }
+      return data;
+    },
     async getExperiences(payload = {}) {
       const {data} = await useApi('dictionaries?group=experience', {
         method: 'get',
@@ -173,6 +184,22 @@ export const useVacancyStore = defineStore('vacancy', {
         this.metros = data.data;
       }
       return data;
+    },
+    async addToFavorite(payload) {
+      const {data} = await useApi('vacancy/favorite', {
+        method: 'post',
+        payload
+      });
+      if (data) return true;
+      else return false;
+    },
+    async removeFromFavorite(payload) {
+      const {data} = await useApi('vacancy/favorite', {
+        method: 'delete',
+        payload
+      });
+      if (data) return true;
+      else return false;
     },
 
   },

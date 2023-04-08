@@ -22,7 +22,9 @@
       <div class="favorites-card-footer">
         <div class="favorites-card-footer-row">
           <div class="group">
-            <button class="group-action btn button-md"> Откликнуться</button>
+              <NuxtLink class="group-action btn button-md" :to="{name: 'vacancies-slug', params: {slug: item.id}, query: {provider: 'hh'}}">
+                Откликнуться
+              </NuxtLink>
           </div>
           <div class="group">
             <button class="group-action ic-btn fav-btn" :class="{'active' : isFavorite}" @click="toggleFavorite">
@@ -42,14 +44,23 @@
 
 <script setup>
 import moment from "moment";
-const isFavorite = ref(false);
+import {useVacancyStore} from "../../store/vacancy";
 
-const toggleFavorite = (e) => {
-  isFavorite.value = !isFavorite.value;
-}
-
+const vacancyStore = useVacancyStore();
 const props = defineProps(['item']);
 const {item} = props;
+
+const isFavorite = ref(false);
+
+const {addToFavorite, removeFromFavorite} = vacancyStore;
+const toggleFavorite = async(e) => {
+  if (isFavorite.value){
+    addToFavorite(item.id);
+  }else{
+    removeFromFavorite({provider: 'hh', id: item.id});
+  }
+  isFavorite.value = !isFavorite.value;
+}
 
 </script>
 

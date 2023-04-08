@@ -1,6 +1,5 @@
 <template>
-
-  <div class="has-sidebar has-sidebar--v3">
+  <div class="has-sidebar has-sidebar--v3" v-if="doesExist">
     <div class="content">
       <div class="vacancy-single">
         <div class="vacancy-single-head">
@@ -25,6 +24,9 @@
       </div>
     </aside>
   </div>
+  <div v-else>
+    <h4>No valid data provided</h4>
+  </div>
 </template>
 
 <script setup>
@@ -34,7 +36,14 @@ const {item} = defineProps({
     required: true
   }
 });
-const pageTitle = computed(() => item.name + " - Jobeek");
+
+const doesExist = computed(() => {
+  if (item?.name){
+    return true;
+  }
+  else return false;
+})
+const pageTitle = computed(() => item?.name + " - Jobeek");
 
 useHead({
   title: pageTitle

@@ -3,7 +3,7 @@
     <div class="favorites-card">
       <div class="favorites-card-head">
         <div class="company">
-          <div class="company-logo"><img :src="item.logo" alt="#">
+          <div class="company-logo"><img :src="item.logo" alt="item.logo">
           </div>
           <div class="company-name">
             <NuxtLink :to="{name: 'vacancies-slug', params: {slug: item.id}, query: {provider: 'superjob'}}">
@@ -35,7 +35,9 @@
         </div>
         <div class="favorites-card-footer-row">
           <div class="group">
-            <button class="group-action btn button-md"> Откликнуться</button>
+            <NuxtLink class="group-action btn button-md" :to="{name: 'vacancies-slug', params: {slug: item.id}, query: {provider: 'superjob'}}">
+              Откликнуться
+            </NuxtLink>
           </div>
           <div class="group">
             <button class="group-action ic-btn fav-btn" :class="{active: isFavorite}" @click="toggleFavorite">
