@@ -7,7 +7,9 @@ import {storeToRefs} from "pinia";
 definePageMeta({
   layout: "cabinet"
 });
-
+useHead({
+  title: "Ваш аккаунт",
+});
 const authStore = useAuthStore();
 const {isEmployer} = storeToRefs(authStore);
 

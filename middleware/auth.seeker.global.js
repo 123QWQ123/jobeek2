@@ -7,6 +7,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
     const seeker = computed(() => authStore.seeker);
 
 
+
     if (protected_routes.includes(to.path) && seeker_routes.includes(to.path) && seeker.value && seeker.value?.is_completed === false) {
         return navigateTo({
             path: '/profile',

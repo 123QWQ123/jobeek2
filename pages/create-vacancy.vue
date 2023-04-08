@@ -9,7 +9,15 @@
               <h1 class="title">Создание вакансии</h1>
             </div>
             <div class="w-box-body">
-              <CreateVacancyProvidersAndName></CreateVacancyProvidersAndName>
+              <CreateVacancyProvidersIntegration :providers="providers"></CreateVacancyProvidersIntegration>
+
+              <div class="input-row">
+                <label for="name">Название</label>
+                <div class="input-wrapper">
+                  <input type="text" id="name" >
+                </div>
+              </div>
+
               <div class="sep"> </div>
               <CreateVacancyFieldsAndAreas></CreateVacancyFieldsAndAreas>
               <div class="sep"> </div>
@@ -36,6 +44,19 @@
 definePageMeta({
   layout: "cabinet",
 });
+
+const providers = reactive({
+  hh: {
+    is_connected: true,
+    is_valid: true,
+    is_checked: true,
+  },
+  superjob: {
+    is_connected: false,
+    is_valid: false,
+    is_checked: false,
+  },
+})
 
 const state =  reactive({
   name: {

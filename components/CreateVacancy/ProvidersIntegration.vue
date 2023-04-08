@@ -22,22 +22,22 @@
       </div>
     </div>
   </div>
-  <div class="input-row">
-    <label for="name">Название</label>
-    <div class="input-wrapper">
-      <input type="text" id="name" >
-    </div>
-  </div>
 </template>
 
 <script setup>
 
-const keywords = ref([]);
-
+const props = defineProps({
+  providers: {
+    required: true,
+    type: Object
+  }
+})
 const providers = ref([
   {name: 'hh', checked: true},
-  {name: 'superjob', checked: true},
+  {name: 'superjob', checked: false},
 ]);
+
+const keywords = ref([]);
 
 const onClickProvider = (provider_name) => {
   const item = providers.value.find((item) => item.name === provider_name);

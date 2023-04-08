@@ -8,8 +8,10 @@ export default defineNuxtRouteMiddleware((to, from) => {
     if (!protected_routes.includes(to.path)) {
         if (public_routes.includes(to.path)) {
             const isAuthed = computed(() => authStore.isAuthed);
-            if (isAuthed.value === true) {
-                return navigateTo('/profile');
+            if (isAuthed.value && to.path === '/profile'){
+                if (isAuthed.value === true) {
+                    return navigateTo('/profile');
+                }
             }
             return;
         }

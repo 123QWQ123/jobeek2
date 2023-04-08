@@ -1,5 +1,7 @@
 <template>
-  <form class="w-box-body" @submit.prevent="handleSubmit" :style="{overflowY: 'hidden'}">
+
+  <form class="w-box-body" @submit.prevent="handleSubmit" >
+    <PageLoader v-if="state.isLoading" />
     <div class="input-row">
       <label for="photo">Фото</label>
       <div class="dwld-photo">
@@ -53,13 +55,13 @@
     <div class="input-row">
       <label for="country">Город проживания <b>*</b></label>
       <div class="input-wrapper">
-        <SelectWithSearch :options="countryOptions" v-model="state.pub_country_id.val"></SelectWithSearch>
+        <SelectWithSearch :options="countryOptions" v-model.number="state.country_id.val"></SelectWithSearch>
       </div>
       <br/>
       <div class="input-wrapper mt-2">
-        <SelectWithSearch :options="cityOptions" v-model="state.pub_city_id.val"></SelectWithSearch>
+        <SelectWithSearch :options="cityOptions" v-model.number="state.city_id.val"></SelectWithSearch>
       </div>
-      <div class="text-danger d-block" v-if="errors.pub_city_id || errors.pub_country_id">
+      <div class="text-danger d-block" v-if="errors.city_id">
         Вам нужно выбрать город проживания!
       </div>
     </div>
@@ -112,6 +114,7 @@ import moment from "moment";
 import Swal from "sweetalert2";
 import {useRuntimeConfig} from "nuxt/app";
 import IMask from "imask";
+import PageLoader from "../UI/PageLoader";
 const profileStore = useProfileStore();
 
 const {getUser} = profileStore;
@@ -120,7 +123,9 @@ const {seeker} = storeToRefs(profileStore);
 
 onMounted(async() => {
   await getUser();
+
 });
+
 const state = reactive({
   first_name: {
     val: "",
@@ -134,12 +139,12 @@ const state = reactive({
     val: moment(),
     isValid: true,
   },
-  pub_country_id: {
-    val: "",
+  country_id: {
+    val: null,
     isValid: true,
   },
-  pub_city_id: {
-    val: "",
+  city_id: {
+    val: null,
     isValid: true,
   },
   photo: {
@@ -168,13 +173,19 @@ const state = reactive({
     isValid: true,
   },
   isFormValid: true,
-  isLoading: true,
+  isLoading: false,
   error: null,
   success: null,
 });
+
+
+watch(() => state.country_id.val, async(newCountry) => {
+  // console.log(newCountry);
+})
+
 const phoneInputElement = ref();
 const phoneMask = ref(null);
-watch(seeker, (new_value) => {
+watch(seeker, async(new_value) => {
   for (const [key, value] of Object.entries(new_value)) {
     if (state.hasOwnProperty(key)){
       if (key === 'birth_date'){
@@ -196,12 +207,12 @@ watch(seeker, (new_value) => {
   }
 })
 
-// const {getCountries, getPublicCities} = profileStore;
-// // await getPublicCountries();
+const {getCountries, getCities} = profileStore;
+await getCountries();
 
 const {countryOptions, cityOptions} = storeToRefs(profileStore);
 
-const country = computed(() => state.pub_country_id.val);
+const country = computed(() => state.country_id.val);
 const photoUrl = computed(() => {
   if (state.photo.base64){
     return state.photo.base64;
@@ -213,14 +224,12 @@ const photoUrl = computed(() => {
 
 
 watch(country, (new_value) => {
-  // getPublicCities({country_id: new_value});
+  getCities({country_id: new_value});
 });
 
 const photoElement = ref();
 
 const openFileBrowser = () => {
-  console.log(1);
-  console.log(photoElement);
   photoElement.value.click();
 }
 const clearPhotoUrl = () => {
@@ -266,19 +275,19 @@ const validate = () => {
 const errors = ref({});
 const {updateSeeker} = profileStore;
 const handleSubmit = async (e) => {
+  state.isLoading = true;
   validate();
   errors.value = {};
 
   const email = state.email_to_verify.val ? state.email_to_verify.val : state.email.val;
-
 
   const formData = new FormData();
   formData.append("photo", state.photo.val);
   formData.append("first_name", state.first_name.val);
   formData.append("last_name", state.last_name.val);
   formData.append("email", email);
-  formData.append("pub_country_id", state.pub_country_id.val);
-  formData.append("pub_city_id", state.pub_city_id.val);
+  formData.append("country_id", state.country_id.val);
+  formData.append("city_id", state.city_id.val);
   formData.append("birth_date", moment(state.birth_date.val).format("YYYY-MM-DD"));
   formData.append("password", state.password.val);
   formData.append("password_confirmation", state.password.val);
@@ -294,6 +303,7 @@ const handleSubmit = async (e) => {
       icon: 'success',
       confirmButtonText: 'ОК'
     });
+    state.isLoading = false;
   }else{
     console.log(resData.errors);
     if (resData?.errors){
@@ -305,6 +315,7 @@ const handleSubmit = async (e) => {
       icon: 'error',
       confirmButtonText: 'ОК'
     });
+    state.isLoading = false;
   }
   console.log(resData);
 

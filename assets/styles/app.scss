@@ -3,7 +3,8 @@
 .right_aligned{
   left: unset;
   right: 0px;
-  width: auto !important;
+  //width: auto !important;
+  width: max-content;
 }
 
 .check-block label{

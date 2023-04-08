@@ -28,7 +28,7 @@ onMounted(async () => {
 </script>
 <template>
   <div>
-    <VacanciesForm></VacanciesForm>
+    <SearchForm></SearchForm>
     <VacanciesResults></VacanciesResults>
   </div>
 </template>

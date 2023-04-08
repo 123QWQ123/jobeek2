@@ -1,7 +1,11 @@
 <template>
-    <CustomSelect label="Год" :options="yearItems" v-model="year"></CustomSelect>
-    <CustomSelect label="Месяц" :options="monthItems" v-model="month"></CustomSelect>
-    <CustomSelect label="День" :options="dayItems" v-model="day"></CustomSelect>
+  <CustomSelect label="Год" :options="yearItems" v-model="year"></CustomSelect>
+  <CustomSelect
+    label="Месяц"
+    :options="monthItems"
+    v-model="month"
+  ></CustomSelect>
+  <CustomSelect label="День" :options="dayItems" v-model="day"></CustomSelect>
 </template>
 <style scoped>
 #date-picker {
@@ -16,10 +20,14 @@
 import moment from "moment";
 
 const props = defineProps({
-  modelValue: Object
+  modelValue: Object,
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(["update:modelValue"]);
+
+// console.log(props.modelValue);
+
+// console.log(props.modelValue);
 
 const years = ref([]);
 const year = ref(0);
@@ -45,8 +53,14 @@ onUpdated(() => {
 });
 
 const emitDate = () => {
-  emit("update:modelValue", moment(`${year.value}-${parseInt(month.value) + 1}-${day.value}`, 'YYYY-MM-DD'));
-}
+  emit(
+    "update:modelValue",
+    moment(
+      `${year.value}-${parseInt(month.value) + 1}-${day.value}`,
+      "YYYY-MM-DD"
+    )
+  );
+};
 
 const maxDate = computed(() => {
   if ([1, 2, 4, 6, 7, 9, 11].includes(month.value)) {
@@ -58,7 +72,7 @@ const maxDate = computed(() => {
 });
 const yearItems = computed(() => {
   let items = years.value.map((value, index) => {
-    return {'name': value, 'value': value};
+    return { name: value, value: value };
   });
   items = items.reverse();
   return items;
@@ -117,7 +131,7 @@ const monthItems = computed(() => {
 });
 const dayItems = computed(() => {
   return Array.from({ length: maxDate.value }, (value, index) => {
-    return {'name': index + 1, 'value': index + 1};
+    return { name: index + 1, value: index + 1 };
   });
 });
 
