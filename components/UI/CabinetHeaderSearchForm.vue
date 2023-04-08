@@ -71,12 +71,6 @@ const onSelect = (e) => {
 const router = useRouter();
 const route = useRoute();
 
-onMounted(() => {
-  const query = route.query;
-  if (!query.hasOwnProperty("salary")) query.salary = "0";
-  form.value = { ...route.query };
-});
-
 const vacancyStore = useVacancyStore();
 
 const region = ref(null);
@@ -84,7 +78,7 @@ const city = ref("*");
 
 const form = ref(useVacancyForm());
 
-console.log(form);
+console.log(form.value);
 
 const onRegionChange = (regionItem) => {
   if (regionItem.value === "*") {
@@ -138,7 +132,6 @@ const country = computed(() => {
     return form.value.countries[0];
   } else return 1;
 });
-console.log(country);
 onMounted(async () => {
   if (country.value) {
     await getRegions({ country_id: [country.value] });
@@ -161,10 +154,12 @@ const isLoading = ref(false);
 
 const { clearVacancies } = vacancyStore;
 const onSubmit = async (e) => {
+  console.log(1);
   isLoading.value = true;
   clearVacancies();
   console.log(form.value);
   const params = useVacancyForm(form.value, "front");
+  console.log(params);
   if (isEmployer.value) {
     navigateTo({ name: "search-resumes", query: params });
   } else {
