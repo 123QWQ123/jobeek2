@@ -1,24 +1,24 @@
 <template>
   <footer class="main-footer">
     <div class="main-footer-content wrapper">
-      <div class="logo"> <img src="~/assets/img/jobeek-dark.svg" alt="#"></div>
+      <NuxtLink to="/" class="logo"><img src="~/assets/img/jobeek-dark.svg" alt="#"></NuxtLink>
       <div class="footer-navigation navigation" role="navigation">
 
         <div class="col">
           <h5 class="col-title">Работодателям</h5>
           <ul>
-            <li><a href="#">Создать вакансию</a></li>
-            <li><a href="#">Поиск соотрудников</a></li>
-            <li><a href="#">Советы</a></li>
+            <li><NuxtLink :to="{name: 'create-vacancy'}">Создать вакансию</NuxtLink></li>
+            <li><NuxtLink :to="{name: 'search-resumes'}">Поиск соотрудников</NuxtLink></li>
+            <li><NuxtLink :to="{name: 'advice'}">Советы</NuxtLink></li>
           </ul>
         </div>
 
         <div class="col">
           <h5 class="col-title">Соискателям</h5>
           <ul>
-            <li><a href="#">Создать резюме</a></li>
-            <li><a href="#">Поиск работы</a></li>
-            <li><a href="#">Советы</a></li>
+            <li><NuxtLink :to="{name: 'create-vacancy'}">Создать резюме</NuxtLink></li>
+            <li><NuxtLink :to="{name: 'search-vacancies'}">Поиск работы</NuxtLink></li>
+            <li><NuxtLink :to="{name: 'advice'}">Советы</NuxtLink></li>
           </ul>
         </div>
 
