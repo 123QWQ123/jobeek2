@@ -11,7 +11,7 @@ export const useAuthStore = defineStore('auth', {
       user: null,
       employer: null,
       seeker: null,
-      isAuthed: false,
+      isAuthed: null,
       isEmployerMode: false,
     }
   },
@@ -24,6 +24,13 @@ export const useAuthStore = defineStore('auth', {
     },
     isEmployer(state) {
       return state.isEmployerMode;
+    },
+    isAuthenticated(state) {
+      let authed = false;
+      if (state.isAuthed){
+        authed = true;
+      }
+      return authed;
     }
   },
   actions: {
