@@ -8,9 +8,15 @@
             <h4 class="modal-title">{{ props.title }}</h4>
             <button type="button" @click="close"></button>
           </div>
-          <slot/>
+          <slot />
           <div class="modal-footer">
-            <button type="button" @click="close" class="notification-button button-accent">Проверить</button>
+            <button
+              type="button"
+              @click="close"
+              class="notification-button button-accent"
+            >
+              Проверить
+            </button>
           </div>
         </div>
       </div>
@@ -18,34 +24,33 @@
   </div>
 </template>
 <script setup>
-const props = defineProps(['title']);
-const emit = defineEmits(['close']);
+const props = defineProps(["title"]);
+const emit = defineEmits(["close"]);
 import { useAuthStore } from "~~/store/auth";
 
 const auth = useAuthStore();
 const { toggleUserMode } = auth;
 
 const toggle = () => {
-  let isEmployerMode = localStorage.getItem('isEmployer');
-  if (isEmployerMode === String(isEmployer.value)){
-    localStorage.setItem('isEmployer', !isEmployer.value);
+  let isEmployerMode = localStorage.getItem("isEmployer");
+  if (isEmployerMode === String(isEmployer.value)) {
+    localStorage.setItem("isEmployer", !isEmployer.value);
   }
   toggleUserMode();
-}
+};
 
 const close = () => {
   console.log(1);
-  emit('close');
-}
-
+  emit("close");
+};
 </script>
 
 <style scoped>
-.modal-title{
+.modal-title {
   font-size: 1.2rem;
 }
 
-.modal-content{
+.modal-content {
   justify-content: center;
 }
 </style>

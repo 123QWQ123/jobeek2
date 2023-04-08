@@ -5,18 +5,16 @@
 </template>
 
 <script setup>
-
-import {useAuthStore} from "~/store/auth";
+import { useAuthStore } from "~/store/auth";
 
 const authStore = useAuthStore();
 
-const {tryLogin} = authStore;
+const { tryLogin } = authStore;
 await tryLogin();
-
 </script>
 
 <style>
-.layout{
+.layout {
   overflow-y: hidden;
 }
 .modal {

@@ -11,9 +11,7 @@ export const useVacancyStore = defineStore('vacancy', {
     return {
       list: [],
       vacancies: [],
-      vacancy: null,
       total: 0,
-      data: null,
       current_page: 0,
       my_vacancies: [],
       specializations: [],
@@ -24,10 +22,8 @@ export const useVacancyStore = defineStore('vacancy', {
       cities: [],
       work_types: [],
       schedules: [],
-      educations: [],
       experiences: [],
       part_times: [],
-      metros: [],
     }
   },
   actions: {
@@ -42,6 +38,7 @@ export const useVacancyStore = defineStore('vacancy', {
       return data;
     },
     async getVacancies(payload, add = false) {
+      console.log(payload);
       const {data} = await useApi('vacancies/search', {
         method: 'get',
         payload
@@ -58,22 +55,11 @@ export const useVacancyStore = defineStore('vacancy', {
       }
       return data;
     },
-    async getVacancy(id, payload) {
-      const {data} = await useApi('vacancy/' + id, {
-        method: 'get',
-        payload
-      });
-      console.log(data);
-      if (data){
-        this.vacancy = data;
-      }
-      return data;
-    },
     async clearVacancies() {
       this.vacancies = [];
     },
     async getMyVacancies(payload) {
-      const {data} = await useApi('employer/vacancies', {
+      const {data} = await useApi('vacancies/search', {
         method: 'get',
         payload
       });
@@ -83,7 +69,6 @@ export const useVacancyStore = defineStore('vacancy', {
       return data;
     },
     async getRegions(payload = {}) {
-      console.log(payload)
       const {data} = await useApi('area/regions', {
         method: 'get',
         payload
@@ -135,16 +120,6 @@ export const useVacancyStore = defineStore('vacancy', {
       }
       return data;
     },
-    async getEducations(payload = {}) {
-      const {data} = await useApi('dictionaries?group=education', {
-        method: 'get',
-        payload
-      });
-      if (data){
-        this.educations = data.data.education;
-      }
-      return data;
-    },
     async getExperiences(payload = {}) {
       const {data} = await useApi('dictionaries?group=experience', {
         method: 'get',
@@ -174,32 +149,6 @@ export const useVacancyStore = defineStore('vacancy', {
         this.industries = data.data;
       }
       return data.data;
-    },
-    async getMetros(payload) {
-      const {data} = await useApi('metro', {
-        method: 'get',
-        payload
-      });
-      if (data){
-        this.metros = data.data;
-      }
-      return data;
-    },
-    async addToFavorite(payload) {
-      const {data} = await useApi('vacancy/favorite', {
-        method: 'post',
-        payload
-      });
-      if (data) return true;
-      else return false;
-    },
-    async removeFromFavorite(payload) {
-      const {data} = await useApi('vacancy/favorite', {
-        method: 'delete',
-        payload
-      });
-      if (data) return true;
-      else return false;
     },
 
   },

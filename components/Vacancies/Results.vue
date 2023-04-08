@@ -104,23 +104,27 @@ const isLoading = ref(false);
 const router = useRouter();
 const {clearVacancies} = vacancyStore;
 const onChangeSorting = (sorting) => {
-  clearVacancies();
   form.value.order_by = sorting;
+  console.log(sorting);
   isLoading.value = true;
+  clearVacancies();
+  console.log(form.value);
   const params = useVacancyForm(form.value, 'front');
   console.log(params);
   router.replace({name: 'search-vacancies', query: params});
   isLoading.value = false;
+  // form
 }
 
 const onChangeCurrency = (currency) => {
-  clearVacancies();
+  console.log(currency);
   form.value.currency = currency;
   isLoading.value = true;
   const params = useVacancyForm(form.value, 'front');
   console.log(params);
   router.replace({name: 'search-vacancies', query: params});
   isLoading.value = false;
+  // form
 }
 
 const listStyles = {
