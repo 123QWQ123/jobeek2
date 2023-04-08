@@ -4,7 +4,7 @@ import { useFindSalary } from "~/composables/useFindSalary";
 import { useFindCurrency } from "~/composables/useFindCurrency";
 
 export function useVacancyForm(data = null, to_ = 'front') {
-    // console.log(data, to_);
+    console.log(data, to_);
     // data is form_data by default or null if this is first of calling
     // to_ = front|backend
     const removeNull = (obj) => {
@@ -20,15 +20,6 @@ export function useVacancyForm(data = null, to_ = 'front') {
     const params = route.query;
 
     let selectedSalary = null;
-    if (data) {
-        selectedSalary = data.salary;
-    } else {
-        selectedSalary = useFindSalary(params?.salary, true);
-
-    }
-
-
-
     let metros = [];
     let regions = [];
     let countries = [1];
@@ -59,6 +50,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
         };
     }
     if (!data) {
+
         if (params.metros) {
             if (params.metros instanceof Array) {
                 metros = params.metros.map(item => parseInt(item));
@@ -135,6 +127,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
     console.log(data, params);
     if (data) {
         console.log(data.metros);
+        selectedSalary = data.salary;
         metros = Array.from(data.metros);
         countries = Array.from(data.countries);
         regions = Array.from(data.regions);
@@ -147,6 +140,9 @@ export function useVacancyForm(data = null, to_ = 'front') {
         part_times = Array.from(data.part_times);
         professional_roles = Array.from(data.professional_roles);
         industries = Array.from(data.industries);
+    }else{
+        selectedSalary = useFindSalary(params?.salary, true);
+
     }
 
     console.log(metros);
@@ -169,6 +165,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
     };
 
     if (data === null) {
+        console.log(form_data);
         return form_data;
     }
 
