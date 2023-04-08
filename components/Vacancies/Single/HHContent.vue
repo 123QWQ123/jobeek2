@@ -1,92 +1,55 @@
 <template>
-
   <div class="has-sidebar has-sidebar--v3">
-    HH
     <div class="content">
       <div class="vacancy-single">
         <div class="vacancy-single-head">
-          <h1 class="title">Продавец-консультант и рабоник зала</h1>
-          <div class="adress"> <span>Саратов, улица Зарубина, 167.</span>
-            <button class="on-map"> <img src="~/assets/img/svg/cil_map.svg" alt="#">Показать на карте</button>
+          <h1 class="title">{{ item?.name }}</h1>
+          <div class="adress">
+            <span>{{ item.address }}</span>
           </div>
-          <div class="requirements">Опыт работы от 1 года, среднее специальное образование, полная занятость</div>
-          <div class="salary">29 000 — 35 000 руб./месяц     </div>
+          <div class="requirements">
+            {{ item.experience && item.experience + "," }}
+            {{ item.education && item.education + "," }} {{ item.work_type }},
+            {{ moment.unix(item.published_date).format("YYYY.MM.DD") }}
+          </div>
+          <div class="salary">
+            {{ vueNumberFormat(item.salary_from, {}) }} —
+            {{ vueNumberFormat(item.salary_to, {}) }} руб./месяц
+          </div>
         </div>
-        <div class="vacancy-single-body">
-          <p>Торговая сеть «Перекрёсток» – объединяем лучших!</p>
-          <p>«Перекрёсток» предлагает покупателям только лучшее, потому что у нас сильная команда профессионалов! Наши сотрудники - самая большая ценность для компании. Мы предлагаем стабильную работу и открываем все возможности, чтобы вместе развиваться и двигаться вперёд. Работа в «Перекрёстке» - это дружный коллектив, гибкий график и удобное месторасположение!</p>
-          <p>Мы предлагаем Вам:</p>
-          <ul>
-            <li>Работа рядом с домом – выбери супермаркет, ближайший к твоему дому!</li>
-            <li>График работы: 5/2; 2/2 частичная занятость, внешнее совмещение;</li>
-            <li>Оформление по ТК РФ с 1-го рабочего дня;</li>
-            <li>Белая заработная плата, выплата 2 раза в месяц;</li>
-            <li>Ежемесячные премии-надбавки;</li>
-            <li>Премии и призы по результатам профессиональных и творческих конкурсов;</li>
-            <li>Подарки детям на Новый год!</li>
-            <li>Бесплатное профессиональное обучение;</li>
-            <li>Накопление повышенного процента баллов по карте лояльности «Вместе», скидка на кулинарию 30%.</li>
-          </ul>
-          <p>Ваши задачи:</p>
-          <ul>
-            <li>Приготовление салатов, холодных закусок, сендвичей, гамбургеров, напитков;</li>
-            <li> Нарезка фруктовых десертов;</li>
-            <li>Приготовление готовой кулинарии, основных блюд и гарниров;</li>
-            <li>Разделка мяса, кур и рыбы;</li>
-            <li>Изготовление полуфабрикатов, начинок и фарша в соответствии с технологическими картами;</li>
-            <li>Пополнение витрины ассортиментом мясного и рыбного производства;</li>
-            <li>Приемка и контроль качества сырья, контроль сроков годности;</li>
-            <li>Участие в инвентаризациях;</li>
-            <li>Соблюдение в чистоте рабочего места, инвентаря и оборудования согласно санитарным нормам;</li>
-            <li>Работа в системе ХАССП.</li>
-          </ul>
-          <p>Мы ожидаем от нашего кандидата:</p>
-          <ul>
-            <li>Уровень образования: не ниже среднего профессионального (повар) при отсутствии опыта работы;</li>
-            <li>Опыт работы не менее 6 месяцев, при отсутствии среднего профессионального образования.</li>
-            <li>Мы объединяем амбициозных профессионалов своего дела. Мы строим дружеские отношения в коллективе и считаем, что работа – наш второй дом.</li>
-          </ul>
-          <p>Благодарим Вас за проявленный интерес к нашей компании!</p>
-          <p>Нет ответа в течение пяти рабочих дней после отправки резюме? Просьба позвонить нам по номеру телефона горячей линии. Звонок для Вас бесплатный.       </p>
-        </div>
+        <div class="vacancy-single-body" v-html="item.description"></div>
         <div class="vacancy-single-footer">
-          <button class="btn button-accent button-accent--ts-bigger">Откликнуться</button>
+          <button class="btn button-accent button-accent--ts-bigger">
+            Откликнуться
+          </button>
         </div>
       </div>
     </div>
     <aside class="sidebar">
       <div class="company-col sticky-item">
-        <div class="company-logo"><img src="~/assets/img/logos/megafon.svg" alt="#"></div>
-        <h3 class="title">Мегафон</h3>
-        <p>Клиент SuperJob с 2003 года</p>
-        <p>Более 5000 сотрудников</p>
-        <p>«Перекрёсток» предлагает покупателям только лучшее, потому что у нас сильная команда активных и целеустремлённых сотрудников!      </p>
-        <div class="count">123 вакансии</div>
-        <div class="grade-box-container">
-          <div class="title">Оценки сотрудников</div>
-          <div class="grade-box">
-            <div class="grade-box-circle">
-              <svg class="progress" data-complete="0.75" xmlns="http://www.w3.org/2000/svg" viewBox="-1 -1 34 34">
-                <circle cx="16" cy="16" r="15.9155" class="progress-bar__background"></circle>
-                <circle cx="16" cy="16" r="15.9155" class="progress-bar__progress js-progress-bar" style="stroke-dashoffset: 25px;"></circle>
-              </svg>
-              <span>7.5</span>
-            </div>
-            <div class="grade-box-text">
-              <strong>Хорошо</strong>
-              <a href="#">12 отзывов</a>
-            </div>
-          </div>
-          <span class="txt">55% рекомендуют компанию</span>
-        </div>
+        <div class="company-logo"><img :src="item.logo" alt="#" /></div>
+        <h3 class="title">{{ item.company }}</h3>
+        <div class="count">{{ item.open_vacancies ?? 0 }} вакансии</div>
       </div>
     </aside>
   </div>
 </template>
 
 <script setup>
+import moment from "moment";
+const { item } = defineProps({
+  item: {
+    required: true,
+  },
+});
+const pageTitle = computed(() => item.name + " - Jobeek");
+
+useHead({
+  title: pageTitle,
+});
+
+console.log(item);
 </script>
 
 <style scoped>
-
 </style>

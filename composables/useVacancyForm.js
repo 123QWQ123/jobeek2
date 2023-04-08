@@ -1,7 +1,7 @@
-import {useSalaryOptions} from "~/composables/useSalaryOptions";
-import {useRoute} from "nuxt/app";
-import {useFindSalary} from "~/composables/useFindSalary";
-import {useFindCurrency} from "~/composables/useFindCurrency";
+import { useSalaryOptions } from "~/composables/useSalaryOptions";
+import { useRoute } from "nuxt/app";
+import { useFindSalary } from "~/composables/useFindSalary";
+import { useFindCurrency } from "~/composables/useFindCurrency";
 
 export function useVacancyForm(data = null, to_ = 'front') {
     // console.log(data, to_);
@@ -20,16 +20,18 @@ export function useVacancyForm(data = null, to_ = 'front') {
     const params = route.query;
 
     let selectedSalary = null;
-    if (data){
+    if (data) {
         selectedSalary = data.salary;
-    }else{
+    } else {
         selectedSalary = useFindSalary(params?.salary, true);
 
     }
 
 
 
+    let metros = [];
     let regions = [];
+    let countries = [1];
     let cities = [];
     let work_types = [];
     let schedules = [];
@@ -38,11 +40,11 @@ export function useVacancyForm(data = null, to_ = 'front') {
     let professional_roles = [];
     let industries = [];
 
-    if (to_ === 'reset'){
-
+    if (to_ === 'reset') {
         return {
             name: "",
-            country: 1,
+            countries: countries,
+            metros: metros,
             regions: regions,
             cities: cities,
             work_types: work_types,
@@ -56,68 +58,87 @@ export function useVacancyForm(data = null, to_ = 'front') {
             order_by: null,
         };
     }
-    if (!data){
-        if (params.regions){
-            if (params.regions instanceof Array){
+    if (!data) {
+        if (params.metros) {
+            if (params.metros instanceof Array) {
+                metros = params.metros.map(item => parseInt(item));
+            } else {
+                metros = [parseInt(params.metros)];
+            }
+        }
+
+        if (params.countries) {
+            if (params.countries instanceof Array) {
+                countries = params.countries.map(item => parseInt(item));
+            } else {
+                countries = [parseInt(params.countries)];
+            }
+        }
+        if (params.regions) {
+            if (params.regions instanceof Array) {
                 regions = params.regions.map(item => parseInt(item));
-            }else{
+            } else {
                 regions = [parseInt(params.regions)];
             }
         }
 
-        if (params.cities){
-            if (params.cities instanceof Array){
+        if (params.cities) {
+            if (params.cities instanceof Array) {
                 cities = params.cities.map(item => parseInt(item));
-            }else{
+            } else {
                 cities = [parseInt(params.cities)];
             }
         }
-        if (params.work_types){
-            if (params.work_types instanceof Array){
+        if (params.work_types) {
+            if (params.work_types instanceof Array) {
                 work_types = params.work_types.map(item => parseInt(item));
-            }else{
+            } else {
                 work_types = [parseInt(params.work_types)];
             }
         }
-        if (params.schedules){
-            if (params.schedules instanceof Array){
+        if (params.schedules) {
+            if (params.schedules instanceof Array) {
                 schedules = params.schedules.map(item => parseInt(item));
-            }else{
+            } else {
                 schedules = [parseInt(params.schedules)];
             }
         }
-        if (params.experiences){
-            if (params.experiences instanceof Array){
+        if (params.experiences) {
+            if (params.experiences instanceof Array) {
                 experiences = params.experiences.map(item => parseInt(item));
-            }else{
+            } else {
                 experiences = [parseInt(params.experiences)];
             }
         }
-        if (params.part_times){
-            if (params.part_times instanceof Array){
+        if (params.part_times) {
+            if (params.part_times instanceof Array) {
                 part_times = params.part_times.map(item => parseInt(item));
-            }else{
+            } else {
                 part_times = [parseInt(params.part_time)];
             }
         }
-        if (params.professional_roles){
-            if (params.professional_roles instanceof Array){
+        if (params.professional_roles) {
+            if (params.professional_roles instanceof Array) {
                 professional_roles = params.professional_roles.map(item => parseInt(item));
-            }else{
+            } else {
                 professional_roles = [parseInt(params.professional_roles)];
             }
         }
-        if (params.industries){
-            if (params.industries instanceof Array){
+        if (params.industries) {
+            if (params.industries instanceof Array) {
                 industries = params.industries.map(item => parseInt(item));
-            }else{
+            } else {
                 industries = [parseInt(params.industries)];
             }
         }
     }
-    if (data){
+    console.log(data, params);
+    if (data) {
+        console.log(data.metros);
+        metros = Array.from(data.metros);
+        countries = Array.from(data.countries);
         regions = Array.from(data.regions);
-        if (regions.length === 1){
+        if (regions.length === 1) {
             cities = Array.from(data.cities);
         }
         work_types = Array.from(data.work_types);
@@ -128,10 +149,12 @@ export function useVacancyForm(data = null, to_ = 'front') {
         industries = Array.from(data.industries);
     }
 
+    console.log(metros);
 
     const form_data = {
         name: data?.name ?? params?.name,
-        country: data?.country ?? params?.country ?? 1,
+        countries: countries,
+        metros: metros,
         regions: regions,
         cities: cities,
         work_types: work_types,
@@ -145,14 +168,15 @@ export function useVacancyForm(data = null, to_ = 'front') {
         order_by: data?.order_by ?? params.order_by ?? null,
     };
 
-    if (data === null){
+    if (data === null) {
         return form_data;
     }
 
     const back_params = {
         name: data.name ?? null,
-        country: data.country?? null,
+        countries: data.countries ?? null,
         regions: data.regions ?? null,
+        metros: data.metros ?? null,
         cities: data.cities ?? null,
         currency: 'RUB',
         order_by: null,
@@ -167,99 +191,108 @@ export function useVacancyForm(data = null, to_ = 'front') {
         country: null,
         city: null,
         regions: null,
+        metros: null,
         cities: null,
         currency: null,
         salary: null,
         order_by: null,
     };
 
-    if (to_ === 'front'){
-        if (data.name){
+    if (to_ === 'front') {
+        if (data.name) {
             front_params.name = data.name;
         }
         if (data.name !== '') front_params.name = data.name;
         if (data.order_by !== '') front_params.order_by = data.order_by;
         if (data.currency !== '') front_params.currency = data.currency;
-        if (data.country !== '') front_params.country = data.country;
-        if (data.regions instanceof Array){
+        if (data.countries instanceof Array) {
+            front_params.countries = Array.from(data.countries);
+        }
+        if (data.regions instanceof Array) {
             front_params.regions = Array.from(data.regions);
         }
-        if (front_params.regions.length === 1 && data.cities instanceof Array){
+        if (data.metros instanceof Array) {
+            front_params.metros = Array.from(data.metros);
+        }
+        if (front_params.regions.length === 1 && data.cities instanceof Array) {
             front_params.cities = Array.from(data.cities);
         }
-        if (data.work_types instanceof Array){
+        if (data.work_types instanceof Array) {
             front_params.work_types = Array.from(data.work_types);
         }
-        if (data.schedules instanceof Array){
+        if (data.schedules instanceof Array) {
             front_params.schedules = Array.from(data.schedules);
         }
-        if (data.experiences instanceof Array){
+        if (data.experiences instanceof Array) {
             front_params.experiences = Array.from(data.experiences);
         }
-        if (data.part_times instanceof Array){
+        if (data.part_times instanceof Array) {
             front_params.part_times = Array.from(data.part_times);
         }
-        if (data.professional_roles instanceof Array){
+        if (data.professional_roles instanceof Array) {
             front_params.professional_roles = Array.from(data.professional_roles);
         }
-        if (data.industries instanceof Array){
+        if (data.industries instanceof Array) {
             front_params.industries = Array.from(data.industries);
         }
 
         if (data.city !== '') front_params.city = data.city;
 
-        if (data.salary.from || data.salary.to){
+        if (data.salary.from || data.salary.to) {
             front_params.salary = data.salary.from + '-' + data.salary.to;
         }
-        if (data.salary.id  === null || data.salary.id === 0) delete front_params.salary;
+        if (data.salary.id === null || data.salary.id === 0) delete front_params.salary;
 
         return removeNull(front_params);
     }
-    if (to_ === 'backend'){
-        if (data.name){
+    if (to_ === 'backend') {
+        if (data.name) {
             back_params.name = data.name;
         }
-        if (data.country){
-            back_params.country = data.country;
+        if (data.country) {
+            back_params.countries = data.country;
         }
-        if (data.regions instanceof Array){
+        if (data.metros instanceof Array) {
+            back_params.metro = Array.from(data.metros);
+        }
+        if (data.regions instanceof Array) {
             back_params.regions = Array.from(data.regions);
         }
-        if (data.cities instanceof Array){
+        if (data.cities instanceof Array) {
             back_params.cities = Array.from(data.cities);
         }
-        if (data.work_types instanceof Array){
+        if (data.work_types instanceof Array) {
             back_params.work_types = Array.from(data.work_types);
         }
-        if (data.schedules instanceof Array){
+        if (data.schedules instanceof Array) {
             back_params.schedules = Array.from(data.schedules);
         }
-        if (data.experiences instanceof Array){
+        if (data.experiences instanceof Array) {
             back_params.experiences = Array.from(data.experiences);
         }
-        if (data.part_times instanceof Array){
+        if (data.part_times instanceof Array) {
             back_params.part_time = Array.from(data.part_times);
         }
-        if (data.professional_roles instanceof Array){
+        if (data.professional_roles instanceof Array) {
             back_params.professional_roles = Array.from(data.professional_roles);
         }
-        if (data.industries instanceof Array){
+        if (data.industries instanceof Array) {
             back_params.industries = Array.from(data.industries);
         }
-        if (data.city){
+        if (data.city) {
             back_params.city = data.city;
         }
-        if (data.currency){
+        if (data.currency) {
             back_params.currency = data.currency;
         }
-        if (data.order_by){
+        if (data.order_by) {
             back_params.order_by = data.order_by;
         }
 
-        if (data.salary.from){
+        if (data.salary.from) {
             back_params.salary.from = data.salary.from;
         }
-        if (data.salary.to){
+        if (data.salary.to) {
             back_params.salary.to = data.salary.to;
         }
         console.log(back_params);
