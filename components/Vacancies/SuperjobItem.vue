@@ -64,10 +64,33 @@
 
 <script setup>
 import moment from "moment";
-const isFavorite = ref(false);
+import {useVacancyStore} from "../../store/vacancy";
+import Swal from "sweetalert2";
 
-const toggleFavorite = (e) => {
-  isFavorite.value = !isFavorite.value;
+const props = defineProps(["item"]);
+const { item } = props;
+
+const isFavorite = ref(item.is_favorite ?? false);
+
+const vacancyStore = useVacancyStore();
+const {addToFavorite, removeFromFavorite} = vacancyStore;
+const toggleFavorite = async() => {
+  let response = {};
+  if (!isFavorite.value === true){
+    response = await addToFavorite({id: item.id, provider: 'superjob'});
+  }else{
+    response = await removeFromFavorite({id: item.id, provider: 'superjob'});
+  }
+  if (response.status === 'success'){
+    isFavorite.value = !isFavorite.value;
+  }else{
+    Swal.fire({
+      title: 'Ошибка!',
+      text: response.message,
+      icon: "error",
+      confirmButtonText: 'ОК'
+    });
+  }
 };
 
 const employerLogo = computed(() => {
@@ -76,8 +99,6 @@ const employerLogo = computed(() => {
   }else return new URL('/assets/img/logos/superjob.svg', import.meta.url);
 });
 
-const props = defineProps(["item"]);
-const { item } = props;
 </script>
 
 <style scoped>

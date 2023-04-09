@@ -4,7 +4,7 @@ import { useFindSalary } from "~/composables/useFindSalary";
 import { useFindCurrency } from "~/composables/useFindCurrency";
 
 export function useVacancyForm(data = null, to_ = 'front') {
-    console.log(data, to_);
+    // console.log(data, to_);
     // data is form_data by default or null if this is first of calling
     // to_ = front|backend
     const removeNull = (obj) => {
@@ -124,7 +124,6 @@ export function useVacancyForm(data = null, to_ = 'front') {
             }
         }
     }
-    console.log(data, params);
     if (data) {
         console.log(data.metros);
         selectedSalary = data.salary;
@@ -145,8 +144,6 @@ export function useVacancyForm(data = null, to_ = 'front') {
 
     }
 
-    console.log(metros);
-
     const form_data = {
         name: data?.name ?? params?.name,
         countries: countries,
@@ -165,7 +162,6 @@ export function useVacancyForm(data = null, to_ = 'front') {
     };
 
     if (data === null) {
-        console.log(form_data);
         return form_data;
     }
 

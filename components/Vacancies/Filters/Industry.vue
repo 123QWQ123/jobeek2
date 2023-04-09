@@ -20,7 +20,7 @@
 
       </div>
 
-      <VacanciesFiltersSpecializationModal v-if="isModalOpen" :is-open="isModalOpen" @toggle="toggleModal" v-model="selectedSpecs" :items="specializations" />
+      <VacanciesFiltersSpecializationModal :title="'Отрасль компании'" v-if="isModalOpen" :is-open="isModalOpen" @toggle="toggleModal" v-model="selectedSpecs" :items="specializations" />
 
       <button class="more-filters" @click="toggleModal" >
         Выбрать

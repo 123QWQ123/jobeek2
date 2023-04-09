@@ -3,7 +3,7 @@
     <div class="filter-modal-container filter-modal-container_visible">
       <div class="filter-modal">
         <div class="filter-modal-header">
-          <span class="filter-modal-title">Специализации</span>
+          <span class="filter-modal-title">{{ title }}</span>
           <br/>
           <div class="filter-tree-selector-popup-search">
             <fieldset class="input-wrapper">
@@ -48,8 +48,11 @@
 </template>
 
 <script setup>
-const {isOpen, items: specializations, modelValue: selected_ids} = defineProps({
+const {isOpen, items: specializations, modelValue: selected_ids, title} = defineProps({
   items: {
+    required: true,
+  },
+  title: {
     required: true,
   },
   isOpen: {
@@ -67,6 +70,7 @@ const emit = defineEmits({
     required: true
   }
 });
+
 const selectedSpecs = ref({});
 
 const apply = () => {

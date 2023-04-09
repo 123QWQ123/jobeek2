@@ -174,6 +174,22 @@ export const useVacancyStore = defineStore('vacancy', {
       return data.data;
     },
 
+    async addToFavorite(payload) {
+      const response = await useApi('vacancy/favorite', {
+        method: 'post',
+        payload
+      });
+      return response;
+    },
+
+    async removeFromFavorite(payload) {
+      const response = await useApi('vacancy/favorite', {
+        method: 'delete',
+        payload
+      });
+      return response;
+    },
+
   },
 })
 
