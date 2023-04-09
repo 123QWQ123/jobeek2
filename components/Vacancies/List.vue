@@ -1,7 +1,7 @@
 <template>
   <div class="content">
     <ul class="favorites-list">
-      <VacanciesItem v-for="item in vacancies" :key="item.id" :item="item"></VacanciesItem>
+      <VacanciesItem v-for="item in vacanciesItems" :key="item.id" :item="item"></VacanciesItem>
     </ul>
 
 
@@ -27,14 +27,18 @@ const vacancyStore = useVacancyStore();
 const {getVacancies} = vacancyStore;
 const {vacancies, current_page} = storeToRefs(vacancyStore);
 
+const vacanciesItems = ref([]);
+
 const loadMoreButton = ref();
 const isLoading = ref(false);
 const isMore = ref(false);
 
 const route = useRoute();
 const form = ref(useVacancyForm());
-watch(vacancies, () => {
-  if (vacancies.value.length > 0){
+watch(vacancies, (newValues) => {
+  vacanciesItems.value = newValues;
+  console.log(newValues);
+  if (newValues.length > 0){
     isMore.value = true;
   }
 })

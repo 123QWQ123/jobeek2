@@ -64,7 +64,7 @@ const closeProviderModal = () => {
       <PageLoader v-if="isLoading" />
       <YourVacanciesList></YourVacanciesList>
 
-      <button type="button" class="btn btn-primary" @click="isProviderModalShown = !isProviderModalShown">
+      <button type="button" class="btn btn-primary" @click="isProviderModalShown.value = !isProviderModalShown">
         Connect providers
       </button>
     </div>

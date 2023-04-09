@@ -11,7 +11,9 @@ export const useVacancyStore = defineStore('vacancy', {
     return {
       list: [],
       vacancies: [],
+      vacancy: null,
       total: 0,
+      data: null,
       current_page: 0,
       my_vacancies: [],
       specializations: [],
@@ -24,6 +26,7 @@ export const useVacancyStore = defineStore('vacancy', {
       schedules: [],
       experiences: [],
       part_times: [],
+      metros: [],
     }
   },
   actions: {
@@ -38,7 +41,6 @@ export const useVacancyStore = defineStore('vacancy', {
       return data;
     },
     async getVacancies(payload, add = false) {
-      console.log(payload);
       const {data} = await useApi('vacancies/search', {
         method: 'get',
         payload
@@ -52,6 +54,17 @@ export const useVacancyStore = defineStore('vacancy', {
           this.current_page = 1;
         }
         this.total = data.found;
+      }
+      return data;
+    },
+    async getVacancy(id, payload) {
+      const {data} = await useApi('vacancy/' + id, {
+        method: 'get',
+        payload
+      });
+      console.log(data);
+      if (data){
+        this.vacancy = data;
       }
       return data;
     },
@@ -147,6 +160,16 @@ export const useVacancyStore = defineStore('vacancy', {
       });
       if (data){
         this.industries = data.data;
+      }
+      return data.data;
+    },
+    async getMetros(payload) {
+      const {data} = await useApi('metro', {
+        method: 'get',
+        payload
+      });
+      if (data){
+        this.metros = data.data;
       }
       return data.data;
     },

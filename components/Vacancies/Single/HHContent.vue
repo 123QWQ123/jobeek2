@@ -27,7 +27,7 @@
     </div>
     <aside class="sidebar">
       <div class="company-col sticky-item">
-        <div class="company-logo"><img :src="item.logo" alt="#" /></div>
+        <div class="company-logo"><img class="w-100" :src="employerLogo" :alt="item.company" /></div>
         <h3 class="title">{{ item.company }}</h3>
         <div class="count">{{ item.open_vacancies ?? 0 }} вакансии</div>
       </div>
@@ -36,6 +36,7 @@
 </template>
 
 <script setup>
+
 import moment from "moment";
 const { item } = defineProps({
   item: {
@@ -48,7 +49,11 @@ useHead({
   title: pageTitle,
 });
 
-console.log(item);
+const employerLogo = computed(() => {
+  if (item && item.logo){
+    return item.logo;
+  }else return new URL('/assets/img/logos/superjob.svg', import.meta.url);
+});
 </script>
 
 <style scoped>

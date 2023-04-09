@@ -1,5 +1,4 @@
 <template>
-
   <div class="has-sidebar has-sidebar--v3">
     <div class="content">
       <div class="vacancy-single">
@@ -8,18 +7,27 @@
           <div class="adress">
             <span>{{ item.address }}</span>
           </div>
-          <div class="requirements">{{item.experience && item.experience + ","}}  {{item.education && item.education + ','}} {{item.work_type}}, {{moment.unix(item.published_date).format("YYYY.MM.DD")}}</div>
-          <div class="salary">{{ vueNumberFormat(item.salary_from, {}) }} — {{ vueNumberFormat(item.salary_to, {}) }} руб./месяц     </div>
+          <div class="requirements">
+            {{ item.experience && item.experience + "," }}
+            {{ item.education && item.education + "," }} {{ item.work_type }},
+            {{ moment.unix(item.published_date).format("YYYY.MM.DD") }}
+          </div>
+          <div class="salary">
+            {{ vueNumberFormat(item.salary_from, {}) }} —
+            {{ vueNumberFormat(item.salary_to, {}) }} руб./месяц
+          </div>
         </div>
         <div class="vacancy-single-body" v-html="item.description"></div>
         <div class="vacancy-single-footer">
-          <button class="btn button-accent button-accent--ts-bigger">Откликнуться</button>
+          <button class="btn button-accent button-accent--ts-bigger">
+            Откликнуться
+          </button>
         </div>
       </div>
     </div>
     <aside class="sidebar">
       <div class="company-col sticky-item">
-        <div class="company-logo"><img :src="item.logo" alt="#"></div>
+        <div class="company-logo"><img class="w-100" :src="employerLogo" :alt="item.company" /></div>
         <h3 class="title">{{ item.company }}</h3>
         <div class="count">{{ item.open_vacancies ?? 0 }} вакансии</div>
       </div>
@@ -29,20 +37,23 @@
 
 <script setup>
 import moment from "moment";
-const {item} = defineProps({
+const { item } = defineProps({
   item: {
-    required: true
-  }
+    required: true,
+  },
 });
 const pageTitle = computed(() => item.name + " - Jobeek");
 
 useHead({
-  title: pageTitle
+  title: pageTitle,
 });
 
-console.log(item);
+const employerLogo = computed(() => {
+  if (item && item.logo){
+    return item.logo;
+  }else return new URL('/assets/img/logos/superjob.svg', import.meta.url);
+});
 </script>
 
 <style scoped>
-
 </style>

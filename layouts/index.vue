@@ -6,7 +6,7 @@
     <HeaderTheHeader v-else></HeaderTheHeader>
     <main class="main" role="main">
       <NuxtPage />
-      <!-- <template #error="{ error }">
+      <template #error="{ error }">
           <div>
             <p>
               Oh no, something broke when loading the lesson!
@@ -16,7 +16,7 @@
               <NuxtLink class="hover:cursor-pointer" to="/"> Go to / </NuxtLink>
             </p>
           </div>
-        </template> -->
+      </template>
     </main>
 
     <footer class="footer" v-if="hasFooterSlot">

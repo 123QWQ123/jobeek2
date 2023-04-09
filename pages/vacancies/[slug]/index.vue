@@ -13,28 +13,15 @@
               class="favorites-card-footer-row telephones-row"
               :style="{ display: isContactsShown }"
             >
-              <ul>
-                <li>
-                  <a class="tel" href="tel: +7 800 550 11 00">
+              <ul v-if="vacancyPhones.length > 0">
+                <li v-for="phone in vacancyPhones">
+                  <a class="tel" :href="getPhoneHref(phone)">
                     <img src="~/assets/img/svg/carbon_phone.svg" alt="#" />+7
-                    800 550 11 00
-                  </a>
-                </li>
-                <li>
-                  <a class="tel" href="tel: +7 800 550 11 00">
-                    <img src="~/assets/img/svg/carbon_phone.svg" alt="#" />+7
-                    800 550 11 00
-                  </a>
-                </li>
-                <li>
-                  <a class="tel" href="tel: +7 800 550 11 00">
-                    <img
-                      src="~/assets/img/svg/akar-icons_whatsapp-fill.svg"
-                      alt="#"
-                    />+7 800 550 11 00
+                    {{ phone }}
                   </a>
                 </li>
               </ul>
+              <p v-else>Нет контактов</p>
             </div>
             <div class="favorites-card-footer-row">
               <div class="group">
@@ -99,21 +86,22 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useVacancyStore } from "../../../store/vacancy";
+import {navigateTo} from "nuxt/app";
 const route = useRoute();
 const vacancyStore = useVacancyStore();
 const { getVacancy } = vacancyStore;
 const { vacancy } = storeToRefs(vacancyStore);
-console.log(vacancy);
 
 const { slug } = route.params;
 const { provider } = route.query;
 const vacancyData = await getVacancy(slug, { provider });
-
 const pageTitle = computed(() => vacancyData?.name + " - Jobeek");
 
-useHead({
-  title: pageTitle.value,
-});
+console.log(vacancyData);
+
+if (!vacancyData.hasOwnProperty('hh') && !vacancyData.hasOwnProperty('superjob')){
+  navigateTo({name: '404'});
+}
 
 console.log(slug, provider);
 
@@ -125,8 +113,27 @@ const toggleContactsVisibility = () => {
     isContactsShown.value = "block";
   }
 };
+const vacancyPhones = computed(() => {
+  let phones = [];
+
+  if (provider === 'hh'){
+    phones = vacancyData.hh.contacts.phones;
+  }
+  if (provider === 'superjob'){
+    phones = vacancyData.superjob.contacts.phones;
+  }
+  return phones;
+});
+const getPhoneHref = (phone) => {
+  return 'href: +' + phone;
+};
 
 const isFavoured = ref(true);
+
+useHead({
+  title: pageTitle.value,
+});
+
 </script>
 
 <style scoped>
