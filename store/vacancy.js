@@ -14,8 +14,9 @@ export const useVacancyStore = defineStore('vacancy', {
       vacancy: null,
       total: 0,
       data: null,
-      current_page: 0,
+      current_page: 1,
       my_vacancies: [],
+      my_favorite_vacancies: [],
       specializations: [],
       industries: [],
       areas: [],
@@ -78,6 +79,21 @@ export const useVacancyStore = defineStore('vacancy', {
       });
       if ('data' in data){
         this.my_vacancies = data.data;
+      }
+      return data;
+    },
+    async getMyFavoriteVacancies(payload) {
+      console.log(payload);
+      const {data} = await useApi('vacancies/search', {
+        method: 'get',
+        payload
+      });
+      console.log(data);
+      if ('items' in data){
+        this.my_favorite_vacancies = data.items;
+        if (payload.page) {
+          this.current_page = payload.page;
+        }
       }
       return data;
     },

@@ -13,7 +13,7 @@
       <img v-else src="~/assets/img/svg/Arrow-Down2.svg" alt="#">
     </button>
     <h3 v-else>
-      К сожалению ничего нашли!
+      К сожалению ничего не нашли!
     </h3>
   </div>
 </template>

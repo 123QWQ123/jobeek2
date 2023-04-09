@@ -40,13 +40,10 @@ const { slug } = route.params;
 const { provider } = route.query;
 const vacancyData = await getVacancy(slug, { provider });
 const pageTitle = computed(() => vacancyData?.name + " - Jobeek");
-console.log(vacancyData);
 
 if (!vacancyData.hasOwnProperty('hh') && !vacancyData.hasOwnProperty('superjob')){
   navigateTo({name: '404'});
 }
-console.log(slug, provider);
-
 useHead({
   title: pageTitle.value,
 });
