@@ -1,7 +1,7 @@
 <template>
   <div class="filter-box" :class="{'open': filterClass}">
     <div class="filter-box-handle" @click="filterClass = !filterClass">
-      <strong>Отрасль компании</strong>
+      <strong>Отрасль компании({{industries?.length}})</strong>
       <img src="~/assets/img/svg/Arrow-Down.svg" alt="#"></div>
     <div class="filter-box-body">
       <div class="check-block-list">
@@ -20,7 +20,7 @@
 
       </div>
 
-      <VacanciesFiltersSpecializationModal :title="'Отрасль компании'" v-if="isModalOpen" :is-open="isModalOpen" @toggle="toggleModal" v-model="selectedSpecs" :items="specializations" />
+      <VacanciesFiltersSpecializationModal :title="'Отрасль компании'" v-if="isModalOpen" :is-open="isModalOpen" @toggle="toggleModal" v-model="selectedSpecs" :items="industries" />
 
       <button class="more-filters" @click="toggleModal" >
         Выбрать
@@ -37,8 +37,8 @@ import {storeToRefs} from "pinia";
 
 const vacancyStore = useVacancyStore();
 
-const {getSpecializations} = vacancyStore;
-const {specializations} = storeToRefs(vacancyStore)
+const {getIndustries} = vacancyStore;
+const {industries} = storeToRefs(vacancyStore)
 
 const isModalOpen = ref(false);
 const selectedSpecs = ref(selectedIds);
@@ -94,7 +94,7 @@ const prepare = (newItems, oldItems) => {
   }
 }
 watch(
-    () => vacancyStore.specializations,
+    () => vacancyStore.industries,
     prepare
 );
 
@@ -103,9 +103,9 @@ watch(
 const filterClass = ref(true);
 
 onMounted(() => {
-  if (specializations.value.length === 0)
-    getSpecializations();
-  else prepare(specializations.value);
+  if (industries.value.length === 0)
+    getIndustries();
+  else prepare(industries.value);
 });
 
 

@@ -3,7 +3,7 @@
     <div class="filter-modal-container filter-modal-container_visible">
       <div class="filter-modal">
         <div class="filter-modal-header">
-          <span class="filter-modal-title">{{ title }}</span>
+          <span class="filter-modal-title">{{ title }} </span>
           <br/>
           <div class="filter-tree-selector-popup-search">
             <fieldset class="input-wrapper">
@@ -17,6 +17,7 @@
                                                 @set="updateSelectedSpecs"
 
             />
+            {{item.items.length}}
           </div>
           <div class="filter-tree-selector-popup-content" v-else>
             <VacanciesFiltersSpecializationItem v-for="item in groupedSpecs" :item="item" :items="item.items" :key="item.id"

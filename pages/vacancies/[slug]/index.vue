@@ -39,7 +39,7 @@ const { vacancy } = storeToRefs(vacancyStore);
 const { slug } = route.params;
 const { provider } = route.query;
 const vacancyData = await getVacancy(slug, { provider });
-const pageTitle = computed(() => vacancyData?.name + " - Jobeek");
+const pageTitle = computed(() => vacancyData[provider]?.name + " - Jobeek");
 
 if (!vacancyData.hasOwnProperty('hh') && !vacancyData.hasOwnProperty('superjob')){
   navigateTo({name: '404'});
