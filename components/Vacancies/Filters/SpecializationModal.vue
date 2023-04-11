@@ -12,16 +12,13 @@
           </div>
         </div>
         <div class="filter-tree-selector-popup">
-          <div class="filter-tree-selector-popup-content" v-if="isSearching">
-            <VacanciesFiltersSpecializationItem v-for="item in groupedSpecs" :item="item" :items="item.items" :key="item.id" :is-open="true"
-                                                @set="updateSelectedSpecs"
-
+          <div class="filter-tree-selector-popup-content">
+            <VacanciesFiltersIndustryItem v-if="isSearching" v-for="item in groupedSpecs" :item="item" :items="item.items" :key="item.id"
+                                          @set="updateSelectedSpecs"
+                                          :is-open="true"
             />
-            {{item.items.length}}
-          </div>
-          <div class="filter-tree-selector-popup-content" v-else>
-            <VacanciesFiltersSpecializationItem v-for="item in groupedSpecs" :item="item" :items="item.items" :key="item.id"
-                                                @set="updateSelectedSpecs"
+            <VacanciesFiltersIndustryItem v-else v-for="item in groupedSpecs" :item="item" :items="item.items" :key="item.id"
+                                          @set="updateSelectedSpecs"
             />
           </div>
         </div>
@@ -92,55 +89,49 @@ const onSearch = () => {
   prepare(specializations);
 }
 const prepare = (newValues, is_first = false) => {
-  const groupItems = [];
 
-    for (let i = 0; i < newValues.length; i++){
-      const item = newValues[i];
+  let groupItems = newValues.filter(newItem => newItem.parent_id === null);
+  groupItems = groupItems.map(newItem => {
+    newItem.items = [];
+    let is_checked = false;
+    if (Array.from(selected_ids).includes(newItem.id)){
+      is_checked = true;
+    }
+    newItem.is_checked = is_checked;
+    newItem.name = newItem.title;
+    return newItem;
+  });
+
+  for (let i = 0; i < groupItems.length; i++){
+    const item = groupItems[i];
+    for (let j = 0; j < newValues.length; j++){
+      const sub_item = newValues[j];
+      if (!sub_item.parent_id) continue;
+
+      if (isSearching.value){
+        if (!sub_item.title.toLowerCase().includes(searchInput.value.toLowerCase())) continue;
+      }
 
       let is_checked = false;
-      if (item && !item.parent_id){
-        if (Array.from(selected_ids).includes(item.id)){
-          is_checked = true;
-        }
-        groupItems.push({
-          id: item.id,
-          name: item.title,
-          is_checked,
-          items: []
-        })
-      }
-    }
-
-    for (let i = 0; i < groupItems.length; i++){
-      const item = groupItems[i];
-      for (let j = 0; j < newValues.length; j++){
-        const sub_item = newValues[j];
-        if (!sub_item.parent_id) continue;
-
-        if (isSearching){
-          if (!sub_item.title.toLowerCase().includes(searchInput.value.toLowerCase())) continue;
-        }
-
-        let is_checked = false;
-        if (sub_item && sub_item.parent_id){
-          if (sub_item.parent_id === item.id){
-            if (Array.from(selected_ids).includes(sub_item.id)){
-              is_checked = true;
-            }
-            groupItems[i].items.push({
-              id: sub_item.id,
-              name: sub_item.title,
-              is_checked,
-            })
+      if (sub_item && sub_item.parent_id){
+        if (sub_item.parent_id === item.id){
+          if (Array.from(selected_ids).includes(sub_item.id)){
+            is_checked = true;
           }
+          groupItems[i].items.push({
+            id: sub_item.id,
+            name: sub_item.title,
+            is_checked,
+          })
         }
       }
     }
-    if (isSearching){
-      groupedSpecs.value = groupItems.filter(spec => spec.items.length);
-    }else{
-      groupedSpecs.value = groupItems;
-    }
+  }
+  if (isSearching.value){
+    groupedSpecs.value = groupItems.filter(spec => spec.items.length);
+  }else{
+    groupedSpecs.value = groupItems;
+  }
 
 }
 

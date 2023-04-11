@@ -83,12 +83,10 @@ export const useVacancyStore = defineStore('vacancy', {
       return data;
     },
     async getMyFavoriteVacancies(payload) {
-      console.log(payload);
       const {data} = await useApi('vacancies/search', {
         method: 'get',
         payload
       });
-      console.log(data);
       if ('items' in data){
         this.my_favorite_vacancies = data.items;
         if (payload.page) {
@@ -174,11 +172,9 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      console.log(data)
       if (data){
         this.industries = data.data;
       }
-      console.log(this.industries);
       return data.data;
     },
     async getMetros(payload) {

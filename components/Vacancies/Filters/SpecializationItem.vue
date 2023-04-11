@@ -60,16 +60,16 @@ const items = ref(props.items);
 const isOpen = ref(props.isOpen);
 const selected_ids = items.value.filter(item => item.is_checked).map(item => item.id);
 const isHalfChecked = ref(selected_ids.length > 0 && selected_ids.length !== items.value.length);
-if (selected_ids.length === items.value.length){
+if (selected_ids.length !== 0 && selected_ids.length === items.value.length){
   item.value.is_checked = true;
 }
-const selectedSubSpecs = ref(selected_ids);
+const selectedSubItems = ref(selected_ids);
 
 watchEffect(() => item.value = props.item);
 watchEffect(() => items.value = props.items);
 // watchEffect(() => isHalfChecked.value = props.isHalfChecked);
 
-watch(selectedSubSpecs, (newValue, oldValue) => {
+watch(selectedSubItems, (newValue, oldValue) => {
   emit('set', props.item.id, newValue);
 });
 
@@ -81,9 +81,9 @@ const selectToggle = () => {
   let is_checked = !item.value.is_checked;
 
   if (is_checked){
-    selectedSubSpecs.value = items.value.map(spec => spec.id);
+    selectedSubItems.value = items.value.map(spec => spec.id);
   }else{
-    selectedSubSpecs.value = [];
+    selectedSubItems.value = [];
     isHalfChecked.value = false;
   }
   const sub_items = items.value.map(sub_item => {
@@ -95,7 +95,7 @@ const selectToggle = () => {
 }
 
 const selectSubToggle = (sub_id) => {
-  const dynSelectedItems = [...selectedSubSpecs.value];
+  const dynSelectedItems = [...selectedSubItems.value];
   const sub_items = items.value.map(sub_item => {
     const dyn_sub_item = {...sub_item};
     if (dyn_sub_item.id === sub_id){

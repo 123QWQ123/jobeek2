@@ -12,15 +12,13 @@
           </div>
         </div>
         <div class="filter-tree-selector-popup">
-          <div class="filter-tree-selector-popup-content" v-if="isSearching">
-            <VacanciesFiltersIndustryItem v-for="item in groupedItems" :item="item" :items="item.items" :key="item.id" :is-open="true"
-                                                @set="updateSelectedItems"
-
+          <div class="filter-tree-selector-popup-content">
+            <VacanciesFiltersIndustryItem v-if="isSearching" v-for="item in groupedSpecs" :item="item" :items="item.items" :key="item.id"
+                                                @set="updateSelectedSpecs"
+                                                :is-open="true"
             />
-          </div>
-          <div class="filter-tree-selector-popup-content" v-else>
-            <VacanciesFiltersIndustryItem v-for="item in groupedItems" :item="item" :items="item.items" :key="item.id"
-                                                @set="updateSelectedItems"
+            <VacanciesFiltersIndustryItem v-else v-for="item in groupedSpecs" :item="item" :items="item.items" :key="item.id"
+                                                @set="updateSelectedSpecs"
             />
           </div>
         </div>
@@ -48,7 +46,7 @@
 </template>
 
 <script setup>
-const {isOpen, items: options, modelValue: selected_ids, title} = defineProps({
+const {isOpen, items: specializations, modelValue: selected_ids, title} = defineProps({
   items: {
     required: true,
   },
@@ -70,12 +68,12 @@ const emit = defineEmits({
     required: true
   }
 });
-console.log(options)
-const selectedItems = ref({});
+
+const selectedSpecs = ref({});
 
 const apply = () => {
   let ids = [];
-  Object.keys(selectedItems.value).map((item_id) => ids = ids.concat(selectedItems.value[item_id]));
+  Object.keys(selectedSpecs.value).map((item_id) => ids = ids.concat(selectedSpecs.value[item_id]));
   emit('update:modelValue', ids);
 }
 const searchInput = ref("");
@@ -85,65 +83,67 @@ const isSearching = computed(() => {
     return false;
   } return true;
 });
-const groupedItems = ref([]);
+const groupedSpecs = ref([]);
 
 const onSearch = () => {
-  prepare(options);
+  prepare(specializations);
 }
 const prepare = (newValues, is_first = false) => {
 
-  let groupItems = newValues.filter(item => item.parent_id === null);
-  groupItems = groupItems.map(item => {
-    item.items = [];
-    item.is_checked = false;
-    if (Array.from(selected_ids).includes(item.id)){
-      item.is_checked = true;
+  let groupItems = newValues.filter(newItem => newItem.parent_id === null);
+  groupItems = groupItems.map(newItem => {
+    newItem.items = [];
+    let is_checked = false;
+    if (Array.from(selected_ids).includes(newItem.id)){
+      is_checked = true;
     }
-    return item;
+    newItem.is_checked = is_checked;
+    newItem.name = newItem.title;
+    return newItem;
   });
 
-    for (let i = 0; i < groupItems.length; i++){
-      const item = groupItems[i];
-      for (let j = 0; j < newValues.length; j++){
-        const sub_item = newValues[j];
-        if (sub_item.parent_id === null) continue;
+  for (let i = 0; i < groupItems.length; i++){
+    const item = groupItems[i];
+    for (let j = 0; j < newValues.length; j++){
+      const sub_item = newValues[j];
+      if (!sub_item.parent_id) continue;
 
-        if (isSearching){
-          if (!sub_item.title.toLowerCase().includes(searchInput.value.toLowerCase())) continue;
-        }
+      if (isSearching.value){
+        if (!sub_item.title.toLowerCase().includes(searchInput.value.toLowerCase())) continue;
+      }
 
-        let is_checked = false;
-        if (sub_item && sub_item.parent_id){
-          if (sub_item.parent_id === item.id){
-            if (Array.from(selected_ids).includes(sub_item.id)){
-              is_checked = true;
-            }
-            groupItems[i].items.push({
-              id: sub_item.id,
-              title: sub_item.title,
-              is_checked,
-            })
+      let is_checked = false;
+      if (sub_item && sub_item.parent_id){
+        if (sub_item.parent_id === item.id){
+          if (Array.from(selected_ids).includes(sub_item.id)){
+            is_checked = true;
           }
+          groupItems[i].items.push({
+            id: sub_item.id,
+            name: sub_item.title,
+            is_checked,
+          })
         }
       }
     }
-    if (isSearching){
-      groupedItems.value = groupItems.filter(spec => spec.items.length);
-    }else{
-      groupedItems.value = groupItems;
-    }
+  }
+  if (isSearching.value){
+    groupedSpecs.value = groupItems.filter(spec => spec.items.length);
+  }else{
+    groupedSpecs.value = groupItems;
+  }
 
 }
 
 onMounted(() => {
-  prepare(options);
+  prepare(specializations);
 })
 
 
-const updateSelectedItems = (id, newSelections) => {
-  const newItems = {...selectedItems.value};
+const updateSelectedSpecs = (id, newSelections) => {
+  const newItems = {...selectedSpecs.value};
   newItems[id] = newSelections;
-  selectedItems.value = newItems;
+  selectedSpecs.value = newItems;
 };
 
 const close = () => emit('toggle');

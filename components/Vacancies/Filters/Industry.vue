@@ -20,7 +20,7 @@
 
       </div>
 
-      <VacanciesFiltersIndustryModal :title="'Отрасль компании'" v-if="isModalOpen" :is-open="isModalOpen" @toggle="toggleModal" v-model="selectedIndustries" :items="industries" />
+      <VacanciesFiltersIndustryModal :title="'Отрасль компании'" v-if="isModalOpen" :is-open="isModalOpen" @toggle="toggleModal" v-model="selectedIndustries" :items="industryItems" />
 
       <button class="more-filters" @click="toggleModal" >
         Выбрать
@@ -31,7 +31,8 @@
 
 <script setup>
 const emit = defineEmits(['onFormChange']);
-const {selectedIds} = defineProps(['selected-ids']);
+const props = defineProps(['selected-ids', 'isOpen']);
+const {selectedIds} = props;
 import {useVacancyStore} from "../../../store/vacancy";
 import {storeToRefs} from "pinia";
 
@@ -51,18 +52,14 @@ console.log(selectedIndustries);
 
 const toggleModal = () => isModalOpen.value = !isModalOpen.value;
 const toggleSelect = (id) => {
-  console.log(id);
-
   const selectedItemIds = [...selectedIndustries.value];
   const dynItems = [...firstItems.value].map(item => {
     if (item.id === id){
       item.is_checked = !item.is_checked;
-      console.log(item.is_checked, selectedItemIds)
       if (item.is_checked && !selectedItemIds.includes(id)){
         selectedItemIds.push(item.id);
       }else{
         const index = selectedItemIds.indexOf(item.id);
-        console.log(index);
         if (index !== -1){
           selectedItemIds.splice(index, 1);
         }
@@ -76,11 +73,11 @@ const toggleSelect = (id) => {
 
 };
 
+const industryItems = ref([]);
 const prepare = (newItems, oldItems) => {
-  console.log(newItems)
-  if (!newItems || newItems.length  < 1){
-    return;
-  }
+  industryItems.value = newItems;
+  if (!newItems || newItems.length  < 1) return;
+
   for (let i = 0; i < 5; i++){
     let item = newItems[i];
     let is_checked = false;
@@ -99,14 +96,14 @@ watch(
     prepare
 );
 
-
-
 const filterClass = ref(true);
+
 
 onMounted(() => {
   if (industries.value.length === 0)
     getIndustries();
   else prepare(industries.value);
+
 });
 
 
