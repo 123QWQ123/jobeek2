@@ -64,10 +64,6 @@ const searchPlaceHolder = computed(() =>
 const onChange = (e) => {
   console.log(e);
 };
-const onSelect = (e) => {
-  console.log(e);
-};
-
 const router = useRouter();
 const route = useRoute();
 
@@ -77,8 +73,6 @@ const region = ref(null);
 const city = ref("*");
 
 const form = ref(useVacancyForm());
-
-console.log(form.value);
 
 const onRegionChange = (regionItem) => {
   if (regionItem.value === "*") {

@@ -64,7 +64,6 @@ const {industries, schedules} = storeToRefs(vacancyStore);
 const industryOptions = ref([]);
 
 watch(industries, (newValues) => {
-  console.log(newValues)
   industryOptions.value = newValues.filter(item => item.parent_id === null);
 });
 
@@ -76,9 +75,7 @@ const toggleIndustries = () => {
 const {getIndustries} = useVacancyStore();
 
 onMounted( () =>{
-  console.log(1)
   getIndustries();
-
 })
 
 </script>

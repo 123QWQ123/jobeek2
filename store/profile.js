@@ -88,7 +88,7 @@ export const useProfileStore = defineStore('profile', {
       });
       if (data){
         this.employer = data.data;
-        this.user = {phone: this.seeker.phone};
+        this.user = {phone: this.employer.phone};
       }
       return data;
     },

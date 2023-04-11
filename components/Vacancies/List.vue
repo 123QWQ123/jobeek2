@@ -37,7 +37,6 @@ const route = useRoute();
 const form = ref(useVacancyForm());
 watch(vacancies, (newValues) => {
   vacanciesItems.value = newValues;
-  console.log(newValues);
   if (newValues.length > 0){
     isMore.value = true;
   }

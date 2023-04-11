@@ -21,6 +21,22 @@ const user = computed(() => authStore.user);
 const employer = computed(() => authStore.employer);
 
 const isLoading = ref(false);
+const providers = ref([
+  {
+    name: 'HeadHunter',
+    slug: 'hh',
+    url: null,
+    is_connected: false,
+    icon: "https://tech.hh.ru/api/logos/min-hh-red.png",
+  },
+  {
+    name: 'Superjob',
+    slug: 'superjob',
+    url: null,
+    is_connected: false,
+    icon: new URL("~/assets/img/logos/superjob.svg", import.meta.url),
+  },
+]);
 watch(isEmployer, (new_value) => {
   console.log(new_value);
   if (new_value) {
@@ -29,33 +45,54 @@ watch(isEmployer, (new_value) => {
 })
 
 const route = useRoute();
-const { getMyVacancies } = vacancyStore;
+const { getMyVacancies, getProvidersAuthUrl } = vacancyStore;
 const { my_vacancies } = storeToRefs(vacancyStore);
+
+
+const isProviderModalShown = ref(false);
 onMounted(async () => {
-  console.log(isEmployer.value);
+
   if (isEmployer.value) {
     navigateTo({ name: 'your-vacancies' });
   }
-  console.log(user, employer);
   if (employer && employer.is_completed) {
 
   }
   isLoading.value = true;
   if (my_vacancies.value.length === 0) {
-    await getMyVacancies();
+    const res = await getMyVacancies();
+    if (res.status === 'error'){
+      const authData = await getProvidersAuthUrl();
+      for (let i = 0; i < providers.value.length; i++){
+        const providerItem = providers.value[i];
+        providerItem.url = authData[providerItem.slug];
+      }
+      isProviderModalShown.value = true;
+    }
+    if (my_vacancies.value.length){
+      isProviderModalShown.value = false;
+    }
   }
   isLoading.value = false;
 });
 
 const isSuccess = ref(true);
 const isAuthorized = ref(true);
-const isProviderModalShown = ref(true);
+const iframe = ref();
 
 
 const closeProviderModal = () => {
-  console.log(11);
   isProviderModalShown.value = false;
 }
+
+const openProviderAuthUrl = (url) => {
+  window.open(url);
+}
+const onIframeLoaded = (data) => {
+  console.log(data, iframe);
+};
+
+const src = ref('https://hh.ru/oauth/authorize?client_id=S4U13T10N0HBBFTFB0VA9RKJUKT69A98NIDDQPLPENQKNCT2BBAF3RG1MDH5IBGC&response_type=code&redirect_uri=https%3A%2F%2Fjobeek.me%2Fapi%2Fservices%2Fhh%2Fauth%2Fcallback&state=1');
 </script>
 <template>
   <main class="main cabinet subs-page" role="main">
@@ -74,34 +111,37 @@ const closeProviderModal = () => {
     </div>
     <HomeSearchSection></HomeSearchSection>
 
-    <CustomModal v-if="isProviderModalShown" title="Пожалуйста, авторизуйтесь у поставщика!" @close="closeProviderModal">
-      <div class="modal-content p-2 m-0 border-0">
+    <CustomModal v-if="isProviderModalShown"  title="Providers: " @close="closeProviderModal">
+      <div class="modal-content p-2 m-0 border-0" style="min-width: 20rem;">
         <div class="list-of-providers">
-          <a href="/redirect" class="provider-item">
+          <a @click="openProviderAuthUrl(item.url)" v-for="item in providers" class="provider-item">
             <span class="provider-label" :class="{ success: isSuccess }">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#f14646" class="bi bi-x"
+              <svg v-if="item.is_connected" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="limegreen" class="bi bi-check"
+                   viewBox="0 0 16 16">
+                <path
+                    d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z" />
+              </svg>
+              <svg v-else xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#f14646" class="bi bi-x"
                 viewBox="0 0 16 16">
                 <path
                   d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
               </svg>
             </span>
-            <img src="https://tech.hh.ru/api/logos/min-hh-red.png" />
-          </a>
-          <a href="/redirect" class="provider-item">
-            <span class="provider-label" :class="{ success: isSuccess }">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="limegreen" class="bi bi-check"
-                viewBox="0 0 16 16">
-                <path
-                  d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z" />
-              </svg>
-            </span>
-            <img src="~/assets/img/logos/superjob.svg" />
+            <img :src="item.icon" />
           </a>
         </div>
       </div>
     </CustomModal>
+
+<!--    <CustomModal v-if="isProviderModalShown" title="Пожалуйста, авторизуйтесь у поставщика" @close="closeProviderModal">-->
+<!--      <div class="modal-content p-2 m-0 border-0">-->
+<!--        <iframe ref="iframe" :src="src" @load="onIframeLoaded"></iframe>-->
+<!--      </div>-->
+<!--    </CustomModal>-->
+
   </main>
 </template>
+
 
 
 <style>

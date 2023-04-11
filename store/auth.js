@@ -4,6 +4,7 @@ let timer;
 // no need to import defineStore and acceptHMRUpdate
 import { defineStore, acceptHMRUpdate } from "pinia";
 import axios from "axios";
+import useApi from "~/hooks/useApi";
 
 export const useAuthStore = defineStore('auth', {
   state: () => {
@@ -13,6 +14,7 @@ export const useAuthStore = defineStore('auth', {
       seeker: null,
       isAuthed: null,
       isEmployerMode: false,
+      geo: null,
     }
   },
   getters: {
@@ -302,7 +304,6 @@ export const useAuthStore = defineStore('auth', {
           this.user = response.data.data;
           this.seeker = this.user;
           this.isAuthed = true;
-
           const response2 = await axios.get(
               url2,
               {
@@ -402,6 +403,15 @@ export const useAuthStore = defineStore('auth', {
       this.setUser(null);
       this.isAuthed = false;
       navigateTo('/');
+    },
+    async getLocation() {
+
+      const response = await useApi('area/location', {
+        method: 'get',
+        payload
+      })
+
+      console.log(response);
     }
   },
 })

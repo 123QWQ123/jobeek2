@@ -33,7 +33,6 @@ export default defineNuxtConfig({
   app: {
     pageTransition: { name: 'layout', mode: 'out-in' }
   },
-
   // imports: {
   //   dirs: ['stores'],
   // },

@@ -30,7 +30,6 @@ import {storeToRefs} from "pinia";
 const vacancyStore = useVacancyStore();
 const {my_vacancies} = storeToRefs(vacancyStore);
 
-console.log(my_vacancies);
 </script>
 
 <style scoped>

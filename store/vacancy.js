@@ -73,12 +73,22 @@ export const useVacancyStore = defineStore('vacancy', {
       this.vacancies = [];
     },
     async getMyVacancies(payload) {
-      const {data} = await useApi('vacancies/search', {
+      const response = await useApi('employer/vacancies', {
+        method: 'get',
+        payload
+      });
+      if (response && 'data' in response.data){
+        this.my_vacancies = response.data.data;
+      }
+      return response;
+    },
+    async getProvidersAuthUrl(payload) {
+      const {data} = await useApi('services/hh/auth/redirect-url', {
         method: 'get',
         payload
       });
       if ('data' in data){
-        this.my_vacancies = data.data;
+        return data.data;
       }
       return data;
     },

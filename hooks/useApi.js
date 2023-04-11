@@ -64,7 +64,6 @@ const useApi = async (method, options = {}) => {
             };
         }
     } catch (error) {
-        console.error(error);
         if (error.response && 'data' in error.response && 'errors' in error.response.data) {
             return {
                 status: 'error',
