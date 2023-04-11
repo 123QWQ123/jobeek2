@@ -36,7 +36,6 @@ const filterItems = ref([]);
 const toggleMore = () => isMore.value = !isMore.value;
 
 const form = ref(useVacancyForm());
-console.log(form.value.work_types);
 const selectedFilterItems = ref(form.value.work_types);
 
 const toggle = (id) => {

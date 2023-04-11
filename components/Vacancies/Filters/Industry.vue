@@ -20,7 +20,7 @@
 
       </div>
 
-      <VacanciesFiltersSpecializationModal :title="'Отрасль компании'" v-if="isModalOpen" :is-open="isModalOpen" @toggle="toggleModal" v-model="selectedSpecs" :items="industries" />
+      <VacanciesFiltersIndustryModal :title="'Отрасль компании'" v-if="isModalOpen" :is-open="isModalOpen" @toggle="toggleModal" v-model="selectedIndustries" :items="industries" />
 
       <button class="more-filters" @click="toggleModal" >
         Выбрать
@@ -41,19 +41,19 @@ const {getIndustries} = vacancyStore;
 const {industries} = storeToRefs(vacancyStore)
 
 const isModalOpen = ref(false);
-const selectedSpecs = ref(selectedIds);
+const selectedIndustries = ref(selectedIds);
 const firstItems = ref([]);
 
-watch(selectedSpecs, (newValues) => {
+watch(selectedIndustries, (newValues) => {
   emit('onFormChange', 'industries', newValues);
 })
-console.log(selectedSpecs);
+console.log(selectedIndustries);
 
 const toggleModal = () => isModalOpen.value = !isModalOpen.value;
 const toggleSelect = (id) => {
   console.log(id);
 
-  const selectedItemIds = [...selectedSpecs.value];
+  const selectedItemIds = [...selectedIndustries.value];
   const dynItems = [...firstItems.value].map(item => {
     if (item.id === id){
       item.is_checked = !item.is_checked;
@@ -71,12 +71,13 @@ const toggleSelect = (id) => {
     return item;
   });
 
-  selectedSpecs.value = selectedItemIds;
+  selectedIndustries.value = selectedItemIds;
   firstItems.value = dynItems;
 
 };
 
 const prepare = (newItems, oldItems) => {
+  console.log(newItems)
   if (!newItems || newItems.length  < 1){
     return;
   }

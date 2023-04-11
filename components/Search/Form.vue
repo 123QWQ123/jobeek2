@@ -92,7 +92,6 @@ const country = computed(() => {
     return form.value.countries[0];
   } else return 1;
 });
-console.log(country)
 onMounted(async() => {
   if (country.value){
     await getRegions({country_id: [country.value]});
@@ -124,9 +123,7 @@ const {clearVacancies} = vacancyStore;
 const onSearchSubmit = async(e) => {
   isLoading.value = true;
   clearVacancies();
-  console.log(form.value);
   const params = useVacancyForm(form.value, 'front');
-  console.log(params);
   router.replace({name: 'search-vacancies', query: params});
   isLoading.value = false;
 }

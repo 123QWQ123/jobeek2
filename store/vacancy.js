@@ -174,9 +174,11 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
+      console.log(data)
       if (data){
         this.industries = data.data;
       }
+      console.log(this.industries);
       return data.data;
     },
     async getMetros(payload) {

@@ -8,7 +8,7 @@
         <div class="divided-box-content">
           <div class="labels-list-box" :class="{expanded: isMoreIndustries}">
             <ul class="labels-list">
-              <li v-for="item in industries">
+              <li v-for="item in industryOptions">
                 <NuxtLink :to="{name: 'search-vacancies', query: {industries: [item.id]}}" class="label" >{{ item.title }}</NuxtLink>
               </li>
             </ul>
@@ -42,16 +42,8 @@
         <div class="divided-box-content">
           <div class="labels-list-box">
             <ul class="labels-list">
-              <li> <a class="label" href="#">Вахтой</a></li>
-              <li> <a class="label" href="#">1 через 3</a></li>
-              <li> <a class="label" href="#">1 через 2</a></li>
-              <li> <a class="label" href="#">1 через 1 </a></li>
-              <li> <a class="label" href="#">1 через 10</a></li>
-              <li> <a class="label" href="#">Удаленка</a></li>
-              <li> <a class="label" href="#">Ночью</a></li>
-              <li> <a class="label" href="#">Сменный график </a></li>
-              <li> <a class="label" href="#">1 через 1</a></li>
-              <li> <a class="label" href="#">1 через 10 </a></li>
+              <li v-for="item in schedules"> <NuxtLink class="label" :to="{name: 'search-vacancies', query: {schedules: [item.id]}}">
+                {{ item.name }}</NuxtLink></li>
             </ul>
           </div>
         </div>
@@ -63,23 +55,30 @@
 <script setup>
 
 import {useVacancyStore} from "../../store/vacancy";
+import {storeToRefs} from "pinia";
+const vacancyStore = useVacancyStore();
+const {getSchedules} = vacancyStore;
+await getSchedules();
+const {industries, schedules} = storeToRefs(vacancyStore);
 
-const industries = ref([]);
+const industryOptions = ref([]);
+
+watch(industries, (newValues) => {
+  console.log(newValues)
+  industryOptions.value = newValues.filter(item => item.parent_id === null);
+});
 
 const isMoreIndustries = ref(false);
 const toggleIndustries = () => {
   isMoreIndustries.value = !isMoreIndustries.value;
 };
-// const onIndustryClick = () => {
-//   isMoreIndustries.value = !isMoreIndustries.value;
-// };
 
 const {getIndustries} = useVacancyStore();
 
-onMounted(async () =>{
-  const items = await getIndustries();
+onMounted( () =>{
+  console.log(1)
+  getIndustries();
 
-  industries.value = items.filter(item => item.parent_id === null);
 })
 
 </script>

@@ -125,7 +125,6 @@ export function useVacancyForm(data = null, to_ = 'front') {
         }
     }
     if (data) {
-        console.log(data.metros);
         selectedSalary = data.salary;
         metros = Array.from(data.metros);
         countries = Array.from(data.countries);
@@ -288,7 +287,6 @@ export function useVacancyForm(data = null, to_ = 'front') {
         if (data.salary.to) {
             back_params.salary.to = data.salary.to;
         }
-        console.log(back_params);
         return removeNull(back_params);
     }
 }

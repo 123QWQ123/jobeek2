@@ -3,7 +3,7 @@
     <HomeMainSection/>
     <HomePlaceSection/>
     <HomeVacancySection/>
-    <HomeCompaniesSection/>
+<!--    <HomeCompaniesSection/>-->
     <HomeWorkSection/>
     <HomeSearchSection/>
   </div>
