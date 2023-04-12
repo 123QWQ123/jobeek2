@@ -1,5 +1,6 @@
 <template>
   <h2 class="lk-page-title">Избранные</h2>
+  <PageLoader v-if="isLoading" />
   <div class="favorites-list-container">
 
     <ul class="favorites-list">
@@ -30,7 +31,7 @@ const {my_favorite_vacancies, current_page} = storeToRefs(vacancyStore);
 
 const vacanciesItems = ref([]);
 
-const isLoading = ref(false);
+const isLoading = ref(true);
 const isMore = ref(false);
 
 const route = useRoute();
@@ -42,8 +43,9 @@ watch(my_favorite_vacancies, (newValues) => {
   }
 });
 
-onMounted(() => {
-  getMyFavoriteVacancies({});
+onMounted(async () => {
+  await getMyFavoriteVacancies({});
+  isLoading.value = false;
 })
 
 const prevPage = async() => {

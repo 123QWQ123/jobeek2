@@ -170,7 +170,6 @@ import moment from "moment";
 import 'moment/locale/ru';
 const props = defineProps(['item']);
 const {item} = props;
-console.log(item);
 
 const isContextMenuShown = ref(false);
 

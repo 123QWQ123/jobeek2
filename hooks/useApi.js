@@ -9,6 +9,10 @@ const useApi = async (method, options = {}) => {
         'Authorization': `Bearer ${token}`
     };
 
+    if (options.content_type){
+        headers['Content-Type'] = options.content_type;
+    }
+
     const CONFIG = useRuntimeConfig();
     let url = CONFIG.public.apiBase + method;
     try {

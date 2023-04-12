@@ -33,3 +33,4 @@ const hasFavs = ref(true);
     <HomeSearchSection></HomeSearchSection>
   </main>
 </template>
+

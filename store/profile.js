@@ -95,6 +95,7 @@ export const useProfileStore = defineStore('profile', {
     async updateSeeker(payload) {
       const response = await useApi('seeker/profile', {
         method: 'post',
+        content_type: 'multipart/form-data',
         payload
       });
       console.log(response);
@@ -104,8 +105,10 @@ export const useProfileStore = defineStore('profile', {
       return response;
     },
     async updateEmployer(payload) {
+      console.log(payload);
       const response = await useApi('employer/profile', {
         method: 'post',
+        content_type: 'multipart/form-data',
         payload
       });
       if ('data' in response){

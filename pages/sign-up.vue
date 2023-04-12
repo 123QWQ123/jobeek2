@@ -137,7 +137,7 @@ onMounted(( ) => {
 </script>
 
 <template>
-  <div class="row">
+  <div>
     <base-modal :show="!!state.error" title="Error occured" :type="'error'" @close="close">
       <p>{{ state.error }}</p>
     </base-modal>

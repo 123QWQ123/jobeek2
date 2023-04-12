@@ -1,5 +1,6 @@
 <template>
   <div class="wrapper wrapper-1290">
+    <PageLoader v-if="isLoading" />
     <h1 class="lk-page-title">Ваши вакансии</h1>
     <div class="notification">
       <div class="ic">
@@ -24,6 +25,8 @@
 </template>
 
 <script setup>
+
+сщыте
 import {useVacancyStore} from "../../store/vacancy";
 import {storeToRefs} from "pinia";
 
