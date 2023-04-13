@@ -42,24 +42,6 @@ export const useAuthStore = defineStore('auth', {
     setUser(payload) {
       this.user = payload;
     },
-    async verify(){
-      const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.base + 'sanctum/csrf-cookie';
-
-      try {
-        const response = await axios.get(url, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-      }catch (error){
-        if ('data' in error){
-          return error.response.data;
-        }
-        return error;
-      }
-    },
     async signUp(payload) {
       const CONFIG = useRuntimeConfig();
       let url = CONFIG.public.apiBase + 'auth/register';
@@ -344,7 +326,6 @@ export const useAuthStore = defineStore('auth', {
       const CONFIG = useRuntimeConfig();
       let url = CONFIG.public.apiBase + 'auth/login';
       try {
-        await this.verify();
         const response = await axios.post(
             url,
             payload

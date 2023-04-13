@@ -1,14 +1,17 @@
 <template>
   <section class="vacancy-section section wrapper">
     <div class="section-head">
-      <h2 class="section-title"> Вакансии в вашем городе</h2><a class="more" href="#">
-      Все <span>вакансии</span><svg width="24" height="25" viewBox="0 0 24 25" fill="none"
+      <h2 class="section-title"> Вакансии в вашем городе</h2>
+      <a class="more" href="#">
+        Все <span>вакансии</span>
+        <svg width="24" height="25" viewBox="0 0 24 25" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
-      <path d="M19.75 12.2256L4.75 12.2256" stroke="#5375FD" stroke-width="1.5"
-            stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M13.7002 6.20124L19.7502 12.2252L13.7002 18.2502" stroke="#5375FD"
-            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-    </svg></a>
+          <path d="M19.75 12.2256L4.75 12.2256" stroke="#5375FD" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M13.7002 6.20124L19.7502 12.2252L13.7002 18.2502" stroke="#5375FD"
+                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </a>
     </div>
     <div class="swiper cards-slider">
       <ul class="vacancy-list swiper-wrapper">

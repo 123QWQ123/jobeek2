@@ -30,6 +30,17 @@ export const useVacancyStore = defineStore('vacancy', {
       metros: [],
     }
   },
+  getters: {
+    top_10_vacancies: (state) => {
+      return state.vacancies.slice(0, 10);
+    },
+    top_20_vacancies: (state) => {
+      return state.vacancies.slice(0, 20);
+    },
+    top_30_vacancies: (state) => {
+      return state.vacancies.slice(0, 30);
+    }
+  },
   actions: {
     async getAreas(payload) {
       const {data} = useApi('area', {

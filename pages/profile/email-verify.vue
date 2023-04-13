@@ -20,7 +20,7 @@ const route = useRoute();
 const isSuccess = ref("-");
 const {code, email} = route.query;
 
-const {verifyEmailConfirmation} = profileStore;
+const {verifyEmailConfirmation, getUser} = profileStore;
 
 onMounted(async() => {
   const resData = await verifyEmailConfirmation({code, email});
@@ -34,6 +34,8 @@ onMounted(async() => {
       icon: 'success',
       confirmButtonText: 'ОК'
     });
+
+    await getUser();
 
     setTimeout(() => {
       navigateTo({name:'profile'});

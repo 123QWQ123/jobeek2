@@ -82,11 +82,13 @@ onMounted( () =>{
 
 <style scoped>
 .labels-list-box{
-  height: 50vh;
+  height: auto;
+  max-height: 20vh;
   overflow: hidden;
 }
 .labels-list-box.expanded{
   height: auto;
+  max-height: unset;
   overflow: visible;
 }
 </style>
