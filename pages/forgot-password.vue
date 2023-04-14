@@ -223,10 +223,10 @@ function close(){
         </form>
         <form v-else-if="tabs.isResetTab" class="enter-form" >
           <div class="i-wrap">
-            <input type="text" name="password" v-model="state.password.val" placeholder="Пароль" @focusout="clearValidity('password')">
+            <input type="password" name="password" v-model="state.password.val" placeholder="Пароль" @focusout="clearValidity('password')">
           </div>
           <div class="i-wrap">
-            <input type="text" name="password_confirmation" v-model="state.password_confirmation.val" placeholder="Повторите пароль" @focusout="clearValidity('password_confirmation')">
+            <input type="password" name="password_confirmation" v-model="state.password_confirmation.val" placeholder="Повторите пароль" @focusout="clearValidity('password_confirmation')">
           </div>
           <div class="note">
             <img src="~/assets/img/svg/i.svg" alt="#">

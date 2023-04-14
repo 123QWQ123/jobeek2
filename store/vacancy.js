@@ -88,7 +88,7 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      if (response && 'data' in response.data){
+      if (response && 'data' in response && 'data' in response.data){
         this.my_vacancies = response.data.data;
       }
       return response;
@@ -98,6 +98,17 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
+      if ('data' in data){
+        return data.data;
+      }
+      return data;
+    },
+    async getConnectedProviders(payload) {
+      const {data} = await useApi('employer/used_providers', {
+        method: 'get',
+        payload
+      });
+      console.log(data);
       if ('data' in data){
         return data.data;
       }

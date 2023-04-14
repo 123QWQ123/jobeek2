@@ -1,4 +1,4 @@
-<template>
+v<template>
   <section class="work-section section wrapper">
     <div class="section-head">
       <h2 class="section-title"> Работа и вакансии в Москве</h2>

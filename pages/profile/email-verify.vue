@@ -39,14 +39,13 @@ onMounted(async() => {
 
     setTimeout(() => {
       navigateTo({name:'profile'});
-    }, 5000)
+    }, 5000);
   }else{
     isSuccess.value = false;
 
     navigateTo({name:'404'});
   }
 });
-console.log(code, email);
 
 </script>
 
