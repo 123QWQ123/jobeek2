@@ -10,8 +10,9 @@
 </template>
 
 <script setup>
+
 definePageMeta({
-  layout: 'main'
+  layout: 'cabinet'
 })
 
 useHead({

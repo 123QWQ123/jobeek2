@@ -1,9 +1,14 @@
 
 <script setup>
 import { useAuthStore } from "~~/store/auth";
+import TheMainHeader from "~/components/Header/TheMainHeader.vue";
 
 const auth = useAuthStore();
 const { logout, toggleUserMode } = auth;
+
+const route = useRoute();
+
+console.log(route.name);
 
 const isAuthed = computed(() => auth.isAuthed);
 const isEmployer = computed(() => auth.isEmployer);
@@ -30,19 +35,19 @@ watch(selectedType, (new_value) => {
   form.value = {...form.value, type: new_value};
 })
 
-
+const isHomePage = computed(() => route.name === 'index');
 
 function onChange(selectedOption) {
   console.log(selectedOption)
 }
 </script>
 <template>
-  <div class="lk-header">
+  <div class="lk-header" v-if="isAuthed">
     <div class="lk-header-main">
       <div class="header-wrapper">
         <NuxtLink class="logo" to="/"> <img src="~/assets/img/jobeek-white.svg" alt="#"></NuxtLink>
-        <CabinetHeaderSearchForm></CabinetHeaderSearchForm>
-        <div class="profile-action" v-if="isAuthed">
+        <CabinetHeaderSearchForm v-if="!isHomePage"></CabinetHeaderSearchForm>
+        <div class="profile-action">
           <NuxtLink class="btn button-xs sign-in-btn ms-4" :to="{name: 'profile'}" role="link">{{ user?.phone }}</NuxtLink>
           <button class="profile-button" type="button"><svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="46" height="46" rx="8" fill="#6886FF"/>
@@ -65,14 +70,11 @@ function onChange(selectedOption) {
             </svg>
           </button>
         </div>
-        <div class="header-actions" v-else>
-          <NuxtLink class="btn button-xs sign-in-btn" :to="{name: 'sign-in'}" role="link">Войти</NuxtLink>
-          <NuxtLink class="btn button-xl sign-up-btn" :to="{name: 'sign-up'}" role="link">Зарегистрироваться </NuxtLink>
-        </div>
       </div>
     </div>
-    <HeaderLkNavbar></HeaderLkNavbar>
+    <HeaderLkNavbar v-if="isAuthed"></HeaderLkNavbar>
   </div>
+  <TheMainHeader v-else></TheMainHeader>
 </template>
 
 

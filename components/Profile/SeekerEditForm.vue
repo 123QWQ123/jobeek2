@@ -121,6 +121,8 @@ const {getUser} = profileStore;
 
 const {seeker} = storeToRefs(profileStore);
 
+console.log(seeker);
+
 onMounted(async() => {
   await getUser();
 
@@ -321,8 +323,13 @@ const handleSubmit = async (e) => {
 
 }
 
-const isConfirmButton = ref(true);
+console.log(seeker?.value?.is_completed);
+const isConfirmButton = ref(false);
 const isCheckButton = ref(false);
+
+watch(seeker, (newSeeker) => {
+    isConfirmButton.value = !newSeeker.is_completed;
+})
 
 const {confirmEmail, checkEmailConfirmation} = profileStore;
 const onEmailConfirm = async() => {
@@ -340,6 +347,7 @@ const onEmailConfirm = async() => {
   }
 
 }
+
 </script>
 
 <style>
