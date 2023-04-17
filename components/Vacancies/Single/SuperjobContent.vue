@@ -69,9 +69,15 @@
             {{ item.education && item.education + "," }} {{ item.work_type }},
             {{ moment.unix(item.published_date).format("YYYY.MM.DD") }}
           </div>
-          <div class="salary">
+          <div class="salary" v-if="item.salary_to && item.salary_from">
             {{ vueNumberFormat(item.salary_from, {}) }} —
             {{ vueNumberFormat(item.salary_to, {}) }} руб./месяц
+          </div>
+          <div class="salary" v-else-if="item.salary_from">
+            от {{ vueNumberFormat(item.salary_from, {}) }} руб./месяц
+          </div>
+          <div class="salary" v-else-if="item.salary_to">
+            до {{ vueNumberFormat(item.salary_to, {}) }} руб./месяц
           </div>
         </div>
         <div class="vacancy-single-body" v-html="item.description"></div>

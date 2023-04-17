@@ -16,9 +16,10 @@ v<template>
     <div class="swiper cards-slider-row">
       <ul class="cards-grid swiper-wrapper">
         <li class="swiper-slide" v-for="item in vacancies">
-          <NuxtLink class="tile-card" :to="{name: 'search-vacancies', query: {countries: [1], regions: [22], professional_roles: [item.professional_role_id ?? 2]} }">
+          <NuxtLink class="tile-card" :to="{name: 'search-vacancies', query: {countries: [1], regions: [22], professional_roles: getProfessionalRoles(item.professional_roles)} }">
             <h4 class="tile-card-title">{{ item.name }}</h4>
-            <span class="tile-card-dop-info">До {{vueNumberFormat(item.salary_to, {})}} ₽ / месяц</span>
+            <span class="tile-card-dop-info" v-if="item.salary_to">До {{vueNumberFormat(item.salary_to, {})}} ₽ / месяц</span>
+            <span v-else class="tile-card-dop-info">От {{vueNumberFormat(item.salary_from, {})}} ₽ / месяц</span>
 <!--            <strong class="tile-card-count">2142 вакансии</strong>-->
           </NuxtLink>
         </li>
@@ -35,6 +36,9 @@ const {getVacancies} = vacancyStore;
 await getVacancies({countries: [1], region_ids: [22]});
 const {top_10_vacancies: vacancies} = storeToRefs(vacancyStore);
 
+const getProfessionalRoles  = (objectData) => {
+    return Object.keys(objectData)
+}
 </script>
 <style scoped>
 .section-head .more{
