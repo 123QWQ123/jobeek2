@@ -2,8 +2,6 @@
 import { navigateTo } from "nuxt/app";
 import { useAuthStore } from "../store/auth";
 import { useVacancyStore } from "../store/vacancy";
-import { storeToRefs } from "pinia";
-import PageLoader from "../components/UI/PageLoader";
 import {useVacancyForm} from "~/composables/useVacancyForm";
 
 definePageMeta({
@@ -15,8 +13,6 @@ useHead({
 
 const authStore = useAuthStore();
 const vacancyStore = useVacancyStore();
-
-const {getMyVacancies} = vacancyStore;
 
 const isEmployer = computed(() => authStore.isEmployer);
 const user = computed(() => authStore.user);
@@ -32,11 +28,11 @@ watch(isEmployer, (new_value) => {
 
 const route = useRoute();
 
+const isShownRestContent = ref(false);
+
 const form = useVacancyForm();
 onMounted(async () => {
-    isLoading.value = true;
-    await getMyVacancies(useVacancyForm(form.value,  'backend'));
-    isLoading.value = false;
+    isShownRestContent.value = true;
 });
 
 </script>
@@ -44,15 +40,15 @@ onMounted(async () => {
   <main class="main cabinet subs-page" role="main">
     <PersonalCabinetSearchMobile />
     <div class="bg-wrapper pt position-relative">
-      <PageLoader v-if="isLoading" />
 
       <YourVacanciesConnectedProviders/>
       <YourVacanciesList ></YourVacanciesList >
     </div>
-    <div class="bg-wrapper bt">
-      <HomeWorkSection></HomeWorkSection>
+
+    <div v-if="isShownRestContent" class="bg-wrapper bt">
+      <LazyHomeWorkSection></LazyHomeWorkSection>
     </div>
-    <HomeSearchSection></HomeSearchSection>
+    <LazyHomeSearchSection v-if="isShownRestContent"></LazyHomeSearchSection>
 
   </main>
 </template>

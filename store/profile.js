@@ -83,6 +83,7 @@ export const useProfileStore = defineStore('profile', {
       return data;
     },
     async getEmployer(url = "") {
+      console.log(url);
       const {data} = await useApi(url, {
         method: 'get',
       });

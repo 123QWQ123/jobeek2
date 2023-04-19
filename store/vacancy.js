@@ -13,6 +13,7 @@ export const useVacancyStore = defineStore('vacancy', {
       vacancies: [],
       vacancy: null,
       total: 0,
+      my_total: 0,
       data: null,
       current_page: 1,
       my_vacancies: [],
@@ -91,6 +92,8 @@ export const useVacancyStore = defineStore('vacancy', {
       console.log(response);
       if (response && 'data' in response && 'items' in response.data){
         this.my_vacancies = response.data.items;
+        this.my_total = response.data.found;
+        this.current_page = response.data.current_page;
       }
       return response;
     },

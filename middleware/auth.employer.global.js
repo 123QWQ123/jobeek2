@@ -13,7 +13,7 @@ export default defineNuxtRouteMiddleware(async(to, from) => {
 
     const profileStore = useProfileStore();
     const {getEmployer} = profileStore;
-    await getEmployer();
+    await getEmployer('employer/profile');
     const employer = computed(() => authStore.employer);
 
     if (protected_routes.includes(to.path) && employer_routes.includes(to.path) && isAuthed.value && employer.value && employer.value?.is_completed === false) {
