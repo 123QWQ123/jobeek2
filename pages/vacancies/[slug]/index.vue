@@ -28,6 +28,9 @@
 </template>
 
 <script setup>
+definePageMeta({
+    layout: 'cabinet'
+})
 import { storeToRefs } from "pinia";
 import { useVacancyStore } from "../../../store/vacancy";
 import {navigateTo} from "nuxt/app";

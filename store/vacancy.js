@@ -88,8 +88,9 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      if (response && 'data' in response && 'data' in response.data){
-        this.my_vacancies = response.data.data;
+      console.log(response);
+      if (response && 'data' in response && 'items' in response.data){
+        this.my_vacancies = response.data.items;
       }
       return response;
     },

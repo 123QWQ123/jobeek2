@@ -59,7 +59,6 @@ watch(isEmployer, (new_value) => {
 const route = useRoute();
 const { my_vacancies } = storeToRefs(vacancyStore);
 
-
 const isProviderModalShown = ref(false);
 const isAllConnected = computed(() => {
 
@@ -76,7 +75,6 @@ const isAllConnected = computed(() => {
 onMounted(async () => {
   isLoading.value = true;
   await checkProviders();
-  console.log(my_vacancies)
   if (!isAllConnected.value){
     isProviderModalShown.value = true;
     const authData = await getProvidersAuthUrl();
@@ -140,13 +138,8 @@ const src = ref('https://hh.ru/oauth/authorize?client_id=S4U13T10N0HBBFTFB0VA9RK
           </div>
         </div>
       </div>
-<!--      <button type="button" class="btn btn-primary" @click="isProviderModalShown = !isProviderModalShown.value">-->
-<!--        Connect providers-->
-<!--      </button>-->
-      <YourVacanciesList></YourVacanciesList>
-
+      <YourVacanciesList ></YourVacanciesList >
     </div>
-
     <div class="bg-wrapper bt">
       <HomeWorkSection></HomeWorkSection>
     </div>

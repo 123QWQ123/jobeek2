@@ -29,7 +29,20 @@ import {useVacancyStore} from "../../store/vacancy";
 import {storeToRefs} from "pinia";
 
 const vacancyStore = useVacancyStore();
+const {getMyVacancies} = vacancyStore;
+
 const {my_vacancies} = storeToRefs(vacancyStore);
+
+const vacancies = ref([]);
+onMounted(async() => {
+    await getMyVacancies();
+})
+
+watch(() => vacancyStore.my_vacancies, (newMyVacancies) => {
+    vacancies.value = newMyVacancies;
+})
+
+
 
 </script>
 

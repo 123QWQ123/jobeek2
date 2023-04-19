@@ -71,13 +71,13 @@
           </div>
           <div class="salary" v-if="item.salary_to && item.salary_from">
             {{ vueNumberFormat(item.salary_from, {}) }} —
-            {{ vueNumberFormat(item.salary_to, {}) }} руб./месяц
+            {{ vueNumberFormat(item.salary_to, {}) }} {{ item.currency }}/месяц
           </div>
           <div class="salary" v-else-if="item.salary_from">
-            от {{ vueNumberFormat(item.salary_from, {}) }} руб./месяц
+            от {{ vueNumberFormat(item.salary_from, {}) }} {{ item.currency }}/месяц
           </div>
           <div class="salary" v-else-if="item.salary_to">
-            до {{ vueNumberFormat(item.salary_to, {}) }} руб./месяц
+            до {{ vueNumberFormat(item.salary_to, {}) }} {{item.currency}}/месяц
           </div>
         </div>
         <div class="vacancy-single-body" v-html="item.description"></div>
@@ -92,7 +92,8 @@
       <div class="company-col sticky-item">
         <div class="company-logo"><img class="w-100" :src="employerLogo" :alt="item.company" /></div>
         <h3 class="title">{{ item.company }}</h3>
-        <div class="count">{{ item.open_vacancies ?? 0 }} вакансии</div>
+          <p>{{ item.staff_count ?? 0 }} сотрудников</p>
+        <div class="count">{{ item.open_vacancies ?? 0 }} открытие вакансии</div>
       </div>
     </aside>
   </div>
