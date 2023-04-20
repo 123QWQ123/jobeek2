@@ -44,6 +44,7 @@
 
         <div class="d-flex mt-4 justify-content-between">
             <button class="btn btn-primary btn-group-sm" :class="{disabled: current_page === 1}"  @click="prevPage">Prev</button>
+            <p>{{current_page}}</p>
             <button class="btn btn-primary btn-group-sm" @click="nextPage">Next</button>
         </div>
       </div>
@@ -101,11 +102,10 @@ const prevPage = async(page) => {
     const params = useMyVacancyForm(form.value, 'backend');
     let page_number = parseInt(current_page.value);
     if(page_number > 1){
-        form.value.page = form.value.page + 1;
+        form.value.page = form.value.page - 1;
     }
     await getMyVacancies(params);
     isLoading.value = false;
-    console.log(filterRef.value)
     filterRef.value.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
@@ -134,6 +134,7 @@ const onChangeSorting = async(sorting) => {
     const params = useMyVacancyForm(form.value, 'front');
     await getMyVacancies(params);
     isLoading.value = false;
+
 }
 
 const listStyles = {
