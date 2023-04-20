@@ -20,52 +20,7 @@
 
       <div class="row d-flex ">
 
-          <ul class="nav nav-tabs" id="myTab" role="tablist">
-              <li class="nav-item" role="presentation">
-                  <button class="nav-link active" id="home-tab" type="button" role="tab">Все</button>
-              </li>
-              <li class="nav-item" role="presentation">
-                  <button class="nav-link" id="profile-tab" type="button" role="tab" >Активные</button>
-              </li>
-              <li class="nav-item" role="presentation">
-                  <button class="nav-link" id="contact-tab" type="button" role="tab">В архиве</button>
-              </li>
-          </ul>
-
-          <div class="option-group selector-group">
-              <div class="option">
-                  <div class="custom-check-wrap">
-                      <div class="theme-checker theme-checker--blue">
-                          <input type="checkbox" id="hh" />
-                          <div class="theme-checker-ui">
-                              <div class="circle"></div>
-                          </div>
-                      </div>
-                      <label for="hh"
-                      ><img
-                              src="~/assets/img/logos/hhmini.svg"
-                              alt="#"
-                      /><span>Hh.ru</span></label
-                      >
-                  </div>
-              </div>
-              <div class="option">
-                  <div class="custom-check-wrap">
-                      <div class="theme-checker theme-checker--blue">
-                          <input type="checkbox" id="sj" checked />
-                          <div class="theme-checker-ui">
-                              <div class="circle"></div>
-                          </div>
-                      </div>
-                      <label for="sj"
-                      ><img src="~/assets/img/logos/sj.svg" alt="#" /><span
-                      >Superjob.ru
-                          </span></label
-                      >
-                  </div>
-              </div>
-          </div>
-
+        <MyVacanciesTabs></MyVacanciesTabs>
 
       </div>
       <div class="tab-content" id="myTabContent">
@@ -91,11 +46,11 @@
                       </div>
                   </div>
                   <ul class="resume-list mt-4">
-                      <YourVacanciesItem v-for="item in my_vacancies" :key="item.id" :item="item"></YourVacanciesItem>
+                      <MyVacanciesItem v-for="item in my_vacancies" :key="item.id" :item="item"></MyVacanciesItem>
                   </ul>
 
                   <div class="d-flex mt-4 justify-content-between">
-                      <button class="btn btn-primary btn-group-sm" :class="{disabled: current_page === 1}"  @click="prevPage">Prev</button>
+                      <button class="btn btn-primary btn-group-sm" :class="{disabled: isPrevDisabled}"  @click="prevPage">Prev</button>
                       <p>{{current_page}}</p>
                       <button class="btn btn-primary btn-group-sm" @click="nextPage">Next</button>
                   </div>
@@ -109,6 +64,8 @@
 </template>
 
 <script setup>
+
+import Swal from "sweetalert2";
 
 useHead({
     title: "Jobeek - Мои вакансии"
@@ -131,6 +88,11 @@ const sortingOptions = ref(useMyVacancySortingOptions());
 const perPageOptions = ref(useMyVacancyPerPageOptions());
 
 const {my_vacancies, current_page, my_total} = storeToRefs(vacancyStore);
+
+const isPrevDisabled = computed(() => {
+  if (parseInt(current_page.value) === 1) return true;
+  return false;
+})
 const form = ref(useMyVacancyForm());
 const vacancies = ref([]);
 const isLoading = ref(true);
@@ -162,6 +124,7 @@ const prevPage = async(page) => {
         form.value.page = form.value.page - 1;
     }
     await getMyVacancies(params);
+    current_page.value = form.value.page;
     isLoading.value = false;
     filterRef.value.scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -170,8 +133,18 @@ const nextPage = async(page) => {
     isLoading.value = true;
     isLoading.value = true;
     form.value.page = form.value.page + 1;
+    current_page.value = form.value.page;
     const params = useMyVacancyForm(form.value, 'front');
-    await getMyVacancies(params);
+    const response = await getMyVacancies(params);
+    console.log(response.data.items)
+    if (response?.data?.items.length === 0){
+      Swal.fire({
+        title: 'Больше нет вакансий',
+        text: response.message,
+        icon: 'success',
+        confirmButtonText: 'ОК'
+      });
+    }
     isLoading.value = false;
     filterRef.value.scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -182,7 +155,8 @@ const onChangePerPage = async(per_page) => {
     const params = useMyVacancyForm(form.value, 'front');
     await getMyVacancies(params);
     isLoading.value = false;
-
+    form.value.page = 1;
+    current_page.value = form.value.page;
 }
 
 const onChangeSorting = async(sorting) => {

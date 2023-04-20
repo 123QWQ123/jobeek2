@@ -1,7 +1,7 @@
 <script setup>
-import { navigateTo } from "nuxt/app";
-import { useAuthStore } from "../../store/auth";
-import { useVacancyStore } from "../../store/vacancy";
+import {navigateTo} from "nuxt/app";
+import {useAuthStore} from "../../store/auth";
+import {useVacancyStore} from "../../store/vacancy";
 import {useVacancyForm} from "~/composables/useVacancyForm";
 
 definePageMeta({
@@ -22,7 +22,7 @@ const isLoading = ref(false);
 
 watch(isEmployer, (new_value) => {
   if (new_value) {
-    navigateTo({ name: 'my-vacancies' });
+    navigateTo({name: 'my-vacancies'});
   }
 });
 
@@ -32,27 +32,21 @@ const isShownRestContent = ref(false);
 
 const form = useVacancyForm();
 onMounted(async () => {
-    isShownRestContent.value = true;
+  isShownRestContent.value = true;
 });
 
 </script>
 <template>
-  <main class="main cabinet subs-page" role="main">
-    <PersonalCabinetSearchMobile />
-    <div class="bg-wrapper pt position-relative">
+  <main className="main cabinet subs-page" role="main">
+    <PersonalCabinetSearchMobile/>
+    <div className="bg-wrapper pt position-relative">
 
-      <YourVacanciesConnectedProviders/>
-      <YourVacanciesList ></YourVacanciesList >
+      <MyVacanciesConnectedProviders/>
+      <MyVacanciesList></MyVacanciesList>
     </div>
-
-    <div v-if="isShownRestContent" class="bg-wrapper bt">
-      <LazyHomeWorkSection></LazyHomeWorkSection>
-    </div>
-    <LazyHomeSearchSection v-if="isShownRestContent"></LazyHomeSearchSection>
 
   </main>
 </template>
-
 
 
 <style>

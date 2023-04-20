@@ -41,14 +41,9 @@ onMounted(async () => {
     <PersonalCabinetSearchMobile />
     <div class="bg-wrapper pt position-relative">
 
-      <YourVacanciesConnectedProviders/>
-      <YourVacanciesList ></YourVacanciesList >
+      <MyVacanciesConnectedProviders/>
+      <MyVacanciesList ></MyVacanciesList >
     </div>
-
-    <div v-if="isShownRestContent" class="bg-wrapper bt">
-      <LazyHomeWorkSection></LazyHomeWorkSection>
-    </div>
-    <LazyHomeSearchSection v-if="isShownRestContent"></LazyHomeSearchSection>
 
   </main>
 </template>

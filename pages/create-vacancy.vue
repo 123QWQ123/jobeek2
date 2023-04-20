@@ -14,7 +14,7 @@
               <div class="input-row">
                 <label for="name">Название</label>
                 <div class="input-wrapper">
-                  <input type="text" id="name" >
+                  <input type="text" id="name" v-model="state.name.val">
                 </div>
               </div>
 
