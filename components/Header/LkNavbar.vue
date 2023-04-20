@@ -24,7 +24,7 @@
             <NuxtLink :to="{name: 'your-resumes'}"> <span>Мои резюме</span></NuxtLink>
           </li>
           <li v-if="isEmployer">
-            <NuxtLink :to="{name: 'your-vacancies'}"> <span>Мои вакансии</span></NuxtLink>
+            <NuxtLink :to="{name: 'my-vacancies'}"> <span>Мои вакансии</span></NuxtLink>
           </li>
           <li>
             <NuxtLink :to="{name: 'your-favorites'}"> <span>Избранные</span></NuxtLink>

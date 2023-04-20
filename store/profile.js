@@ -36,7 +36,7 @@ export const useProfileStore = defineStore('profile', {
         method: 'get',
         payload
       });
-      if (data){
+      if ('data' in data){
         this.countries = data.data.countries;
       }
       return data;
@@ -46,7 +46,7 @@ export const useProfileStore = defineStore('profile', {
         method: 'get',
         payload
       });
-      if (data){
+      if ('data' in data){
         this.regions = data.data.regions;
       }
       return data;
@@ -56,7 +56,7 @@ export const useProfileStore = defineStore('profile', {
         method: 'get',
         payload
       });
-      if (data){
+      if ('data' in data){
         this.cities = data.data.cities;
       }
       return data;
@@ -76,18 +76,17 @@ export const useProfileStore = defineStore('profile', {
       const {data} = await useApi(url, {
         method: 'get',
       });
-      if (data){
+      if ('data' in data){
         this.seeker = data.data;
         this.user = {phone: this.seeker.phone};
       }
       return data;
     },
     async getEmployer(url = "") {
-      console.log(url);
       const {data} = await useApi(url, {
         method: 'get',
       });
-      if (data){
+      if ('data' in data){
         this.employer = data.data;
         this.user = {phone: this.employer.phone};
       }
@@ -99,14 +98,12 @@ export const useProfileStore = defineStore('profile', {
         content_type: 'multipart/form-data',
         payload
       });
-      console.log(response);
       if ('data' in response){
         this.user = response.data.data;
       }
       return response;
     },
     async updateEmployer(payload) {
-      console.log(payload);
       const response = await useApi('employer/profile', {
         method: 'post',
         content_type: 'multipart/form-data',

@@ -48,7 +48,6 @@ const firstItems = ref([]);
 watch(selectedIndustries, (newValues) => {
   emit('onFormChange', 'industries', newValues);
 })
-console.log(selectedIndustries);
 
 const toggleModal = () => isModalOpen.value = !isModalOpen.value;
 const toggleSelect = (id) => {

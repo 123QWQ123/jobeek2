@@ -47,22 +47,17 @@ const firstItems = ref([]);
 watch(selectedSpecs, (newValues) => {
   emit('onFormChange', 'professional_roles', newValues);
 })
-console.log(selectedSpecs);
 
 const toggleModal = () => isModalOpen.value = !isModalOpen.value;
 const toggleSelect = (id) => {
-  console.log(id);
-
   const selectedItemIds = [...selectedSpecs.value];
   const dynItems = [...firstItems.value].map(item => {
     if (item.id === id){
       item.is_checked = !item.is_checked;
-      console.log(item.is_checked, selectedItemIds)
       if (item.is_checked && !selectedItemIds.includes(id)){
         selectedItemIds.push(item.id);
       }else{
         const index = selectedItemIds.indexOf(item.id);
-        console.log(index);
         if (index !== -1){
           selectedItemIds.splice(index, 1);
         }

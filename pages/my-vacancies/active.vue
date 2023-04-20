@@ -1,7 +1,7 @@
 <script setup>
 import { navigateTo } from "nuxt/app";
-import { useAuthStore } from "../store/auth";
-import { useVacancyStore } from "../store/vacancy";
+import { useAuthStore } from "../../store/auth";
+import { useVacancyStore } from "../../store/vacancy";
 import {useVacancyForm} from "~/composables/useVacancyForm";
 
 definePageMeta({
@@ -22,7 +22,7 @@ const isLoading = ref(false);
 
 watch(isEmployer, (new_value) => {
   if (new_value) {
-    navigateTo({ name: 'your-vacancies' });
+    navigateTo({ name: 'my-vacancies' });
   }
 });
 

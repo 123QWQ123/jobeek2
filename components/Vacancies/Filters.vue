@@ -32,7 +32,6 @@
 </template>
 
 <script setup>
-console.log('filters');
 import {useVacancyStore} from "../../store/vacancy";
 import {useRoute, useRouter} from "nuxt/app";
 import {useVacancyForm} from "../../composables/useVacancyForm";
@@ -65,7 +64,6 @@ const resetFilters = () => {
   router.push({query: resetParams});
 }
 const onFormChange = (filter_name, filter_value) => {
-  console.log(filter_name, filter_value);
   form.value[filter_name] = filter_value;
   const params = useVacancyForm(form.value, 'front');
   router.push({query: params});

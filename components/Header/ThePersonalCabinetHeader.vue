@@ -2,6 +2,7 @@
 <script setup>
 import { useAuthStore } from "~~/store/auth";
 import TheMainHeader from "~/components/Header/TheMainHeader.vue";
+import {protected_routes, search_exception_routes} from "~/config";
 
 const auth = useAuthStore();
 const { logout, toggleUserMode } = auth;
@@ -35,7 +36,10 @@ watch(selectedType, (new_value) => {
   form.value = {...form.value, type: new_value};
 })
 
-const isHomePage = computed(() => route.name === 'index');
+const isCabinetNavbarShown = computed(() => {
+    console.log(route.name);
+    return !search_exception_routes.includes(route.name);
+});
 
 function onChange(selectedOption) {
   console.log(selectedOption)
@@ -46,7 +50,7 @@ function onChange(selectedOption) {
     <div class="lk-header-main">
       <div class="header-wrapper">
         <NuxtLink class="logo" to="/"> <img src="~/assets/img/jobeek-white.svg" alt="#"></NuxtLink>
-        <CabinetHeaderSearchForm v-if="!isHomePage"></CabinetHeaderSearchForm>
+        <CabinetHeaderSearchForm v-if="!isCabinetNavbarShown"></CabinetHeaderSearchForm>
         <div class="profile-action">
           <NuxtLink class="btn button-xs sign-in-btn ms-4" :to="{name: 'profile'}" role="link">{{ user?.phone }}</NuxtLink>
           <button class="profile-button" type="button"><svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">

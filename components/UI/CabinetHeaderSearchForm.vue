@@ -41,7 +41,7 @@
           :listItemStyles="searchSelectItemStyles"
         />
       </div>
-      <button class="button-xl submit-search-form" type="submit">Поиск</button>
+      <button class="button-xl submit-search-form" type="submit" @click="onSubmit">Поиск</button>
     </div>
   </form>
 </template>

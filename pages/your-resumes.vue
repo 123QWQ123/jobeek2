@@ -14,7 +14,7 @@ console.log(isEmployer);
 
 watch(isEmployer, (new_value) => {
   if (new_value){
-    navigateTo({name: 'your-vacancies'});
+    navigateTo({name: 'my-vacancies'});
   }
   console.log(new_value);
 })
@@ -23,7 +23,7 @@ const route = useRoute();
 onMounted(async () => {
   console.log(route.query);
   if (isEmployer.value){
-    navigateTo({name: 'your-vacancies'});
+    navigateTo({name: 'my-vacancies'});
   }
 });
 
