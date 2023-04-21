@@ -6,7 +6,7 @@
 <!--          <span>Lorem ipsum dolor sit amet, consectetur adipiscing-->
 <!--                            elit. Id.</span>-->
       </div>
-      <form class="search-form" @submit.prevent="onSearchSubmit" role="form" autocomplete="off">
+      <form class="search-form" role="form" autocomplete="off">
         <div class="search-row">
           <div class="input-wrap has-icon has-label">
             <img class="icon" src="~/assets/img/svg/search.svg" alt="#" />
@@ -45,7 +45,7 @@
                       :listItemStyles="searchSelectItemStyles"
               />
           </div>
-          <button class="button-accent submit-search-form" type="submit">Поиск </button>
+          <button class="button-accent submit-search-form" type="button" @click="onSubmit">Поиск </button>
         </div>
       </form>
     </div>
