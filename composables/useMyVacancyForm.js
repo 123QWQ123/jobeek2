@@ -25,6 +25,7 @@ export function useMyVacancyForm(data = null, to_ = 'front') {
         return {
             name: "",
             page: page,
+            status: 'active',
             order_by: null,
             per_page: 10,
         };
@@ -35,6 +36,7 @@ export function useMyVacancyForm(data = null, to_ = 'front') {
         page: data?.page ?? 1,
         per_page: data?.per_page ?? params.per_page ?? 10,
         order_by: data?.order_by ?? params.order_by ?? null,
+        status: data?.status ?? params.status ?? 'active',
     };
 
     if (data === null) {
@@ -45,6 +47,7 @@ export function useMyVacancyForm(data = null, to_ = 'front') {
         name: data.name ?? null,
         page: data.page ?? 1,
         order_by: null,
+        status: 'active',
         per_page: 10,
     };
     //
@@ -52,6 +55,7 @@ export function useMyVacancyForm(data = null, to_ = 'front') {
         name: null,
         page: null,
         order_by: null,
+        status: null,
         per_page: 10,
     };
 
@@ -63,6 +67,7 @@ export function useMyVacancyForm(data = null, to_ = 'front') {
             front_params.page = data.page;
         }
         if (data.order_by !== '') front_params.order_by = data.order_by;
+        if (data.status !== '') front_params.status = data.status;
         if (data.per_page !== '') front_params.per_page = data.per_page;
         return removeNull(front_params);
     }
@@ -72,6 +77,10 @@ export function useMyVacancyForm(data = null, to_ = 'front') {
         }
         if (data.order_by) {
             back_params.order_by = data.order_by;
+        }
+
+        if (data.status) {
+            back_params.status = data.status;
         }
 
         if (data.per_page) {

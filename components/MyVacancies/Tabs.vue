@@ -1,10 +1,14 @@
 <template>
   <ul class="nav nav-tabs" id="myTab" role="tablist">
-    <li class="nav-item" role="presentation">
-      <NuxtLink class="nav-link active" id="home-tab" type="button" to="/my-vacancies/" role="tab">Все</NuxtLink>
-    </li>
+
     <li class="nav-item" role="presentation">
       <NuxtLink class="nav-link" id="active-tab" type="button" to="/my-vacancies/active" role="tab">Активные</NuxtLink>
+    </li>
+    <li class="nav-item" role="presentation">
+      <NuxtLink class="nav-link active" id="home-tab" type="button" to="/my-vacancies/" role="tab"></NuxtLink>
+    </li>
+    <li class="nav-item" role="presentation">
+      <NuxtLink class="nav-link active" id="home-tab" type="button" to="/my-vacancies/" role="tab">Все</NuxtLink>
     </li>
     <li class="nav-item" role="presentation">
       <NuxtLink class="nav-link" id="archived-tab" type="button" to="/my-vacancies/active" role="tab">В архиве</NuxtLink>
