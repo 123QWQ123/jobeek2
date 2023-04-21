@@ -1,20 +1,21 @@
 <template>
   <div class="content">
-    <ul class="favorites-list">
-      <VacanciesItem v-for="item in vacanciesItems" :key="item.id" :item="item"></VacanciesItem>
-    </ul>
+      <PageLoader v-if="isLoading"/>
 
+      <ul class="favorites-list">
+        <VacanciesItem v-for="item in vacanciesItems" :key="item.id" :item="item"></VacanciesItem>
+      </ul>
 
-    <button ref="loadMoreButton" v-if="isMore" id="load_more_button" class="create-button show-more" @click="loadMore">
-      Показать еще
-      <div v-if="isLoading" class="ms-2 spinner-grow spinner-grow-sm" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>
-      <img v-else src="~/assets/img/svg/Arrow-Down2.svg" alt="#">
-    </button>
-    <h3 v-else>
-      К сожалению ничего не нашли!
-    </h3>
+      <button ref="loadMoreButton" v-if="isMore" id="load_more_button" class="create-button show-more" @click="loadMore">
+        Показать еще
+        <div v-if="isLoading" class="ms-2 spinner-grow spinner-grow-sm" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <img v-else src="~/assets/img/svg/Arrow-Down2.svg" alt="#">
+      </button>
+      <h3 v-else>
+        К сожалению ничего не нашли!
+      </h3>
   </div>
 </template>
 
@@ -42,10 +43,20 @@ watch(vacancies, (newValues) => {
   }
 })
 
-const loadMore = async() => {
+
+onMounted(async() => {
+    isLoading.value = true;
+    const params = useVacancyForm(form.value, 'backend');
+    const res = await getVacancies({...params});
+    console.log(res);
+    isLoading.value = false;
+})
+
+const loadMore = () => {
   isLoading.value = true;
   const params = useVacancyForm(form.value, 'backend');
-  const res = await getVacancies({...params, page: parseInt(current_page.value) + 1}, true);
+  const res = getVacancies({...params, page: parseInt(current_page.value) + 1}, true);
+    console.log(res);
   if (res.items.length < 1){
     isMore.value = false;
     Swal.fire({

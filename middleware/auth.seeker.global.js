@@ -9,21 +9,24 @@ export default defineNuxtRouteMiddleware(async(to, from) => {
     if (authStore.isAuthed === null){
         await tryLogin();
     }
-    const profileStore = useProfileStore();
-    const {getEmployer} = profileStore;
-    await getEmployer('seeker/profile');
-    const isAuthed = computed(() => authStore.isAuthenticated);
-    const seeker = computed(() => authStore.seeker);
+    if (authStore.isAuthed === true){
+        const profileStore = useProfileStore();
+        const {getEmployer} = profileStore;
+        await getEmployer('seeker/profile');
+        const isAuthed = computed(() => authStore.isAuthenticated);
+        const seeker = computed(() => authStore.seeker);
 
-    if (protected_routes.includes(to.path) && seeker_routes.includes(to.path) && isAuthed.value && seeker.value && seeker.value?.is_completed === false) {
-        return navigateTo({
-            path: '/profile',
-            query: {
-                message_text: "Not allowed!",
-                message_code: "405",
-                message_type: 'error'
-            }
-        })
+        if (protected_routes.includes(to.path) && seeker_routes.includes(to.path) && isAuthed.value && seeker.value && seeker.value?.is_completed === false) {
+            return navigateTo({
+                path: '/profile',
+                query: {
+                    message_text: "Not allowed!",
+                    message_code: "405",
+                    message_type: 'error'
+                }
+            })
+        }
     }
 
+    return;
 },)

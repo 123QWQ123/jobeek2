@@ -21,14 +21,7 @@ export default defineNuxtConfig({
     '~/components/UI'
   ],
   modules: [
-    'nuxt3-vuex',
-    [
       '@pinia/nuxt',
-      {
-        disableVuex: true
-      },
-    ],
-
   ],
   app: {
     pageTransition: { name: 'layout', mode: 'out-in' }

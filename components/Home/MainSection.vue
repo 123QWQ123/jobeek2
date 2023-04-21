@@ -161,9 +161,9 @@ const onSubmit = async (e) => {
     const params = useVacancyForm(form.value, "front");
     console.log(params);
     if (isEmployer.value) {
-        navigateTo({ name: "search-resumes", query: params });
+        router.push({ name: "search-resumes", query: params });
     } else {
-        navigateTo({ name: "search-vacancies", query: params });
+        router.push({ name: "search-vacancies", query: params });
     }
     isLoading.value = false;
 };
