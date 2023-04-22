@@ -70,7 +70,7 @@
         </button>
         <div class="aside-container">
           <VacanciesFilters></VacanciesFilters>
-          <VacanciesList></VacanciesList>
+          <VacanciesList :key="$route.fullPath"></VacanciesList>
         </div>
       </div>
     </div>

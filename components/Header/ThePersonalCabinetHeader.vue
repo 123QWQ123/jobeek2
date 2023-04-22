@@ -37,7 +37,6 @@ watch(selectedType, (new_value) => {
 })
 
 const isCabinetNavbarShown = computed(() => {
-    console.log(route.name);
     return !search_exception_routes.includes(route.name);
 });
 

@@ -14,7 +14,7 @@ const authStore = useAuthStore();
 const isEmployer = computed(() => authStore.isEmployer);
 
 watch(isEmployer, (new_value) => {
-  if (new_value){
+  if (!new_value){
     navigateTo({name: 'search-resumes'});
   }
 })
