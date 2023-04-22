@@ -6,7 +6,7 @@
 
 <style>
 .layout {
-  overflow-y: hidden;
+  /*overflow-y: hidden;*/
 }
 .modal {
   display: flex;
