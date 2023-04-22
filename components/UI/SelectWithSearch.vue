@@ -89,6 +89,13 @@ function close(){
 
 </template>
 
+<style>
+
+.select2-container .select2-selection--multiple .select2-selection__rendered{
+  flex-wrap: wrap !important;
+}
+
+</style>
 <style scoped>
 .list{
   max-height: 0vh;

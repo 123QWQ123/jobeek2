@@ -1,6 +1,7 @@
 <template>
   <div class="input-row input-row--checkboxes">
     <label>Подключенные сервисы</label>
+    {{providers}}
     <div class="input-wrapper input-wrapper--flex">
       <div class="custom-check-wrap">
         <div class="theme-checker theme-checker--blue" @click="onClickProvider('hh')">
@@ -32,12 +33,17 @@ const props = defineProps({
     type: Object
   }
 })
-const providers = ref([
-  {name: 'hh', checked: true},
-  {name: 'superjob', checked: false},
-]);
 
-const keywords = ref([]);
+console.log(props.providers);
+
+watch(props.providers, (newPropProviders) => {
+  providers.value.map(item => item.checked = newPropProviders[item.name].is_connected);
+})
+
+const providers = ref([
+  {name: 'hh', checked: props.providers.hh.is_connected},
+  {name: 'superjob', checked: props.providers.superjob.is_connected},
+]);
 
 const onClickProvider = (provider_name) => {
   const item = providers.value.find((item) => item.name === provider_name);

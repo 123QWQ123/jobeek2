@@ -9,15 +9,9 @@
               <h1 class="title">Создание вакансии</h1>
             </div>
             <div class="w-box-body">
-              <CreateVacancyProvidersIntegration :providers="providers"></CreateVacancyProvidersIntegration>
+              <CreateVacancyProvidersIntegration :providers="providers" @set="updateState"></CreateVacancyProvidersIntegration>
 
-              <div class="input-row">
-                <label for="name">Название</label>
-                <div class="input-wrapper">
-                  <input type="text" id="name" v-model="state.name.val">
-                </div>
-              </div>
-
+              <CreateVacancyKeywords  @set="updateState"></CreateVacancyKeywords>
               <div class="sep"> </div>
               <CreateVacancyFieldsAndAreas></CreateVacancyFieldsAndAreas>
               <div class="sep"> </div>
@@ -31,8 +25,9 @@
             </div>
           </div>
           <div class="form-submit-container">
-            <p>Найдено 2 012 вакансий</p>
-            <button class="button-accent" type="submit">Сохранить</button>
+<!--            <p>Найдено 2 012 вакансий</p>-->
+            {{providers}}
+            <button class="button-accent" type="button" @click="onSubmit">Сохранить</button>
           </div>
         </form>
       </div>
@@ -41,6 +36,8 @@
 </template>
 
 <script setup>
+import {useVacancyStore} from "../store/vacancy";
+
 definePageMeta({
   layout: "cabinet",
 });
@@ -59,6 +56,13 @@ const providers = reactive({
 })
 
 const state =  reactive({
+  providers: {
+    val: {
+      hh: true,
+      superjob: true,
+    },
+    isValid: true
+  },
   name: {
     val: "",
     isValid: false
@@ -105,4 +109,18 @@ const state =  reactive({
   },
 });
 
+const updateState = (prop, value) => {
+  state[prop].val = value;
+}
+
+const {getConnectedProviders} = useVacancyStore();
+onMounted(async() => {
+  console.log('running...');
+  const resData = await getConnectedProviders();
+  Object.keys(resData).map((item) => providers[item].is_connected = resData[item]);
+})
+
+const onSubmit = () => {
+  console.log(state);
+}
 </script>

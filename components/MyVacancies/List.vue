@@ -21,46 +21,51 @@
     <div class="col d-flex justify-content-between mt-4" >
       <h1 ref="filterRef" class="lk-page-title mt-4">Ваши вакансии({{ my_total }})</h1>
 
-      {{providers}}
-      <div class="d-inline-flex">
-        <div class="option-group selector-group">
-          <div class="option" @click="onProviderToggle('hh')">
-            <div class="custom-check-wrap">
-              <div class="theme-checker theme-checker--blue">
-                <input type="checkbox" id="hh" :checked="providers.hh" />
-                <div class="theme-checker-ui">
-                  <div class="circle" :class="{'right' : providers.hh, 'left': !providers.hh}"></div>
-                </div>
-              </div>
-              <label for="hh"
-              ><img
-                  src="~/assets/img/logos/hhmini.svg"
-                  alt="#"
-              /><span>Hh.ru</span></label
-              >
-            </div>
-          </div>
-          <div class="option" @click="onProviderToggle('superjob')">
-            <div class="custom-check-wrap">
-              <div class="theme-checker theme-checker--blue">
-                <input type="checkbox" id="sj" :checked="providers.superjob" />
-                <div class="theme-checker-ui">
-                  <div class="circle" :class="{'right' : providers.superjob, 'left': !providers.superjob}"></div>
-                </div>
-              </div>
-              <label for="sj"
-              ><img src="~/assets/img/logos/sj.svg" alt="#" /><span
-              >Superjob.ru
-                          </span></label
-              >
-            </div>
-          </div>
-        </div>
-      </div>
+<!--      {{providers}}-->
+<!--      <div class="d-inline-flex">-->
+<!--        <div class="option-group selector-group">-->
+<!--          <div class="option" @click="onProviderToggle('hh')">-->
+<!--            <div class="custom-check-wrap">-->
+<!--              <div class="theme-checker theme-checker&#45;&#45;blue">-->
+<!--                <input type="checkbox" id="hh" :checked="providers.hh" />-->
+<!--                <div class="theme-checker-ui">-->
+<!--                  <div class="circle" :class="{'right' : providers.hh, 'left': !providers.hh}"></div>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <label for="hh"-->
+<!--              ><img-->
+<!--                  src="~/assets/img/logos/hhmini.svg"-->
+<!--                  alt="#"-->
+<!--              /><span>Hh.ru</span></label-->
+<!--              >-->
+<!--            </div>-->
+<!--          </div>-->
+<!--          <div class="option" @click="onProviderToggle('superjob')">-->
+<!--            <div class="custom-check-wrap">-->
+<!--              <div class="theme-checker theme-checker&#45;&#45;blue">-->
+<!--                <input type="checkbox" id="sj" :checked="providers.superjob" />-->
+<!--                <div class="theme-checker-ui">-->
+<!--                  <div class="circle" :class="{'right' : providers.superjob, 'left': !providers.superjob}"></div>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <label for="sj"-->
+<!--              ><img src="~/assets/img/logos/sj.svg" alt="#" /><span-->
+<!--              >Superjob.ru-->
+<!--                          </span></label-->
+<!--              >-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
     </div>
     <div class="col d-flex justify-content-between align-items-center" >
         <div class="d-inline-flex">
-          <form class="sort mx-1 ms-auto" action="#">
+
+          <form class="sort mx-2 ms-auto" action="#">
+            <span>Поставщик:</span>
+            <CustomSelect :options="providerOptions" v-model="form.provider" @change="onProviderChange" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
+          </form>
+          <form class="sort mx-2 ms-auto" action="#">
             <span>Фильтр:</span>
             <CustomSelect :options="filterOptions" v-model="form.status" @change="onFilterChange" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
           </form>
@@ -118,6 +123,11 @@ const {getMyVacancies} = vacancyStore;
 const sortingOptions = ref(useMyVacancySortingOptions());
 const perPageOptions = ref(useMyVacancyPerPageOptions());
 const filterOptions = ref(useMyVacanciesFilterOptions());
+const providerOptions = ref([
+  {value: '*', name: 'Все'},
+  {value: 'hh', name: 'HeadHunter'},
+  {value: 'superjob', name: 'Superjob'},
+]);
 
 
 const {my_vacancies, current_page, my_total} = storeToRefs(vacancyStore);
@@ -128,15 +138,12 @@ const isPrevDisabled = computed(() => {
 })
 const form = ref(useMyVacancyForm());
 
-console.log(form.value);
-
 const providers = ref({
   hh: true,
   superjob: true
 })
 
 const onProviderToggle = (provider) => {
-  console.log(provider);
   providers.value[provider] = !providers.value[provider];
 }
 
@@ -170,12 +177,10 @@ function getCommon(arr1, arr2) {
 }
 
 watch(providers.value, (newProviders) => {
-  console.log(newProviders)
   let prevItems = useMyVacanciesFilterOptions();
 
   const commonStates = getCommon(hhFilters, superjobFilters);
 
-  console.log(prevItems, commonStates);
   if (newProviders.superjob === false && newProviders.hh === false){
     prevItems = [];
   }
@@ -185,7 +190,6 @@ watch(providers.value, (newProviders) => {
   if (newProviders.superjob === true && newProviders.hh === false){
     prevItems = prevItems.filter(item => superjobFilters.includes(item.value) || commonStates.includes(item.value));
   }
-  console.log(prevItems);
   filterOptions.value = prevItems;
 })
 watch(filterOptions, (newFilterOptions) => {
@@ -229,7 +233,6 @@ const nextPage = async(page) => {
     current_page.value = form.value.page;
     const params = useMyVacancyForm(form.value, 'front');
     const response = await getMyVacancies(params);
-    console.log(response.data.items)
     if (response?.data?.items.length === 0){
       Swal.fire({
         title: 'Больше нет вакансий',
@@ -266,6 +269,24 @@ const onFilterChange = async(filter) => {
     const params = useMyVacancyForm(form.value, 'front');
     await getMyVacancies(params);
     isLoading.value = false;
+}
+const onProviderChange = async(provider) => {
+    form.value.provider = provider;
+    if (provider === '*'){
+      providers.value.hh = true;
+      providers.value.superjob = true;
+    }
+    if (provider === 'hh'){
+      providers.value.hh = true;
+      providers.value.superjob = false;
+    }
+    if (provider === 'superjob'){
+      providers.value.hh = false;
+      providers.value.superjob = true;
+    }
+    // const params = useMyVacancyForm(form.value, 'front');
+    // await getMyVacancies(params);
+    // isLoading.value = false;
 }
 
 const listStyles = {
