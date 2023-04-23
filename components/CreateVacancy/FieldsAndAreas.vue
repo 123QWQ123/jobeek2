@@ -8,10 +8,7 @@
   <div class="input-row">
     <label for="locations">Города, области, страны</label>
     <div class="input-wrapper">
-<!--      <SelectWithSearch v-model="myAreaSearch" :options="areaOptions" @input="onAreaChange" />-->
       <MultiSelectWithSearch v-model="myAreaSearch" :options="areaOptions" @input="onAreaChange" @select="onAreaSelect" />
-<!--        <Select2 v-model="selectedAreas" :options="areaOptions" :settings="{multiple: true, ajax: ajaxConfig}" />-->
-
     </div>
   </div>
 </template>

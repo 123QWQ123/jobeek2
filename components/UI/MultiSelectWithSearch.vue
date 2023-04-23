@@ -77,8 +77,8 @@ function onSelect(e){
     const selectedOptionItem = options.value.find(item => String(item.value) === String(selectedOptionValue));
     if (selectedOptionItem){
         selectedOption.value = selectedOptionItem;
-        if (!selectedOptions.value.includes(selectedOptionItem.value)){
-            selectedOptions.value.push(selectedOptionItem.value);
+        if (!selectedOptions.value.includes(String(selectedOptionItem.value))){
+            selectedOptions.value.push(String(selectedOptionItem.value));
         }
         // exclude from all options
         options.value = props.options.filter(item => !selectedOptions.value.includes(String(item.value)));
@@ -88,18 +88,12 @@ function onSelect(e){
 }
 
 function onUnselect(deleteId){
-    let tempOptions = options.value;
+    let tempOptions = props.options;
     let tempSelectedOptions = selectedOptions.value;
-    const selectedOptionItemIndex = props.options.findIndex(item => item.value == deleteId);
+    const selectedOptionItemIndex = props.options.findIndex(item => String(item.value) == String(deleteId));
     if (selectedOptionItemIndex !== -1){
-        selectedOptions.value = tempSelectedOptions.filter(item => item != deleteId);
-        tempOptions.push(props.options[selectedOptionItemIndex]);
-        tempOptions = tempOptions.sort(function(a, b) {
-            let textA = a.name.toUpperCase();
-            let textB = b.name.toUpperCase();
-            return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
-        });
-        options.value = tempOptions;
+        selectedOptions.value = tempSelectedOptions.filter(item => String(item) != String(deleteId));
+        options.value = tempOptions.filter(item => !selectedOptions.value.includes(String(item.value)));
         emit('unselect', deleteId)
     }
 }
