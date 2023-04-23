@@ -8,10 +8,10 @@
             </ul>
 
         </div>
-        <div class="selection selected-options">
+        <div class="selection selected-options" v-if="selectedOptions.length">
             <ul class="selected-options" id="select2--container">
-                <li v-for="item in selectedOptions" class="multi-select_selected-item">
-                    <button type="button" class="select2-selection__choice__remove" @click="onUnselect(item)">
+                <li v-for="item in selectedOptions" class="multi-select_selected-item" @click="onUnselect(item)">
+                    <button type="button" class="select2-selection__choice__remove" >
                         <span aria-hidden="true">×</span>
                     </button>
                     <span class="select2-selection__choice__display">{{ getSelectedOptionName(item) }}</span>
@@ -69,33 +69,17 @@ watch(props, (newProps) => {
 
 const selectedOption = ref(null);
 const selectedOptions = ref([]);
-const selectedItem = computed(() =>{
-  if (options.value.length){
-    if (selectedOption.value){
-      return selectedOption;
-    }
-    return options.value[0];
-  }
-});
-
 
 function onSelect(e){
-  if (e.target.classList.contains('current') || e.target.classList.contains('nice-select')){
-    isOpen.value = !isOpen.value;
-  }
   if (e.target.classList.contains('option')){
     isOpen.value = false;
     const selectedOptionValue =  e.target.dataset.value;
-      console.log(options.value);
     const selectedOptionItem = options.value.find(item => String(item.value) === String(selectedOptionValue));
-      console.log(selectedOptionItem, selectedOptionValue);
     if (selectedOptionItem){
         selectedOption.value = selectedOptionItem;
-        console.log(selectedOptionItem);
         if (!selectedOptions.value.includes(selectedOptionItem.value)){
-            selectedOptions.value.push(String(selectedOptionItem.value));
+            selectedOptions.value.push(selectedOptionItem.value);
         }
-
         // exclude from all options
         options.value = props.options.filter(item => !selectedOptions.value.includes(String(item.value)));
         emit('change', selectedOptionItem)
@@ -104,22 +88,18 @@ function onSelect(e){
 }
 
 function onUnselect(deleteId){
-    console.log(deleteId);
     let tempOptions = options.value;
-    const selectedOptionItemIndex = props.options.findIndex(item => String(item.value) === String(deleteId));
-    console.log(selectedOptionItemIndex);
+    let tempSelectedOptions = selectedOptions.value;
+    const selectedOptionItemIndex = props.options.findIndex(item => item.value == deleteId);
     if (selectedOptionItemIndex !== -1){
-        if (selectedOptions.value.includes(deleteId)){
-            selectedOptions.value.splice(selectedOptionItemIndex);
-            selectedOptions.value = selectedOptions.value.filter(item => String(item.value) !== String(deleteId));
-            tempOptions.push(props.options[selectedOptionItemIndex]);
-            tempOptions = tempOptions.sort(function(a, b) {
-                let textA = a.name.toUpperCase();
-                let textB = b.name.toUpperCase();
-                return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
-            });
-            options.value = tempOptions;
-        }
+        selectedOptions.value = tempSelectedOptions.filter(item => item != deleteId);
+        tempOptions.push(props.options[selectedOptionItemIndex]);
+        tempOptions = tempOptions.sort(function(a, b) {
+            let textA = a.name.toUpperCase();
+            let textB = b.name.toUpperCase();
+            return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+        });
+        options.value = tempOptions;
         emit('unselect', deleteId)
     }
 }
@@ -136,17 +116,9 @@ const onChangeHandler = (e) => {
   isOpen.value = true;
   const typedName = e.target.textContent.toLowerCase();
   emit('input', searchInput.value);
-  if (typedName === ""){
-    options.value = props.options;
-  }else{
-    options.value = props.options.filter(
-        (item) => item.name.toLowerCase().includes(typedName)
-    );
-  }
 }
 
 function getSelectedOptionName(value){
-    console.log(value, options);
     const selectedOptionItem = props.options.find(item => String(item.value) === String(value));
     if (selectedOptionItem) return selectedOptionItem.name;
     else return "Not found";

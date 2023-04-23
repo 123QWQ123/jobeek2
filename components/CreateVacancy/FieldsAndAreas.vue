@@ -2,7 +2,7 @@
   <div class="input-row">
     <label for="industry">Отрасль</label>
     <div class="input-wrapper">
-      <Select2 :options="industryOptions" :settings="{ multiple: true }" @select="onFieldChange" @unselect="onFieldChange" />
+        <MultiSelectWithSearch v-model="myAreaSearch" :options="industryOptions" @input="onFieldChange" @select="onFieldSelect" />
     </div>
   </div>
   <div class="input-row">
@@ -45,7 +45,7 @@ watch(
     () => vacancyStore.industries,
     (newValues) => {
       industryOptions.value = newValues.map(item => {
-        return {id: item.id, text: item.title};
+        return {value: item.id, name: item.title};
       });
     }
 );
@@ -68,6 +68,9 @@ const onAreaChange = (text) => {
   if (text.length >= 2){
     getAreas({search: text});
   }
+}
+const onFieldSelect = (item) => {
+    console.log(item);
 }
 const onAreaSelect = (item) => {
     console.log(item);
