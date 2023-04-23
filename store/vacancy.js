@@ -44,10 +44,12 @@ export const useVacancyStore = defineStore('vacancy', {
   },
   actions: {
     async getAreas(payload) {
-      const {data} = useApi('area', {
+      console.log(payload);
+      const {data} = await useApi('area', {
         method: 'get',
         payload
       });
+      console.log(data)
       if (data){
         this.areas = data;
       }

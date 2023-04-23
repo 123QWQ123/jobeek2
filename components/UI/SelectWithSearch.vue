@@ -66,6 +66,7 @@ const onChangeHandler = (e) => {
   searchInput.value = e.target.textContent;
   isOpen.value = true;
   const typedName = e.target.textContent.toLowerCase();
+  emit('input', searchInput.value);
   if (typedName === ""){
     options.value = props.options;
   }else{

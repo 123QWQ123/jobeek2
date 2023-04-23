@@ -8,7 +8,7 @@
   <div class="input-row">
     <label for="locations">Города, области, страны</label>
     <div class="input-wrapper">
-      <SelectWithSearch v-model="myCountrySearch" :options="areaOptions" @input="onAreaChange" />
+      <SelectWithSearch v-model="myAreaSearch" :options="areaOptions" @input="onAreaChange" />
     </div>
   </div>
 </template>
@@ -23,18 +23,13 @@ const onFieldChange = (event) => {
   // console.log(event);
   // console.log("myChangeEvent: ", event);
 }
-const onAreaChange = (areaSearch) => {
-  if (areaSearch.length >= 2){
-    getAreas({search: areaSearch});
-  }
-}
 const onAreaSelect = (e) => {
   console.log(e);
 }
 
 const vacancyStore = useVacancyStore();
 
-const {getIndustries, industries, countries, getAreas, cities} = vacancyStore;
+const {getIndustries, industries, countries, getAreas, cities, areas} = vacancyStore;
 
 onMounted(async() => {
   await getIndustries();
@@ -67,15 +62,14 @@ watch(
 
 
 const myField = ref();
-const myCountrySearch = ref("");
+const myAreaSearch = ref("");
 
-watch(myCountrySearch, (newValue) => {
-  console.log(newValue);
-  if (newValue.length >= 2){
-    getAreas({search: newValue});
+const onAreaChange = (text) => {
+  console.log(text)
+  if (text.length >= 2){
+    getAreas({search: text});
   }
-})
-
+}
 
 </script>
 
