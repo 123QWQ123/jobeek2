@@ -49,7 +49,6 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      console.log(data)
       if (data){
         this.areas = data;
       }

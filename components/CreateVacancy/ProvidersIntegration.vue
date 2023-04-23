@@ -1,7 +1,6 @@
 <template>
   <div class="input-row input-row--checkboxes">
     <label>Подключенные сервисы</label>
-    {{providers}}
     <div class="input-wrapper input-wrapper--flex">
       <div class="custom-check-wrap">
         <div class="theme-checker theme-checker--blue" @click="onClickProvider('hh')">

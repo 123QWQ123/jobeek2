@@ -82,20 +82,18 @@
           </form>
         </div>
       </div>
-      <ul class="resume-list mt-4">
+      <ul class="resume-list mt-4" v-if="my_total > 0">
         <MyVacanciesItem v-for="item in my_vacancies" :key="item.id" :item="item"></MyVacanciesItem>
       </ul>
-
+      <div class="d-flex mt-4 pb-4 justify-content-center" v-else>
+        <p>Ничего не найдено!</p>
+      </div>
       <div class="d-flex mt-4 justify-content-between" v-if="my_total > 0">
         <button class="btn btn-primary btn-group-sm" :class="{disabled: isPrevDisabled}"  @click="prevPage">Prev</button>
         <p>{{current_page}}</p>
         <button class="btn btn-primary btn-group-sm" @click="nextPage">Next</button>
       </div>
     </div>
-    <div class="row d-flex ">
-        <div class="resume-list-container pt-3" >
-      </div>
-  </div>
 </template>
 
 <script setup>

@@ -38,9 +38,14 @@
 <script setup>
 import {useVacancyStore} from "../store/vacancy";
 
+
 definePageMeta({
   layout: "cabinet",
 });
+
+useHead({
+    title: "Создание вакансии - Jobeek"
+})
 
 const providers = reactive({
   hh: {
