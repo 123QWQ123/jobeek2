@@ -21,7 +21,7 @@
             <NuxtLink :to="{name: 'your-responses'}"><span>Отклики<div class="count">12</div></span></NuxtLink>
           </li>
           <li v-if="!isEmployer">
-            <NuxtLink :to="{name: 'your-resumes'}"> <span>Мои резюме</span></NuxtLink>
+            <NuxtLink :to="{name: 'my-resumes'}"> <span>Мои резюме</span></NuxtLink>
           </li>
           <li v-if="isEmployer">
             <NuxtLink :to="{name: 'my-vacancies'}"> <span>Мои вакансии</span></NuxtLink>

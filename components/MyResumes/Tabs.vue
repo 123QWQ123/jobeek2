@@ -58,7 +58,7 @@
 import Swal from "sweetalert2";
 
 useHead({
-    title: "Jobeek - Мои вакансии"
+    title: "Jobeek - Мои резюме"
 })
 import {useVacancyStore} from "../../store/vacancy";
 import {storeToRefs} from "pinia";

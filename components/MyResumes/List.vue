@@ -1,7 +1,8 @@
 <template>
-    <PageLoader v-if="isLoading" />
   <div class="wrapper wrapper-1290">
-      <div class="notification mt-0">
+    <PageLoader v-if="isLoading" />
+
+    <div class="notification mt-0">
         <div class="ic">
           <img src="~/assets/img/svg/crown2.svg" alt="#" />
         </div>
@@ -14,12 +15,12 @@
         </div>
         <a class="notification-button button-accent" href="#">Подключить </a>
       </div>
-      <NuxtLink class="create-button" type="link" :to="{name: 'create-vacancy'}" >Создать вакансию</NuxtLink>
+      <NuxtLink class="create-button" type="link" :to="{name: 'create-resume'}" >Создать резюме</NuxtLink>
 
 
 
     <div class="col d-flex justify-content-between mt-4" >
-      <h1 ref="filterRef" class="lk-page-title mt-4">Ваши вакансии({{ my_total }})</h1>
+      <h1 ref="filterRef" class="lk-page-title mt-4">Ваши резюме({{ my_total }})</h1>
 
 <!--      {{providers}}-->
 <!--      <div class="d-inline-flex">-->
@@ -301,5 +302,9 @@ const listStyles = {
 }
 .theme-checker input ~ .theme-checker-ui .circle.right{
   transform: translate(30px, -50%);
+}
+
+.sort .d-select{
+  background: #F5F8FA !important;
 }
 </style>

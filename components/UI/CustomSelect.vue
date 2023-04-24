@@ -67,7 +67,7 @@ export default {
   color: #0A2540;
 }
 .d-select{
-  background: none;
+  /*background: none;*/
   padding-right: 3.125rem;
 }
 </style>
