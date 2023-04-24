@@ -4,38 +4,31 @@
     <div class="checkboxes-row input-row--checkboxes">
       <div class="check-block">
         <div class="checkbox">
-          <input type="checkbox" id="full">
-          <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
+          <input type="radio" id="full" name="employment_type">
+          <div class="checkbox-mask"></div>
         </div>
         <label for="full">Полная</label>
       </div>
       <div class="check-block">
         <div class="checkbox">
-          <input type="checkbox" id="changeable">
-          <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
+          <input type="radio" id="full1" name="employment_type">
+          <div class="checkbox-mask"></div>
         </div>
-        <label for="changeable">Сменная</label>
+        <label for="full1">Полная</label>
       </div>
       <div class="check-block">
         <div class="checkbox">
-          <input type="checkbox" id="incomplete-distance">
-          <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
+          <input type="radio" id="full2" name="employment_type">
+          <div class="checkbox-mask"></div>
         </div>
-        <label for="incomplete-distance">Неполная дистанционная</label>
+        <label for="full2">Полная</label>
       </div>
       <div class="check-block">
         <div class="checkbox">
-          <input type="checkbox" id="incomplete">
-          <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
+          <input type="radio" id="full3" name="employment_type">
+          <div class="checkbox-mask"></div>
         </div>
-        <label for="incomplete">Неполная</label>
-      </div>
-      <div class="check-block">
-        <div class="checkbox">
-          <input type="checkbox" id="rotational">
-          <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
-        </div>
-        <label for="rotational">Вахтовая</label>
+        <label for="full3">Полная</label>
       </div>
     </div>
   </div>

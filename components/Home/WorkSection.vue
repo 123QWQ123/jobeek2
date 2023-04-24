@@ -33,7 +33,7 @@ import {storeToRefs} from "pinia";
 import {useVacancyStore} from "../../store/vacancy";
 const vacancyStore = useVacancyStore();
 const {getVacancies} = vacancyStore;
-const {top_10_vacancies: vacancies} = storeToRefs(vacancyStore);
+const {top_10: vacancies} = storeToRefs(vacancyStore);
 
 onMounted(async() => {
     await getVacancies({countries: [1], region_ids: [22]});

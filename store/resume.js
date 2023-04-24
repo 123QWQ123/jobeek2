@@ -6,17 +6,17 @@ import axios from "axios";
 import {useAuthStore} from "~/store/auth";
 import useApi from "~/hooks/useApi";
 
-export const useVacancyStore = defineStore('vacancy', {
+export const useResumeStore = defineStore('resume', {
   state: () => {
     return {
-      vacancies: [],
-      vacancy: null,
+      resumes: [],
+      resume: null,
       total: 0,
       my_total: 0,
       data: null,
       current_page: 1,
-      my_vacancies: [],
-      my_favorite_vacancies: [],
+      my_resumes: [],
+      my_favorite_resumes: [],
       specializations: [],
       industries: [],
       areas: [],
@@ -32,17 +32,18 @@ export const useVacancyStore = defineStore('vacancy', {
   },
   getters: {
     top_10: (state) => {
-      return state.vacancies.slice(0, 10);
+      return state.resumes.slice(0, 10);
     },
     top_20: (state) => {
-      return state.vacancies.slice(0, 20);
+      return state.resumes.slice(0, 20);
     },
     top_30: (state) => {
-      return state.vacancies.slice(0, 30);
+      return state.resumes.slice(0, 30);
     }
   },
   actions: {
     async getAreas(payload) {
+      console.log(payload);
       const {data} = await useApi('area', {
         method: 'get',
         payload
@@ -53,16 +54,16 @@ export const useVacancyStore = defineStore('vacancy', {
       return data;
     },
     async getVacancies(payload, add = false) {
-      const {data} = await useApi('vacancies/search', {
+      const {data} = await useApi('resumes/search', {
         method: 'get',
         payload
       });
       if (data && 'items' in data){
         if (add){
-          this.vacancies = this.vacancies.concat(data.items);
+          this.resumes = this.resumes.concat(data.items);
           this.current_page++;
         }else{
-          this.vacancies = data.items;
+          this.resumes = data.items;
           this.current_page = 1;
         }
         this.total = data.found;
@@ -70,7 +71,7 @@ export const useVacancyStore = defineStore('vacancy', {
       return data;
     },
     async getVacancy(id, payload) {
-      const {data} = await useApi('vacancy/' + id, {
+      const {data} = await useApi('resume/' + id, {
         method: 'get',
         payload
       });
@@ -79,20 +80,32 @@ export const useVacancyStore = defineStore('vacancy', {
       }
       return data;
     },
-    async clearVacancies() {
-      this.vacancies = [];
+    async clearResumes() {
+      this.resumes = [];
     },
-    async getMyVacancies(payload) {
-      const response = await useApi('employer/vacancies', {
+    async getMyResumes(payload) {
+      const response = await useApi('seeker/resumes', {
         method: 'get',
         payload
       });
+      console.log(response);
       if (response && 'data' in response && 'items' in response.data){
-        this.my_vacancies = response.data.items;
+        this.my_resumes = response.data.items;
         this.my_total = response.data.found;
         this.current_page = response.data.current_page;
       }
       return response;
+    },
+    async getConnectedProviders(payload) {
+      const {data} = await useApi('seeker/used_providers', {
+        method: 'get',
+        payload
+      });
+      console.log(data);
+      if ('data' in data){
+        return data.data;
+      }
+      return data;
     },
     async getMyFavoriteVacancies(payload) {
       const {data} = await useApi('vacancies/search', {
@@ -201,7 +214,7 @@ export const useVacancyStore = defineStore('vacancy', {
     },
 
     async addToFavorite(payload) {
-      const response = await useApi('vacancy/favorite', {
+      const response = await useApi('resume/favorite', {
         method: 'post',
         payload
       });
@@ -209,7 +222,7 @@ export const useVacancyStore = defineStore('vacancy', {
     },
 
     async removeFromFavorite(payload) {
-      const response = await useApi('vacancy/favorite', {
+      const response = await useApi('resume/favorite', {
         method: 'delete',
         payload
       });
@@ -220,5 +233,5 @@ export const useVacancyStore = defineStore('vacancy', {
 })
 
 if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(useVacancyStore, import.meta.hot));
+  import.meta.hot.accept(acceptHMRUpdate(useResumeStore, import.meta.hot));
 }

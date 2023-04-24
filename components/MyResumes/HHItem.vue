@@ -9,28 +9,29 @@
           </div>
           <div class="resume-card-name">
             <strong class="title">
-              {{item.name}}
+              {{item.title}}
             </strong
             >
             <span class="location">{{ item.city }} </span
           >
-            <span class="price" v-if="item.salary_from">От {{vueNumberFormat(item.salary_from, {})}} ₽</span>
-            <span class="price" v-else>До {{vueNumberFormat(item.salary_to, {})}} ₽</span>
+              <span class="price">От {{vueNumberFormat(item.salary, {})}} ₽</span>
+<!--            <span class="price" v-if="item.salary_from">От {{vueNumberFormat(item.salary_from, {})}} ₽</span>-->
+<!--            <span class="price" v-else>До {{vueNumberFormat(item.salary_to, {})}} ₽</span>-->
           </div>
         </div>
         <div class="resume-card-body-col">
-          <div class="date">с {{ published_date.format('D') }} {{ published_date.format('MMMM') }}</div>
+          <div class="date">в {{ published_date.format('D') }} {{ published_date.format('MMMM') }}</div>
 <!--          <div class="date">с {{ published_date.format('D') }} {{ published_date.format('MMMM') }} по 24 марта</div>-->
           <div class="resume-counts">
             <div class="count">
               <strong>{{item.views}}</strong><span>Просмотров</span>
             </div>
             <div class="count">
-              <strong>{{item.responses}}</strong><span>Отклики </span>
+              <strong>{{item.new_views}}</strong><span>Новых просмотров</span>
             </div>
-            <div class="count">
-              <strong>{{item.unread_responses}}</strong><span>Непрочитанные отклики</span>
-            </div>
+<!--            <div class="count">-->
+<!--              <strong>{{item.unread_responses}}</strong><span>Откликов</span>-->
+<!--            </div>-->
           </div>
         </div>
       </div>

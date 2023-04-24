@@ -29,6 +29,7 @@
 import {useVacancyStore} from "../../store/vacancy";
 import {storeToRefs} from "pinia";
 import Paginate from "vuejs-paginate-next";
+import {useProfileStore} from "~/store/profile";
 const providers = ref([
     {
         name: 'HeadHunter',
@@ -47,7 +48,7 @@ const providers = ref([
 ]);
 
 const vacancyStore = useVacancyStore();
-const { getProvidersAuthUrl, getConnectedProviders } = vacancyStore;
+const { getProvidersAuthUrl, getConnectedProviders } = useProfileStore();
 
 const checkProviders = async() => {
 

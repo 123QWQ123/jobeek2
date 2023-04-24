@@ -134,6 +134,29 @@ export const useProfileStore = defineStore('profile', {
       });
     },
 
+    async getConnectedProviders(payload) {
+      const {data} = await useApi('employer/used_providers', {
+        method: 'get',
+        payload
+      });
+      console.log(data);
+      if ('data' in data){
+        return data.data;
+      }
+      return data;
+    },
+
+    async getProvidersAuthUrl(payload) {
+      const {data} = await useApi('services/hh/auth/redirect-url', {
+        method: 'get',
+        payload
+      });
+      if ('data' in data){
+        return data.data;
+      }
+      return data;
+    },
+
     async upload(payload) {
       const CONFIG = useRuntimeConfig();
       let url = CONFIG.public.apiBase + 'upload';

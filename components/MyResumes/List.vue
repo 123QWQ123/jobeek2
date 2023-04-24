@@ -59,7 +59,7 @@
 <!--        </div>-->
 <!--      </div>-->
     </div>
-    <div class="col d-flex justify-content-between align-items-center" >
+    <div class="col d-flex justify-content-between align-items-center " >
         <div class="d-inline-flex">
 
           <form class="sort mx-2 ms-auto" action="#">
@@ -84,12 +84,12 @@
         </div>
       </div>
       <ul class="resume-list mt-4" v-if="my_total > 0">
-        <MyResumesItem v-for="item in my_vacancies" :key="item.id" :item="item"></MyResumesItem>
+        <MyResumesItem v-for="item in my_resumes" :key="item.id" :item="item"></MyResumesItem>
       </ul>
       <div class="d-flex mt-4 pb-4 justify-content-center" v-else>
         <p>Ничего не найдено!</p>
       </div>
-      <div class="d-flex mt-4 justify-content-between" v-if="my_total > 0">
+      <div class="d-flex mt-4 justify-content-between pb-4" v-if="my_total > 0">
         <button class="btn btn-primary btn-group-sm" :class="{disabled: isPrevDisabled}"  @click="prevPage">Prev</button>
         <p>{{current_page}}</p>
         <button class="btn btn-primary btn-group-sm" @click="nextPage">Next</button>
@@ -104,7 +104,6 @@ import Swal from "sweetalert2";
 useHead({
     title: "Jobeek - Мои вакансии"
 })
-import {useVacancyStore} from "../../store/vacancy";
 import {storeToRefs} from "pinia";
 import PageLoader from "~/components/UI/PageLoader.vue";
 import {useMyVacancyForm} from "~/composables/useMyVacancyForm";
@@ -112,12 +111,12 @@ import CustomSelect from "~/components/UI/CustomSelect.vue";
 import {useMyVacancySortingOptions} from "~/composables/useMyVacancySortingOptions";
 import {useMyVacancyPerPageOptions} from "~/composables/useMyVacancyPerPageOptions";
 import {useMyVacanciesFilterOptions} from "../../composables/useMyVacanciesFilterOptions";
-
-
+import {useResumeStore} from "~/store/resume";
 
 const router = useRouter();
-const vacancyStore = useVacancyStore();
-const {getMyVacancies} = vacancyStore;
+const resumeStore = useResumeStore();
+console.log(resumeStore);
+const {getMyResumes} = resumeStore;
 
 const sortingOptions = ref(useMyVacancySortingOptions());
 const perPageOptions = ref(useMyVacancyPerPageOptions());
@@ -129,7 +128,7 @@ const providerOptions = ref([
 ]);
 
 
-const {my_vacancies, current_page, my_total} = storeToRefs(vacancyStore);
+const {my_resumes, current_page, my_total} = storeToRefs(resumeStore);
 
 const isPrevDisabled = computed(() => {
   if (parseInt(current_page.value) === 1) return true;
@@ -146,16 +145,16 @@ const onProviderToggle = (provider) => {
   providers.value[provider] = !providers.value[provider];
 }
 
-const vacancies = ref([]);
+const resumes = ref([]);
 const isLoading = ref(true);
 onMounted(async() => {
     const params = useMyVacancyForm(form.value, 'backend');
-    await getMyVacancies(params);
+    await getMyResumes(params);
     isLoading.value = false;
 })
 
-watch(() => vacancyStore.my_vacancies, (newMyVacancies) => {
-    vacancies.value = newMyVacancies;
+watch(() => resumeStore.my_resumes, (newMyResumes) => {
+    resumes.value = newMyResumes;
 });
 
 const hhFilters = ['active', 'archived', 'deleted'];
@@ -207,7 +206,7 @@ const filterRef = ref();
 const onInput = async(page) => {
     isLoading.value = true;
     const params = useMyVacancyForm(form.value, 'backend');
-    await getMyVacancies({...params});
+    await getMyResumes({...params});
     isLoading.value = false;
 }
 
@@ -219,7 +218,7 @@ const prevPage = async(page) => {
     if(page_number > 1){
         form.value.page = form.value.page - 1;
     }
-    await getMyVacancies(params);
+    await getMyResumes(params);
     current_page.value = form.value.page;
     isLoading.value = false;
     filterRef.value.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -231,7 +230,8 @@ const nextPage = async(page) => {
     form.value.page = form.value.page + 1;
     current_page.value = form.value.page;
     const params = useMyVacancyForm(form.value, 'front');
-    const response = await getMyVacancies(params);
+    const response = await getMyResumes(params);
+    console.log(response);
     if (response?.data?.items.length === 0){
       Swal.fire({
         title: 'Больше нет вакансий',
@@ -248,7 +248,7 @@ const onChangePerPage = async(per_page) => {
     isLoading.value = true;
     form.value.per_page = per_page;
     const params = useMyVacancyForm(form.value, 'front');
-    await getMyVacancies(params);
+    await getMyResumes(params);
     isLoading.value = false;
     form.value.page = 1;
     current_page.value = form.value.page;
@@ -258,7 +258,7 @@ const onChangeSorting = async(sorting) => {
     isLoading.value = true;
     form.value.order_by = sorting;
     const params = useMyVacancyForm(form.value, 'front');
-    await getMyVacancies(params);
+    await getMyResumes(params);
     isLoading.value = false;
 
 }
@@ -266,7 +266,7 @@ const onFilterChange = async(filter) => {
     isLoading.value = true;
     form.value.status = filter;
     const params = useMyVacancyForm(form.value, 'front');
-    await getMyVacancies(params);
+    await getMyResumes(params);
     isLoading.value = false;
 }
 const onProviderChange = async(provider) => {
