@@ -15,9 +15,15 @@
               <div class="sep"> </div>
               <CreateVacancyFieldsAndAreas></CreateVacancyFieldsAndAreas>
               <div class="sep"> </div>
-              <CreateVacancyJobSalaryAndCompany></CreateVacancyJobSalaryAndCompany>
+              <CreateVacancyJobSalary></CreateVacancyJobSalary>
               <div class="sep"></div>
-              <CreateVacancyJobEmploymentAndLicense></CreateVacancyJobEmploymentAndLicense>
+              <CreateVacancyJobEmploymentAndEducation></CreateVacancyJobEmploymentAndEducation>
+              <div class="sep"> </div>
+              <CreateVacancyGender></CreateVacancyGender>
+              <div class="sep"> </div>
+              <CreateVacancyPlaceOfWork></CreateVacancyPlaceOfWork>
+              <div class="sep"> </div>
+              <CreateVacancyLicenses></CreateVacancyLicenses>
               <div class="sep"> </div>
               <CreateVacancyForeignLanguages></CreateVacancyForeignLanguages>
               <div class="sep"> </div>
@@ -37,6 +43,7 @@
 
 <script setup>
 import {useVacancyStore} from "../store/vacancy";
+import {useProfileStore} from "~/store/profile";
 
 
 definePageMeta({
@@ -118,9 +125,8 @@ const updateState = (prop, value) => {
   state[prop].val = value;
 }
 
-const {getConnectedProviders} = useVacancyStore();
+const {getConnectedProviders} = useProfileStore();
 onMounted(async() => {
-  console.log('running...');
   const resData = await getConnectedProviders();
   Object.keys(resData).map((item) => providers[item].is_connected = resData[item]);
 })

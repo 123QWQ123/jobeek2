@@ -1,30 +1,38 @@
 <template>
   <div class="input-row">
     <label for="lenguage">Владение иностранными языками</label>
-    <div class="c2">
-      <div class="input-wrapper"><select class="d-select" name="lenguage" id="lenguage">
-        <option data-display="Язык">Язык</option>
-        <option value="1">Статус привитого</option>
-        <option value="2">Another option</option>
-        <option value="3" disabled>A disabled option</option>
-        <option value="4">Potato</option>
-      </select>
-      </div>
-      <div class="input-wrapper"><select class="d-select" name="lenguage-level"
-                                         id="lenguage-level">
-        <option data-display="Уровень владения">Уровень владения</option>
-        <option value="1">Статус привитого</option>
-        <option value="2">Another option</option>
-        <option value="3" disabled>A disabled option</option>
-        <option value="4">Potato</option>
-      </select>
-      </div>
-    </div>
+
+      <CreateVacancyForeignLanguagesSelectedItem
+              :languages="languageOptions"
+              :language-levels="languageLevelOptions"
+              :selected-languages="selectedLanguages"
+              v-for="item in selectedLanguages" :item="item"
+              @click="addItem" @delete="deleteItem" />
+
   </div>
 </template>
 
 <script setup>
+import {storeToRefs} from "pinia";
+import {useVacancyStore} from "~/store/vacancy";
+import CreateVacancy from "~/pages/create-vacancy.vue";
+const vacancyStore = useVacancyStore();
+const {getForeignLanguages, getLanguageLevels} = vacancyStore;
+const {foreign_languages, language_levels} = storeToRefs(vacancyStore);
+await getForeignLanguages();
+await getLanguageLevels();
 
+const languageOptions = computed(() => foreign_languages.value.map(item => ({value: item.id, name: item.name})));
+const languageLevelOptions = computed(() => language_levels.value.map(item => ({value: item.id, name: item.name})));
+
+const selectedLanguages = ref([0]);
+
+const addItem = (newItem) => {
+
+}
+const deleteItem = (deleteItem) => {
+
+}
 </script>
 
 <style scoped>

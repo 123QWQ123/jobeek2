@@ -83,7 +83,7 @@ function close(){
 <template>
   <div v-click-outside="close" onfocusout="close" class="nice-select n-select d-select" :class="{'open' : isOpen}" tabindex="0" @click.prevent="onClick">
     <span class="current" contenteditable="true" @keyup="onChangeHandler">{{ !isOpen ? (selectedItem?.name ?? selectedItem?.value.name) : searchInput }}</span>
-    <ul class="list" :style="listStyles">
+    <ul class="list" :style="listStyles" v-if="isOpen">
       <li v-for="item in options" :key="item.value" :data-value="item.value" class="option" :style="listItemStyles">{{ item.name }}</li>
     </ul>
   </div>

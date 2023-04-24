@@ -231,7 +231,6 @@ const nextPage = async(page) => {
     current_page.value = form.value.page;
     const params = useMyVacancyForm(form.value, 'front');
     const response = await getMyResumes(params);
-    console.log(response);
     if (response?.data?.items.length === 0){
       Swal.fire({
         title: 'Больше нет вакансий',

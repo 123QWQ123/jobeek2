@@ -1,0 +1,26 @@
+<template>
+  <div class="input-row">
+    <label for="remote-work">Пол</label>
+    <div class="input-wrapper">
+        <CustomSelect :options="genderOptions" v-model="gender"></CustomSelect>
+    </div>
+  </div>
+</template>
+
+<script setup>
+
+import {storeToRefs} from "pinia";
+import {useVacancyStore} from "~/store/vacancy";
+const vacancyStore = useVacancyStore();
+const {getGenders} = vacancyStore;
+const {genders} = storeToRefs(vacancyStore);
+await getGenders();
+
+const genderOptions = computed(() => genders.value.map(item => ({value: item.id, name: item.name})));
+
+const gender = ref(12);
+</script>
+
+<style scoped>
+
+</style>

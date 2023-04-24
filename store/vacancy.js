@@ -28,6 +28,12 @@ export const useVacancyStore = defineStore('vacancy', {
       experiences: [],
       part_times: [],
       metros: [],
+      driver_licenses: [],
+      educations: [],
+      genders: [],
+      place_of_works: [],
+      foreign_languages: [],
+      language_levels: [],
     }
   },
   getters: {
@@ -149,6 +155,56 @@ export const useVacancyStore = defineStore('vacancy', {
       }
       return data;
     },
+    async getGenders(payload) {
+      const {data} = await useApi('dictionaries?group=gender', {
+        method: 'get',
+        payload
+      });
+      if (data){
+        this.genders = data.data.gender;
+      }
+      return data;
+    },
+    async getPlaceOfWorks(payload) {
+      const {data} = await useApi('dictionaries?group=place_of_work', {
+        method: 'get',
+        payload
+      });
+      if (data){
+        this.place_of_works = data.data.place_of_work;
+      }
+      return data;
+    },
+    async getForeignLanguages(payload) {
+      const {data} = await useApi('dictionaries?group=language', {
+        method: 'get',
+        payload
+      });
+      if (data){
+        this.foreign_languages = data.data.language;
+      }
+      return data;
+    },
+    async getLanguageLevels(payload) {
+      const {data} = await useApi('dictionaries?group=language_level', {
+        method: 'get',
+        payload
+      });
+      if (data){
+        this.language_levels = data.data.language_level;
+      }
+      return data;
+    },
+    async getDriverLicenses(payload) {
+      const {data} = await useApi('dictionaries?group=driver_license_types', {
+        method: 'get',
+        payload
+      });
+      if (data){
+        this.driver_licenses = data.data.driver_license_types;
+      }
+      return data;
+    },
     async getSchedules(payload = {}) {
       const {data} = await useApi('dictionaries?group=schedule', {
         method: 'get',
@@ -186,6 +242,16 @@ export const useVacancyStore = defineStore('vacancy', {
       });
       if (data){
         this.industries = data.data;
+      }
+      return data.data;
+    },
+    async getEducations(payload) {
+      const {data} = await useApi('dictionaries?group=education', {
+        method: 'get',
+        payload
+      });
+      if (data){
+        this.educations = data.data.education;
       }
       return data.data;
     },

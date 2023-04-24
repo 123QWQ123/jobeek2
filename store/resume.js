@@ -108,7 +108,7 @@ export const useResumeStore = defineStore('resume', {
       return data;
     },
     async getMyFavoriteVacancies(payload) {
-      const {data} = await useApi('vacancies/search', {
+      const {data} = await useApi('resumes/search', {
         method: 'get',
         payload
       });

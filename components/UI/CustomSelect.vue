@@ -1,9 +1,11 @@
 <template>
   <div v-click-outside="close" onfocusout="close" class="nice-select n-select d-select"  :style="props.style" :class="{open: isOpen}" tabindex="0" @click.prevent="onClick">
     <span class="current">{{ label }}</span>
-    <ul class="list" :style="listStyles">
-        <li v-for="item in options" :key="item.value" :data-value="item.value" class="option">{{ item.name }}</li>
-    </ul>
+      <transition>
+        <ul class="list" :style="listStyles" v-if="isOpen">
+            <li v-for="item in options" :key="item.value" :data-value="item.value" class="option">{{ item.name }}</li>
+        </ul>
+      </transition>
   </div>
 </template>
 
