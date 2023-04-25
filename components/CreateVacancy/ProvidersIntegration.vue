@@ -33,8 +33,6 @@ const props = defineProps({
   }
 })
 
-console.log(props.providers);
-
 watch(props.providers, (newPropProviders) => {
   providers.value.map(item => item.checked = newPropProviders[item.name].is_connected);
 })

@@ -52,10 +52,10 @@ onMounted(async() => {
     isLoading.value = false;
 })
 
-const loadMore = () => {
+const loadMore = async() => {
   isLoading.value = true;
   const params = useVacancyForm(form.value, 'backend');
-  const res = getVacancies({...params, page: parseInt(current_page.value) + 1}, true);
+  const res = await getVacancies({...params, page: parseInt(current_page.value) + 1}, true);
     console.log(res);
   if (res.items.length < 1){
     isMore.value = false;

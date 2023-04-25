@@ -32,8 +32,6 @@ await getEducations();
 
 const educationOptions = computed(() => educations.value.map(item => ({value: item.id, name: item.name})));
 const education = ref(54);
-
-console.log(educations);
 </script>
 
 <style scoped>

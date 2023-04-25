@@ -1,17 +1,14 @@
 <template>
-  <div class="input-row" v-if="isButton">
-      <button>Добавить</button>
-  </div>
-  <div class="input-row" v-else>
-      {{ props.selectedLanguages }}
-      -
-      {{selectedLanguage}}
-      -
-      {{selectedLanguageLevel}}
-      <div class="row mb-3">
+  <div class="row position-relative">
+      <span class="position-absolute absoluted_icon" @click="deleteItem">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+          </svg>
+      </span>
+      <div class="col-12">
           <div class="c2">
               <div class="input-wrapper">
-                  <SelectWithSearch :options="props.languages" v-model.number="selectedLanguage"></SelectWithSearch>
+                  <SelectWithSearch :placeholder="'Выберите'" :options="props.languages" v-model.number="selectedLanguage"></SelectWithSearch>
               </div>
               <div class="input-wrapper">
                   <CustomSelect :options="props.languageLevels" v-model.number="selectedLanguageLevel"></CustomSelect>
@@ -24,6 +21,18 @@
 <script setup>
 const emit = defineEmits(['add', 'delete', 'update'])
 const props = defineProps({
+    isNew: {
+        required: false,
+        default: false
+    },
+    id: {
+        required: true,
+        default: null
+    },
+    level: {
+        required: true,
+        default: null
+    },
     languages: {
         required: true,
         type: Array
@@ -40,30 +49,53 @@ const props = defineProps({
 
 
 const isButton = computed(() => {
+    console.log(props.selectedLanguages.length, props.selectedLanguages.length-1);
     return props.selectedLanguages.length > 1 && props.selectedLanguages[props.selectedLanguages.length-1] === 0;
 });
-const selectedLanguage = ref(null);
-const selectedLanguageLevel = ref(null);
+const isNew = ref(props.isNew);
+const selectedLanguage = ref(props.id);
+const selectedLanguageLevel = ref(props.level);
 
-watch(() => selectedLanguageLevel.value, (newLevel) => {
-    console.log(newLevel);
-    if (newLevel && selectedLanguage.value){
-        emit('add', {id: selectedLanguage.value, level: newLevel});
-    }
-})
 watch(() => selectedLanguage.value, (newLanguage) => {
-    console.log(newLanguage);
-
     if (selectedLanguageLevel.value && newLanguage){
-        emit('add', {id: newLanguage, level: selectedLanguageLevel.value});
+        emit('update', props.id, {id: newLanguage, level: selectedLanguageLevel.value});
     }
 });
 
+watch(() => selectedLanguageLevel.value, (newLevel) => {
+    if (newLevel && selectedLanguage.value){
+        let isNewIndex = props.selectedLanguages.findIndex(item => item.id === selectedLanguage.value);
+        if (props.selectedLanguages.length === 1 || isNewIndex === -1 || props.selectedLanguages.length - 1 === isNewIndex){
+            emit('add', {id: selectedLanguage.value, level: newLevel});
+        }else{
+            emit('update', props.id, {id: selectedLanguage.value, level: newLevel});
+        }
+    }
+})
+
+const deleteItem = (id = null) => {
+    emit('delete', selectedLanguage.value);
+}
+
 onMounted(() => {
-    console.log(1);
+    if (props.id){
+        isNew.value = false;
+    }
 })
 </script>
 
 <style scoped>
-
+.absoluted_icon{
+    position: absolute;
+    left: -2rem;
+    top: .5rem;
+    font-size: 1rem;
+    z-index: 1;
+    cursor: pointer;
+    max-width: 3rem;
+}
+.absoluted_icon svg{
+    width: 24px;
+    height: 24px;
+}
 </style>
