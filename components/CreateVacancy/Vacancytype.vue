@@ -1,0 +1,26 @@
+<template>
+  <div class="input-row">
+    <label for="remote-work">Тип вакансии</label>
+    <div class="input-wrapper">
+        <CustomSelect :options="vacancyTypeOptions" v-model="vacancy_type"></CustomSelect>
+    </div>
+  </div>
+</template>
+
+<script setup>
+
+import {storeToRefs} from "pinia";
+import {useVacancyStore} from "~/store/vacancy";
+const vacancyStore = useVacancyStore();
+const {getVacancyTypes} = vacancyStore;
+const {vacancy_types} = storeToRefs(vacancyStore);
+await getVacancyTypes();
+
+const vacancyTypeOptions = computed(() => vacancy_types.value.map(item => ({value: item.id, name: item.name})));
+
+const vacancy_type = ref(46);
+</script>
+
+<style scoped>
+
+</style>

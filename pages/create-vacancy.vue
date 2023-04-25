@@ -21,7 +21,21 @@
               <div class="sep"> </div>
               <CreateVacancyGender></CreateVacancyGender>
               <div class="sep"> </div>
+              <CreateVacancyMaritalStatus></CreateVacancyMaritalStatus>
+              <div class="sep"> </div>
+              <CreateVacancyChildren></CreateVacancyChildren>
+              <div class="sep"> </div>
+              <CreateVacancyExperience></CreateVacancyExperience>
+              <div class="sep"> </div>
               <CreateVacancyPlaceOfWork></CreateVacancyPlaceOfWork>
+              <div class="sep"> </div>
+              <CreateVacancyVacancytype></CreateVacancyVacancytype>
+              <div class="sep"> </div>
+              <CreateVacancyBillingType></CreateVacancyBillingType>
+              <div class="sep"> </div>
+<!--              <CreateVacancyVacancyBillingType></CreateVacancyVacancyBillingType>-->
+              <div class="sep"> </div>
+              <CreateVacancyLicenses></CreateVacancyLicenses>
               <div class="sep"> </div>
               <CreateVacancyLicenses></CreateVacancyLicenses>
               <div class="sep"> </div>

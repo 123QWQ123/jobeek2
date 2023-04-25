@@ -1,6 +1,4 @@
 <template>
-  {{selectedLanguages}}
-
   <div class="input-row">
     <div class="left">
         <label for="lenguage">Владение иностранными языками</label>

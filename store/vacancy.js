@@ -34,6 +34,10 @@ export const useVacancyStore = defineStore('vacancy', {
       place_of_works: [],
       foreign_languages: [],
       language_levels: [],
+      marital_statuses: [],
+      childrens: [],
+      vacancy_billing_types: [],
+      vacancy_types: [],
     }
   },
   getters: {
@@ -155,6 +159,26 @@ export const useVacancyStore = defineStore('vacancy', {
       }
       return data;
     },
+    async getVacancyBillingTypes(payload) {
+      const {data} = await useApi('dictionaries?group=vacancy_billing_type', {
+        method: 'get',
+        payload
+      });
+      if (data){
+        this.vacancy_billing_types = data.data.vacancy_billing_type;
+      }
+      return data;
+    },
+    async getVacancyTypes(payload) {
+      const {data} = await useApi('dictionaries?group=vacancy_type', {
+        method: 'get',
+        payload
+      });
+      if (data){
+        this.vacancy_types = data.data.vacancy_type;
+      }
+      return data;
+    },
     async getGenders(payload) {
       const {data} = await useApi('dictionaries?group=gender', {
         method: 'get',
@@ -162,6 +186,26 @@ export const useVacancyStore = defineStore('vacancy', {
       });
       if (data){
         this.genders = data.data.gender;
+      }
+      return data;
+    },
+    async getChildren(payload) {
+      const {data} = await useApi('dictionaries?group=children', {
+        method: 'get',
+        payload
+      });
+      if (data){
+        this.childrens = data.data.children;
+      }
+      return data;
+    },
+    async getMaritalStatus(payload) {
+      const {data} = await useApi('dictionaries?group=maritalstatus', {
+        method: 'get',
+        payload
+      });
+      if (data){
+        this.marital_statuses = data.data.maritalstatus;
       }
       return data;
     },
