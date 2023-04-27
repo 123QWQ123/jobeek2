@@ -76,7 +76,7 @@ export const useProfileStore = defineStore('profile', {
       const {data} = await useApi(url, {
         method: 'get',
       });
-      if ('data' in data){
+      if (data && 'data' in data){
         this.seeker = data.data;
         this.user = {phone: this.seeker.phone};
       }
@@ -86,7 +86,7 @@ export const useProfileStore = defineStore('profile', {
       const {data} = await useApi(url, {
         method: 'get',
       });
-      if ('data' in data){
+      if (data && 'data' in data){
         this.employer = data.data;
         this.user = {phone: this.employer.phone};
       }

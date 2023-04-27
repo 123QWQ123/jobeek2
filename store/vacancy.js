@@ -67,6 +67,7 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
+      console.log(data);
       if (data && 'items' in data){
         if (add){
           this.vacancies = this.vacancies.concat(data.items);
@@ -109,7 +110,8 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      if ('items' in data){
+      console.log(data);
+      if (data && 'items' in data){
         this.my_favorite_vacancies = data.items;
         if (payload.page) {
           this.current_page = payload.page;

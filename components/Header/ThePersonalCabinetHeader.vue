@@ -37,7 +37,7 @@ watch(selectedType, (new_value) => {
 })
 
 const isCabinetNavbarShown = computed(() => {
-    return !search_exception_routes.includes(route.name);
+    return search_exception_routes.includes(route.name);
 });
 
 function onChange(selectedOption) {

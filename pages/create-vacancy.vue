@@ -17,6 +17,8 @@
               <div class="sep"> </div>
               <CreateVacancyJobSalary></CreateVacancyJobSalary>
               <div class="sep"></div>
+              <CreateVacancyContacts></CreateVacancyContacts>
+              <div class="sep"></div>
               <CreateVacancyJobEmploymentAndEducation></CreateVacancyJobEmploymentAndEducation>
               <div class="sep"> </div>
               <CreateVacancyGender></CreateVacancyGender>
@@ -33,13 +35,19 @@
               <div class="sep"> </div>
               <CreateVacancyBillingType></CreateVacancyBillingType>
               <div class="sep"> </div>
-<!--              <CreateVacancyVacancyBillingType></CreateVacancyVacancyBillingType>-->
-              <div class="sep"> </div>
-              <CreateVacancyLicenses></CreateVacancyLicenses>
-              <div class="sep"> </div>
               <CreateVacancyLicenses></CreateVacancyLicenses>
               <div class="sep"> </div>
               <CreateVacancyForeignLanguages></CreateVacancyForeignLanguages>
+              <div class="sep"> </div>
+              <CreateVacancySkills></CreateVacancySkills>
+              <div class="sep"> </div>
+              <CreateVacancyAge></CreateVacancyAge>
+              <div class="sep"> </div>
+              <CreateVacancyFirmName></CreateVacancyFirmName>
+              <div class="sep"> </div>
+              <CreateVacancyFirmActivity></CreateVacancyFirmActivity>
+              <div class="sep"> </div>
+              <CreateVacancyDescription></CreateVacancyDescription>
               <div class="sep"> </div>
               <CreateVacancyNotifications></CreateVacancyNotifications>
             </div>

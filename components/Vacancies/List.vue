@@ -49,6 +49,9 @@ onMounted(async() => {
     const params = useVacancyForm(form.value, 'backend');
     const res = await getVacancies({...params});
     console.log(res);
+    if (res?.status !== 'success'){
+        isLoading.value = false;
+    }
     isLoading.value = false;
 })
 

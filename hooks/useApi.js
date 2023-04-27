@@ -5,6 +5,7 @@ const useApi = async (method, options = {}) => {
     // console.log(options);
     const token = localStorage.getItem('token');
     const headers = {
+        'Accept': 'application/json',
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
     };
@@ -56,6 +57,7 @@ const useApi = async (method, options = {}) => {
                 },
             );
         }
+        // console.log(response)
         if ('data' in response) {
             return {
                 status: 'success',
