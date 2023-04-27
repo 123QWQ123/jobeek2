@@ -16,7 +16,9 @@ const {getGenders} = vacancyStore;
 const {genders} = storeToRefs(vacancyStore);
 await getGenders();
 
-const genderOptions = computed(() => genders.value.map(item => ({value: item.id, name: item.name})));
+console.log(genders);
+
+const genderOptions = computed(() => genders?.value.map(item => ({value: item.id, name: item.name})));
 
 const gender = ref(12);
 </script>

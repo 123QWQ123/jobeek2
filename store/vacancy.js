@@ -67,7 +67,6 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      console.log(data);
       if (data && 'items' in data){
         if (add){
           this.vacancies = this.vacancies.concat(data.items);
@@ -110,7 +109,6 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      console.log(data);
       if (data && 'items' in data){
         this.my_favorite_vacancies = data.items;
         if (payload.page) {
@@ -124,20 +122,18 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      if (data){
-        this.regions = data.data.regions;
+      if (data && 'data' in data){
+        this.regions = data.data.regions ?? [];
       }
       return data;
     },
     async getCities(payload = {}) {
-      console.log(payload)
       const {data} = await useApi('area/cities', {
         method: 'get',
         payload
       });
-      if (data){
-        console.log(data)
-        this.cities = data.data.cities;
+      if (data && 'data' in data){
+        this.cities = data.data.cities ?? [];
       }
       return data;
     },
@@ -146,8 +142,8 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      if (data){
-        this.specializations = data.data;
+      if (data && 'data' in data){
+        this.specializations = data.data ?? [];
       }
       return data;
     },
@@ -156,8 +152,8 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      if (data){
-        this.work_types = data.data.work_type;
+      if (data && 'data' in data){
+        this.work_types = data.data.work_type ?? [];
       }
       return data;
     },
@@ -166,8 +162,8 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      if (data){
-        this.vacancy_billing_types = data.data.vacancy_billing_type;
+      if (data && 'data' in data){
+        this.vacancy_billing_types = data.data.vacancy_billing_type ?? [];
       }
       return data;
     },
@@ -176,8 +172,8 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      if (data){
-        this.vacancy_types = data.data.vacancy_type;
+      if (data && 'data' in data){
+        this.vacancy_types = data.data.vacancy_type ?? [];
       }
       return data;
     },
@@ -186,8 +182,8 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      if (data){
-        this.genders = data.data.gender;
+      if (data && 'data' in data){
+        this.genders = data.data.gender ?? [];
       }
       return data;
     },
@@ -196,8 +192,8 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      if (data){
-        this.childrens = data.data.children;
+      if (data && 'data' in data){
+        this.childrens = data.data.children ?? [];
       }
       return data;
     },
@@ -206,8 +202,8 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      if (data){
-        this.marital_statuses = data.data.maritalstatus;
+      if (data && 'data' in data){
+        this.marital_statuses = data.data.maritalstatus ?? [];
       }
       return data;
     },
@@ -216,8 +212,8 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      if (data){
-        this.place_of_works = data.data.place_of_work;
+      if (data && 'data' in data){
+        this.place_of_works = data.data.place_of_work ?? [];
       }
       return data;
     },
@@ -226,8 +222,8 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      if (data){
-        this.foreign_languages = data.data.language;
+      if (data && 'data' in data){
+        this.foreign_languages = data.data.language ?? [];
       }
       return data;
     },
@@ -236,8 +232,8 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      if (data){
-        this.language_levels = data.data.language_level;
+      if (data && 'data' in data){
+        this.language_levels = data.data.language_level ?? [];
       }
       return data;
     },
@@ -246,8 +242,8 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      if (data){
-        this.driver_licenses = data.data.driver_license_types;
+      if (data && 'data' in data){
+        this.driver_licenses = data.data.driver_license_types ?? [];
       }
       return data;
     },
@@ -256,8 +252,8 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      if (data){
-        this.schedules = data.data.schedule;
+      if (data && 'data' in data){
+        this.schedules = data.data.schedule ?? [];
       }
       return data;
     },
@@ -266,8 +262,8 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      if (data){
-        this.experiences = data.data.experience;
+      if (data && 'data' in data){
+        this.experiences = data.data.experience ?? [];
       }
       return data;
     },
@@ -276,8 +272,8 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      if (data){
-        this.part_times = data.data.part_time;
+      if (data && 'data' in data){
+        this.part_times = data.data.part_time ?? [];
       }
       return data;
     },
@@ -286,8 +282,8 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      if (data){
-        this.industries = data.data;
+      if (data && 'data' in data){
+        this.industries = data.data ?? [];
       }
       return data.data;
     },
@@ -296,8 +292,8 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      if (data){
-        this.educations = data.data.education;
+      if (data && 'data' in data){
+        this.educations = data.data.education ?? [];
       }
       return data.data;
     },
@@ -306,8 +302,8 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      if (data){
-        this.metros = data.data;
+      if (data && 'data' in data){
+        this.metros = data.data ?? [];
       }
       return data.data;
     },

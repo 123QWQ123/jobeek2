@@ -16,6 +16,8 @@ const {getPlaceOfWorks} = vacancyStore;
 const {place_of_works} = storeToRefs(vacancyStore);
 await getPlaceOfWorks();
 
+console.log(place_of_works);
+
 const formatOptions = computed(() => place_of_works.value.map(item => ({value: item.id, name: item.name})));
 
 const format_of_work = ref(21);
