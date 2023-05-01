@@ -65,8 +65,6 @@ const create = () => {
 
 
 const updateItem = (id, newItem) => {
-    console.log(newItem);
-    // const newItems = selectedLanguages.value;
     const newItems = selectedLanguages.value.map(item => {
         if (item.id === id){
             return newItem;

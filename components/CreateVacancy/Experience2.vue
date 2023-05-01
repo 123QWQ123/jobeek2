@@ -1,12 +1,7 @@
 <template>
   <div class="input-row">
     <label for="remote-work">Опыт работы({{experience}})</label>
-    <div class="d-flex flex-row justify-content-between align-content-center gap-2">
-        <label class="radio-label form-control" v-for="item in experienceOptions" :class="{'active': experience === item.value}">
-            <input class="hidden" type="radio" :value="item.value"  v-model="experience" />
-            {{ item.name }}
-        </label>
-    </div>
+    <CustomRadio :options="experienceOptions" v-model="experience"></CustomRadio>
   </div>
 </template>
 

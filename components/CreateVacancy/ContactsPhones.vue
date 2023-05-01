@@ -5,6 +5,7 @@
         >
             <CreateVacancyContactsPhonesItem
                 v-for="(item, index) in selectedPhones" :item="item"
+                :key="index"
                 :index="index"
                 :phone="item.phone"
                 :comment="item.comment"
@@ -18,11 +19,6 @@
 </template>
 
 <script setup>
-import {storeToRefs} from "pinia";
-import {useVacancyStore} from "~/store/vacancy";
-const vacancyStore = useVacancyStore();
-const {getForeignLanguages, getLanguageLevels} = vacancyStore;
-const {foreign_languages, language_levels} = storeToRefs(vacancyStore);
 
 const selectedPhones = ref([ { phone: null, comment: null } ]);
 const currentPhone = ref(0);

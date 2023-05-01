@@ -1,5 +1,4 @@
 <template>
-    {{props}}
   <div class="row">
       <div class="col-10">
           <div class="input-wrapper">

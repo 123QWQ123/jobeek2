@@ -26,9 +26,7 @@
 
                       <CreateVacancyProvidersIntegration :providers="providers" @set="updateState"></CreateVacancyProvidersIntegration>
 
-                      <CreateVacancyContacts></CreateVacancyContacts>
                       <div class="sep"> </div>
-
                       <CreateVacancyKeywords  @set="updateState"></CreateVacancyKeywords>
                       <div class="sep"> </div>
                       <CreateVacancyFieldsAndAreas></CreateVacancyFieldsAndAreas>
