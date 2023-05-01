@@ -1,16 +1,19 @@
 <template>
     <div class="right">
-        <CreateVacancyContactsPhonesItem
-            v-if="selectedPhones.length"
-            class="mb-2"
-            v-for="item in selectedPhones" :item="item"
-            :phone="item.phone"
-            :comment="item.comment"
-            @add="addItem"
-            @update="updateItem"
-            @delete="deleteItem" />
+        <div class="accordion mb-2"
+             v-if="selectedPhones.length"
+        >
+            <CreateVacancyContactsPhonesItem
+                v-for="(item, index) in selectedPhones" :item="item"
+                :index="index"
+                :phone="item.phone"
+                :comment="item.comment"
+                @update="updateItem"
+                @delete="deleteItem" />
+        </div>
 
-        <button class="btn btn-primary" v-else @click="reset">Добавить</button>
+        <button class="btn btn-primary" v-else-if="selectedPhones.length === 0" @click="create">Добавить</button>
+        <button class="btn btn-primary" v-if="selectedPhones.length !== 0" @click="create">Добавить еще</button>
     </div>
 </template>
 
@@ -21,48 +24,25 @@ const vacancyStore = useVacancyStore();
 const {getForeignLanguages, getLanguageLevels} = vacancyStore;
 const {foreign_languages, language_levels} = storeToRefs(vacancyStore);
 
-
-const languageOptions = computed(() => {
-    const newItems = foreign_languages.value;
-    newItems.unshift({id: null, name: "Выберите"});
-    return newItems.map(item => ({value: item.id, name: item.name}));
-});
-const languageLevelOptions = computed(() => {
-    const newItems = language_levels.value;
-    newItems.unshift({id: null, name: "Выберите"});
-    return newItems.map(item => ({value: item.id, name: item.name}));
-});
-
-const selectedPhones = ref([ { "id": null, "level": null } ]);
-
+const selectedPhones = ref([ { phone: null, comment: null } ]);
+const currentPhone = ref(0);
 const reset = () => {
-    selectedPhones.value = [ { "id": null, "level": null } ];
+    selectedPhones.value = [ { phone: null, comment: null } ];
 }
-const addItem = (newItem) => {
-    console.log(newItem);
-    const newItems = selectedPhones.value.filter(item => item.id !== null);
-    newItems.push(newItem);
+const create = () => {
+    const newItems = selectedPhones.value;
     newItems.push({
-        id: null,
-        level: null
+        phone: null, comment: null
     });
+    currentPhone.value = newItems.length - 1;
     selectedPhones.value = newItems;
 }
 
-
-const updateItem = (id, newItem) => {
-    console.log(newItem);
-    // const newItems = selectedLanguages.value;
-    const newItems = selectedPhones.value.map(item => {
-        if (item.id === id){
-            return newItem;
-        }
-        return item;
-    });
-    selectedPhones.value = newItems;
+const updateItem = (index, newItem) => {
+    selectedPhones.value[index] = newItem;
 }
-const deleteItem = (deleteItem) => {
-    const newItems = selectedPhones.value.filter(item => item.id !== deleteItem);
+const deleteItem = (index) => {
+    const newItems = selectedPhones.value.filter((item, key) => key !== index);
     selectedPhones.value = newItems;
 }
 </script>

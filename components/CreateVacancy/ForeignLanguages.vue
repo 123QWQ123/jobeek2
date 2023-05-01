@@ -1,5 +1,4 @@
 <template>
-    {{selectedLanguages}}
   <div class="input-row">
 
     <div class="left">
@@ -61,15 +60,6 @@ const create = () => {
         level: null
     });
     currentLanguage.value = newItems.length - 1;
-    selectedLanguages.value = newItems;
-}
-const addItem = (newItem) => {
-    const newItems = selectedLanguages.value.filter(item => item.id !== null);
-    newItems.push(newItem);
-    newItems.push({
-        id: null,
-        level: null
-    });
     selectedLanguages.value = newItems;
 }
 

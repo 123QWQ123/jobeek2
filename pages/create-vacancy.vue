@@ -10,7 +10,7 @@
             </div>
               {{currentStep}}
             <div class="w-box-body">
-              <form id="signUpForm" action="#!">
+              <form id="signUpForm"  @submit.prevent="onSubmit">
                   <!-- start step indicators -->
                   <div class="form-header d-flex mb-4">
                       <span class="stepIndicator" :class="{'active': isFirstStep, 'finish': isThirdStep || isSecondStep}">первый этап</span>
@@ -26,7 +26,7 @@
 
                       <CreateVacancyProvidersIntegration :providers="providers" @set="updateState"></CreateVacancyProvidersIntegration>
 
-                      <CreateVacancyForeignLanguages></CreateVacancyForeignLanguages>
+                      <CreateVacancyContacts></CreateVacancyContacts>
                       <div class="sep"> </div>
 
                       <CreateVacancyKeywords  @set="updateState"></CreateVacancyKeywords>

@@ -60,10 +60,7 @@ watch(() => selectedLanguage.value, (newLanguage) => {
 
 watch(() => selectedLanguageLevel.value, (newLevel) => {
     if (newLevel && selectedLanguage.value){
-        let isNewIndex = props.selectedLanguages.findIndex(item => item.id === selectedLanguage.value);
-        if (props.selectedLanguages.length !== 1 || isNewIndex !== -1 || props.selectedLanguages.length - 1 !== isNewIndex){
-            emit('update', props.id, {id: selectedLanguage.value, level: newLevel});
-        }
+        emit('update', props.id, {id: selectedLanguage.value, level: newLevel});
     }
 })
 
