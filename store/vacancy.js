@@ -97,6 +97,7 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
+      console.log(response);
       if (response && 'data' in response && 'items' in response.data){
         this.my_vacancies = response.data.items;
         this.my_total = response.data.found;

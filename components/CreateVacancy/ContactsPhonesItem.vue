@@ -6,12 +6,16 @@
           </svg>
       </span>
       <div class="col-12">
-          <div class="c2">
+          <div class="c1">
               <div class="input-wrapper">
                   <input type="phone" v-model="phone" placeholder="+71651651131" />
               </div>
+          </div>
+      </div>
+      <div class="col-12 mt-2">
+          <div class="c1">
               <div class="input-wrapper">
-                  <input type="text" v-model="comment" placeholder="Чем номер?" />
+                  <textarea type="text" class="form-control"  v-model="comment" placeholder="Коммента́рия" > </textarea>
               </div>
           </div>
       </div>

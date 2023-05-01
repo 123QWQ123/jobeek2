@@ -145,7 +145,7 @@ function close(){
     display: block;
 }
 .selection{
-    border: 1px solid;
+    /*border: 1px solid;*/
     border-radius: 4px;
     /*padding: 0 16px;*/
     left: 0;

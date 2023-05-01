@@ -9,6 +9,7 @@ const protected_routes = [
     '/my-resumes',
     '/your-favorites',
     '/my-vacancies',
+    // '/create-vacancy',
 ];
 const search_exception_routes = [
     'index',

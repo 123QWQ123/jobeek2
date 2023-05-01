@@ -148,8 +148,10 @@ const onProviderToggle = (provider) => {
 const vacancies = ref([]);
 const isLoading = ref(true);
 onMounted(async() => {
+    isLoading.value = false;
     const params = useMyVacancyForm(form.value, 'backend');
-    await getMyVacancies(params);
+    const res = await getMyVacancies(params);
+    console.log(res);
     isLoading.value = false;
 })
 

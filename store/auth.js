@@ -6,6 +6,8 @@ import { defineStore, acceptHMRUpdate } from "pinia";
 import axios from "axios";
 import useApi from "~/hooks/useApi";
 
+
+
 export const useAuthStore = defineStore('auth', {
   state: () => {
     return {
@@ -279,10 +281,14 @@ export const useAuthStore = defineStore('auth', {
               {
                 headers: {
                   'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${token}`
+                  'Accept': 'application/json',
+                  'Authorization': `Bearer ${token}`,
+                  proxyHeaders: false,
+                  credentials: false
                 }
               },
           );
+          console.log(response);
           this.user = response.data.data;
           this.seeker = this.user;
           this.isAuthed = true;
@@ -299,6 +305,7 @@ export const useAuthStore = defineStore('auth', {
           this.employer = this.user;
           return;
         }catch (error){
+          console.log(error);
           console.log('UnAuthorized');
           // this.logout();
         }

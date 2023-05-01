@@ -8,7 +8,8 @@ export default defineNuxtRouteMiddleware(async(to, from) => {
     const {tryLogin} = authStore;
     console.log(authStore.isAuthed);
     if (authStore.isAuthed === null){
-        await tryLogin();
+        const data = await tryLogin();
+        console.log(data);
     }
 
     if (authStore.isAuthed === true){
