@@ -8,7 +8,7 @@
       <div class="col-12">
           <div class="c2">
               <div class="input-wrapper">
-                  <SelectWithSearch :placeholder="'Выберите'" :options="props.languages" v-model.number="selectedLanguage"></SelectWithSearch>
+                  <SelectWithSearch :placeholder="'Выберите'" :options="languageOptions" v-model.number="selectedLanguage"></SelectWithSearch>
               </div>
               <div class="input-wrapper">
                   <CustomSelect :options="props.languageLevels" v-model.number="selectedLanguageLevel"></CustomSelect>
@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-const emit = defineEmits(['add', 'delete', 'update'])
+const emit = defineEmits(['delete', 'update'])
 const props = defineProps({
     isNew: {
         required: false,
@@ -48,10 +48,6 @@ const props = defineProps({
 });
 
 
-const isButton = computed(() => {
-    console.log(props.selectedLanguages.length, props.selectedLanguages.length-1);
-    return props.selectedLanguages.length > 1 && props.selectedLanguages[props.selectedLanguages.length-1] === 0;
-});
 const isNew = ref(props.isNew);
 const selectedLanguage = ref(props.id);
 const selectedLanguageLevel = ref(props.level);
@@ -65,12 +61,16 @@ watch(() => selectedLanguage.value, (newLanguage) => {
 watch(() => selectedLanguageLevel.value, (newLevel) => {
     if (newLevel && selectedLanguage.value){
         let isNewIndex = props.selectedLanguages.findIndex(item => item.id === selectedLanguage.value);
-        if (props.selectedLanguages.length === 1 || isNewIndex === -1 || props.selectedLanguages.length - 1 === isNewIndex){
-            emit('add', {id: selectedLanguage.value, level: newLevel});
-        }else{
+        if (props.selectedLanguages.length !== 1 || isNewIndex !== -1 || props.selectedLanguages.length - 1 !== isNewIndex){
             emit('update', props.id, {id: selectedLanguage.value, level: newLevel});
         }
     }
+})
+
+const languageOptions = computed(() => {
+    const selectedIDs = props.selectedLanguages.map(({id}) => id);
+    const filtered = props.languages.filter(item => !selectedIDs.includes(item.value) || item.value === props.id);
+    return filtered;
 })
 
 const deleteItem = (id = null) => {

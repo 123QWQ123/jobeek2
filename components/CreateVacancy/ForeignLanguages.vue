@@ -1,25 +1,28 @@
 <template>
+    {{selectedLanguages}}
   <div class="input-row">
+
     <div class="left">
         <label for="lenguage">Владение иностранными языками</label>
     </div>
 
-      <div class="right">
 
-          <CreateVacancyForeignLanguagesSelectedItem
-                  v-if="selectedLanguages.length"
-                  class="mb-2"
-                  :languages="languageOptions"
-                  :language-levels="languageLevelOptions"
-                  :selected-languages="selectedLanguages"
-                  v-for="item in selectedLanguages" :item="item"
-                  :id="item.id"
-                  :level="item.level"
-                  @add="addItem"
-                  @update="updateItem"
-                  @delete="deleteItem" />
-          <button class="btn btn-primary" v-else @click="reset">Добавить</button>
-      </div>
+    <div class="right">
+        <CreateVacancyForeignLanguagesSelectedItem
+                v-if="selectedLanguages.length"
+                class="mb-2"
+                :languages="languageOptions"
+                :language-levels="languageLevelOptions"
+                :selected-languages="selectedLanguages"
+                v-for="item in selectedLanguages" :item="item"
+                :id="item.id"
+                :level="item.level"
+                @update="updateItem"
+                @delete="deleteItem" />
+        <button type="button" class="btn btn-primary" v-else-if="selectedLanguages.length === 0" @click="reset">Добавить</button>
+        <button type="button" class="btn btn-primary" v-if="selectedLanguages.length !== 0" @click="create">Добавить еще</button>
+
+    </div>
 
   </div>
 </template>
@@ -44,13 +47,23 @@ const languageLevelOptions = computed(() => {
     return newItems.map(item => ({value: item.id, name: item.name}));
 });
 
+const currentLanguage = ref(0);
+
 const selectedLanguages = ref([ { "id": null, "level": null } ]);
 
 const reset = () => {
     selectedLanguages.value = [ { "id": null, "level": null } ];
 }
+const create = () => {
+    const newItems = selectedLanguages.value;
+    newItems.push({
+        id: null,
+        level: null
+    });
+    currentLanguage.value = newItems.length - 1;
+    selectedLanguages.value = newItems;
+}
 const addItem = (newItem) => {
-    console.log(newItem);
     const newItems = selectedLanguages.value.filter(item => item.id !== null);
     newItems.push(newItem);
     newItems.push({

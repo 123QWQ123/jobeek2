@@ -26,6 +26,9 @@
 
                       <CreateVacancyProvidersIntegration :providers="providers" @set="updateState"></CreateVacancyProvidersIntegration>
 
+                      <CreateVacancyForeignLanguages></CreateVacancyForeignLanguages>
+                      <div class="sep"> </div>
+
                       <CreateVacancyKeywords  @set="updateState"></CreateVacancyKeywords>
                       <div class="sep"> </div>
                       <CreateVacancyFieldsAndAreas></CreateVacancyFieldsAndAreas>
@@ -48,7 +51,7 @@
 
                       <CreateVacancyChildren></CreateVacancyChildren>
                       <div class="sep"> </div>
-                      <CreateVacancyExperience></CreateVacancyExperience>
+                      <CreateVacancyExperience2></CreateVacancyExperience2>
                       <div class="sep"> </div>
                       <CreateVacancyPlaceOfWork></CreateVacancyPlaceOfWork>
                       <div class="sep"> </div>
@@ -302,7 +305,7 @@ body{
 }
 #signUpForm .form-footer button{
     background-color: #009688;
-    border: 1px solid #009688 !important;
+    border: 1px solid #5375FD !important;
     color: #ffffff;
     border: none;
     padding: 13px 30px;
@@ -318,6 +321,6 @@ body{
 
 #signUpForm .form-footer button {
     background-color: #fff;
-    color: #009688;
+    color: #5375FD;
 }
 </style>
