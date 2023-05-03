@@ -8,12 +8,14 @@
 </template>
 
 <script setup>
-
-import {storeToRefs} from "pinia";
+const emit = defineEmits(['set']);
 import {useVacancyStore} from "~/store/vacancy";
 const vacancyStore = useVacancyStore();
 
 const description = ref("");
+watch(description, (newValues) => {
+    emit('set', 'description', newValues);
+})
 </script>
 
 <style scoped>

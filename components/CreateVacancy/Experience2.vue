@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-
+const emit = defineEmits(['set']);
 import {storeToRefs} from "pinia";
 import {useVacancyStore} from "~/store/vacancy";
 const vacancyStore = useVacancyStore();
@@ -17,25 +17,10 @@ await getExperiences();
 const experienceOptions = computed(() => experiences.value.map(item => ({value: item.id, name: item.name})));
 
 const experience = ref(76);
-
+watch(experience, (newValues) => {
+    emit('set', 'experience', newValues);
+});
 </script>
 
 <style scoped>
-.radio-label{
-    padding: 5px;
-    text-align: center;
-    cursor: pointer;
-    color: #0A2540;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0px 0px 20px rgba(28, 27, 98, 0.04);
-}
-.radio-label.active{
-    background-color: #3e85f6;
-    color: #F5F8FA;
-}
-.radio-label input.hidden{
-    display: none;
-}
 </style>

@@ -54,6 +54,8 @@ const SuperjobProviderChecked = computed(() => {
   return providers.value.find((item) => item.name === 'superjob')?.checked;
 });
 
+
+
 </script>
 
 <style scoped>

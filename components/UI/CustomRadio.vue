@@ -28,6 +28,7 @@ watch(
 
 <style scoped>
 .radio-label{
+    font-weight: normal;
     padding: 5px;
     text-align: center;
     cursor: pointer;

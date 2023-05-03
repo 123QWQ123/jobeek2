@@ -11,12 +11,16 @@
 </template>
 
 <script setup>
-
-import {storeToRefs} from "pinia";
+const emit = defineEmits(['set']);
 import {useVacancyStore} from "~/store/vacancy";
 const vacancyStore = useVacancyStore();
 
-const age = ref({});
+const age = reactive({});
+
+watch(age, (newValues) => {
+    emit('set', 'age_from', newValues.from);
+    emit('set', 'age_to', newValues.to);
+})
 </script>
 
 <style scoped>

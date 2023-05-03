@@ -4,7 +4,7 @@
         <h2 class="accordion-header position-relative" id="headingOne">
             <button class="accordion-button" type="button" :class="{collapsed: isShown}" @click="clickOnButton">
                 <div class="input-wrapper me-2">
-                    <input type="phone" v-model.number="phone" placeholder="+71651651131" @focusin="open" />
+                    <input ref="phoneInputElement" type="phone" placeholder="+71651651131" @focusin="open" />
                 </div>
             </button>
             <span class="position-absolute absoluted_icon" @click="deleteItem">
@@ -24,6 +24,8 @@
 </template>
 
 <script setup>
+import IMask from "imask";
+
 const emit = defineEmits(['add', 'delete', 'update'])
 const props = defineProps({
     isNew: {
@@ -54,7 +56,6 @@ const isShown = ref(true);
 const open = (() => isShown.value = true);
 const close = (() => isShown.value = false);
 const clickOnButton = ((e) => {
-    console.log(e.target, e.target.classList);
     if (e.target.classList.contains('accordion-button')){
         isShown.value = !isShown.value;
     }
@@ -75,7 +76,17 @@ const deleteItem = () => {
     emit('delete', props.index);
 }
 
+const phoneInputElement = ref();
+const phoneMask = ref(null);
 onMounted(() => {
+
+    phoneMask.value = new IMask(phoneInputElement.value, {
+        mask: "+{7}(000)000-00-00",
+    });
+    phoneInputElement.value.addEventListener("input", (e) => {
+        phone.value = phoneMask.value.unmaskedValue
+    });
+
     if (props.id){
         isNew.value = false;
     }

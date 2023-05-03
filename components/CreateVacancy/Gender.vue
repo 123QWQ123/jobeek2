@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-
+const emit = defineEmits(['set']);
 import {storeToRefs} from "pinia";
 import {useVacancyStore} from "~/store/vacancy";
 const vacancyStore = useVacancyStore();
@@ -21,6 +21,10 @@ console.log(genders);
 const genderOptions = computed(() => genders?.value.map(item => ({value: item.id, name: item.name})));
 
 const gender = ref(12);
+
+watch(gender, (newValues) => {
+    emit('set', 'gender', newValues);
+})
 </script>
 
 <style scoped>

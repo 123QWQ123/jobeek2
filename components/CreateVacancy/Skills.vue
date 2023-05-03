@@ -32,11 +32,11 @@
 </template>
 
 <script setup>
-import {storeToRefs} from "pinia";
+const emit = defineEmits(['set']);
 import {useVacancyStore} from "~/store/vacancy";
 const vacancyStore = useVacancyStore();
 
-const selectedSkills = ref([]);
+const selectedSkills = ref([null]);
 
 const currentSkillId = ref(null);
 const currentSkill = ref(null);
@@ -84,13 +84,15 @@ const deleteItem = (deleteItem) => {
     const newItems = selectedSkills.value.filter(item => item !== deleteItem);
     selectedSkills.value = newItems;
 }
+
+watch(selectedSkills, (newValues) => {
+    emit('set', 'key_skills', newValues);
+})
 </script>
 
 <style scoped>
 .selection{
-    /*border: 1px solid;*/
     border-radius: 4px;
-    /*padding: 0 16px;*/
     left: 0;
 }
 .selected-options{

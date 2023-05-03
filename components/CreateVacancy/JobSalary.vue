@@ -21,16 +21,10 @@
       </div>
     </div>
   </div>
-<!--  <div class="input-row">-->
-<!--    <label for="company">Компания</label>-->
-<!--    <div class="input-wrapper">-->
-<!--      <input type="text" id="company">-->
-<!--    </div>-->
-<!--  </div>-->
 </template>
 
 <script setup>
-
+const emit = defineEmits(['set']);
 
 import {useCurrencyOptions} from "~/composables/useCurrencyOptions";
 
@@ -61,7 +55,10 @@ watch(salary, () => {
     }else{
         salary.to.isValid = true;
     }
-})
+    emit('set', 'salary', {from: salary.from.val, to: salary.to.val, currency: salary.currency});
+});
+
+
 const skyBlueBG = {
     background: "#F5F8FA"
 }

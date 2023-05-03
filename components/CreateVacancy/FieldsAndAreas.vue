@@ -2,13 +2,18 @@
   <div class="input-row">
     <label for="industry">Отрасль</label>
     <div class="input-wrapper">
-        <MultiSelectWithSearch v-model="myAreaSearch" :options="industryOptions" @input="onFieldChange" @select="onFieldSelect" />
+        <MultiSelectWithSearch :options="industryOptions"
+                               @input="onFieldChange" v-model="fields"
+                               @update:modelValue="emit('set', 'specializations', fields)"
+        />
     </div>
   </div>
   <div class="input-row">
-    <label for="locations">Города, области, страны</label>
+    <label for="locations">Города, области, страны()</label>
     <div class="input-wrapper">
-      <MultiSelectWithSearch v-model="myAreaSearch" :options="areaOptions" @input="onAreaChange" @select="onAreaSelect" />
+      <MultiSelectWithSearch v-model="areas" :options="areaOptions"
+                             @input="onAreaChange"
+                             @update:modelValue="emit('set', 'areas', areas)"/>
     </div>
   </div>
 </template>
@@ -16,34 +21,36 @@
 <script setup>
 
 import {useVacancyStore} from "../../store/vacancy";
-import CustomSelect from "../UI/CustomSelect";
-import SelectWithSearch from "../UI/SelectWithSearch";
-import {useRuntimeConfig} from "nuxt/app";
 
-const onFieldChange = (event) => {
-  console.log(event);
-  // console.log("myChangeEvent: ", event);
+const emit = defineEmits(['set'])
+
+const fields = reactive([]);
+const areas = reactive([]);
+const fieldText = ref("");
+const onFieldChange = (text) => {
+  fieldText.value = text;
+  industries.value = vacancyStore.industries;
 }
 
 const vacancyStore = useVacancyStore();
 
-const {getIndustries, industries, countries, getAreas, cities, areas} = vacancyStore;
+const {getIndustries, countries, getAreas} = vacancyStore;
 
+const industries = ref();
 onMounted(async() => {
   await getIndustries();
+  industries.value = vacancyStore.industries;
 })
-
-// await getAreas();
-// await getCountries();
-// await getRegions();
 
 const industryOptions = ref([]);
 watch(
-    () => vacancyStore.industries,
+    () => industries.value,
     (newValues) => {
-      industryOptions.value = newValues.map(item => {
-        return {value: item.id, name: item.title};
-      });
+      industryOptions.value = newValues
+          .filter(item => item.title.includes(fieldText.value))
+          .map(item => {
+            return {value: item.id, name: item.title};
+          });
     }
 );
 
@@ -57,20 +64,10 @@ watch(
     }
 );
 
-const selectedIndustries = ref([]);
-const selectedAreas = ref([]);
-const myAreaSearch = ref("");
-
 const onAreaChange = (text) => {
   if (text.length >= 2){
     getAreas({search: text});
   }
-}
-const onFieldSelect = (item) => {
-    console.log(item);
-}
-const onAreaSelect = (item) => {
-    console.log(item);
 }
 
 </script>

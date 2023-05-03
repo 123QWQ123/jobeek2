@@ -149,7 +149,7 @@ export const useVacancyStore = defineStore('vacancy', {
       return data;
     },
     async getWorkTypes(payload) {
-      const {data} = await useApi('dictionaries?group=work_type', {
+      const {data} = await useApi('dictionaries?groups[]=work_type', {
         method: 'get',
         payload
       });
@@ -159,7 +159,7 @@ export const useVacancyStore = defineStore('vacancy', {
       return data;
     },
     async getVacancyBillingTypes(payload) {
-      const {data} = await useApi('dictionaries?group=vacancy_billing_type', {
+      const {data} = await useApi('dictionaries?groups[]=vacancy_billing_type', {
         method: 'get',
         payload
       });
@@ -169,7 +169,7 @@ export const useVacancyStore = defineStore('vacancy', {
       return data;
     },
     async getVacancyTypes(payload) {
-      const {data} = await useApi('dictionaries?group=vacancy_type', {
+      const {data} = await useApi('dictionaries?groups[]=vacancy_type', {
         method: 'get',
         payload
       });
@@ -179,7 +179,7 @@ export const useVacancyStore = defineStore('vacancy', {
       return data;
     },
     async getGenders(payload) {
-      const {data} = await useApi('dictionaries?group=gender', {
+      const {data} = await useApi('dictionaries?groups[]=gender', {
         method: 'get',
         payload
       });
@@ -189,7 +189,7 @@ export const useVacancyStore = defineStore('vacancy', {
       return data;
     },
     async getChildren(payload) {
-      const {data} = await useApi('dictionaries?group=children', {
+      const {data} = await useApi('dictionaries?groups[]=children', {
         method: 'get',
         payload
       });
@@ -199,7 +199,7 @@ export const useVacancyStore = defineStore('vacancy', {
       return data;
     },
     async getMaritalStatus(payload) {
-      const {data} = await useApi('dictionaries?group=maritalstatus', {
+      const {data} = await useApi('dictionaries?groups[]=maritalstatus', {
         method: 'get',
         payload
       });
@@ -209,7 +209,7 @@ export const useVacancyStore = defineStore('vacancy', {
       return data;
     },
     async getPlaceOfWorks(payload) {
-      const {data} = await useApi('dictionaries?group=place_of_work', {
+      const {data} = await useApi('dictionaries?groups[]=place_of_work', {
         method: 'get',
         payload
       });
@@ -219,7 +219,7 @@ export const useVacancyStore = defineStore('vacancy', {
       return data;
     },
     async getForeignLanguages(payload) {
-      const {data} = await useApi('dictionaries?group=language', {
+      const {data} = await useApi('dictionaries?groups[]=language', {
         method: 'get',
         payload
       });
@@ -229,7 +229,7 @@ export const useVacancyStore = defineStore('vacancy', {
       return data;
     },
     async getLanguageLevels(payload) {
-      const {data} = await useApi('dictionaries?group=language_level', {
+      const {data} = await useApi('dictionaries?groups[]=language_level', {
         method: 'get',
         payload
       });
@@ -239,7 +239,7 @@ export const useVacancyStore = defineStore('vacancy', {
       return data;
     },
     async getDriverLicenses(payload) {
-      const {data} = await useApi('dictionaries?group=driver_license_types', {
+      const {data} = await useApi('dictionaries?groups[]=driver_license_types', {
         method: 'get',
         payload
       });
@@ -249,7 +249,7 @@ export const useVacancyStore = defineStore('vacancy', {
       return data;
     },
     async getSchedules(payload = {}) {
-      const {data} = await useApi('dictionaries?group=schedule', {
+      const {data} = await useApi('dictionaries?groups[]=schedule', {
         method: 'get',
         payload
       });
@@ -259,7 +259,7 @@ export const useVacancyStore = defineStore('vacancy', {
       return data;
     },
     async getExperiences(payload = {}) {
-      const {data} = await useApi('dictionaries?group=experience', {
+      const {data} = await useApi('dictionaries?groups[]=experience', {
         method: 'get',
         payload
       });
@@ -269,7 +269,7 @@ export const useVacancyStore = defineStore('vacancy', {
       return data;
     },
     async getPartTimes(payload = {}) {
-      const {data} = await useApi('dictionaries?group=part_time', {
+      const {data} = await useApi('dictionaries?groups[]=part_time', {
         method: 'get',
         payload
       });
@@ -289,7 +289,7 @@ export const useVacancyStore = defineStore('vacancy', {
       return data.data;
     },
     async getEducations(payload) {
-      const {data} = await useApi('dictionaries?group=education', {
+      const {data} = await useApi('dictionaries?groups[]=education', {
         method: 'get',
         payload
       });

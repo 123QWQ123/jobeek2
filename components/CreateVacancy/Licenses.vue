@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-
+const emit = defineEmits(['set']);
 import {storeToRefs} from "pinia";
 import {useVacancyStore} from "~/store/vacancy";
 const vacancyStore = useVacancyStore();
@@ -31,6 +31,7 @@ const toggle = (id) => {
         const deleteIndex = selected_licenses.value.indexOf(id);
         selected_licenses.value.splice(deleteIndex, 1);
     }
+    emit('set', 'driver_license_types', selected_licenses.value);
 }
 
 </script>

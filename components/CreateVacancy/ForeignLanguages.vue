@@ -27,6 +27,7 @@
 </template>
 
 <script setup>
+const emit  = defineEmits(['set']);
 import {storeToRefs} from "pinia";
 import {useVacancyStore} from "~/store/vacancy";
 const vacancyStore = useVacancyStore();
@@ -77,6 +78,10 @@ const deleteItem = (deleteItem) => {
     const newItems = selectedLanguages.value.filter(item => item.id !== deleteItem);
     selectedLanguages.value = newItems;
 }
+
+watch(selectedLanguages, (newValues) => {
+    emit('set', 'languages', newValues);
+})
 </script>
 
 <style scoped>

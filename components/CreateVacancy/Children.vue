@@ -19,6 +19,10 @@ await getChildren();
 const childrenOptions = computed(() => childrens.value.map(item => ({value: item.id, name: item.name})));
 
 const children = ref(15);
+
+watch(children, (newValues) => {
+    emit('set', 'children', newValues);
+})
 </script>
 
 <style scoped>

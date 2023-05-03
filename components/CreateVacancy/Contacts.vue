@@ -17,16 +17,18 @@
 </template>
 
 <script setup>
+const emit = defineEmits(['set']);
 
-import {storeToRefs} from "pinia";
-import {useVacancyStore} from "~/store/vacancy";
-const vacancyStore = useVacancyStore();
-
-const contacts = ref({
+const contacts = reactive({
     email: "",
     name: "",
     phones: []
 });
+
+watch(contacts, (newValues) => {
+    console.log(newValues);
+    emit('set', 'contacts', contacts);
+})
 </script>
 
 <style scoped>

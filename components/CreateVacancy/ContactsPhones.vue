@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-
+const emit = defineEmits(['update:modelValue']);
 const selectedPhones = ref([ { phone: null, comment: null } ]);
 const currentPhone = ref(0);
 const reset = () => {
@@ -41,6 +41,10 @@ const deleteItem = (index) => {
     const newItems = selectedPhones.value.filter((item, key) => key !== index);
     selectedPhones.value = newItems;
 }
+
+watch(selectedPhones.value, (newValues) => {
+    emit('update:modelValue', selectedPhones.value);
+})
 </script>
 
 <style scoped>

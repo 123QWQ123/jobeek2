@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-
+const emit = defineEmits(['set']);
 import {storeToRefs} from "pinia";
 import {useVacancyStore} from "~/store/vacancy";
 const vacancyStore = useVacancyStore();
@@ -19,6 +19,11 @@ await getMaritalStatus();
 const maritalStatusOptions = computed(() => marital_statuses.value.map(item => ({value: item.id, name: item.name})));
 
 const marital_status = ref(18);
+
+
+watch(marital_status, (newValues) => {
+    emit('set', 'marital_status', newValues);
+})
 </script>
 
 <style scoped>

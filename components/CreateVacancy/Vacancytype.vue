@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-
+const emit = defineEmits(['set']);
 import {storeToRefs} from "pinia";
 import {useVacancyStore} from "~/store/vacancy";
 const vacancyStore = useVacancyStore();
@@ -19,6 +19,10 @@ await getVacancyTypes();
 const vacancyTypeOptions = computed(() => vacancy_types.value.map(item => ({value: item.id, name: item.name})));
 
 const vacancy_type = ref(46);
+
+watch(vacancy_type, (newValues) => {
+    emit('set', 'vacancy_type', newValues);
+});
 </script>
 
 <style scoped>

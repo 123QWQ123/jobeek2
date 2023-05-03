@@ -7,88 +7,128 @@
           <div class="w-box w-box--main w-box-subscribe">
             <div class="w-box-head">
               <h1 class="title">Создание вакансии</h1>
+              <div class="form-header d-flex mb-4">
+                    <span
+                            @click="currentStep = 'first'"
+                            class="stepIndicator" :class="{'active': isFirstStep, 'finish': isThirdStep || isSecondStep}">1
+                      <span class="tab_name">Шаг</span>
+                    </span>
+                  <span
+                          @click="currentStep = 'second'"
+                          class="stepIndicator" :class="{'active': isSecondStep, 'finish': isThirdStep}">2
+                      <span class="tab_name">Шаг</span>
+                    </span>
+                  <span
+                          @click="currentStep = 'third'"
+                          class="stepIndicator" :class="{'active': isThirdStep}">3
+                      <span class="tab_name">Шаг</span>
+                    </span>
+              </div>
             </div>
-              {{currentStep}}
+<!--              {{state}}-->
+<!--              {{hhState}}-->
             <div class="w-box-body">
               <form id="signUpForm"  @submit.prevent="onSubmit">
                   <!-- start step indicators -->
-                  <div class="form-header d-flex mb-4">
-                      <span class="stepIndicator" :class="{'active': isFirstStep, 'finish': isThirdStep || isSecondStep}">первый этап</span>
-                      <span class="stepIndicator" :class="{'active': isSecondStep, 'finish': isThirdStep}">Второй этап</span>
-                      <span class="stepIndicator" :class="{'active': isThirdStep}">Третый этап</span>
-                  </div>
+
                   <!-- end step indicators -->
 
+                  <transition-group name="step">
                   <!-- step one -->
-                  <div class="step" v-if="isFirstStep" :class="{'d-block' : isFirstStep}">
-                      <p class="text-center mb-4">первый этап</p>
+                    <div class="step" v-if="isFirstStep" :class="{'d-block' : isFirstStep}">
+<!--                        <p class="text-center mb-4">первый этап</p>-->
 
 
-                      <CreateVacancyProvidersIntegration :providers="providers" @set="updateState"></CreateVacancyProvidersIntegration>
+                        <CreateVacancyProvidersIntegration :providers="providers" @set="updateState"></CreateVacancyProvidersIntegration>
 
+                        <div class="sep"> </div>
+                        <CreateVacancyName  @set="updateState"></CreateVacancyName>
+                        <div class="sep"> </div>
+                        <CreateVacancyFieldsAndAreas @set="updateState"></CreateVacancyFieldsAndAreas>
+                        <div class="sep"> </div>
+                        <CreateVacancyJobSalary @set="updateState"></CreateVacancyJobSalary>
+                        <div class="sep"></div>
+                        <CreateVacancyContacts @set="updateState"></CreateVacancyContacts>
+                        <div class="sep"></div>
+                        <CreateVacancyJobEmploymentAndEducation @set="updateState"></CreateVacancyJobEmploymentAndEducation>
+                        <div class="sep"> </div>
+                        <CreateVacancyGender @set="updateState"></CreateVacancyGender>
+                        <div class="sep"> </div>
+                        <CreateVacancyMaritalStatus @set="updateState"></CreateVacancyMaritalStatus>
+                        <div class="sep"> </div>
+                    </div>
+
+                    <!-- step two -->
+                    <div class="step d-block" v-if="isSecondStep" :class="{'d-block' : isFirstStep}">
+<!--                        <p class="text-center mb-4">Второй этап</p>-->
+
+                        <CreateVacancyChildren @set="updateState"></CreateVacancyChildren>
+                        <div class="sep"> </div>
+                        <CreateVacancyExperience2 @set="updateState"></CreateVacancyExperience2>
+                        <div class="sep"> </div>
+                        <CreateVacancyPlaceOfWork @set="updateState"></CreateVacancyPlaceOfWork>
+                        <div class="sep"> </div>
+                        <CreateVacancyVacancytype @set="updateState"></CreateVacancyVacancytype>
+                        <div class="sep"> </div>
+                        <CreateVacancyBillingType @set="updateState"></CreateVacancyBillingType>
+                        <div class="sep"> </div>
+                        <CreateVacancyLicenses @set="updateState"></CreateVacancyLicenses>
+                        <div class="sep"> </div>
+                    </div>
+
+                    <!-- step three -->
+                    <div class="step pb-3" v-if="isThirdStep" :class="{'d-block' : isThirdStep}">
+<!--                      <p class="text-center mb-4">Третый этап</p>-->
+
+                      <CreateVacancyForeignLanguages @set="updateState"></CreateVacancyForeignLanguages>
                       <div class="sep"> </div>
-                      <CreateVacancyKeywords  @set="updateState"></CreateVacancyKeywords>
+                      <CreateVacancySkills @set="updateState"></CreateVacancySkills>
                       <div class="sep"> </div>
-                      <CreateVacancyFieldsAndAreas></CreateVacancyFieldsAndAreas>
+                      <CreateVacancyAge @set="updateState"></CreateVacancyAge>
                       <div class="sep"> </div>
-                      <CreateVacancyJobSalary></CreateVacancyJobSalary>
+                      <CreateVacancyFirmName @set="updateState"></CreateVacancyFirmName>
+                      <div class="sep"> </div>
+                      <CreateVacancyFirmActivity @set="updateState"></CreateVacancyFirmActivity>
+                      <div class="sep"> </div>
+                      <CreateVacancyDescription @set="updateState"></CreateVacancyDescription>
+                      <div class="sep"> </div>
+                      <CreateVacancyNotifications @set="updateState"></CreateVacancyNotifications>
+                      <div class="sep"> </div>
+
+
+                      <CreateVacancyHHAcceptKids v-model="hhState.accept_kids"/>
                       <div class="sep"></div>
-                      <CreateVacancyContacts></CreateVacancyContacts>
+                      <CreateVacancyHHAcceptTemporary v-model="hhState.accept_temporary"/>
                       <div class="sep"></div>
-                      <CreateVacancyJobEmploymentAndEducation></CreateVacancyJobEmploymentAndEducation>
-                      <div class="sep"> </div>
-                      <CreateVacancyGender></CreateVacancyGender>
-                      <div class="sep"> </div>
-                      <CreateVacancyMaritalStatus></CreateVacancyMaritalStatus>
-                      <div class="sep"> </div>
-                  </div>
-
-                  <!-- step two -->
-                  <div class="step d-block" v-if="isSecondStep" :class="{'d-block' : isFirstStep}">
-                      <p class="text-center mb-4">Второй этап</p>
-
-                      <CreateVacancyChildren></CreateVacancyChildren>
-                      <div class="sep"> </div>
-                      <CreateVacancyExperience2></CreateVacancyExperience2>
-                      <div class="sep"> </div>
-                      <CreateVacancyPlaceOfWork></CreateVacancyPlaceOfWork>
-                      <div class="sep"> </div>
-                      <CreateVacancyVacancytype></CreateVacancyVacancytype>
-                      <div class="sep"> </div>
-                      <CreateVacancyBillingType></CreateVacancyBillingType>
-                      <div class="sep"> </div>
-                      <CreateVacancyLicenses></CreateVacancyLicenses>
-                      <div class="sep"> </div>
-                  </div>
-
-                  <!-- step three -->
-                  <div class="step pb-3" v-if="isThirdStep" :class="{'d-block' : isThirdStep}">
-                      <p class="text-center mb-4">Третый этап</p>
-
-                      <CreateVacancyForeignLanguages></CreateVacancyForeignLanguages>
-                      <div class="sep"> </div>
-                      <CreateVacancySkills></CreateVacancySkills>
-                      <div class="sep"> </div>
-                      <CreateVacancyAge></CreateVacancyAge>
-                      <div class="sep"> </div>
-                      <CreateVacancyFirmName></CreateVacancyFirmName>
-                      <div class="sep"> </div>
-                      <CreateVacancyFirmActivity></CreateVacancyFirmActivity>
-                      <div class="sep"> </div>
-                      <CreateVacancyDescription></CreateVacancyDescription>
-                      <div class="sep"> </div>
-                      <CreateVacancyNotifications></CreateVacancyNotifications>
+                      <CreateVacancyHHAcceptIncompleteResumes v-model="hhState.accept_incomplete_resumes"/>
+                      <div class="sep"></div>
+                      <CreateVacancyHHAcceptHandicapped v-model="hhState.accept_handicapped"/>
+                      <div class="sep"></div>
+                      <CreateVacancyHHAllowMessages v-model="hhState.accept_handicapped"/>
+                      <div class="sep"></div>
+                      <CreateVacancyHHAcceptHandicapped v-model="hhState.accept_handicapped"/>
+                      <div class="sep"></div>
+                      <CreateVacancyHHResponseNotifcation v-model="hhState.response_notification"/>
+                      <div class="sep"></div>
+                      <CreateVacancyHHResponseUrl v-model="hhState.response_url"/>
+                      <div class="sep"></div>
+                      <CreateVacancyHHWithZP v-model="hhState.with_zp"/>
+                      <div class="sep"></div>
+                      <CreateVacancyHHWorkinDays v-model="hhState.working_days"/>
+                      <div class="sep"></div>
+                      <CreateVacancyHHWorkinTimeIntervals v-model="hhState.working_time_intervals"/>
+                      <div class="sep"></div>
+                      <CreateVacancyHHWorkinTimeModes v-model="hhState.working_time_modes"/>
                       <hr/>
                   </div>
-
+                  </transition-group>
                   <!-- start previous / next buttons -->
                   <div class="form-footer d-flex">
-                      <button type="button" id="prevBtn" @click="goToPrevStep">←</button>
-                      <button type="button" id="nextBtn" @click="goToNextStep">→</button>
+                      <button type="button" id="prevBtn" @click="goToPrevStep">Назад</button>
+                      <button type="button" id="nextBtn" @click="goToNextStep">Далее</button>
                   </div>
                   <!-- end previous / next buttons -->
               </form>
-
 
             </div>
           </div>
@@ -129,6 +169,23 @@ const providers = reactive({
   },
 })
 
+const hhState = reactive({
+    accept_kids: false,
+    accept_temporary: false,
+    accept_incomplete_resumes: false,
+    accept_handicapped: false,
+    allow_messages: false,
+    response_notification: false,
+    response_url: "",
+    with_zp: false,
+    working_days: null,
+    working_time_intervals: null,
+    working_time_modes: null,
+});
+const superjobState = reactive({
+    accept_kids: true,
+    accept_temporary: true,
+});
 const state =  reactive({
   providers: {
     val: {
@@ -137,54 +194,36 @@ const state =  reactive({
     },
     isValid: true
   },
-  name: {
-    val: "",
-    isValid: false
-  },
-  area: {
-    val: "",
-    isValid: false
-  },
-  contacts: {
-    val: "",
-    isValid: false
-  },
-  employer_name: {
-    val: "",
-    isValid: false
-  },
-  description: {
-    val: "",
-    isValid: false
-  },
-  experience: {
-    val: null || {},
-    isValid: false
-  },
-  employment: {
-    val: null || {},
-    isValid: false
-  },
-  salary: {
-    val: null || {},
-    isValid: false
-  },
-  languages: {
-    val: [],
-    isValid: false
-  },
-  schedule: {
-    val: null || {},
-    isValid: false
-  },
-  status: {
-    val: "",
-    isValid: false
-  },
+  name: "",
+  specializations: [],
+  areas: [],
+  salary: {},
+  contacts: [],
+  employment: null,
+  education: null,
+  gender: null,
+  marital_status: null,
+  children: [],
+  experience: null,
+  place_of_work: null,
+  vacancy_type: null,
+  billing_type: null,
+  driver_license_types: null,
+  work_type: null,
+  key_skills: null,
+  age_from: null,
+  age_to: null,
+  firm_name: "",
+  firm_activity: "",
+  description: "",
+  schedule: "",
+
+
 });
 
 const updateState = (prop, value) => {
-  state[prop].val = value;
+    console.log(prop, value);
+  state[prop] = value;
 }
 
 const {getConnectedProviders} = useProfileStore();
@@ -231,11 +270,7 @@ body{
     font-family: 'Open Sans', sans-serif;
 }
 #signUpForm {
-    /*max-width: 500px;*/
-    /*background-color: #ffffff;*/
-    /*margin: 40px auto;*/
     padding: 40px;
-    /*box-shadow: 0px 6px 18px rgb(0 0 0 / 9%);*/
     border-radius: 12px;
 }
 #signUpForm .form-header {
@@ -243,17 +278,29 @@ body{
     text-align: center;
     font-size: .9em;
 }
+
 #signUpForm .form-header .stepIndicator {
+    cursor: pointer;
     position: relative;
     flex: 1;
     padding-bottom: 30px;
 }
+
+#signUpForm .form-header .stepIndicator .tab_name{
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -24px;
+    width: 100%;
+}
+
 #signUpForm .form-header .stepIndicator.active {
     font-weight: 600;
 }
 #signUpForm .form-header .stepIndicator.finish {
     font-weight: 600;
     color: #5375FD;
+
 }
 #signUpForm .form-header .stepIndicator::before {
     content: "";
@@ -296,6 +343,7 @@ body{
 }
 #signUpForm .step {
     display: none;
+    /*padding-top: 2rem;*/
 }
 #signUpForm .form-footer{
     overflow:auto;
@@ -307,7 +355,7 @@ body{
     color: #ffffff;
     border: none;
     padding: 13px 30px;
-    font-size: 2em;
+    font-size: 1.2rem;
     cursor: pointer;
     border-radius: 5px;
     flex: 1;
@@ -320,5 +368,24 @@ body{
 #signUpForm .form-footer button {
     background-color: #fff;
     color: #5375FD;
+}
+
+.step-enter-active,
+.step-leave-active {
+    transition: all 0.4s;
+}
+.step-enter-from,
+.step-leave-to {
+    opacity: 0;
+    filter: blur(1rem);
+}
+
+</style>
+
+<style>
+
+.input-row input.checkbox-mask {
+    width: 24px;
+    height: 24px;
 }
 </style>
