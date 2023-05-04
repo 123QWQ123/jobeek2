@@ -1,15 +1,9 @@
 <template>
-    <div class="input-row">
-        <div class="left">
-            <label for="remote-work">
-                Работа только по сб и вс
-            </label>
-        </div>
-
-        <div class="right ">
-            <input class="checkbox-mask" type="checkbox" v-model="value" />
-        </div>
-
+    <div class="form-check d-inline-flex">
+        <input class="form-check-input" type="checkbox" id="working_in_days" v-model="value">
+        <label for="working_in_days">
+            Работа только по сб и вс
+        </label>
     </div>
 </template>
 

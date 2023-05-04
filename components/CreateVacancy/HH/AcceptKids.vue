@@ -1,15 +1,9 @@
 <template>
-    <div class="input-row">
-        <div class="left">
-            <label for="remote-work">
-                Указание, что вакансия доступна для соискателей старше 14 лет
-            </label>
-        </div>
-
-        <div class="right">
-            <input class="checkbox-mask" type="checkbox" v-model="value" />
-        </div>
-
+    <div class="form-check d-inline-flex">
+        <input class="form-check-input" type="checkbox" id="accept_kids" v-model="value">
+        <label for="accept_kids">
+            Указание, что вакансия доступна для соискателей старше 14 лет
+        </label>
     </div>
 </template>
 

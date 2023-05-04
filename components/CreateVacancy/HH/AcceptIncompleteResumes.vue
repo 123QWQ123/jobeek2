@@ -1,16 +1,10 @@
 <template>
-    <div class="input-row">
-        <div class="left">
-            <label for="remote-work">
-                Неполное резюме.
-                разрешен ли отклик на вакансию неполным резюме
-            </label>
-        </div>
-
-        <div class="right">
-            <input class="checkbox-mask" type="checkbox" v-model="value" />
-        </div>
-
+    <div class="form-check d-inline-flex">
+        <input class="form-check-input" type="checkbox" id="accept_incomplete_resumes" v-model="value">
+        <label for="accept_incomplete_resumes">
+            Неполное резюме.
+            разрешен ли отклик на вакансию неполным резюме
+        </label>
     </div>
 </template>
 

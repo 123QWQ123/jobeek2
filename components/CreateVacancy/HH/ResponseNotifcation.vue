@@ -1,15 +1,9 @@
 <template>
-    <div class="input-row">
-        <div class="left">
-            <label for="remote-work">
-                Уведомлять ли менеджера о новых откликах
-            </label>
-        </div>
-
-        <div class="right ">
-            <input class="checkbox-mask" type="checkbox" v-model="value" />
-        </div>
-
+    <div class="form-check d-inline-flex">
+        <input class="form-check-input" type="checkbox" id="response_notifications" v-model="value">
+        <label for="response_notifications">
+            Уведомлять ли менеджера о новых откликах
+        </label>
     </div>
 </template>
 

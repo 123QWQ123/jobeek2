@@ -1,16 +1,10 @@
 <template>
-    <div class="input-row">
-        <div class="left">
-            <label for="remote-work">
-                Соискатель с инвалидностью.
-                Указание, что вакансия доступна для соискателей с инвалидностью
-            </label>
-        </div>
-
-        <div class="right">
-            <input class="checkbox-mask" type="checkbox" v-model="value" />
-        </div>
-
+    <div class="form-check d-inline-flex">
+        <input class="form-check-input" type="checkbox" id="accept_handicapped" v-model="value">
+        <label for="accept_handicapped">
+            Соискатель с инвалидностью.
+            Указание, что вакансия доступна для соискателей с инвалидностью
+        </label>
     </div>
 </template>
 

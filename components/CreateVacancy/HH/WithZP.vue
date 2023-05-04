@@ -1,15 +1,10 @@
 <template>
-    <div class="input-row">
-        <div class="left">
-            <label for="remote-work">
-                Вашу вакансию увидят больше людей. Мы разместим ее дополнительно на сервисе Зарплата.ру
-            </label>
-        </div>
 
-        <div class="right ">
-            <input class="checkbox-mask" type="checkbox" v-model="value" />
-        </div>
-
+    <div class="form-check d-inline-flex">
+        <input class="form-check-input" type="checkbox" id="with_zp" v-model="value">
+        <label for="with_zp">
+            Вашу вакансию увидят больше людей. Мы разместим ее дополнительно на сервисе Зарплата.ру
+        </label>
     </div>
 </template>
 

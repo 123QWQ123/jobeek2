@@ -1,16 +1,12 @@
 <template>
-    <div class="input-row">
-        <div class="left">
-            <label for="remote-work">
-                Можно начинать работать после 16:00
-            </label>
-        </div>
 
-        <div class="right ">
-            <input class="checkbox-mask" type="checkbox" v-model="value" />
-        </div>
-
+    <div class="form-check d-inline-flex">
+        <input class="form-check-input" type="checkbox" id="working_in_time_modes" v-model="value">
+        <label for="working_in_time_modes">
+            Можно начинать работать после 16:00
+        </label>
     </div>
+
 </template>
 
 <script setup>

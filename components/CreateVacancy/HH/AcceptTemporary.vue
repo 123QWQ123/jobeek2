@@ -1,16 +1,11 @@
 <template>
-    <div class="input-row">
-        <div class="left">
-            <label for="remote-work">
-                Временное трудоустройство.
-                указание, что вакансия доступна с временным трудоустройством
-            </label>
-        </div>
+    <div class="form-check d-inline-flex">
+        <input class="form-check-input" type="checkbox" id="accept_temporary" v-model="value">
 
-        <div class="right">
-            <input class="checkbox-mask" type="checkbox" v-model="value" />
-        </div>
-
+        <label for="accept_temporary">
+            Временное трудоустройство.
+            указание, что вакансия доступна с временным трудоустройством
+        </label>
     </div>
 </template>
 

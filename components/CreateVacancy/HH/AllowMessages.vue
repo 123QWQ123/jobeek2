@@ -1,16 +1,10 @@
 <template>
-    <div class="input-row">
-        <div class="left">
-            <label for="remote-work">
-                Разрешение сообщений.
-                возможность переписки с кандидатами по данной вакансии
-            </label>
-        </div>
-
-        <div class="right">
-            <input class="checkbox-mask" type="checkbox" v-model="value" />
-        </div>
-
+    <div class="form-check d-inline-flex">
+        <input class="form-check-input" type="checkbox" id="allow_messages" v-model="value">
+        <label for="allow_messages">
+            Разрешение сообщений.
+            возможность переписки с кандидатами по данной вакансии
+        </label>
     </div>
 </template>
 

@@ -1,63 +1,71 @@
 <template>
   <div class="input-row input-row--checkboxes">
     <label>Подключенные сервисы</label>
-    <div class="input-wrapper input-wrapper--flex">
-      <div class="custom-check-wrap">
-        <div class="theme-checker theme-checker--blue" @click="onClickProvider('hh')">
-          <input type="checkbox" id="hh" :checked="HHProviderChecked">
-          <div class="theme-checker-ui">
-            <div class="circle"> </div>
+      <div class="c2">
+          <div class="input-wrapper input-wrapper--flex">
+              <div class="form-check  d-inline-flex" >
+                  <input class="form-check-input" type="checkbox" id="hh" v-model="hh">
+                  <label class="form-check-label" for="hh">
+                      <img src="~/assets/img/logos/hhmini.svg" alt="#"><span>Hh.ru</span>
+                  </label>
+              </div>
           </div>
-        </div>
-        <label for="hh"><img src="~/assets/img/logos/hhmini.svg" alt="#"><span>Hh.ru</span></label>
-      </div>
-      <div class="custom-check-wrap">
-        <div class="theme-checker theme-checker--blue" @click="onClickProvider('superjob')">
-          <input type="checkbox" id="sj" :checked="SuperjobProviderChecked">
-          <div class="theme-checker-ui">
-            <div class="circle"> </div>
+          <div class="input-wrapper input-wrapper--flex">
+              <div class="form-check d-inline-flex">
+                  <input class="form-check-input" type="checkbox" id="superjob" v-model="superjob">
+                  <label class="form-check-label" for="superjob">
+                      <img src="~/assets/img/logos/sj.svg" alt="#"><span>Superjob.ru</span>
+                  </label>
+              </div>
           </div>
-        </div>
-        <label for="sj"><img src="~/assets/img/logos/sj.svg" alt="#"><span>Superjob.ru</span></label>
       </div>
+    <div>
+        {{hh}}
+        {{superjob}}
     </div>
   </div>
 </template>
 
 <script setup>
-
+const emit = defineEmits(['set']);
 const props = defineProps({
-  providers: {
+  hh: {
     required: true,
-    type: Object
+  },
+  superjob: {
+    required: true,
   }
 })
 
-watch(props.providers, (newPropProviders) => {
-  providers.value.map(item => item.checked = newPropProviders[item.name].is_connected);
-})
+const hh = ref(props.hh);
+const superjob = ref(props.superjob);
 
-const providers = ref([
-  {name: 'hh', checked: props.providers.hh.is_connected},
-  {name: 'superjob', checked: props.providers.superjob.is_connected},
-]);
 
-const onClickProvider = (provider_name) => {
-  const item = providers.value.find((item) => item.name === provider_name);
-  if (item) item.checked = !item.checked;
-}
-
-const HHProviderChecked = computed(() => {
-  return providers.value.find((item) => item.name === 'hh')?.checked;
+watch(hh, (newValue) => {
+    emit('set', 'providers', {hh: newValue, superjob: superjob.value});
 });
-const SuperjobProviderChecked = computed(() => {
-  return providers.value.find((item) => item.name === 'superjob')?.checked;
+watch(superjob, (newValue) => {
+    emit('set', 'providers', {hh: hh.value, superjob: newValue});
 });
-
-
-
 </script>
 
-<style scoped>
-
+<style>
+.form-check{
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+}
+.form-check-input[type=checkbox] {
+    width: 1.5em;
+    height: 2em;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.form-check-label{
+    display: inline-flex;
+    align-items: center;
+}
+.form-check-label img{
+    margin-right: 0.2rem;
+}
 </style>
