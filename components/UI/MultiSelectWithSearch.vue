@@ -77,7 +77,6 @@ function onSelect(e){
     const selectedOptionValue =  e.target.dataset.value;
     const selectedOptionItem = options.value.find(item => String(item.value) === String(selectedOptionValue));
     if (selectedOptionItem){
-        console.log(tempSelectedOptions);
         if (!tempSelectedOptions.includes(String(selectedOptionItem.value))){
             tempSelectedOptions.push(String(selectedOptionItem.value));
             selectedOptions.value = tempSelectedOptions;
@@ -87,7 +86,6 @@ function onSelect(e){
         options.value = props.options.filter(item => !tempSelectedOptions.includes(String(item.value)));
         emit('change', selectedOptionItem)
     }
-    console.log(tempSelectedOptions);
     emit('update:modelValue', tempSelectedOptions);
   }
 }
@@ -165,9 +163,13 @@ function close(){
 }
 
 .multi-select_selected-item{
-    border: 1px solid;
+    border: 1px solid #5375FD;
     border-radius: 4px;
     padding: 2px;
+    color: #5375FD;
+}
+.multi-select_selected-item span{
+    color: #5375FD;
 }
 </style>
 

@@ -6,14 +6,10 @@
                                @input="onFieldChange" v-model="fields"
                                @update:modelValue="emit('set', 'specializations', fields)"
         />
-    </div>
-  </div>
-  <div class="input-row">
-    <label for="locations">Города, области, страны()</label>
-    <div class="input-wrapper">
-      <MultiSelectWithSearch v-model="areas" :options="areaOptions"
-                             @input="onAreaChange"
-                             @update:modelValue="emit('set', 'areas', areas)"/>
+
+        <div :style="{display: 'none'}" class="text-danger" :class="{'d-block': !isValid}">
+            Выберите специализации
+        </div>
     </div>
   </div>
 </template>
@@ -23,6 +19,8 @@
 import {useVacancyStore} from "../../store/vacancy";
 
 const emit = defineEmits(['set'])
+const props = defineProps(['is_valid']);
+const isValid = computed(() => props.is_valid);
 
 const fields = reactive([]);
 const areas = reactive([]);

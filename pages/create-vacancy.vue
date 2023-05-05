@@ -35,29 +35,21 @@
 
                   <transition-group name="step">
                     <!-- step one -->
-                    <CreateVacancyStep01 v-if="isFirstStep" :providers="providers" :class="{'d-block' : isFirstStep}" @set="updateState" />
+                    <CreateVacancyStep01 v-if="isFirstStep" :providers="providers" :class="{'d-block' : isFirstStep}" @set="updateState" @next="goToNextStep"/>
 
                     <!-- step two -->
-                    <CreateVacancyStep01 v-if="isSecondStep" :providers="providers" :class="{'d-block' : isFirstStep}" @set="updateState"/>
+                    <CreateVacancyStep02 v-if="isSecondStep" :providers="providers" :class="{'d-block' : isFirstStep}" @set="updateState" @next="goToNextStep" @prev="goToPrevStep"/>
 
                     <!-- step three -->
-                    <CreateVacancyStep01 v-if="isThirdStep" :providers="providers" :class="{'d-block' : isThirdStep}" @set="updateState"/>
+                    <CreateVacancyStep03 v-if="isThirdStep" :providers="providers" :class="{'d-block' : isThirdStep}" @set="updateState" @next="goToPrevStep"/>
                   </transition-group>
                   <!-- start previous / next buttons -->
-                  <div class="w-box-foot">
-                      <div class="form-footer d-flex">
-                          <button type="button" id="prevBtn" v-if="!isFirstStep" @click="goToPrevStep">Назад</button>
-                          <button type="button" id="nextBtn" v-if="!isThirdStep" @click="goToNextStep">Далее</button>
-                      </div>
-                  </div>
                   <!-- end previous / next buttons -->
               </form>
 
             </div>
           </div>
           <div class="form-submit-container">
-<!--            <p>Найдено 2 012 вакансий</p>-->
-<!--            {{providers}}-->
             <button class="btn btn-outline-primary" type="button" @click="onSubmit">Сохранить как черновик</button>
             <button class="button-accent" type="button" @click="onSubmit">Опубликовать</button>
           </div>

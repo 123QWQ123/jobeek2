@@ -38,7 +38,7 @@ watch(education, (newValues) => {
     emit('set', 'education', newValues);
 })
 watch(work_types, (newValues) => {
-    emit('set', 'work_types', newValues);
+    emit('set', 'employment', newValues);
 })
 </script>
 

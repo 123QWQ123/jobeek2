@@ -16,6 +16,14 @@
         <div class="sep"> </div>
         <CreateVacancyForeignLanguages @set="updateState"></CreateVacancyForeignLanguages>
         <div class="sep"> </div>
+
+
+        <div class="w-box-foot">
+            <div class="form-footer d-flex">
+                <button type="button" id="prevBtn" @click="goToPrevStep">Назад</button>
+                <button type="button" id="nextBtn" @click="goToNextStep">Далее</button>
+            </div>
+        </div>
     </div>
 </template>
 

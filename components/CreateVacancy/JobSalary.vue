@@ -2,6 +2,7 @@
   <div class="input-row">
     <label for="income">Какой ЗП вы предложите (₽)?</label>
     <div class="row-container">
+        {{salary}}
       <div class="c3">
         <div class="input-wrapper w-auto">
           <input id="salary_from" type="number" v-model.number="salary.from.val" placeholder="От">
