@@ -11,9 +11,9 @@
         <div class="sep"> </div>
         <CreateVacancyAreas :is_valid="state.areas.is_valid" @set="updateState"></CreateVacancyAreas>
         <div class="sep"> </div>
-        <CreateVacancyJobSalary :is_valid="state.salary.is_valid" @set="updateState"></CreateVacancyJobSalary>
+        <CreateVacancyJobSalary :is_valid="state.salary.is_valid" @set="updateState" ref="jobSalary"></CreateVacancyJobSalary>
         <div class="sep"></div>
-        <CreateVacancyContacts @set="updateState"></CreateVacancyContacts>
+        <CreateVacancyContacts ref="contacts" @set="updateState"></CreateVacancyContacts>
         <div class="sep"></div>
         <CreateVacancyJobEmploymentAndEducation @set="updateState"></CreateVacancyJobEmploymentAndEducation>
         <div class="sep"> </div>
@@ -35,6 +35,8 @@
 const emit = defineEmits(['set', 'next']);
 const props = defineProps(['providers']);
 
+const jobSalary = ref();
+const contacts = ref();
 const state =  reactive({
     providers: {
         val: {
@@ -54,7 +56,7 @@ const state =  reactive({
         },
         is_valid: true,
         is_required: true,
-        min: 1
+        min: 1,
     },
     specializations: {
         val: [],
@@ -73,13 +75,20 @@ const state =  reactive({
         type: 'object',
         is_valid: false,
         is_required: false,
+        component: jobSalary,
+        check: (prop, value, state) => {
+            return state[prop].component.validate();
+        }
     },
     contacts: {
-        val: [],
-        type: 'array',
+        val: {},
+        type: 'object',
         is_valid: true,
         is_required: false,
-
+        component: contacts,
+        check: (prop, value, state) => {
+            return state[prop].component.validate();
+        }
     },
     employment: {
         val: null,
@@ -120,10 +129,11 @@ const validate = () => {
         const is_required = state[item].is_required;
         const min = state[item].min ?? 0;
         const check = state[item].check;
+        console.log(check);
         if (item === 'is_checked'){
             return false;
         }
-        console.log(type, typeof value)
+        console.log(item, type, typeof value)
         if (type === typeof value || is_required){
             let is_valid = true;
             if (type === 'array'){
@@ -141,17 +151,19 @@ const validate = () => {
                 }
             }
             if (type === 'object'){
-                return true
+                if (is_valid && check && check(item, value, state)) return true;
+                else return false;
             }
 
             console.log(is_valid);
 
-            if (is_valid && check(item, value, state)) return true;
+            if (is_valid && check && check(item, value, state)) return true;
             else return false;
 
         }
         return false;
     });
+
 
     console.log(filtered_keys);
     Object.keys(state).map(item => {
@@ -161,6 +173,8 @@ const validate = () => {
         return item;
     });
 }
+
+
 const onSubmit = () => {
     validate();
 

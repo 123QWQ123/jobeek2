@@ -2,22 +2,21 @@
   <div class="input-row">
     <label for="income">Какой ЗП вы предложите (₽)?</label>
     <div class="row-container">
-        {{salary}}
       <div class="c3">
         <div class="input-wrapper w-auto">
-          <input id="salary_from" type="number" v-model.number="salary.from.val" placeholder="От">
+          <input id="salary_from" type="number" v-model="salary.from.val" placeholder="От">
           <div :style="{display: 'none'}" class="text-danger" :class="{'d-block': !salary.from.isValid && salary.from.isChecked}">
-              введите только цифры
+              Введите стартовая вилка
           </div>
         </div>
         <div class="input-wrapper w-auto">
           <input id="salary_to" type="number" v-model.number="salary.to.val" placeholder="До">
             <div :style="{display: 'none'}" class="text-danger" :class="{'d-block': !salary.to.isValid && salary.to.isChecked}">
-                введите только цифры
+                Введите больше чем от
             </div>
         </div>
         <div class="input-wrapper ms-auto">
-            <CustomSelect class="skyBlueBG" :options="currencyOptions" :style="skyBlueBG" v-model="salary.currency"></CustomSelect>
+            <CustomSelect class="skyBlueBG" :options="currencyOptions" :style="skyBlueBG" v-model="salary.currency.val"></CustomSelect>
         </div>
       </div>
     </div>
@@ -28,8 +27,7 @@
 const emit = defineEmits(['set']);
 
 import {useCurrencyOptions} from "~/composables/useCurrencyOptions";
-
-const currencyOptions = useCurrencyOptions();
+const currencyOptions = ref(useCurrencyOptions());
 
 const salary = reactive({
     to: {
@@ -42,24 +40,37 @@ const salary = reactive({
         isChecked: false,
         isValid: false,
     },
-    currency: 'RUB',
+    currency: {
+        val: 'RUB',
+        isChecked: false,
+        isValid: false,
+    },
 });
-watch(salary, () => {
+
+const validate = () => {
     salary.from.isChecked = true;
-    if (!salary.from.val instanceof Number){
-        salary.from.isValid = false;
-    }else{
+    console.log(parseInt(salary.from.val));
+    if (parseInt(salary.from.val) > 0){
         salary.from.isValid = true;
-    }
-    if (!salary.to.val instanceof Number){
-        salary.to.isValid = false;
     }else{
-        salary.to.isValid = true;
+        salary.from.isValid = false;
     }
-    emit('set', 'salary', {from: salary.from.val, to: salary.to.val, currency: salary.currency});
-});
-
-
+    salary.to.isChecked = true;
+    if (salary.to.val == "" || parseInt(salary.to.val) > parseInt(salary.from.val)){
+        salary.to.isValid = true;
+    }else{
+        salary.to.isValid = false;
+    }
+    salary.currency.isChecked = true;
+    if (currencyOptions.value.includes(salary.currency)){
+        salary.currency.isValid = true;
+    }else{
+        salary.currency.isValid = false;
+    }
+    emit('set', 'salary', {from: salary.from.val, to: salary.to.val, currency: salary.currency.val});
+}
+watch(salary, validate);
+defineExpose({validate});
 const skyBlueBG = {
     background: "#F5F8FA"
 }

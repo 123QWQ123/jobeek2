@@ -1,12 +1,21 @@
 <template>
   <div class="input-row">
     <label for="remote-work">Контакты</label>
-    <div class="input-wrapper">
-        <div class="c2">
-            <input type="text" v-model="contacts.name" placeholder="Имя">
-            <input type="email" v-model="contacts.email" placeholder="Email">
-        </div>
-    </div>
+      <div class="c2">
+          <div class="input-wrapper">
+              <input type="text" v-model="contacts.name.val" placeholder="Имя">
+              <div :style="{display: 'none'}" class="text-danger" :class="{'d-block': !contacts.name.isValid && contacts.name.isChecked}">
+                  Введите имя
+              </div>
+
+          </div>
+          <div class="input-wrapper">
+              <input type="email" v-model="contacts.email.val" placeholder="Email">
+              <div :style="{display: 'none'}" class="text-danger" :class="{'d-block': !contacts.email.isValid && contacts.email.isChecked}">
+                  Введите Email
+              </div>
+          </div>
+      </div>
   </div>
   <div class="input-row">
     <label for="remote-work"></label>
@@ -20,15 +29,46 @@
 const emit = defineEmits(['set']);
 
 const contacts = reactive({
-    email: "",
-    name: "",
-    phones: []
+    email: {
+        val: "",
+        isChecked: false,
+        isValid: false,
+    },
+    name: {
+        val: "",
+        isChecked: false,
+        isValid: false,
+    },
+    phones: {
+        val: [],
+        isChecked: false,
+        isValid: false,
+    },
 });
 
-watch(contacts, (newValues) => {
-    console.log(newValues);
-    emit('set', 'contacts', contacts);
-})
+const validate = () => {
+    contacts.name.isChecked = true;
+    if (contacts.name.val.length > 0){
+        contacts.name.isValid = true;
+    }else{
+        contacts.name.isValid = false;
+    }
+    contacts.email.isChecked = true;
+    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(contacts.email.val)) {
+        contacts.name.isValid = true;
+    } else {
+        contacts.name.isValid = false;
+    }
+    contacts.phones.isChecked = true;
+    if (contacts.phones.val.length >= 0) {
+        contacts.phones.isValid = true;
+    } else {
+        contacts.phones.isValid = false;
+    }
+    emit('set', 'contacts', {name: contacts.name.val, email: contacts.email.email});
+}
+watch(contacts, validate);
+defineExpose({validate});
 </script>
 
 <style scoped>
