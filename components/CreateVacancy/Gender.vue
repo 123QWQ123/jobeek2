@@ -3,12 +3,18 @@
     <label for="remote-work">Пол</label>
     <div class="input-wrapper">
         <CustomSelect :options="genderOptions" v-model="gender"></CustomSelect>
+
+        <div :style="{display: 'none'}" class="text-danger" :class="{'d-block': !isValid}">
+            Введите название вакансий
+        </div>
     </div>
   </div>
 </template>
 
 <script setup>
 const emit = defineEmits(['set']);
+const props = defineProps(['is_valid']);
+const isValid = computed(() => props.is_valid);
 import {storeToRefs} from "pinia";
 import {useVacancyStore} from "~/store/vacancy";
 const vacancyStore = useVacancyStore();

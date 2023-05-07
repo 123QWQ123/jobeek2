@@ -1,8 +1,8 @@
 <template>
   <div class="input-row">
-    <label for="remote-work">Семейное положение</label>
+    <label for="remote-work">Образование</label>
     <div class="input-wrapper">
-        <CustomSelect :options="maritalStatusOptions" v-model="marital_status"></CustomSelect>
+        <CustomSelect :options="educationOptions" v-model="education"></CustomSelect>
         <div :style="{display: 'none'}" class="text-danger" :class="{'d-block': !isValid}">
             Введите название вакансий
         </div>
@@ -14,21 +14,18 @@
 const emit = defineEmits(['set']);
 const props = defineProps(['is_valid']);
 const isValid = computed(() => props.is_valid);
-
 import {storeToRefs} from "pinia";
 import {useVacancyStore} from "~/store/vacancy";
 const vacancyStore = useVacancyStore();
-const {getMaritalStatus} = vacancyStore;
-const {marital_statuses} = storeToRefs(vacancyStore);
-await getMaritalStatus();
+const {getEducations} = vacancyStore;
+const {educations} = storeToRefs(vacancyStore);
+await getEducations();
 
-const maritalStatusOptions = computed(() => marital_statuses.value.map(item => ({value: item.id, name: item.name})));
+const educationOptions = computed(() => educations.value.map(item => ({value: item.id, name: item.name})));
+const education = ref(54);
 
-const marital_status = ref(18);
-
-
-watch(marital_status, (newValues) => {
-    emit('set', 'marital_status', newValues);
+watch(education, (newValues) => {
+    emit('set', 'education', newValues);
 })
 </script>
 

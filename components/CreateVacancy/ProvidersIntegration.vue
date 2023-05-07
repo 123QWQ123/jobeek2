@@ -19,16 +19,20 @@
               </div>
           </div>
       </div>
-    <div>
-        {{hh}}
-        {{superjob}}
-    </div>
+      <div :style="{display: 'none'}" class="text-danger" :class="{'d-block': !isValid}">
+          Выберите один из сервисов
+      </div>
   </div>
+  {{props}}
 </template>
 
 <script setup>
 const emit = defineEmits(['set']);
+const isValid = computed(() => props.is_valid);
 const props = defineProps({
+  is_valid: {
+      required: true,
+  },
   hh: {
     required: true,
   },
@@ -47,6 +51,7 @@ watch(hh, (newValue) => {
 watch(superjob, (newValue) => {
     emit('set', 'providers', {hh: hh.value, superjob: newValue});
 });
+
 </script>
 
 <style>

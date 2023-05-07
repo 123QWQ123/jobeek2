@@ -2,7 +2,12 @@
     <div class="step">
         {{state}}
         <!--                        <p class="text-center mb-4">первый этап</p>-->
-        <CreateVacancyProvidersIntegration :hh="state.providers.hh" :superjob="state.providers.superjob" @set="updateState"></CreateVacancyProvidersIntegration>
+        <CreateVacancyProvidersIntegration
+            :is_valid="state.providers.is_valid"
+            :hh="state.providers.val.hh"
+            :superjob="state.providers.val.superjob"
+            @set="updateState"
+        />
 
         <div class="sep"> </div>
         <CreateVacancyName :is_valid="state.name.is_valid" @set="updateState"></CreateVacancyName>
@@ -15,11 +20,13 @@
         <div class="sep"></div>
         <CreateVacancyContacts ref="contacts" @set="updateState"></CreateVacancyContacts>
         <div class="sep"></div>
-        <CreateVacancyJobEmploymentAndEducation @set="updateState"></CreateVacancyJobEmploymentAndEducation>
+        <CreateVacancyJobEmployment :is_valid="state.employment.is_valid" @set="updateState"></CreateVacancyJobEmployment>
         <div class="sep"> </div>
-        <CreateVacancyGender @set="updateState"></CreateVacancyGender>
+        <CreateVacancyEducation :is_valid="state.education.is_valid" @set="updateState"></CreateVacancyEducation>
         <div class="sep"> </div>
-        <CreateVacancyMaritalStatus @set="updateState"></CreateVacancyMaritalStatus>
+        <CreateVacancyGender :is_valid="state.education.is_valid" @set="updateState"></CreateVacancyGender>
+        <div class="sep"> </div>
+        <CreateVacancyMaritalStatus :is_valid="state.education.is_valid" @set="updateState"></CreateVacancyMaritalStatus>
         <div class="sep"> </div>
 
         <div class="w-box-foot">
@@ -45,6 +52,12 @@ const state =  reactive({
         },
         type: 'object',
         is_valid: true,
+        check: (prop, value, state) => {
+            console.log(value.hh, value.superjob);
+            if (value.hh === true || value.superjob === true) return true;
+            else return false;
+            // return state[prop].component.validate();
+        },
         is_required: true,
         min: 1
     },
@@ -84,7 +97,7 @@ const state =  reactive({
         val: {},
         type: 'object',
         is_valid: true,
-        is_required: false,
+        is_required: true,
         component: contacts,
         check: (prop, value, state) => {
             return state[prop].component.validate();
@@ -99,7 +112,7 @@ const state =  reactive({
     education: {
         val: null,
         type: 'number',
-        is_valid: false,
+        is_valid: true,
         is_required: false
     },
     gender: {
@@ -133,7 +146,6 @@ const validate = () => {
         if (item === 'is_checked'){
             return false;
         }
-        console.log(item, type, typeof value)
         if (type === typeof value || is_required){
             let is_valid = true;
             if (type === 'array'){
@@ -151,11 +163,12 @@ const validate = () => {
                 }
             }
             if (type === 'object'){
-                if (is_valid && check && check(item, value, state)) return true;
+                if (is_valid && check && check(item, value, state)) {
+                    console.log(1111111);
+                    return true;
+                }
                 else return false;
             }
-
-            console.log(is_valid);
 
             if (is_valid && check && check(item, value, state)) return true;
             else return false;
@@ -163,11 +176,10 @@ const validate = () => {
         }
         return false;
     });
-
-
     console.log(filtered_keys);
     Object.keys(state).map(item => {
         if (item !== 'is_checked'){
+            console.log(item, state[item]);
             state[item].is_valid = filtered_keys.includes(item);
         }
         return item;
