@@ -56,7 +56,6 @@ const state =  reactive({
             console.log(value.hh, value.superjob);
             if (value.hh === true || value.superjob === true) return true;
             else return false;
-            // return state[prop].component.validate();
         },
         is_required: true,
         min: 1
@@ -66,10 +65,12 @@ const state =  reactive({
         type: 'string',
         check: (prop, value, state) => {
             console.log(prop, value, state);
+            console.log(value.length);
+            return value.length >= state[prop].min;
         },
         is_valid: true,
         is_required: true,
-        min: 1,
+        min: 1
     },
     specializations: {
         val: [],
@@ -146,35 +147,34 @@ const validate = () => {
         if (item === 'is_checked'){
             return false;
         }
-        if (type === typeof value || is_required){
-            let is_valid = true;
-            if (type === 'array'){
-                if (is_required){
-                    if (value.length  < 1 || min > value.length)
-                        is_valid = false;
+        if (is_required){
+            if (type === typeof value){
+                let is_valid = true;
+                if (type === 'array'){
+                    if (is_required){
+                        if (value.length  < 1 || min > value.length)
+                            is_valid = false;
+                    }
                 }
-            }
-            if (type === 'string'){
-                if (is_required)
-                {
-                    if (is_required && value.length >= min)
-                        is_valid = false;
-                    else is_valid = false;
+                if (type === 'string'){
+                    if (is_required)
+                    {
+                        if (!value || value.length < min)
+                            is_valid = false;
+                    }
                 }
-            }
-            if (type === 'object'){
-                if (is_valid && check && check(item, value, state)) {
-                    console.log(1111111);
-                    return true;
-                }
-                else return false;
-            }
 
-            if (is_valid && check && check(item, value, state)) return true;
-            else return false;
-
+                console.log(item + "|" + value, " => " + is_valid);
+                if (check){
+                    if (check(item, value, state)) return true;
+                    else return false;
+                } else return is_valid;
+            }
+            else{
+                return false;
+            }
         }
-        return false;
+        return true;
     });
     console.log(filtered_keys);
     Object.keys(state).map(item => {

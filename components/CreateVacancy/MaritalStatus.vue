@@ -3,8 +3,9 @@
     <label for="remote-work">Семейное положение</label>
     <div class="input-wrapper">
         <CustomSelect :options="maritalStatusOptions" v-model="marital_status"></CustomSelect>
+
         <div :style="{display: 'none'}" class="text-danger" :class="{'d-block': !isValid}">
-            Введите название вакансий
+            Выберите
         </div>
     </div>
   </div>
