@@ -4,14 +4,14 @@
       <div class="c2">
           <div class="input-wrapper">
               <input type="text" v-model="contacts.name.val" placeholder="Имя">
-              <div :style="{display: 'none'}" class="text-danger" :class="{'d-block': !contacts.name.isValid && contacts.name.isChecked}">
+              <div :style="{display: 'none'}" class="text-danger" :class="{'d-block': (!contacts.name.isValid && contacts.name.isChecked)}">
                   Введите имя
               </div>
 
           </div>
           <div class="input-wrapper">
               <input type="email" v-model="contacts.email.val" placeholder="Email">
-              <div :style="{display: 'none'}" class="text-danger" :class="{'d-block': !contacts.email.isValid && contacts.email.isChecked}">
+              <div :style="{display: 'none'}" class="text-danger" :class="{'d-block': (!contacts.email.isValid && contacts.email.isChecked)}">
                   Введите Email
               </div>
           </div>
@@ -27,6 +27,9 @@
 
 <script setup>
 const emit = defineEmits(['set']);
+const props = defineProps(['is_valid']);
+const isValid = computed(() => props.is_valid);
+
 
 const contacts = reactive({
     email: {
@@ -44,6 +47,7 @@ const contacts = reactive({
         isChecked: false,
         isValid: false,
     },
+    // isValid: isValid
 });
 
 const validate = () => {
@@ -65,9 +69,19 @@ const validate = () => {
     } else {
         contacts.phones.isValid = false;
     }
-    emit('set', 'contacts', {name: contacts.name.val, email: contacts.email.email});
+    console.log(contacts.name.val, )
+    emit('set', 'contacts', {name: contacts.name.val, email: contacts.email.val});
 }
-watch(contacts, validate);
+watch(() => contacts.name.val, (newValue) => {
+    reset('name', newValue);
+});
+watch(() => contacts.email.val, (newValue) => {
+    reset('email', newValue);
+});
+const reset = (prop) => {
+    contacts[prop].isValid = true;
+}
+
 defineExpose({validate});
 </script>
 

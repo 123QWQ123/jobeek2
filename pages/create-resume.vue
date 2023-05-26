@@ -1,7 +1,12 @@
 <script setup>
 definePageMeta({
-  layout: "cabinet",
+    layout: "cabinet",
 });
+
+useHead({
+    title: "Создание резюме - Jobeek"
+})
+
 </script>
 <template>
   <main class="main cabinet create-subscribe-page bg-wrapper" role="main">

@@ -36,6 +36,7 @@ export const useProfileStore = defineStore('profile', {
         method: 'get',
         payload
       });
+      console.log(data);
       if ('data' in data){
         this.countries = data.data.countries;
       }
@@ -76,9 +77,10 @@ export const useProfileStore = defineStore('profile', {
       const {data} = await useApi(url, {
         method: 'get',
       });
+      console.log(data);
       if (data && 'data' in data){
         this.seeker = data.data;
-        this.user = {phone: this.seeker.phone};
+        this.user = {phone: this.seeker?.phone};
       }
       return data;
     },
@@ -88,7 +90,7 @@ export const useProfileStore = defineStore('profile', {
       });
       if (data && 'data' in data){
         this.employer = data.data;
-        this.user = {phone: this.employer.phone};
+        this.user = {phone: this.employer?.phone};
       }
       return data;
     },

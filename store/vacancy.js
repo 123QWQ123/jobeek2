@@ -254,7 +254,7 @@ export const useVacancyStore = defineStore('vacancy', {
         payload
       });
       if (data && 'data' in data){
-        this.schedules = data.data.schedule ?? [];
+        this.schedules = data.data?.schedule ?? [];
       }
       return data;
     },

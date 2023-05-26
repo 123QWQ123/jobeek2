@@ -10,12 +10,7 @@
           <input type="text" placeholder="Укажите должность" id="position" required>
         </div>
       </div>
-      <div class="input-row">
-        <label for="income">Какой доход вы рассматриваете (₽)? <b>*</b></label>
-        <div class="input-wrapper">
-          <input type="text" placeholder="Укажите сумму" id="income" required>
-        </div>
-      </div>
+        <CreateResumeSalary/>
       <div class="input-row">
         <label for="employment">Занятость <b>*</b></label>
         <div class="input-wrapper"><select class="d-select" name="employment" id="employment">
@@ -41,23 +36,12 @@
           </div>
         </div>
       </div>
-      <div class="input-row">
-        <label for="vaccine">Вакцинация от COVID-19 <b>*</b></label>
-        <div class="input-wrapper">
-          <select class="d-select" name="vaccine" id="vaccine">
-            <option data-display="Статус привитого">Nothing</option>
-            <option value="1">Some option</option>
-            <option value="2">Another option</option>
-            <option value="3" disabled>A disabled option</option>
-            <option value="4">Potato</option>
-          </select>
-        </div>
-      </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import CreateResume from "~/pages/create-resume.vue";
 </script>
 
 <style scoped>

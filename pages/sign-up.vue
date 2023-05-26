@@ -100,8 +100,9 @@ const onSMSSubmit = async () => {
 
   console.log(response);
   if (response.status === 'success'){
+      console.log(response.data.token);
     await tryLogin(response.data.token);
-    navigateTo({name: 'profile'});
+    // navigateTo({name: 'profile'});
   }else{
     if ( 'errors' in response && response.message) {
       Swal.fire({

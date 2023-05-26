@@ -18,23 +18,28 @@ const auth = useAuthStore();
 const { toggleUserMode } = auth;
 
 const toggle = () => {
-  let isEmployerMode = localStorage.getItem('isEmployer');
-  if (isEmployerMode === String(isEmployer.value)){
-    localStorage.setItem('isEmployer', !isEmployer.value);
-  }
-  toggleUserMode();
+
+    if (!process.server){
+        let isEmployerMode = localStorage.getItem('isEmployer');
+        if (isEmployerMode === String(isEmployer.value)){
+            localStorage.setItem('isEmployer', !isEmployer.value);
+        }
+        toggleUserMode();
+    }
 }
 
 const isAuthed = computed(() => auth.isAuthed);
 const isEmployer = computed(() => auth.isEmployer);
 
-let isEmployerMode = localStorage.getItem('isEmployer');
-if (isEmployerMode === null){
-  localStorage.setItem('isEmployer', isEmployer.value);
-}else{
-  if (isEmployerMode !== String(isEmployer.value)){
-    toggleUserMode();
-  }
+if (!process.server){
+    let isEmployerMode = localStorage.getItem('isEmployer');
+    if (isEmployerMode === null){
+        localStorage.setItem('isEmployer', isEmployer.value);
+    }else{
+        if (isEmployerMode !== String(isEmployer.value)){
+            toggleUserMode();
+        }
+    }
 }
 
 </script>

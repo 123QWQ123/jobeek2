@@ -18,7 +18,7 @@
         <div class="sep"> </div>
         <CreateVacancyJobSalary :is_valid="state.salary.is_valid" @set="updateState" ref="jobSalary"></CreateVacancyJobSalary>
         <div class="sep"></div>
-        <CreateVacancyContacts ref="contacts" @set="updateState"></CreateVacancyContacts>
+        <CreateVacancyContacts ref="contacts" :is_valid="state.contacts.is_valid" @set="updateState"></CreateVacancyContacts>
         <div class="sep"></div>
         <CreateVacancyJobEmployment :is_valid="state.employment.is_valid" @set="updateState"></CreateVacancyJobEmployment>
         <div class="sep"> </div>
@@ -88,7 +88,7 @@ const state =  reactive({
         val: {},
         type: 'object',
         is_valid: false,
-        is_required: false,
+        is_required: true,
         component: jobSalary,
         check: (prop, value, state) => {
             return state[prop].component.validate();
@@ -131,8 +131,13 @@ const state =  reactive({
     is_checked: true,
 });
 const updateState = (prop, value) => {
-    console.log(prop, value);
     state[prop].val = value;
+    reset(prop);
+}
+
+const reset = (name) => {
+    console.log(name);
+    state[name].is_valid = true;
 }
 
 const validate = () => {
@@ -143,7 +148,6 @@ const validate = () => {
         const is_required = state[item].is_required;
         const min = state[item].min ?? 0;
         const check = state[item].check;
-        console.log(check);
         if (item === 'is_checked'){
             return false;
         }
@@ -163,8 +167,6 @@ const validate = () => {
                             is_valid = false;
                     }
                 }
-
-                console.log(item + "|" + value, " => " + is_valid);
                 if (check){
                     if (check(item, value, state)) return true;
                     else return false;
@@ -179,7 +181,6 @@ const validate = () => {
     console.log(filtered_keys);
     Object.keys(state).map(item => {
         if (item !== 'is_checked'){
-            console.log(item, state[item]);
             state[item].is_valid = filtered_keys.includes(item);
         }
         return item;

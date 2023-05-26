@@ -6,7 +6,7 @@
         <div class="input-wrapper w-auto">
           <input id="salary_from" type="number" v-model="salary.from.val" placeholder="От">
           <div :style="{display: 'none'}" class="text-danger" :class="{'d-block': !salary.from.isValid && salary.from.isChecked}">
-              Введите стартовая вилка
+              Введите стартовую вилку
           </div>
         </div>
         <div class="input-wrapper w-auto">
@@ -62,7 +62,7 @@ const validate = () => {
         salary.to.isValid = false;
     }
     salary.currency.isChecked = true;
-    if (currencyOptions.value.includes(salary.currency)){
+    if (currencyOptions.value.includes(salary.currency.val)){
         salary.currency.isValid = true;
     }else{
         salary.currency.isValid = false;
