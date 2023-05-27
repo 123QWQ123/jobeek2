@@ -11,8 +11,12 @@ useHead({
   title: "Ваш аккаунт",
 });
 const authStore = useAuthStore();
+// const isEmployer = computed(() => authStore.isEmployer);
 const {isEmployer} = storeToRefs(authStore);
-
+// watch(() => isEmployer.value, (newValue) => {
+//     console.log(newValue);
+//     isEmployer.value = newValue;
+// })
 
 const route = useRoute();
 
@@ -35,12 +39,16 @@ const error = computed(() => {
         </div>
         <div class="w-box w-box--main">
           <div class="w-box-head">
-            <h1 class="title">Профиль</h1>
+            <h1 class="title">Профиль({{isEmployer}})</h1>
           </div>
-          <Transition name="content">
-            <ProfileEmployerEditForm v-if="isEmployer"/>
-            <ProfileSeekerEditForm v-else="isEmployer"/>
-          </Transition>
+            <transition name="content">
+              <div v-if="isEmployer">
+                  <ProfileEmployerEditForm/>
+              </div>
+              <div v-else>
+                  <ProfileSeekerEditForm/>
+              </div>
+            </transition>
         </div>
       </div>
       <aside class="sidebar">

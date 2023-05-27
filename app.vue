@@ -1,5 +1,7 @@
 <template>
+<div>
     <NuxtLayout> </NuxtLayout>
+</div>
 </template>
 
 <style>
@@ -35,3 +37,5 @@
   transform: translateY(0);
 }
 </style>
+<script setup lang="ts">
+</script>

@@ -35,6 +35,8 @@ const config = {
     '/sign-in': { ssr: false },
     '/sign-up': { ssr: false },
     '/profile': { ssr: false },
+    '/my-resumes': { ssr: false },
+    '/my-vacancies': { ssr: false },
     // Add cors headers
     '/api/**': { cors: true },
     // Add redirect headers

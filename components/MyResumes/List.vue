@@ -115,7 +115,6 @@ import {useResumeStore} from "~/store/resume";
 
 const router = useRouter();
 const resumeStore = useResumeStore();
-console.log(resumeStore);
 const {getMyResumes} = resumeStore;
 
 const sortingOptions = ref(useMyVacancySortingOptions());

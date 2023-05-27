@@ -103,6 +103,7 @@ const useApi = async (method, options = {}) => {
                 };
             }
         } catch (error) {
+            console.log(error);
             if (error.response && 'data' in error.response && 'errors' in error.response.data) {
                 return {
                     status: 'error',

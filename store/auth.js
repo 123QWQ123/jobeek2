@@ -31,7 +31,6 @@ export const useAuthStore = defineStore('auth', {
     },
     isAuthenticated(state) {
       let authed = false;
-      console.log(state.isAuthed);
       if (state.isAuthed === true){
         authed = true;
       }
@@ -71,7 +70,7 @@ export const useAuthStore = defineStore('auth', {
           };
         }
       }catch (error){
-        console.log(error);
+        // console.log(error);
         if (error.response && 'data' in error.response){
           return {
             status: 'error',
@@ -116,7 +115,6 @@ export const useAuthStore = defineStore('auth', {
               }
             },
         );
-        console.log(response);
 
         if (response.status === 200 && 'token' in response.data?.data){
           console.log(response.data?.data);
@@ -154,8 +152,6 @@ export const useAuthStore = defineStore('auth', {
               }
             },
         );
-        console.log(response);
-
         if ('data' in response){
           return {
             status: 'success',
@@ -168,7 +164,7 @@ export const useAuthStore = defineStore('auth', {
           };
         }
       }catch (error){
-        console.log(error);
+        // console.log(error);
         if ('data' in error.response){
           return {
             status: 'error',
@@ -290,7 +286,6 @@ export const useAuthStore = defineStore('auth', {
                 }
               },
           );
-          console.log(response.data);
           if (response.status !== 200){
             this.isAuthed = false;
             return false;

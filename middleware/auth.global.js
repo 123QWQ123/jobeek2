@@ -9,7 +9,8 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         const authStore = useAuthStore();
         const profileStore = useProfileStore();
         const {getEmployer, getSeeker} = profileStore;
-
+        let employer = computed(() => authStore.employer);
+        const isEmployer = !!localStorage.getItem('isEmployer');
         const {tryLogin, logout} = authStore;
         let isAuthed = false;
         if (authStore.isAuthed === null){
@@ -18,52 +19,39 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         }
         if (isAuthed === true){
 
-            isAuthed = false;
-            const resData = await getEmployer('employer/profile');
-            console.log(resData);
-            if (resData.status !== 'failed'){
-                const employer = computed(() => {
-                    console.log(authStore.employer);
-                    return authStore.employer;
-                });
-                isAuthed = authStore.isAuthenticated;
+            console.log(isEmployer);
+            if (isEmployer){
+                await getEmployer('employer/profile');
+                if (protected_routes.includes(to.path) && employer_routes.includes(to.path) && employer.value && employer.value.is_completed === false) {
+                    return navigateTo({
+                        path: '/profile',
+                        query: {
+                            message_text: "Not allowed!",
+                            message_code: "405",
+                            message_type: 'error'
+                        }
+                    })
+                }
+                return;
             }else{
-                const employer = null;
-                isAuthed = false;
+
+                let seeker = authStore.seeker;
+                const seekerProfile = await getSeeker('seeker/profile');
+
+                await getEmployer('employer/profile');
+                if (protected_routes.includes(to.path) && seeker_routes.includes(to.path) && seeker.value && seeker.value.is_completed === false) {
+                    return navigateTo({
+                        path: '/profile',
+                        query: {
+                            message_text: "Not allowed!",
+                            message_code: "405",
+                            message_type: 'error'
+                        }
+                    })
+                }
+                return;
             }
 
-            if (protected_routes.includes(to.path) && employer_routes.includes(to.path) && isAuthed && employer.value && employer.value?.is_completed === false) {
-                return navigateTo({
-                    path: '/profile',
-                    query: {
-                        message_text: "Not allowed!",
-                        message_code: "405",
-                        message_type: 'error'
-                    }
-                })
-            }
-
-
-            const seekerProfile = await getSeeker('seeker/profile');
-            console.log(seekerProfile);
-            if (seekerProfile.status !== 'failed'){
-                const seeker = computed(() => authStore.seeker);
-                isAuthed = authStore.isAuthenticated;
-            }else{
-                const seeker = null;
-                isAuthed = false;
-            }
-            if (protected_routes.includes(to.path) && seeker_routes.includes(to.path) && isAuthed && seeker.value && seeker.value?.is_completed === false) {
-                return navigateTo({
-                    path: '/profile',
-                    query: {
-                        message_text: "Not allowed!",
-                        message_code: "405",
-                        message_type: 'error'
-                    }
-                })
-            }
-            return;
         }else{
             return;
         }

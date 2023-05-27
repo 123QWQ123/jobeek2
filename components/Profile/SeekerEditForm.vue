@@ -214,6 +214,10 @@ await getCountries();
 
 const {countryOptions, cityOptions} = storeToRefs(profileStore);
 
+// watch(() => countryOptions.value, (newValues) => {
+//     console.log(newValues);
+// })
+
 const country = computed(() => state.country_id.val);
 const photoUrl = computed(() => {
   if (state.photo.base64){
@@ -297,7 +301,17 @@ const handleSubmit = async (e) => {
 
   const resData = await updateSeeker(formData);
 
+    console.log(resData);
   if (resData.status === 'success'){
+      console.log(resData.data.status);
+      if (resData.data.status === 'failed'){
+          console.log(resData.errors);
+          if (resData?.data.errors){
+              errors.value = {...resData.data.errors};
+          }
+          state.isLoading = false;
+          return;
+      }
     await getUser();
     Swal.fire({
       title: 'Успешно!',
@@ -307,10 +321,6 @@ const handleSubmit = async (e) => {
     });
     state.isLoading = false;
   }else{
-    console.log(resData.errors);
-    if (resData?.errors){
-      errors.value = {...resData.errors};
-    }
     Swal.fire({
       title: 'Ошибка!',
       text: resData.message,

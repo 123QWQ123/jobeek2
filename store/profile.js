@@ -77,7 +77,6 @@ export const useProfileStore = defineStore('profile', {
       const {data} = await useApi(url, {
         method: 'get',
       });
-      console.log(data);
       if (data && 'data' in data){
         this.seeker = data.data;
         this.user = {phone: this.seeker?.phone};
@@ -85,14 +84,15 @@ export const useProfileStore = defineStore('profile', {
       return data;
     },
     async getEmployer(url = "") {
-      const {data} = await useApi(url, {
+      const response = await useApi(url, {
         method: 'get',
       });
-      if (data && 'data' in data){
-        this.employer = data.data;
+      console.log(response);
+      if (response && response.data && 'data' in response.data){
+        this.employer = response.data.data;
         this.user = {phone: this.employer?.phone};
       }
-      return data;
+      return response;
     },
     async updateSeeker(payload) {
       const response = await useApi('seeker/profile', {
@@ -100,6 +100,7 @@ export const useProfileStore = defineStore('profile', {
         content_type: 'multipart/form-data',
         payload
       });
+      console.log(response);
       if ('data' in response){
         this.user = response.data.data;
       }
