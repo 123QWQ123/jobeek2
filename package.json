@@ -9,6 +9,7 @@
     "deploy-stage": "nuxt generate && scp -r ./.output/public/* jobeek:~/web"
   },
   "devDependencies": {
+    "@nuxt/devtools": "^0.5.5",
     "nuxt": "3.0.0",
     "prettier": "^2.8.3",
     "vite": "^3.2.5"

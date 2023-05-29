@@ -10,14 +10,14 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         const profileStore = useProfileStore();
         const {getEmployer, getSeeker} = profileStore;
         let employer = computed(() => authStore.employer);
+        let seeker = computed(() => authStore.seeker);
+        let isAuthed = computed(() => authStore.isAuthenticated);
         const isEmployer = !!localStorage.getItem('isEmployer');
         const {tryLogin, logout} = authStore;
-        let isAuthed = false;
         if (authStore.isAuthed === null){
             await tryLogin();
-            isAuthed = authStore.isAuthenticated;
         }
-        if (isAuthed === true){
+        if (isAuthed.value === true){
 
             console.log(isEmployer);
             if (isEmployer){
@@ -35,8 +35,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
                 return;
             }else{
 
-                let seeker = authStore.seeker;
-                const seekerProfile = await getSeeker('seeker/profile');
+                await getSeeker('seeker/profile');
 
                 await getEmployer('employer/profile');
                 if (protected_routes.includes(to.path) && seeker_routes.includes(to.path) && seeker.value && seeker.value.is_completed === false) {
@@ -53,6 +52,16 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
             }
 
         }else{
+            if (protected_routes.includes(to.path)) {
+                return navigateTo({
+                    path: '/sign-in',
+                    query: {
+                        message_text: "Please, Sign in to have access!",
+                        message_code: "403",
+                        message_type: 'error'
+                    }
+                })
+            }
             return;
         }
     }

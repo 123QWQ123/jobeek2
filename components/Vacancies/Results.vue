@@ -5,7 +5,7 @@
         <div class="search-head">
           <div class="col">
             <div class="search-item">{{ search_keyword }}</div>
-            <div class="found-count">Найдено {{vueNumberFormat(total, {})}} вакансий</div>
+            <div class="found-count">Найдено {{total}} вакансий</div>
           </div>
           <div class="col d-flex justify-content-end">
             <div class="d-inline-flex">
@@ -85,15 +85,24 @@ import {useCurrencyOptions} from "../../composables/useCurrencyOptions";
 import {useSortingOptions} from "../../composables/useSortingOptions";
 import {useVacancyForm} from "../../composables/useVacancyForm";
 import {navigateTo} from "nuxt/app";
+import {useDictionaryStore} from "~/store/dictionary";
+import vueNumberFormat from "~/plugins/vueNumberFormat";
+
 
 const vacancyStore = useVacancyStore();
+const dictionaryStore = useDictionaryStore();
 const {total} = storeToRefs(vacancyStore);
+
 const route = useRoute();
 const {name: search_keyword} = route.query;
 
 const currencyOptions = ref(useCurrencyOptions());
 const sortingOptions = ref(useSortingOptions());
 
+(() => {
+    console.log(total.value);
+    // vacancyStore.total = vueNumberFormat(total.value, {});
+});
 const onChange = (data) => {
   console.log(data);
 }

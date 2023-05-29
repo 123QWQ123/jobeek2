@@ -13,6 +13,7 @@ const config = {
     }
   },
   ssr: true,
+  pages: true,
   css: [
     "bootstrap/dist/css/bootstrap.min.css",
     '~/assets/styles/nice-select.css',
@@ -25,7 +26,15 @@ const config = {
   ],
     modules: [
     '@pinia/nuxt',
+      '@nuxt/devtools',
   ],
+  devtools: {
+    // Enable devtools (default: true)
+    enabled: true,
+    // VS Code Server options
+    vscode: {},
+    // ...other options
+  },
   app: {
     pageTransition: { name: 'layout', mode: 'out-in' }
   },
@@ -37,6 +46,7 @@ const config = {
     '/profile': { ssr: false },
     '/my-resumes': { ssr: false },
     '/my-vacancies': { ssr: false },
+    '/create-vacancy': { ssr: false },
     // Add cors headers
     '/api/**': { cors: true },
     // Add redirect headers

@@ -72,7 +72,7 @@ const onSubmit = async () => {
       phone: phoneMask.value.unmaskedValue,
     });
 
-    if (response.status === 'success'){
+    if ('data' in response && 'session' in response.data){
       isConfirmTab.value = true;
       isRegisterTab.value = false;
       state.session = response.data.session;
@@ -99,10 +99,10 @@ const onSMSSubmit = async () => {
   });
 
   console.log(response);
-  if (response.status === 'success'){
+  if ('data' in response && 'token' in response.data){
       console.log(response.data.token);
     await tryLogin(response.data.token);
-    // navigateTo({name: 'profile'});
+    navigateTo({name: 'profile'});
   }else{
     if ( 'errors' in response && response.message) {
       Swal.fire({

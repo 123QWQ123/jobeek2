@@ -45,98 +45,21 @@ export const useAuthStore = defineStore('auth', {
       this.user = payload;
     },
     async signUp(payload) {
-      const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + 'auth/register';
-      try {
-        const response = await axios.post(
-            url,
-            payload,
-            {
-              headers: {
-                'Content-Type': 'application/json',
-              }
-            },
-        );
-        if ('data' in response){
-          console.log(response)
-          return {
-            status: 'success',
-            data: response.data.data
-          };
-        }else{
-          return {
-            status: 'error',
-            data: response.message
-          };
-        }
-      }catch (error){
-        // console.log(error);
-        if (error.response && 'data' in error.response){
-          return {
-            status: 'error',
-            data: error.response.data
-          };
-        }
-        return {
-          status: 'error',
-          message: error.message,
-        };
-      }
-      // const resData = await response;
-      // const expiresIn = resData.expiresIn * 1000;
-      // const expirationDate = new Date().getTime() + expiresIn;
-      //
-      // localStorage.setItem('token', resData.idToken);
-      // localStorage.setItem('userId', resData.localId);
-      // localStorage.setItem('tokenExpirationDate', expirationDate);
-      //
-      // timer = setTimeout(() => {
-      //   this.autoLogout();
-      // }, expiresIn);
-
-      // if (response.ok) {
-      //   this.setUser({
-      //     token: resData.idToken,
-      //     userId: resData.localId,
-      //   });
-      //   this.isAuthed = true;
-      // }
+      const {data} = await useApi('auth/register', {
+        method: 'post',
+        payload
+      });
+      return data;
     },
     async confirmPhoneCode(payload) {
-      const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + 'auth/register/confirm';
-      try {
-        const response = await axios.post(
-            url,
-            payload,
-            {
-              headers: {
-                'Content-Type': 'application/json',
-              }
-            },
-        );
-
-        if (response.status === 200 && 'token' in response.data?.data){
-          console.log(response.data?.data);
-          localStorage.setItem('token', response.data?.data.token);
-        }
-        return {
-          status: 'success',
-          data: response.data.data
-        };
-      }catch (error){
-        console.log(error);
-        if ('data' in error){
-          return {
-            status: 'error',
-            data: error.data
-          };
-        }
-        return {
-          status: 'error',
-          message: error.message,
-        };
+      const {data} = await useApi('auth/register/confirm', {
+        method: 'post',
+        payload
+      });
+      if ('token' in data?.data){
+        localStorage.setItem('token', data?.data.token);
       }
+      return data;
     },
     async sendRecoveryCode(payload) {
 

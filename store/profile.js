@@ -102,7 +102,7 @@ export const useProfileStore = defineStore('profile', {
       });
       console.log(response);
       if ('data' in response){
-        this.user = response.data.data;
+        this.user = response.data?.data;
       }
       return response;
     },
@@ -113,7 +113,7 @@ export const useProfileStore = defineStore('profile', {
         payload
       });
       if ('data' in response){
-        this.user = response.data.data;
+        this.user = response.data?.data;
       }
       return response;
     },

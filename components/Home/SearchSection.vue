@@ -56,8 +56,10 @@
 
 import {useVacancyStore} from "../../store/vacancy";
 import {storeToRefs} from "pinia";
+import {useDictionaryStore} from "~/store/dictionary";
 const vacancyStore = useVacancyStore();
-const {getSchedules} = vacancyStore;
+const dictionaryStore = useDictionaryStore();
+const {getSchedules} = dictionaryStore;
 await getSchedules();
 const {industries, schedules} = storeToRefs(vacancyStore);
 
