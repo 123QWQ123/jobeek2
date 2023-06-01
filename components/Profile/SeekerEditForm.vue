@@ -54,11 +54,11 @@
     <div class="input-row">
       <label for="country">Город проживания <b>*</b></label>
       <div class="input-wrapper">
-        <SelectWithSearch :options="countryOptions" v-model.number="state.country_id.val"></SelectWithSearch>
+        <SelectWithSearch :options="countryOptions" v-model.number="state.country_id.val" :placeholder="'Выберите страну'"></SelectWithSearch>
       </div>
       <br/>
       <div class="input-wrapper mt-2">
-        <SelectWithSearch :options="cityOptions" v-model.number="state.city_id.val"></SelectWithSearch>
+        <SelectWithSearch :options="cityOptions" v-model.number="state.city_id.val" :placeholder="'Выберите город'"></SelectWithSearch>
       </div>
       <div class="text-danger d-block" v-if="errors.city_id">
         Вам нужно выбрать город проживания!
@@ -120,11 +120,8 @@ const {getUser} = profileStore;
 
 const {seeker} = storeToRefs(profileStore);
 
-console.log(seeker);
-
 onMounted(async() => {
-  await getUser();
-
+  // await getUser();
 });
 
 const state = reactive({
@@ -180,13 +177,13 @@ const state = reactive({
 });
 
 
-watch(() => state.country_id.val, async(newCountry) => {
-  // console.log(newCountry);
+onMounted(() => {
+    getUser();
 })
-
 const phoneInputElement = ref();
 const phoneMask = ref(null);
-watch(seeker, async(new_value) => {
+watch(() => seeker.value, async(new_value) => {
+    console.log(new_value);
   for (const [key, value] of Object.entries(new_value)) {
     if (state.hasOwnProperty(key)){
       if (key === 'birth_date'){
@@ -203,6 +200,7 @@ watch(seeker, async(new_value) => {
         }, 0)
         continue;
       }
+        console.log(value);
       state[key].val = value;
     }
   }

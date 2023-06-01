@@ -36,7 +36,7 @@ const config = {
     // ...other options
   },
   app: {
-    pageTransition: { name: 'layout', mode: 'out-in' }
+    // pageTransition: { name: 'layout', mode: 'out-in' }
   },
   routeRules: {
     // Static page generated on-demand, revalidates in background

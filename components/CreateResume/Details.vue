@@ -40,12 +40,8 @@
   </div>
   <div class="input-row">
       <label for="country">Город проживания <b>*</b></label>
-      <div class="input-wrapper">
-          <SelectWithSearch :options="countryOptions" v-model.number="state.country_id.val"></SelectWithSearch>
-      </div>
-      <br/>
       <div class="input-wrapper mt-2">
-          <SelectWithSearch :options="cityOptions" v-model.number="state.city_id.val"></SelectWithSearch>
+          <SelectWithSearch :options="cityOptions" v-model.number="state.city_id.val" :placeholder="'Ишите город'"></SelectWithSearch>
       </div>
 
       <div class="text-danger d-block" v-if="errors.city_id">
@@ -127,10 +123,6 @@ const state = reactive({
         val: moment(),
         isValid: true,
     },
-    country_id: {
-        val: null,
-        isValid: true,
-    },
     city_id: {
         val: null,
         isValid: true,
@@ -167,19 +159,20 @@ const state = reactive({
 });
 const errors = ref({});
 const profileStore = useProfileStore();
-const {getCountries, getCities} = profileStore;
-const {cityOptions} = storeToRefs(profileStore);
-const countryOptions = computed(() => profileStore.countries);
-await getCountries();
-console.log(countryOptions);
-const country = computed(() => state.country_id.val);
-watch(country, (new_value) => {
-    getCities({country_id: new_value});
-});
+const {searchCities} = profileStore;
 
+const cityOptions = ref([]);
+
+onMounted(async() => {
+    cityOptions.value = await searchCities();
+})
 
 </script>
 
-<style scoped>
+<style>
+
+.from-to-block{
+
+}
 
 </style>

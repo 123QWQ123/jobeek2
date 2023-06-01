@@ -18,6 +18,9 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         if (authStore.isAuthed === null){
             await tryLogin();
         }
+
+        console.log(isAuthed.value);
+
         if (isAuthed.value === true){
             if (isEmployer){
                 await getEmployer('employer/profile');
@@ -49,6 +52,8 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
             }
 
         }else{
+            console.log(to.name);
+            console.log(protected_routes.includes(to.name));
             if (protected_routes.includes(to.name)) {
                 return navigateTo({
                     path: '/sign-in',

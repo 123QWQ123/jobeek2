@@ -1,15 +1,16 @@
 const public_routes = [
-    '/sign-up',
-    '/sign-up/confirm',
-    '/sign-in',
+    'sign-up',
+    'sign-up-confirm',
+    'sign-in',
 ];
 
 const protected_routes = [
-    '/profile',
-    '/my-resumes',
-    '/your-favorites',
-    '/my-vacancies',
-    // '/create-vacancy',
+    'profile',
+    'my-resumes',
+    'your-favorites',
+    'my-vacancies',
+    'create-vacancy',
+    'create-resume',
 ];
 const search_exception_routes = [
     'index',
