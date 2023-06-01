@@ -28,56 +28,51 @@
     </div>
   </div>
   <div class="input-row">
-    <label>Дата рождения <b>*</b></label>
-    <div class="input-wrapper">
-      <div class="c3"><select class="d-select" name="birth-day" id="birth-day">
-        <option data-display="День">Nothing</option>
-        <option value="1">Some option</option>
-        <option value="2">Another option</option>
-        <option value="3" disabled>A disabled option</option>
-        <option value="4">Potato</option>
-      </select>
-        <select class="d-select" name="birth-month" id="birth-month">
-          <option data-display="Месяц">Nothing</option>
-          <option value="1">Some option</option>
-          <option value="2">Another option</option>
-          <option value="3" disabled>A disabled option</option>
-          <option value="4">Potato</option>
-        </select>
-        <select class="d-select" name="birth-year" id="birth-year">
-          <option data-display="Год">Nothing</option>
-          <option value="1">Some option</option>
-          <option value="2">Another option</option>
-          <option value="3" disabled>A disabled option</option>
-          <option value="4">Potato</option>
-        </select>
-      </div><div class="check-block">
-      <div class="checkbox">
-        <input type="checkbox" id="do-not-show-date">
-        <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
+      <label>Дата рождения <b>*</b></label>
+      <div class="input-wrapper">
+          <div class="c3">
+              <BirthDatePicker v-model="state.birth_date.val"></BirthDatePicker>
+          </div>
+          <div class="text-danger d-block" v-if="errors.birth_date">
+              {{ errors.birth_date }}
+          </div>
       </div>
-      <label for="do-not-show-date">Не показывать дату рождения</label>
-    </div>
-    </div>
   </div>
   <div class="input-row">
-    <label for="city">Город проживания <b>*</b></label>
-    <div class="input-wrapper"><select class="d-select" name="city" id="city">
-      <option data-display="Выберите город">Nothing</option>
-      <option value="1">Some option</option>
-      <option value="2">Another option</option>
-      <option value="3" disabled>A disabled option</option>
-      <option value="4">Potato</option>
-    </select>
-      <div class="check-block">
-        <div class="checkbox">
-          <input type="checkbox" id="ready-to-relocate" checked>
-          <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
-        </div>
-        <label for="ready-to-relocate">Готов к переезду</label>
+      <label for="country">Город проживания <b>*</b></label>
+      <div class="input-wrapper">
+          <SelectWithSearch :options="countryOptions" v-model.number="state.country_id.val"></SelectWithSearch>
       </div>
-    </div>
+      <br/>
+      <div class="input-wrapper mt-2">
+          <SelectWithSearch :options="cityOptions" v-model.number="state.city_id.val"></SelectWithSearch>
+      </div>
+
+      <div class="text-danger d-block" v-if="errors.city_id">
+          Вам нужно выбрать город проживания!
+      </div>
+
+
+      <div class="check-block">
+          <div class="checkbox">
+              <input type="checkbox" id="ready-to-relocate" checked>
+              <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
+          </div>
+          <label for="ready-to-relocate">Готов к переезду</label>
+      </div>
   </div>
+<!--  <div class="input-row">-->
+<!--      -->
+<!--    <label for="city">Город проживания <b>*</b></label>-->
+<!--    <div class="input-wrapper"><select class="d-select" name="city" id="city">-->
+<!--      <option data-display="Выберите город">Nothing</option>-->
+<!--      <option value="1">Some option</option>-->
+<!--      <option value="2">Another option</option>-->
+<!--      <option value="3" disabled>A disabled option</option>-->
+<!--      <option value="4">Potato</option>-->
+<!--    </select>-->
+<!--    </div>-->
+<!--  </div>-->
   <div class="input-row">
     <label for="phone">Телефон</label>
     <div class="input-wrapper">
@@ -114,6 +109,75 @@
 </template>
 
 <script setup>
+
+import moment from "moment/moment";
+import {storeToRefs} from "pinia";
+import {useProfileStore} from "~/store/profile";
+
+const state = reactive({
+    first_name: {
+        val: "",
+        isValid: true,
+    },
+    last_name: {
+        val: "",
+        isValid: true,
+    },
+    birth_date: {
+        val: moment(),
+        isValid: true,
+    },
+    country_id: {
+        val: null,
+        isValid: true,
+    },
+    city_id: {
+        val: null,
+        isValid: true,
+    },
+    photo: {
+        val: "",
+        isValid: true,
+        base64: "",
+    },
+    photo_url: {
+        val: "",
+        isValid: true,
+    },
+    phone: {
+        val: "",
+        isValid: true,
+    },
+    email: {
+        val: "",
+        isValid: true,
+    },
+    email_to_verify: {
+        val: "",
+        isValid: true,
+    },
+    password: {
+        val: "",
+        isValid: true,
+    },
+    isFormValid: true,
+    isLoading: false,
+    error: null,
+    success: null,
+});
+const errors = ref({});
+const profileStore = useProfileStore();
+const {getCountries, getCities} = profileStore;
+const {cityOptions} = storeToRefs(profileStore);
+const countryOptions = computed(() => profileStore.countries);
+await getCountries();
+console.log(countryOptions);
+const country = computed(() => state.country_id.val);
+watch(country, (new_value) => {
+    getCities({country_id: new_value});
+});
+
+
 </script>
 
 <style scoped>

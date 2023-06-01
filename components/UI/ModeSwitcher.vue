@@ -1,9 +1,9 @@
 <template>
-  <div class="theme-checker-box checker-box right__box" @click="toggle">
+  <div class="theme-checker-box cursor-pointer checker-box right__box" @click="toggle">
     <span class="v v1 " :class="{'active' : !isEmployer}" title="Соискатель">Соискатель</span>
     <div class="theme-checker" >
       <input type="checkbox" id="employer" checked>
-      <div class="theme-checker-ui">
+      <div class="theme-checker-ui ">
         <div class="circle" :class="{'left': !isEmployer, 'right' : isEmployer }"> </div>
       </div>
     </div>

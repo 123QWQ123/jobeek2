@@ -1,100 +1,102 @@
 <template>
   <div class="wrapper wrapper-1290">
-    <PageLoader v-if="isLoading" />
 
-    <div class="notification mt-0">
-        <div class="ic">
-          <img src="~/assets/img/svg/crown2.svg" alt="#" />
-        </div>
-        <div class="notification-text">
-          <strong class="title">Подключите премиум</strong>
-          <p>
-            У вас стоит лимит на создание подписок: 3 шт. Чтобы создавать
-            неограниченное кол-во подписок, подключите премиум
-          </p>
-        </div>
-        <a class="notification-button button-accent" href="#">Подключить </a>
+      <PageLoader v-if="isLoading" />
+
+      <div class="notification mt-0">
+          <div class="ic">
+              <img src="~/assets/img/svg/crown2.svg" alt="#" />
+          </div>
+          <div class="notification-text">
+              <strong class="title">Подключите премиум</strong>
+              <p>
+                  У вас стоит лимит на создание подписок: 3 шт. Чтобы создавать
+                  неограниченное кол-во подписок, подключите премиум
+              </p>
+          </div>
+          <a class="notification-button button-accent" href="#">Подключить </a>
       </div>
       <NuxtLink class="create-button" type="link" :to="{name: 'create-resume'}" >Создать резюме</NuxtLink>
 
 
 
-    <div class="col d-flex justify-content-between mt-4" >
-      <h1 ref="filterRef" class="lk-page-title mt-4">Ваши резюме({{ my_total }})</h1>
+      <div class="col d-flex justify-content-between mt-4" >
+          <h1 ref="filterRef" class="lk-page-title mt-4">Ваши резюме({{ my_total }})</h1>
 
-<!--      {{providers}}-->
-<!--      <div class="d-inline-flex">-->
-<!--        <div class="option-group selector-group">-->
-<!--          <div class="option" @click="onProviderToggle('hh')">-->
-<!--            <div class="custom-check-wrap">-->
-<!--              <div class="theme-checker theme-checker&#45;&#45;blue">-->
-<!--                <input type="checkbox" id="hh" :checked="providers.hh" />-->
-<!--                <div class="theme-checker-ui">-->
-<!--                  <div class="circle" :class="{'right' : providers.hh, 'left': !providers.hh}"></div>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--              <label for="hh"-->
-<!--              ><img-->
-<!--                  src="~/assets/img/logos/hhmini.svg"-->
-<!--                  alt="#"-->
-<!--              /><span>Hh.ru</span></label-->
-<!--              >-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <div class="option" @click="onProviderToggle('superjob')">-->
-<!--            <div class="custom-check-wrap">-->
-<!--              <div class="theme-checker theme-checker&#45;&#45;blue">-->
-<!--                <input type="checkbox" id="sj" :checked="providers.superjob" />-->
-<!--                <div class="theme-checker-ui">-->
-<!--                  <div class="circle" :class="{'right' : providers.superjob, 'left': !providers.superjob}"></div>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--              <label for="sj"-->
-<!--              ><img src="~/assets/img/logos/sj.svg" alt="#" /><span-->
-<!--              >Superjob.ru-->
-<!--                          </span></label-->
-<!--              >-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
-    </div>
-    <div class="col d-flex justify-content-between align-items-center " >
-        <div class="d-inline-flex">
+          {{providers}}
+          <div class="d-inline-flex">
+              <div class="option-group selector-group">
+                  <div class="option" @click="onProviderToggle('hh')">
+                      <div class="custom-check-wrap">
+                          <div class="theme-checker theme-checker--blue">
+                              <input type="checkbox" id="hh" :checked="providers.hh" />
+                              <div class="theme-checker-ui">
+                                  <div class="circle" :class="{'right' : providers.hh, 'left': !providers.hh}"></div>
+                              </div>
+                          </div>
+                          <label for="hh"
+                          ><img
+                                  src="~/assets/img/logos/hhmini.svg"
+                                  alt="#"
+                          /><span>Hh.ru</span></label
+                          >
+                      </div>
+                  </div>
+                  <div class="option" @click="onProviderToggle('superjob')">
+                      <div class="custom-check-wrap">
+                          <div class="theme-checker theme-checker--blue">
+                              <input type="checkbox" id="sj" :checked="providers.superjob" />
+                              <div class="theme-checker-ui">
+                                  <div class="circle" :class="{'right' : providers.superjob, 'left': !providers.superjob}"></div>
+                              </div>
+                          </div>
+                          <label for="sj"
+                          ><img src="~/assets/img/logos/sj.svg" alt="#" /><span
+                          >Superjob.ru
+                            </span></label
+                          >
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="col d-flex justify-content-between align-items-center " >
+          <div class="d-inline-flex">
 
-          <form class="sort mx-2 ms-auto" action="#">
-            <span>Поставщик:</span>
-            <CustomSelect :options="providerOptions" v-model="form.provider" @change="onProviderChange" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
-          </form>
-          <form class="sort mx-2 ms-auto" action="#">
-            <span>Фильтр:</span>
-            <CustomSelect :options="filterOptions" v-model="form.status" @change="onFilterChange" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
-          </form>
-        </div>
+              <form class="sort mx-2 ms-auto" action="#">
+                  <span>Поставщик:</span>
+                  <CustomSelect :options="providerOptions" v-model="form.provider" @change="onProviderChange" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
+              </form>
+              <form class="sort mx-2 ms-auto" action="#">
+                  <span>Фильтр:</span>
+                  <CustomSelect :options="filterOptions" v-model="form.status" @change="onFilterChange" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
+              </form>
+          </div>
 
-        <div class="d-inline-flex">
-          <form class="sort mx-1" action="#">
-            <span>Показать:</span>
-            <CustomSelect v-model="form.per_page" :options="perPageOptions" @change="onChangePerPage" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
-          </form>
-          <form class="sort mx-1" action="#">
-            <span>Сортировать:</span>
-            <CustomSelect v-model="form.order_by" :options="sortingOptions" @change="onChangeSorting" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
-          </form>
-        </div>
+          <div class="d-inline-flex">
+              <form class="sort mx-1" action="#">
+                  <span>Показать:</span>
+                  <CustomSelect v-model="form.per_page" :options="perPageOptions" @change="onChangePerPage" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
+              </form>
+              <form class="sort mx-1" action="#">
+                  <span>Сортировать:</span>
+                  <CustomSelect v-model="form.order_by" :options="sortingOptions" @change="onChangeSorting" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
+              </form>
+          </div>
+
       </div>
       <ul class="resume-list mt-4" v-if="my_total > 0">
-        <MyResumesItem v-for="item in my_resumes" :key="item.id" :item="item"></MyResumesItem>
+          <MyResumesItem v-for="item in my_resumes" :key="item.id" :item="item"></MyResumesItem>
       </ul>
       <div class="d-flex mt-4 pb-4 justify-content-center" v-else>
-        <p>Ничего не найдено!</p>
+          <p>Ничего не найдено!</p>
       </div>
       <div class="d-flex mt-4 justify-content-between pb-4" v-if="my_total > 0">
-        <button class="btn btn-primary btn-group-sm" :class="{disabled: isPrevDisabled}"  @click="prevPage">Prev</button>
-        <p>{{current_page}}</p>
-        <button class="btn btn-primary btn-group-sm" @click="nextPage">Next</button>
+          <button class="btn btn-primary btn-group-sm" :class="{disabled: isPrevDisabled}"  @click="prevPage">Prev</button>
+          <p>{{current_page}}</p>
+          <button class="btn btn-primary btn-group-sm" @click="nextPage">Next</button>
       </div>
-    </div>
+  </div>
 </template>
 
 <script setup>

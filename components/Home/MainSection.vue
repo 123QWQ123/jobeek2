@@ -54,7 +54,6 @@
 <script setup>
 
 import { useAuthStore } from "~~/store/auth";
-import { navigateTo } from "nuxt/app";
 import { useVacancyStore } from "../../store/vacancy";
 import { useVacancyForm } from "../../composables/useVacancyForm";
 import { storeToRefs } from "pinia";
@@ -154,12 +153,9 @@ const isLoading = ref(false);
 
 const { clearVacancies } = vacancyStore;
 const onSubmit = async (e) => {
-    console.log(1);
     isLoading.value = true;
     clearVacancies();
-    console.log(form.value);
     const params = useVacancyForm(form.value, "front");
-    console.log(params);
     if (isEmployer.value) {
         router.push({ name: "search-resumes", query: params });
     } else {

@@ -3,8 +3,6 @@ import axios from "axios";
 
 const useApi = async (method, options = {}) => {
     // console.log(options);
-    const CONFIG = useRuntimeConfig();
-    let url = CONFIG.public.apiBase + method;
 
     // const { data, pending, error, refresh } = await useFetch(url, {
     //     onRequest({ request, options }) {
@@ -104,6 +102,14 @@ const useApi = async (method, options = {}) => {
             }
         } catch (error) {
             console.log(error);
+            if (error.response && error.response.status === 403){
+                if (error.response.data.message === "Доступ запрещен, пожалуйста, активируйте свой профиль Соискателя."){
+                    navigateTo({name: 'profile'})
+                }
+                if (error.response.data.message === "Доступ запрещен, пожалуйста, активируйте свой профиль Соискателя."){
+                    navigateTo({name: 'profile'})
+                }
+            }
             if (error.response && 'data' in error.response && 'errors' in error.response.data) {
                 return {
                     status: 'error',
@@ -194,7 +200,7 @@ const useApi = async (method, options = {}) => {
                 };
             }
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             if (error.response && 'data' in error.response && 'errors' in error.response.data) {
                 return {
                     status: 'error',

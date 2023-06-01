@@ -6,6 +6,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     if (!process.server) {
         console.log("middleware from client side");
 
+        console.log(to);
         const authStore = useAuthStore();
         const profileStore = useProfileStore();
         const {getEmployer, getSeeker} = profileStore;
@@ -18,15 +19,13 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
             await tryLogin();
         }
         if (isAuthed.value === true){
-
-            console.log(isEmployer);
             if (isEmployer){
                 await getEmployer('employer/profile');
-                if (protected_routes.includes(to.path) && employer_routes.includes(to.path) && employer.value && employer.value.is_completed === false) {
+                if (protected_routes.includes(to.name) && employer_routes.includes(to.name) && employer.value && employer.value.is_completed === false) {
                     return navigateTo({
                         path: '/profile',
                         query: {
-                            message_text: "Not allowed!",
+                            message_text: "you have to completed your employer profile!",
                             message_code: "405",
                             message_type: 'error'
                         }
@@ -36,13 +35,11 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
             }else{
 
                 await getSeeker('seeker/profile');
-
-                await getEmployer('employer/profile');
-                if (protected_routes.includes(to.path) && seeker_routes.includes(to.path) && seeker.value && seeker.value.is_completed === false) {
+                if (protected_routes.includes(to.name) && seeker_routes.includes(to.name) && seeker.value && seeker.value.is_completed === false) {
                     return navigateTo({
                         path: '/profile',
                         query: {
-                            message_text: "Not allowed!",
+                            message_text: "you have to completed your seeker profile!",
                             message_code: "405",
                             message_type: 'error'
                         }
@@ -52,7 +49,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
             }
 
         }else{
-            if (protected_routes.includes(to.path)) {
+            if (protected_routes.includes(to.name)) {
                 return navigateTo({
                     path: '/sign-in',
                     query: {

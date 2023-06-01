@@ -29,9 +29,8 @@ const props = defineProps({
 
 const isOpen = ref(false);
 const options = ref(props.options);
-watch(props, (newProps) => {
-  options.value = newProps.options;
-
+watch(() => props.options, (newOptions) => {
+  options.value = newOptions;
   selectedOption.value = options.value.find(item => String(item.value) === String(props.modelValue));
 });
 

@@ -1,5 +1,4 @@
 <template>
-
   <form class="w-box-body" @submit.prevent="handleSubmit" >
     <PageLoader v-if="state.isLoading" />
     <div class="input-row">
@@ -219,6 +218,10 @@ const {countryOptions, cityOptions} = storeToRefs(profileStore);
 // })
 
 const country = computed(() => state.country_id.val);
+watch(country, (new_value) => {
+    getCities({country_id: new_value});
+});
+
 const photoUrl = computed(() => {
   if (state.photo.base64){
     return state.photo.base64;
@@ -229,9 +232,6 @@ const photoUrl = computed(() => {
 
 
 
-watch(country, (new_value) => {
-  getCities({country_id: new_value});
-});
 
 const photoElement = ref();
 

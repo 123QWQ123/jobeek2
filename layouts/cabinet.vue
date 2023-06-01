@@ -5,7 +5,9 @@
     </header>
     <HeaderThePersonalCabinetHeader v-else></HeaderThePersonalCabinetHeader>
 
-    <NuxtPage />
+      <div>
+          <NuxtPage />
+      </div>
 <!--       <template #error="{ error }">-->
 <!--        <div>-->
 <!--          <p>-->

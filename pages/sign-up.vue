@@ -97,10 +97,7 @@ const onSMSSubmit = async () => {
     session: state.session,
     code: state.code.val,
   });
-
-  console.log(response);
   if ('data' in response && 'token' in response.data){
-      console.log(response.data.token);
     await tryLogin(response.data.token);
     navigateTo({name: 'profile'});
   }else{
