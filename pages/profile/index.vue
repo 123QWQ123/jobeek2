@@ -3,6 +3,7 @@
 
 import {useAuthStore} from "../../store/auth";
 import {storeToRefs} from "pinia";
+import {useCheckJSON} from "~/composables/useCheckJSON";
 
 definePageMeta({
   layout: "cabinet"
@@ -21,7 +22,24 @@ const {isEmployer} = storeToRefs(authStore);
 const route = useRoute();
 
 const error = computed(() => {
-  return route.query.message_text;
+    return route.query.message;
+});
+const errorMessage = computed(() => {
+    // console.log();
+    if (useCheckJSON(route.query.message)){
+        return JSON.parse(route.query.message).text;
+    }
+    return route.query.message
+});
+const errorClass = computed(() => {
+    if (useCheckJSON(route.query.message)){
+        const code = JSON.parse(route.query.message).code;
+        console.log(code);
+        if (code === 200 || code === 201){
+            return 'bg-success';
+        }
+    }
+    return 'bg-danger';
 });
 
 </script>
@@ -32,9 +50,9 @@ const error = computed(() => {
     <div class="has-sidebar has-sidebar--v2 wrapper wrapper-1290">
       <div class="content">
         <div class="w-box w-box--main" v-if="error">
-          <div class="w-box-head bg-danger ">
+          <div class="w-box-head " :class="errorClass">
             <h1 class="title text-light">Ошибка</h1>
-            <p class="descr text-light">Вам обязательно заполнить данные профиля!</p>
+            <p class="descr text-light">{{errorMessage}}</p>
           </div>
         </div>
         <div class="w-box w-box--main">

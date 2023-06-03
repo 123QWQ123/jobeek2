@@ -41,7 +41,7 @@
   <div class="input-row">
       <label for="country">Город проживания <b>*</b></label>
       <div class="input-wrapper mt-2">
-          <SelectWithSearch :options="cityOptions" v-model.number="state.city_id.val" :placeholder="'Ишите город'"></SelectWithSearch>
+          <SelectWithSearch :options="cityOptions" v-model.number="state.city_id.val" :placeholder="'Ишите город'" @input="updateCityInput"></SelectWithSearch>
       </div>
 
       <div class="text-danger d-block" v-if="errors.city_id">
@@ -163,8 +163,15 @@ const {searchCities} = profileStore;
 
 const cityOptions = ref([]);
 
-onMounted(async() => {
-    cityOptions.value = await searchCities();
+const updateCityInput = async (newValue = '') => {
+    console.log(newValue);
+     const items = await searchCities({search: newValue}) ?? [];
+    console.log(items);
+    cityOptions.value = items.map(item => ({value: item.city_id, name: item.city_name}));
+}
+
+onMounted(() => {
+    updateCityInput()
 })
 
 </script>

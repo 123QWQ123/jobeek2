@@ -62,15 +62,14 @@ export const useProfileStore = defineStore('profile', {
       return data;
     },
     async searchCities(payload = {}) {
-      const {data} = await useApi('area/search', {
+      const {data} = await useApi('area', {
         method: 'get',
         payload
       });
-      console.log(data);
       if (data.status === 'failed'){
         return [];
       }
-      return data ? data.regions : [];
+      return data ?? [];
     },
     async getUser(payload = "") {
 
@@ -97,7 +96,6 @@ export const useProfileStore = defineStore('profile', {
       const response = await useApi(url, {
         method: 'get',
       });
-      console.log(response);
       if (response && response.data && 'data' in response.data){
         this.employer = response.data.data;
         this.user = {phone: this.employer?.phone};

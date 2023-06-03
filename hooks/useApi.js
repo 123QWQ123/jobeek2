@@ -101,14 +101,17 @@ const useApi = async (method, options = {}) => {
                 };
             }
         } catch (error) {
-            console.log(error);
             if (error.response && error.response.status === 403){
-                if (error.response.data.message === "Доступ запрещен, пожалуйста, активируйте свой профиль Соискателя."){
-                    navigateTo({name: 'profile'})
-                }
-                if (error.response.data.message === "Доступ запрещен, пожалуйста, активируйте свой профиль Соискателя."){
-                    navigateTo({name: 'profile'})
-                }
+                navigateTo({
+                    path: '/profile',
+                    query: {
+                        message: JSON.stringify({
+                            text: error.response.data.message,
+                            code: 403,
+                            type: 'error',
+                        }),
+                    }
+                })
             }
             if (error.response && 'data' in error.response && 'errors' in error.response.data) {
                 return {

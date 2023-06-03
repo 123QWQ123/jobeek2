@@ -149,12 +149,12 @@ onMounted(( ) => {
         <form class="enter-form" @submit.prevent="onSubmit" v-if="isRegisterTab">
           <h1>Регистрация</h1>
           <div class="i-wrap">
-            <input type="tel" name="tel" ref="phoneInputElement" v-model="state.phone.val" placeholder="Номер телефона" @focusout="clearValidity('phone')">
+            <input type="tel" name="tel" ref="phoneInputElement" v-model="state.phone.val" placeholder="Номер телефона" @focusout="clearValidity('phone')" autofocus>
           </div>
           <div class="help-box">
             <div class="check-block " :class="{ 'border-bottom border-danger': !state.i_agree.isValid }">
               <div class="checkbox">
-                <input type="checkbox" id="agree" v-model="state.i_agree.val" @focusout="clearValidity('i_agree')">
+                <input type="checkbox" id="agree" v-model="state.i_agree.val" @focusout="clearValidity('i_agree')" autofocus>
                 <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
               </div>
               <label for="agree">Согласен с <a href="#">правилами обработки персональных данных</a></label>
@@ -165,7 +165,7 @@ onMounted(( ) => {
         <form v-if="isConfirmTab" class="enter-form" @submit.prevent="onSMSSubmit" >
           <h1>Потверждения телефона</h1>
           <div class="i-wrap">
-            <input type="number" name="code" v-model="state.code.val" placeholder="Код потверждения" @focusout="clearValidity('code')">
+            <input type="number" name="code" v-model="state.code.val" placeholder="Код потверждения" @focusout="clearValidity('code')" autofocus>
             <span class="text-success mt-1 py-2 px-3" type="button" disabled>
               Мы вам отправили код потверждения на телефон. Введите код!
             </span>

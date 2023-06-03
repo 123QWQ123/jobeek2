@@ -54,10 +54,17 @@ const checkProviders = async() => {
 
     const connectedProviders = await getConnectedProviders();
 
-    for (let i = 0; i < providers.value.length; i++){
-        const providerItem = providers.value[i];
-        providerItem.is_connected = connectedProviders[providerItem.slug];
+
+    console.log(connectedProviders);
+
+    if (connectedProviders){
+        for (let i = 0; i < providers.value.length; i++){
+            const providerItem = providers.value[i];
+            console.log(providerItem);
+            providerItem.is_connected = connectedProviders[providerItem.slug] ?? false;
+        }
     }
+
 
 }
 

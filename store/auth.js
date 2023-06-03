@@ -31,6 +31,7 @@ export const useAuthStore = defineStore('auth', {
     },
     isAuthenticated(state) {
       let authed = false;
+      console.log(state.isAuthed);
       if (state.isAuthed === true){
         authed = true;
       }
@@ -209,7 +210,7 @@ export const useAuthStore = defineStore('auth', {
                 }
               },
           );
-          if (response.status !== 200){
+          if (response.status !== 200 || response.data.status === "failed"){
             this.isAuthed = false;
             return false;
           }

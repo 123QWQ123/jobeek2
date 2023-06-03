@@ -183,7 +183,6 @@ onMounted(() => {
 const phoneInputElement = ref();
 const phoneMask = ref(null);
 watch(() => seeker.value, async(new_value) => {
-    console.log(new_value);
   for (const [key, value] of Object.entries(new_value)) {
     if (state.hasOwnProperty(key)){
       if (key === 'birth_date'){
@@ -200,7 +199,6 @@ watch(() => seeker.value, async(new_value) => {
         }, 0)
         continue;
       }
-        console.log(value);
       state[key].val = value;
     }
   }
@@ -331,7 +329,6 @@ const handleSubmit = async (e) => {
 
 }
 
-console.log(seeker?.value?.is_completed);
 const isConfirmButton = ref(false);
 const isCheckButton = ref(false);
 

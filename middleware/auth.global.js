@@ -6,31 +6,30 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     if (!process.server) {
         console.log("middleware from client side");
 
-        console.log(to);
         const authStore = useAuthStore();
         const profileStore = useProfileStore();
         const {getEmployer, getSeeker} = profileStore;
         let employer = computed(() => authStore.employer);
         let seeker = computed(() => authStore.seeker);
         let isAuthed = computed(() => authStore.isAuthenticated);
+
         const isEmployer = !!localStorage.getItem('isEmployer');
         const {tryLogin, logout} = authStore;
         if (authStore.isAuthed === null){
             await tryLogin();
         }
 
-        console.log(isAuthed.value);
-
         if (isAuthed.value === true){
             if (isEmployer){
                 await getEmployer('employer/profile');
-                if (protected_routes.includes(to.name) && employer_routes.includes(to.name) && employer.value && employer.value.is_completed === false) {
+                if (employer_routes.includes(to.name) && employer.value && employer.value.is_completed == false) {
                     return navigateTo({
                         path: '/profile',
                         query: {
-                            message_text: "you have to completed your employer profile!",
-                            message_code: "405",
-                            message_type: 'error'
+                            message: {
+                                text: "you have to completed your employer profile!",
+                                code: "405", type: 'error'
+                            },
                         }
                     })
                 }
@@ -38,7 +37,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
             }else{
 
                 await getSeeker('seeker/profile');
-                if (protected_routes.includes(to.name) && seeker_routes.includes(to.name) && seeker.value && seeker.value.is_completed === false) {
+                if (seeker_routes.includes(to.name) && seeker.value && seeker.value.is_completed === false) {
                     return navigateTo({
                         path: '/profile',
                         query: {
@@ -52,8 +51,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
             }
 
         }else{
-            console.log(to.name);
-            console.log(protected_routes.includes(to.name));
             if (protected_routes.includes(to.name)) {
                 return navigateTo({
                     path: '/sign-in',
