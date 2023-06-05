@@ -14,12 +14,13 @@ const protected_routes = [
 ];
 const search_exception_routes = [
     'index',
-    'my-resumes',
-    'my-vacancies',
+    'search-vacancies',
+    'search-resumes',
 ];
 const employer_routes = [
     'my-vacancies',
     'your-favorites',
+    'your-subscriptions',
     'your-responses'
 ];
 const seeker_routes = [

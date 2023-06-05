@@ -20,6 +20,15 @@ export default {
   const emit = defineEmits(['change', 'update:modelValue']);
   const isOpen = ref(false);
   const options = computed(() => props.options);
+
+  const label = computed(() => {
+      if (selectedOption.value)
+      {
+          return selectedOption.value.name;
+      }
+      return props.label;
+  });
+
   // const classes = computed(() => {
   //     let classes = props.class;
   //     if (isOpen.value){
@@ -29,7 +38,7 @@ export default {
   //     return classes;
   // });
   const selectedValue = computed(() => props.modelValue);
-  const selectedOption = ref({});
+  const selectedOption = ref(null);
   const selectedItem = props.options.find(
       (item) => String(selectedValue.value) === String(item.value)
   );
@@ -48,7 +57,6 @@ export default {
     }
   })
 
-  const label = computed(() => selectedOption.value?.name);
   function onClick(e){
     if (e.target.classList.contains('current') || e.target.classList.contains('nice-select')){
       isOpen.value = !isOpen.value;
@@ -71,5 +79,6 @@ export default {
 .d-select{
   /*background: none;*/
   padding-right: 3.125rem;
+    width: auto;
 }
 </style>

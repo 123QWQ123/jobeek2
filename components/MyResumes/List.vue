@@ -138,8 +138,8 @@ const isPrevDisabled = computed(() => {
 const form = ref(useMyVacancyForm());
 
 const providers = ref({
-  hh: true,
-  superjob: true
+  hh: false,
+  superjob: false
 })
 
 const onProviderToggle = (provider) => {

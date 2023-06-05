@@ -13,7 +13,8 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         let seeker = computed(() => authStore.seeker);
         let isAuthed = computed(() => authStore.isAuthenticated);
 
-        const isEmployer = !!localStorage.getItem('isEmployer');
+        const isEmployer = localStorage.getItem('isEmployer') !== 'true' ? false : true ;
+        console.log(isEmployer);
         const {tryLogin, logout} = authStore;
         if (authStore.isAuthed === null){
             await tryLogin();
@@ -26,10 +27,10 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
                     return navigateTo({
                         path: '/profile',
                         query: {
-                            message: {
-                                text: "you have to completed your employer profile!",
+                            message: JSON.stringify({
+                                text: "you have to complete your employer profile!",
                                 code: "405", type: 'error'
-                            },
+                            })
                         }
                     })
                 }
@@ -41,9 +42,10 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
                     return navigateTo({
                         path: '/profile',
                         query: {
-                            message_text: "you have to completed your seeker profile!",
-                            message_code: "405",
-                            message_type: 'error'
+                            message: JSON.stringify({
+                                text: "you have to complete your seeker profile!",
+                                code: "405", type: 'error'
+                            })
                         }
                     })
                 }

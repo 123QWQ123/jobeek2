@@ -73,24 +73,14 @@
     <label for="phone">Телефон</label>
     <div class="input-wrapper">
       <div class="c">
-        <input type="text" placeholder="Телефон" id="phone">
+        <input type="text" placeholder="Телефон" id="phone" ref="phoneInputElement">
+
         <div class="from-to-block">
           <label for="from">Отвечу на звонки</label>
           <div class="c2">
-            <select class="d-select" name="from" id="from">
-              <option data-display="С">Nothing</option>
-              <option value="1">Some option</option>
-              <option value="2">Another option</option>
-              <option value="3" disabled>A disabled option</option>
-              <option value="4">Potato</option>
-            </select>
-            <select class="d-select" name="to" id="to">
-              <option data-display="До">Nothing</option>
-              <option value="1">Some option</option>
-              <option value="2">Another option</option>
-              <option value="3" disabled>A disabled option</option>
-              <option value="4">Potato</option>
-            </select>
+              <CustomSelect :options="useHourOptions()" v-model="state.phone.from" :label="'От'"></CustomSelect>
+
+              <CustomSelect :options="useHourOptions()" v-model="state.phone.to" :label="'До'"></CustomSelect>
           </div>
         </div>
       </div>
@@ -99,7 +89,7 @@
   <div class="input-row">
     <label for="email">Электронная почта</label>
     <div class="input-wrapper">
-      <input type="email" placeholder="Электронная почта" id="email" value="Hellothere@gmail.com">
+      <input type="email" placeholder="Электронная почта" id="email" v-model="state.email.val">
     </div>
   </div>
 </template>
@@ -109,6 +99,8 @@
 import moment from "moment/moment";
 import {storeToRefs} from "pinia";
 import {useProfileStore} from "~/store/profile";
+import {useHourOptions} from "~/composables/useHourOptions";
+import IMask from "imask";
 
 const state = reactive({
     first_name: {
@@ -138,6 +130,8 @@ const state = reactive({
     },
     phone: {
         val: "",
+        from: null,
+        to: null,
         isValid: true,
     },
     email: {
@@ -162,6 +156,17 @@ const profileStore = useProfileStore();
 const {searchCities} = profileStore;
 
 const cityOptions = ref([]);
+
+
+
+const phoneInputElement = ref();
+const phoneMask = ref(null);
+onMounted(( ) => {
+    phoneMask.value = new IMask(phoneInputElement.value, {
+        mask: "+{7}(000)000-00-00",
+    });
+    phoneInputElement.value.addEventListener("input", () => {});
+});
 
 const updateCityInput = async (newValue = '') => {
     console.log(newValue);

@@ -38,7 +38,13 @@ onMounted(async() => {
     await getUser();
 
     setTimeout(() => {
-      navigateTo({name:'profile'});
+      navigateTo({
+            name:'profile', query:
+            {
+              message: "Вы успешно потвердили ваш эмаил!"
+            }
+          }
+      );
     }, 5000);
   }else{
     isSuccess.value = false;

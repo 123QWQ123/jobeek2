@@ -44,7 +44,6 @@ watch(() => props.options, (newOptions) => {
 const selectedOption = ref(null);
 
 const labelText = computed(() => {
-    console.log(selectedOption.value);
     if (!isOpen.value){
         if (selectedOption.value){
             return selectedOption.value.name;
@@ -99,7 +98,7 @@ const onChangeHandler = (e) => {
     options.value = props.options;
   }else{
     options.value = props.options.filter(
-        (item) => item.name.toLowerCase().includes(typedName)
+        (item) => String(item.name).toLowerCase().includes(typedName)
     );
   }
 }
@@ -141,7 +140,7 @@ function close(){
     font-weight: 400 !important;
     font-size: 16px;
     line-height: 22px;
-    color: #78757E;
+    /*color: #78757E;*/
     background-color: unset;
 }
 </style>

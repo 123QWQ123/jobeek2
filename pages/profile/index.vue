@@ -38,8 +38,10 @@ const errorClass = computed(() => {
         if (code === 200 || code === 201){
             return 'bg-success';
         }
+        return 'bg-danger';
+    }else{
+        return 'bg-success';
     }
-    return 'bg-danger';
 });
 
 </script>

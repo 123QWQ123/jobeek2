@@ -52,6 +52,19 @@ export const useVacancyStore = defineStore('vacancy', {
     }
   },
   actions: {
+
+    async getConnectedProviders(payload) {
+      const {data} = await useApi('employer/used_providers', {
+        method: 'get',
+        payload
+      });
+      console.log(data);
+      if ('data' in data){
+        return data.data;
+      }
+      return data;
+    },
+
     async getAreas(payload) {
       const {data} = await useApi('area', {
         method: 'get',
