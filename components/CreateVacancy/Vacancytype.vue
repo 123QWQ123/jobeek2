@@ -8,12 +8,14 @@
 </template>
 
 <script setup>
+import {useDictionaryStore} from "~/store/dictionary";
+
 const emit = defineEmits(['set']);
 import {storeToRefs} from "pinia";
 import {useVacancyStore} from "~/store/vacancy";
-const vacancyStore = useVacancyStore();
-const {getVacancyTypes} = vacancyStore;
-const {vacancy_types} = storeToRefs(vacancyStore);
+const dictionaryStore = useDictionaryStore();
+const {getVacancyTypes} = dictionaryStore;
+const {vacancy_types} = storeToRefs(dictionaryStore);
 await getVacancyTypes();
 
 const vacancyTypeOptions = computed(() => vacancy_types.value.map(item => ({value: item.id, name: item.name})));

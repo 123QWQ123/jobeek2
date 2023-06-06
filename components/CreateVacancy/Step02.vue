@@ -28,11 +28,13 @@
 </template>
 
 <script setup>
+import {useDictionaryStore} from "~/store/dictionary";
+
 const emit = defineEmits(['set']);
 import {storeToRefs} from "pinia";
 import {useVacancyStore} from "~/store/vacancy";
 const vacancyStore = useVacancyStore();
-const {getVacancyBillingTypes} = vacancyStore;
+const {getVacancyBillingTypes} = useDictionaryStore();
 const {vacancy_billing_types} = storeToRefs(vacancyStore);
 await getVacancyBillingTypes();
 
@@ -41,7 +43,11 @@ const vacancyTypeOptions = computed(() => vacancy_billing_types.value.map(item =
 const vacancy_billing_type = ref(50);
 watch(vacancy_billing_type, (newValues) => {
     emit('set', 'billing_type', newValues);
-})
+});
+
+const updateState = (name, value) => emit('set', name, value);
+
+
 </script>
 
 <style scoped>

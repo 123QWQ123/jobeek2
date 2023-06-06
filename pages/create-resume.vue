@@ -28,15 +28,13 @@ useHead({
 
           <CreateResumePositionAndIncome></CreateResumePositionAndIncome>
 
-          <CreateResumeWorkExperience></CreateResumeWorkExperience>
-
           <CreateResumeEducation></CreateResumeEducation>
 
           <CreateResumeCerticatesAndCourses></CreateResumeCerticatesAndCourses>
 
           <CreateResumeKnowledgeAndSkills></CreateResumeKnowledgeAndSkills>
 
-          <CreateResumeForeignLanguages></CreateResumeForeignLanguages>
+          <CreateResumeWorkExperience></CreateResumeWorkExperience>
 
           <CreateResumeDriverLicenses></CreateResumeDriverLicenses>
 
@@ -46,9 +44,12 @@ useHead({
 
           <CreateResumePortfolio></CreateResumePortfolio>
 
-          <div class="form-submit-container">
-            <p>При создании резюме вы соглашаетесь с <a href="#">правилами работы сервиса</a> и даете согласие на обработку персональных данных, разрешенных для распространения</p>
-            <button class="button-accent" type="submit">Сохранить</button>
+          <p class="text-lg-end">При создании резюме вы соглашаетесь с <a href="#">правилами работы сервиса</a> и даете согласие на обработку персональных данных, разрешенных для распространения</p>
+          <div class="form-submit-container mt-2">
+
+
+            <button class="btn btn-outline-primary" type="submit">Сохранить как черновик</button>
+            <button class="button-accent" type="submit">Сохранить и опубликовать</button>
           </div>
         </form>
       </div>

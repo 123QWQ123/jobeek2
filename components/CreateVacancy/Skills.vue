@@ -32,9 +32,10 @@
 </template>
 
 <script setup>
+import {useDictionaryStore} from "~/store/dictionary";
+
 const emit = defineEmits(['set']);
-import {useVacancyStore} from "~/store/vacancy";
-const vacancyStore = useVacancyStore();
+const dictionaryStore = useDictionaryStore();
 
 const selectedSkills = ref([null]);
 

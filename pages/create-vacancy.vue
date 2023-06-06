@@ -62,6 +62,7 @@
 <script setup>
 import {useVacancyStore} from "../store/vacancy";
 import {useProfileStore} from "~/store/profile";
+import {useResumeStore} from "~/store/resume";
 
 
 definePageMeta({
@@ -140,7 +141,7 @@ const updateState = (prop, value) => {
   state[prop] = value;
 }
 
-const {getConnectedProviders} = useProfileStore();
+const {getConnectedProviders} = useVacancyStore();
 onMounted(async() => {
   const resData = await getConnectedProviders();
   Object.keys(resData).map((item) => providers[item].is_connected = resData[item]);

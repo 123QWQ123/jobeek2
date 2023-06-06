@@ -140,8 +140,8 @@ function close(){
     font-weight: 400 !important;
     font-size: 16px;
     line-height: 22px;
-    /*color: #78757E;*/
     background-color: unset;
+    opacity: 1;
 }
 </style>
 

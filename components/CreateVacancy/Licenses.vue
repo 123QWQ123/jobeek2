@@ -14,12 +14,13 @@
 </template>
 
 <script setup>
+import {useDictionaryStore} from "~/store/dictionary";
+
 const emit = defineEmits(['set']);
 import {storeToRefs} from "pinia";
-import {useVacancyStore} from "~/store/vacancy";
-const vacancyStore = useVacancyStore();
-const {getDriverLicenses} = vacancyStore;
-const {driver_licenses} = storeToRefs(vacancyStore);
+const dictionaryStore = useDictionaryStore();
+const {getDriverLicenses} = dictionaryStore;
+const {driver_licenses} = storeToRefs(dictionaryStore);
 await getDriverLicenses();
 
 const selected_licenses = ref([]);

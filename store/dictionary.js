@@ -80,12 +80,12 @@ export const useDictionaryStore = defineStore('dictionary', {
         payload
       });
       if (data && 'data' in data){
-        this.childrens = data.data?.children ?? [];
+        this.children = data.data?.children ?? [];
       }
       return data;
     },
     async getMaritalStatus(payload) {
-      const {data} = await useApi('dictionaries?groups[]=maritalstatus', {
+      const {data} = await useApi('dictionaries?groups[]=marital_status', {
         method: 'get',
         payload
       });

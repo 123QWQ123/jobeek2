@@ -11,12 +11,14 @@
 
 import {storeToRefs} from "pinia";
 import {useVacancyStore} from "~/store/vacancy";
-const vacancyStore = useVacancyStore();
-const {getChildren} = vacancyStore;
-const {childrens} = storeToRefs(vacancyStore);
+import {useDictionaryStore} from "~/store/dictionary";
+const dictionaryStore = useDictionaryStore();
+const {getChildren} = dictionaryStore;
+const {children: childrens} = storeToRefs(dictionaryStore);
 await getChildren();
 
 const childrenOptions = computed(() => childrens.value.map(item => ({value: item.id, name: item.name})));
+console.log(childrenOptions);
 
 const children = ref(15);
 

@@ -27,12 +27,14 @@
 </template>
 
 <script setup>
+import {useDictionaryStore} from "~/store/dictionary";
+
 const emit  = defineEmits(['set']);
 import {storeToRefs} from "pinia";
 import {useVacancyStore} from "~/store/vacancy";
-const vacancyStore = useVacancyStore();
-const {getForeignLanguages, getLanguageLevels} = vacancyStore;
-const {foreign_languages, language_levels} = storeToRefs(vacancyStore);
+const dictionaryStore = useDictionaryStore();
+const {getForeignLanguages, getLanguageLevels} = dictionaryStore;
+const {foreign_languages, language_levels} = storeToRefs(dictionaryStore);
 await getForeignLanguages();
 await getLanguageLevels();
 

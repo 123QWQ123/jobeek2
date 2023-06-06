@@ -12,13 +12,15 @@
 </template>
 
 <script setup>
+import {useDictionaryStore} from "~/store/dictionary";
+
 const emit = defineEmits(['set']);
 const props = defineProps(['is_valid']);
 const isValid = computed(() => props.is_valid);
 import {storeToRefs} from "pinia";
 import {useVacancyStore} from "~/store/vacancy";
 const vacancyStore = useVacancyStore();
-const {getGenders} = vacancyStore;
+const {getGenders} = useDictionaryStore();
 const {genders} = storeToRefs(vacancyStore);
 await getGenders();
 

@@ -9,12 +9,14 @@
 </template>
 
 <script setup>
+import {useDictionaryStore} from "~/store/dictionary";
+
 const emit = defineEmits(['set']);
 import {storeToRefs} from "pinia";
 import {useVacancyStore} from "~/store/vacancy";
-const vacancyStore = useVacancyStore();
-const {getPlaceOfWorks} = vacancyStore;
-const {place_of_works} = storeToRefs(vacancyStore);
+const dictionaryStore = useDictionaryStore();
+const {getPlaceOfWorks} = dictionaryStore;
+const {place_of_works} = storeToRefs(dictionaryStore);
 await getPlaceOfWorks();
 
 const formatOptions = computed(() => place_of_works.value.map(item => ({value: item.id, name: item.name})));

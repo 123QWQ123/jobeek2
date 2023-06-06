@@ -18,13 +18,15 @@
 </template>
 
 <script setup>
+import {useDictionaryStore} from "~/store/dictionary";
+
 const emit = defineEmits(['set']);
 const props = defineProps(['is_valid']);
 const isValid = computed(() => props.is_valid);
 import {storeToRefs} from "pinia";
 import {useVacancyStore} from "~/store/vacancy";
 const vacancyStore = useVacancyStore();
-const {getWorkTypes} = vacancyStore;
+const {getWorkTypes} = useDictionaryStore();
 const {work_types: workTypesOptions,} = storeToRefs(vacancyStore);
 await getWorkTypes();
 

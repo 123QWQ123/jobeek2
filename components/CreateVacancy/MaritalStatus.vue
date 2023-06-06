@@ -12,15 +12,17 @@
 </template>
 
 <script setup>
+import {useDictionaryStore} from "~/store/dictionary";
+
 const emit = defineEmits(['set']);
 const props = defineProps(['is_valid']);
 const isValid = computed(() => props.is_valid);
 
 import {storeToRefs} from "pinia";
 import {useVacancyStore} from "~/store/vacancy";
-const vacancyStore = useVacancyStore();
-const {getMaritalStatus} = vacancyStore;
-const {marital_statuses} = storeToRefs(vacancyStore);
+const dictionaryStore = useDictionaryStore();
+const {getMaritalStatus} = dictionaryStore;
+const {marital_statuses} = storeToRefs(dictionaryStore);
 await getMaritalStatus();
 
 const maritalStatusOptions = computed(() => marital_statuses.value.map(item => ({value: item.id, name: item.name})));
