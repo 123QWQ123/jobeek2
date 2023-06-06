@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@nuxtjs/auth": "^4.5.1",
-    "@nuxtjs/auth-next": "5.0.0-1667386184.dfbbb54",
+    "@nuxtjs/auth-next": "5.0.0-1667386184.dfbbb54",php
     "@nuxtjs/axios": "^5.13.6",
     "@pinia/nuxt": "^0.4.6",
     "autoprefixer": "^10.4.13",
