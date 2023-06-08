@@ -70,13 +70,33 @@ export const useResumeStore = defineStore('resume', {
       }
       return data;
     },
-    async getVacancy(id, payload) {
+    async createResume(id, payload) {
+      const {data} = await useApi('resume/', {
+        method: 'post',
+        payload
+      });
+      if (data){
+        this.resume = data;
+      }
+      return data;
+    },
+    async updateResume(id, payload) {
       const {data} = await useApi('resume/' + id, {
+        method: 'put',
+        payload
+      });
+      if (data){
+        this.resume = data;
+      }
+      return data;
+    },
+    async getResume(id, payload) {
+      const {data} = await useApi('seeker/resumes/' + id, {
         method: 'get',
         payload
       });
       if (data){
-        this.vacancy = data;
+        this.resume = data;
       }
       return data;
     },

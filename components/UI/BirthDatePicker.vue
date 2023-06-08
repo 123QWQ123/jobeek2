@@ -20,7 +20,9 @@
 import moment from "moment";
 
 const props = defineProps({
-  modelValue: Object,
+  modelValue: {
+    type: String
+  },
 });
 
 const emit = defineEmits(["update:modelValue"]);
@@ -39,14 +41,23 @@ onMounted(() => {
   for (let i = -100; i <= 0; i++) {
     years.value.push(currentYear + i);
   }
-  const d = props.modelValue;
+
+  let d = moment();
+  if (props.modelValue){
+    d = moment(props.modelValue, 'YYYY-MM-DD');
+  }
   year.value = d.format("YYYY");
   month.value = d.format("MM");
   day.value = d.format("DD");
+
+  emitDate();
 });
 
 onUpdated(() => {
-  const d = props.modelValue;
+  let d = moment();
+  if (props.modelValue){
+    d = moment(props.modelValue, 'YYYY-MM-DD');
+  }
   year.value = d.format("YYYY");
   month.value = +d.format("MM") - 1;
   day.value = +d.format("DD");
@@ -58,7 +69,7 @@ const emitDate = () => {
     moment(
       `${year.value}-${parseInt(month.value) + 1}-${day.value}`,
       "YYYY-MM-DD"
-    )
+    ).format("YYYY-MM-DD")
   );
 };
 

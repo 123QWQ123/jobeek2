@@ -1,8 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import { fileURLToPath } from 'node:url';
 import path from 'path';
 import fs from 'fs';
 const config = {
+  server: {},
   runtimeConfig: {
     // The private keys which are only available within server-side
     apiSecret: "123",
@@ -24,9 +24,9 @@ const config = {
     '~/components',
     '~/components/UI'
   ],
-    modules: [
+  modules: [
     '@pinia/nuxt',
-      '@nuxt/devtools',
+    '@nuxt/devtools',
   ],
   devtools: {
     // Enable devtools (default: true)

@@ -134,7 +134,7 @@ const state = reactive({
     isValid: true,
   },
   birth_date: {
-    val: moment(),
+    val: null,
     isValid: true,
   },
   country_id: {
@@ -185,11 +185,6 @@ const phoneMask = ref(null);
 watch(() => seeker.value, async(new_value) => {
   for (const [key, value] of Object.entries(new_value)) {
     if (state.hasOwnProperty(key)){
-      if (key === 'birth_date'){
-        const formatted = moment(value, "YYYY-MM-DD");
-        state[key].val = formatted;
-        continue;
-      }
       if (key === 'phone'){
         state[key].val = value;
         setTimeout(() => {

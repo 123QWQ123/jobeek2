@@ -1,12 +1,39 @@
 <script setup>
+import {storeToRefs} from "pinia";
+import {useResumeStore} from "~/store/resume";
+
 definePageMeta({
     layout: "cabinet",
 });
 
 useHead({
     title: "Создание резюме - Jobeek"
-})
+});
 
+
+const route = useRoute();
+
+const draftId = computed(() => route.query.draft_id);
+
+const resumeStore = useResumeStore();
+const {resume} = storeToRefs(resumeStore)
+const formTitle = computed(() => {
+  if (resume.value){
+    return "Обновить резюме";
+  }
+
+  return "Создание резюме";
+});
+
+
+const {getResume} = resumeStore;
+
+onMounted(() => {
+  if (draftId.value){
+    getResume(draftId.value);
+  }
+})
+// console.log(route)
 </script>
 <template>
   <main class="main cabinet create-subscribe-page bg-wrapper" role="main">
@@ -16,14 +43,12 @@ useHead({
         <form class="create-resume" action="" name="create-resume ">
           <div class="w-box w-box--main w-box-resume pb-4">
             <div class="w-box-head">
-              <h1 class="title">Создание резюме</h1>
+              <h1 class="title">{{ formTitle }}</h1>
               <div class="descr">Получайте уведомления о новых вакансиях по созданному запросу</div>
             </div>
-            <div class="w-box-body">
-              <CreateResumeProviders></CreateResumeProviders>
-              <CreateResumeDetails></CreateResumeDetails>
-              <CreateResumeSocialNetworks></CreateResumeSocialNetworks>
-            </div>
+<!--            <CreateResumeProviders></CreateResumeProviders>-->
+            <CreateResumePersonalData></CreateResumePersonalData>
+
           </div>
 
           <CreateResumePositionAndIncome></CreateResumePositionAndIncome>
