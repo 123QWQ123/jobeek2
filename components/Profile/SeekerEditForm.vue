@@ -60,7 +60,7 @@
       <div class="input-wrapper mt-2">
         <SelectWithSearch :options="cityOptions" v-model.number="state.city_id.val" :placeholder="'Выберите город'"></SelectWithSearch>
       </div>
-      <div class="text-danger d-block" v-if="errors.city_id">
+      <div class="text-danger d-block" v-if="errors.city_id || errors.country_id">
         Вам нужно выбрать город проживания!
       </div>
     </div>
@@ -295,14 +295,7 @@ const handleSubmit = async (e) => {
     console.log(resData);
   if (resData.status === 'success'){
       console.log(resData.data.status);
-      if (resData.data.status === 'failed'){
-          console.log(resData.errors);
-          if (resData?.data.errors){
-              errors.value = {...resData.data.errors};
-          }
-          state.isLoading = false;
-          return;
-      }
+
     await getUser();
     Swal.fire({
       title: 'Успешно!',
@@ -312,6 +305,14 @@ const handleSubmit = async (e) => {
     });
     state.isLoading = false;
   }else{
+    if (resData.data.status === 'failed'){
+      console.log(resData.errors);
+      if (resData?.data.errors){
+        errors.value = {...resData.data.errors};
+      }
+      state.isLoading = false;
+      return;
+    }
     Swal.fire({
       title: 'Ошибка!',
       text: resData.message,
