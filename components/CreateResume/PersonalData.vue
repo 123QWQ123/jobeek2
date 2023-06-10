@@ -104,10 +104,6 @@ const route = useRoute();
 
 console.log(route);
 
-
-// const {draft_id} = route.query;
-
-// console.log(draft_id);
 const draftID = computed(() => route.query.draft_id);
 
 console.log(draftID.value);
@@ -169,6 +165,7 @@ const state = reactive({
         isValid: true,
     },
     isFormValid: true,
+    isNew: true,
     isLoading: false,
     error: null,
     success: null,
@@ -201,12 +198,34 @@ onMounted(() => {
     updateCityInput()
 })
 
-
 const {updateResume} = resumeStore;
 const save = async () => {
-  const data = useFormData(state)
-  console.log(data);
-  const resData = await updateResume(data);
+  const formData = useFormData(state, 'form_data')
+  console.log(formData);
+  // const data = form2json(formData)
+  // console.log(data);
+
+  state.isLoading = true;
+  // validate();
+  errors.value = {};
+  state.errorMessage = "";
+
+
+  const email = state.email_to_verify.val ? state.email_to_verify.val : state.email.val;
+
+  if (state.isNew === true){
+    const resData = await createResume(formData);
+
+  }else{
+    const resData = await updateResume(formData);
+
+  }
+
+  console.log(resData);
+
+  if (resData.status === 'success'){
+    state.isNew = false;
+  }
   console.log(resData);
 }
 </script>

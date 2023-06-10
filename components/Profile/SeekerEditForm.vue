@@ -1,6 +1,10 @@
 <template>
   <form class="w-box-body" @submit.prevent="handleSubmit" >
     <PageLoader v-if="state.isLoading" />
+
+    <div class="alert alert-danger" v-if="errorMessage">
+      {{ errorMessage }}
+    </div>
     <div class="input-row">
       <label for="photo">Фото</label>
       <div class="dwld-photo">
@@ -100,6 +104,7 @@
         <base-button type="submit">Сохранить</base-button>
       </div>
     </div>
+
   </form>
 </template>
 
@@ -270,11 +275,14 @@ const validate = () => {
   }
 }
 const errors = ref({});
+const errorMessage = ref(null);
 const {updateSeeker} = profileStore;
 const handleSubmit = async (e) => {
   state.isLoading = true;
   validate();
   errors.value = {};
+  state.errorMessage = "";
+
 
   const email = state.email_to_verify.val ? state.email_to_verify.val : state.email.val;
 
@@ -305,6 +313,7 @@ const handleSubmit = async (e) => {
     });
     state.isLoading = false;
   }else{
+    errorMessage.value = resData.message;
     if (resData.data.status === 'failed'){
       console.log(resData.errors);
       if (resData?.data.errors){
@@ -313,12 +322,13 @@ const handleSubmit = async (e) => {
       state.isLoading = false;
       return;
     }
-    Swal.fire({
-      title: 'Ошибка!',
-      text: resData.message,
-      icon: 'error',
-      confirmButtonText: 'ОК'
-    });
+
+    // Swal.fire({
+    //   title: 'Ошибка!',
+    //   text: resData.message,
+    //   icon: 'error',
+    //   confirmButtonText: 'ОК'
+    // });
     state.isLoading = false;
   }
   console.log(resData);

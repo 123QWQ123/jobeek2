@@ -85,6 +85,7 @@ export const useResumeStore = defineStore('resume', {
         method: 'put',
         payload
       });
+      console.log(data, payload)
       if (data){
         this.resume = data;
       }
