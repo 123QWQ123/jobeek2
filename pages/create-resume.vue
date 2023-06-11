@@ -33,7 +33,7 @@ onMounted(() => {
     getResume(draftId.value);
   }
 })
-// console.log(route)
+// groups[]=
 </script>
 <template>
   <main class="main cabinet create-subscribe-page bg-wrapper" role="main">
@@ -53,9 +53,9 @@ onMounted(() => {
 
           <CreateResumePositionAndIncome></CreateResumePositionAndIncome>
 
-          <CreateResumeEducation></CreateResumeEducation>
+          <CreateResumeEducationContent></CreateResumeEducationContent>
 
-          <CreateResumeCerticatesAndCourses></CreateResumeCerticatesAndCourses>
+          <CreateResumeEducationDocumentsContent></CreateResumeEducationDocumentsContent>
 
           <CreateResumeKnowledgeAndSkills></CreateResumeKnowledgeAndSkills>
 

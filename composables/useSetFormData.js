@@ -1,4 +1,4 @@
-export function useFormData(state, type = 'json') {
+export function useSetFormData(state, data, type = 'json') {
     if (state.hasOwnProperty('value')){
         state = state.value;
     }
@@ -6,7 +6,7 @@ export function useFormData(state, type = 'json') {
         try {
             const keys = Object.keys(state).filter(item => state[item] instanceof Object);
             const newData = {};
-            keys.map((item) => (newData[item] = state[item].val));
+            keys.map((item) => (state[item].val = newData[item]));
             return newData;
         } catch (e) {
             return {};
@@ -18,7 +18,7 @@ export function useFormData(state, type = 'json') {
         const formData = new FormData();
         try {
             const keys = Object.keys(state).filter(item => state[item] instanceof Object);
-            keys.map(item => formData.append(item, state[item].val));
+            keys.map(item => (state[item].val = formData[item]));
             return formData;
         } catch (e) {
             return {};

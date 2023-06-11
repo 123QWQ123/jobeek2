@@ -28,6 +28,9 @@ const config = {
     '@pinia/nuxt',
     '@nuxt/devtools',
   ],
+  build: {
+    transpile: ['@vuepic/vue-datepicker']
+  },
   devtools: {
     // Enable devtools (default: true)
     enabled: true,

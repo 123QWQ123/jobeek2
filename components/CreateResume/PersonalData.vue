@@ -47,21 +47,23 @@
       <label for="country">Город проживания <b>*</b></label>
       <div class="input-wrapper mt-2">
         <SelectWithSearch :options="cityOptions" v-model.number="state.city_id.val" :placeholder="'Ишите город'" @input="updateCityInput"></SelectWithSearch>
+
+        <div class="check-block">
+            <div class="checkbox">
+                <input type="checkbox" id="ready-to-relocate" v-model="state.business_trip.val">
+                <div class="checkbox-mask">
+                    <img src="~/assets/img/svg/check.svg" alt="#" />
+                </div>
+            </div>
+            <label for="ready-to-relocate">Готов к переезду</label>
+        </div>
       </div>
 
       <div class="text-danger d-block" v-if="errors.city_id">
         Вам нужно выбрать город проживания!
       </div>
-
-
-      <div class="check-block">
-        <div class="checkbox">
-          <input type="checkbox" id="ready-to-relocate" checked>
-          <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
-        </div>
-        <label for="ready-to-relocate">Готов к переезду</label>
-      </div>
     </div>
+
     <div class="input-row">
       <label for="phone">Телефон</label>
       <div class="input-wrapper">
@@ -102,11 +104,7 @@ const resumeStore = useResumeStore();
 
 const route = useRoute();
 
-console.log(route);
-
 const draftID = computed(() => route.query.draft_id);
-
-console.log(draftID.value);
 
 const {getResume} = resumeStore;
 
@@ -163,6 +161,10 @@ const state = reactive({
     password: {
         val: "",
         isValid: true,
+    },
+    business_trip: {
+        val: false,
+        isValid: true
     },
     isFormValid: true,
     isNew: true,

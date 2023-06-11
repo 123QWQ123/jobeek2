@@ -7,33 +7,14 @@
       <div class="input-row">
         <label for="position">Какую должность вы хотите занимать? <b>*</b></label>
         <div class="input-wrapper">
-          <input type="text" placeholder="Укажите должность" id="position" required>
+          <input type="text" placeholder="Укажите должность" id="position" v-model="state.profession.val">
         </div>
       </div>
-        <CreateResumeSalary/>
+        <CreateResumeSalary v-model="state.salary.val" :currency="state.salary.val.currency" :amount="state.salary.val.amount"/>
       <div class="input-row">
         <label for="employment">Занятость <b>*</b></label>
-        <div class="input-wrapper"><select class="d-select" name="employment" id="employment">
-          <option data-display="Выберите занятость">Nothing</option>
-          <option value="1">Some option</option>
-          <option value="2">Another option</option>
-          <option value="3" disabled>A disabled option</option>
-          <option value="4">Potato</option>
-        </select>
-          <div class="check-block">
-            <div class="checkbox">
-              <input type="checkbox" id="remote" checked>
-              <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
-            </div>
-            <label for="remote">Ищу удаленную работу</label>
-          </div>
-          <div class="check-block">
-            <div class="checkbox">
-              <input type="checkbox" id="no-trips">
-              <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
-            </div>
-            <label for="no-trips">Не готов к командировкам</label>
-          </div>
+        <div class="input-wrapper">
+            <CustomSelect :options="employmentOptions" v-model="state.employment.val"  />
         </div>
       </div>
     </div>
@@ -41,7 +22,32 @@
 </template>
 
 <script setup>
-import CreateResume from "~/pages/create-resume.vue";
+
+import {useDictionaryStore} from "~/store/dictionary";
+
+const dictionaryStore = useDictionaryStore();
+const state = reactive({
+    profession: {
+        val: "",
+        isValid: true
+    },
+    salary: {
+        val: {
+            amount: null,
+            currency: "RUB"
+        },
+        isValid: true
+    },
+    employment: {
+        val: 81,
+        isValid: true
+    },
+})
+const {getWorkTypes} = dictionaryStore;
+await getWorkTypes();
+const employmentOptions = computed(() => {
+    return dictionaryStore.work_types.map(item => ({name: item.name,value: item.id}));
+});
 </script>
 
 <style scoped>

@@ -21,18 +21,18 @@
 
 <script setup>
 const emit = defineEmits(['set']);
-
+const props = defineProps(['currency', 'amount'])
 import {useCurrencyOptions} from "~/composables/useCurrencyOptions";
 const currencyOptions = ref(useCurrencyOptions());
 
 const salary = reactive({
     amount: {
-        val: null,
+        val: props.amount,
         isChecked: false,
         isValid: false,
     },
     currency: {
-        val: 'RUB',
+        val: props.currency,
         isChecked: false,
         isValid: false,
     },
@@ -52,7 +52,7 @@ const validate = () => {
     }else{
         salary.currency.isValid = false;
     }
-    emit('set', 'salary', {from: salary.amount.val, currency: salary.currency.val});
+    emit('update:modelValue', {from: salary.amount.val, currency: salary.currency.val});
 }
 watch(salary, validate);
 defineExpose({validate});
