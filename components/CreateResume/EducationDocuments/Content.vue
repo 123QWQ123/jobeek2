@@ -6,7 +6,7 @@
     <div class="w-box-body">
         <div class="" v-if="isFirst">
             <div class="row">
-                <CreateResumeEducationDocumentsHistory v-model="education_documents" />
+                <CreateResumeEducationDocumentsHistory ref="educationDocumentElement" v-model="education_documents" />
             </div>
         </div>
         <div class="empty-area" v-else>
@@ -19,7 +19,14 @@
 
 <script setup>
 
-const isFirst = ref(true);
+const isFirst = ref(false);
+const educationDocumentElement = ref(false);
+
+// watch(() => isFirst.value, (newValue) => {
+//     if (newValue){
+//         setTimeout(() => educationDocumentElement.value.reset());
+//     }
+// })
 
 const education_documents = ref([]);
 

@@ -24,7 +24,7 @@ const isFirst = ref(false);
 const educations = ref([]);
 
 const save = () => {
-    console.log(educations.value)
+    // console.log(educations.value)
 }
 </script>
 

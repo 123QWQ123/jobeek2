@@ -5,10 +5,14 @@
                   class="mb-2"
                   :selected-educations="selectedEducations"
                   v-for="(item, index) in selectedEducations" :item="item"
-                  :index="index"
-                  :key="index"
-                  :options="educationLevelOptions"
-                  :year-options="yearOptions"
+                  :key="item.id"
+                  :id="item.id"
+                  :profession="item.profession"
+                  :institute="item.institute"
+                  :faculty="item.faculty"
+                  :form="item.form"
+                  :start_year="item.start_year"
+                  :end_year="item.end_year"
                   @update="updateItem"
                   @delete="deleteItem" />
 
@@ -18,43 +22,39 @@
 </template>
 
 <script setup>
-import {useDictionaryStore} from "~/store/dictionary";
 
+
+import {useDictionaryStore} from "~/store/dictionary";
+import { v4 as uuidv4 } from "uuid";
 const emit  = defineEmits(['set']);
 import {storeToRefs} from "pinia";
-import {useYearOptions} from "~/composables/useYearOptions";
 const dictionaryStore = useDictionaryStore();
 const {getEducations} = dictionaryStore;
 const {educations} = storeToRefs(dictionaryStore);
 await getEducations();
 
-const educationLevelOptions = computed(() => {
-    return dictionaryStore.educations.map((item) => ({name: item.name, value: item.id}));
-})
-
-const yearOptions = ref(useYearOptions());
 const currentItem = ref(0);
+
+
 const resetObject = {
     "id": 0,
     "profession": null,
     "institute": null,
-    "id_institute": null,
     "faculty": null,
     "form": null,
     "start_year": null,
     "end_year": null,
 };
-const selectedEducations = ref([resetObject]);
+const selectedEducations = ref([]);
 
 const reset = () => {
-    selectedEducations.value = [resetObject];
+    resetObject.id = uuidv4();
+    selectedEducations.value = [ resetObject ];
 }
 const create = () => {
     const newItems = selectedEducations.value;
-    newItems.push({
-        "id": newItems.length,
-        ...resetObject
-    });
+    resetObject.id = uuidv4();
+    newItems.push(resetObject);
     currentItem.value = newItems.length - 1;
     selectedEducations.value = newItems;
 }
@@ -70,14 +70,15 @@ const updateItem = (id, newItem) => {
     selectedEducations.value = newItems;
 }
 const deleteItem = (deleteItem) => {
-    const newItems = selectedEducations.value.filter(item => item.id !== deleteItem);
+    const newItems = selectedEducations.value.filter((item) => item.id !== deleteItem);
     selectedEducations.value = newItems;
 }
 
-watch(selectedEducations, (newValues) => {
-    emit('set', 'educations', newValues);
-});
 
+
+onMounted(() => {
+    reset();
+})
 </script>
 
 <style scoped>

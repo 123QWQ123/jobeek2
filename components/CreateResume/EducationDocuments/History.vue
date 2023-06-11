@@ -28,8 +28,6 @@ const {getEducations} = dictionaryStore;
 const {educations} = storeToRefs(dictionaryStore);
 await getEducations();
 
-const currentItem = ref(0);
-
 const resetObject = {
     "title": null,
     "organization": null,
@@ -44,38 +42,30 @@ const reset = () => {
 }
 const create = () => {
     const newItems = selectedEducations.value;
-    console.log(newItems.length);
     resetObject.id = uuidv4();
     newItems.push(resetObject);
-    currentItem.value = newItems.length - 1;
     selectedEducations.value = newItems;
-    console.log(selectedEducations.value);
 }
 
 
 const updateItem = (id, newItem) => {
-    console.log(id, newItem);
     const newItems = selectedEducations.value.map(item => {
         if (item.id === id){
             return newItem;
         }
         return item;
     });
-    console.log(newItems);
     selectedEducations.value = newItems;
 }
 const deleteItem = (deleteItem) => {
-    console.log(deleteItem);
-    console.log(selectedEducations.value);
     const newItems = selectedEducations.value.filter((item) => item.id !== deleteItem);
-    console.log(newItems);
     selectedEducations.value = newItems;
 }
 
-// watch(selectedEducations, (newValues) => {
-//     emit('set', 'educations', newValues);
-// });
 
+onMounted(() => {
+    reset();
+})
 </script>
 
 <style scoped>
