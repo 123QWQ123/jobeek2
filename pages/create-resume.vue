@@ -10,7 +10,6 @@ useHead({
     title: "Создание резюме - Jobeek"
 });
 
-
 const route = useRoute();
 
 const draftId = computed(() => route.query.draft_id);
@@ -39,6 +38,8 @@ onMounted(() => {
   <main class="main cabinet create-subscribe-page bg-wrapper" role="main">
     <div class="bg-wrapper pt">
       <PersonalCabinetSearchMobile />
+
+        {{state}}
       <div class="wrapper wrapper-1290">
         <form class="create-resume" action="" name="create-resume ">
           <div class="w-box w-box--main w-box-resume pb-4">
@@ -57,15 +58,18 @@ onMounted(() => {
 
           <CreateResumeEducationDocumentsContent></CreateResumeEducationDocumentsContent>
 
-          <CreateResumeKnowledgeAndSkills></CreateResumeKnowledgeAndSkills>
 
-          <CreateResumeWorkExperience></CreateResumeWorkExperience>
+          <CreateResumeWorkExperienceContent></CreateResumeWorkExperienceContent>
 
           <CreateResumeDriverLicenses></CreateResumeDriverLicenses>
 
+          <CreateResumeKnowledgeAndSkills></CreateResumeKnowledgeAndSkills>
+
+          <CreateResumeForeignLanguages></CreateResumeForeignLanguages>
+
           <CreateResumeCitizenship></CreateResumeCitizenship>
 
-          <CreateResumeFamily></CreateResumeFamily>
+          <CreateResumeFamilyAndMe></CreateResumeFamilyAndMe>
 
           <CreateResumePortfolio></CreateResumePortfolio>
 

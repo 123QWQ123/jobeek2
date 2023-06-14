@@ -1,16 +1,18 @@
 <template>
   <div class="education_item">
-          <CreateResumeEducationItem
+          <CreateResumeWorkExperienceItem
                   v-if="selectedEducations.length"
                   class="mb-2"
                   v-for="(item, index) in selectedEducations" :item="item"
                   :key="item.id"
                   :id="item.id"
                   :profession="item.profession"
-                  :institute="item.institute"
-                  :faculty="item.faculty"
-                  :form="item.form"
+                  :company="item.company"
+                  :company_url="item.company_url"
+                  :type="item.type"
+                  :start_month="item.start_month"
                   :start_year="item.start_year"
+                  :end_month="item.end_month"
                   :end_year="item.end_year"
                   @update="updateItem"
                   @delete="deleteItem" />
@@ -36,11 +38,14 @@ const currentItem = ref(0);
 
 
 const resetObject = {
-    "id": 0,
     "profession": null,
-    "institute": null,
-    "faculty": null,
-    "form": null,
+    "company": null,
+    "company_url": null,
+    "industry": null,
+    "town_id": null,
+    "type": null,
+    "start_month": null,
+    "end_month": null,
     "start_year": null,
     "end_year": null,
 };

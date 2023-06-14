@@ -4,7 +4,11 @@
         <h3 class="title">Знания и навыки</h3>
       </div>
       <div class="w-box-body">
-          <CreateResumeForeignLanguages v-if="isFirst" @set="updateState"></CreateResumeForeignLanguages>
+          <div class="form_content" v-if="isShown">
+<!--              <CreateResumeForeignLanguages v-if="isShown" @set="updateState"></CreateResumeForeignLanguages>-->
+
+              <CreateResumeSkillsContent/>
+          </div>
           <div class="empty-area" v-else>
               <span>Здесь вы можете указать релевантный опыт в сфере которую вы выбарли</span>
               <button class="add" type="button" @click="add">Добавить</button>
@@ -20,11 +24,11 @@
 
 <script setup>
 const emit = defineEmits(['set']);
-const isFirst = ref(false);
+const isShown = ref(false);
 const hasChanged = ref(false);
 
 const add  = () => {
-    isFirst.value = !isFirst.value;
+    isShown.value = !isShown.value;
     hasChanged.value = true;
 }
 

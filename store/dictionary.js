@@ -90,7 +90,7 @@ export const useDictionaryStore = defineStore('dictionary', {
         payload
       });
       if (data && 'data' in data){
-        this.marital_statuses = data.data?.maritalstatus ?? [];
+        this.marital_statuses = data.data?.marital_status ?? [];
       }
       return data;
     },
