@@ -65,7 +65,7 @@ onMounted(() => {
 
           <CreateResumeKnowledgeAndSkills></CreateResumeKnowledgeAndSkills>
 
-          <CreateResumeForeignLanguages></CreateResumeForeignLanguages>
+          <CreateResumeForeignLanguagesContent></CreateResumeForeignLanguagesContent>
 
           <CreateResumeCitizenship></CreateResumeCitizenship>
 
