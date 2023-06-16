@@ -1,6 +1,6 @@
 <template>
   <div class="input-row">
-    <label for="income">Какой доход вы рассматриваете?</label>
+    <label>Какой доход вы рассматриваете?</label>
     <div class="row-container">
       <div class="row">
         <div class="col-8">

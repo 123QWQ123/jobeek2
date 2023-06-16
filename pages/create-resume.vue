@@ -65,13 +65,13 @@ onMounted(() => {
 
           <CreateResumeKnowledgeAndSkills></CreateResumeKnowledgeAndSkills>
 
-<!--          <CreateResumeForeignLanguagesContent></CreateResumeForeignLanguagesContent>-->
+          <CreateResumeForeignLanguagesContent></CreateResumeForeignLanguagesContent>
 
           <CreateResumeCitizenship></CreateResumeCitizenship>
 
           <CreateResumeFamilyAndMe></CreateResumeFamilyAndMe>
 
-          <CreateResumePortfolio></CreateResumePortfolio>
+<!--          <CreateResumePortfolio></CreateResumePortfolio>-->
 
           <p class="text-lg-end">При создании резюме вы соглашаетесь с <a href="#">правилами работы сервиса</a> и даете согласие на обработку персональных данных, разрешенных для распространения</p>
           <div class="form-submit-container mt-2">

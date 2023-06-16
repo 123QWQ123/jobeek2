@@ -1,88 +1,42 @@
 <template>
-  <div class="education_item">
-<!--    <CreateResumeForeignLanguagesItem-->
-<!--        v-if="selectedLanguages.length"-->
-<!--        class="mb-2"-->
-<!--        v-for="(item, index) in selectedLanguages" :item="item"-->
-<!--        :key="item.id"-->
-<!--        :id="item.id"-->
-<!--        :profession="item.profession"-->
-<!--        :institute="item.institute"-->
-<!--        :faculty="item.faculty"-->
-<!--        :form="item.form"-->
-<!--        :start_year="item.start_year"-->
-<!--        :end_year="item.end_year"-->
-<!--        @update="updateItem"-->
-<!--        @delete="deleteItem" />-->
-
-    <button type="button" class="btn btn-primary" v-if="selectedLanguages.length === 0" @click="reset">Добавить</button>
-    <button type="button" class="btn btn-primary" v-if="selectedLanguages.length !== 0" @click="create">Добавить еще</button>
-  </div>
+    <div class="w-box"  @focusout="save">
+        <div class="w-box-head">
+            <h3 class="title">Владение иностранными языками</h3>
+        </div>
+        <div class="w-box-body">
+            <div class="" v-if="isFirst">
+                <div class="row">
+                    <CreateResumeForeignLanguagesHistory ref="componentElement" v-model="foreign_languages" />
+                </div>
+            </div>
+            <div class="empty-area" v-else>
+                <span>Здесь вы можете указать</span>
+                <button class="add" type="button" @click="isFirst = !isFirst">Добавить </button>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script setup>
 
+import CreateResume from "~/pages/create-resume.vue";
 
-import {useDictionaryStore} from "~/store/dictionary";
-import { v4 as uuidv4 } from "uuid";
-const emit  = defineEmits(['set']);
-import {storeToRefs} from "pinia";
-const dictionaryStore = useDictionaryStore();
-const {getEducations} = dictionaryStore;
-const {educations} = storeToRefs(dictionaryStore);
-await getEducations();
+const isFirst = ref(false);
+const componentElement = ref(false);
 
-const currentItem = ref(0);
+// watch(() => isFirst.value, (newValue) => {
+//     if (newValue){
+//         setTimeout(() => educationDocumentElement.value.reset());
+//     }
+// })
 
+const foreign_languages = ref([]);
 
-const resetObject = {
-  "id": 0,
-  "profession": null,
-  "institute": null,
-  "faculty": null,
-  "form": null,
-  "start_year": null,
-  "end_year": null,
-};
-const selectedLanguages = ref([]);
-
-const reset = () => {
-  resetObject.id = uuidv4();
-  selectedLanguages.value = [ resetObject ];
+const save = () => {
+    // console.log(education_documents.value)
 }
-const create = () => {
-  const newItems = selectedLanguages.value;
-  resetObject.id = uuidv4();
-  newItems.push(resetObject);
-  currentItem.value = newItems.length - 1;
-  selectedLanguages.value = newItems;
-}
-
-
-const updateItem = (id, newItem) => {
-  const newItems = selectedLanguages.value.map(item => {
-    if (item.id === id){
-      return newItem;
-    }
-    return item;
-  });
-  selectedLanguages.value = newItems;
-}
-const deleteItem = (deleteItem) => {
-  const newItems = selectedLanguages.value.filter((item) => item.id !== deleteItem);
-  selectedLanguages.value = newItems;
-}
-
-
-
-onMounted(() => {
-  reset();
-})
 </script>
 
 <style scoped>
 
-.education_item{
-  margin-bottom: 2.5rem;
-}
 </style>

@@ -11,7 +11,7 @@
                     <SelectWithSearch :placeholder="'Выберите'" :options="languageOptions" v-model.number="state.language_id.val"></SelectWithSearch>
                 </div>
                 <div class="input-wrapper">
-                    <CustomSelect :options="languageLevelOptions" v-model.number="state.language_level.val"></CustomSelect>
+                    <CustomSelect :placeholder="'Выберите'" :options="languageLevelOptions" v-model.number="state.language_level.val"></CustomSelect>
                 </div>
             </div>
         </div>
@@ -105,7 +105,7 @@ watch(() => props, () => {
 
 .absoluted_icon{
     position: absolute;
-    left: -.5rem;
+    left: -2rem;
     top: 0.5rem;
     font-size: 1rem;
     z-index: 1;

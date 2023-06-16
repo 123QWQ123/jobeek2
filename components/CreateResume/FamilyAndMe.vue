@@ -75,11 +75,7 @@ const dictionaryStore = useDictionaryStore();
 const {getMaritalStatus} = dictionaryStore;
 await getMaritalStatus();
 
-console.log(dictionaryStore.marital_statuses);
-
 const maritalStatusOptions = computed(() => dictionaryStore.marital_statuses.map(item => ({value: item.id, name: item.name})));
-console.log(maritalStatusOptions);
-
 
 watch(() => state.marital_status, (newValues) => {
     emit('set', 'marital_status', newValues);

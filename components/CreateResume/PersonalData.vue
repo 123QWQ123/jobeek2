@@ -44,7 +44,7 @@
       </div>
     </div>
     <div class="input-row">
-      <label for="country">Город проживания <b>*</b></label>
+      <label>Город проживания <b>*</b></label>
       <div class="input-wrapper mt-2">
         <SelectWithSearch :options="cityOptions" v-model.number="state.city_id.val" :placeholder="'Ишите город'" @input="updateCityInput"></SelectWithSearch>
 
@@ -71,9 +71,9 @@
           <input type="text" placeholder="Телефон" id="phone" ref="phoneInputElement">
 
           <div class="from-to-block">
-            <label for="from">Отвечу на звонки</label>
+            <label>Отвечу на звонки</label>
             <div class="c2">
-              <CustomSelect :options="useHourOptions()" v-model="state.phone.from" :label="'От'"></CustomSelect>
+              <CustomSelect :options="useHourOptions()" v-model="state.phone.from"  :label="'От'"></CustomSelect>
 
               <CustomSelect :options="useHourOptions()" v-model="state.phone.to" :label="'До'"></CustomSelect>
             </div>
@@ -82,9 +82,9 @@
       </div>
     </div>
     <div class="input-row">
-      <label for="email">Электронная почта</label>
+      <label for="resume_email">Электронная почта</label>
       <div class="input-wrapper">
-        <input type="email" placeholder="Электронная почта" v-model="state.email.val">
+        <input id="resume_email" type="email" placeholder="Электронная почта" v-model="state.email.val">
       </div>
     </div>
   </div>
@@ -190,9 +190,7 @@ onMounted(( ) => {
 });
 
 const updateCityInput = async (newValue = '') => {
-    console.log(newValue);
      const items = await searchCities({search: newValue}) ?? [];
-    console.log(items);
     cityOptions.value = items.map(item => ({value: item.city_id, name: item.city_name}));
 }
 
@@ -203,7 +201,6 @@ onMounted(() => {
 const {updateResume} = resumeStore;
 const save = async () => {
   const formData = useFormData(state, 'form_data')
-  console.log(formData);
   // const data = form2json(formData)
   // console.log(data);
 
@@ -222,8 +219,6 @@ const save = async () => {
     const resData = await updateResume(formData);
 
   }
-
-  console.log(resData);
 
   if (resData.status === 'success'){
     state.isNew = false;

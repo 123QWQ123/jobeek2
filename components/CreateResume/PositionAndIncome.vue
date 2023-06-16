@@ -5,14 +5,14 @@
     </div>
     <div class="w-box-body">
       <div class="input-row">
-        <label for="position">Какую должность вы хотите занимать? <b>*</b></label>
+        <label >Какую должность вы хотите занимать? <b>*</b></label>
         <div class="input-wrapper">
           <input type="text" placeholder="Укажите должность" id="position" v-model="state.profession.val">
         </div>
       </div>
         <CreateResumeSalary v-model="state.salary.val" :currency="state.salary.val.currency" :amount="state.salary.val.amount"/>
       <div class="input-row">
-        <label for="employment">Занятость <b>*</b></label>
+        <label>Занятость <b>*</b></label>
         <div class="input-wrapper">
             <CustomSelect :options="employmentOptions" v-model="state.employment.val"  />
         </div>

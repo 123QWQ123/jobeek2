@@ -10,7 +10,7 @@
                    autocomplete="off">
           </div>
           <div class="input-wrap has-label">
-            <label for="salary">Желаемая зарплата </label>
+            <label>Желаемая зарплата </label>
 <!--            <HeaderSalarySelectInForm @change="onChange"></HeaderSalarySelectInForm>-->
           </div>
           <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">
