@@ -1,19 +1,19 @@
 <template>
   <div class="education_item">
-    <CreateResumeEducationItem
-        v-if="selectedEducations.length"
-        class="mb-2"
-        v-for="(item, index) in selectedLanguages" :item="item"
-        :key="item.id"
-        :id="item.id"
-        :profession="item.profession"
-        :institute="item.institute"
-        :faculty="item.faculty"
-        :form="item.form"
-        :start_year="item.start_year"
-        :end_year="item.end_year"
-        @update="updateItem"
-        @delete="deleteItem" />
+<!--    <CreateResumeForeignLanguagesItem-->
+<!--        v-if="selectedLanguages.length"-->
+<!--        class="mb-2"-->
+<!--        v-for="(item, index) in selectedLanguages" :item="item"-->
+<!--        :key="item.id"-->
+<!--        :id="item.id"-->
+<!--        :profession="item.profession"-->
+<!--        :institute="item.institute"-->
+<!--        :faculty="item.faculty"-->
+<!--        :form="item.form"-->
+<!--        :start_year="item.start_year"-->
+<!--        :end_year="item.end_year"-->
+<!--        @update="updateItem"-->
+<!--        @delete="deleteItem" />-->
 
     <button type="button" class="btn btn-primary" v-if="selectedLanguages.length === 0" @click="reset">Добавить</button>
     <button type="button" class="btn btn-primary" v-if="selectedLanguages.length !== 0" @click="create">Добавить еще</button>

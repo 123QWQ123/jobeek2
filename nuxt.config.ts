@@ -50,6 +50,7 @@ const config = {
     '/my-resumes': { ssr: false },
     '/my-vacancies': { ssr: false },
     '/create-vacancy': { ssr: false },
+    '/create-resume': { ssr: false },
     // Add cors headers
     '/api/**': { cors: true },
     // Add redirect headers

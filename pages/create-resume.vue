@@ -39,7 +39,7 @@ onMounted(() => {
     <div class="bg-wrapper pt">
       <PersonalCabinetSearchMobile />
 
-        {{state}}
+<!--        {{state}}-->
       <div class="wrapper wrapper-1290">
         <form class="create-resume" action="" name="create-resume ">
           <div class="w-box w-box--main w-box-resume pb-4">
@@ -65,7 +65,7 @@ onMounted(() => {
 
           <CreateResumeKnowledgeAndSkills></CreateResumeKnowledgeAndSkills>
 
-          <CreateResumeForeignLanguagesContent></CreateResumeForeignLanguagesContent>
+<!--          <CreateResumeForeignLanguagesContent></CreateResumeForeignLanguagesContent>-->
 
           <CreateResumeCitizenship></CreateResumeCitizenship>
 

@@ -36,7 +36,7 @@ export const useProfileStore = defineStore('profile', {
         method: 'get',
         payload
       });
-      if ('data' in data){
+      if (data && 'data' in data){
         this.countries = data.data.countries;
       }
       return data;
