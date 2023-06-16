@@ -24,22 +24,19 @@
 <script setup>
 import {useDictionaryStore} from "~/store/dictionary";
 
-const emit  = defineEmits(['set']);
+const emit  = defineEmits(['update:modelValue']);
 const props  = defineProps({
     modelValue: {
         required: true,
        default: []
     }
 });
-import {storeToRefs} from "pinia";
 import {v4 as uuidv4} from "uuid";
 
 const dictionaryStore = useDictionaryStore();
 const {getForeignLanguages, getLanguageLevels} = dictionaryStore;
-const {foreign_languages, language_levels} = storeToRefs(dictionaryStore);
 await getForeignLanguages();
 await getLanguageLevels();
-
 
 const resetObject = {
     "language_id": null,
@@ -73,6 +70,9 @@ const deleteItem = (deleteItem) => {
     selectedItems.value = newItems;
 }
 
+watch(() => selectedItems.value, () => {
+  emit('update:modelValue', selectedItems.value);
+})
 
 onMounted(() => {
     reset();

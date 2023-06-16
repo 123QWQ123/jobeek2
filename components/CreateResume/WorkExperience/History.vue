@@ -1,9 +1,9 @@
 <template>
   <div class="education_item">
           <CreateResumeWorkExperienceItem
-                  v-if="selectedEducations.length"
+                  v-if="selectedItems.length"
                   class="mb-2"
-                  v-for="(item, index) in selectedEducations" :item="item"
+                  v-for="(item, index) in selectedItems" :item="item"
                   :key="item.id"
                   :id="item.id"
                   :profession="item.profession"
@@ -17,8 +17,8 @@
                   @update="updateItem"
                   @delete="deleteItem" />
 
-          <button type="button" class="btn btn-primary" v-if="selectedEducations.length === 0" @click="reset">Добавить</button>
-          <button type="button" class="btn btn-primary" v-if="selectedEducations.length !== 0" @click="create">Добавить еще</button>
+          <button type="button" class="btn btn-primary" v-if="selectedItems.length === 0" @click="reset">Добавить</button>
+          <button type="button" class="btn btn-primary" v-if="selectedItems.length !== 0" @click="create">Добавить еще</button>
   </div>
 </template>
 
@@ -49,33 +49,33 @@ const resetObject = {
     "start_year": null,
     "end_year": null,
 };
-const selectedEducations = ref([]);
+const selectedItems = ref([]);
 
 const reset = () => {
     resetObject.id = uuidv4();
-    selectedEducations.value = [ resetObject ];
+  selectedItems.value = [ resetObject ];
 }
 const create = () => {
-    const newItems = selectedEducations.value;
+    const newItems = selectedItems.value;
     resetObject.id = uuidv4();
     newItems.push(resetObject);
     currentItem.value = newItems.length - 1;
-    selectedEducations.value = newItems;
+  selectedItems.value = newItems;
 }
 
 
 const updateItem = (id, newItem) => {
-    const newItems = selectedEducations.value.map(item => {
+    const newItems = selectedItems.value.map(item => {
         if (item.id === id){
             return newItem;
         }
         return item;
     });
-    selectedEducations.value = newItems;
+    selectedItems.value = newItems;
 }
 const deleteItem = (deleteItem) => {
-    const newItems = selectedEducations.value.filter((item) => item.id !== deleteItem);
-    selectedEducations.value = newItems;
+    const newItems = selectedItems.value.filter((item) => item.id !== deleteItem);
+  selectedItems.value = newItems;
 }
 
 

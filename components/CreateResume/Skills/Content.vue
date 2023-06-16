@@ -25,9 +25,8 @@
 
 <script setup>
 import {useDictionaryStore} from "~/store/dictionary";
-import CreateResume from "~/pages/create-resume.vue";
 
-const emit = defineEmits(['set']);
+const emit = defineEmits(['update:modelValue']);
 const dictionaryStore = useDictionaryStore();
 
 const selectedSkills = ref([null]);
@@ -45,7 +44,6 @@ const computedSelectedSkills = computed(() => {
     return selectedSkills.value.filter(item => item);
 })
 const setCurrent = (index) => {
-    console.log(index);
     currentSkillId.value = index;
     currentSkill.value = selectedSkills.value[index];
 }
@@ -53,7 +51,6 @@ const reset = () => {
     selectedSkills.value = [null];
 }
 const addItem = (newItem) => {
-    console.log(newItem);
     const newItems = selectedSkills.value.filter((item) => item);
     newItems.push(newItem);
     newItems.push(null);
@@ -62,7 +59,6 @@ const addItem = (newItem) => {
 
 
 const updateItem = (id, newItem) => {
-    console.log(newItem);
     // const newItems = selectedLanguages.value;
     const newItems = selectedSkills.value.map((item, index) => {
         if (index === id){
@@ -80,7 +76,7 @@ const deleteItem = (deleteItem) => {
 }
 
 watch(selectedSkills, (newValues) => {
-    emit('set', 'key_skills', newValues);
+  emit('update:modelValue', newValues.filter(item => item));
 })
 </script>
 

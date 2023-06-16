@@ -4,14 +4,14 @@
       <h3 class="title">Образование</h3>
     </div>
     <div class="w-box-body">
-        <div class="" v-if="isFirst">
+        <div class="" v-if="isShown">
             <div class="row">
-                <CreateResumeEducationHistory v-model="educations" />
+                <CreateResumeEducationHistory ref="educationElement" v-model="educations" />
             </div>
         </div>
         <div class="empty-area" v-else>
             <span>Здесь вы можете указать</span>
-            <button class="add" type="button" @click="isFirst = !isFirst">Добавить </button>
+            <button class="add" type="button" @click="isShown = !isShown">Добавить </button>
         </div>
     </div>
   </div>
@@ -19,13 +19,18 @@
 
 <script setup>
 
-const isFirst = ref(false);
-
 const educations = ref([]);
 
+const educationElement = ref(false);
+
+const isShown = ref(false);
+
+watch(() => educations.value, (newData) => {
+  console.log(newData);
+})
 const save = () => {
-    // console.log(educations.value)
-}
+  console.log(educations.value)
+};
 </script>
 
 <style scoped>

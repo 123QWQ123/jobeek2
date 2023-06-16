@@ -34,6 +34,8 @@
                         <div class="c2">
                             <div>
                                 <CustomSelect :options="yearOptions" v-model="state.start_year.val" :label="'Начало года'" />
+                              <div class="alert alert-warning" v-if="state.start_year.isValid">Окончание должен быть больше чем начало</div>
+
                             </div>
                             <div>
                                 <CustomSelect :options="monthOptions" v-model="state.start_month.val" :label="'Начало месяца '" />
@@ -41,10 +43,12 @@
                         </div>
                         <div class="c2 mt-2">
                             <div>
-                                <CustomSelect :options="yearOptions" v-model="state.start_year.val" :label="'Окончание года'" />
+                                <CustomSelect :options="yearOptions" v-model="state.end_year.val" :label="'Окончание года'" />
+                              {{state.end_year.isValid}}
+                                <div class="alert alert-warning" v-if="state.end_year.isValid">Окончание должен быть больше чем начало</div>
                             </div>
                             <div>
-                                <CustomSelect :options="monthOptions" v-model="state.start_month.val" :label="'Окончание месяца '" />
+                                <CustomSelect :options="monthOptions" v-model="state.end_month.val" :label="'Окончание месяца '" />
                             </div>
                         </div>
                     </div>
@@ -129,41 +133,57 @@ onMounted(() => {
 const state = reactive({
     id: {
         val: props.id,
-        isValid: null,
+        isValid: false,
     },
     profession: {
         val: props.profession,
-        isValid: null,
+        isValid: false,
     },
     company: {
         val: props.company,
-        isValid: null,
+        isValid: false,
     },
     company_url: {
         val: props.company_url,
-        isValid: null,
+        isValid: false,
     },
     type: {
         val: props.type,
-        isValid: null,
+        isValid: false,
     },
     start_month: {
         val: props.start_month,
-        isValid: null,
+        isValid: false,
     },
     end_month: {
         val: props.end_month,
-        isValid: null,
+        isValid: false,
     },
     start_year: {
         val: props.start_year,
-        isValid: null,
+        isValid: false,
     },
     end_year: {
         val: props.end_year,
-        isValid: null,
+        isValid: false,
     },
 });
+
+watch(() => state.start_year.val, (newStartYear) => {
+  console.log(newStartYear);
+  if (newStartYear > state.end_year.val){
+    state.start_year.isValid = false;
+  }
+  state.start_year.isValid = true;
+
+})
+
+watch(() => state.end_year.val, (newEndYear) => {
+  console.log(newEndYear);
+  if (state.start_year.val > newEndYear){
+    state.end_year.isValid = false;
+  }
+})
 
 const yearOptions = computed(() => useYearOptions())
 const monthOptions = computed(() => useMonthOptions())

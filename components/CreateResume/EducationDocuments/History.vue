@@ -21,7 +21,7 @@
 <script setup>
 import {useDictionaryStore} from "~/store/dictionary";
 import { v4 as uuidv4 } from "uuid";
-const emit  = defineEmits(['set']);
+const emit  = defineEmits(['update:modelValue']);
 import {storeToRefs} from "pinia";
 const dictionaryStore = useDictionaryStore();
 const {getEducations} = dictionaryStore;
@@ -35,7 +35,9 @@ const resetObject = {
     "end_year": null,
 };
 const selectedEducations = ref([]);
-
+watch(() => selectedEducations.value, (newSelectedEducations) => {
+  emit('update:modelValue', newSelectedEducations);
+})
 const reset = () => {
     resetObject.id = uuidv4();
     selectedEducations.value = [ resetObject ];

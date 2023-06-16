@@ -6,7 +6,7 @@
         <div class="w-box-body">
             <div class="" v-if="isFirst">
                 <div class="row">
-                    <CreateResumeForeignLanguagesHistory ref="componentElement" v-model="foreign_languages" />
+                  <SharedComponentsForeignLanguagesWrapper ref="componentElement" v-model="foreign_languages" />
                 </div>
             </div>
             <div class="empty-area" v-else>
@@ -19,22 +19,18 @@
 
 <script setup>
 
-import CreateResume from "~/pages/create-resume.vue";
-
 const isFirst = ref(false);
 const componentElement = ref(false);
 
-// watch(() => isFirst.value, (newValue) => {
-//     if (newValue){
-//         setTimeout(() => educationDocumentElement.value.reset());
-//     }
-// })
-
 const foreign_languages = ref([]);
 
+
 const save = () => {
-    // console.log(education_documents.value)
+    console.log(foreign_languages.value);
+    // emit('update:modelValue', foreign_languages.value);
 }
+watch(() => foreign_languages.value,  save);
+
 </script>
 
 <style scoped>
