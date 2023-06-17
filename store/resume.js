@@ -70,8 +70,9 @@ export const useResumeStore = defineStore('resume', {
       }
       return data;
     },
-    async createResume(id, payload) {
-      const {data} = await useApi('resume/', {
+    async createResume( payload) {
+      console.log(payload);
+      const {data} = await useApi('seeker/resumes/create', {
         method: 'post',
         payload
       });
