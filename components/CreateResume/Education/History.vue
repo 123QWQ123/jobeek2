@@ -26,6 +26,7 @@
 import {useDictionaryStore} from "~/store/dictionary";
 import { v4 as uuidv4 } from "uuid";
 const emit  = defineEmits(['update:modelValue']);
+const props  = defineProps(['modelValue']);
 import {storeToRefs} from "pinia";
 const dictionaryStore = useDictionaryStore();
 const {getEducations} = dictionaryStore;
@@ -44,7 +45,7 @@ const resetObject = {
     "start_year": null,
     "end_year": null,
 };
-const selectedEducations = ref([]);
+const selectedEducations = ref(props.modelValue ?? []);
 watch(() => selectedEducations.value, (newData) => {
   emit('update:modelValue', newData);
 })
@@ -78,7 +79,9 @@ const deleteItem = (deleteItem) => {
 
 
 onMounted(() => {
-    reset();
+    if (!props.modelValue.length){
+        reset();
+    }
 })
 </script>
 

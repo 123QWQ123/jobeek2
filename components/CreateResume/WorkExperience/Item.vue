@@ -1,5 +1,5 @@
 <template>
-    <div class="row position-relative empty-area" @focusout="save">
+    <div class="row position-relative empty-area" @mouseleave="save">
       <span class="position-absolute absoluted_icon" @click="deleteItem">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
             <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
@@ -21,6 +21,13 @@
                         <input type="text" placeholder="Введите заведения" required v-model="state.company.val">
                     </div>
                 </div>
+
+                <div class="input-row">
+                    <label for="position">О компании</label>
+                    <div class="input-wrapper">
+                        <textarea class="form-control" type="text" placeholder="Как можно подробнее расскажите о конкретных результатах вашей работы" v-model="state.industry.val"></textarea>
+                    </div>
+                </div>
                 <div class="input-row">
                     <label for="position">Ссылка на сайт компании<b>*</b></label>
                     <div class="input-wrapper">
@@ -34,26 +41,45 @@
                         <div class="c2">
                             <div>
                                 <CustomSelect :options="yearOptions" v-model="state.start_year.val" :label="'Начало года'" />
-                              <div class="alert alert-warning" v-if="state.start_year.isValid">Окончание должен быть больше чем начало</div>
-
+                              <div class="alert alert-warning" v-if="state.start_year.isValid">Начало должен быть меньше чем окончания</div>
                             </div>
                             <div>
                                 <CustomSelect :options="monthOptions" v-model="state.start_month.val" :label="'Начало месяца '" />
                             </div>
                         </div>
-                        <div class="c2 mt-2">
+                        <div class="c2 mt-2" v-if="!state.until_today.val === true">
                             <div>
                                 <CustomSelect :options="yearOptions" v-model="state.end_year.val" :label="'Окончание года'" />
-                              {{state.end_year.isValid}}
                                 <div class="alert alert-warning" v-if="state.end_year.isValid">Окончание должен быть больше чем начало</div>
                             </div>
                             <div>
                                 <CustomSelect :options="monthOptions" v-model="state.end_month.val" :label="'Окончание месяца '" />
                             </div>
                         </div>
+                        <div class="check-block mt-2">
+                            <div class="checkbox">
+                                <input type="checkbox" id="until_today" v-model="state.until_today.val" :checked="state.until_today.val">
+                                <div class="checkbox-mask">
+                                    <img src="~/assets/img/svg/check.svg" alt="#" />
+                                </div>
+                            </div>
+                            <label for="until_today">Работаю по настоящее время</label>
+                        </div>
                     </div>
                 </div>
 
+                <div class="input-row">
+                    <label for="position">Обязанности</label>
+                    <div class="input-wrapper">
+                        <textarea class="form-control" type="text" placeholder="Опишите, какие обязанности у вас были в этой компании, что именно вы делали" v-model="state.responsibilities.val"></textarea>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <label for="position">Достижения</label>
+                    <div class="input-wrapper">
+                        <textarea class="form-control" type="text" placeholder="Как можно подробнее расскажите о конкретных результатах вашей работы" v-model="state.achievements.val"></textarea>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -105,21 +131,29 @@ const props = defineProps({
         required: true,
         default: null
     },
+    responsibilities: {
+        required: true,
+        default: null
+    },
+    achievements: {
+        required: true,
+        default: null
+    },
+    industry: {
+        required: true,
+        default: null
+    },
+    until_today: {
+        required: true,
+        type: Boolean,
+        default: false
+    },
 });
 
 const dictionaryStore = useDictionaryStore();
 
 const isNew = ref(props.isNew);
 
-watch(() => props, () => {
-    state['id'] = props.id;
-    state['profession'] = props.profession;
-    state['institute'] = props.institute;
-    state['faculty'] = props.faculty;
-    state['form'] = props.form;
-    state['start_year'] = props.start_year;
-    state['end_year'] = props.end_year;
-})
 const deleteItem = (id = null) => {
     emit('delete', props.id);
 }
@@ -147,8 +181,8 @@ const state = reactive({
         val: props.company_url,
         isValid: false,
     },
-    type: {
-        val: props.type,
+    industry: {
+        val: props.industry,
         isValid: false,
     },
     start_month: {
@@ -163,25 +197,54 @@ const state = reactive({
         val: props.start_year,
         isValid: false,
     },
+    until_today: {
+        val: props.until_today,
+        isValid: false,
+    },
     end_year: {
         val: props.end_year,
         isValid: false,
     },
+    responsibilities: {
+        val: props.responsibilities,
+        isValid: false,
+    },
+    achievements: {
+        val: props.achievements,
+        isValid: false,
+    },
 });
 
-watch(() => state.start_year.val, (newStartYear) => {
-  console.log(newStartYear);
-  if (newStartYear > state.end_year.val){
-    state.start_year.isValid = false;
+watch(() => state.until_today.val, (newUntilToday) => {
+  console.log(newUntilToday);
+  if (newUntilToday === true){
+      state.end_year.val = (new Date).getFullYear();
+      state.end_month.val = (new Date).getMonth();
   }
-  state.start_year.isValid = true;
-
+})
+watch(() => state.start_year.val, (newStartYear) => {
+  console.log(state.end_year.val, newStartYear);
+  if (state.end_year.val){
+      if (newStartYear >= state.end_year.val){
+          state.start_year.isValid = true;
+          state.end_year.isValid = true;
+      }else{
+          state.start_year.isValid = false;
+      }
+  }
 })
 
 watch(() => state.end_year.val, (newEndYear) => {
-  console.log(newEndYear);
-  if (state.start_year.val > newEndYear){
-    state.end_year.isValid = false;
+    console.log(state.start_year.val, newEndYear);
+
+  if (state.start_year.val){
+      if (state.start_year.val >= newEndYear){
+          state.end_year.isValid = true;
+          state.start_year.isValid = true;
+      }else{
+          state.end_year.isValid = false;
+      }
+
   }
 })
 

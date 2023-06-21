@@ -1,17 +1,17 @@
 <template>
-  <div class="w-box"  @focusout="save">
+  <div class="w-box"  @mouseleave="save">
     <div class="w-box-head">
       <h3 class="title">Опыт работы</h3>
     </div>
     <div class="w-box-body">
-        <div class="form_content" v-if="isFirst">
+        <div class="form_content" v-if="isShown">
             <div class="row">
-                <CreateResumeWorkExperienceHistory v-model="work_experiences" />
+                <CreateResumeWorkExperienceHistory v-model="work_experiences_items" ref="workExperienceElement"/>
             </div>
         </div>
         <div class="empty-area" v-else>
             <span>Здесь вы можете указать</span>
-            <button class="add" type="button" @click="isFirst = !isFirst">Добавить </button>
+            <button class="add" type="button" @click="isShown = !isShown">Добавить </button>
         </div>
     </div>
   </div>
@@ -19,12 +19,62 @@
 
 <script setup>
 
-const isFirst = ref(false);
+import useFormValidation from "~/composables/useFormValidation";
+import {useResumeStore} from "~/store/resume";
 
-const work_experiences = ref([]);
+const work_experiences_items = ref([]);
 
-const save = () => {
-    // console.log(educations.value)
+const workExperienceElement = ref(false);
+
+const isShown = ref(false);
+const isChanged = ref(false);
+const isSaved = ref(false);
+
+const route = useRoute();
+const resumeStore = useResumeStore();
+const draftID = computed(() => route.query.draft_id);
+
+watch(() => work_experiences_items.value, (newData) => {
+    console.log(newData);
+    isChanged.value = true;
+});
+
+const resume = computed(() => resumeStore.resume);
+
+const work_histories = computed(() => resume.value?.work_histories ?? []);
+watch(() => work_histories.value, (newItems) => {
+    if (newItems.length > 0){
+        isShown.value = true;
+        work_experiences_items.value = newItems;
+    }
+});
+
+const {getResume, updateResume} = resumeStore;
+
+const {errors, handleErrorResponse} = useFormValidation();
+const save = async () => {
+    console.log('leaving...')
+    if (isChanged.value){
+        errors.value = {};
+        const resData = await updateResume(draftID.value, {
+            form_data: 'EXPERIENCE_DATA',
+            work_histories: work_experiences_items.value
+        });
+
+        console.log(resData);
+
+        if (resData.status !== 'success'){
+            return handleErrorResponse(resData.data);
+        }
+
+        isSaved.value = true;
+        isChanged.value = true;
+        setTimeout(() => {
+            isSaved.value = false;
+        }, 3000);
+
+        await getResume(draftID.value);
+    }
 }
 </script>
 

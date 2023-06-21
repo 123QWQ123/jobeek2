@@ -12,7 +12,7 @@
             </div>
         </div>
         <div class="col-4">
-            <CustomSelect class="skyBlueBG" :options="currencyOptions" :style="skyBlueBG" v-model="salary.currency.val"></CustomSelect>
+            <CustomSelect class="skyBlueBG" :label="'Валюта'" :options="currencyOptions" :style="skyBlueBG" v-model="salary.currency.val"></CustomSelect>
         </div>
       </div>
     </div>

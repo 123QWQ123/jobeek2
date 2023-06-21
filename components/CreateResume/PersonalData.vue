@@ -2,7 +2,7 @@
   <div class="w-box-body" @mouseleave="save">
 <!--      <CreateResumeSocialNetworks></CreateResumeSocialNetworks>-->
 
-    <div class="input-row" v-if="!isEditing">
+    <div class="input-row" v-if="!draftID">
         <label for="name">Название<b>*</b></label>
         <div class="input-wrapper">
             <div class="c1 mt-1">
@@ -168,6 +168,7 @@ import {useFormData} from "~/composables/useFormData";
 import {useRuntimeConfig} from "#app";
 import useFormValidation from "~/composables/useFormValidation";
 import {storeToRefs} from "pinia";
+import {useWatchStateValues} from "~/composables/useWatchStateValues";
 const resumeStore = useResumeStore();
 const profileStore = useProfileStore();
 const CONFIG = useRuntimeConfig();
@@ -283,20 +284,7 @@ const state = reactive({
     error: null,
     success: null,
 });
-watch(() => state.first_name.val, () => isChanged.value = true);
-watch(() => state.last_name.val, () => isChanged.value = true);
-watch(() => state.middle_name.val, () => isChanged.value = true);
-watch(() => state.is_relocatable.val, () => isChanged.value = true);
-watch(() => state.hide_birthday.val, () => isChanged.value = true);
-watch(() => state.city_id.val, () => isChanged.value = true);
-watch(() => state.birth_date.val, () => isChanged.value = true);
-watch(() => state.email.val, () => isChanged.value = true);
-watch(() => state.phone.val, () => isChanged.value = true);
-watch(() => state.phone_time_start.val, () => isChanged.value = true);
-watch(() => state.phone_time_end.val, () => isChanged.value = true);
-
-const isEditing = computed(() => resume ? true : false);
-
+watch(() => useWatchStateValues(state), () => isChanged.value = true);
 watch(() => resume.value, (newResume) => {
     if (newResume){
         state['first_name'].val = newResume['first_name'];
@@ -305,6 +293,7 @@ watch(() => resume.value, (newResume) => {
         state['is_relocatable'].val = newResume['is_relocatable'];
         state['hide_birthday'].val = newResume['hide_birthday'];
         state['city_id'].val = newResume['city_id'];
+        getCities(state.city_id.val);
         state['birth_date'].val = newResume['birth_date'];
         state['email'].val = newResume['email'];
         state['phone'].val = newResume['phone'];
@@ -313,9 +302,6 @@ watch(() => resume.value, (newResume) => {
         state['phone_time_end'].val = newResume['phone_time_end'];
     }
 })
-// onMounted(async() => {
-//
-// })
 
 const {searchCities} = profileStore;
 const {getCountryCities} = profileStore;
@@ -337,7 +323,7 @@ const getCities = async (newValue = '') => {
 }
 
 onMounted(( ) => {
-    getCities(state.city_id.val);
+
     phoneMask.value = new IMask(phoneInputElement.value, {
         mask: "+{7}(000)000-00-00",
     });
@@ -351,7 +337,6 @@ const {updateResume, createResume} = resumeStore;
 const {errors, handleErrorResponse} = useFormValidation();
 const save = async () => {
 
-    console.log(isChanged.value);
     if (isChanged.value){
 
         state.isLoading = true;
@@ -359,16 +344,19 @@ const save = async () => {
         errors.value = {};
         state.errorMessage = "";
         let resData = {};
-        if (isEditing.value){
+        if (draftID.value){
             const formData = useFormData(state, 'form_data')
             formData.append('form_data', 'personal_data');
             formData.delete('title');
             resData = await updateResume(draftID.value, formData, 'put');
         }else{
-
-            const formData = useFormData(state, 'form_data')
-            formData.append('form_data', 'personal_data')
+            const formData = useFormData(state)
+            // const formData = useFormData(state, 'form_data')
+            // formData.append('form_data', 'personal_data')
+            formData.form_data = 'personal_data';
+            console.log(formData);
             resData = await createResume(formData);
+            console.log(resData);
             if (resData.status === 'success'){
                 const resume_id = resData.data.data.id;
                 state.isNew = false;
@@ -382,14 +370,13 @@ const save = async () => {
         if (resData.status !== 'success'){
             return handleErrorResponse(resData.data);
         }
-
         isSaved.value = true;
         isChanged.value = false;
         setTimeout(() => {
             isSaved.value = false;
         }, 3000);
 
-        await getResume(draftID.value);
+        // await getResume(draftID.value);
     }
 }
 

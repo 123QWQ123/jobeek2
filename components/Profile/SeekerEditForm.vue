@@ -47,9 +47,7 @@
     <div class="input-row">
       <label>Дата рождения <b>*</b></label>
       <div class="input-wrapper">
-        <div class="c3">
-          <BirthDatePicker v-model="state.birth_date.val"></BirthDatePicker>
-        </div>
+        <BirthDatePicker v-model="state.birth_date.val"></BirthDatePicker>
         <div class="text-danger d-block" v-if="errors.birth_date">
           {{ errors.birth_date }}
         </div>
