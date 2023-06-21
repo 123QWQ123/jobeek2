@@ -1,5 +1,5 @@
 <template>
-  <div class="w-box"  @focusout="save">
+  <div class="w-box"  @mouseleave="save">
     <div class="w-box-head">
       <h3 class="title">Образование</h3>
     </div>
@@ -19,18 +19,58 @@
 
 <script setup>
 
+import useFormValidation from "~/composables/useFormValidation";
+import {useResumeStore} from "~/store/resume";
+
 const educations = ref([]);
 
 const educationElement = ref(false);
 
 const isShown = ref(false);
 
-watch(() => educations.value, (newData) => {
-  console.log(newData);
-})
-const save = () => {
-  console.log(educations.value)
-};
+// watch(() => educations.value, (newData) => {
+//   console.log(newData);
+// })
+
+const route = useRoute();
+const resumeStore = useResumeStore();
+
+const draftID = computed(() => route.query.draft_id);
+
+const {resume} = resumeStore;
+
+const isSaved = ref(false);
+
+const {getResume, updateResume} = resumeStore;
+
+const {errors, handleErrorResponse} = useFormValidation();
+const save = async () => {
+
+
+    errors.value = {};
+
+    const resData = await updateResume(draftID.value, {
+        form_data: 'EDUCATION_DATA',
+        education: educations.value
+    });
+
+    console.log(resData);
+
+    if (resData.status !== 'success'){
+        handleErrorResponse(resData.data);
+    }
+
+    isSaved.value = true;
+    setTimeout(() => {
+        isSaved.value = false;
+    }, 3000);
+
+    await getResume(draftID.value);
+}
+// const save = () => {
+//   console.log(educations.value)
+//
+// };
 </script>
 
 <style scoped>

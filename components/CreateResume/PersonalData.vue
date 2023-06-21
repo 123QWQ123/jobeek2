@@ -1,6 +1,15 @@
 <template>
   <div class="w-box-body" @mouseleave="save">
 <!--      <CreateResumeSocialNetworks></CreateResumeSocialNetworks>-->
+
+    <div class="input-row" v-if="!isEditing">
+        <label for="name">Название<b>*</b></label>
+        <div class="input-wrapper">
+            <div class="c1 mt-1">
+                <input type="text" placeholder="Название" v-model="state.title.val">
+            </div>
+        </div>
+    </div>
     <div class="input-row">
       <label for="photo">Фото</label>
       <div class="dwld-photo">
@@ -158,6 +167,7 @@ import IMask from "imask";
 import {useFormData} from "~/composables/useFormData";
 import {useRuntimeConfig} from "#app";
 import useFormValidation from "~/composables/useFormValidation";
+import {storeToRefs} from "pinia";
 const resumeStore = useResumeStore();
 const profileStore = useProfileStore();
 const CONFIG = useRuntimeConfig();
@@ -166,9 +176,10 @@ const route = useRoute();
 const draftID = computed(() => route.query.draft_id);
 
 const {seeker} = profileStore;
-const {resume} = resumeStore;
+const {resume} = storeToRefs(resumeStore);
 
 const isSaved = ref(false);
+const isChanged = ref(false);
 
 const photoUrl = computed(() => {
   if (state.photo.base64){
@@ -201,6 +212,10 @@ const handleUploadFile = async (e) => {
 const {getResume} = resumeStore;
 
 const state = reactive({
+    title: {
+        val: "",
+        isValid: true,
+    },
     first_name: {
         val: "",
         isValid: true,
@@ -268,22 +283,39 @@ const state = reactive({
     error: null,
     success: null,
 });
+watch(() => state.first_name.val, () => isChanged.value = true);
+watch(() => state.last_name.val, () => isChanged.value = true);
+watch(() => state.middle_name.val, () => isChanged.value = true);
+watch(() => state.is_relocatable.val, () => isChanged.value = true);
+watch(() => state.hide_birthday.val, () => isChanged.value = true);
+watch(() => state.city_id.val, () => isChanged.value = true);
+watch(() => state.birth_date.val, () => isChanged.value = true);
+watch(() => state.email.val, () => isChanged.value = true);
+watch(() => state.phone.val, () => isChanged.value = true);
+watch(() => state.phone_time_start.val, () => isChanged.value = true);
+watch(() => state.phone_time_end.val, () => isChanged.value = true);
 
-onMounted(async() => {
-    console.log(resume);
-    state['first_name'].val = resume['first_name'];
-    state['last_name'].val = resume['last_name'];
-    state['middle_name'].val = resume['middle_name'];
-    state['is_relocatable'].val = resume['is_relocatable'];
-    state['hide_birthday'].val = resume['hide_birthday'];
-    state['city_id'].val = resume['city_id'];
-    state['birth_date'].val = resume['birth_date'];
-    state['email'].val = resume['email'];
-    state['phone'].val = resume['phone'];
-    phoneInputElement.value.value = resume['phone'];
-    state['phone_time_start'].val = resume['phone_time_start'];
-    state['phone_time_end'].val = resume['phone_time_end'];
+const isEditing = computed(() => resume ? true : false);
+
+watch(() => resume.value, (newResume) => {
+    if (newResume){
+        state['first_name'].val = newResume['first_name'];
+        state['last_name'].val = newResume['last_name'];
+        state['middle_name'].val = newResume['middle_name'];
+        state['is_relocatable'].val = newResume['is_relocatable'];
+        state['hide_birthday'].val = newResume['hide_birthday'];
+        state['city_id'].val = newResume['city_id'];
+        state['birth_date'].val = newResume['birth_date'];
+        state['email'].val = newResume['email'];
+        state['phone'].val = newResume['phone'];
+        phoneInputElement.value.value = newResume['phone'];
+        state['phone_time_start'].val = newResume['phone_time_start'];
+        state['phone_time_end'].val = newResume['phone_time_end'];
+    }
 })
+// onMounted(async() => {
+//
+// })
 
 const {searchCities} = profileStore;
 const {getCountryCities} = profileStore;
@@ -314,31 +346,51 @@ onMounted(( ) => {
     });
 });
 
-const {updateResume} = resumeStore;
+const {updateResume, createResume} = resumeStore;
 
 const {errors, handleErrorResponse} = useFormValidation();
 const save = async () => {
-  const formData = useFormData(state, 'form_data')
-  formData.append('form_data', 'personal_data')
 
-  state.isLoading = true;
-  // validate();
-  errors.value = {};
-  state.errorMessage = "";
+    console.log(isChanged.value);
+    if (isChanged.value){
 
-  const resData = await updateResume(draftID.value, formData, 'put');
+        state.isLoading = true;
+        // validate();
+        errors.value = {};
+        state.errorMessage = "";
+        let resData = {};
+        if (isEditing.value){
+            const formData = useFormData(state, 'form_data')
+            formData.append('form_data', 'personal_data');
+            formData.delete('title');
+            resData = await updateResume(draftID.value, formData, 'put');
+        }else{
+
+            const formData = useFormData(state, 'form_data')
+            formData.append('form_data', 'personal_data')
+            resData = await createResume(formData);
+            if (resData.status === 'success'){
+                const resume_id = resData.data.data.id;
+                state.isNew = false;
+                setTimeout(() => {
+                    navigateTo({name: 'create-resume', query: {draft_id: resume_id}})
+                });
+            }
+        }
 
 
-  if (resData.status !== 'success'){
-      handleErrorResponse(resData.data);
-  }
+        if (resData.status !== 'success'){
+            return handleErrorResponse(resData.data);
+        }
 
-    isSaved.value = true;
-  setTimeout(() => {
-      isSaved.value = false;
-  }, 3000);
+        isSaved.value = true;
+        isChanged.value = false;
+        setTimeout(() => {
+            isSaved.value = false;
+        }, 3000);
 
-  await getResume(draftID.value);
+        await getResume(draftID.value);
+    }
 }
 
 </script>

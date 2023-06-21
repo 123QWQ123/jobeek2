@@ -30,7 +30,6 @@ import {useCurrencyOptions} from "~/composables/useCurrencyOptions";
 const currencyOptions = ref(useCurrencyOptions());
 
 const {modelValue} = props;
-console.log(modelValue);
 const salary = reactive({
     amount: {
         val: modelValue.amount,
@@ -45,13 +44,11 @@ const salary = reactive({
 });
 
 watch(() => props.modelValue, (newValue) => {
-    console.log(newValue);
     salary.amount.val = newValue.amount;
     salary.currency.val = newValue.currency;
 })
 const validate = () => {
     salary.amount.isChecked = true;
-    console.log(parseInt(salary.amount.val));
     if (parseInt(salary.amount.val) > 0){
         salary.amount.isValid = true;
     }else{

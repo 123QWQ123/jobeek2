@@ -46,16 +46,15 @@ await getWorkTypes();
 const employmentOptions = computed(() => {
     return dictionaryStore.work_types.map(item => ({name: item.name,value: item.id}));
 });
+const resumeStore = useResumeStore();
 
 const route = useRoute();
 const draftID = computed(() => route.query.draft_id);
 
-console.log(draftID.value);
-
-const resumeStore = useResumeStore();
 const {resume} = resumeStore;
 
 const isSaved = ref(false);
+const isChanged = ref(false);
 
 const {getResume} = resumeStore;
 
@@ -71,18 +70,6 @@ const state = ref({
         },
         isValid: true
     },
-    // salary_from: {
-    //     val: "",
-    //     isValid: true,
-    // },
-    // salary_to: {
-    //     val: "",
-    //     isValid: true,
-    // },
-    // salary_currency: {
-    //     val: null,
-    //     isValid: true,
-    // },
     employment_id: {
         val: resume.employment_id,
         isValid: true,
@@ -93,42 +80,41 @@ const state = ref({
     error: null,
     success: null,
 });
-
+watch(() => state.value, () => {
+    isChanged.value = true;
+})
 const {updateResume} = resumeStore;
 
 const {errors, handleErrorResponse} = useFormValidation();
 const save = async () => {
+    if (isChanged.value){
 
-    console.log(state.value.salary.val);
-    const jsonData = {
-        salary_currency: state.value.salary.val.currency,
-        title: state.value.title.val,
-        salary_from: state.value.salary.val.amount,
-        employment_id: state.value.employment_id.val,
-        form_data: 'PROFESSION_DETAILS_DATA'
+        const jsonData = {
+            salary_currency: state.value.salary.val.currency,
+            title: state.value.title.val,
+            salary_from: state.value.salary.val.amount,
+            employment_id: state.value.employment_id.val,
+            form_data: 'PROFESSION_DETAILS_DATA'
+        }
+
+        state.isLoading = true;
+        // validate();
+        errors.value = {};
+        state.errorMessage = "";
+
+        const resData = await updateResume(draftID.value, jsonData);
+
+        if (resData.status !== 'success'){
+            handleErrorResponse(resData.data);
+        }
+
+        isSaved.value = true;
+        setTimeout(() => {
+            isSaved.value = false;
+        }, 3000);
+
+        await getResume(draftID.value);
     }
-
-    console.log(jsonData);
-
-    state.isLoading = true;
-    // validate();
-    errors.value = {};
-    state.errorMessage = "";
-
-    const resData = await updateResume(draftID.value, jsonData);
-
-    console.log(resData);
-
-    if (resData.status !== 'success'){
-        handleErrorResponse(resData.data);
-    }
-
-    isSaved.value = true;
-    setTimeout(() => {
-        isSaved.value = false;
-    }, 3000);
-
-    await getResume(draftID.value);
 }
 
 </script>

@@ -56,9 +56,7 @@ onMounted(() => {
             </div>
 <!--            <CreateResumeProviders></CreateResumeProviders>-->
 
-            <CreateResumePersonalData v-if="isEditable" ></CreateResumePersonalData>
-            <CreateResumePersonalDataWithResumeTitle v-else></CreateResumePersonalDataWithResumeTitle>
-
+            <CreateResumePersonalData ></CreateResumePersonalData>
           </div>
 
           <CreateResumePositionAndIncome v-if="isEditable"></CreateResumePositionAndIncome>

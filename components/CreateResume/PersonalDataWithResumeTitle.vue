@@ -1,5 +1,5 @@
 <template>
-  <div class="w-box-body" @focusout="save">
+  <div class="w-box-body" @mouseleave="save">
 <!--      <CreateResumeSocialNetworks></CreateResumeSocialNetworks>-->
     {{errors}}
 
@@ -268,19 +268,17 @@ const save = async () => {
   let resData = null;
   if (state.isNew === true){
     resData = await createResume(formData);
-  }else{
-    resData = await updateResume(formData);
   }
 
   console.log(resData);
 
 
   if (resData.status === 'success'){
-      const resume_id = resData.data.data.id;
-      state.isNew = false;
-    setTimeout(() => {
-        navigateTo({name: 'create-resume', query: {draft_id: resume_id}})
-    });
+      // const resume_id = resData.data.data.id;
+      // state.isNew = false;
+      // setTimeout(() => {
+      //     navigateTo({name: 'create-resume', query: {draft_id: resume_id}})
+      // });
   }else{
       handleErrorResponse(resData.data);
   }
