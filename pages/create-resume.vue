@@ -15,7 +15,14 @@ const route = useRoute();
 const draftId = computed(() => route.query.draft_id);
 
 const resumeStore = useResumeStore();
-const {resume} = storeToRefs(resumeStore)
+const {resume} = storeToRefs(resumeStore);
+
+const isEditable = computed(() => {
+    if (resume.value){
+        return true;
+    }
+    return false;
+});
 const formTitle = computed(() => {
   if (resume.value){
     return "Обновить резюме";
@@ -31,7 +38,7 @@ onMounted(() => {
   if (draftId.value){
     getResume(draftId.value);
   }
-})
+});
 // groups[]=
 </script>
 <template>
@@ -48,11 +55,13 @@ onMounted(() => {
               <div class="descr">Получайте уведомления о новых вакансиях по созданному запросу</div>
             </div>
 <!--            <CreateResumeProviders></CreateResumeProviders>-->
-            <CreateResumePersonalData></CreateResumePersonalData>
+
+            <CreateResumePersonalData v-if="isEditable" ></CreateResumePersonalData>
+            <CreateResumePersonalDataWithResumeTitle v-else></CreateResumePersonalDataWithResumeTitle>
 
           </div>
 
-          <CreateResumePositionAndIncome></CreateResumePositionAndIncome>
+          <CreateResumePositionAndIncome v-if="isEditable"></CreateResumePositionAndIncome>
 
           <CreateResumeEducationContent></CreateResumeEducationContent>
 

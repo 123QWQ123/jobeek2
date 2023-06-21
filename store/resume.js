@@ -71,26 +71,25 @@ export const useResumeStore = defineStore('resume', {
       return data;
     },
     async createResume( payload) {
-      console.log(payload);
-      const {data} = await useApi('seeker/resumes/create', {
+      const response = await useApi('seeker/resumes/create', {
         method: 'post',
         payload
       });
-      if (data){
-        this.resume = data;
+      if ('data' in response){
+        this.resume = response.data;
       }
-      return data;
+      return response;
     },
-    async updateResume(id, payload) {
-      const {data} = await useApi('resume/' + id, {
-        method: 'put',
+    async updateResume(id, payload, content_type = 'application/json') {
+      const response = await useApi('seeker/resumes/' + id, {
+        method: 'PUT',
+        content_type,
         payload
       });
-      console.log(data, payload)
-      if (data){
-        this.resume = data;
+      if ('data' in response && response.data.status === 'success'){
+        this.resume = response.data;
       }
-      return data;
+      return response;
     },
     async getResume(id, payload) {
       const {data} = await useApi('seeker/resumes/' + id, {
@@ -98,7 +97,7 @@ export const useResumeStore = defineStore('resume', {
         payload
       });
       if (data){
-        this.resume = data;
+        this.resume = data.data;
       }
       return data;
     },

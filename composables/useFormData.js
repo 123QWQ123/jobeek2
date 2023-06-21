@@ -6,7 +6,15 @@ export function useFormData(state, type = 'json') {
         try {
             const keys = Object.keys(state).filter(item => state[item] instanceof Object);
             const newData = {};
-            keys.map((item) => (newData[item] = state[item].val));
+            keys.map((item) => {
+                let value = state[item].val;
+                if (typeof value === 'boolean'){
+                    newData[item] = Number(value);
+                }
+                else{
+                    newData[item] = value;
+                }
+            });
             return newData;
         } catch (e) {
             return {};
@@ -18,7 +26,15 @@ export function useFormData(state, type = 'json') {
         const formData = new FormData();
         try {
             const keys = Object.keys(state).filter(item => state[item] instanceof Object);
-            keys.map(item => formData.append(item, state[item].val));
+            keys.map(item => {
+                let value = state[item].val;
+                if (typeof value === 'boolean'){
+                    formData.append(item, Number(value))
+                }
+                else{
+                    formData.append(item, value)
+                }
+            });
             return formData;
         } catch (e) {
             return {};

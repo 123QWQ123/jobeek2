@@ -62,12 +62,6 @@ const placeholderClass = computed(() => {
     return isFirst.value || !selectedOption.value;
 })
 
-function onClick(e){
-  // if (e.target.classList.contains('current') || e.target.classList.contains('nice-select')){
-  //   isOpen.value = !isOpen.value;
-  // }
-}
-
 const searchInputElement = ref();
 function switchToEditing(){
     isOpen.value = true;
@@ -77,9 +71,7 @@ function switchToEditing(){
     setTimeout(() => searchInputElement.value?.focus(), 0);
 }
 function onSelect(id){
-    console.log(id);
     const selectedOptionItem = options.value.find(item => String(item.value) === String(id));
-    console.log(selectedOptionItem);
     selectedOption.value = selectedOptionItem;
     searchInput.value = selectedOptionItem.name;
     emit('change', selectedOptionItem);
@@ -108,7 +100,7 @@ function close(){
 }
 </script>
 <template>
-  <div v-click-outside="close" onfocusout="close" class="nice-select n-select d-select" :class="{'open' : isOpen}" tabindex="0" @click.prevent="onClick">
+  <div v-click-outside="close" onfocusout="close" class="nice-select n-select d-select" :class="{'open' : isOpen}" tabindex="0">
 
     <span class="current" ref="searchInputElement" contenteditable="true" @keyup="onChangeHandler" :class="{placeholder: placeholderClass}" @click="switchToEditing" >{{ labelText }}</span>
 

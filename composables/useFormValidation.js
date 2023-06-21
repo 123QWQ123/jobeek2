@@ -1,23 +1,25 @@
 import { ref } from 'vue';
 
-export default function useFormValidation(state = {}) {
+export default function useFormValidation(state = null) {
     const errors = ref({});
+    state = state ?? ref({});
 
-    const handleErrorResponse = (respone) => {
-        console.log(respone);
-        if (respone.status === 'failed') {
+    const handleErrorResponse = (response) => {
+        if (response && response.status === 'failed') {
             // errors.value = error.data.errors;
-            if (respone.errors){
-                Object.keys(respone.errors).map(item => {
-                    console.log(item);
-                    errors.value[item] = respone.errors[item][0];
-                    if (item in state.value){
+            if (response.errors){
+                Object.keys(response.errors).map(item => {
+                    errors.value[item] = response.errors[item][0];
+                    if (state.value && item in state.value){
                         state.value[item].isValid = false;
+                    }
+                    if (item in state){
+                        state[item].isValid = false;
                     }
                 });
             }
         } else {
-            console.log(respone);
+            console.log(response);
         }
     };
 

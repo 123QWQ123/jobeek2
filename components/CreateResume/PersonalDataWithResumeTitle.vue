@@ -1,6 +1,16 @@
 <template>
-  <div class="w-box-body" @mouseleave="save">
+  <div class="w-box-body" @focusout="save">
 <!--      <CreateResumeSocialNetworks></CreateResumeSocialNetworks>-->
+    {{errors}}
+
+      <div class="input-row">
+          <label for="name">Название<b>*</b></label>
+          <div class="input-wrapper">
+              <div class="c1 mt-1">
+                  <input type="text" placeholder="Название" v-model="state.title.val">
+              </div>
+          </div>
+      </div>
     <div class="input-row">
       <label for="photo">Фото</label>
       <div class="dwld-photo">
@@ -46,23 +56,11 @@
     <div class="input-row">
       <label>Дата рождения <b>*</b></label>
       <div class="input-wrapper">
-        <div class="mb-1">
-          <BirthDatePicker v-model.lazy="state.birth_date.val" :value="state.birth_date.val"></BirthDatePicker>
-        </div>
-          <div class="check-block">
-              <div class="checkbox">
-                  <input type="checkbox" id="hide_birthday" v-model.number="state.hide_birthday.val">
-                  <div class="checkbox-mask">
-                      <img src="~/assets/img/svg/check.svg" alt="#" />
-                  </div>
-              </div>
-              <label for="hide_birthday">Не показать даты рождения</label>
+          <div class="mb-1">
+              <BirthDatePicker v-model.lazy="state.birth_date.val" :value="state.birth_date.val"></BirthDatePicker>
           </div>
         <div class="text-danger d-block" v-if="errors.birth_date">
           {{ errors.birth_date }}
-        </div>
-        <div class="text-danger d-block" v-if="errors.hide_birthday">
-          {{ errors.hide_birthday }}
         </div>
       </div>
     </div>
@@ -71,60 +69,35 @@
       <div class="input-wrapper mt-2">
         <SelectWithSearch :options="cityOptions" v-model.number="state.city_id.val" :placeholder="'Ишите город'" @input="updateCityInput"></SelectWithSearch>
 
-        <div class="text-danger d-block" v-if="errors.city_id">
-            Вам нужно выбрать город проживания!
-        </div>
-
         <div class="check-block">
             <div class="checkbox">
-                <input type="checkbox" id="ready-to-relocate" v-model.number="state.is_relocatable.val">
+                <input type="checkbox" id="ready-to-relocate" v-model="state.business_trip.val">
                 <div class="checkbox-mask">
                     <img src="~/assets/img/svg/check.svg" alt="#" />
                 </div>
             </div>
             <label for="ready-to-relocate">Готов к переезду</label>
-
-        </div>
-
-        <div class="text-danger d-block" v-if="errors.is_relocatable">
-            {{ errors.is_relocatable }}
         </div>
       </div>
 
+      <div class="text-danger d-block" v-if="errors.city_id">
+        Вам нужно выбрать город проживания!
+      </div>
     </div>
 
     <div class="input-row">
       <label for="phone">Телефон</label>
       <div class="input-wrapper">
         <div class="c">
+          <input type="text" placeholder="Телефон" id="phone" ref="phoneInputElement">
 
-            <div>
-                <input type="text" placeholder="Телефон" id="phone" ref="phoneInputElement">
-            </div>
           <div class="from-to-block">
             <label>Отвечу на звонки</label>
             <div class="c2">
+              <CustomSelect :options="useHourOptions()" v-model="state.phone.from"  :label="'От'"></CustomSelect>
 
-                <div>
-                    <CustomSelect :options="useHourOptions()" v-model="state.phone_time_start.val"  :label="'От'"></CustomSelect>
-
-                    <div class="text-danger d-block" v-if="errors.phone_time_start">
-                        {{ errors.phone_time_start }}
-                    </div>
-                </div>
-                <div>
-                    <CustomSelect :options="useHourOptions()" v-model="state.phone_time_end.val" :label="'До'"></CustomSelect>
-
-                    <div class="text-danger d-block" v-if="errors.phone_time_end">
-                        {{ errors.phone_time_end }}
-                    </div>
-                </div>
+              <CustomSelect :options="useHourOptions()" v-model="state.phone.to" :label="'До'"></CustomSelect>
             </div>
-
-          </div>
-
-          <div class="text-danger d-block" v-if="errors.phone">
-              {{ errors.phone }}
           </div>
         </div>
       </div>
@@ -133,19 +106,8 @@
       <label for="resume_email">Электронная почта</label>
       <div class="input-wrapper">
         <input id="resume_email" type="email" placeholder="Электронная почта" v-model="state.email.val">
-        <div class="text-danger d-block" v-if="errors.email">
-            {{errors.email}}
-        </div>
       </div>
     </div>
-      <transition>
-        <span v-if="isSaved" class="d-inline-flex justify-content-center align-items-center" style="color:#0c0">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="me-2">
-                <path fill="#0c0" d="M10.041 17l-4.5-4.319 1.395-1.435 3.08 2.937 7.021-7.183 1.422 1.409-8.418 8.591zm5.959 7v-2h-8v2h8zm0-24v2h-8v-2h8zm2 0h1c2.762 0 5 2.239 5 5v1h-2v-1c0-1.654-1.346-3-3-3h-1v-2zm6 16h-2v-8h2v8zm-18 8h-1c-2.762 0-5-2.239-5-5v-1h2v1c0 1.654 1.346 3 3 3h1v2zm18-6v1c0 2.761-2.238 5-5 5h-1v-2h1c1.654 0 3-1.346 3-3v-1h2zm-24-12v-1c0-2.761 2.238-5 5-5h1v2h-1c-1.654 0-3 1.346-3 3v1h-2zm0 2h2v8h-2v-8z"/>
-            </svg>
-            Сохранен
-        </span>
-      </transition>
   </div>
 </template>
 
@@ -163,12 +125,7 @@ const profileStore = useProfileStore();
 const CONFIG = useRuntimeConfig();
 const route = useRoute();
 
-const draftID = computed(() => route.query.draft_id);
-
 const {seeker} = profileStore;
-const {resume} = resumeStore;
-
-const isSaved = ref(false);
 
 const photoUrl = computed(() => {
   if (state.photo.base64){
@@ -177,6 +134,9 @@ const photoUrl = computed(() => {
     return CONFIG.public.base + state.photo_url.val;
   } else return CONFIG.public.base + '/assets/images/avatar.png';
 });
+
+
+
 
 const photoElement = ref();
 
@@ -198,9 +158,18 @@ const handleUploadFile = async (e) => {
   }
 }
 
-const {getResume} = resumeStore;
+onMounted(() => {
+  // console.log(profileStore.seeker);
+
+})
+
+const { createResume} = resumeStore;
 
 const state = reactive({
+    title: {
+        val: "",
+        isValid: true,
+    },
     first_name: {
         val: "",
         isValid: true,
@@ -230,16 +199,10 @@ const state = reactive({
         val: "",
         isValid: true,
     },
-    phone_time_start: {
-        val: "",
-        isValid: true,
-    },
-    phone_time_end: {
-        val: "",
-        isValid: true,
-    },
     phone: {
         val: "",
+        from: null,
+        to: null,
         isValid: true,
     },
     email: {
@@ -254,11 +217,7 @@ const state = reactive({
         val: "",
         isValid: true,
     },
-    hide_birthday: {
-        val: false,
-        isValid: true
-    },
-    is_relocatable: {
+    business_trip: {
         val: false,
         isValid: true
     },
@@ -268,79 +227,65 @@ const state = reactive({
     error: null,
     success: null,
 });
-
-onMounted(async() => {
-    console.log(resume);
-    state['first_name'].val = resume['first_name'];
-    state['last_name'].val = resume['last_name'];
-    state['middle_name'].val = resume['middle_name'];
-    state['is_relocatable'].val = resume['is_relocatable'];
-    state['hide_birthday'].val = resume['hide_birthday'];
-    state['city_id'].val = resume['city_id'];
-    state['birth_date'].val = resume['birth_date'];
-    state['email'].val = resume['email'];
-    state['phone'].val = resume['phone'];
-    phoneInputElement.value.value = resume['phone'];
-    state['phone_time_start'].val = resume['phone_time_start'];
-    state['phone_time_end'].val = resume['phone_time_end'];
-})
-
 const {searchCities} = profileStore;
-const {getCountryCities} = profileStore;
 const cityOptions = ref([]);
 
 const phoneInputElement = ref();
 const phoneMask = ref(null);
-
-const updateCityInput = async (newValue = '') => {
-    const items = await searchCities({search: newValue}) ?? [];
-    cityOptions.value = items.map(item => ({value: item.city_id, name: item.city_name}));
-}
-
-const getCities = async (newValue = '') => {
-    if (newValue){
-        const items = await getCountryCities({city_id: newValue}) ?? [];
-        cityOptions.value = items.map(item => ({value: item.id, name: item.name}));
-    }
-}
-
 onMounted(( ) => {
-    getCities(state.city_id.val);
     phoneMask.value = new IMask(phoneInputElement.value, {
         mask: "+{7}(000)000-00-00",
     });
-    phoneInputElement.value.addEventListener("input", (e) => {
-        state.phone.val = phoneMask.value.unmaskedValue;
-    });
+    phoneInputElement.value.addEventListener("input", () => {});
 });
+
+const updateCityInput = async (newValue = '') => {
+     const items = await searchCities({search: newValue}) ?? [];
+    cityOptions.value = items.map(item => ({value: item.city_id, name: item.city_name}));
+}
+
+onMounted(() => {
+    updateCityInput()
+})
 
 const {updateResume} = resumeStore;
 
-const {errors, handleErrorResponse} = useFormValidation();
+const {errors, handleErrorResponse} = useFormValidation(state);
 const save = async () => {
   const formData = useFormData(state, 'form_data')
   formData.append('form_data', 'personal_data')
+  // const data = form2json(formData)
+  // console.log(data);
 
   state.isLoading = true;
   // validate();
   errors.value = {};
   state.errorMessage = "";
 
-  const resData = await updateResume(draftID.value, formData, 'put');
 
+  const email = state.email_to_verify.val ? state.email_to_verify.val : state.email.val;
 
-  if (resData.status !== 'success'){
-      handleErrorResponse(resData.data);
+  let resData = null;
+  if (state.isNew === true){
+    resData = await createResume(formData);
+  }else{
+    resData = await updateResume(formData);
   }
 
-    isSaved.value = true;
-  setTimeout(() => {
-      isSaved.value = false;
-  }, 3000);
+  console.log(resData);
 
-  await getResume(draftID.value);
+
+  if (resData.status === 'success'){
+      const resume_id = resData.data.data.id;
+      state.isNew = false;
+    setTimeout(() => {
+        navigateTo({name: 'create-resume', query: {draft_id: resume_id}})
+    });
+  }else{
+      handleErrorResponse(resData.data);
+  }
+  // console.log(resData);
 }
-
 </script>
 
 <style>

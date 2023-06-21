@@ -71,6 +71,16 @@ export const useProfileStore = defineStore('profile', {
       }
       return data ?? [];
     },
+    async getCountryCities(payload = {}) {
+      const response = await useApi('area/cities', {
+        method: 'get',
+        payload
+      });
+      if (response.status === 'success'){
+        return response.data.data;
+      }
+      return [];
+    },
     async getUser(payload = "") {
 
       const {isEmployer} = useAuthStore();

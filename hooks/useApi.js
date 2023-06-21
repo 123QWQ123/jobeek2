@@ -70,9 +70,15 @@ const useApi = async (method, options = {}) => {
             }
             if (options.method.toUpperCase() === 'PUT') {
                 if (!options.payload) throw new Error("No payload provided");
+                const body = options.payload;
+                if (options.content_type !== 'application/json'){
+                    body.append('_method', 'PUT');
+                }else{
+                    body._method = 'PUT';
+                }
                 response = await axios.post(
                     url,
-                    options.payload,
+                    body,
                     {
                         headers: headers
                     },
@@ -88,7 +94,6 @@ const useApi = async (method, options = {}) => {
                     },
                 );
             }
-            // console.log(response)
             if ('data' in response) {
                 return {
                     status: 'success',
