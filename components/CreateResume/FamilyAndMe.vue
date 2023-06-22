@@ -23,7 +23,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="row w-100 mt-4">
                 <div class="input-row">
                     <label for="remote-work">Есть дети?</label>

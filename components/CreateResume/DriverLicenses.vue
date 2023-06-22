@@ -50,6 +50,7 @@ const dictionaryStore = useDictionaryStore();
 
 
 const selected_licenses = ref( resumeStore.resume.driver_licenses ?? []);
+const draftID = computed(() => route.query.draft_id);
 
 const isShown = ref(false);
 const isChanged = ref(false);
@@ -59,7 +60,6 @@ const isCollapsed = ref(true);
 const {getDriverLicenses} = dictionaryStore;
 const {driver_licenses: driving_license_options} = storeToRefs(dictionaryStore);
 await getDriverLicenses();
-const draftID = computed(() => route.query.draft_id);
 
 watch(() => useWatchStateValues(selected_licenses.value), (newData) => {
     isChanged.value = true;
@@ -97,12 +97,11 @@ const save = async () => {
         }
 
         isSaved.value = true;
-        isChanged.value = true;
+        isChanged.value = false;
         setTimeout(() => {
             isSaved.value = false;
         }, 3000);
 
-        await getResume(draftID.value);
     }
 }
 

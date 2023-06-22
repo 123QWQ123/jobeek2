@@ -57,7 +57,7 @@ const add  = () => {
     isShown.value = !isShown.value;
 }
 
-watch(() => useWatchStateValues(skills.value), (newSkills) => {
+watch(() => skills.value, (newSkills) => {
     console.log(newSkills);
   isChanged.value = true;
 })
@@ -85,12 +85,11 @@ const save = async() => {
         }
 
         isSaved.value = true;
-        isChanged.value = true;
+        isChanged.value = false;
         setTimeout(() => {
             isSaved.value = false;
         }, 3000);
 
-        await getResume(draftID.value);
     }
 };
 </script>

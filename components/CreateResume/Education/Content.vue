@@ -9,7 +9,7 @@
           <div class="w-box-body" :class="{collapse: isCollapsed}">
               <div class="" v-if="isShown">
                   <div class="row">
-                      <CreateResumeEducationHistory ref="educationElement" v-model="educations" />
+                      <CreateResumeEducationHistory ref="educationElement" v-model="educations" :errors="errors.education" />
                   </div>
               </div>
               <div class="empty-area" v-else>
@@ -35,27 +35,15 @@
 
 import useFormValidation from "~/composables/useFormValidation";
 import {useResumeStore} from "~/store/resume";
-
-const educations = ref([]);
-
 const educationElement = ref(false);
-
-const isShown = ref(false);
-const isChanged = ref(false);
-const isSaved = ref(false);
-const isCollapsed = ref(true);
-
 const route = useRoute();
 const resumeStore = useResumeStore();
 const draftID = computed(() => route.query.draft_id);
 
-watch(() => educations.value, (newData) => {
-    isChanged.value = true;
-});
-
 const resume = computed(() => resumeStore.resume);
-
 const education_histories = computed(() => resume.value?.education_histories ?? []);
+const educations = ref(education_histories.value ?? []);
+
 watch(() => education_histories.value, (newItems) => {
     if (newItems.length > 0){
         isShown.value = true;
@@ -63,30 +51,41 @@ watch(() => education_histories.value, (newItems) => {
     }
 });
 
+const isShown = ref(false);
+const isChanged = ref(false);
+const isSaved = ref(false);
+const isCollapsed = ref(true);
+watch(() => isCollapsed.value, (newData) => {
+    if (!newData){
+        isShown.value = true;
+    }
+});
+
+watch(() => educations.value, (newData) => {
+    isChanged.value = true;
+});
+
 const {getResume, updateResume} = resumeStore;
 
 const {errors, handleErrorResponse} = useFormValidation();
 const save = async () => {
     if (isChanged.value){
-        errors.value = {};
+
         const resData = await updateResume(draftID.value, {
             form_data: 'EDUCATION_DATA',
             education: educations.value
         });
-
-        console.log(resData);
 
         if (resData.status !== 'success'){
             return handleErrorResponse(resData.data);
         }
 
         isSaved.value = true;
-        isChanged.value = true;
+        isChanged.value = false;
         setTimeout(() => {
             isSaved.value = false;
         }, 3000);
 
-        await getResume(draftID.value);
     }
 }
 </script>

@@ -57,7 +57,6 @@ const {updateResume, getResume} = resumeStore;
 const {errors, handleErrorResponse} = useFormValidation();
 
 const save = async() => {
-    console.log(foreign_languages.value);
     if (isChanged.value){
         errors.value = {};
         const resData = await updateResume(draftID.value, {
@@ -70,15 +69,16 @@ const save = async() => {
         }
 
         isSaved.value = true;
-        isChanged.value = true;
+        isChanged.value = false;
         setTimeout(() => {
             isSaved.value = false;
         }, 3000);
 
-        await getResume(draftID.value);
     }
 }
-watch(() => foreign_languages.value,  () => isChanged.value = true);
+watch(() => foreign_languages.value,  (newItems) => {
+    isChanged.value = true;
+});
 
 </script>
 

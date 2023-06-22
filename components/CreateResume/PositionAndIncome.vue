@@ -9,13 +9,28 @@
         <label >Какую должность вы хотите занимать? <b>*</b></label>
         <div class="input-wrapper">
           <input type="text" placeholder="Укажите должность" id="title" v-model="state.title.val">
+
+          <div class="text-danger d-block" v-if="errors.title">
+              {{ errors.title }}
+          </div>
         </div>
       </div>
-        <CreateResumeSalary v-model="state.salary.val"/>
+      <CreateResumeSalary v-model="state.salary.val"/>
+
+      <div class="text-danger d-block" v-if="errors.salary_from">
+          {{ errors.salary_from }}
+      </div>
+      <div class="text-danger d-block" v-if="errors.salary_currency">
+          {{ errors.salary_currency }}
+      </div>
       <div class="input-row">
         <label>Занятость <b>*</b></label>
         <div class="input-wrapper">
             <CustomSelect :options="employmentOptions" v-model="state.employment_id.val"  />
+
+            <div class="text-danger d-block" v-if="errors.employment_id">
+                {{ errors.employment_id }}
+            </div>
         </div>
       </div>
 
@@ -91,7 +106,6 @@ const {updateResume} = resumeStore;
 const {errors, handleErrorResponse} = useFormValidation();
 const save = async () => {
     if (isChanged.value){
-
         const jsonData = {
             salary_currency: state.value.salary.val.currency,
             title: state.value.title.val,
@@ -99,7 +113,6 @@ const save = async () => {
             employment_id: state.value.employment_id.val,
             form_data: 'PROFESSION_DETAILS_DATA'
         }
-
         state.isLoading = true;
         // validate();
         errors.value = {};
@@ -116,8 +129,6 @@ const save = async () => {
         setTimeout(() => {
             isSaved.value = false;
         }, 3000);
-
-        await getResume(draftID.value);
     }
 }
 

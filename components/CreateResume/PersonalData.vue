@@ -391,7 +391,6 @@ const save = async () => {
             isSaved.value = false;
         }, 3000);
 
-        // await getResume(draftID.value);
     }
 }
 

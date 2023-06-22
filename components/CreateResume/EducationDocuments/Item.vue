@@ -12,6 +12,10 @@
                     <label for="position">Название<b>*</b></label>
                     <div class="input-wrapper">
                         <input type="text" placeholder="Введите" v-model="state.title.val">
+
+                        <div class="text-danger d-block" v-if="errors.title">
+                            {{ errors.title }}
+                        </div>
                     </div>
                 </div>
 
@@ -19,12 +23,20 @@
                     <label for="position">Организация, проводившая обучение<b>*</b></label>
                     <div class="input-wrapper">
                         <input type="text" placeholder="Введите заведения" v-model="state.organization.val">
+
+                        <div class="text-danger d-block" v-if="errors.organization">
+                            {{ errors.organization }}
+                        </div>
                     </div>
                 </div>
                 <div class="input-row">
                     <label for="position">Ссылка на электронный сертификат<b>*</b></label>
                     <div class="input-wrapper">
-                        <input type="text" placeholder="Введите факультет" v-model="state.certificate_url.val">
+                        <input type="text" placeholder="Введите ссылку" v-model="state.url.val">
+
+                        <div class="text-danger d-block" v-if="errors.url">
+                            {{ errors.url }}
+                        </div>
                     </div>
                 </div>
                 <div class="input-row">
@@ -32,6 +44,10 @@
                     <div class="input-wrapper">
                         <div>
                             <CustomSelect :options="useYearOptions()" v-model="state.end_year.val" :label="'Выбрать'" />
+
+                            <div class="text-danger d-block" v-if="errors.end_year">
+                                {{ errors.end_year }}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -43,6 +59,7 @@
 
 <script setup>
 import {useDictionaryStore} from "~/store/dictionary";
+import {useWatchStateValues} from "~/composables/useWatchStateValues";
 
 const emit = defineEmits(['delete', 'update'])
 const props = defineProps({
@@ -62,7 +79,7 @@ const props = defineProps({
         required: true,
         default: null
     },
-    certificate_url: {
+    url: {
         required: true,
         default: null
     },
@@ -70,19 +87,20 @@ const props = defineProps({
         required: true,
         default: null
     },
+    errors: {
+        required: true,
+        default: {}
+    },
+});
+const errors = ref(props.errors);
+watch(() => props.errors, (newErrors) => {
+    errors.value = newErrors;
 });
 
 const dictionaryStore = useDictionaryStore();
 
 const isNew = ref(props.isNew);
 
-watch(() => props, () => {
-    state['id'] = props.id;
-    state['title'] = props.title;
-    state['organization'] = props.organization;
-    state['certificate_url'] = props.certificate_url;
-    state['end_year'] = props.end_year;
-})
 const deleteItem = (id = null) => {
     emit('delete', props.id);
 }
@@ -106,8 +124,8 @@ const state = reactive({
         val: props.organization,
         isValid: null,
     },
-    certificate_url: {
-        val: props.certificate_url,
+    url: {
+        val: props.url,
         isValid: null,
     },
     end_year: {
@@ -116,10 +134,10 @@ const state = reactive({
     },
 });
 
-
 const save = () => {
     emit('update', props.id, useFormData(state));
 }
+watch(() => useWatchStateValues(state, true), () => save);
 </script>
 
 <style scoped>

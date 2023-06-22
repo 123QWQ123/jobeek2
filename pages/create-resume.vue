@@ -52,7 +52,7 @@ onMounted(() => {
           <CreateResumeEducationDocumentsContent v-if="isEditable"></CreateResumeEducationDocumentsContent>
 
 
-          <CreateResumeWorkExperienceContent  v-if="isEditable"></CreateResumeWorkExperienceContent>
+          <CreateResumeWorkExperienceContent v-if="isEditable"></CreateResumeWorkExperienceContent>
 
           <CreateResumeDriverLicenses v-if="isEditable"></CreateResumeDriverLicenses>
 
@@ -60,9 +60,9 @@ onMounted(() => {
 
           <CreateResumeForeignLanguagesContent v-if="isEditable"></CreateResumeForeignLanguagesContent>
 
-          <CreateResumeCitizenship></CreateResumeCitizenship>
+          <CreateResumeCitizenshipAndFamily v-if="isEditable"></CreateResumeCitizenshipAndFamily>
 
-          <CreateResumeFamilyAndMe></CreateResumeFamilyAndMe>
+<!--          <CreateResumeFamilyAndMe v-if="isEditable"></CreateResumeFamilyAndMe>-->
 
 <!--          <CreateResumePortfolio></CreateResumePortfolio>-->
 

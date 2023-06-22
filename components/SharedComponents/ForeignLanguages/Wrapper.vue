@@ -69,7 +69,7 @@ const deleteItem = (deleteItem) => {
     selectedItems.value = newItems;
 }
 
-watch(() => selectedItems.value, () => {
+watch(() => selectedItems.value, (newData) => {
   emit('update:modelValue', selectedItems.value);
 })
 
