@@ -5,12 +5,11 @@
             <div class="" v-if="selectedItems.length">
                 <CreateResumeForeignLanguagesItem
                     class="w-100 mb-2"
-                    :selected-items="selectedItems"
                     v-for="item in selectedItems" :item="item"
                     :key="item.id"
                     :id="item.id"
                     :language_id="item.language_id"
-                    :language_level="item.language_level"
+                    :level="item.level"
                     @update="updateItem"
                     @delete="deleteItem" />
             </div>
@@ -40,9 +39,9 @@ await getLanguageLevels();
 
 const resetObject = {
     "language_id": null,
-    "language_level": null,
+    "level": null,
 };
-const selectedItems = ref([]);
+const selectedItems = ref(props.modelValue ?? []);
 
 const reset = () => {
     resetObject.id = uuidv4();
@@ -75,7 +74,14 @@ watch(() => selectedItems.value, () => {
 })
 
 onMounted(() => {
-    reset();
+    if (selectedItems.value.length === 0){
+        reset();
+    }else{
+        selectedItems.value = selectedItems.value.map(item => {
+            item.id = uuidv4();
+            return item;
+        });
+    }
 })
 </script>
 

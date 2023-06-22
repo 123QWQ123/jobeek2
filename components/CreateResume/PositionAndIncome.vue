@@ -2,8 +2,9 @@
   <div class="w-box w-box--main w-box-position" @mouseleave="save">
     <div class="w-box-head">
       <h3 class="title">Должность и доход</h3>
+      <span class="arrow" :class="{up: isCollapsed}" @click="isCollapsed = !isCollapsed"></span>
     </div>
-    <div class="w-box-body">
+    <div class="w-box-body" :class="{collapse: isCollapsed}">
       <div class="input-row">
         <label >Какую должность вы хотите занимать? <b>*</b></label>
         <div class="input-wrapper">
@@ -56,6 +57,7 @@ const {resume} = resumeStore;
 
 const isSaved = ref(false);
 const isChanged = ref(false);
+const isCollapsed = ref(true);
 
 const {getResume} = resumeStore;
 

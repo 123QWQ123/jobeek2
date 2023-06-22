@@ -23,14 +23,6 @@ const isEditable = computed(() => {
     }
     return false;
 });
-const formTitle = computed(() => {
-  if (resume.value){
-    return "Обновить резюме";
-  }
-
-  return "Создание резюме";
-});
-
 
 const {getResume} = resumeStore;
 
@@ -49,30 +41,24 @@ onMounted(() => {
 <!--        {{state}}-->
       <div class="wrapper wrapper-1290">
         <form class="create-resume" action="" name="create-resume ">
-          <div class="w-box w-box--main w-box-resume pb-4">
-            <div class="w-box-head">
-              <h1 class="title">{{ formTitle }}</h1>
-              <div class="descr">Получайте уведомления о новых вакансиях по созданному запросу</div>
-            </div>
-<!--            <CreateResumeProviders></CreateResumeProviders>-->
 
-            <CreateResumePersonalData ></CreateResumePersonalData>
-          </div>
+          <CreateResumePersonalData ></CreateResumePersonalData>
+
 
           <CreateResumePositionAndIncome v-if="isEditable"></CreateResumePositionAndIncome>
 
-          <CreateResumeEducationContent></CreateResumeEducationContent>
+          <CreateResumeEducationContent v-if="isEditable"></CreateResumeEducationContent>
 
-          <CreateResumeEducationDocumentsContent></CreateResumeEducationDocumentsContent>
+          <CreateResumeEducationDocumentsContent v-if="isEditable"></CreateResumeEducationDocumentsContent>
 
 
-          <CreateResumeWorkExperienceContent></CreateResumeWorkExperienceContent>
+          <CreateResumeWorkExperienceContent  v-if="isEditable"></CreateResumeWorkExperienceContent>
 
-          <CreateResumeDriverLicenses></CreateResumeDriverLicenses>
+          <CreateResumeDriverLicenses v-if="isEditable"></CreateResumeDriverLicenses>
 
-          <CreateResumeKnowledgeAndSkills></CreateResumeKnowledgeAndSkills>
+          <CreateResumeKnowledgeAndSkills v-if="isEditable"></CreateResumeKnowledgeAndSkills>
 
-          <CreateResumeForeignLanguagesContent></CreateResumeForeignLanguagesContent>
+          <CreateResumeForeignLanguagesContent v-if="isEditable"></CreateResumeForeignLanguagesContent>
 
           <CreateResumeCitizenship></CreateResumeCitizenship>
 

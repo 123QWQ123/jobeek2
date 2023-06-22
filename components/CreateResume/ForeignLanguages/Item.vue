@@ -8,10 +8,10 @@
         <div class="col-12">
             <div class="c2 w-100">
                 <div class="input-wrapper">
-                    <SelectWithSearch :placeholder="'Выберите'" :options="languageOptions" v-model.number="state.language_id.val"></SelectWithSearch>
+                    <SelectWithSearch :placeholder="'Выберите язык'" :options="languageOptions" v-model.number="state.language_id.val"></SelectWithSearch>
                 </div>
                 <div class="input-wrapper">
-                    <CustomSelect :options="languageLevelOptions" v-model.number="state.language_level.val"></CustomSelect>
+                    <CustomSelect :label="'Уровен'" :options="languageLevelOptions" v-model.number="state.level.val"></CustomSelect>
                 </div>
             </div>
         </div>
@@ -21,6 +21,11 @@
 <script setup>
 
 import {useDictionaryStore} from "~/store/dictionary";
+
+const dictionaryStore = useDictionaryStore();
+
+const {getForeignLanguages} = dictionaryStore;
+await getForeignLanguages();
 
 const emit = defineEmits(['delete', 'update'])
 const props = defineProps({
@@ -36,48 +41,32 @@ const props = defineProps({
         required: true,
         default: null
     },
-    language_level: {
+    level: {
         required: true,
         default: null
     },
-    selectedItems: {
-        required: true,
-        type: Array
-    },
 });
-
+console.log(props.language_id);
 const state = reactive({
     id: {
         val: props.id,
-        isValid: null,
+        isValid: true,
     },
     language_id: {
         val: props.language_id,
-        isValid: null,
+        isValid: true,
     },
-    language_level: {
-        val: props.language_level,
-        isValid: null,
+    level: {
+        val: props.level,
+        isValid: true,
     },
 });
 
 const isNew = ref(props.isNew);
 
-const dictionaryStore = useDictionaryStore();
-
-const {getForeignLanguages} = dictionaryStore;
-await getForeignLanguages();
-
-onMounted(() => {
-    if (props.id){
-        isNew.value = false;
-    }
-})
-
 const languageOptions = computed(() => {
     return dictionaryStore.foreign_languages.map((item) => ({name: item.name, value: item.id}));
 })
-
 const languageLevelOptions = computed(() => {
     return dictionaryStore.language_levels.map((item) => ({name: item.name, value: item.id}));
 })
@@ -90,12 +79,16 @@ const deleteItem = (id = null) => {
     emit('delete', props.id);
 }
 
-watch(() => props, () => {
-    state['id'] = props.id;
-    state['language_id'] = props.language_id;
-    state['language_level'] = props.language_level;
+onMounted(() => {
+    console.log(props.language_id);
+    state['id'].val = props.id;
+    state['language_id'].val = props.language_id;
+    state['level'].val = props.level;
+
+    if (props.id){
+        isNew.value = false;
+    }
 })
-//
 
 </script>
 
@@ -103,7 +96,7 @@ watch(() => props, () => {
 
 .absoluted_icon{
     position: absolute;
-    left: -.5rem;
+    left: -2rem;
     top: 0.5rem;
     font-size: 1rem;
     z-index: 1;

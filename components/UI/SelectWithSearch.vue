@@ -32,19 +32,28 @@ const props = defineProps({
 
 const isFirst = ref(false);
 const isOpen = ref(false);
+console.log(props.options);
 const options = ref(props.options);
 const placeholder = computed(() => props.placeholder);
 
 watch(() => props.options, (newOptions) => {
   options.value = newOptions;
+  console.log(props.modelValue);
   selectedOption.value = options.value.find(item => String(item.value) === String(props.modelValue));
 });
 
 
+// console.log(props.modelValue);
 const selectedOption = ref(null);
 
+onMounted(() => {
+    selectedOption.value = options.value.find(item => String(item.value) === String(props.modelValue));
+})
+
 const labelText = computed(() => {
+
     if (!isOpen.value){
+        console.log(selectedOption.value);
         if (selectedOption.value){
             return selectedOption.value.name;
         }else{

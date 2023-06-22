@@ -26,10 +26,11 @@
 <script setup>
 import {useDictionaryStore} from "~/store/dictionary";
 
+const props = defineProps(['modelValue']);
 const emit = defineEmits(['update:modelValue']);
 const dictionaryStore = useDictionaryStore();
 
-const selectedSkills = ref([null]);
+const selectedSkills = ref([...props.modelValue]);
 
 const currentSkillId = ref(null);
 const currentSkill = ref(null);

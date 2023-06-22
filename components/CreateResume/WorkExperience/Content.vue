@@ -2,18 +2,22 @@
   <div class="w-box"  @mouseleave="save">
     <div class="w-box-head">
       <h3 class="title">Опыт работы</h3>
+      <span class="arrow" :class="{up: isCollapsed}" @click="isCollapsed = !isCollapsed"></span>
     </div>
-    <div class="w-box-body">
-        <div class="form_content" v-if="isShown">
-            <div class="row">
-                <CreateResumeWorkExperienceHistory v-model="work_experiences_items" ref="workExperienceElement"/>
-            </div>
-        </div>
-        <div class="empty-area" v-else>
-            <span>Здесь вы можете указать</span>
-            <button class="add" type="button" @click="isShown = !isShown">Добавить </button>
-        </div>
-    </div>
+      <transition>
+          <div class="w-box-body" :class="{collapse: isCollapsed}">
+              <div class="form_content" v-if="isShown">
+                  <div class="row">
+                      <CreateResumeWorkExperienceHistory v-model="work_experiences_items" ref="workExperienceElement"/>
+                  </div>
+              </div>
+              <div class="empty-area" v-else>
+                  <span>Здесь вы можете указать</span>
+                  <button class="add" type="button" @click="isShown = !isShown">Добавить </button>
+              </div>
+          </div>
+      </transition>
+
   </div>
 </template>
 
@@ -29,13 +33,13 @@ const workExperienceElement = ref(false);
 const isShown = ref(false);
 const isChanged = ref(false);
 const isSaved = ref(false);
+const isCollapsed = ref(true);
 
 const route = useRoute();
 const resumeStore = useResumeStore();
 const draftID = computed(() => route.query.draft_id);
 
 watch(() => work_experiences_items.value, (newData) => {
-    console.log(newData);
     isChanged.value = true;
 });
 
@@ -79,5 +83,4 @@ const save = async () => {
 </script>
 
 <style scoped>
-
 </style>
