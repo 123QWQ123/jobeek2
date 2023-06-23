@@ -41,7 +41,7 @@
           :listItemStyles="searchSelectItemStyles"
         />
       </div>
-      <button class="button-xl submit-search-form" type="submit">Поиск</button>
+      <button class="button-xl submit-search-form" type="submit" @click="onSubmit">Поиск</button>
     </div>
   </form>
 </template>
@@ -64,10 +64,6 @@ const searchPlaceHolder = computed(() =>
 const onChange = (e) => {
   console.log(e);
 };
-const onSelect = (e) => {
-  console.log(e);
-};
-
 const router = useRouter();
 const route = useRoute();
 
@@ -77,8 +73,6 @@ const region = ref(null);
 const city = ref("*");
 
 const form = ref(useVacancyForm());
-
-console.log(form.value);
 
 const onRegionChange = (regionItem) => {
   if (regionItem.value === "*") {

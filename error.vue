@@ -22,7 +22,7 @@ console.log(props);
 
 const handleError = () => clearError({ redirect: "/" });
 </script>
-<style>
+<style scoped>
 body {
   height: 100vh;
   display: flex;

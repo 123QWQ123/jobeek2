@@ -4,6 +4,9 @@ let timer;
 // no need to import defineStore and acceptHMRUpdate
 import { defineStore, acceptHMRUpdate } from "pinia";
 import axios from "axios";
+import useApi from "~/hooks/useApi";
+
+
 
 export const useAuthStore = defineStore('auth', {
   state: () => {
@@ -13,6 +16,7 @@ export const useAuthStore = defineStore('auth', {
       seeker: null,
       isAuthed: null,
       isEmployerMode: false,
+      geo: null,
     }
   },
   getters: {
@@ -27,7 +31,8 @@ export const useAuthStore = defineStore('auth', {
     },
     isAuthenticated(state) {
       let authed = false;
-      if (state.isAuthed){
+      console.log(state.isAuthed);
+      if (state.isAuthed === true){
         authed = true;
       }
       return authed;
@@ -40,117 +45,22 @@ export const useAuthStore = defineStore('auth', {
     setUser(payload) {
       this.user = payload;
     },
-    async verify(){
-      const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.base + 'sanctum/csrf-cookie';
-
-      try {
-        const response = await axios.get(url, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-      }catch (error){
-        if ('data' in error){
-          return error.response.data;
-        }
-        return error;
-      }
-    },
     async signUp(payload) {
-      const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + 'auth/register';
-      try {
-        const response = await axios.post(
-            url,
-            payload,
-            {
-              headers: {
-                'Content-Type': 'application/json',
-              }
-            },
-        );
-        if ('data' in response){
-          console.log(response)
-          return {
-            status: 'success',
-            data: response.data.data
-          };
-        }else{
-          return {
-            status: 'error',
-            data: response.message
-          };
-        }
-      }catch (error){
-        console.log(error);
-        if (error.response && 'data' in error.response){
-          return {
-            status: 'error',
-            data: error.response.data
-          };
-        }
-        return {
-          status: 'error',
-          message: error.message,
-        };
-      }
-      // const resData = await response;
-      // const expiresIn = resData.expiresIn * 1000;
-      // const expirationDate = new Date().getTime() + expiresIn;
-      //
-      // localStorage.setItem('token', resData.idToken);
-      // localStorage.setItem('userId', resData.localId);
-      // localStorage.setItem('tokenExpirationDate', expirationDate);
-      //
-      // timer = setTimeout(() => {
-      //   this.autoLogout();
-      // }, expiresIn);
-
-      // if (response.ok) {
-      //   this.setUser({
-      //     token: resData.idToken,
-      //     userId: resData.localId,
-      //   });
-      //   this.isAuthed = true;
-      // }
+      const {data} = await useApi('auth/register', {
+        method: 'post',
+        payload
+      });
+      return data;
     },
     async confirmPhoneCode(payload) {
-      const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + 'auth/register/confirm';
-      try {
-        const response = await axios.post(
-            url,
-            payload,
-            {
-              headers: {
-                'Content-Type': 'application/json',
-              }
-            },
-        );
-        console.log(response)
-        if ('token' in response.data?.data){
-          console.log(response.data?.data);
-          localStorage.setItem('token', response.data?.data.token);
-        }
-        return {
-          status: 'success',
-          data: response.data.data
-        };
-      }catch (error){
-        console.log(error);
-        if ('data' in error.response){
-          return {
-            status: 'error',
-            data: error.response.data
-          };
-        }
-        return {
-          status: 'error',
-          message: error.message,
-        };
+      const {data} = await useApi('auth/register/confirm', {
+        method: 'post',
+        payload
+      });
+      if ('token' in data?.data){
+        localStorage.setItem('token', data?.data.token);
       }
+      return data;
     },
     async sendRecoveryCode(payload) {
 
@@ -166,8 +76,6 @@ export const useAuthStore = defineStore('auth', {
               }
             },
         );
-        console.log(response);
-
         if ('data' in response){
           return {
             status: 'success',
@@ -180,7 +88,7 @@ export const useAuthStore = defineStore('auth', {
           };
         }
       }catch (error){
-        console.log(error);
+        // console.log(error);
         if ('data' in error.response){
           return {
             status: 'error',
@@ -295,14 +203,21 @@ export const useAuthStore = defineStore('auth', {
               {
                 headers: {
                   'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${token}`
+                  'Accept': 'application/json',
+                  'Authorization': `Bearer ${token}`,
+                  proxyHeaders: false,
+                  credentials: false
                 }
               },
           );
+          if (response.status !== 200 || response.data.status === "failed"){
+            this.isAuthed = false;
+            return false;
+          }
+
           this.user = response.data.data;
           this.seeker = this.user;
           this.isAuthed = true;
-
           const response2 = await axios.get(
               url2,
               {
@@ -316,6 +231,7 @@ export const useAuthStore = defineStore('auth', {
           this.employer = this.user;
           return;
         }catch (error){
+          console.log(error);
           console.log('UnAuthorized');
           // this.logout();
         }
@@ -343,7 +259,6 @@ export const useAuthStore = defineStore('auth', {
       const CONFIG = useRuntimeConfig();
       let url = CONFIG.public.apiBase + 'auth/login';
       try {
-        await this.verify();
         const response = await axios.post(
             url,
             payload
@@ -402,6 +317,15 @@ export const useAuthStore = defineStore('auth', {
       this.setUser(null);
       this.isAuthed = false;
       navigateTo('/');
+    },
+    async getLocation() {
+
+      const response = await useApi('area/location', {
+        method: 'get',
+        payload
+      })
+
+      console.log(response);
     }
   },
 })

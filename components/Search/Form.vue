@@ -1,6 +1,5 @@
 <template>
-  <form class="search-form" @submit.prevent="onSearchSubmit" role="form" autocomplete="off">
-    <PageLoader v-if="isLoading"/>
+  <form class="search-form" role="form" autocomplete="off">
     <div class="wrapper">
       <div class="search-row">
         <div class="input-wrap has-icon has-label"><img class="icon" src="~/assets/img/svg/search.svg" alt="#">
@@ -21,7 +20,7 @@
           <label for="region">Регион</label>
           <SelectWithSearch :options="regionOptions" v-model="region" :listStyles="searchSelectStyles" @change="onRegionChange" :listItemStyles="searchSelectItemStyles"/>
         </div>
-        <button class="button-accent submit-search-form" type="submit">Поиск </button>
+        <button class="button-accent submit-search-form" type="button" @click="onSubmit">Поиск </button>
       </div>
     </div>
   </form>
@@ -35,6 +34,7 @@ const vacancyStore = useVacancyStore();
 const route = useRoute();
 const router = useRouter();
 
+console.info('running');
 
 const region = ref(null);
 const city = ref('*');
@@ -92,7 +92,6 @@ const country = computed(() => {
     return form.value.countries[0];
   } else return 1;
 });
-console.log(country)
 onMounted(async() => {
   if (country.value){
     await getRegions({country_id: [country.value]});
@@ -105,35 +104,16 @@ onMounted(async() => {
     value: '*', name: 'Все'
   });
   regionOptions.value = items;
+
 });
 
 
 const isLoading = ref(false);
-onMounted(async() => {
-  isLoading.value = true;
-  if (page.name === 'search-vacancies'){
-    if (vacancies.value.length === 0){
-      const formParams = useVacancyForm(form.value, 'backend');
-      await getVacancies({...formParams});
-    }
-  }
-
-  isLoading.value = false;
-});
-
-
 const {clearVacancies} = vacancyStore;
-const onSearchSubmit = async(e) => {
-  isLoading.value = true;
-  clearVacancies();
-  console.log(form.value);
+const onSubmit = (e) => {
   const params = useVacancyForm(form.value, 'front');
-  console.log(params);
-  router.replace({name: 'search-vacancies', query: params});
-  isLoading.value = false;
+  navigateTo({name: 'search-vacancies', query: params});
 }
-
-
 
 const regionListStyles = {
   left: 'unset',

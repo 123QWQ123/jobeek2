@@ -1,7 +1,10 @@
 <template>
-
   <form class="w-box-body" @submit.prevent="handleSubmit" >
     <PageLoader v-if="state.isLoading" />
+
+    <div class="alert alert-danger" v-if="errorMessage">
+      {{ errorMessage }}
+    </div>
     <div class="input-row">
       <label for="photo">Фото</label>
       <div class="dwld-photo">
@@ -44,9 +47,7 @@
     <div class="input-row">
       <label>Дата рождения <b>*</b></label>
       <div class="input-wrapper">
-        <div class="c3">
-          <BirthDatePicker v-model="state.birth_date.val"></BirthDatePicker>
-        </div>
+        <BirthDatePicker v-model="state.birth_date.val"></BirthDatePicker>
         <div class="text-danger d-block" v-if="errors.birth_date">
           {{ errors.birth_date }}
         </div>
@@ -55,13 +56,13 @@
     <div class="input-row">
       <label for="country">Город проживания <b>*</b></label>
       <div class="input-wrapper">
-        <SelectWithSearch :options="countryOptions" v-model.number="state.country_id.val"></SelectWithSearch>
+        <SelectWithSearch :options="countryOptions" v-model.number="state.country_id.val" :placeholder="'Выберите страну'"></SelectWithSearch>
       </div>
       <br/>
       <div class="input-wrapper mt-2">
-        <SelectWithSearch :options="cityOptions" v-model.number="state.city_id.val"></SelectWithSearch>
+        <SelectWithSearch :options="cityOptions" v-model.number="state.city_id.val" :placeholder="'Выберите город'"></SelectWithSearch>
       </div>
-      <div class="text-danger d-block" v-if="errors.city_id">
+      <div class="text-danger d-block" v-if="errors.city_id || errors.country_id">
         Вам нужно выбрать город проживания!
       </div>
     </div>
@@ -101,6 +102,7 @@
         <base-button type="submit">Сохранить</base-button>
       </div>
     </div>
+
   </form>
 </template>
 
@@ -122,8 +124,7 @@ const {getUser} = profileStore;
 const {seeker} = storeToRefs(profileStore);
 
 onMounted(async() => {
-  await getUser();
-
+  // await getUser();
 });
 
 const state = reactive({
@@ -136,7 +137,7 @@ const state = reactive({
     isValid: true,
   },
   birth_date: {
-    val: moment(),
+    val: null,
     isValid: true,
   },
   country_id: {
@@ -179,20 +180,14 @@ const state = reactive({
 });
 
 
-watch(() => state.country_id.val, async(newCountry) => {
-  // console.log(newCountry);
+onMounted(() => {
+    getUser();
 })
-
 const phoneInputElement = ref();
 const phoneMask = ref(null);
-watch(seeker, async(new_value) => {
+watch(() => seeker.value, async(new_value) => {
   for (const [key, value] of Object.entries(new_value)) {
     if (state.hasOwnProperty(key)){
-      if (key === 'birth_date'){
-        const formatted = moment(value, "YYYY-MM-DD");
-        state[key].val = formatted;
-        continue;
-      }
       if (key === 'phone'){
         state[key].val = value;
         setTimeout(() => {
@@ -212,7 +207,15 @@ await getCountries();
 
 const {countryOptions, cityOptions} = storeToRefs(profileStore);
 
+// watch(() => countryOptions.value, (newValues) => {
+//     console.log(newValues);
+// })
+
 const country = computed(() => state.country_id.val);
+watch(country, (new_value) => {
+    getCities({country_id: new_value});
+});
+
 const photoUrl = computed(() => {
   if (state.photo.base64){
     return state.photo.base64;
@@ -223,9 +226,6 @@ const photoUrl = computed(() => {
 
 
 
-watch(country, (new_value) => {
-  getCities({country_id: new_value});
-});
 
 const photoElement = ref();
 
@@ -273,11 +273,14 @@ const validate = () => {
   }
 }
 const errors = ref({});
+const errorMessage = ref(null);
 const {updateSeeker} = profileStore;
 const handleSubmit = async (e) => {
   state.isLoading = true;
   validate();
   errors.value = {};
+  state.errorMessage = "";
+
 
   const email = state.email_to_verify.val ? state.email_to_verify.val : state.email.val;
 
@@ -295,7 +298,10 @@ const handleSubmit = async (e) => {
 
   const resData = await updateSeeker(formData);
 
+    console.log(resData);
   if (resData.status === 'success'){
+      console.log(resData.data.status);
+
     await getUser();
     Swal.fire({
       title: 'Успешно!',
@@ -305,24 +311,34 @@ const handleSubmit = async (e) => {
     });
     state.isLoading = false;
   }else{
-    console.log(resData.errors);
-    if (resData?.errors){
-      errors.value = {...resData.errors};
+    errorMessage.value = resData.message;
+    if (resData.data.status === 'failed'){
+      console.log(resData.errors);
+      if (resData?.data.errors){
+        errors.value = {...resData.data.errors};
+      }
+      state.isLoading = false;
+      return;
     }
-    Swal.fire({
-      title: 'Ошибка!',
-      text: resData.message,
-      icon: 'error',
-      confirmButtonText: 'ОК'
-    });
+
+    // Swal.fire({
+    //   title: 'Ошибка!',
+    //   text: resData.message,
+    //   icon: 'error',
+    //   confirmButtonText: 'ОК'
+    // });
     state.isLoading = false;
   }
   console.log(resData);
 
 }
 
-const isConfirmButton = ref(true);
+const isConfirmButton = ref(false);
 const isCheckButton = ref(false);
+
+watch(seeker, (newSeeker) => {
+    isConfirmButton.value = !newSeeker.is_completed;
+})
 
 const {confirmEmail, checkEmailConfirmation} = profileStore;
 const onEmailConfirm = async() => {
@@ -340,6 +356,7 @@ const onEmailConfirm = async() => {
   }
 
 }
+
 </script>
 
 <style>

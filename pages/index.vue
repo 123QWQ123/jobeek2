@@ -3,15 +3,16 @@
     <HomeMainSection/>
     <HomePlaceSection/>
     <HomeVacancySection/>
-    <HomeCompaniesSection/>
+<!--    <HomeCompaniesSection/>-->
     <HomeWorkSection/>
     <HomeSearchSection/>
   </div>
 </template>
 
 <script setup>
+
 definePageMeta({
-  layout: 'main'
+  layout: 'cabinet'
 })
 
 useHead({

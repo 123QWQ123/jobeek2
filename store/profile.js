@@ -36,7 +36,7 @@ export const useProfileStore = defineStore('profile', {
         method: 'get',
         payload
       });
-      if (data){
+      if (data && 'data' in data){
         this.countries = data.data.countries;
       }
       return data;
@@ -46,7 +46,7 @@ export const useProfileStore = defineStore('profile', {
         method: 'get',
         payload
       });
-      if (data){
+      if ('data' in data){
         this.regions = data.data.regions;
       }
       return data;
@@ -56,10 +56,30 @@ export const useProfileStore = defineStore('profile', {
         method: 'get',
         payload
       });
-      if (data){
+      if ('data' in data){
         this.cities = data.data.cities;
       }
       return data;
+    },
+    async searchCities(payload = {}) {
+      const {data} = await useApi('area', {
+        method: 'get',
+        payload
+      });
+      if (data.status === 'failed'){
+        return [];
+      }
+      return data ?? [];
+    },
+    async getCountryCities(payload = {}) {
+      const response = await useApi('area/cities', {
+        method: 'get',
+        payload
+      });
+      if (response.status === 'success'){
+        return response.data.data;
+      }
+      return [];
     },
     async getUser(payload = "") {
 
@@ -76,40 +96,42 @@ export const useProfileStore = defineStore('profile', {
       const {data} = await useApi(url, {
         method: 'get',
       });
-      if (data){
+      if (data && 'data' in data){
         this.seeker = data.data;
-        this.user = {phone: this.seeker.phone};
+        this.user = {phone: this.seeker?.phone};
       }
       return data;
     },
     async getEmployer(url = "") {
-      const {data} = await useApi(url, {
+      const response = await useApi(url, {
         method: 'get',
       });
-      if (data){
-        this.employer = data.data;
-        this.user = {phone: this.seeker.phone};
+      if (response && response.data && 'data' in response.data){
+        this.employer = response.data.data;
+        this.user = {phone: this.employer?.phone};
       }
-      return data;
+      return response;
     },
     async updateSeeker(payload) {
       const response = await useApi('seeker/profile', {
         method: 'post',
+        content_type: 'multipart/form-data',
         payload
       });
       console.log(response);
       if ('data' in response){
-        this.user = response.data.data;
+        this.user = response.data?.data;
       }
       return response;
     },
     async updateEmployer(payload) {
       const response = await useApi('employer/profile', {
         method: 'post',
+        content_type: 'multipart/form-data',
         payload
       });
       if ('data' in response){
-        this.user = response.data.data;
+        this.user = response.data?.data;
       }
       return response;
     },
@@ -131,6 +153,17 @@ export const useProfileStore = defineStore('profile', {
         method: 'post',
         payload
       });
+    },
+
+    async getProvidersAuthUrl(payload) {
+      const {data} = await useApi('services/hh/auth/redirect-url', {
+        method: 'get',
+        payload
+      });
+      if ('data' in data){
+        return data.data;
+      }
+      return data;
     },
 
     async upload(payload) {

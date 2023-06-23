@@ -6,11 +6,13 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "deploy-stage": "nuxt generate && scp -r ./.output/public/* jobeek:~/web"
+    "deploy-stage": "nuxt generate && scp -r ./.output/public/* jobeek:~/web",
+    "deploy-stage-ssr": "nuxt build && scp -r ./.output/* jobeek:~/web"
   },
   "devDependencies": {
-    "nuxt": "3.0.0",
-    "nuxt3-vuex": "^1.0.3",
+    "@nuxt/devtools": "^0.6.1",
+    "nuxt": "3.5.1",
+    "nuxt-storm": "^1.1.3",
     "prettier": "^2.8.3",
     "vite": "^3.2.5"
   },
@@ -26,10 +28,13 @@
     "date-fns": "^2.29.3",
     "defu": "^6.1.2",
     "fibers": "^5.0.3",
+    "fs": "^0.0.1-security",
+    "https": "^1.0.0",
     "imask": "^6.4.3",
     "moment": "^2.29.4",
     "node-sass": "^8.0.0",
     "nuxt3-select2": "^0.1.29",
+    "pinia": "^2.1.3",
     "postcss": "^8.4.21",
     "postcss-loader": "^7.0.2",
     "sass": "^1.57.1",
@@ -37,6 +42,7 @@
     "select2-bootstrap-5-theme": "^1.3.0",
     "sweetalert2": "^11.7.1",
     "swrv": "^1.0.3",
+    "uuid": "^9.0.0",
     "vue-number-format": "^1.3.1",
     "vue-search-select": "^3.0.8",
     "vuejs-paginate-next": "^1.0.2"
