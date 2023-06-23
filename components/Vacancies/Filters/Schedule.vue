@@ -22,11 +22,14 @@
 </template>
 
 <script setup>
+import {useDictionaryStore} from "~/store/dictionary";
+
 const emit = defineEmits(['onFormChange'])
 import {useVacancyStore} from "../../../store/vacancy";
 import {useVacancyForm} from "../../../composables/useVacancyForm";
 
 const vacancyStore = useVacancyStore();
+const dictionaryStore = useDictionaryStore();
 
 const filterClass = ref(true);
 const isMore = ref(true);
@@ -82,13 +85,13 @@ const prepare = (items, custom_items) => {
   });
 };
 
-watch(() => vacancyStore.schedules, prepare);
-const {getSchedules} = vacancyStore;
+watch(() => dictionaryStore.schedules, prepare);
+const {getSchedules} = dictionaryStore;
 onMounted(async () => {
-  if (vacancyStore.schedules.length === 0){
+  if (dictionaryStore.schedules.length === 0){
     await getSchedules();
   }else{
-    prepare(null, vacancyStore.schedules);
+    prepare(null, dictionaryStore.schedules);
   }
 });
 

@@ -124,9 +124,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
             }
         }
     }
-    console.log(data, params);
     if (data) {
-        console.log(data.metros);
         selectedSalary = data.salary;
         metros = Array.from(data.metros);
         countries = Array.from(data.countries);
@@ -142,10 +140,7 @@ export function useVacancyForm(data = null, to_ = 'front') {
         industries = Array.from(data.industries);
     }else{
         selectedSalary = useFindSalary(params?.salary, true);
-
     }
-
-    console.log(metros);
 
     const form_data = {
         name: data?.name ?? params?.name,
@@ -292,7 +287,6 @@ export function useVacancyForm(data = null, to_ = 'front') {
         if (data.salary.to) {
             back_params.salary.to = data.salary.to;
         }
-        console.log(back_params);
         return removeNull(back_params);
     }
 }

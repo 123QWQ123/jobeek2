@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-
+const emit = defineEmits(['set']);
 </script>
 
 <style scoped>

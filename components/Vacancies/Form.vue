@@ -64,7 +64,6 @@ const regionOptions = ref([]);
 const cityOptions = ref([]);
 
 const prepareCities = () => {
-  console.log(cities.value);
   const c_items = cities.value.map((item) => ({value: item.id, name: item.name}));
   c_items.unshift({
     value: '*', name: 'Все'
@@ -109,7 +108,6 @@ const {clearVacancies} = vacancyStore;
 const onSearchSubmit = async(e) => {
   isLoading.value = true;
   clearVacancies();
-  console.log(form.value);
   const params = useVacancyForm(form.value, 'front');
   console.log(params);
   router.replace({name: 'search-vacancies', query: params});

@@ -2,7 +2,6 @@
 definePageMeta({
   layout: "cabinet",
 });
-
 const hasFavs = ref(true);
 </script>
 <template>
@@ -17,9 +16,10 @@ const hasFavs = ref(true);
             <strong class="title">У вас пока нет вакансий в избранном</strong>
             <p>Сохраняйте вакансии, нажимая на звёздочку</p>
           </div>
-          <a class="notification-button button-accent" href="#"
-          >Найти вакансию
-          </a>
+          <NuxtLink class="notification-button button-accent"
+                    :to="{name: 'search-vacancies'}">
+            Найти вакансию
+          </NuxtLink>
         </div>
         <h2 class="lk-page-title">
           Вакансии, которые могут вас заинтересовать
@@ -33,3 +33,4 @@ const hasFavs = ref(true);
     <HomeSearchSection></HomeSearchSection>
   </main>
 </template>
+

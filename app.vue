@@ -1,21 +1,12 @@
 <template>
-  <div>
+<div>
     <NuxtLayout> </NuxtLayout>
-  </div>
+</div>
 </template>
-
-<script setup>
-import { useAuthStore } from "~/store/auth";
-
-const authStore = useAuthStore();
-
-const { tryLogin } = authStore;
-await tryLogin();
-</script>
 
 <style>
 .layout {
-  overflow-y: hidden;
+  /*overflow-y: hidden;*/
 }
 .modal {
   display: flex;
@@ -46,3 +37,5 @@ await tryLogin();
   transform: translateY(0);
 }
 </style>
+<script setup lang="ts">
+</script>

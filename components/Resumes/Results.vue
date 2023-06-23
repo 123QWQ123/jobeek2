@@ -65,7 +65,7 @@
         </button>
         <div class="aside-container">
           <ResumesFilters></ResumesFilters>
-          <ResumesList></ResumesList>
+<!--          <ResumesList></ResumesList>-->
         </div>
       </div>
     </div>

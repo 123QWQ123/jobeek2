@@ -22,11 +22,14 @@
 </template>
 
 <script setup>
+import {useDictionaryStore} from "~/store/dictionary";
+
 const emit = defineEmits(['onFormChange'])
 import {useVacancyStore} from "../../../store/vacancy";
 import {useVacancyForm} from "../../../composables/useVacancyForm";
 
 const vacancyStore = useVacancyStore();
+const dictionaryStore = useDictionaryStore();
 
 const filterClass = ref(true);
 const isMore = ref(true);
@@ -82,10 +85,10 @@ const prepare = (items, custom_items) => {
   });
 };
 
-watch(() => vacancyStore.experiences, prepare);
-const {getExperiences} = vacancyStore;
+watch(() => dictionaryStore.experiences, prepare);
+const {getExperiences} = dictionaryStore;
 onMounted(async () => {
-  if (vacancyStore.experiences.length === 0){
+  if (dictionaryStore.experiences.length === 0){
     await getExperiences();
   }else{
     prepare(null, vacancyStore.experiences);

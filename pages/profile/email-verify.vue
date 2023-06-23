@@ -20,7 +20,7 @@ const route = useRoute();
 const isSuccess = ref("-");
 const {code, email} = route.query;
 
-const {verifyEmailConfirmation} = profileStore;
+const {verifyEmailConfirmation, getUser} = profileStore;
 
 onMounted(async() => {
   const resData = await verifyEmailConfirmation({code, email});
@@ -35,16 +35,23 @@ onMounted(async() => {
       confirmButtonText: 'ОК'
     });
 
+    await getUser();
+
     setTimeout(() => {
-      navigateTo({name:'profile'});
-    }, 5000)
+      navigateTo({
+            name:'profile', query:
+            {
+              message: "Вы успешно потвердили ваш эмаил!"
+            }
+          }
+      );
+    }, 5000);
   }else{
     isSuccess.value = false;
 
     navigateTo({name:'404'});
   }
 });
-console.log(code, email);
 
 </script>
 

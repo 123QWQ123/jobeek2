@@ -1,8 +1,8 @@
-<template>
+v<template>
   <section class="work-section section wrapper">
     <div class="section-head">
       <h2 class="section-title"> Работа и вакансии в Москве</h2>
-      <NuxtLink class="more" :to="{name: 'search-vacancies'}">
+      <NuxtLink class="more" :to="{name: 'search-vacancies', query: {countries: [1], regions: [22]}}">
         Все <span> вакансии </span>
         <svg width="24" height="25" viewBox="0 0 24 25" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
@@ -15,11 +15,12 @@
     </div>
     <div class="swiper cards-slider-row">
       <ul class="cards-grid swiper-wrapper">
-        <li class="swiper-slide" v-for="i in 15">
-          <NuxtLink class="tile-card" href="#">
-            <h4 class="tile-card-title">Комплектовщик</h4>
-            <span class="tile-card-dop-info">До 185 000 ₽ / месяц</span>
-            <strong class="tile-card-count">2142 вакансии</strong>
+        <li class="swiper-slide" v-for="item in vacancies">
+          <NuxtLink class="tile-card" :to="{name: 'search-vacancies', query: {countries: [1], regions: [22], professional_roles: getProfessionalRoles(item.professional_roles)} }">
+            <h4 class="tile-card-title">{{ item.name }}</h4>
+            <span class="tile-card-dop-info" v-if="item.salary_to">До {{vueNumberFormat(item.salary_to, {})}} ₽ / месяц</span>
+            <span v-else class="tile-card-dop-info">От {{vueNumberFormat(item.salary_from, {})}} ₽ / месяц</span>
+<!--            <strong class="tile-card-count">2142 вакансии</strong>-->
           </NuxtLink>
         </li>
       </ul>
@@ -27,6 +28,23 @@
   </section>
 </template>
 
+<script setup>
+import {storeToRefs} from "pinia";
+import {useVacancyStore} from "../../store/vacancy";
+const vacancyStore = useVacancyStore();
+const {getVacancies} = vacancyStore;
+const {top_10: vacancies} = storeToRefs(vacancyStore);
+
+onMounted(async() => {
+    await getVacancies({countries: [1], region_ids: [22]});
+})
+const getProfessionalRoles  = (objectData) => {
+  console.log(objectData)
+  if (objectData)
+    return Object.keys(objectData);
+  return [];
+}
+</script>
 <style scoped>
 .section-head .more{
   gap: 0.3rem;

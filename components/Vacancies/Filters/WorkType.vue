@@ -22,11 +22,14 @@
 </template>
 
 <script setup>
+import {useDictionaryStore} from "~/store/dictionary";
+
 const emit = defineEmits(['onFormChange'])
 import {useVacancyStore} from "../../../store/vacancy";
 import {useVacancyForm} from "../../../composables/useVacancyForm";
 
 const vacancyStore = useVacancyStore();
+const dictionaryStore = useDictionaryStore();
 
 const filterClass = ref(true);
 const isMore = ref(true);
@@ -36,7 +39,6 @@ const filterItems = ref([]);
 const toggleMore = () => isMore.value = !isMore.value;
 
 const form = ref(useVacancyForm());
-console.log(form.value.work_types);
 const selectedFilterItems = ref(form.value.work_types);
 
 const toggle = (id) => {
@@ -88,13 +90,13 @@ const prepare = (items, custom_items) => {
   });
 };
 
-watch(() => vacancyStore.work_types, prepare);
-const {getWorkTypes} = vacancyStore;
+watch(() => dictionaryStore.work_types, prepare);
+const {getWorkTypes} = dictionaryStore;
 onMounted(async () => {
-  if (vacancyStore.work_types.length === 0){
+  if (dictionaryStore.work_types.length === 0){
     await getWorkTypes();
   }else{
-    prepare(null, vacancyStore.work_types);
+    prepare(null, dictionaryStore.work_types);
   }
 });
 
