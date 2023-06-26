@@ -142,5 +142,13 @@ function close(){
     background-color: unset;
     opacity: 1;
 }
+
+.placeholder {
+    font-weight: 400 !important;
+    font-size: 16px;
+    line-height: 22px;
+    background-color: unset;
+    opacity: 1;
+}
 </style>
 

@@ -7,7 +7,7 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "deploy-stage": "nuxt generate && scp -r ./.output/public/* jobeek:~/web",
-    "deploy-stage-ssr": "nuxt build && scp -r ./.output jobeek:~/web"
+    "deploy-stage-ssr": "nuxt build && scp -r ./.output/* jobeek:~/web"
   },
   "devDependencies": {
     "@nuxt/devtools": "^0.6.1",
