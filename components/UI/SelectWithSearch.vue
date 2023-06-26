@@ -132,6 +132,15 @@ function close(){
   color: #0A2540;
   width: 100%;
   height: unset !important;
+  cursor: pointer;
+}
+
+.placeholder {
+    font-weight: 400 !important;
+    font-size: 16px;
+    line-height: 22px;
+    background-color: unset;
+    opacity: 1;
 }
 
 .placeholder {

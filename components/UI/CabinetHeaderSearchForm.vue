@@ -28,6 +28,7 @@
           v-model="city"
           :listStyles="searchSelectStyles"
           @change="onCityChange"
+          :placeholder="'Город'"
           :listItemStyles="searchSelectItemStyles"
         />
       </div>
@@ -36,6 +37,7 @@
         <SelectWithSearch
           :options="regionOptions"
           v-model="region"
+          :placeholder="'Регион'"
           :listStyles="searchSelectStyles"
           @change="onRegionChange"
           :listItemStyles="searchSelectItemStyles"
