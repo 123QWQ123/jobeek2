@@ -2,7 +2,6 @@
 import path from 'path';
 import fs from 'fs';
 const config = {
-  server: {},
   runtimeConfig: {
     // The private keys which are only available within server-side
     apiSecret: "123",

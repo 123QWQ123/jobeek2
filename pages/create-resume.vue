@@ -6,10 +6,16 @@ definePageMeta({
     layout: "cabinet",
 });
 
-useHead({
-    title: "Создание резюме - Jobeek"
-});
+// useHead({
+//     title: "Создание резюме - Jobeek"
+// });
 
+const pageTitle = computed(() => {
+  if (draftId.value) {
+      return "Обновить резюме - Jobeek"
+  }
+  return "Создание резюме - Jobeek";
+})
 const route = useRoute();
 
 const draftId = computed(() => route.query.draft_id);
@@ -35,6 +41,9 @@ onMounted(() => {
 </script>
 <template>
   <main class="main cabinet create-subscribe-page bg-wrapper" role="main">
+    <Head>
+        <Title>{{pageTitle}}</Title>
+    </Head>
     <div class="bg-wrapper pt">
       <PersonalCabinetSearchMobile />
 

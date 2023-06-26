@@ -63,7 +63,7 @@
                 <label>Дата рождения <b>*</b></label>
                 <div class="input-wrapper">
                     <div class="mb-1">
-                        <BirthDatePicker v-model.lazy="state.birth_date.val" :value="state.birth_date.val"></BirthDatePicker>
+                        <BirthDatePicker v-model="state.birth_date.val" :value="state.birth_date.val"></BirthDatePicker>
                     </div>
                     <div class="check-block">
                         <div class="checkbox">
@@ -183,6 +183,10 @@ const CONFIG = useRuntimeConfig();
 const route = useRoute();
 
 const draftID = computed(() => route.query.draft_id);
+console.log(draftID);
+watch(() => draftID.value, (newDraftID) => {
+    getResume(newDraftID);
+})
 
 const {seeker} = profileStore;
 const {resume} = storeToRefs(resumeStore);
@@ -295,6 +299,7 @@ const state = reactive({
     },
     isFormValid: true,
     isNew: true,
+    isFilled: false,
     isLoading: false,
     error: null,
     success: null,
@@ -359,6 +364,7 @@ const save = async () => {
         errors.value = {};
         state.errorMessage = "";
         let resData = {};
+        console.log(draftID.value);
         if (draftID.value){
             const formData = useFormData(state, 'form_data')
             formData.append('form_data', 'personal_data');
@@ -382,9 +388,10 @@ const save = async () => {
         }
 
 
-        if (resData.status !== 'success'){
+        if (resData.status === "error"){
             return handleErrorResponse(resData.data);
         }
+        console.log(1);
         isSaved.value = true;
         isChanged.value = false;
         setTimeout(() => {
