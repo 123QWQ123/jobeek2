@@ -75,9 +75,9 @@ export const useResumeStore = defineStore('resume', {
         method: 'post',
         payload
       });
-      if ('data' in response){
-        this.resume = response.data;
-      }
+      // if ('data' in response){
+      //   this.resume = response.data;
+      // }
       return response;
     },
     async updateResume(id, payload, content_type = 'application/json') {
@@ -86,9 +86,9 @@ export const useResumeStore = defineStore('resume', {
         content_type,
         payload
       });
-      if ('data' in response && response.data.status === 'success'){
-        this.resume = response.data;
-      }
+      // if ('data' in response && response.data.status === 'success'){
+      //   this.resume = response.data;
+      // }
       return response;
     },
     async getResume(id, payload) {

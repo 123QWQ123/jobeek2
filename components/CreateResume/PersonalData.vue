@@ -6,7 +6,7 @@
         </div>
         <!--            <CreateResumeProviders></CreateResumeProviders>-->
 
-        <div class="w-box-body" @mouseleave="save">
+        <div class="w-box-body" @mouseleave="save" v-click-outside="onFormCompleted">
             <!--      <CreateResumeSocialNetworks></CreateResumeSocialNetworks>-->
 
             <div class="input-row" v-if="!draftID">
@@ -299,8 +299,13 @@ const state = reactive({
     error: null,
     success: null,
 });
-watch(() => useWatchStateValues(state), () => isChanged.value = true);
+watch(() => useWatchStateValues(state), () => {
+    if (draftID.value){
+        isChanged.value = true;
+    }
+});
 watch(() => resume.value, (newResume) => {
+    console.log(newResume);
     if (newResume){
         state['first_name'].val = newResume['first_name'];
         state['last_name'].val = newResume['last_name'];
@@ -312,7 +317,7 @@ watch(() => resume.value, (newResume) => {
         state['birth_date'].val = newResume['birth_date'];
         state['email'].val = newResume['email'];
         state['phone'].val = newResume['phone'];
-        phoneInputElement.value.value = newResume['phone'];
+        phoneInputElement.value.value = newResume['phone'] ?? '';
         state['phone_time_start'].val = newResume['phone_time_start'];
         state['phone_time_end'].val = newResume['phone_time_end'];
     }
@@ -350,10 +355,14 @@ onMounted(( ) => {
 const {updateResume, createResume} = resumeStore;
 
 const {errors, handleErrorResponse} = useFormValidation();
+const onFormCompleted = () => {
+    isChanged.value = true;
+    save();
+}
 const save = async () => {
 
     if (isChanged.value){
-
+        console.log(0);
         state.isLoading = true;
         // validate();
         errors.value = {};
@@ -376,8 +385,9 @@ const save = async () => {
                 const resume_id = resData.data.data.id;
                 state.isNew = false;
                 setTimeout(() => {
+                    console.log('redirecting...')
                     navigateTo({name: 'create-resume', query: {draft_id: resume_id}})
-                });
+                }, 100);
             }
         }
 
