@@ -30,6 +30,7 @@
                       :options="cityOptions"
                       v-model="city"
                       :listStyles="searchSelectStyles"
+                      :placeholder="'Выберите'"
                       @change="onCityChange"
                       :listItemStyles="searchSelectItemStyles"
               />
@@ -41,6 +42,7 @@
                       :options="regionOptions"
                       v-model="region"
                       :listStyles="searchSelectStyles"
+                      :placeholder="'Выберите'"
                       @change="onRegionChange"
                       :listItemStyles="searchSelectItemStyles"
               />

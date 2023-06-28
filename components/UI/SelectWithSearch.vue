@@ -1,3 +1,14 @@
+<template>
+    <div class="nice-select n-select d-select" :class="{'open' : isOpen}" v-click-outside="() => isOpen = false" tabindex="0">
+
+        <span class="current" ref="searchInputElement" contenteditable="true" @keyup="onChangeHandler" :class="{placeholder: placeholderClass}" @click="toggle" >{{ labelText }}</span>
+        <span class="select_arrow" @click="toggle"></span>
+        <ul class="list" :style="listStyles" v-if="isOpen">
+            <li v-for="item in options" :key="item.value" :data-value="item.value" class="option" @click="onSelect(item.value)" :style="listItemStyles">{{ item.name }}</li>
+        </ul>
+    </div>
+
+</template>
 <script>
 export default {
   name: "SelectWithSearch",
@@ -69,12 +80,15 @@ const placeholderClass = computed(() => {
 })
 
 const searchInputElement = ref();
-function switchToEditing(){
-    isOpen.value = true;
+function toggle(){
     if (isFirst.value === false){
         isFirst.value = true;
     }
-    setTimeout(() => searchInputElement.value?.focus(), 0);
+    isOpen.value = !isOpen.value;
+    if (isOpen.value){
+        console.log(1);
+        setTimeout(() => searchInputElement.value?.focus(), 0);
+    }
 }
 function onSelect(id){
     const selectedOptionItem = options.value.find(item => String(item.value) === String(id));
@@ -105,17 +119,6 @@ function close(){
   isOpen.value = false;
 }
 </script>
-<template>
-  <div v-click-outside="close" onfocusout="close" class="nice-select n-select d-select" :class="{'open' : isOpen}" tabindex="0">
-
-    <span class="current" ref="searchInputElement" contenteditable="true" @keyup="onChangeHandler" :class="{placeholder: placeholderClass}" @click="switchToEditing" >{{ labelText }}</span>
-
-    <ul class="list" :style="listStyles" v-if="isOpen">
-      <li v-for="item in options" :key="item.value" :data-value="item.value" class="option" @click="onSelect(item.value)" :style="listItemStyles">{{ item.name }}</li>
-    </ul>
-  </div>
-
-</template>
 
 <style>
 
@@ -149,6 +152,26 @@ function close(){
     line-height: 22px;
     background-color: unset;
     opacity: 1;
+}
+
+.nice-select:after{
+    display: none;
+}
+.select_arrow{
+    border-bottom: 2px solid #999;
+    border-right: 2px solid #999;
+    content: '';
+    display: block;
+    height: 8px;
+    margin-top: -4px;
+    pointer-events: initial;
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform-origin: 66% 66%;
+    transform: rotate(45deg);
+    transition: all 0.15s ease-in-out;
+    width: 8px;
 }
 </style>
 
