@@ -35,12 +35,12 @@
           <li v-if="false">
             <NuxtLink :to="{name: 'your-messages'}"> <span>Сообщения</span></NuxtLink>
           </li>
-          <li >
-            <NuxtLink :to="{name: 'advice'}"> <span>Советы</span></NuxtLink>
-          </li>
-          <li v-if="!isEmployer">
-            <NuxtLink :to="{name: 'courses'}"> <span>Курсы</span></NuxtLink>
-          </li>
+<!--          <li >-->
+<!--            <NuxtLink :to="{name: 'advice'}"> <span>Советы</span></NuxtLink>-->
+<!--          </li>-->
+<!--          <li v-if="!isEmployer">-->
+<!--            <NuxtLink :to="{name: 'courses'}"> <span>Курсы</span></NuxtLink>-->
+<!--          </li>-->
         </ul>
       </nav>
       <ModeSwitcher></ModeSwitcher>

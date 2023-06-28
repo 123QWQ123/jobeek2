@@ -14,6 +14,10 @@
                 <div class="input-wrapper">
                     <div class="c1 mt-1">
                         <input type="text" placeholder="Название" v-model="state.title.val">
+
+                        <div class="text-danger d-block" v-if="errors.title">
+                            {{ errors.title }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -49,13 +53,25 @@
                     <div class="c2">
                         <div class="input-wrapper">
                             <input type="text" placeholder="Имя" v-model="state.first_name.val">
+
+                            <div class="text-danger d-block" v-if="errors.first_name">
+                                {{ errors.first_name }}
+                            </div>
                         </div>
                         <div class="input-wrapper">
                             <input type="text" placeholder="Фамилия" v-model="state.last_name.val">
+
+                            <div class="text-danger d-block" v-if="errors.last_name">
+                                {{ errors.last_name }}
+                            </div>
                         </div>
                     </div>
                     <div class="c1 mt-1">
                         <input type="text" placeholder="Отчество" v-model="state.middle_name.val">
+
+                        <div class="text-danger d-block" v-if="errors.middle_name">
+                            {{ errors.middle_name }}
+                        </div>
                     </div>
                 </div>
             </div>
