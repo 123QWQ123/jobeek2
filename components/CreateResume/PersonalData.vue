@@ -1,13 +1,13 @@
 <template>
-    <div class="w-box w-box--main w-box-resume pb-4">
+    <div class="w-box w-box--main w-box-resume pb-4" v-click-outside="save">
         <div class="w-box-head">
             <h1 class="title">{{ formTitle }}</h1>
             <div class="descr">Получайте уведомления о новых вакансиях по созданному запросу</div>
         </div>
-        <!--            <CreateResumeProviders></CreateResumeProviders>-->
 
-        <div class="w-box-body" @mouseleave="save" v-click-outside="onFormCompleted">
-            <!--      <CreateResumeSocialNetworks></CreateResumeSocialNetworks>-->
+        <div class="w-box-body" >
+<!--                  <CreateResumeSocialNetworks></CreateResumeSocialNetworks>-->
+<!--            <CreateResumeProviders></CreateResumeProviders>-->
 
             <div class="input-row" v-if="!draftID">
                 <label for="name">Название<b>*</b></label>
@@ -196,6 +196,12 @@ const formTitle = computed(() => {
 
 const isSaved = ref(false);
 const isChanged = ref(false);
+const isFirst = ref(true);
+onMounted(() => {
+    if (draftID.value){
+        isFirst.value = false;
+    }
+})
 
 const photoUrl = computed(() => {
   if (state.photo.base64){
@@ -300,12 +306,9 @@ const state = reactive({
     success: null,
 });
 watch(() => useWatchStateValues(state), () => {
-    if (draftID.value){
-        isChanged.value = true;
-    }
+    isChanged.value = true;
 });
-watch(() => resume.value, (newResume) => {
-    console.log(newResume);
+watch(() => resumeStore.resume, (newResume) => {
     if (newResume){
         state['first_name'].val = newResume['first_name'];
         state['last_name'].val = newResume['last_name'];
@@ -355,10 +358,7 @@ onMounted(( ) => {
 const {updateResume, createResume} = resumeStore;
 
 const {errors, handleErrorResponse} = useFormValidation();
-const onFormCompleted = () => {
-    isChanged.value = true;
-    save();
-}
+
 const save = async () => {
 
     if (isChanged.value){
@@ -373,6 +373,7 @@ const save = async () => {
             formData.append('form_data', 'personal_data');
             formData.delete('title');
             resData = await updateResume(draftID.value, formData, 'put');
+            console.log(resData);
         }else{
             const formData = useFormData(state)
             // const formData = useFormData(state, 'form_data')

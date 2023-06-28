@@ -1,5 +1,5 @@
 <template>
-    <div class="w-box"  @mouseleave="save">
+    <div class="w-box"  v-click-outside="save">
         <div class="w-box-head">
             <h3 class="title">Владение иностранными языками</h3>
             <span class="arrow" :class="{up: isCollapsed}" @click="isCollapsed = !isCollapsed"></span>

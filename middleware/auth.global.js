@@ -5,7 +5,6 @@ import {useProfileStore} from "~/store/profile";
 export default defineNuxtRouteMiddleware(async (to, from) => {
     if (!process.server) {
         console.log("middleware from client side");
-
         const authStore = useAuthStore();
         const profileStore = useProfileStore();
         const {getEmployer, getSeeker} = profileStore;
@@ -14,7 +13,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         let isAuthed = computed(() => authStore.isAuthenticated);
 
         const isEmployer = localStorage.getItem('isEmployer') !== 'true' ? false : true ;
-        console.log(isEmployer);
         const {tryLogin, logout} = authStore;
         if (authStore.isAuthed === null){
             await tryLogin();

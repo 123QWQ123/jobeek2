@@ -1,6 +1,6 @@
 <template>
 
-  <div class="w-box" @mouseleave="save">
+  <div class="w-box" v-click-outside="save">
     <div class="w-box-head">
       <h3 class="title">Гражданство и Семья</h3>
       <span class="arrow" :class="{up: isCollapsed}" @click="isCollapsed = !isCollapsed"></span>
@@ -125,7 +125,6 @@ const {getResume, updateResume} = resumeStore;
 const {errors, handleErrorResponse} = useFormValidation();
 
 const save = async() => {
-    console.log(isChanged.value);
     if (isChanged.value){
         errors.value = {};
         const formData = useFormData(state);

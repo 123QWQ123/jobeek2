@@ -31,7 +31,6 @@ export const useAuthStore = defineStore('auth', {
     },
     isAuthenticated(state) {
       let authed = false;
-      console.log(state.isAuthed);
       if (state.isAuthed === true){
         authed = true;
       }
