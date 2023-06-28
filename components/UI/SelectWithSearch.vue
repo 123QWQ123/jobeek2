@@ -7,7 +7,6 @@
             <li v-for="item in options" :key="item.value" :data-value="item.value" class="option" @click="onSelect(item.value)" :style="listItemStyles">{{ item.name }}</li>
         </ul>
     </div>
-
 </template>
 <script>
 export default {

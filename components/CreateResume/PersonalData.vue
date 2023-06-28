@@ -65,14 +65,14 @@
                     <div class="mb-1">
                         <BirthDatePicker v-model.lazy="state.birth_date.val" :value="state.birth_date.val"></BirthDatePicker>
                     </div>
-                    <div class="check-block">
+                    <div class="check-block mt-2">
                         <div class="checkbox">
                             <input type="checkbox" id="hide_birthday" v-model.number="state.hide_birthday.val">
                             <div class="checkbox-mask">
                                 <img src="~/assets/img/svg/check.svg" alt="#" />
                             </div>
                         </div>
-                        <label for="hide_birthday">Не показать даты рождения</label>
+                        <label for="hide_birthday" class="fs-14">Не показать даты рождения</label>
                     </div>
                     <div class="text-danger d-block" v-if="errors.birth_date">
                         {{ errors.birth_date }}
@@ -87,19 +87,19 @@
                 <div class="input-wrapper mt-2">
                     <SelectWithSearch :options="cityOptions" v-model.number="state.city_id.val" :placeholder="'Ишите город'" @input="updateCityInput"></SelectWithSearch>
 
-                    <div class="text-danger d-block" v-if="errors.city_id">
-                        Вам нужно выбрать город проживания!
-                    </div>
-
-                    <div class="check-block">
+                    <div class="check-block mt-2">
                         <div class="checkbox">
                             <input type="checkbox" id="ready-to-relocate" v-model.number="state.is_relocatable.val">
                             <div class="checkbox-mask">
                                 <img src="~/assets/img/svg/check.svg" alt="#" />
                             </div>
                         </div>
-                        <label for="ready-to-relocate">Готов к переезду</label>
+                        <label for="ready-to-relocate" class="fs-14">Готов к переезду</label>
 
+                    </div>
+
+                    <div class="text-danger d-block" v-if="errors.city_id">
+                        Вам нужно выбрать город проживания!
                     </div>
 
                     <div class="text-danger d-block" v-if="errors.is_relocatable">

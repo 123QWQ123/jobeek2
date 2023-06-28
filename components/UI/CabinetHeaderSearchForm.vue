@@ -1,6 +1,6 @@
 <template>
   <form
-    class="search-form search-form--widget"
+    class="search-form search-form--widget search-form-desktop"
     action="#"
     role="form"
     autocomplete="off"
@@ -18,10 +18,13 @@
           v-model="form.name"
         />
       </div>
-      <HeaderSalarySelectInForm
-        v-model="form.salary"
-        @change="onChange"
-      ></HeaderSalarySelectInForm>
+        <div class="input-wrap has-icon">
+          <HeaderSalarySelectInForm
+            v-model="form.salary"
+            @change="onChange"
+          ></HeaderSalarySelectInForm>
+        </div>
+
       <div class="input-wrap has-icon">
         <SelectWithSearch
           :options="cityOptions"
@@ -182,5 +185,11 @@ const searchSelectStyles = {
 <style scoped>
 .search-form--widget {
   display: block;
+}
+
+@media only screen and (max-width: 1280px){
+    .search-form-desktop{
+        display: none;
+    }
 }
 </style>
