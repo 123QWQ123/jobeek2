@@ -127,9 +127,10 @@
         >
         <span
           v-else
-          class="badge bg-success fs-6 position-absolute end-0 top-0 p-2 px-2 mt-2 me-2"
-          >Потвержден</span
-        >
+          class="badge bg-checkbox h-100 fs-6 position-absolute end-0 top-0 p-0 px-0 mt-0 me-0 pb-2"
+          >
+          <svg xmlns="http://www.w3.org/2000/svg" style="transform: scale(0.7)" viewBox="0 0 48 48" width="48px" height="48px"><path fill="#fff" d="M40.6 12.1L17 35.7 7.4 26.1 4.6 29 17 41.3 43.4 14.9z"/></svg>
+        </span>
       </div>
       <div class="text-success d-block" v-if="state.email.is_sent">
         {{ "Вам выслано емейл с код подтверждением, подтвердите ваш емейл." }}
@@ -351,5 +352,8 @@ input[type="text"]:disabled {
 <style scoped>
 #photo {
   cursor: pointer;
+}
+.bg-checkbox{
+    background-color: #1fb141;
 }
 </style>
