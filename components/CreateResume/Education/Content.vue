@@ -2,14 +2,14 @@
   <div class="w-box" v-click-outside="save">
     <div class="w-box-head">
       <h3 class="title">Образование</h3>
-      <span class="arrow" :class="{up: isCollapsed}" @click="isCollapsed = !isCollapsed"></span>
+      <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
 
     </div>
       <transition>
           <div class="w-box-body" :class="{collapse: isCollapsed}">
               <div class="" v-if="isShown">
                   <div class="row">
-                      <CreateResumeEducationHistory ref="educationElement" v-model="educations" :errors="errors.education" />
+                      <CreateResumeEducationHistory ref="educationElement" v-model="educations" :errors="errors.education"  />
                   </div>
               </div>
               <div class="empty-area" v-else>
@@ -44,17 +44,22 @@ const resume = computed(() => resumeStore.resume);
 const education_histories = computed(() => resume.value?.education_histories ?? []);
 const educations = ref(education_histories.value ?? []);
 
+const isShown = ref(false);
+const isChanged = ref(false);
+const isSaved = ref(false);
+const isCollapsed = ref(true);
+const isUpdated = ref(false);
+
 watch(() => education_histories.value, (newItems) => {
+    if (isUpdated.value){
+        isUpdated.value = false;
+        return;
+    }
     if (newItems.length > 0){
         isShown.value = true;
         educations.value = newItems;
     }
 });
-
-const isShown = ref(false);
-const isChanged = ref(false);
-const isSaved = ref(false);
-const isCollapsed = ref(true);
 watch(() => isCollapsed.value, (newData) => {
     if (!newData){
         isShown.value = true;
@@ -79,15 +84,17 @@ const save = async () => {
         if (resData.status !== 'success'){
             return handleErrorResponse(resData.data);
         }
-
-        isSaved.value = true;
         isChanged.value = false;
-        setTimeout(() => {
-            isSaved.value = false;
-        }, 3000);
+        isSaved.value = false;
 
+        isUpdated.value = true;
+        getResume(draftID.value)
     }
 }
+
+const isCompleted = computed(() => {
+    return resume.value?.education_histories?.length > 0;
+});
 </script>
 
 <style scoped>

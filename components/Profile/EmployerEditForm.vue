@@ -95,41 +95,34 @@
         />
       </div>
     </div>
+      <div>
+
+          email: {{state.email.val}}
+          <br/>
+          email_to_verify: {{state.email_to_verify.val}}
+      </div>
     <div class="input-row">
       <label for="email">Электронная почта<b>*</b></label>
+
       <div class="input-wrapper position-relative">
         <input
           type="email"
           placeholder="Электронная почта"
           id="email"
-          v-model="state.email.val"
-          v-if="!state.email_to_verify.val"
-        />
-        <input
-          type="email"
-          placeholder="Электронная почта"
-          id="email_to_verify"
-          v-else
-          v-model="state.email_to_verify.val"
+          :value="emailInputValue"
+          @input="onInputEmail"
         />
         <a
-          v-if="state.email_to_verify.val"
+          v-if="state.email_to_verify.val && state.email_to_verify.val !== state.email.val"
           @click="onEmailConfirm"
           class="badge bg-primary position-absolute fs-6 end-0 top-0 p-2 px-2 mt-2 me-2"
           >Потверждать</a
         >
-        <a
-          v-else-if="isCheckButton"
-          @click="checkEmailConfirmation"
-          if="isConfirmButton"
-          class="badge bg-primary btn-sm fs-6 position-absolute end-0 top-0 p-2 px-2 mt-2 me-2"
-          >Проверить</a
-        >
         <span
-          v-else
-          class="badge bg-checkbox h-100 fs-6 position-absolute end-0 top-0 p-0 px-0 mt-0 me-0 pb-2"
+          v-if="!state.email_to_verify.val"
+          class="h-100 fs-6 position-absolute end-0 top-0 p-0 px-0 mt-0 me-0 pb-2"
           >
-          <svg xmlns="http://www.w3.org/2000/svg" style="transform: scale(0.7)" viewBox="0 0 48 48" width="48px" height="48px"><path fill="#fff" d="M40.6 12.1L17 35.7 7.4 26.1 4.6 29 17 41.3 43.4 14.9z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" style="transform: scale(0.5)" viewBox="0 0 48 48" width="48px" height="48px"><path fill="green" d="M40.6 12.1L17 35.7 7.4 26.1 4.6 29 17 41.3 43.4 14.9z"/></svg>
         </span>
       </div>
       <div class="text-success d-block" v-if="state.email.is_sent">
@@ -171,6 +164,7 @@ const profileStore = useProfileStore();
 const { getUser } = profileStore;
 const { employer } = storeToRefs(profileStore);
 
+
 onMounted(async () => {
   await getUser();
 });
@@ -210,12 +204,24 @@ const state = reactive({
   success: null,
 });
 
-watch(state, () => {
-  if (phoneMask.value) {
-    phoneMask.value.updateValue();
-  }
+const emailInputValue = computed(() => {
+    if (state.email.val && state.email_to_verify.val && state.email.val !== state.email_to_verify.val){
+        return state.email_to_verify.val;
+    }
+    return state.email.val;
 });
 
+const onInputEmail = (e) => {
+    console.log(e.target.value);
+    state.email_to_verify.val = e.target.value;
+}
+
+watch(() => state.email_to_verify.val, (newEmail) => {
+    console.log(newEmail);
+
+})
+
+const emailToVerify = ref();
 const isConfirmButton = ref(true);
 const isCheckButton = ref(false);
 
@@ -225,13 +231,14 @@ watch(employer, (new_value) => {
   for (const [key, value] of Object.entries(new_value)) {
     if (state.hasOwnProperty(key)) {
       if (key === "phone") {
-        state[key].val = value;
         setTimeout(() => {
           phoneMask.value = new IMask(phoneInputElement.value, {
             mask: "+{7}(000)000-00-00",
           });
         }, 0);
-        continue;
+      }
+      if (key === "email_to_verify") {
+          console.log(key, value)
       }
       state[key].val = value;
     }

@@ -76,7 +76,6 @@ const save = (e) => {
 
           <CreateResumeEducationDocumentsContent v-if="isEditable"></CreateResumeEducationDocumentsContent>
 
-
           <CreateResumeWorkExperienceContent v-if="isEditable"></CreateResumeWorkExperienceContent>
 
           <CreateResumeDriverLicenses v-if="isEditable"></CreateResumeDriverLicenses>

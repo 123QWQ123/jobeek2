@@ -4,6 +4,13 @@
 </div>
 </template>
 
+<script setup>
+import {useResumeStore} from "~/store/resume";
+
+const { getConnectedProviders } = useResumeStore();
+await getConnectedProviders();
+</script>
+
 <style>
 .layout {
   /*overflow-y: hidden;*/

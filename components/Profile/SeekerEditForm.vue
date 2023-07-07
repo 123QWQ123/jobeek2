@@ -69,22 +69,30 @@
     <div class="input-row">
       <label for="phone">Телефон</label>
       <div class="input-wrapper">
-        <input type="text" ref="phoneInputElement" disabled placeholder="Телефон" id="phone" v-model="state.phone.val" />
+        <input type="text" disabled ref="phoneInputElement" placeholder="Телефон" id="phone" />
       </div>
     </div>
     <div class="input-row">
       <label for="email">Электронная почта<b>*</b></label>
       <div class="input-wrapper position-relative">
-        <input type="email" placeholder="Электронная почта" id="email" v-model="state.email.val" v-if="!state.email_to_verify.val" />
-        <input type="email" placeholder="Электронная почта" id="email_to_verify" v-else v-model="state.email_to_verify.val" />
-        <a v-if="isConfirmButton" @click="onEmailConfirm" class="badge bg-primary position-absolute fs-6 end-0 top-0 p-2 px-2 mt-2 me-2">Потверждать</a>
-        <a v-else-if="isCheckButton" @click="checkEmailConfirmation" if="isConfirmButton" class="badge bg-primary btn-sm fs-6 position-absolute end-0 top-0 p-2 px-2 mt-2 me-2">Проверить</a>
-
-        <span
-                v-else
-                class="badge bg-checkbox h-100 fs-6 position-absolute end-0 top-0 p-0 px-0 mt-0 me-0 pb-2"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" style="transform: scale(0.7)" viewBox="0 0 48 48" width="48px" height="48px"><path fill="#fff" d="M40.6 12.1L17 35.7 7.4 26.1 4.6 29 17 41.3 43.4 14.9z"/></svg>
+          <input
+                  type="email"
+                  placeholder="Электронная почта"
+                  id="email"
+                  :value="emailInputValue"
+                  @input="onInputEmail"
+          />
+          <a
+                  v-if="state.email_to_verify.val && state.email_to_verify.val !== state.email.val"
+                  @click="onEmailConfirm"
+                  class="badge bg-primary position-absolute fs-6 end-0 top-0 p-2 px-2 mt-2 me-2"
+          >Потверждать</a
+          >
+          <span
+                  v-if="!state.email_to_verify.val"
+                  class="h-100 fs-6 position-absolute end-0 top-0 p-0 px-0 mt-0 me-0 pb-2"
+          >
+          <svg xmlns="http://www.w3.org/2000/svg" style="transform: scale(0.5)" viewBox="0 0 48 48" width="48px" height="48px"><path fill="green" d="M40.6 12.1L17 35.7 7.4 26.1 4.6 29 17 41.3 43.4 14.9z"/></svg>
         </span>
       </div>
       <div class="text-success d-block" v-if="state.email.is_sent">
@@ -127,11 +135,7 @@ const profileStore = useProfileStore();
 
 const {getUser} = profileStore;
 
-const {seeker} = storeToRefs(profileStore);
-
-onMounted(async() => {
-  // await getUser();
-});
+const seeker = computed(() => profileStore.seeker);
 
 const state = reactive({
   first_name: {
@@ -185,29 +189,41 @@ const state = reactive({
   success: null,
 });
 
+const emailInputValue = computed(() => {
+    if (state.email.val && state.email_to_verify.val && state.email.val !== state.email_to_verify.val){
+        return state.email_to_verify.val;
+    }
+    return state.email.val;
+});
+const onInputEmail = (e) => {
+    console.log(e.target.value);
+    state.email_to_verify.val = e.target.value;
+}
 
-onMounted(() => {
-    getUser();
-})
 const phoneInputElement = ref();
 const phoneMask = ref(null);
 watch(() => seeker.value, async(new_value) => {
-  for (const [key, value] of Object.entries(new_value)) {
-    if (state.hasOwnProperty(key)){
-      if (key === 'phone'){
-        state[key].val = value;
-        setTimeout(() => {
-          phoneMask.value = new IMask(phoneInputElement.value, {
-            mask: "+{7}(000)000-00-00",
-          });
-        }, 0)
-        continue;
-      }
-      state[key].val = value;
+    if (new_value){
+        for (const [key, value] of Object.entries(new_value)) {
+            if (state.hasOwnProperty(key)){
+                state[key].val = value;
+                if (key === 'phone'){
+                    phoneMask.value.unmaskedValue = value;
+                }
+            }
+        }
     }
-  }
 })
 
+onMounted(() => {
+    getUser();
+    phoneMask.value = new IMask(phoneInputElement.value, {
+        mask: "+{7}(000)000-00-00",
+    });
+    phoneInputElement.value.addEventListener("input", (e) => {
+        state.phone.val = phoneMask.value.unmaskedValue;
+    });
+})
 const {getCountries, getCities} = profileStore;
 await getCountries();
 
@@ -219,7 +235,7 @@ const {countryOptions, cityOptions} = storeToRefs(profileStore);
 
 const country = computed(() => state.country_id.val);
 watch(country, (new_value) => {
-    getCities({country_id: new_value});
+    getCities({country_ids: [new_value]});
 });
 
 const photoUrl = computed(() => {

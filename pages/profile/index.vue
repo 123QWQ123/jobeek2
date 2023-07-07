@@ -59,7 +59,7 @@ const errorClass = computed(() => {
         </div>
         <div class="w-box w-box--main">
           <div class="w-box-head">
-            <h1 class="title">Профиль({{isEmployer}})</h1>
+            <h1 class="title">Профиль</h1>
           </div>
             <transition name="content">
               <div v-if="isEmployer">

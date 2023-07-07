@@ -28,6 +28,22 @@ export const useResumeStore = defineStore('resume', {
       experiences: [],
       part_times: [],
       metros: [],
+      providers: [
+        {
+          name: 'HeadHunter',
+          slug: 'hh',
+          url: null,
+          is_connected: true,
+          icon: "https://tech.hh.ru/api/logos/min-hh-red.png",
+        },
+        {
+          name: 'Superjob',
+          slug: 'superjob',
+          url: null,
+          is_connected: true,
+          icon: new URL("~/assets/img/logos/superjob.svg", import.meta.url),
+        },
+      ]
     }
   },
   getters: {
@@ -39,7 +55,7 @@ export const useResumeStore = defineStore('resume', {
     },
     top_30: (state) => {
       return state.resumes.slice(0, 30);
-    }
+    },
   },
   actions: {
     async getAreas(payload) {
@@ -122,8 +138,14 @@ export const useResumeStore = defineStore('resume', {
         method: 'get',
         payload
       });
-      console.log(data);
       if ('data' in data){
+        const connectedProviders = data.data;
+        if (connectedProviders){
+          for (let i = 0; i < this.providers.length; i++){
+            const providerItem = this.providers[i];
+            this.providers[i].is_connected = connectedProviders[providerItem.slug] ?? false;
+          }
+        }
         return data.data;
       }
       return data;

@@ -2,7 +2,7 @@
   <div class="w-box" v-click-outside="save">
     <div class="w-box-head">
       <h3 class="title">Сертификаты, курсы</h3>
-      <span class="arrow" :class="{up: isCollapsed}" @click="isCollapsed = !isCollapsed"></span>
+      <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
 
     </div>
     <transition>
@@ -44,7 +44,7 @@ const isShown = ref(false);
 const isChanged = ref(false);
 const isSaved = ref(false);
 const isCollapsed = ref(true);
-
+const isUpdated = ref(false);
 
 const resume = computed(() => resumeStore.resume);
 const education_documents = computed(() => resume.value?.education_documents ?? []);
@@ -53,6 +53,10 @@ watch(() => education_document_items.value, (newData) => {
     isChanged.value = true;
 });
 watch(() => education_documents.value, (newItems) => {
+    if (isUpdated.value){
+        isUpdated.value = false;
+        return;
+    }
     if (newItems.length > 0){
         isShown.value = true;
         education_document_items.value = newItems;
@@ -82,14 +86,18 @@ const save = async () => {
             return handleErrorResponse(resData.data);
         }
 
-        isSaved.value = true;
         isChanged.value = false;
-        setTimeout(() => {
-            isSaved.value = false;
-        }, 3000);
+        isSaved.value = false;
+
+        isUpdated.value = true;
+        getResume(draftID.value)
 
     }
 }
+const isCompleted = computed(() => {
+    return resume.value?.education_documents?.length > 0;
+});
+
 </script>
 
 <style scoped>

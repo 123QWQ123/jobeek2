@@ -5,14 +5,26 @@
       <div class="row">
         <div class="col-8">
             <div class="input-wrapper w-100">
-                <input id="salary_from" type="number" v-model="salary.amount.val" placeholder="Укажите сумму">
-                <div :style="{display: 'none'}" class="text-danger" :class="{'d-block': !salary.amount.isValid && salary.amount.isChecked}">
-                    Введите сумму
+                <input id="salary_from" type="number" v-model="salary.amount.val" placeholder="Укажите сумму" @focusin="$emit('clearError', 'salary_amount')">
+                <div class="text-danger d-block" v-if="errors.salary_from">
+                    {{ errors.salary_from }}
+                </div>
+
+                <div class="text-danger d-block" v-if="errors.until_today">
+                    {{ errors.until_today }}
                 </div>
             </div>
         </div>
         <div class="col-4">
-            <CustomSelect class="skyBlueBG" :label="'Валюта'" :options="currencyOptions" :style="skyBlueBG" v-model="salary.currency.val"></CustomSelect>
+            <CustomSelect class="skyBlueBG" :label="'Валюта'"
+                          :options="currencyOptions"
+                          :style="skyBlueBG" v-model="salary.currency.val"
+                          @focusin="clear('salary_currency')"
+                          ></CustomSelect>
+
+            <div class="text-danger d-block" v-if="errors.salary_currency">
+                {{ errors.salary_currency }}
+            </div>
         </div>
       </div>
     </div>
@@ -20,10 +32,14 @@
 </template>
 
 <script setup>
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'clear-error']);
 const props = defineProps({
     modelValue: {
         required: true,
+    },
+    errors: {
+        required: true,
+        default: {}
     }
 })
 import {useCurrencyOptions} from "~/composables/useCurrencyOptions";
@@ -60,6 +76,7 @@ const validate = () => {
     }else{
         salary.currency.isValid = false;
     }
+    console.log(salary.amount.val, salary.currency.val);
     emit('update:modelValue', {amount: salary.amount.val, currency: salary.currency.val});
 }
 watch(salary, validate);
@@ -67,6 +84,13 @@ defineExpose({validate});
 const skyBlueBG = {
     background: "#F5F8FA"
 }
+const errors = ref({});
+watch(() => props.errors, (newErrors) => {
+    console.log(errors.value, newErrors);
+    errors.value = newErrors;
+})
+
+const clear = (input) => emit('clear-error', input);
 </script>
 
 

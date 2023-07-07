@@ -15,12 +15,13 @@
           <label for="city">Город</label>
           <SelectWithSearch :options="cityOptions" v-model="city" :listStyles="searchSelectStyles" @change="onCityChange" :listItemStyles="searchSelectItemStyles"/>
         </div>
-        <div class="input-wrap has-label">
-<!--          <img class="icon" src="~/assets/img/svg/location.svg" alt="#">-->
-          <label for="region">Регион</label>
-          <SelectWithSearch :options="regionOptions" v-model="region" :listStyles="searchSelectStyles" @change="onRegionChange" :listItemStyles="searchSelectItemStyles"/>
-        </div>
         <button class="button-accent submit-search-form" type="button" @click="onSubmit">Поиск </button>
+
+<!--        <div class="input-wrap has-label">-->
+<!--&lt;!&ndash;          <img class="icon" src="~/assets/img/svg/location.svg" alt="#">&ndash;&gt;-->
+<!--          <label for="region">Регион</label>-->
+<!--          <SelectWithSearch :options="regionOptions" v-model="region" :listStyles="searchSelectStyles" @change="onRegionChange" :listItemStyles="searchSelectItemStyles"/>-->
+<!--        </div>-->
       </div>
     </div>
   </form>
@@ -41,6 +42,7 @@ const city = ref('*');
 
 const form = ref(useVacancyForm());
 
+console.log(form.value)
 
 const onRegionChange = (regionItem) => {
   if (regionItem.value === '*'){
@@ -65,7 +67,7 @@ const searchSelectItemStyles = {
 }
 
 const {regions, cities} = storeToRefs(vacancyStore);
-const regionOptions = ref([]);
+// const regionOptions = ref([]);
 const cityOptions = ref([]);
 
 const prepareCities = () => {
@@ -78,13 +80,13 @@ const prepareCities = () => {
 
 const page = useRoute();
 
-watch(region, async(newRegion) => {
-
-  if (region.value !== '*'){
-    await getCities({region_ids: [newRegion]});
-  }
-  prepareCities();
-});
+// watch(region, async(newRegion) => {
+//
+//   if (region.value !== '*'){
+//     await getCities({region_ids: [newRegion]});
+//   }
+//   prepareCities();
+// });
 
 
 const country = computed(() => {
@@ -93,17 +95,18 @@ const country = computed(() => {
   } else return 1;
 });
 onMounted(async() => {
-  if (country.value){
-    await getRegions({country_id: [country.value]});
-  }
-  if (form.value.regions.length === 1){
-    region.value = form.value.regions[0];
-  }
-  const items = regions.value.map((item) => ({value: item.id, name: item.name}));
-  items.unshift({
-    value: '*', name: 'Все'
-  });
-  regionOptions.value = items;
+    prepareCities();
+  // if (country.value){
+  //   await getRegions({country_id: [country.value]});
+  // }
+  // if (form.value.regions.length === 1){
+  //   region.value = form.value.regions[0];
+  // }
+  // const items = regions.value.map((item) => ({value: item.id, name: item.name}));
+  // items.unshift({
+  //   value: '*', name: 'Все'
+  // });
+  // regionOptions.value = items;
 
 });
 
@@ -115,13 +118,13 @@ const onSubmit = (e) => {
   navigateTo({name: 'search-vacancies', query: params});
 }
 
-const regionListStyles = {
-  left: 'unset',
-  right: '0px',
-  width: 'auto !important',
-  maxWidth: '20rem',
-  minWidth: '8rem',
-}
+// const regionListStyles = {
+//   left: 'unset',
+//   right: '0px',
+//   width: 'auto !important',
+//   maxWidth: '20rem',
+//   minWidth: '8rem',
+// }
 const searchSelectStyles = {
   left: 'unset',
   right: '0px',
@@ -134,4 +137,7 @@ const searchSelectStyles = {
 
 <style scoped>
 
+.search-row{
+    grid-template-columns: 1fr 20% 20% 130px;
+}
 </style>

@@ -3,7 +3,7 @@
   <div class="w-box" v-click-outside="save">
     <div class="w-box-head">
       <h3 class="title">Гражданство и Семья</h3>
-      <span class="arrow" :class="{up: isCollapsed}" @click="isCollapsed = !isCollapsed"></span>
+      <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
 
     </div>
 
@@ -55,14 +55,6 @@
           </div>
       </transition>
 
-      <transition>
-      <span v-if="isSaved" class="p-3 d-inline-flex justify-content-center align-items-center" style="color:#0c0">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="me-2">
-              <path fill="#0c0" d="M10.041 17l-4.5-4.319 1.395-1.435 3.08 2.937 7.021-7.183 1.422 1.409-8.418 8.591zm5.959 7v-2h-8v2h8zm0-24v2h-8v-2h8zm2 0h1c2.762 0 5 2.239 5 5v1h-2v-1c0-1.654-1.346-3-3-3h-1v-2zm6 16h-2v-8h2v8zm-18 8h-1c-2.762 0-5-2.239-5-5v-1h2v1c0 1.654 1.346 3 3 3h1v2zm18-6v1c0 2.761-2.238 5-5 5h-1v-2h1c1.654 0 3-1.346 3-3v-1h2zm-24-12v-1c0-2.761 2.238-5 5-5h1v2h-1c-1.654 0-3 1.346-3 3v1h-2zm0 2h2v8h-2v-8z"/>
-          </svg>
-          Сохранен
-      </span>
-      </transition>
   </div>
 </template>
 
@@ -147,6 +139,11 @@ const save = async() => {
 
     }
 }
+
+const isCompleted = computed(() => {
+
+    return resume.value.citizenship && resume.value.about && resume.value.has_children && resume.value.salary_from && resume.value.marital_status_id;
+});
 </script>
 
 <style scoped>

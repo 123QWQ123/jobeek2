@@ -19,6 +19,8 @@ export function useVacancyForm(data = null, to_ = 'front') {
     const params = route.query;
 
     let selectedSalary = null;
+    let city = null;
+
     let metros = [];
     let regions = [];
     let countries = [1];
@@ -200,6 +202,9 @@ export function useVacancyForm(data = null, to_ = 'front') {
         }
         if (data.regions instanceof Array) {
             front_params.regions = Array.from(data.regions);
+        }
+        if (data.cities instanceof Array) {
+            front_params.cities = Array.from(data.cities);
         }
         if (data.metros instanceof Array) {
             front_params.metros = Array.from(data.metros);

@@ -78,6 +78,7 @@ const create = () => {
 
 
 const updateItem = (id, newItem) => {
+    console.log(id, newItem);
     const newItems = selectedEducationDocs.value.map(item => {
         if (item.id === id){
             return newItem;

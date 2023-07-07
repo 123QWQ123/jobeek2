@@ -31,50 +31,33 @@ import {storeToRefs} from "pinia";
 import Paginate from "vuejs-paginate-next";
 import {useProfileStore} from "~/store/profile";
 import {useResumeStore} from "~/store/resume";
-const providers = ref([
-    {
-        name: 'HeadHunter',
-        slug: 'hh',
-        url: null,
-        is_connected: true,
-        icon: "https://tech.hh.ru/api/logos/min-hh-red.png",
-    },
-    {
-        name: 'Superjob',
-        slug: 'superjob',
-        url: null,
-        is_connected: true,
-        icon: new URL("~/assets/img/logos/superjob.svg", import.meta.url),
-    },
-]);
+// const providers = ref();
+
 
 const vacancyStore = useVacancyStore();
+const resumeStore = useResumeStore();
 const { getProvidersAuthUrl } = useProfileStore();
-const { getConnectedProviders } = useResumeStore();
+const { getConnectedProviders } = resumeStore;
 
-const checkProviders = async() => {
+const {providers} = resumeStore;
+console.log(providers);
+// const checkProviders = async() => {
+//     if (connectedProviders){
+//         for (let i = 0; i < providers.length; i++){
+//             const providerItem = providers[i];
+//             console.log(providerItem);
+//             providerItem.is_connected = connectedProviders[providerItem.slug] ?? false;
+//         }
+//     }
+// }
+// await checkProviders();
 
-    const connectedProviders = await getConnectedProviders();
-
-
-    console.log(connectedProviders);
-
-    if (connectedProviders){
-        for (let i = 0; i < providers.value.length; i++){
-            const providerItem = providers.value[i];
-            console.log(providerItem);
-            providerItem.is_connected = connectedProviders[providerItem.slug] ?? false;
-        }
-    }
-
-
-}
 
 const isAllConnected = computed(() => {
 
     let is_all = true;
-    for (let i = 0; i < providers.value.length; i++){
-        const providerItem = providers.value[i];
+    for (let i = 0; i < providers.length; i++){
+        const providerItem = providers[i];
         if(providerItem.is_connected === false){
             is_all = false;
         }
@@ -82,12 +65,12 @@ const isAllConnected = computed(() => {
 
     return is_all;
 });
+const authData = await getProvidersAuthUrl();
+
 onMounted(async () => {
-    await checkProviders();
     if (!isAllConnected.value){
-        const authData = await getProvidersAuthUrl();
-        for (let i = 0; i < providers.value.length; i++){
-            const providerItem = providers.value[i];
+        for (let i = 0; i < providers.length; i++){
+            const providerItem = providers[i];
             providerItem.url = authData[providerItem.slug];
         }
     }

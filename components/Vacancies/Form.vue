@@ -9,15 +9,15 @@
                  autocomplete="off">
         </div>
         <div class="input-wrap has-label">
-          <label for="salary">Желаемая зарплата</label>
+          <label for="salary">Желаемая зарплата1</label>
           <HeaderSalarySelectInForm v-model="form.salary"></HeaderSalarySelectInForm>
         </div>
         <div class="input-wrap has-icon">
           <SelectWithSearch :options="cityOptions" v-model="city" :listStyles="searchSelectStyles" @change="onCityChange" :listItemStyles="searchSelectItemStyles"/>
         </div>
-        <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">
-          <SelectWithSearch :options="regionOptions" v-model="region" :listStyles="searchSelectStyles" @change="onRegionChange" :listItemStyles="searchSelectItemStyles"/>
-        </div>
+<!--        <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">-->
+<!--          <SelectWithSearch :options="regionOptions" v-model="region" :listStyles="searchSelectStyles" @change="onRegionChange" :listItemStyles="searchSelectItemStyles"/>-->
+<!--        </div>-->
         <button class="button-accent submit-search-form" type="submit">Поиск </button>
       </div>
     </div>
@@ -71,23 +71,25 @@ const prepareCities = () => {
   cityOptions.value = c_items;
 }
 
-watch(region, async(newRegion) => {
-  if (region.value !== '*'){
-    await getCities({region_ids: [newRegion]});
-  }
-  prepareCities();
-});
+// watch(region, async(newRegion) => {
+//   if (region.value !== '*'){
+//     await getCities({region_ids: [newRegion]});
+//   }
+//   prepareCities();
+// });
 
 onMounted(async() => {
-  if (form.value.regions.length === 1){
-    region.value = form.value.regions[0];
-  }
-  await getRegions({country_ids: [form.value.country]});
-  const items = regions.value.map((item) => ({value: item.id, name: item.name}));
-  items.unshift({
-    value: '*', name: 'Все'
-  });
-  regionOptions.value = items;
+
+    prepareCities();
+  // if (form.value.regions.length === 1){
+  //   region.value = form.value.regions[0];
+  // }
+  // await getRegions({country_ids: [form.value.country]});
+  // const items = regions.value.map((item) => ({value: item.id, name: item.name}));
+  // items.unshift({
+  //   value: '*', name: 'Все'
+  // });
+  // regionOptions.value = items;
 });
 
 

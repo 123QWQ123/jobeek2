@@ -50,8 +50,6 @@ watch(() => props.options, (newOptions) => {
   selectedOption.value = options.value.find(item => String(item.value) === String(props.modelValue));
 });
 
-
-// console.log(props.modelValue);
 const selectedOption = ref(null);
 
 onMounted(() => {
@@ -85,7 +83,6 @@ function toggle(){
     }
     isOpen.value = !isOpen.value;
     if (isOpen.value){
-        console.log(1);
         setTimeout(() => searchInputElement.value?.focus(), 0);
     }
 }

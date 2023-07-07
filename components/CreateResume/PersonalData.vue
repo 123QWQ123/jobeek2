@@ -3,9 +3,10 @@
         <div class="w-box-head">
             <h1 class="title">{{ formTitle }}</h1>
             <div class="descr">Получайте уведомления о новых вакансиях по созданному запросу</div>
+            <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
         </div>
 
-        <div class="w-box-body" >
+        <div class="w-box-body" :class="{collapse: isCollapsed}">
 <!--                  <CreateResumeSocialNetworks></CreateResumeSocialNetworks>-->
 <!--            <CreateResumeProviders></CreateResumeProviders>-->
 
@@ -13,7 +14,7 @@
                 <label for="name">Название<b>*</b></label>
                 <div class="input-wrapper">
                     <div class="c1 mt-1">
-                        <input type="text" placeholder="Название" v-model="state.title.val">
+                        <input type="text" placeholder="Название" v-model="state.title.val" @focusin="() => errors.title = ''">
 
                         <div class="text-danger d-block" v-if="errors.title">
                             {{ errors.title }}
@@ -52,22 +53,22 @@
                 <div class="input-wrapper">
                     <div class="c2">
                         <div class="input-wrapper">
-                            <input type="text" placeholder="Имя" v-model="state.first_name.val">
+                            <input type="text" placeholder="Имя" v-model="state.first_name.val" @focusin="() => errors.first_name = ''">
 
                             <div class="text-danger d-block" v-if="errors.first_name">
                                 {{ errors.first_name }}
                             </div>
                         </div>
                         <div class="input-wrapper">
-                            <input type="text" placeholder="Фамилия" v-model="state.last_name.val">
+                            <input type="text" placeholder="Фамилия" v-model="state.last_name.val" @focusin="() => errors.last_name = ''">
 
-                            <div class="text-danger d-block" v-if="errors.last_name">
+                            <div class="text-danger d-block" v-if="errors.last_name" >
                                 {{ errors.last_name }}
                             </div>
                         </div>
                     </div>
                     <div class="c1 mt-1">
-                        <input type="text" placeholder="Отчество" v-model="state.middle_name.val">
+                        <input type="text" placeholder="Отчество" v-model="state.middle_name.val" @focusin="() => errors.middle_name = ''">
 
                         <div class="text-danger d-block" v-if="errors.middle_name">
                             {{ errors.middle_name }}
@@ -79,19 +80,20 @@
                 <label>Дата рождения <b>*</b></label>
                 <div class="input-wrapper">
                     <div class="mb-1">
-                        <BirthDatePicker v-model.lazy="state.birth_date.val" :value="state.birth_date.val"></BirthDatePicker>
+                        <BirthDatePicker v-model.lazy="state.birth_date.val" :value="state.birth_date.val" @focusin="() => errors.birth_date = ''"></BirthDatePicker>
+
+                        <div class="text-danger d-block" v-if="errors.birth_date">
+                            {{ errors.birth_date }}
+                        </div>
                     </div>
                     <div class="check-block mt-2">
                         <div class="checkbox">
-                            <input type="checkbox" id="hide_birthday" v-model.number="state.hide_birthday.val">
+                            <input type="checkbox" id="hide_birthday" v-model.number="state.hide_birthday.val" @focusin="() => errors.hide_birthday = ''">
                             <div class="checkbox-mask">
                                 <img src="~/assets/img/svg/check.svg" alt="#" />
                             </div>
                         </div>
                         <label for="hide_birthday" class="fs-14">Не показать даты рождения</label>
-                    </div>
-                    <div class="text-danger d-block" v-if="errors.birth_date">
-                        {{ errors.birth_date }}
                     </div>
                     <div class="text-danger d-block" v-if="errors.hide_birthday">
                         {{ errors.hide_birthday }}
@@ -101,21 +103,21 @@
             <div class="input-row">
                 <label>Город проживания <b>*</b></label>
                 <div class="input-wrapper mt-2">
-                    <SelectWithSearch :options="cityOptions" v-model.number="state.city_id.val" :placeholder="'Ишите город'" @input="updateCityInput"></SelectWithSearch>
+                    <SelectWithSearch :options="cityOptions" v-model.number="state.city_id.val" :placeholder="'Ишите город'" @input="updateCityInput" @focusin="() => errors.city_id = ''"></SelectWithSearch>
+
+                    <div class="text-danger d-block" v-if="errors.city_id">
+                        Вам нужно выбрать город проживания!
+                    </div>
 
                     <div class="check-block mt-2">
                         <div class="checkbox">
-                            <input type="checkbox" id="ready-to-relocate" v-model.number="state.is_relocatable.val">
+                            <input type="checkbox" id="ready-to-relocate" v-model.number="state.is_relocatable.val" @focusin="() => errors.is_relocatable = ''">
                             <div class="checkbox-mask">
                                 <img src="~/assets/img/svg/check.svg" alt="#" />
                             </div>
                         </div>
                         <label for="ready-to-relocate" class="fs-14">Готов к переезду</label>
 
-                    </div>
-
-                    <div class="text-danger d-block" v-if="errors.city_id">
-                        Вам нужно выбрать город проживания!
                     </div>
 
                     <div class="text-danger d-block" v-if="errors.is_relocatable">
@@ -138,14 +140,14 @@
                             <div class="c2">
 
                                 <div>
-                                    <CustomSelect :options="useHourOptions()" v-model="state.phone_time_start.val"  :label="'От'"></CustomSelect>
+                                    <CustomSelect :options="useHourOptions()" v-model="state.phone_time_start.val"  :label="'От'" @focusin="() => errors.phone_time_start = ''"></CustomSelect>
 
                                     <div class="text-danger d-block" v-if="errors.phone_time_start">
                                         {{ errors.phone_time_start }}
                                     </div>
                                 </div>
                                 <div>
-                                    <CustomSelect :options="useHourOptions()" v-model="state.phone_time_end.val" :label="'До'"></CustomSelect>
+                                    <CustomSelect :options="useHourOptions()" v-model="state.phone_time_end.val" :label="'До'" @focusin="() => errors.phone_time_end = ''"></CustomSelect>
 
                                     <div class="text-danger d-block" v-if="errors.phone_time_end">
                                         {{ errors.phone_time_end }}
@@ -164,20 +166,12 @@
             <div class="input-row">
                 <label for="resume_email">Электронная почта</label>
                 <div class="input-wrapper">
-                    <input id="resume_email" type="email" placeholder="Электронная почта" v-model="state.email.val">
+                    <input id="resume_email" type="email" placeholder="Электронная почта" v-model="state.email.val" @focusin="() => errors.email = ''">
                     <div class="text-danger d-block" v-if="errors.email">
                         {{errors.email}}
                     </div>
                 </div>
             </div>
-            <transition>
-        <span v-if="isSaved" class="d-inline-flex justify-content-center align-items-center" style="color:#0c0">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="me-2">
-                <path fill="#0c0" d="M10.041 17l-4.5-4.319 1.395-1.435 3.08 2.937 7.021-7.183 1.422 1.409-8.418 8.591zm5.959 7v-2h-8v2h8zm0-24v2h-8v-2h8zm2 0h1c2.762 0 5 2.239 5 5v1h-2v-1c0-1.654-1.346-3-3-3h-1v-2zm6 16h-2v-8h2v8zm-18 8h-1c-2.762 0-5-2.239-5-5v-1h2v1c0 1.654 1.346 3 3 3h1v2zm18-6v1c0 2.761-2.238 5-5 5h-1v-2h1c1.654 0 3-1.346 3-3v-1h2zm-24-12v-1c0-2.761 2.238-5 5-5h1v2h-1c-1.654 0-3 1.346-3 3v1h-2zm0 2h2v8h-2v-8z"/>
-            </svg>
-            Сохранен
-        </span>
-            </transition>
         </div>
     </div>
 </template>
@@ -213,11 +207,8 @@ const formTitle = computed(() => {
 const isSaved = ref(false);
 const isChanged = ref(false);
 const isFirst = ref(true);
-onMounted(() => {
-    if (draftID.value){
-        isFirst.value = false;
-    }
-})
+const isCollapsed = ref(false);
+const isUpdated = ref(false);
 
 const photoUrl = computed(() => {
   if (state.photo.base64){
@@ -321,10 +312,20 @@ const state = reactive({
     error: null,
     success: null,
 });
-watch(() => useWatchStateValues(state), () => {
-    isChanged.value = true;
+
+
+watch(() => useWatchStateValues(state, true, true),   () => {
+    if (!isFirst.value){
+        isChanged.value = true;
+    }else{
+        isFirst.value = false;
+    }
 });
 watch(() => resumeStore.resume, (newResume) => {
+    if (isUpdated.value){
+        isUpdated.value = false;
+        return;
+    }
     if (newResume){
         state['first_name'].val = newResume['first_name'];
         state['last_name'].val = newResume['last_name'];
@@ -336,7 +337,7 @@ watch(() => resumeStore.resume, (newResume) => {
         state['birth_date'].val = newResume['birth_date'];
         state['email'].val = newResume['email'];
         state['phone'].val = newResume['phone'];
-        phoneInputElement.value.value = newResume['phone'] ?? '';
+        phoneMask.value.value = newResume['phone'] ?? '';
         state['phone_time_start'].val = newResume['phone_time_start'];
         state['phone_time_end'].val = newResume['phone_time_end'];
     }
@@ -362,7 +363,6 @@ const getCities = async (newValue = '') => {
 }
 
 onMounted(( ) => {
-
     phoneMask.value = new IMask(phoneInputElement.value, {
         mask: "+{7}(000)000-00-00",
     });
@@ -378,7 +378,6 @@ const {errors, handleErrorResponse} = useFormValidation();
 const save = async () => {
 
     if (isChanged.value){
-        console.log(0);
         state.isLoading = true;
         // validate();
         errors.value = {};
@@ -390,6 +389,9 @@ const save = async () => {
             formData.delete('title');
             resData = await updateResume(draftID.value, formData, 'put');
             console.log(resData);
+            isUpdated.value = true;
+            getResume(draftID.value)
+
         }else{
             const formData = useFormData(state)
             // const formData = useFormData(state, 'form_data')
@@ -412,14 +414,19 @@ const save = async () => {
         if (resData.status !== 'success'){
             return handleErrorResponse(resData.data);
         }
-        isSaved.value = true;
         isChanged.value = false;
-        setTimeout(() => {
-            isSaved.value = false;
-        }, 3000);
+        isSaved.value = false;
 
     }
 }
+
+const isCompleted = computed(() => {
+    const myResume = resume.value;
+    if (myResume){
+        return (myResume.first_name && myResume.last_name && myResume.id && myResume.birth_date && myResume.city_id && myResume.phone && myResume.phone_time_start && myResume.phone_time_end && myResume.email);
+    }
+    return false;
+});
 
 </script>
 
