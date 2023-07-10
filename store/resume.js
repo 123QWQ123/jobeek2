@@ -29,20 +29,20 @@ export const useResumeStore = defineStore('resume', {
       part_times: [],
       metros: [],
       providers: [
-        {
-          name: 'HeadHunter',
-          slug: 'hh',
-          url: null,
-          is_connected: true,
-          icon: "https://tech.hh.ru/api/logos/min-hh-red.png",
-        },
-        {
-          name: 'Superjob',
-          slug: 'superjob',
-          url: null,
-          is_connected: true,
-          icon: new URL("~/assets/img/logos/superjob.svg", import.meta.url),
-        },
+        // {
+        //   name: 'HeadHunter',
+        //   slug: 'hh',
+        //   url: null,
+        //   is_connected: true,
+        //   icon: "https://tech.hh.ru/api/logos/min-hh-red.png",
+        // },
+        // {
+        //   name: 'Superjob',
+        //   slug: 'superjob',
+        //   url: null,
+        //   is_connected: true,
+        //   icon: new URL("~/assets/img/logos/superjob.svg", import.meta.url),
+        // },
       ]
     }
   },
@@ -102,6 +102,7 @@ export const useResumeStore = defineStore('resume', {
         content_type,
         payload
       });
+      console.log(response);
       // if ('data' in response && response.data.status === 'success'){
       //   this.resume = response.data;
       // }
@@ -139,13 +140,13 @@ export const useResumeStore = defineStore('resume', {
         payload
       });
       if ('data' in data){
-        const connectedProviders = data.data;
-        if (connectedProviders){
-          for (let i = 0; i < this.providers.length; i++){
-            const providerItem = this.providers[i];
-            this.providers[i].is_connected = connectedProviders[providerItem.slug] ?? false;
-          }
-        }
+        // const connectedProviders = data.data;
+        // console.log(connectedProviders);
+        // if (connectedProviders){
+        //   for (const [key, connectedProvider] of Array.from(connectedProviders)) {
+        //     this.providers[key].is_connected = connectedProvider ?? false;
+        //   }
+        // }
         return data.data;
       }
       return data;

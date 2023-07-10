@@ -27,11 +27,8 @@
 <script setup>
 
 import {useVacancyStore} from "../../store/vacancy";
-import {storeToRefs} from "pinia";
-import Paginate from "vuejs-paginate-next";
 import {useProfileStore} from "~/store/profile";
 import {useResumeStore} from "~/store/resume";
-// const providers = ref();
 
 
 const vacancyStore = useVacancyStore();
@@ -65,10 +62,11 @@ const isAllConnected = computed(() => {
 
     return is_all;
 });
-const authData = await getProvidersAuthUrl();
 
 onMounted(async () => {
     if (!isAllConnected.value){
+        const authData = await getProvidersAuthUrl();
+
         for (let i = 0; i < providers.length; i++){
             const providerItem = providers[i];
             providerItem.url = authData[providerItem.slug];

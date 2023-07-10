@@ -31,6 +31,8 @@ const isShown = ref(false);
 const isChanged = ref(false);
 const isSaved = ref(false);
 const isCollapsed = ref(true);
+const isUpdated = ref(false);
+
 const componentElement = ref(false);
 const resumeStore = useResumeStore();
 
@@ -63,7 +65,7 @@ const save = async() => {
 
         isChanged.value = false;
         isSaved.value = false;
-        getResume(draftID.value);
+        // getResume(draftID.value);
     }
 }
 watch(() => foreign_languages.value,  (newItems) => {
@@ -73,7 +75,11 @@ watch(() => foreign_languages.value,  (newItems) => {
 
 
 const isCompleted = computed(() => {
-    return resume.value?.languages?.length > 0;
+    if (isUpdated.value === true){
+        return foreign_languages.value.length > 0;
+    }else{
+        return resumeStore.resume?.languages?.length > 0;
+    }
 });
 </script>
 

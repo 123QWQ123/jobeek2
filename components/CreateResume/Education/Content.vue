@@ -86,14 +86,16 @@ const save = async () => {
         }
         isChanged.value = false;
         isSaved.value = false;
-
         isUpdated.value = true;
-        getResume(draftID.value)
     }
 }
 
 const isCompleted = computed(() => {
-    return resume.value?.education_histories?.length > 0;
+    if (isUpdated.value === true){
+        return educations.value.length > 0;
+    }else{
+        return resume.value?.education_histories?.length > 0;
+    }
 });
 </script>
 

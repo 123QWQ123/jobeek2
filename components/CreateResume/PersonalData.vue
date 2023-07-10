@@ -337,6 +337,8 @@ watch(() => resumeStore.resume, (newResume) => {
         state['birth_date'].val = newResume['birth_date'];
         state['email'].val = newResume['email'];
         state['phone'].val = newResume['phone'];
+        state['photo_url'].val = newResume['photo'];
+        console.log(newResume['photo']);
         phoneMask.value.value = newResume['phone'] ?? '';
         state['phone_time_start'].val = newResume['phone_time_start'];
         state['phone_time_end'].val = newResume['phone_time_end'];
@@ -397,9 +399,8 @@ const save = async () => {
             // const formData = useFormData(state, 'form_data')
             // formData.append('form_data', 'personal_data')
             formData.form_data = 'personal_data';
-            console.log(formData);
             resData = await createResume(formData);
-            console.log(resData);
+
             if (resData.status === 'success'){
                 const resume_id = resData.data.data.id;
                 state.isNew = false;
@@ -416,6 +417,7 @@ const save = async () => {
         }
         isChanged.value = false;
         isSaved.value = false;
+        isUpdated.value = false;
 
     }
 }

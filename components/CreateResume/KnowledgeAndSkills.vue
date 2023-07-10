@@ -88,8 +88,6 @@ const save = async() => {
         isChanged.value = false;
 
         isUpdated.value = true;
-        getResume(draftID.value)
-
     }
 };
 </script>

@@ -6,10 +6,6 @@ definePageMeta({
     layout: "cabinet",
 });
 
-// useHead({
-//     title: "Создание резюме - Jobeek"
-// });
-
 const pageTitle = computed(() => {
   if (draftId.value) {
       return "Обновить резюме - Jobeek"

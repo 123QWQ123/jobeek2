@@ -102,7 +102,6 @@ const save = async () => {
 
 
         isUpdated.value = true;
-        getResume(draftID.value)
 
     }
 }
