@@ -90,16 +90,14 @@ const save = async () => {
         isSaved.value = false;
 
         isUpdated.value = true;
+        getResume(draftID.value)
 
     }
 }
 const isCompleted = computed(() => {
-    if (isUpdated.value === true){
-        return education_document_items.value.length > 0;
-    }else{
-        return resume.value?.education_documents?.length > 0;
-    }
+    return resume.value?.education_documents?.length > 0;
 });
+
 </script>
 
 <style scoped>

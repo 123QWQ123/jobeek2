@@ -65,7 +65,7 @@ const save = async() => {
 
         isChanged.value = false;
         isSaved.value = false;
-        // getResume(draftID.value);
+        getResume(draftID.value);
     }
 }
 watch(() => foreign_languages.value,  (newItems) => {
