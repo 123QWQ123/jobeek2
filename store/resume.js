@@ -139,7 +139,7 @@ export const useResumeStore = defineStore('resume', {
         method: 'get',
         payload
       });
-      if ('data' in data){
+      if (data && 'data' in data){
         // const connectedProviders = data.data;
         // console.log(connectedProviders);
         // if (connectedProviders){

@@ -392,13 +392,14 @@ const save = async () => {
             resData = await updateResume(draftID.value, formData, 'put');
             console.log(resData);
             isUpdated.value = true;
-            getResume(draftID.value)
+            // getResume(draftID.value)
 
         }else{
-            const formData = useFormData(state)
+            const formData = useFormData(state, 'form_data');
+            console.log(formData);
             // const formData = useFormData(state, 'form_data')
             // formData.append('form_data', 'personal_data')
-            formData.form_data = 'personal_data';
+            // formData.form_data = 'personal_data';
             resData = await createResume(formData);
 
             if (resData.status === 'success'){
