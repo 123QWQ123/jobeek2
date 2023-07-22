@@ -30,19 +30,34 @@
 </template>
 
 <script setup>
+
 import useFormValidation from "~/composables/useFormValidation";
 import {useResumeStore} from "~/store/resume";
+import {useDiff} from "~/composables/useDiff";
 import {useDictionaryStore} from "~/store/dictionary";
-import {storeToRefs} from "pinia";
-import {useWatchStateValues} from "~/composables/useWatchStateValues";
-
+const educationElement = ref(false);
 const route = useRoute();
 const resumeStore = useResumeStore();
 const dictionaryStore = useDictionaryStore();
-
-
-const selected_licenses = ref( resumeStore.resume.driver_licenses ?? []);
 const draftID = computed(() => route.query.draft_id);
+
+const driver_licenses = ref(resumeStore.resume?.driver_licenses ?? []);
+const {getDriverLicenses} = dictionaryStore;
+const driving_license_options = computed(() => dictionaryStore.driver_licenses);
+await getDriverLicenses();
+const check = (id) => {
+    return driver_licenses.value.includes(id);
+}
+const toggle = (id) => {
+    const IDs = [...driver_licenses.value];
+    if (!IDs.includes(id)){
+        IDs.push(id);
+    }else{
+        const deleteIndex = IDs.indexOf(id);
+        IDs.splice(deleteIndex, 1);
+    }
+    driver_licenses.value = IDs;
+}
 
 const isShown = ref(false);
 const isChanged = ref(false);
@@ -50,71 +65,81 @@ const isSaved = ref(false);
 const isCollapsed = ref(true);
 const isUpdated = ref(false);
 
-const {getDriverLicenses} = dictionaryStore;
-const {driver_licenses: driving_license_options} = storeToRefs(dictionaryStore);
-await getDriverLicenses();
+const sectionData = ref({
+    driver_licenses: [],
+});
+watch(() => sectionData.value, (newData, oldData) => {
+    const diffData =  useDiff(newData, oldData, ['id', 'created_at', 'updated_at']);
+    if (Object.keys(diffData).length){
+        driver_licenses.value = newData.driver_licenses;
+        if (isUpdated.value){
+            isUpdated.value = false;
+            return;
+        }
+    }
+});
+watch(() => resumeStore.resume, (newResume) => {
+    if (newResume){
+        sectionData.value = {
+            driver_licenses: newResume?.driver_licenses,
+        };
+        nextTick(() => {
+            isChanged.value = false;
+        });
+    }
+});
 
-watch(() => useWatchStateValues(selected_licenses.value), (newData) => {
+watch(() => driver_licenses.value, (newData) => {
+    console.log(newData);
     isChanged.value = true;
 });
 
-watch(() => resumeStore.resume?.driver_licenses, (newItems) => {
-    if (isUpdated.value){
-        isUpdated.value = false;
-        return;
-    }
-    if (newItems.length>0){
-        selected_licenses.value = newItems;
+onMounted(() => {
+    if (resumeStore.resume){
+        sectionData.value = {
+            driver_licenses: resumeStore.resume?.driver_licenses,
+        };
+        nextTick(() => {
+            isChanged.value = false;
+        });
     }
 })
 
-onMounted(() => {
-    if (selected_licenses.value.length > 0){
+watch(() => isCollapsed.value, (newData) => {
+    if (!newData){
         isShown.value = true;
-        isCollapsed.value = false;
     }
-})
-const isCompleted = computed(() => {
-    return resumeStore.resume.driver_licenses?.length > 0;
 });
 
 
 const {getResume, updateResume} = resumeStore;
 
 const {errors, handleErrorResponse} = useFormValidation();
-const check = (id) => {
-    return selected_licenses.value.includes(id);
-}
 const save = async () => {
     if (isChanged.value){
-        errors.value = {};
         const resData = await updateResume(draftID.value, {
             form_data: 'DRIVER_LICENSES_DATA',
-            driver_licenses: selected_licenses.value
+            driver_licenses: driver_licenses.value
         });
 
         if (resData.status !== 'success'){
             return handleErrorResponse(resData.data);
         }
-
-        isSaved.value = true;
         isChanged.value = false;
-
-
+        isSaved.value = false;
         isUpdated.value = true;
 
+        await getResume(draftID.value);
     }
 }
 
-const toggle = (id) => {
-    if (!selected_licenses.value.includes(id)){
-        selected_licenses.value.push(id);
+const isCompleted = computed(() => {
+    if (isUpdated.value === true){
+        return driver_licenses.value.length > 0;
     }else{
-        const deleteIndex = selected_licenses.value.indexOf(id);
-        selected_licenses.value.splice(deleteIndex, 1);
+        return resumeStore.resume?.driver_licenses?.length > 0;
     }
-}
-
+});
 
 </script>
 

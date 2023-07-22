@@ -60,7 +60,6 @@ watch(() => sectionData.value, (newData, oldData) => {
             isUpdated.value = false;
             return;
         }
-        console.log('rerendering EDUCATION_HISTORIES');
     }
 });
 watch(() => resumeStore.resume, (newResume) => {
