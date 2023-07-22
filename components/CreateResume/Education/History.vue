@@ -50,6 +50,7 @@ const resetObject = {
 
 const selectedEducations = ref(props.modelValue ?? []);
 watch(() => selectedEducations.value, (newData) => {
+    console.log(newData);
   emit('update:modelValue', newData);
 })
 const errors = ref(props.errors ?? []);

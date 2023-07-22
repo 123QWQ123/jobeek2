@@ -35,7 +35,6 @@ const isEditable = computed(() => {
 const {getResume} = resumeStore;
 
 onMounted(() => {
-    console.log('mounted');
   if (draftId.value){
     getResume(draftId.value);
   }

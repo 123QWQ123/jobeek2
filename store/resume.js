@@ -86,9 +86,10 @@ export const useResumeStore = defineStore('resume', {
       }
       return data;
     },
-    async createResume( payload) {
+    async createResume( payload, content_type = 'application/json') {
       const response = await useApi('seeker/resumes/create', {
         method: 'post',
+        content_type,
         payload
       });
       // if ('data' in response){
@@ -102,7 +103,6 @@ export const useResumeStore = defineStore('resume', {
         content_type,
         payload
       });
-      console.log(response);
       // if ('data' in response && response.data.status === 'success'){
       //   this.resume = response.data;
       // }

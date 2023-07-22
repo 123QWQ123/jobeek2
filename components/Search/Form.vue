@@ -42,20 +42,20 @@ const city = ref('*');
 
 const form = ref(useVacancyForm());
 
-console.log(form.value)
 
-const onRegionChange = (regionItem) => {
-  if (regionItem.value === '*'){
-    form.value.regions = [];
-  }else{
-    form.value.regions = [regionItem.value];
-  }
-}
+onMounted(() => {
+    console.log(Array.from(form.value.cities));
+    console.log(Array.from(form.value.regions));
+    if (Array.from(form.value.cities).length === 1){
+      city.value = form.value.cities[0];
+    }
+})
+
 const onCityChange = (regionItem) => {
   if (regionItem.value === '*'){
-    form.value.regions = [];
+    form.value.cities = [];
   }else{
-    form.value.regions = [regionItem.value];
+    form.value.cities = [regionItem.value];
   }
 }
 const {getVacancies, getRegions, getCities} = vacancyStore;
@@ -66,7 +66,9 @@ const searchSelectItemStyles = {
   whiteSpace: 'pre-wrap',
 }
 
-const {regions, cities} = storeToRefs(vacancyStore);
+// const {regions, cities} = storeToRefs(vacancyStore);
+const cities = computed(() => vacancyStore.cities);
+const regions = computed(() => vacancyStore.regions);
 // const regionOptions = ref([]);
 const cityOptions = ref([]);
 
@@ -94,20 +96,18 @@ const country = computed(() => {
     return form.value.countries[0];
   } else return 1;
 });
-onMounted(async() => {
-    prepareCities();
-  // if (country.value){
-  //   await getRegions({country_id: [country.value]});
-  // }
-  // if (form.value.regions.length === 1){
-  //   region.value = form.value.regions[0];
-  // }
-  // const items = regions.value.map((item) => ({value: item.id, name: item.name}));
-  // items.unshift({
-  //   value: '*', name: 'Все'
-  // });
-  // regionOptions.value = items;
 
+onMounted(async() => {
+
+    await getRegions({country_id: country.value});
+    // const region_ids = regions.value.map((item) => item.id);
+    // console.log(region_ids);
+    await getCities({country_id: country.value});
+    //
+    // console.log(regions.value);
+    // console.log(cities.value);
+
+    prepareCities();
 });
 
 
@@ -118,13 +118,6 @@ const onSubmit = (e) => {
   navigateTo({name: 'search-vacancies', query: params});
 }
 
-// const regionListStyles = {
-//   left: 'unset',
-//   right: '0px',
-//   width: 'auto !important',
-//   maxWidth: '20rem',
-//   minWidth: '8rem',
-// }
 const searchSelectStyles = {
   left: 'unset',
   right: '0px',

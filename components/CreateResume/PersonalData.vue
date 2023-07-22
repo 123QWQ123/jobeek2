@@ -187,6 +187,7 @@ import {useRuntimeConfig} from "#app";
 import useFormValidation from "~/composables/useFormValidation";
 import {storeToRefs} from "pinia";
 import {useWatchStateValues} from "~/composables/useWatchStateValues";
+import {useDiff} from "~/composables/useDiff";
 const resumeStore = useResumeStore();
 const profileStore = useProfileStore();
 const CONFIG = useRuntimeConfig();
@@ -321,27 +322,47 @@ watch(() => useWatchStateValues(state, true, true),   () => {
         isFirst.value = false;
     }
 });
+
+const sectionData = ref({});
+watch(() => sectionData.value, (newData, oldData) => {
+    const diffData =  useDiff(newData, oldData);
+    if (Object.keys(diffData).length){
+        state['first_name'].val = newData['first_name'];
+        state['last_name'].val = newData['last_name'];
+        state['middle_name'].val = newData['middle_name'] ?? "";
+        state['is_relocatable'].val = newData['is_relocatable'];
+        state['hide_birthday'].val = newData['hide_birthday'];
+        state['city_id'].val = newData['city_id'];
+        getCities(state.city_id.val);
+        state['birth_date'].val = newData['birth_date'];
+        state['email'].val = newData['email'];
+        state['phone'].val = newData['phone'];
+        state['photo_url'].val = newData['photo'];
+        phoneMask.value.value = newData['phone'] ?? '';
+        state['phone_time_start'].val = newData['phone_time_start'];
+        state['phone_time_end'].val = newData['phone_time_end'];
+    }
+})
 watch(() => resumeStore.resume, (newResume) => {
     if (isUpdated.value){
         isUpdated.value = false;
         return;
     }
     if (newResume){
-        state['first_name'].val = newResume['first_name'];
-        state['last_name'].val = newResume['last_name'];
-        state['middle_name'].val = newResume['middle_name'];
-        state['is_relocatable'].val = newResume['is_relocatable'];
-        state['hide_birthday'].val = newResume['hide_birthday'];
-        state['city_id'].val = newResume['city_id'];
-        getCities(state.city_id.val);
-        state['birth_date'].val = newResume['birth_date'];
-        state['email'].val = newResume['email'];
-        state['phone'].val = newResume['phone'];
-        state['photo_url'].val = newResume['photo'];
-        console.log(newResume['photo']);
-        phoneMask.value.value = newResume['phone'] ?? '';
-        state['phone_time_start'].val = newResume['phone_time_start'];
-        state['phone_time_end'].val = newResume['phone_time_end'];
+        sectionData.value = {
+            first_name: newResume.first_name,
+            last_name: newResume.last_name,
+            middle_name: newResume.middle_name,
+            is_relocatable: newResume.is_relocatable,
+            hide_birthday: newResume.hide_birthday,
+            city_id: newResume.city_id,
+            birth_date: newResume.birth_date,
+            email: newResume.email,
+            phone: newResume.phone,
+            photo_url: newResume.photo,
+            phone_time_start: newResume.phone_time_start,
+            phone_time_end: newResume.phone_time_end,
+        };
     }
 })
 
@@ -378,7 +399,6 @@ const {updateResume, createResume} = resumeStore;
 const {errors, handleErrorResponse} = useFormValidation();
 
 const save = async () => {
-
     if (isChanged.value){
         state.isLoading = true;
         // validate();
@@ -396,11 +416,11 @@ const save = async () => {
 
         }else{
             const formData = useFormData(state, 'form_data');
-            console.log(formData);
+            console.log(Object.fromEntries(formData));
             // const formData = useFormData(state, 'form_data')
             // formData.append('form_data', 'personal_data')
             // formData.form_data = 'personal_data';
-            resData = await createResume(formData);
+            resData = await createResume(formData, 'multipart/form-data');
 
             if (resData.status === 'success'){
                 const resume_id = resData.data.data.id;

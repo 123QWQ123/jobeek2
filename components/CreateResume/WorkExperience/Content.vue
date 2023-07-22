@@ -8,7 +8,7 @@
           <div class="w-box-body" :class="{collapse: isCollapsed}">
               <div class="form_content" v-if="isShown">
                   <div class="row">
-                      <CreateResumeWorkExperienceHistory v-model="work_experiences_items" ref="workExperienceElement" :errors="errors.work_histories"/>
+                      <CreateResumeWorkExperienceHistory v-model="work_histories" ref="workExperienceElement" :errors="errors.work_histories"/>
                   </div>
               </div>
               <div class="empty-area" v-else>
@@ -25,15 +25,13 @@
 
 import useFormValidation from "~/composables/useFormValidation";
 import {useResumeStore} from "~/store/resume";
-const props = defineProps(['modelValue']);
-
+import {useDiff} from "~/composables/useDiff";
+const educationElement = ref(false);
 const route = useRoute();
 const resumeStore = useResumeStore();
 const draftID = computed(() => route.query.draft_id);
-const resume = computed(() => resumeStore.resume);
-const work_histories = computed(() => resume.value?.work_histories ?? []);
-const work_experiences_items = ref(work_histories.value ?? []);
-const workExperienceElement = ref(false);
+
+const work_histories = ref(resumeStore.resume?.work_histories.value ?? []);
 
 const isShown = ref(false);
 const isChanged = ref(false);
@@ -41,53 +39,147 @@ const isSaved = ref(false);
 const isCollapsed = ref(true);
 const isUpdated = ref(false);
 
+const sectionData = ref({
+    work_histories: [],
+});
+watch(() => sectionData.value, (newData, oldData) => {
+    const diffData =  useDiff(newData, oldData, ['id', 'created_at', 'updated_at']);
+    if (Object.keys(diffData).length){
+        work_histories.value = newData.work_histories;
+        if (isUpdated.value){
+            isUpdated.value = false;
+            return;
+        }
+        console.log('rerendering WORK_HISTORIES');
+    }
+});
+watch(() => resumeStore.resume, (newResume) => {
+    if (newResume){
+        sectionData.value = {
+            work_histories: newResume?.work_histories,
+        };
+        nextTick(() => {
+            isChanged.value = false;
+        });
+    }
+});
+
+watch(() => work_histories.value, (newData) => {
+    isChanged.value = true;
+});
+
+onMounted(() => {
+    if (resumeStore.resume){
+        sectionData.value = {
+            work_histories: resumeStore.resume?.work_histories,
+        };
+        nextTick(() => {
+            isChanged.value = false;
+        });
+    }
+})
+
 watch(() => isCollapsed.value, (newData) => {
     if (!newData){
         isShown.value = true;
     }
 });
 
-watch(() => work_experiences_items.value, (newData) => {
-    isChanged.value = true;
-});
 
-watch(() => work_histories.value, (newItems) => {
-    if (isUpdated.value){
-        isUpdated.value = false;
-        return;
-    }
-    if (newItems.length > 0){
-        isShown.value = true;
-        work_experiences_items.value = newItems;
-    }
-});
 const {getResume, updateResume} = resumeStore;
 
 const {errors, handleErrorResponse} = useFormValidation();
 const save = async () => {
     if (isChanged.value){
-        errors.value = {};
         const resData = await updateResume(draftID.value, {
             form_data: 'EXPERIENCE_DATA',
-            work_histories: work_experiences_items.value
+            work_histories: work_histories.value
         });
 
         if (resData.status !== 'success'){
             return handleErrorResponse(resData.data);
         }
-
         isChanged.value = false;
         isSaved.value = false;
-
-
         isUpdated.value = true;
-        getResume(draftID.value)
+
+        await getResume(draftID.value);
     }
 }
 
 const isCompleted = computed(() => {
-    return resume.value?.work_histories?.length > 0;
+    if (isUpdated.value === true){
+        return work_histories.value.length > 0;
+    }else{
+        return resumeStore.resume?.work_histories?.length > 0;
+    }
 });
+
+//import useFormValidation from "~/composables/useFormValidation";
+//import {useResumeStore} from "~/store/resume";
+//const props = defineProps(['modelValue']);
+//
+//const route = useRoute();
+//const resumeStore = useResumeStore();
+//const draftID = computed(() => route.query.draft_id);
+//const resume = computed(() => resumeStore.resume);
+//const work_histories = computed(() => resume.value?.work_histories ?? []);
+//const work_experiences_items = ref(work_histories.value ?? []);
+//const workExperienceElement = ref(false);
+//
+//const isShown = ref(false);
+//const isChanged = ref(false);
+//const isSaved = ref(false);
+//const isCollapsed = ref(true);
+//const isUpdated = ref(false);
+//
+//watch(() => isCollapsed.value, (newData) => {
+//    if (!newData){
+//        isShown.value = true;
+//    }
+//});
+//
+//watch(() => work_experiences_items.value, (newData) => {
+//    isChanged.value = true;
+//});
+//
+//watch(() => work_histories.value, (newItems) => {
+//    if (isUpdated.value){
+//        isUpdated.value = false;
+//        return;
+//    }
+//    if (newItems.length > 0){
+//        isShown.value = true;
+//        work_experiences_items.value = newItems;
+//    }
+//});
+//const {getResume, updateResume} = resumeStore;
+//
+//const {errors, handleErrorResponse} = useFormValidation();
+//const save = async () => {
+//    if (isChanged.value){
+//        errors.value = {};
+//        const resData = await updateResume(draftID.value, {
+//            form_data: 'EXPERIENCE_DATA',
+//            work_histories: work_experiences_items.value
+//        });
+//
+//        if (resData.status !== 'success'){
+//            return handleErrorResponse(resData.data);
+//        }
+//
+//        isChanged.value = false;
+//        isSaved.value = false;
+//
+//
+//        isUpdated.value = true;
+//        getResume(draftID.value)
+//    }
+//}
+//
+//const isCompleted = computed(() => {
+//    return resume.value?.work_histories?.length > 0;
+//});
 </script>
 
 <style scoped>

@@ -135,6 +135,7 @@ const submitSearch = () => {
 
 const prepare = (items, custom_items) => {
 
+    console.log(items, custom_items);
   let filterItems = items;
   if (!items){
     filterItems = custom_items;
@@ -190,12 +191,14 @@ const prepare = (items, custom_items) => {
 
 const {getRegions} = vacancyStore;
 watch(() => vacancyStore.regions, prepare);
-onMounted(async () => {
-  if (vacancyStore.regions.length === 0 || parseInt(selectedCountry) !== parseInt(appliedCountry.value)){
-    await getRegions({country_id: selectedCountry});
-    appliedCountry.value = selectedCountry;
+onMounted( async() => {
+// || parseInt(selectedCountry) !== parseInt(appliedCountry.value)
+
+  if (vacancyStore.regions.length === 0){
+      await getRegions({country_id: selectedCountry});
+      appliedCountry.value = selectedCountry;
   }else{
-    prepare(null, vacancyStore.regions);
+      prepare(null, vacancyStore.regions);
   }
   if (selectedItems.value.length > 0){
     isMore.value = true;

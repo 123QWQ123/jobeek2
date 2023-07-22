@@ -9,7 +9,7 @@
         <div class="w-box-body" :class="{collapse: isCollapsed}">
             <div class="" v-if="isShown">
                 <div class="row">
-                    <CreateResumeEducationDocumentsHistory ref="educationDocumentElement" v-model="education_document_items" :errors="errors['education_documents']" />
+                    <CreateResumeEducationDocumentsHistory ref="educationDocumentElement" v-model="education_documents" :errors="errors['education_documents']" />
                 </div>
             </div>
             <div class="empty-area" v-else>
@@ -33,12 +33,16 @@
 
 <script setup>
 
+
 import useFormValidation from "~/composables/useFormValidation";
 import {useResumeStore} from "~/store/resume";
-
+import {useDiff} from "~/composables/useDiff";
+const educationElement = ref(false);
 const route = useRoute();
 const resumeStore = useResumeStore();
 const draftID = computed(() => route.query.draft_id);
+
+const education_documents = ref(resumeStore.resume?.education_documents ?? []);
 
 const isShown = ref(false);
 const isChanged = ref(false);
@@ -46,24 +50,41 @@ const isSaved = ref(false);
 const isCollapsed = ref(true);
 const isUpdated = ref(false);
 
-const resume = computed(() => resumeStore.resume);
-const education_documents = computed(() => resume.value?.education_documents ?? []);
-const education_document_items = ref(education_documents.value ?? []);
-watch(() => education_document_items.value, (newData) => {
-    isChanged.value = true;
+const resumeData = ref({
+    educations: [],
 });
-watch(() => education_documents.value, (newItems) => {
-    if (isUpdated.value){
-        isUpdated.value = false;
-        return;
+watch(() => resumeData.value, (newResume, oldData) => {
+    const diffData =  useDiff(newResume, oldData, ['id', 'created_at', 'updated_at']);
+    if (Object.keys(diffData).length){
+        education_documents.value = newResume.education_documents;
+        if (isUpdated.value){
+            isUpdated.value = false;
+            return;
+        }
+        console.log('rerendering EDUCATION_DOCUMENTS');
     }
-    if (newItems.length > 0){
-        isShown.value = true;
-        education_document_items.value = newItems;
+});
+watch(() => resumeStore.resume, (newResume) => {
+    if (newResume){
+        resumeData.value = {
+            education_documents: newResume.education_documents,
+        };
+        nextTick(() => {
+            isChanged.value = false;
+        });
     }
 });
 
-const educationDocumentElement = ref(false);
+onMounted(() => {
+    if (resumeStore.resume){
+        resumeData.value = {
+            education_documents: resumeStore.resume?.education_documents,
+        };
+        nextTick(() => {
+            isChanged.value = false;
+        });
+    }
+})
 
 watch(() => isCollapsed.value, (newData) => {
     if (!newData){
@@ -71,32 +92,127 @@ watch(() => isCollapsed.value, (newData) => {
     }
 });
 
+watch(() => education_documents.value, (newData) => {
+    isChanged.value = true;
+});
+
 const {getResume, updateResume} = resumeStore;
 
 const {errors, handleErrorResponse} = useFormValidation();
 const save = async () => {
     if (isChanged.value){
-        errors.value = {};
         const resData = await updateResume(draftID.value, {
             form_data: 'EDUCATION_DOCUMENTS_DATA',
-            education_documents: education_document_items.value
+            education_documents: education_documents.value
         });
 
         if (resData.status !== 'success'){
             return handleErrorResponse(resData.data);
         }
-
         isChanged.value = false;
         isSaved.value = false;
-
         isUpdated.value = true;
-        getResume(draftID.value)
 
+        await getResume(draftID.value);
     }
 }
+
 const isCompleted = computed(() => {
-    return resume.value?.education_documents?.length > 0;
+    if (isUpdated.value === true){
+        return education_documents.value.length > 0;
+    }else{
+        return resumeStore.resume?.education_documents?.length > 0;
+    }
 });
+
+//import useFormValidation from "~/composables/useFormValidation";
+//import {useResumeStore} from "~/store/resume";
+//import {useDiff} from "~/composables/useDiff";
+//
+//const route = useRoute();
+//const resumeStore = useResumeStore();
+//const draftID = computed(() => route.query.draft_id);
+//
+//const isShown = ref(false);
+//const isChanged = ref(false);
+//const isSaved = ref(false);
+//const isCollapsed = ref(true);
+//const isUpdated = ref(false);
+//const education_documents = ref(resumeStore.resume?.education_documents ?? []);
+//const resumeData = ref({
+//    education_documents: [],
+//});
+//watch(() => resumeData.value, (newResume, oldData) => {
+//    console.log(newResume, oldData);
+//    const diffData =  useDiff(newResume, oldData);
+//    console.log(diffData);
+//    if (Object.keys(diffData).length > 0){
+//        education_documents.value = newResume.education_documents;
+//        if (isUpdated.value){
+//            isUpdated.value = false;
+//            return;
+//        }
+//        nextTick(() => {
+//            isChanged.value = false;
+//        })
+//        console.log('rerendering EDUCATION_DOCS');
+//    }
+//});
+//watch(() => resumeStore.resume, (newResume) => {
+//    resumeData.value = {
+//        education_documents: newResume.education_documents
+//    }
+//});
+//
+//onMounted(() => {
+//    if (resumeStore.resume){
+//        resumeData.value = {
+//            education_documents: resumeStore.resume?.education_documents,
+//        };
+//    }
+//})
+//
+//
+////
+//watch(() => education_documents.value, (newData) => {
+//    console.log(1);
+//    isChanged.value = true;
+//});
+//
+//
+//const educationDocumentElement = ref(false);
+//
+//watch(() => isCollapsed.value, (newData) => {
+//    if (!newData){
+//        isShown.value = true;
+//    }
+//});
+//
+//const {getResume, updateResume} = resumeStore;
+//
+//const {errors, handleErrorResponse} = useFormValidation();
+//const save = async () => {
+//    console.log(isChanged.value);
+//    if (isChanged.value){
+//        errors.value = {};
+//        const resData = await updateResume(draftID.value, {
+//            form_data: 'EDUCATION_DOCUMENTS_DATA',
+//            education_documents: education_documents.value
+//        });
+//
+//        if (resData.status !== 'success'){
+//            return handleErrorResponse(resData.data);
+//        }
+//
+//        isChanged.value = false;
+//        isSaved.value = false;
+//        isUpdated.value = true;
+//        await getResume(draftID.value)
+//    }
+//}
+//const isCompleted = computed(() => {
+//    return resumeStore.resume?.education_documents?.length > 0;
+//});
 
 </script>
 

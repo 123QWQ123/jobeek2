@@ -35,14 +35,13 @@
 
 import useFormValidation from "~/composables/useFormValidation";
 import {useResumeStore} from "~/store/resume";
+import {useDiff} from "~/composables/useDiff";
 const educationElement = ref(false);
 const route = useRoute();
 const resumeStore = useResumeStore();
 const draftID = computed(() => route.query.draft_id);
 
-const resume = computed(() => resumeStore.resume);
-const education_histories = computed(() => resume.value?.education_histories ?? []);
-const educations = ref(education_histories.value ?? []);
+const educations = ref(resumeStore.resume?.education_histories.value ?? []);
 
 const isShown = ref(false);
 const isChanged = ref(false);
@@ -50,19 +49,28 @@ const isSaved = ref(false);
 const isCollapsed = ref(true);
 const isUpdated = ref(false);
 
-watch(() => education_histories.value, (newItems) => {
-    if (isUpdated.value){
-        isUpdated.value = false;
-        return;
-    }
-    if (newItems.length > 0){
-        isShown.value = true;
-        educations.value = newItems;
+const sectionData = ref({
+    educations: [],
+});
+watch(() => sectionData.value, (newData, oldData) => {
+    const diffData =  useDiff(newData, oldData, ['id', 'created_at', 'updated_at']);
+    if (Object.keys(diffData).length){
+        educations.value = newData.educations;
+        if (isUpdated.value){
+            isUpdated.value = false;
+            return;
+        }
+        console.log('rerendering EDUCATION_HISTORIES');
     }
 });
-watch(() => isCollapsed.value, (newData) => {
-    if (!newData){
-        isShown.value = true;
+watch(() => resumeStore.resume, (newResume) => {
+    if (newResume){
+        sectionData.value = {
+            educations: newResume?.education_histories,
+        };
+        nextTick(() => {
+            isChanged.value = false;
+        });
     }
 });
 
@@ -70,12 +78,29 @@ watch(() => educations.value, (newData) => {
     isChanged.value = true;
 });
 
+onMounted(() => {
+    if (resumeStore.resume){
+        sectionData.value = {
+            educations: resumeStore.resume?.education_histories,
+        };
+        nextTick(() => {
+            isChanged.value = false;
+        });
+    }
+})
+
+watch(() => isCollapsed.value, (newData) => {
+    if (!newData){
+        isShown.value = true;
+    }
+});
+
+
 const {getResume, updateResume} = resumeStore;
 
 const {errors, handleErrorResponse} = useFormValidation();
 const save = async () => {
     if (isChanged.value){
-
         const resData = await updateResume(draftID.value, {
             form_data: 'EDUCATION_DATA',
             education: educations.value
@@ -87,6 +112,8 @@ const save = async () => {
         isChanged.value = false;
         isSaved.value = false;
         isUpdated.value = true;
+
+        await getResume(draftID.value);
     }
 }
 
@@ -94,7 +121,7 @@ const isCompleted = computed(() => {
     if (isUpdated.value === true){
         return educations.value.length > 0;
     }else{
-        return resume.value?.education_histories?.length > 0;
+        return resumeStore.resume?.education_histories?.length > 0;
     }
 });
 </script>

@@ -60,9 +60,17 @@ const useApi = async (method, options = {}) => {
             }
             if (options.method.toUpperCase() === 'POST') {
                 if (!options.payload) throw new Error("No payload provided");
+                const body = options.payload;
+
+                if (options.content_type !== 'application/json'){
+                    body.append('_method', 'POST');
+                }else{
+                    body._method = 'POST';
+                }
+
                 response = await axios.post(
                     url,
-                    options.payload,
+                    body,
                     {
                         headers: headers
                     },
