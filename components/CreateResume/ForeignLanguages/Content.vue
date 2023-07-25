@@ -9,7 +9,7 @@
             <div class="w-box-body" :class="{collapse: isCollapsed}">
                 <div class="" v-if="isShown">
                     <div class="row">
-                        <SharedComponentsForeignLanguagesWrapper ref="componentElement" v-model="foreign_languages" />
+                        <SharedComponentsForeignLanguagesWrapper ref="componentElement" v-model="foreign_languages" :errors="errors.languages ?? []" />
                     </div>
                 </div>
                 <div class="empty-area" v-else>
@@ -24,8 +24,16 @@
 
 <script setup>
 
+
 import useFormValidation from "~/composables/useFormValidation";
 import {useResumeStore} from "~/store/resume";
+import {useDiff} from "~/composables/useDiff";
+const educationElement = ref(false);
+const route = useRoute();
+const resumeStore = useResumeStore();
+const draftID = computed(() => route.query.draft_id);
+
+const foreign_languages = ref(resumeStore.resume?.languages ?? []);
 
 const isShown = ref(false);
 const isChanged = ref(false);
@@ -33,27 +41,56 @@ const isSaved = ref(false);
 const isCollapsed = ref(true);
 const isUpdated = ref(false);
 
-const componentElement = ref(false);
-const resumeStore = useResumeStore();
+const sectionData = ref({
+    languages: [],
+});
+watch(() => sectionData.value, (newData, oldData) => {
+    const diffData =  useDiff(newData, oldData, ['id', 'created_at', 'updated_at']);
+    if (Object.keys(diffData).length){
+        foreign_languages.value = newData.languages;
+        if (isUpdated.value){
+            isUpdated.value = false;
+            return;
+        }
+    }
+});
+watch(() => resumeStore.resume, (newResume) => {
+    if (newResume){
+        sectionData.value = {
+            languages: newResume.languages,
+        };
+        nextTick(() => {
+            isChanged.value = false;
+        });
+    }
+});
 
-const foreign_languages = ref(resumeStore.resume?.languages ?? []);
 onMounted(() => {
-    if (foreign_languages.value.length > 0){
-        isShown.value = true;
-        isCollapsed.value = false;
+    if (resumeStore.resume){
+        sectionData.value = {
+            languages: resumeStore.resume?.languages,
+        };
+        nextTick(() => {
+            isChanged.value = false;
+        });
     }
 })
 
-const route = useRoute();
-const draftID = computed(() => route.query.draft_id);
+watch(() => isCollapsed.value, (newData) => {
+    if (!newData){
+        isShown.value = true;
+    }
+});
 
-const {updateResume, getResume} = resumeStore;
-const resume = computed(() => resumeStore.resume);
+watch(() => foreign_languages.value, (newData) => {
+    isChanged.value = true;
+});
+
+const {getResume, updateResume} = resumeStore;
+
 const {errors, handleErrorResponse} = useFormValidation();
-
-const save = async() => {
+const save = async () => {
     if (isChanged.value){
-        errors.value = {};
         const resData = await updateResume(draftID.value, {
             form_data: 'LANGUAGES_DATA',
             languages: foreign_languages.value
@@ -62,25 +99,19 @@ const save = async() => {
         if (resData.status !== 'success'){
             return handleErrorResponse(resData.data);
         }
-
         isChanged.value = false;
         isSaved.value = false;
-        getResume(draftID.value);
+        isUpdated.value = true;
+
+        await getResume(draftID.value);
     }
 }
-watch(() => foreign_languages.value,  (newItems) => {
-    isChanged.value = true;
-});
-
-
 
 const isCompleted = computed(() => {
-    if (isUpdated.value === true){
-        return foreign_languages.value.length > 0;
-    }else{
-        return resumeStore.resume?.languages?.length > 0;
-    }
+    return resumeStore.resume?.languages?.length > 0;
 });
+
+
 </script>
 
 <style scoped>

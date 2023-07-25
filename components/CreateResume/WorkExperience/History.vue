@@ -59,7 +59,6 @@ const selectedItems = ref(props.modelValue ?? []);
 const errors = ref(props.errors ?? []);
 watch(() => props.errors, (newData) => {
     const newItems = selectedItems.value;
-    console.log(newData);
     selectedItems.value.map((item, index) => {
         newData?.map((error, errorIndex) => {
             if (errorIndex === index){
@@ -75,7 +74,6 @@ watch(() => props.errors, (newData) => {
             }
         })
     })
-    console.log(newItems);
     errors.value = newItems;
 })
 const reset = () => {

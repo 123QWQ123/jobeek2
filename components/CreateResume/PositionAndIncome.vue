@@ -34,11 +34,15 @@
 </template>
 
 <script setup>
-
-import {useDictionaryStore} from "~/store/dictionary";
 import {useResumeStore} from "~/store/resume";
+
+import {useProfileStore} from "~/store/profile";
 import useFormValidation from "~/composables/useFormValidation";
 import {useWatchStateValues} from "~/composables/useWatchStateValues";
+import {useDiff} from "~/composables/useDiff";
+import {useDictionaryStore} from "~/store/dictionary";
+const resumeStore = useResumeStore();
+const profileStore = useProfileStore();
 
 const dictionaryStore = useDictionaryStore();
 
@@ -47,33 +51,38 @@ await getWorkTypes();
 const employmentOptions = computed(() => {
     return dictionaryStore.work_types.map(item => ({name: item.name,value: item.id}));
 });
-const resumeStore = useResumeStore();
 
 const route = useRoute();
+
 const draftID = computed(() => route.query.draft_id);
 
-const {resume} = resumeStore;
+const {seeker} = profileStore;
+const resume = computed(() => resumeStore.resume);
 
+const isShown = ref(false);
 const isSaved = ref(false);
 const isChanged = ref(false);
-const isCollapsed = ref(true);
+const isFirst = ref(true);
+const isCollapsed = ref(false);
+const isUpdated = ref(false);
+
 
 const {getResume} = resumeStore;
 
-const state = ref({
+const state = reactive({
     title: {
         val: resume.title,
         isValid: true,
     },
     salary: {
         val: {
-            amount: resume.salary_from,
-            currency: resume.salary_currency
+            amount: resume.value.salary_from,
+            currency: resume.value.salary_currency
         },
         isValid: true
     },
     employment_id: {
-        val: resume.employment_id,
+        val: resume.value.employment_id,
         isValid: true,
     },
     isFormValid: true,
@@ -83,22 +92,82 @@ const state = ref({
     success: null,
 });
 
-watch(() => useWatchStateValues(state.value), () => isChanged.value = true);
+
+watch(() => useWatchStateValues(state, true, true),   () => {
+    if (!isFirst.value){
+        isChanged.value = true;
+    }else{
+        isFirst.value = false;
+    }
+});
+
+const sectionData = ref({});
+watch(() => sectionData.value, (newData, oldData) => {
+    const diffData =  useDiff(newData, oldData, ['id', 'created_at', 'updated_at']);
+    if (Object.keys(diffData).length){
+        state['title'].val = newData['title'];
+        state['salary'].val.amount = newData['salary_from'];
+        state['salary'].val.currency = newData['salary_currency'];
+        state['employment_id'].val = newData['employment_id'];
+        if (isUpdated.value){
+            isUpdated.value = false;
+            return;
+        }
+    }
+});
+watch(() => resumeStore.resume, (newResume) => {
+    if (newResume){
+        sectionData.value = {
+            title: resumeStore.resume?.title,
+            salary_from: resumeStore.resume?.salary_from,
+            salary_currency: resumeStore.resume?.salary_currency,
+            employment_id: resumeStore.resume?.employment_id,
+        };
+        nextTick(() => {
+            isChanged.value = false;
+        });
+    }
+});
+
+onMounted(() => {
+    if (resumeStore.resume){
+        sectionData.value = {
+            title: resumeStore.resume?.title,
+            salary_from: resumeStore.resume?.salary_from,
+            salary_currency: resumeStore.resume?.salary_currency,
+            employment_id: resumeStore.resume?.employment_id,
+        };
+        nextTick(() => {
+            isChanged.value = false;
+        });
+    }
+})
+
+watch(() => isCollapsed.value, (newData) => {
+    if (!newData){
+        isShown.value = true;
+    }
+});
+
 
 const {updateResume} = resumeStore;
 
 const {errors, handleErrorResponse, clearInputError} = useFormValidation();
+
 const save = async () => {
     if (isChanged.value){
+        state.isLoading = true;
+        // validate();
+        errors.value = {};
+        state.errorMessage = "";
         const jsonData = {
-            salary_currency: state.value.salary.val.currency,
-            title: state.value.title.val,
-            salary_from: state.value.salary.val.amount,
-            employment_id: state.value.employment_id.val,
+            salary_currency: state.salary.val.currency,
+            title: state.title.val,
+            salary_from: state.salary.val.amount,
+            employment_id: state.employment_id.val,
             form_data: 'PROFESSION_DETAILS_DATA'
         }
         state.isLoading = true;
-        // validate();
         errors.value = {};
         state.errorMessage = "";
 
@@ -107,17 +176,24 @@ const save = async () => {
         if (resData.status !== 'success'){
             return handleErrorResponse(resData.data);
         }
-
         isChanged.value = false;
         isSaved.value = false;
+        isUpdated.value = false;
 
+        await getResume(draftID.value);
 
     }
 }
 
 const isCompleted = computed(() => {
-    return resume.title && resume.salary_from && resume.salary_currency && resume.salary_from && resume.employment_id;
+    const myResume = resume.value;
+    if (myResume){
+        return myResume.title && myResume.salary_from && myResume.salary_currency && myResume.salary_from && myResume.employment_id
+    }
+    return false;
 });
+
+
 </script>
 
 <style scoped>

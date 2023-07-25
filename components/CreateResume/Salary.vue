@@ -9,10 +9,6 @@
                 <div class="text-danger d-block" v-if="errors.salary_from">
                     {{ errors.salary_from }}
                 </div>
-
-                <div class="text-danger d-block" v-if="errors.until_today">
-                    {{ errors.until_today }}
-                </div>
             </div>
         </div>
         <div class="col-4">
@@ -32,7 +28,7 @@
 </template>
 
 <script setup>
-const emit = defineEmits(['update:modelValue', 'clear-error']);
+const emit = defineEmits(['update:modelValue', 'clearError']);
 const props = defineProps({
     modelValue: {
         required: true,
@@ -45,15 +41,14 @@ const props = defineProps({
 import {useCurrencyOptions} from "~/composables/useCurrencyOptions";
 const currencyOptions = ref(useCurrencyOptions());
 
-const {modelValue} = props;
 const salary = reactive({
     amount: {
-        val: modelValue.amount,
+        val: null,
         isChecked: false,
         isValid: false,
     },
     currency: {
-        val: modelValue.currency,
+        val: null,
         isChecked: false,
         isValid: false,
     },
@@ -62,6 +57,10 @@ const salary = reactive({
 watch(() => props.modelValue, (newValue) => {
     salary.amount.val = newValue.amount;
     salary.currency.val = newValue.currency;
+})
+onMounted(() => {
+    salary.amount.val = props.modelValue.amount;
+    salary.currency.val = props.modelValue.currency;
 })
 const validate = () => {
     salary.amount.isChecked = true;
@@ -76,11 +75,9 @@ const validate = () => {
     }else{
         salary.currency.isValid = false;
     }
-    console.log(salary.amount.val, salary.currency.val);
     emit('update:modelValue', {amount: salary.amount.val, currency: salary.currency.val});
 }
 watch(salary, validate);
-defineExpose({validate});
 const skyBlueBG = {
     background: "#F5F8FA"
 }
@@ -90,7 +87,9 @@ watch(() => props.errors, (newErrors) => {
     errors.value = newErrors;
 })
 
-const clear = (input) => emit('clear-error', input);
+const clear = (input) => emit('clearError', input);
+defineExpose({validate});
+
 </script>
 
 

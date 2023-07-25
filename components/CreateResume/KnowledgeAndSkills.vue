@@ -92,7 +92,7 @@ const {getResume, updateResume} = resumeStore;
 
 const {errors, handleErrorResponse} = useFormValidation();
 const save = async () => {
-    console.log(isChanged.value);
+    // console.log(isChanged.value);
     if (isChanged.value){
         const resData = await updateResume(draftID.value, {
             form_data: 'KNOWLEDGE_AND_SKILLS_DATA',
@@ -111,11 +111,7 @@ const save = async () => {
 }
 
 const isCompleted = computed(() => {
-    if (isUpdated.value === true){
-        return skills.value.length > 0;
-    }else{
-        return resumeStore.resume?.skills?.length > 0;
-    }
+    return resumeStore.resume?.skills?.length > 0;
 });
 </script>
 

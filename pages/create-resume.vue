@@ -64,7 +64,6 @@ const save = (e) => {
 
           <CreateResumePersonalData ></CreateResumePersonalData>
 
-
           <CreateResumePositionAndIncome v-if="isEditable"></CreateResumePositionAndIncome>
 
           <CreateResumeEducationContent v-if="isEditable"></CreateResumeEducationContent>
@@ -80,8 +79,6 @@ const save = (e) => {
           <CreateResumeForeignLanguagesContent v-if="isEditable"></CreateResumeForeignLanguagesContent>
 
           <CreateResumeCitizenshipAndFamily v-if="isEditable"></CreateResumeCitizenshipAndFamily>
-
-<!--          <CreateResumeFamilyAndMe v-if="isEditable"></CreateResumeFamilyAndMe>-->
 
 <!--          <CreateResumePortfolio></CreateResumePortfolio>-->
 

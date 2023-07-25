@@ -7,8 +7,9 @@
         </div>
 
         <div class="w-box-body" :class="{collapse: isCollapsed}">
-<!--                  <CreateResumeSocialNetworks></CreateResumeSocialNetworks>-->
-<!--            <CreateResumeProviders></CreateResumeProviders>-->
+
+            {{state.providers.val}}
+            <CreateResumeProviders v-model="state.providers.val" :errors="errors.providers"></CreateResumeProviders>
 
             <div class="input-row" v-if="!draftID">
                 <label for="name">Название<b>*</b></label>
@@ -172,6 +173,8 @@
                     </div>
                 </div>
             </div>
+            <br/>
+            <CreateResumeSocialNetworksContent v-model="state.social_networks.val"></CreateResumeSocialNetworksContent>
         </div>
     </div>
 </template>
@@ -188,6 +191,8 @@ import useFormValidation from "~/composables/useFormValidation";
 import {storeToRefs} from "pinia";
 import {useWatchStateValues} from "~/composables/useWatchStateValues";
 import {useDiff} from "~/composables/useDiff";
+import {v4 as uuidv4} from "uuid";
+import {useCreateFormData} from "~/composables/useCreateFormData";
 const resumeStore = useResumeStore();
 const profileStore = useProfileStore();
 const CONFIG = useRuntimeConfig();
@@ -295,10 +300,6 @@ const state = reactive({
         val: "",
         isValid: true,
     },
-    password: {
-        val: "",
-        isValid: true,
-    },
     hide_birthday: {
         val: false,
         isValid: true
@@ -307,6 +308,22 @@ const state = reactive({
         val: false,
         isValid: true
     },
+    social_networks: {
+        val:  [
+            {
+                id: uuidv4(),
+                type: 'phone',
+                value: '76515'
+            }
+        ],
+        isValid: true
+    },
+    providers: {
+        val: {
+            hh: false,
+            superjob: false
+        }
+    },
     isFormValid: true,
     isNew: true,
     isLoading: false,
@@ -314,8 +331,8 @@ const state = reactive({
     success: null,
 });
 
-
-watch(() => useWatchStateValues(state, true, true),   () => {
+watch(() => useWatchStateValues(state, true, true),   (newState, oldState) => {
+    console.log('update');
     if (!isFirst.value){
         isChanged.value = true;
     }else{
@@ -341,6 +358,7 @@ watch(() => sectionData.value, (newData, oldData) => {
         phoneMask.value.value = newData['phone'] ?? '';
         state['phone_time_start'].val = newData['phone_time_start'];
         state['phone_time_end'].val = newData['phone_time_end'];
+        state['social_networks'].val = newData['social_networks'];
     }
 })
 watch(() => resumeStore.resume, (newResume) => {
@@ -362,6 +380,8 @@ watch(() => resumeStore.resume, (newResume) => {
             photo_url: newResume.photo,
             phone_time_start: newResume.phone_time_start,
             phone_time_end: newResume.phone_time_end,
+            social_networks: newResume.social_networks,
+            providers: newResume.providers,
         };
     }
 })
@@ -397,8 +417,8 @@ onMounted(( ) => {
 const {updateResume, createResume} = resumeStore;
 
 const {errors, handleErrorResponse} = useFormValidation();
-
 const save = async () => {
+    console.log(isChanged.value);
     if (isChanged.value){
         state.isLoading = true;
         // validate();
@@ -406,20 +426,19 @@ const save = async () => {
         state.errorMessage = "";
         let resData = {};
         if (draftID.value){
+            const jsonData = useFormData(state);
             const formData = useFormData(state, 'form_data')
             formData.append('form_data', 'personal_data');
+            const unrefed = state.social_networks.val.map((item) => ({type: item.type, value:item.value}));
+            formData.delete('social_networks');
             formData.delete('title');
+            useCreateFormData(formData, 'social_networks', unrefed);
             resData = await updateResume(draftID.value, formData, 'put');
-            console.log(resData);
             isUpdated.value = true;
-            // getResume(draftID.value)
+            await getResume(draftID.value)
 
         }else{
             const formData = useFormData(state, 'form_data');
-            console.log(Object.fromEntries(formData));
-            // const formData = useFormData(state, 'form_data')
-            // formData.append('form_data', 'personal_data')
-            // formData.form_data = 'personal_data';
             resData = await createResume(formData, 'multipart/form-data');
 
             if (resData.status === 'success'){

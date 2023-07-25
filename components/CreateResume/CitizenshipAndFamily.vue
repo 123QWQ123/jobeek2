@@ -60,34 +60,43 @@
 
 <script setup>
 
-import {useVacancyStore} from "~/store/vacancy";
-import {useProfileStore} from "~/store/profile";
-import {useDictionaryStore} from "~/store/dictionary";
-import useFormValidation from "~/composables/useFormValidation";
 import {useResumeStore} from "~/store/resume";
+
+import {useProfileStore} from "~/store/profile";
+import useFormValidation from "~/composables/useFormValidation";
 import {useWatchStateValues} from "~/composables/useWatchStateValues";
-
-const profileStore = useProfileStore();
-const vacancyStore = useVacancyStore();
+import {useDiff} from "~/composables/useDiff";
+import {useDictionaryStore} from "~/store/dictionary";
 const resumeStore = useResumeStore();
-
-const route = useRoute();
-const draftID = computed(() => route.query.draft_id);
-
-const isShown = ref(true);
-const isChanged = ref(false);
-const isSaved = ref(false);
-const isCollapsed = ref(true);
+const profileStore = useProfileStore();
 
 const dictionaryStore = useDictionaryStore();
+
+
 const {getMaritalStatus} = dictionaryStore;
 await getMaritalStatus();
 const {getCountries} = profileStore;
 await getCountries();
 const countryOptions = computed(() => profileStore.countries.map((item) => ({name:item.name, value: item.id})));
-const resume = computed(() => resumeStore.resume);
 const maritalStatusOptions = computed(() => dictionaryStore.marital_statuses.map(item => ({value: item.id, name: item.name})));
-const isValid = computed(() => props.is_valid);
+
+
+const route = useRoute();
+
+const draftID = computed(() => route.query.draft_id);
+
+const {seeker} = profileStore;
+const resume = computed(() => resumeStore.resume);
+
+const isShown = ref(false);
+const isSaved = ref(false);
+const isChanged = ref(false);
+const isFirst = ref(true);
+const isCollapsed = ref(false);
+const isUpdated = ref(false);
+
+
+const {getResume} = resumeStore;
 
 const state = reactive({
     citizenship: {
@@ -107,43 +116,113 @@ const state = reactive({
         isValid: true
     },
 });
-watch(() => useWatchStateValues(state), () => isChanged.value = true);
+
+watch(() => useWatchStateValues(state, true, true),   () => {
+    if (!isFirst.value){
+        isChanged.value = true;
+    }else{
+        isFirst.value = false;
+    }
+});
+
+const sectionData = ref({});
+watch(() => sectionData.value, (newData, oldData) => {
+    const diffData =  useDiff(newData, oldData, ['id', 'created_at', 'updated_at']);
+    if (Object.keys(diffData).length){
+        state['citizenship'].val = newData['citizenship'];
+        state['about'].val = newData['about'];
+        state['has_children'].val = newData['has_children'];
+        state['marital_status_id'].val = newData['marital_status_id'];
+        if (isUpdated.value){
+            isUpdated.value = false;
+            return;
+        }
+    }
+});
+watch(() => resumeStore.resume, (newResume) => {
+    if (newResume){
+        sectionData.value = {
+            citizenship: resumeStore.resume?.citizenship,
+            about: resumeStore.resume?.about,
+            has_children: resumeStore.resume?.has_children,
+            marital_status_id: resumeStore.resume?.marital_status_id,
+        };
+        nextTick(() => {
+            isChanged.value = false;
+        });
+    }
+});
+
+onMounted(() => {
+    if (resumeStore.resume){
+        sectionData.value = {
+            citizenship: resumeStore.resume?.citizenship,
+            about: resumeStore.resume?.about,
+            has_children: resumeStore.resume?.has_children,
+            marital_status_id: resumeStore.resume?.marital_status_id,
+        };
+
+        isShown.value = true;
+
+        nextTick(() => {
+            isChanged.value = false;
+        });
+    }
+})
+
+watch(() => isCollapsed.value, (newData) => {
+    if (!newData){
+        isShown.value = true;
+    }
+});
+
+
+const {updateResume} = resumeStore;
+
+const {errors, handleErrorResponse, clearInputError} = useFormValidation();
 const add  = () => {
     isShown.value = !isShown.value;
     // hasChanged.value = true;
 }
-const {getResume, updateResume} = resumeStore;
-
-const {errors, handleErrorResponse} = useFormValidation();
-
-const save = async() => {
+const save = async () => {
     if (isChanged.value){
+        state.isLoading = true;
+        // validate();
         errors.value = {};
-        const formData = useFormData(state);
-        console.log(formData);
-        const resData = await updateResume(draftID.value, {
-            form_data: 'CITIZENSHIP_AND_FAMILY_DATA',
-            ...formData
-        });
+        state.errorMessage = "";
+        const jsonData = {
+            citizenship: state.citizenship.val,
+            about: state.about.val,
+            has_children: state.has_children.val,
+            marital_status_id: state.marital_status_id.val,
+            form_data: 'CITIZENSHIP_AND_FAMILY_DATA'
+        }
+        state.isLoading = true;
+        errors.value = {};
+        state.errorMessage = "";
 
-        console.log(resData);
+        const resData = await updateResume(draftID.value, jsonData);
+
         if (resData.status !== 'success'){
             return handleErrorResponse(resData.data);
         }
-
-        isSaved.value = true;
         isChanged.value = false;
-        setTimeout(() => {
-            isSaved.value = false;
-        }, 3000);
+        isSaved.value = false;
+        isUpdated.value = false;
+
+        await getResume(draftID.value);
 
     }
 }
 
 const isCompleted = computed(() => {
-
-    return resume.value.citizenship && resume.value.about && resume.value.has_children && resume.value.salary_from && resume.value.marital_status_id;
+    const myResume = resume.value;
+    if (myResume){
+        return myResume.citizenship && myResume.about && myResume.has_children && myResume.marital_status_id;
+    }
+    return false;
 });
+
 </script>
 
 <style scoped>

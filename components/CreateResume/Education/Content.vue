@@ -117,11 +117,7 @@ const save = async () => {
 }
 
 const isCompleted = computed(() => {
-    if (isUpdated.value === true){
-        return educations.value.length > 0;
-    }else{
-        return resumeStore.resume?.education_histories?.length > 0;
-    }
+    return resumeStore.resume?.education_histories?.length > 0
 });
 </script>
 
