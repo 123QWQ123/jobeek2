@@ -200,7 +200,6 @@ const emailInputValue = computed(() => {
     return state.email.val;
 });
 const onInputEmail = (e) => {
-    console.log(e.target.value);
     state.email_to_verify.val = e.target.value;
 }
 
@@ -238,10 +237,6 @@ const {getCountries, getCities} = profileStore;
 await getCountries();
 
 const {countryOptions, cityOptions} = storeToRefs(profileStore);
-
-// watch(() => countryOptions.value, (newValues) => {
-//     console.log(newValues);
-// })
 
 const country = computed(() => state.country_id.val);
 watch(country, (new_value) => {
@@ -330,9 +325,7 @@ const handleSubmit = async (e) => {
 
   const resData = await updateSeeker(formData);
 
-    console.log(resData);
   if (resData.status === 'success'){
-
     await getUser();
     await refreshSeeker();
     Swal.fire({
@@ -345,7 +338,6 @@ const handleSubmit = async (e) => {
   }else{
     errorMessage.value = resData.message;
     if (resData.data.status === 'failed'){
-      console.log(resData.errors);
       if (resData?.data.errors){
         errors.value = {...resData.data.errors};
       }
@@ -355,8 +347,6 @@ const handleSubmit = async (e) => {
 
     state.isLoading = false;
   }
-  console.log(resData);
-
 }
 
 const isConfirmButton = ref(false);
