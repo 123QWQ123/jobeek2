@@ -49,6 +49,9 @@ watch(() => props.options, (newOptions) => {
   options.value = newOptions;
   selectedOption.value = options.value.find(item => String(item.value) === String(props.modelValue));
 });
+watch(() => props.modelValue, (newValue) => {
+  selectedOption.value = options.value.find(item => String(item.value) === String(newValue));
+});
 
 const selectedOption = ref(null);
 

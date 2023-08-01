@@ -45,10 +45,14 @@ export const useAuthStore = defineStore('auth', {
       this.user = payload;
     },
     async signUp(payload) {
+      console.log(payload);
       const {data} = await useApi('auth/register', {
         method: 'post',
         payload
       });
+
+      console.log(data);
+
       return data;
     },
     async confirmPhoneCode(payload) {
@@ -133,7 +137,6 @@ export const useAuthStore = defineStore('auth', {
               }
             },
         );
-        console.log(response)
         return {
           status: 'success',
           data: response.data.data
@@ -185,6 +188,29 @@ export const useAuthStore = defineStore('auth', {
         };
       }
     },
+
+    async refreshSeeker(url = "seeker/profile") {
+      const {data} = await useApi(url, {
+        method: 'get',
+      });
+      if (data && 'data' in data){
+        this.seeker = data.data;
+        this.user = {phone: this.seeker?.phone};
+      }
+      return data;
+    },
+
+    async refreshEmployer(url = "employer/profile") {
+      const response = await useApi(url, {
+        method: 'get',
+      });
+      if (response && response.data && 'data' in response.data){
+        this.employer = response.data.data;
+        this.user = {phone: this.employer?.phone};
+      }
+      return response;
+    },
+
     async tryLogin(token = "") {
       const CONFIG = useRuntimeConfig();
       let url = CONFIG.public.apiBase + 'seeker/profile';
@@ -228,16 +254,18 @@ export const useAuthStore = defineStore('auth', {
           );
           this.user = {...response2.data.data};
           this.employer = this.user;
-          return;
+          return true;
         }catch (error){
           console.log(error);
           console.log('UnAuthorized');
-          // this.logout();
+          this.logout();
+          return false;
         }
 
       }
       this.setUser(null);
       this.isAuthed = false;
+      return false;
       // if (expiresIn < 0) {
       //   this.autoLogout();
       //   return;
@@ -317,7 +345,7 @@ export const useAuthStore = defineStore('auth', {
       this.isAuthed = false;
       navigateTo('/');
     },
-    async getLocation() {
+    async getLocation(payload = {}) {
 
       const response = await useApi('area/location', {
         method: 'get',

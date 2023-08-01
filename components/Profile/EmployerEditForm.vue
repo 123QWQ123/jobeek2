@@ -84,6 +84,20 @@
       </div>
     </div>
     <div class="input-row">
+      <label for="name">о компании <b>*</b></label>
+      <div class="input-wrapper">
+        <input
+          type="text"
+          id="name"
+          required
+          v-model="state.company_description.val"
+        />
+      </div>
+      <div class="text-danger d-block" v-if="errors.company_description">
+        {{ errors.company_description }}
+      </div>
+    </div>
+    <div class="input-row">
       <label for="phone">Телефон</label>
       <div class="input-wrapper">
         <input
@@ -95,12 +109,6 @@
         />
       </div>
     </div>
-      <div>
-
-          email: {{state.email.val}}
-          <br/>
-          email_to_verify: {{state.email_to_verify.val}}
-      </div>
     <div class="input-row">
       <label for="email">Электронная почта<b>*</b></label>
 
@@ -170,6 +178,10 @@ onMounted(async () => {
 });
 const state = reactive({
   company_name: {
+    val: "",
+    isValid: true,
+  },
+  company_description: {
     val: "",
     isValid: true,
   },
@@ -286,6 +298,10 @@ const validate = () => {
     state.company_name.isValid = false;
     state.isFormValid = false;
   }
+  if (state.company_description.val === "") {
+    state.company_description.isValid = false;
+    state.isFormValid = false;
+  }
   if (state.logo_url.val === "") {
     state.logo_url.isValid = false;
     state.isFormValid = false;
@@ -326,6 +342,7 @@ const handleSubmit = async (e) => {
   const formData = new FormData();
   formData.append("logo", state.logo.val);
   formData.append("company_name", state.company_name.val);
+  formData.append("company_description", state.company_description.val);
   formData.append("email", state.email.val);
   formData.append("password", state.password.val);
   formData.append("password_confirmation", state.password.val);

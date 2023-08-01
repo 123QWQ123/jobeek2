@@ -8,7 +8,7 @@
 
         <div class="w-box-body" :class="{collapse: isCollapsed}">
 
-            {{state.providers.val}}
+            {{errors}}
             <CreateResumeProviders v-model="state.providers.val" :errors="errors.providers"></CreateResumeProviders>
 
             <div class="input-row" v-if="!draftID">
@@ -174,7 +174,7 @@
                 </div>
             </div>
             <br/>
-            <CreateResumeSocialNetworksContent v-model="state.social_networks.val"></CreateResumeSocialNetworksContent>
+            <CreateResumeSocialNetworksContent v-model="state.social_networks.val" :errors="errors.social_networks"></CreateResumeSocialNetworksContent>
         </div>
     </div>
 </template>
@@ -313,7 +313,7 @@ const state = reactive({
             {
                 id: uuidv4(),
                 type: 'phone',
-                value: '76515'
+                value: ''
             }
         ],
         isValid: true
@@ -431,14 +431,25 @@ const save = async () => {
             formData.append('form_data', 'personal_data');
             const unrefed = state.social_networks.val.map((item) => ({type: item.type, value:item.value}));
             formData.delete('social_networks');
+            formData.delete('providers');
             formData.delete('title');
             useCreateFormData(formData, 'social_networks', unrefed);
+            useCreateFormData(formData, 'providers', state.providers.val);
+
             resData = await updateResume(draftID.value, formData, 'put');
             isUpdated.value = true;
             await getResume(draftID.value)
 
         }else{
             const formData = useFormData(state, 'form_data');
+
+            const unrefed = state.social_networks.val.map((item) => ({type: item.type, value:item.value}));
+            console.log(unrefed);
+            // formData.delete('social_networks');
+            formData.delete('providers');
+            // useCreateFormData(formData, 'social_networks', state.social_networks.val);
+            useCreateFormData(formData, 'providers', state.providers.val);
+
             resData = await createResume(formData, 'multipart/form-data');
 
             if (resData.status === 'success'){

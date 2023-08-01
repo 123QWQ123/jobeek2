@@ -37,7 +37,7 @@ export const useProfileStore = defineStore('profile', {
         payload
       });
       if (data && 'data' in data){
-        this.countries = data.data.countries;
+        this.countries = data.data;
       }
       return data;
     },
@@ -57,7 +57,7 @@ export const useProfileStore = defineStore('profile', {
         payload
       });
       if ('data' in data){
-        this.cities = data.data.cities;
+        this.cities = data.data;
       }
       return data;
     },
@@ -82,7 +82,6 @@ export const useProfileStore = defineStore('profile', {
       return [];
     },
     async getUser(payload = "") {
-
       const {isEmployer} = useAuthStore();
       let url = 'seeker/profile';
       if (isEmployer){
@@ -114,7 +113,7 @@ export const useProfileStore = defineStore('profile', {
     },
     async updateSeeker(payload) {
       const response = await useApi('seeker/profile', {
-        method: 'post',
+        method: 'put',
         content_type: 'multipart/form-data',
         payload
       });
@@ -126,7 +125,7 @@ export const useProfileStore = defineStore('profile', {
     },
     async updateEmployer(payload) {
       const response = await useApi('employer/profile', {
-        method: 'post',
+        method: 'put',
         content_type: 'multipart/form-data',
         payload
       });

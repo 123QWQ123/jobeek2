@@ -1,4 +1,5 @@
 <template>
+    {{errors}}
     <div class="education_item">
         <CreateResumeSocialNetworksItem
                 v-if="selectedContacts.length"
@@ -24,6 +25,10 @@ const emit  = defineEmits(['update:modelValue']);
 const props  = defineProps({
     modelValue: {
         required: true,
+    },
+    errors: {
+        required: true,
+        default: {}
     }
 });
 import {storeToRefs} from "pinia";
@@ -31,6 +36,7 @@ const dictionaryStore = useDictionaryStore();
 const {getEducations} = dictionaryStore;
 const {educations} = storeToRefs(dictionaryStore);
 await getEducations();
+
 
 const resetObject = {
     type: 'phone',

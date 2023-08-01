@@ -21,6 +21,7 @@ const isSuccess = ref("-");
 const {code, email} = route.query;
 
 const {verifyEmailConfirmation, getUser} = profileStore;
+const {refreshSeeker} = useAuthStore();
 
 onMounted(async() => {
   const resData = await verifyEmailConfirmation({code, email});
@@ -37,14 +38,23 @@ onMounted(async() => {
 
     await getUser();
 
+    await refreshSeeker();
+
     setTimeout(() => {
-      navigateTo({
-            name:'profile', query:
-            {
-              message: "Вы успешно потвердили ваш эмаил!"
+        navigateTo({
+                name:'profile', query:
+                    {
+                        message: "Вы успешно потвердили ваш эмаил!"
+                    }
             }
-          }
-      );
+        );
+    }, 500);
+
+    setTimeout(() => {
+        navigateTo({
+                name:'profile', query: {}
+            }
+        );
     }, 5000);
   }else{
     isSuccess.value = false;

@@ -131,9 +131,11 @@ import Swal from "sweetalert2";
 import {useRuntimeConfig} from "nuxt/app";
 import IMask from "imask";
 import PageLoader from "../UI/PageLoader";
+import {useAuthStore} from "~/store/auth";
 const profileStore = useProfileStore();
 
 const {getUser} = profileStore;
+const {refreshSeeker} = useAuthStore();
 
 const seeker = computed(() => profileStore.seeker);
 
@@ -192,6 +194,8 @@ const state = reactive({
 const emailInputValue = computed(() => {
     if (state.email.val && state.email_to_verify.val && state.email.val !== state.email_to_verify.val){
         return state.email_to_verify.val;
+    }else if(state.email_to_verify.val){
+        return state.email_to_verify.val;
     }
     return state.email.val;
 });
@@ -202,21 +206,27 @@ const onInputEmail = (e) => {
 
 const phoneInputElement = ref();
 const phoneMask = ref(null);
-watch(() => seeker.value, async(new_value) => {
+const fillState = async(new_value) => {
     if (new_value){
         for (const [key, value] of Object.entries(new_value)) {
             if (state.hasOwnProperty(key)){
                 state[key].val = value;
-                if (key === 'phone'){
+                if (phoneMask.value && key === 'phone'){
                     phoneMask.value.unmaskedValue = value;
                 }
             }
         }
     }
-})
+};
+
+watch(() => seeker.value, fillState);
 
 onMounted(() => {
-    getUser();
+    if (!profileStore.seeker){
+        getUser();
+    }else{
+        fillState(profileStore.seeker);
+    }
     phoneMask.value = new IMask(phoneInputElement.value, {
         mask: "+{7}(000)000-00-00",
     });
@@ -301,7 +311,7 @@ const handleSubmit = async (e) => {
   state.isLoading = true;
   validate();
   errors.value = {};
-  state.errorMessage = "";
+  errorMessage.value = "";
 
 
   const email = state.email_to_verify.val ? state.email_to_verify.val : state.email.val;
@@ -322,9 +332,9 @@ const handleSubmit = async (e) => {
 
     console.log(resData);
   if (resData.status === 'success'){
-      console.log(resData.data.status);
 
     await getUser();
+    await refreshSeeker();
     Swal.fire({
       title: 'Успешно!',
       text: resData.message,
@@ -343,12 +353,6 @@ const handleSubmit = async (e) => {
       return;
     }
 
-    // Swal.fire({
-    //   title: 'Ошибка!',
-    //   text: resData.message,
-    //   icon: 'error',
-    //   confirmButtonText: 'ОК'
-    // });
     state.isLoading = false;
   }
   console.log(resData);
