@@ -224,14 +224,11 @@ const emailInputValue = computed(() => {
 });
 
 const onInputEmail = (e) => {
-    console.log(e.target.value);
     state.email_to_verify.val = e.target.value;
 }
 
-watch(() => state.email_to_verify.val, (newEmail) => {
-    console.log(newEmail);
-
-})
+// watch(() => state.email_to_verify.val, (newEmail) => {
+// })
 
 const emailToVerify = ref();
 const isConfirmButton = ref(true);
@@ -358,13 +355,11 @@ const handleSubmit = async (e) => {
     });
     state.isLoading = false;
   } else {
-    console.log(resData.errors);
     if (resData?.errors) {
       errors.value = { ...resData.errors };
     }
     state.isLoading = false;
   }
-  console.log(resData);
 };
 </script>
 
