@@ -93,7 +93,6 @@ const onSubmit = async () => {
       phone: state.phone.val,
     });
 
-    console.log(response);
     if (response.status === 'success'){
       state.token = response.data.token;
       tabs.isConfirmTab = true;
