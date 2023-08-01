@@ -88,6 +88,7 @@ const onSubmit = async () => {
   validateForm();
   if (state.isFormValid) {
     state.phone.val = phoneMask.value.unmaskedValue;
+
     const response = await sendRecoveryCode({
       phone: state.phone.val,
     });
