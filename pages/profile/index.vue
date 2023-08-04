@@ -25,7 +25,6 @@ const error = computed(() => {
     return route.query.message;
 });
 const errorMessage = computed(() => {
-    // console.log();
     if (useCheckJSON(route.query.message)){
         return JSON.parse(route.query.message).text;
     }

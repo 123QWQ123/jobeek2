@@ -165,8 +165,9 @@ const CONFIG = useRuntimeConfig();
 
 import { storeToRefs } from "pinia";
 import Swal from "sweetalert2";
-import { useRuntimeConfig } from "nuxt/app";
+import {navigateTo, useRuntimeConfig} from "nuxt/app";
 import IMask from "imask";
+import {useCheckJSON} from "~/composables/useCheckJSON";
 const profileStore = useProfileStore();
 
 const { getUser } = profileStore;
@@ -330,6 +331,14 @@ const onEmailConfirm = async () => {
 };
 
 const errors = ref({});
+
+const route = useRoute();
+const errorMessage = computed(() => {
+  if (useCheckJSON(route.query.message)){
+    return JSON.parse(route.query.message).text;
+  }
+  return route.query.message
+});
 const { updateEmployer } = profileStore;
 const handleSubmit = async (e) => {
   state.isLoading = true;
@@ -347,6 +356,7 @@ const handleSubmit = async (e) => {
   const resData = await updateEmployer(formData);
   if (resData.status === "success") {
     await getUser();
+
     Swal.fire({
       title: "Успешно!",
       text: resData.message,
@@ -354,6 +364,9 @@ const handleSubmit = async (e) => {
       confirmButtonText: "ОК",
     });
     state.isLoading = false;
+    if (errorMessage.value){
+      navigateTo({name: 'profile', query: {}})
+    }
   } else {
     if (resData?.errors) {
       errors.value = { ...resData.errors };

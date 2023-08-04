@@ -7,11 +7,12 @@ const config = {
     // The private keys which are only available within server-side
     apiSecret: "123",
         // Keys within public, will be also exposed to the client-side
-        public: {
-      apiBase: process.env.BACKEND_HOST_API || "https://api.jobeek.online/api/",
-          base: process.env.BACKEND_HOST || "https://api.jobeek.online/",
-    }
+      public: {
+        apiBase: "https://api.jobeek.online/api/",
+        base: "https://api.jobeek.online/",
+      }
   },
+
   ssr: true,
   pages: true,
   css: [
