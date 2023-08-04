@@ -132,6 +132,8 @@ import {useRuntimeConfig} from "nuxt/app";
 import IMask from "imask";
 import PageLoader from "../UI/PageLoader";
 import {useAuthStore} from "~/store/auth";
+import {useCheckJSON} from "~/composables/useCheckJSON";
+import {navigateTo} from "#app";
 const profileStore = useProfileStore();
 
 const {getUser} = profileStore;
@@ -301,6 +303,14 @@ const validate = () => {
 }
 const errors = ref({});
 const errorMessage = ref(null);
+
+const route = useRoute();
+const routeErrorMessage = computed(() => {
+  if (useCheckJSON(route.query.message)){
+    return JSON.parse(route.query.message).text;
+  }
+  return route.query.message
+});
 const {updateSeeker} = profileStore;
 const handleSubmit = async (e) => {
   state.isLoading = true;
@@ -335,6 +345,10 @@ const handleSubmit = async (e) => {
       confirmButtonText: 'ОК'
     });
     state.isLoading = false;
+
+    if (routeErrorMessage.value){
+      navigateTo({name: 'profile', query: {}})
+    }
   }else{
     errorMessage.value = resData.message;
     if (resData.data.status === 'failed'){

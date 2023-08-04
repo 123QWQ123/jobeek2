@@ -333,7 +333,7 @@ const onEmailConfirm = async () => {
 const errors = ref({});
 
 const route = useRoute();
-const errorMessage = computed(() => {
+const routeErrorMessage = computed(() => {
   if (useCheckJSON(route.query.message)){
     return JSON.parse(route.query.message).text;
   }
@@ -364,7 +364,7 @@ const handleSubmit = async (e) => {
       confirmButtonText: "ОК",
     });
     state.isLoading = false;
-    if (errorMessage.value){
+    if (routeErrorMessage.value){
       navigateTo({name: 'profile', query: {}})
     }
   } else {
