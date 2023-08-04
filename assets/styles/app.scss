@@ -77,3 +77,43 @@
 .search-row{
   grid-template-columns: 1fr 20% 20% 170px;
 }
+
+
+//@media (min-width: 1048px) {
+//  .main-navigation{
+//    display: block;
+//    transform: unset;
+//    position: static;
+//    top: unset;
+//    left: unset;
+//    width: auto;
+//    height: auto;
+//    background-color: #fff;
+//    z-index: 4;
+//    padding: unset;
+//    box-shadow: unset;
+//    transition: transform .1s ease-in;
+//  }
+//  .main-navigation ul{
+//    flex-direction: unset;
+//  }
+//}
+
+//@media (max-width: 1280px) {
+//  .hamburger {
+//    display: block;
+//    margin-left: -15px;
+//  }
+//
+//  //.main-navigation  {
+//  //  display: none;
+//  //}
+//
+//  .hamburger-inner, .hamburger-inner::after, .hamburger-inner::before {
+//    background-color: #0A2540;
+//  }
+//
+//  .lk-header-nav .header-wrapper {
+//    height: 58px;
+//  }
+//}

@@ -1,19 +1,19 @@
 <template>
   <div class="lk-header-nav">
     <div class="header-wrapper">
-      <button class="hamburger" type="button">
+      <button class="hamburger" @click.prevent="isMobileNavigationActive = !isMobileNavigationActive" type="button">
           <span class="hamburger-box">
             <span class="hamburger-inner"></span>
           </span>
       </button>
-      <nav class="main-navigation">
-        <button class="close-menu-button">
+      <nav class="main-navigation" :class="{'active': isMobileNavigationActive}">
+        <button class="close-menu-button" @click="isMobileNavigationActive = false">
           <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M1.38919 0.000268166L0 1.36792L21.5661 22.5996L22.9553 21.232L1.38919 0.000268166Z" fill="#2C373E"/>
             <path d="M23.0005 1.76829L21.6113 0.400635L0.0452116 21.6323L1.4344 23L23.0005 1.76829Z" fill="#2C373E"/>
           </svg>
         </button>
-        <ul>
+        <ul >
           <li>
             <NuxtLink to="/"> <span>Главная</span></NuxtLink>
           </li>
@@ -66,6 +66,11 @@ export default {
   name: "LkNavbar.vue"
 }
 
+const isMobileNavigationActive = ref(false);
+
+const toggleMobileNavigation = () => {
+    isMobileNavigationActive.value = !isMobileNavigationActive.value;
+}
 </script>
 
 <style scoped>

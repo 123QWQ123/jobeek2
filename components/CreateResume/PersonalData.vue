@@ -8,7 +8,7 @@
 
         <div class="w-box-body" :class="{collapse: isCollapsed}">
 
-            {{errors}}
+            {{errors.social_networks}}
             <CreateResumeProviders v-model="state.providers.val" :errors="errors.providers"></CreateResumeProviders>
 
             <div class="input-row" v-if="!draftID">

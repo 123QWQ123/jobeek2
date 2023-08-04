@@ -17,6 +17,7 @@ const config = {
   css: [
     "bootstrap/dist/css/bootstrap.min.css",
     '~/assets/styles/nice-select.css',
+    '~/assets/styles/hamburger.min.css',
     '~/assets/styles/main.css',
     '~/assets/styles/app.scss',
   ],
