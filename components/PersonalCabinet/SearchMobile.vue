@@ -6,7 +6,6 @@
           <div class="input-wrap has-icon has-label">
               <img class="icon" src="~/assets/img/svg/search.svg" alt="#">
               <label for="name">Названии вакансии </label>
-
               <input
                 type="text"
                 name="name"
@@ -24,28 +23,8 @@
               ></HeaderSalarySelectInForm>
           </div>
           <div class="input-wrap has-icon">
-<!--              <SelectWithSearch-->
-<!--                      :options="cityOptions"-->
-<!--                      v-model="city"-->
-<!--                      :listStyles="searchSelectStyles"-->
-<!--                      @change="onCityChange"-->
-<!--                      :placeholder="'Город'"-->
-<!--                      :listItemStyles="searchSelectItemStyles"-->
-<!--              />-->
-
               <SelectWithSearch :options="cityOptions" v-model.number="city" :placeholder="'Город'" @input="updateCityInput" ></SelectWithSearch>
           </div>
-<!--          <div class="input-wrap has-icon">-->
-<!--              <img class="icon" src="~/assets/img/svg/location.svg" alt="#" />-->
-<!--              <SelectWithSearch-->
-<!--                      :options="regionOptions"-->
-<!--                      v-model="region"-->
-<!--                      :placeholder="'Регион'"-->
-<!--                      :listStyles="searchSelectStyles"-->
-<!--                      @change="onRegionChange"-->
-<!--                      :listItemStyles="searchSelectItemStyles"-->
-<!--              />-->
-<!--          </div>-->
           <button class="button-accent submit-search-form" type="submit">Поиск </button>
         </div>
       </form>

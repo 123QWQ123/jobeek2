@@ -6,6 +6,7 @@
             <span class="hamburger-inner"></span>
           </span>
       </button>
+
       <nav class="main-navigation" :class="{'active': isMobileNavigationActive}">
         <button class="close-menu-button" @click="isMobileNavigationActive = false">
           <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -13,7 +14,7 @@
             <path d="M23.0005 1.76829L21.6113 0.400635L0.0452116 21.6323L1.4344 23L23.0005 1.76829Z" fill="#2C373E"/>
           </svg>
         </button>
-        <ul >
+        <ul @click="isMobileNavigationActive = false">
           <li>
             <NuxtLink to="/"> <span>Главная</span></NuxtLink>
           </li>
@@ -43,22 +44,28 @@
 <!--          </li>-->
         </ul>
       </nav>
+
       <ModeSwitcher></ModeSwitcher>
+
     </div>
   </div>
+
 </template>
 
 <script setup>
 
+const {$isMobile} = useNuxtApp();
+
 import { useAuthStore } from "~~/store/auth";
 
 const auth = useAuthStore();
-const { logout } = auth;
 
 const isAuthed = computed(() => auth.isAuthed);
 const isEmployer = computed(() => auth.isEmployer);
+
 const user = computed(() => auth.user);
 
+const isMobile = computed(() => $isMobile());
 </script>
 
 <script>
