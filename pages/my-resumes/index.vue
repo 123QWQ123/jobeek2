@@ -39,10 +39,10 @@ onMounted(async () => {
 <template>
   <main class="main cabinet subs-page" role="main">
     <PersonalCabinetSearchMobile />
-    <div class="bg-wrapper pt position-relative">
+    <div class="bg-wrapper pt position-relative pb-4">
 
       <MyResumesConnectedProviders/>
-      <MyResumesList ></MyResumesList >
+<!--      <MyResumesList ></MyResumesList >-->
     </div>
 
   </main>

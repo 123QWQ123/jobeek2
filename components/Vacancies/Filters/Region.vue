@@ -134,8 +134,6 @@ const submitSearch = () => {
 }
 
 const prepare = (items, custom_items) => {
-
-    console.log(items, custom_items);
   let filterItems = items;
   if (!items){
     filterItems = custom_items;

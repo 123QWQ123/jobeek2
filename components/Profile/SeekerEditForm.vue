@@ -246,6 +246,7 @@ watch(country, (new_value) => {
 });
 
 const photoUrl = computed(() => {
+  console.log(state.photo_url);
   if (state.photo.base64){
     return state.photo.base64;
   } else if (state.photo_url.val){

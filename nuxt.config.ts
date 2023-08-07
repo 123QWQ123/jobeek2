@@ -49,9 +49,9 @@ const config = {
     '/**': { swr: 5  }, // 👈🏻 TTL in seconds
     '/sign-in': { ssr: false },
     '/sign-up': { ssr: false },
-    '/profile': { ssr: false },
-    '/my-resumes': { ssr: false },
-    '/my-vacancies': { ssr: false },
+    // '/profile': { ssr: true },
+    // '/my-resumes': { ssr: false },
+    // '/my-vacancies': { ssr: false },
     '/create-vacancy': { ssr: false },
     '/create-resume': { ssr: false },
     // Add cors headers

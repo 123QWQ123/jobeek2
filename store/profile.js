@@ -154,8 +154,19 @@ export const useProfileStore = defineStore('profile', {
       });
     },
 
-    async getProvidersAuthUrl(payload) {
-      const {data} = await useApi('services/hh/auth/redirect-url', {
+    async getSeekerProvidersAuthEndpoints(payload) {
+      const {data} = await useApi('services/auth/redirect-url?profile=seeker', {
+        method: 'get',
+        payload
+      });
+      if ('data' in data){
+        return data.data;
+      }
+      return data;
+    },
+
+    async getEmployerProvidersAuthEndpoints(payload) {
+      const {data} = await useApi('services/auth/redirect-url?profile=seeker', {
         method: 'get',
         payload
       });

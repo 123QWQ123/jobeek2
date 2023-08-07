@@ -28,22 +28,10 @@ export const useResumeStore = defineStore('resume', {
       experiences: [],
       part_times: [],
       metros: [],
-      providers: [
-        // {
-        //   name: 'HeadHunter',
-        //   slug: 'hh',
-        //   url: null,
-        //   is_connected: true,
-        //   icon: "https://tech.hh.ru/api/logos/min-hh-red.png",
-        // },
-        // {
-        //   name: 'Superjob',
-        //   slug: 'superjob',
-        //   url: null,
-        //   is_connected: true,
-        //   icon: new URL("~/assets/img/logos/superjob.svg", import.meta.url),
-        // },
-      ]
+      providers: {
+        hh: null,
+        superjob: null
+      },
     }
   },
   getters: {
@@ -140,14 +128,11 @@ export const useResumeStore = defineStore('resume', {
         payload
       });
       if (data && 'data' in data){
-        // const connectedProviders = data.data;
-        // console.log(connectedProviders);
-        // if (connectedProviders){
-        //   for (const [key, connectedProvider] of Array.from(connectedProviders)) {
-        //     this.providers[key].is_connected = connectedProvider ?? false;
-        //   }
-        // }
-        return data.data;
+        const providers = data.data;
+        this.providers.hh = providers.hh;
+        this.providers.superjob = providers.superjob;
+        console.log(this.providers);
+        return this.providers;
       }
       return data;
     },

@@ -9,8 +9,6 @@ const { logout, toggleUserMode } = auth;
 
 const route = useRoute();
 
-console.log(route.name);
-
 const isAuthed = computed(() => auth.isAuthed);
 const isEmployer = computed(() => auth.isEmployer);
 const user = computed(() => auth.user);

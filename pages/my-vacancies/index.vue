@@ -42,7 +42,7 @@ onMounted(async () => {
     <div class="bg-wrapper pt position-relative">
 
       <MyVacanciesConnectedProviders/>
-      <MyVacanciesList ></MyVacanciesList >
+<!--      <MyVacanciesList ></MyVacanciesList >-->
     </div>
 
   </main>

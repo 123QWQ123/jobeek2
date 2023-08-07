@@ -109,27 +109,27 @@
         />
       </div>
     </div>
+
     <div class="input-row">
       <label for="email">Электронная почта<b>*</b></label>
-
       <div class="input-wrapper position-relative">
         <input
-          type="email"
-          placeholder="Электронная почта"
-          id="email"
-          :value="emailInputValue"
-          @input="onInputEmail"
+            type="email"
+            placeholder="Электронная почта"
+            id="email"
+            :value="emailInputValue"
+            @input="onInputEmail"
         />
         <a
-          v-if="state.email_to_verify.val && state.email_to_verify.val !== state.email.val"
-          @click="onEmailConfirm"
-          class="badge bg-primary position-absolute fs-6 end-0 top-0 p-2 px-2 mt-2 me-2"
-          >Потверждать</a
+            v-if="state.email_to_verify.val && state.email_to_verify.val !== state.email.val"
+            @click="onEmailConfirm"
+            class="badge bg-primary position-absolute fs-6 end-0 top-0 p-2 px-2 mt-2 me-2"
+        >Потверждать</a
         >
         <span
-          v-if="!state.email_to_verify.val"
-          class="h-100 fs-6 position-absolute end-0 top-0 p-0 px-0 mt-0 me-0 pb-2"
-          >
+            v-if="!state.email_to_verify.val"
+            class="h-100 fs-6 position-absolute end-0 top-0 p-0 px-0 mt-0 me-0 pb-2"
+        >
           <svg xmlns="http://www.w3.org/2000/svg" style="transform: scale(0.5)" viewBox="0 0 48 48" width="48px" height="48px"><path fill="green" d="M40.6 12.1L17 35.7 7.4 26.1 4.6 29 17 41.3 43.4 14.9z"/></svg>
         </span>
       </div>
@@ -140,7 +140,6 @@
         {{ errors.email }}
       </div>
     </div>
-
     <div class="input-row">
       <label for="email">Пароль<b>*</b></label>
       <div class="input-wrapper position-relative">
@@ -217,15 +216,18 @@ const state = reactive({
   success: null,
 });
 
+
 const emailInputValue = computed(() => {
-    if (state.email.val && state.email_to_verify.val && state.email.val !== state.email_to_verify.val){
-        return state.email_to_verify.val;
-    }
-    return state.email.val;
+  if (state.email.val && state.email_to_verify.val && state.email.val !== state.email_to_verify.val){
+    return state.email_to_verify.val;
+  }else if(state.email_to_verify.val){
+    return state.email_to_verify.val;
+  }
+  return state.email.val;
 });
 
 const onInputEmail = (e) => {
-    state.email_to_verify.val = e.target.value;
+  state.email_to_verify.val = e.target.value;
 }
 
 // watch(() => state.email_to_verify.val, (newEmail) => {
@@ -345,11 +347,13 @@ const handleSubmit = async (e) => {
   validate();
   errors.value = {};
 
+  const email = state.email_to_verify.val ? state.email_to_verify.val : state.email.val;
+
   const formData = new FormData();
   formData.append("logo", state.logo.val);
   formData.append("company_name", state.company_name.val);
   formData.append("company_description", state.company_description.val);
-  formData.append("email", state.email.val);
+  formData.append("email", email);
   formData.append("password", state.password.val);
   formData.append("password_confirmation", state.password.val);
   formData.append("_method", "put");

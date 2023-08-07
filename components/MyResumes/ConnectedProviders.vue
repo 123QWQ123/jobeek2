@@ -1,9 +1,10 @@
 <template>
     <div class="wrapper wrapper-1290" v-if="!isAllConnected">
         <h1 class="lk-page-title">Cервисы</h1>
+        {{providersList}}
         <div class="modal-content p-2 m-0 border-0" style="min-width: 10rem;">
             <div class="list-of-providers">
-                <a @click="openProviderAuthUrl(item.url)" v-for="item in providers" class="provider-item">
+                <a @click="openProviderAuthUrl(item.url)" v-for="item in providersList" class="provider-item">
                   <span class="provider-label success">
                     <svg v-if="item.is_connected" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="limegreen" class="bi bi-check"
                          viewBox="0 0 16 16">
@@ -21,7 +22,9 @@
             </div>
         </div>
     </div>
-  <div v-else></div>
+  <div v-else>
+      No providers connected
+  </div>
 </template>
 
 <script setup>
@@ -36,42 +39,61 @@ const resumeStore = useResumeStore();
 const { getProvidersAuthUrl } = useProfileStore();
 const { getConnectedProviders } = resumeStore;
 
-const {providers} = resumeStore;
-console.log(providers);
-// const checkProviders = async() => {
-//     if (connectedProviders){
-//         for (let i = 0; i < providers.length; i++){
-//             const providerItem = providers[i];
-//             console.log(providerItem);
-//             providerItem.is_connected = connectedProviders[providerItem.slug] ?? false;
-//         }
-//     }
-// }
-// await checkProviders();
 
+
+
+const providersList = ref([
+    {
+        name: 'HeadHunter',
+        slug: 'hh',
+        url: null,
+        is_connected: false,
+        icon: "https://tech.hh.ru/api/logos/min-hh-red.png",
+    },
+    {
+        name: 'Superjob',
+        slug: 'superjob',
+        url: null,
+        is_connected: false,
+        icon: new URL("~/assets/img/logos/superjob.svg", import.meta.url),
+    },
+]);
+
+const providers = computed(() => resumeStore.providers);
+console.log(resumeStore.providers);
+watch(() => providers.value, (newProviders) => {
+    console.log(newProviders);
+
+    for (let i = 0; i < providersList.value.length; i++){
+        const providerItem = providersList.value[i];
+        if (newProviders[providerItem.slug])
+            providerItem.is_connected = newProviders[providerItem.slug];
+    }
+})
 
 const isAllConnected = computed(() => {
-
-    let is_all = true;
-    for (let i = 0; i < providers.length; i++){
-        const providerItem = providers[i];
-        if(providerItem.is_connected === false){
-            is_all = false;
-        }
-    }
-
-    return is_all;
+    if (providers.value.hh && providers.value.superjob)
+        return true;
+    else return false;
 });
 
 onMounted(async () => {
+    if (resumeStore.providers.hh === null && !resumeStore.providers.superjob === null){
+        getConnectedProviders();
+    }
     if (!isAllConnected.value){
         const authData = await getProvidersAuthUrl();
-
-        for (let i = 0; i < providers.length; i++){
-            const providerItem = providers[i];
-            providerItem.url = authData[providerItem.slug];
+        for (let i = 0; i < providersList.value.length; i++){
+            const providerItem = providersList.value[i];
+            if (authData[providerItem.slug]){
+              providerItem.url = authData[providerItem.slug];
+            }
+            if (resumeStore.providers[providerItem.slug]){
+              providerItem.is_connected = authData[providerItem.slug];
+            }
         }
     }
+
 });
 
 
