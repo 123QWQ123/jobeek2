@@ -2,8 +2,9 @@
 <script setup>
 
 import {useAuthStore} from "../../store/auth";
-import {storeToRefs} from "pinia";
 import {useCheckJSON} from "~/composables/useCheckJSON";
+import { toast } from 'vue3-toastify';
+
 
 definePageMeta({
   layout: "cabinet"
@@ -12,12 +13,7 @@ useHead({
   title: "Ваш аккаунт",
 });
 const authStore = useAuthStore();
-// const isEmployer = computed(() => authStore.isEmployer);
-const {isEmployer} = storeToRefs(authStore);
-// watch(() => isEmployer.value, (newValue) => {
-//     console.log(newValue);
-//     isEmployer.value = newValue;
-// })
+const isEmployer = computed(() => authStore.isEmployer);
 
 const route = useRoute();
 
@@ -43,16 +39,24 @@ const errorClass = computed(() => {
     }
 });
 
+
+onMounted(() => {
+
+  if (route.query.message) {
+    toast.info(route.query.message);
+  }
+})
 </script>
 
 <template>
   <main class="main cabinet profile-page bg-wrapper" role="main">
-<!--    <PersonalCabinetSearchMobile />-->
+    <PersonalCabinetSearchMobile />
+
+
     <div class="has-sidebar has-sidebar--v2 wrapper wrapper-1290">
       <div class="content">
         <div class="w-box w-box--main" v-if="error">
           <div class="w-box-head " :class="errorClass">
-            <h1 class="title text-light">Ошибка</h1>
             <p class="descr text-light">{{errorMessage}}</p>
           </div>
         </div>

@@ -21,6 +21,7 @@ const config = {
     '~/assets/styles/hamburger.min.css',
     '~/assets/styles/main.css',
     '~/assets/styles/app.scss',
+    '~/assets/styles/main.css',
   ],
   components: [
     '~/components',
@@ -29,7 +30,15 @@ const config = {
   modules: [
     '@pinia/nuxt',
     '@nuxt/devtools',
+    'nuxt-swiper'
   ],
+  swiper: {
+    // Swiper options
+    //----------------------
+    // prefix: 'Swiper',
+    // styleLang: 'css',
+    // modules: ['navigation', 'pagination'], // all modules are imported by default
+  },
   build: {
     transpile: ['@vuepic/vue-datepicker']
   },

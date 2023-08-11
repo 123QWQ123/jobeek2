@@ -36,7 +36,7 @@ import {useResumeStore} from "~/store/resume";
 
 const vacancyStore = useVacancyStore();
 const resumeStore = useResumeStore();
-const { getProvidersAuthUrl } = useProfileStore();
+const { getSeekerProvidersAuthEndpoints } = useProfileStore();
 const { getConnectedProviders } = resumeStore;
 
 
@@ -82,7 +82,7 @@ onMounted(async () => {
         getConnectedProviders();
     }
     if (!isAllConnected.value){
-        const authData = await getProvidersAuthUrl();
+        const authData = await getSeekerProvidersAuthEndpoints();
         for (let i = 0; i < providersList.value.length; i++){
             const providerItem = providersList.value[i];
             if (authData[providerItem.slug]){
