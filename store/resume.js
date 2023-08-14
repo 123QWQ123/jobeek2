@@ -28,6 +28,10 @@ export const useResumeStore = defineStore('resume', {
       experiences: [],
       part_times: [],
       metros: [],
+      providers: {
+        hh: null,
+        superjob: null
+      },
     }
   },
   getters: {
@@ -39,7 +43,7 @@ export const useResumeStore = defineStore('resume', {
     },
     top_30: (state) => {
       return state.resumes.slice(0, 30);
-    }
+    },
   },
   actions: {
     async getAreas(payload) {
@@ -70,14 +74,15 @@ export const useResumeStore = defineStore('resume', {
       }
       return data;
     },
-    async createResume( payload) {
+    async createResume( payload, content_type = 'application/json') {
       const response = await useApi('seeker/resumes/create', {
         method: 'post',
+        content_type,
         payload
       });
-      if ('data' in response){
-        this.resume = response.data;
-      }
+      // if ('data' in response){
+      //   this.resume = response.data;
+      // }
       return response;
     },
     async updateResume(id, payload, content_type = 'application/json') {
@@ -86,9 +91,9 @@ export const useResumeStore = defineStore('resume', {
         content_type,
         payload
       });
-      if ('data' in response && response.data.status === 'success'){
-        this.resume = response.data;
-      }
+      // if ('data' in response && response.data.status === 'success'){
+      //   this.resume = response.data;
+      // }
       return response;
     },
     async getResume(id, payload) {
@@ -122,9 +127,12 @@ export const useResumeStore = defineStore('resume', {
         method: 'get',
         payload
       });
-      console.log(data);
-      if ('data' in data){
-        return data.data;
+      if (data && 'data' in data){
+        const providers = data.data;
+        this.providers.hh = providers.hh;
+        this.providers.superjob = providers.superjob;
+        console.log(this.providers);
+        return this.providers;
       }
       return data;
     },

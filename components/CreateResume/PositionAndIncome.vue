@@ -1,32 +1,26 @@
 <template>
-  <div class="w-box w-box--main w-box-position" @mouseleave="save">
+  <div class="w-box w-box--main w-box-position" v-click-outside="save">
     <div class="w-box-head">
       <h3 class="title">Должность и доход</h3>
-      <span class="arrow" :class="{up: isCollapsed}" @click="isCollapsed = !isCollapsed"></span>
+      <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
     </div>
     <div class="w-box-body" :class="{collapse: isCollapsed}">
       <div class="input-row">
         <label >Какую должность вы хотите занимать? <b>*</b></label>
         <div class="input-wrapper">
-          <input type="text" placeholder="Укажите должность" id="title" v-model="state.title.val">
+          <input type="text" placeholder="Укажите должность" id="title" v-model="state.title.val" @focusin="() => errors.title = ''">
 
           <div class="text-danger d-block" v-if="errors.title">
               {{ errors.title }}
           </div>
         </div>
       </div>
-      <CreateResumeSalary v-model="state.salary.val"/>
+      <CreateResumeSalary v-model="state.salary.val" @clear-error="clearInputError" :errors="errors"/>
 
-      <div class="text-danger d-block" v-if="errors.salary_from">
-          {{ errors.salary_from }}
-      </div>
-      <div class="text-danger d-block" v-if="errors.salary_currency">
-          {{ errors.salary_currency }}
-      </div>
       <div class="input-row">
         <label>Занятость <b>*</b></label>
         <div class="input-wrapper">
-            <CustomSelect :options="employmentOptions" v-model="state.employment_id.val"  />
+            <CustomSelect :options="employmentOptions" v-model="state.employment_id.val" @focusin="() => errors.employment_id = ''" />
 
             <div class="text-danger d-block" v-if="errors.employment_id">
                 {{ errors.employment_id }}
@@ -36,25 +30,19 @@
 
     </div>
 
-
-    <transition>
-      <span v-if="isSaved" class="p-3 d-inline-flex justify-content-center align-items-center" style="color:#0c0">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="me-2">
-              <path fill="#0c0" d="M10.041 17l-4.5-4.319 1.395-1.435 3.08 2.937 7.021-7.183 1.422 1.409-8.418 8.591zm5.959 7v-2h-8v2h8zm0-24v2h-8v-2h8zm2 0h1c2.762 0 5 2.239 5 5v1h-2v-1c0-1.654-1.346-3-3-3h-1v-2zm6 16h-2v-8h2v8zm-18 8h-1c-2.762 0-5-2.239-5-5v-1h2v1c0 1.654 1.346 3 3 3h1v2zm18-6v1c0 2.761-2.238 5-5 5h-1v-2h1c1.654 0 3-1.346 3-3v-1h2zm-24-12v-1c0-2.761 2.238-5 5-5h1v2h-1c-1.654 0-3 1.346-3 3v1h-2zm0 2h2v8h-2v-8z"/>
-          </svg>
-          Сохранен
-      </span>
-    </transition>
-
   </div>
 </template>
 
 <script setup>
-
-import {useDictionaryStore} from "~/store/dictionary";
 import {useResumeStore} from "~/store/resume";
+
+import {useProfileStore} from "~/store/profile";
 import useFormValidation from "~/composables/useFormValidation";
 import {useWatchStateValues} from "~/composables/useWatchStateValues";
+import {useDiff} from "~/composables/useDiff";
+import {useDictionaryStore} from "~/store/dictionary";
+const resumeStore = useResumeStore();
+const profileStore = useProfileStore();
 
 const dictionaryStore = useDictionaryStore();
 
@@ -63,33 +51,38 @@ await getWorkTypes();
 const employmentOptions = computed(() => {
     return dictionaryStore.work_types.map(item => ({name: item.name,value: item.id}));
 });
-const resumeStore = useResumeStore();
 
 const route = useRoute();
+
 const draftID = computed(() => route.query.draft_id);
 
-const {resume} = resumeStore;
+const {seeker} = profileStore;
+const resume = computed(() => resumeStore.resume);
 
+const isShown = ref(false);
 const isSaved = ref(false);
 const isChanged = ref(false);
-const isCollapsed = ref(true);
+const isFirst = ref(true);
+const isCollapsed = ref(false);
+const isUpdated = ref(false);
+
 
 const {getResume} = resumeStore;
 
-const state = ref({
+const state = reactive({
     title: {
         val: resume.title,
         isValid: true,
     },
     salary: {
         val: {
-            amount: resume.salary_from,
-            currency: resume.salary_currency
+            amount: resume.value.salary_from,
+            currency: resume.value.salary_currency
         },
         isValid: true
     },
     employment_id: {
-        val: resume.employment_id,
+        val: resume.value.employment_id,
         isValid: true,
     },
     isFormValid: true,
@@ -99,38 +92,107 @@ const state = ref({
     success: null,
 });
 
-watch(() => useWatchStateValues(state.value), () => isChanged.value = true);
+
+watch(() => useWatchStateValues(state, true, true),   () => {
+    if (!isFirst.value){
+        isChanged.value = true;
+    }else{
+        isFirst.value = false;
+    }
+});
+
+const sectionData = ref({});
+watch(() => sectionData.value, (newData, oldData) => {
+    const diffData =  useDiff(newData, oldData, ['id', 'created_at', 'updated_at']);
+    if (Object.keys(diffData).length){
+        state['title'].val = newData['title'];
+        state['salary'].val.amount = newData['salary_from'];
+        state['salary'].val.currency = newData['salary_currency'];
+        state['employment_id'].val = newData['employment_id'];
+        if (isUpdated.value){
+            isUpdated.value = false;
+            return;
+        }
+    }
+});
+watch(() => resumeStore.resume, (newResume) => {
+    if (newResume){
+        sectionData.value = {
+            title: resumeStore.resume?.title,
+            salary_from: resumeStore.resume?.salary_from,
+            salary_currency: resumeStore.resume?.salary_currency,
+            employment_id: resumeStore.resume?.employment_id,
+        };
+        nextTick(() => {
+            isChanged.value = false;
+        });
+    }
+});
+
+onMounted(() => {
+    if (resumeStore.resume){
+        sectionData.value = {
+            title: resumeStore.resume?.title,
+            salary_from: resumeStore.resume?.salary_from,
+            salary_currency: resumeStore.resume?.salary_currency,
+            employment_id: resumeStore.resume?.employment_id,
+        };
+        nextTick(() => {
+            isChanged.value = false;
+        });
+    }
+})
+
+watch(() => isCollapsed.value, (newData) => {
+    if (!newData){
+        isShown.value = true;
+    }
+});
+
 
 const {updateResume} = resumeStore;
 
-const {errors, handleErrorResponse} = useFormValidation();
+const {errors, handleErrorResponse, clearInputError} = useFormValidation();
+
 const save = async () => {
     if (isChanged.value){
+        state.isLoading = true;
+        // validate();
+        errors.value = {};
+        state.errorMessage = "";
         const jsonData = {
-            salary_currency: state.value.salary.val.currency,
-            title: state.value.title.val,
-            salary_from: state.value.salary.val.amount,
-            employment_id: state.value.employment_id.val,
+            salary_currency: state.salary.val.currency,
+            title: state.title.val,
+            salary_from: state.salary.val.amount,
+            employment_id: state.employment_id.val,
             form_data: 'PROFESSION_DETAILS_DATA'
         }
         state.isLoading = true;
-        // validate();
         errors.value = {};
         state.errorMessage = "";
 
         const resData = await updateResume(draftID.value, jsonData);
 
         if (resData.status !== 'success'){
-            handleErrorResponse(resData.data);
+            return handleErrorResponse(resData.data);
         }
-
-        isSaved.value = true;
         isChanged.value = false;
-        setTimeout(() => {
-            isSaved.value = false;
-        }, 3000);
+        isSaved.value = false;
+        isUpdated.value = false;
+
+        await getResume(draftID.value);
+
     }
 }
+
+const isCompleted = computed(() => {
+    const myResume = resume.value;
+    if (myResume){
+        return myResume.title && myResume.salary_from && myResume.salary_currency && myResume.salary_from && myResume.employment_id
+    }
+    return false;
+});
+
 
 </script>
 

@@ -7,7 +7,9 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "deploy-stage": "nuxt generate && scp -r ./.output/public/* jobeek:~/web",
-    "deploy-stage-ssr": "nuxt build && scp -r ./.output/* jobeek:~/web"
+    "deploy-stage-ssr": "nuxt build && scp -rp g+rwx ./.output/* jobeek:~/web",
+    "upload-stage-ssr": "scp -rp g+rwx ./.output/* jobeek:~/web",
+    "upload-stage-using-rsync": "rsync --chmod=u+rwx,g+rwx,o+rx ./.output/* jobeek:~/web"
   },
   "devDependencies": {
     "@nuxt/devtools": "^0.6.1",
@@ -31,6 +33,7 @@
     "fs": "^0.0.1-security",
     "https": "^1.0.0",
     "imask": "^6.4.3",
+    "mobile-detect": "^1.4.5",
     "moment": "^2.29.4",
     "node-sass": "^8.0.0",
     "nuxt3-select2": "^0.1.29",
@@ -41,7 +44,6 @@
     "sass-loader": "^13.2.0",
     "select2-bootstrap-5-theme": "^1.3.0",
     "sweetalert2": "^11.7.1",
-    "swrv": "^1.0.3",
     "uuid": "^9.0.0",
     "vue-number-format": "^1.3.1",
     "vue-search-select": "^3.0.8",

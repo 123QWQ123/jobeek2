@@ -89,6 +89,7 @@ export const useVacancyStore = defineStore('vacancy', {
           this.current_page = 1;
         }
         this.total = data.found;
+        return this.vacancies;
       }
       return data;
     },
@@ -166,16 +167,19 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
+      console.log(data);
       if (data && 'data' in data){
         this.industries = data.data ?? [];
+        return this.industries;
       }
-      return data.data;
+      return data;
     },
     async getEducations(payload) {
       const {data} = await useApi('dictionaries?groups[]=education', {
         method: 'get',
         payload
       });
+      console.log(data);
       if (data && 'data' in data){
         this.educations = data.data?.education ?? [];
       }
@@ -188,8 +192,9 @@ export const useVacancyStore = defineStore('vacancy', {
       });
       if (data && 'data' in data){
         this.metros = data.data ?? [];
+        return this.metros;
       }
-      return data.data;
+      return data;
     },
 
     async addToFavorite(payload) {

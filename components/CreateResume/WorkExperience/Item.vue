@@ -11,7 +11,7 @@
                 <div class="input-row">
                     <label for="position">Должность<b>*</b></label>
                     <div class="input-wrapper">
-                        <input type="text" placeholder="Введите специальность" required v-model="state.profession.val">
+                        <input type="text" placeholder="Введите специальность" required v-model="state.profession.val" @focusin="() => errors.profession = ''">
 
                         <div class="text-danger d-block" v-if="errors.profession">
                             {{ errors.profession }}
@@ -22,7 +22,7 @@
                 <div class="input-row">
                     <label for="position">Название компании<b>*</b></label>
                     <div class="input-wrapper">
-                        <input type="text" placeholder="Введите заведения" required v-model="state.company.val">
+                        <input type="text" placeholder="Введите заведения" required v-model="state.company.val" @focusin="() => errors.company = ''">
 
                         <div class="text-danger d-block" v-if="errors.company">
                             {{ errors.company }}
@@ -33,7 +33,7 @@
                 <div class="input-row">
                     <label for="position">О компании</label>
                     <div class="input-wrapper">
-                        <textarea class="form-control" type="text" placeholder="Как можно подробнее расскажите о конкретных результатах вашей работы" v-model="state.industry.val"></textarea>
+                        <textarea class="form-control" type="text" placeholder="Как можно подробнее расскажите о конкретных результатах вашей работы" v-model="state.industry.val" @focusin="() => errors.industry = ''"></textarea>
 
                         <div class="text-danger d-block" v-if="errors.industry">
                             {{ errors.industry }}
@@ -43,7 +43,7 @@
                 <div class="input-row">
                     <label for="position">Ссылка на сайт компании<b>*</b></label>
                     <div class="input-wrapper">
-                        <input type="text" placeholder="Введите факультет" required v-model="state.company_url.val">
+                        <input type="text" placeholder="Введите факультет" required v-model="state.company_url.val" @focusin="() => errors.company_url = ''">
 
                         <div class="text-danger d-block" v-if="errors.company_url">
                             {{ errors.company_url }}
@@ -56,7 +56,7 @@
 
                         <div class="c2">
                             <div>
-                                <CustomSelect :options="yearOptions" v-model="state.start_year.val" :label="'Начало года'" />
+                                <CustomSelect :options="yearOptions" v-model="state.start_year.val" :label="'Начало года'" @focusin="() => errors.start_year = ''"/>
                                 <div class="alert alert-warning" v-if="state.start_year.isValid">Начало должен быть меньше чем окончания</div>
 
                                 <div class="text-danger d-block" v-if="errors.start_year">
@@ -64,7 +64,7 @@
                                 </div>
                             </div>
                             <div>
-                                <CustomSelect :options="monthOptions" v-model="state.start_month.val" :label="'Начало месяца '" />
+                                <CustomSelect :options="monthOptions" v-model="state.start_month.val" :label="'Начало месяца '" @focusin="() => errors.start_month = ''"/>
 
                                 <div class="text-danger d-block" v-if="errors.start_month">
                                     {{ errors.start_month }}
@@ -73,7 +73,7 @@
                         </div>
                         <div class="c2 mt-2" v-if="!state.until_today.val === true">
                             <div>
-                                <CustomSelect :options="yearOptions" v-model="state.end_year.val" :label="'Окончание года'" />
+                                <CustomSelect :options="yearOptions" v-model="state.end_year.val" :label="'Окончание года'" @focusin="() => errors.end_year = ''"/>
                                 <div class="alert alert-warning" v-if="state.end_year.isValid">Окончание должен быть больше чем начало</div>
 
                                 <div class="text-danger d-block" v-if="errors.end_year">
@@ -81,7 +81,7 @@
                                 </div>
                             </div>
                             <div>
-                                <CustomSelect :options="monthOptions" v-model="state.end_month.val" :label="'Окончание месяца '" />
+                                <CustomSelect :options="monthOptions" v-model="state.end_month.val" :label="'Окончание месяца '" @focusin="() => errors.end_month = ''" />
 
                                 <div class="text-danger d-block" v-if="errors.end_month">
                                     {{ errors.end_month }}
@@ -90,7 +90,7 @@
                         </div>
                         <div class="check-block mt-2">
                             <div class="checkbox">
-                                <input type="checkbox" id="until_today" v-model="state.until_today.val" :checked="state.until_today.val">
+                                <input type="checkbox" id="until_today" v-model="state.until_today.val" :checked="state.until_today.val" @focusin="() => errors.until_today = ''">
                                 <div class="checkbox-mask">
                                     <img src="~/assets/img/svg/check.svg" alt="#" />
                                 </div>
@@ -107,13 +107,13 @@
                 <div class="input-row">
                     <label for="position">Обязанности</label>
                     <div class="input-wrapper">
-                        <textarea class="form-control" type="text" placeholder="Опишите, какие обязанности у вас были в этой компании, что именно вы делали" v-model="state.responsibilities.val"></textarea>
+                        <textarea class="form-control" type="text" placeholder="Опишите, какие обязанности у вас были в этой компании, что именно вы делали" v-model="state.responsibilities.val" @focusin="() => errors.responsibilities = ''"></textarea>
                     </div>
                 </div>
                 <div class="input-row">
                     <label for="position">Достижения</label>
                     <div class="input-wrapper">
-                        <textarea class="form-control" type="text" placeholder="Как можно подробнее расскажите о конкретных результатах вашей работы" v-model="state.achievements.val"></textarea>
+                        <textarea class="form-control" type="text" placeholder="Как можно подробнее расскажите о конкретных результатах вашей работы" v-model="state.achievements.val" @focusin="() => errors.achievements = ''"></textarea>
                     </div>
                 </div>
             </div>

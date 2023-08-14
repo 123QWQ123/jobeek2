@@ -72,7 +72,7 @@ const onSubmit = async () => {
       phone: phoneMask.value.unmaskedValue,
     });
 
-    if ('data' in response && 'session' in response.data){
+    if (response && 'data' in response && 'session' in response.data){
       isConfirmTab.value = true;
       isRegisterTab.value = false;
       state.session = response.data.session;

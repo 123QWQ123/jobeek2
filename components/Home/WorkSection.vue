@@ -39,7 +39,6 @@ onMounted(async() => {
     await getVacancies({countries: [1], region_ids: [22]});
 })
 const getProfessionalRoles  = (objectData) => {
-  console.log(objectData)
   if (objectData)
     return Object.keys(objectData);
   return [];

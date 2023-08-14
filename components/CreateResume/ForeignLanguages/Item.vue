@@ -9,9 +9,17 @@
             <div class="c2 w-100">
                 <div class="input-wrapper">
                     <SelectWithSearch :placeholder="'Выберите язык'" :options="languageOptions" v-model.number="state.language_id.val"></SelectWithSearch>
+
+                    <div class="text-danger d-block" v-if="errors.language_id">
+                        {{ errors.language_id }}
+                    </div>
                 </div>
                 <div class="input-wrapper">
                     <CustomSelect :label="'Уровен'" :options="languageLevelOptions" v-model.number="state.level.val"></CustomSelect>
+
+                    <div class="text-danger d-block" v-if="errors.level">
+                        {{ errors.level }}
+                    </div>
                 </div>
             </div>
         </div>
@@ -44,6 +52,10 @@ const props = defineProps({
     level: {
         required: true,
         default: null
+    },
+    errors: {
+        required: true,
+        default: {}
     },
 });
 const state = reactive({

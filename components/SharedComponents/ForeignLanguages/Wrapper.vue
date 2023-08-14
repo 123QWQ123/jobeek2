@@ -10,6 +10,7 @@
                     :id="item.id"
                     :language_id="item.language_id"
                     :level="item.level"
+                    :errors="item.errors"
                     @update="updateItem"
                     @delete="deleteItem" />
             </div>
@@ -28,6 +29,9 @@ const props  = defineProps({
     modelValue: {
         required: true,
        default: []
+    },
+    errors: {
+        default: []
     }
 });
 import {v4 as uuidv4} from "uuid";
@@ -37,11 +41,34 @@ const {getForeignLanguages, getLanguageLevels} = dictionaryStore;
 await getForeignLanguages();
 await getLanguageLevels();
 
+
+const selectedItems = ref(props.modelValue ?? []);
+const errors = ref(props.errors ?? []);
 const resetObject = {
     "language_id": null,
     "level": null,
+    "errors": {},
 };
-const selectedItems = ref(props.modelValue ?? []);
+
+watch(() => props.errors, (newData) => {
+    const newItems = selectedItems.value;
+    selectedItems.value.map((item, index) => {
+        newData?.map((error, errorIndex) => {
+            if (errorIndex === index){
+                if (!newItems[index]){
+                    newItems[index] = {};
+                }
+                if (!newItems[index].errors){
+                    newItems[index].errors = {};
+                }
+                Object.keys(error).map((errorKey) => {
+                    newItems[index].errors[errorKey] = error[errorKey];
+                });
+            }
+        })
+    })
+    errors.value = newItems;
+})
 
 const reset = () => {
     resetObject.id = uuidv4();
