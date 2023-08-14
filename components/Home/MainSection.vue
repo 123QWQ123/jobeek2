@@ -26,25 +26,21 @@
           </div>
           <div class="input-wrap has-label">
               <label for="salary">Город</label>
-              <SelectWithSearch
-                      :options="cityOptions"
-                      v-model="city"
-                      :listStyles="searchSelectStyles"
-                      @change="onCityChange"
-                      :listItemStyles="searchSelectItemStyles"
-              />
+
+              <SelectWithSearch :options="cityOptions" v-model.number="city" :placeholder="'Город'" @input="updateCityInput" ></SelectWithSearch>
           </div>
 
-          <div class="input-wrap has-label">
-              <label for="salary">Регион</label>
-              <SelectWithSearch
-                      :options="regionOptions"
-                      v-model="region"
-                      :listStyles="searchSelectStyles"
-                      @change="onRegionChange"
-                      :listItemStyles="searchSelectItemStyles"
-              />
-          </div>
+<!--          <div class="input-wrap has-label">-->
+<!--              <label for="salary">Регион</label>-->
+<!--              <SelectWithSearch-->
+<!--                      :options="regionOptions"-->
+<!--                      v-model="region"-->
+<!--                      :listStyles="searchSelectStyles"-->
+<!--                      :placeholder="'Выберите'"-->
+<!--                      @change="onRegionChange"-->
+<!--                      :listItemStyles="searchSelectItemStyles"-->
+<!--              />-->
+<!--          </div>-->
           <button class="button-accent submit-search-form" type="button" @click="onSubmit">Поиск </button>
         </div>
       </form>
@@ -57,6 +53,7 @@ import { useAuthStore } from "~~/store/auth";
 import { useVacancyStore } from "../../store/vacancy";
 import { useVacancyForm } from "../../composables/useVacancyForm";
 import { storeToRefs } from "pinia";
+import {useProfileStore} from "~/store/profile";
 
 const auth = useAuthStore();
 const { logout } = auth;
@@ -73,26 +70,34 @@ const router = useRouter();
 const route = useRoute();
 
 const vacancyStore = useVacancyStore();
+const profileStore = useProfileStore();
+const {searchCities} = profileStore;
 
 const region = ref(null);
 const city = ref("*");
 
 const form = ref(useVacancyForm());
 
-const onRegionChange = (regionItem) => {
-    if (regionItem.value === "*") {
-        form.value.regions = [];
-    } else {
-        form.value.regions = [regionItem.value];
-    }
-};
-const onCityChange = (regionItem) => {
-    if (regionItem.value === "*") {
-        form.value.regions = [];
-    } else {
-        form.value.regions = [regionItem.value];
-    }
-};
+// const onRegionChange = (regionItem) => {
+//     if (regionItem.value === "*") {
+//         form.value.regions = [];
+//     } else {
+//         form.value.regions = [regionItem.value];
+//     }
+// };
+// const onCityChange = (regionItem) => {
+//     if (regionItem.value === "*") {
+//         form.value.regions = [];
+//     } else {
+//         form.value.regions = [regionItem.value];
+//     }
+// };
+
+const updateCityInput = async (newValue = '') => {
+    const items = await searchCities({search: newValue}) ?? [];
+    cityOptions.value = items.map(item => ({value: item.city_id, name: item.city_name}));
+}
+
 const { getVacancies, getRegions, getCities } = vacancyStore;
 const vacancies = computed(() => vacancyStore.vacancies);
 

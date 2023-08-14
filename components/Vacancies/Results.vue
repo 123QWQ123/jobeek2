@@ -71,6 +71,7 @@
         <div class="aside-container">
           <VacanciesFilters></VacanciesFilters>
           <VacanciesList :key="$route.fullPath"></VacanciesList>
+
         </div>
       </div>
     </div>

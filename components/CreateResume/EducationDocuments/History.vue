@@ -46,7 +46,6 @@ watch(() => selectedEducationDocs.value, (newSelectedEducations) => {
 const errors = ref(props.errors ?? []);
 watch(() => props.errors, (newData) => {
     const newItems = selectedEducationDocs.value;
-    console.log(newData);
     selectedEducationDocs.value.map((item, index) => {
         newData?.map((error, errorIndex) => {
             if (errorIndex === index){
@@ -62,7 +61,6 @@ watch(() => props.errors, (newData) => {
             }
         })
     })
-    console.log(newItems);
     errors.value = newItems;
 })
 const reset = () => {

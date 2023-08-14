@@ -4,7 +4,15 @@ export default function useFormValidation(state = null) {
     const errors = ref({});
     state = state ?? ref({});
 
+    const clearInputError = (inputName) => {
+        if(state.value){
+            state.value[inputName] = null;
+            return;
+        }
+        state[inputName] = null;
+    }
     const handleErrorResponse = (response) => {
+        // console.log(response);
         if (response && response.status === 'failed') {
             // errors.value = error.data.errors;
             if (response.errors){
@@ -38,5 +46,5 @@ export default function useFormValidation(state = null) {
         }
     };
 
-    return { errors, handleErrorResponse };
+    return { errors, handleErrorResponse, clearInputError };
 }

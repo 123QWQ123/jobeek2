@@ -1,5 +1,5 @@
 <template>
-    <div class="row position-relative empty-area" @focusout="save">
+    <div class="row position-relative empty-area">
       <span class="position-absolute absoluted_icon" @click="deleteItem">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
             <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
@@ -11,7 +11,7 @@
                 <div class="input-row">
                     <label for="position">Название<b>*</b></label>
                     <div class="input-wrapper">
-                        <input type="text" placeholder="Введите" v-model="state.title.val">
+                        <input type="text" placeholder="Введите" v-model="state.title.val" @focusin="() => errors.title = ''">
 
                         <div class="text-danger d-block" v-if="errors.title">
                             {{ errors.title }}
@@ -22,7 +22,7 @@
                 <div class="input-row">
                     <label for="position">Организация, проводившая обучение<b>*</b></label>
                     <div class="input-wrapper">
-                        <input type="text" placeholder="Введите заведения" v-model="state.organization.val">
+                        <input type="text" placeholder="Введите заведения" v-model="state.organization.val" @focusin="() => errors.organization = ''">
 
                         <div class="text-danger d-block" v-if="errors.organization">
                             {{ errors.organization }}
@@ -32,7 +32,7 @@
                 <div class="input-row">
                     <label for="position">Ссылка на электронный сертификат<b>*</b></label>
                     <div class="input-wrapper">
-                        <input type="text" placeholder="Введите ссылку" v-model="state.url.val">
+                        <input type="text" placeholder="Введите ссылку" v-model="state.url.val" @focusin="() => errors.url = ''">
 
                         <div class="text-danger d-block" v-if="errors.url">
                             {{ errors.url }}
@@ -43,7 +43,7 @@
                     <label for="position">Год окончания<b>*</b></label>
                     <div class="input-wrapper">
                         <div>
-                            <CustomSelect :options="useYearOptions()" v-model="state.end_year.val" :label="'Выбрать'" />
+                            <CustomSelect :options="useYearOptions()" v-model="state.end_year.val" :label="'Выбрать'" @focusin="() => errors.end_year = ''"/>
 
                             <div class="text-danger d-block" v-if="errors.end_year">
                                 {{ errors.end_year }}
@@ -137,7 +137,8 @@ const state = reactive({
 const save = () => {
     emit('update', props.id, useFormData(state));
 }
-watch(() => useWatchStateValues(state, true), () => save);
+watch(() => useWatchStateValues(state), save);
+
 </script>
 
 <style scoped>

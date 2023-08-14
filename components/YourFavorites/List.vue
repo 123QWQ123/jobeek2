@@ -14,7 +14,7 @@
       <button class="btn btn-primary ms-2 " @click="nextPage">Next</button>
     </div>
     <h3 v-else>
-      К сожалению больше ничего не нашли!
+      К сожалению больше ничего не нашли!!!!
     </h3>
   </div>
 </template>

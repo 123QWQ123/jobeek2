@@ -7,16 +7,18 @@ const config = {
     // The private keys which are only available within server-side
     apiSecret: "123",
         // Keys within public, will be also exposed to the client-side
-        public: {
-      apiBase: process.env.BACKEND_HOST_API || "https://api.jobeek.online/api/",
-          base: process.env.BACKEND_HOST || "https://api.jobeek.online/",
-    }
+      public: {
+        apiBase: "https://api.jobeek.online/api/",
+        base: "https://api.jobeek.online/",
+      }
   },
+
   ssr: true,
   pages: true,
   css: [
     "bootstrap/dist/css/bootstrap.min.css",
     '~/assets/styles/nice-select.css',
+    '~/assets/styles/hamburger.min.css',
     '~/assets/styles/main.css',
     '~/assets/styles/app.scss',
   ],
@@ -44,11 +46,12 @@ const config = {
   routeRules: {
     // Static page generated on-demand, revalidates in background
     // Render these routes with SPA
+    '/**': { swr: 5  }, // 👈🏻 TTL in seconds
     '/sign-in': { ssr: false },
     '/sign-up': { ssr: false },
-    '/profile': { ssr: false },
-    '/my-resumes': { ssr: false },
-    '/my-vacancies': { ssr: false },
+    // '/profile': { ssr: true },
+    // '/my-resumes': { ssr: false },
+    // '/my-vacancies': { ssr: false },
     '/create-vacancy': { ssr: false },
     '/create-resume': { ssr: false },
     // Add cors headers

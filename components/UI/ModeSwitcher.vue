@@ -54,4 +54,11 @@ if (!process.server){
 .theme-checker input ~ .theme-checker-ui .circle.right{
     transform: translate(30px, -50%);
 }
+
+@media only screen and (max-width: 960px){
+
+    .checker-box .v:not(.active){
+        width: auto;
+    }
+}
 </style>

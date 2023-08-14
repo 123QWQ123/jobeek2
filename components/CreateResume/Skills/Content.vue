@@ -79,6 +79,8 @@ const deleteItem = (deleteItem) => {
 watch(selectedSkills, (newValues) => {
   emit('update:modelValue', newValues.filter(item => item));
 })
+
+
 </script>
 
 <style scoped>

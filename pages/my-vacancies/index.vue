@@ -21,8 +21,8 @@ const employer = computed(() => authStore.employer);
 const isLoading = ref(false);
 
 watch(isEmployer, (new_value) => {
-  if (new_value) {
-    navigateTo({ name: 'my-vacancies' });
+  if (!new_value) {
+    navigateTo({ name: 'my-resumes' });
   }
 });
 
@@ -42,7 +42,7 @@ onMounted(async () => {
     <div class="bg-wrapper pt position-relative">
 
       <MyVacanciesConnectedProviders/>
-      <MyVacanciesList ></MyVacanciesList >
+<!--      <MyVacanciesList ></MyVacanciesList >-->
     </div>
 
   </main>

@@ -1,5 +1,5 @@
 <template>
-  <CustomSelect v-model="selectedSalary" :options="salaryOptions" @change="onChange"></CustomSelect>
+  <CustomSelect :label="'Зарплата'" v-model="selectedSalary" :options="salaryOptions" @change="onChange"></CustomSelect>
 </template>
 
 <script setup>

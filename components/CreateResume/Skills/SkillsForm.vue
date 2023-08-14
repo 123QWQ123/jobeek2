@@ -2,7 +2,7 @@
   <div class="row">
       <div class="col-10">
           <div class="input-wrapper">
-              <input type="text" v-model="skill" />
+              <input type="text" v-model="skill" @keyup.enter.prevent="onSubmit"/>
           </div>
       </div>
       <div class="col-2">

@@ -1,7 +1,9 @@
 const public_routes = [
+    'index',
     'sign-up',
     'sign-up-confirm',
     'sign-in',
+    'forgot-password',
 ];
 
 const protected_routes = [

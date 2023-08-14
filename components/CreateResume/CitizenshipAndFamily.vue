@@ -1,9 +1,9 @@
 <template>
 
-  <div class="w-box" @mouseleave="save">
+  <div class="w-box" v-click-outside="save">
     <div class="w-box-head">
       <h3 class="title">Гражданство и Семья</h3>
-      <span class="arrow" :class="{up: isCollapsed}" @click="isCollapsed = !isCollapsed"></span>
+      <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
 
     </div>
 
@@ -55,47 +55,48 @@
           </div>
       </transition>
 
-      <transition>
-      <span v-if="isSaved" class="p-3 d-inline-flex justify-content-center align-items-center" style="color:#0c0">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="me-2">
-              <path fill="#0c0" d="M10.041 17l-4.5-4.319 1.395-1.435 3.08 2.937 7.021-7.183 1.422 1.409-8.418 8.591zm5.959 7v-2h-8v2h8zm0-24v2h-8v-2h8zm2 0h1c2.762 0 5 2.239 5 5v1h-2v-1c0-1.654-1.346-3-3-3h-1v-2zm6 16h-2v-8h2v8zm-18 8h-1c-2.762 0-5-2.239-5-5v-1h2v1c0 1.654 1.346 3 3 3h1v2zm18-6v1c0 2.761-2.238 5-5 5h-1v-2h1c1.654 0 3-1.346 3-3v-1h2zm-24-12v-1c0-2.761 2.238-5 5-5h1v2h-1c-1.654 0-3 1.346-3 3v1h-2zm0 2h2v8h-2v-8z"/>
-          </svg>
-          Сохранен
-      </span>
-      </transition>
   </div>
 </template>
 
 <script setup>
 
-import {useVacancyStore} from "~/store/vacancy";
-import {useProfileStore} from "~/store/profile";
-import {useDictionaryStore} from "~/store/dictionary";
-import useFormValidation from "~/composables/useFormValidation";
 import {useResumeStore} from "~/store/resume";
+
+import {useProfileStore} from "~/store/profile";
+import useFormValidation from "~/composables/useFormValidation";
 import {useWatchStateValues} from "~/composables/useWatchStateValues";
-
-const profileStore = useProfileStore();
-const vacancyStore = useVacancyStore();
+import {useDiff} from "~/composables/useDiff";
+import {useDictionaryStore} from "~/store/dictionary";
 const resumeStore = useResumeStore();
-
-const route = useRoute();
-const draftID = computed(() => route.query.draft_id);
-
-const isShown = ref(true);
-const isChanged = ref(false);
-const isSaved = ref(false);
-const isCollapsed = ref(true);
+const profileStore = useProfileStore();
 
 const dictionaryStore = useDictionaryStore();
+
+
 const {getMaritalStatus} = dictionaryStore;
 await getMaritalStatus();
 const {getCountries} = profileStore;
 await getCountries();
 const countryOptions = computed(() => profileStore.countries.map((item) => ({name:item.name, value: item.id})));
-const resume = computed(() => resumeStore.resume);
 const maritalStatusOptions = computed(() => dictionaryStore.marital_statuses.map(item => ({value: item.id, name: item.name})));
-const isValid = computed(() => props.is_valid);
+
+
+const route = useRoute();
+
+const draftID = computed(() => route.query.draft_id);
+
+const {seeker} = profileStore;
+const resume = computed(() => resumeStore.resume);
+
+const isShown = ref(false);
+const isSaved = ref(false);
+const isChanged = ref(false);
+const isFirst = ref(true);
+const isCollapsed = ref(false);
+const isUpdated = ref(false);
+
+
+const {getResume} = resumeStore;
 
 const state = reactive({
     citizenship: {
@@ -115,39 +116,113 @@ const state = reactive({
         isValid: true
     },
 });
-watch(() => useWatchStateValues(state), () => isChanged.value = true);
+
+watch(() => useWatchStateValues(state, true, true),   () => {
+    if (!isFirst.value){
+        isChanged.value = true;
+    }else{
+        isFirst.value = false;
+    }
+});
+
+const sectionData = ref({});
+watch(() => sectionData.value, (newData, oldData) => {
+    const diffData =  useDiff(newData, oldData, ['id', 'created_at', 'updated_at']);
+    if (Object.keys(diffData).length){
+        state['citizenship'].val = newData['citizenship'];
+        state['about'].val = newData['about'];
+        state['has_children'].val = newData['has_children'];
+        state['marital_status_id'].val = newData['marital_status_id'];
+        if (isUpdated.value){
+            isUpdated.value = false;
+            return;
+        }
+    }
+});
+watch(() => resumeStore.resume, (newResume) => {
+    if (newResume){
+        sectionData.value = {
+            citizenship: resumeStore.resume?.citizenship,
+            about: resumeStore.resume?.about,
+            has_children: resumeStore.resume?.has_children,
+            marital_status_id: resumeStore.resume?.marital_status_id,
+        };
+        nextTick(() => {
+            isChanged.value = false;
+        });
+    }
+});
+
+onMounted(() => {
+    if (resumeStore.resume){
+        sectionData.value = {
+            citizenship: resumeStore.resume?.citizenship,
+            about: resumeStore.resume?.about,
+            has_children: resumeStore.resume?.has_children,
+            marital_status_id: resumeStore.resume?.marital_status_id,
+        };
+
+        isShown.value = true;
+
+        nextTick(() => {
+            isChanged.value = false;
+        });
+    }
+})
+
+watch(() => isCollapsed.value, (newData) => {
+    if (!newData){
+        isShown.value = true;
+    }
+});
+
+
+const {updateResume} = resumeStore;
+
+const {errors, handleErrorResponse, clearInputError} = useFormValidation();
 const add  = () => {
     isShown.value = !isShown.value;
     // hasChanged.value = true;
 }
-const {getResume, updateResume} = resumeStore;
-
-const {errors, handleErrorResponse} = useFormValidation();
-
-const save = async() => {
-    console.log(isChanged.value);
+const save = async () => {
     if (isChanged.value){
+        state.isLoading = true;
+        // validate();
         errors.value = {};
-        const formData = useFormData(state);
-        console.log(formData);
-        const resData = await updateResume(draftID.value, {
-            form_data: 'CITIZENSHIP_AND_FAMILY_DATA',
-            ...formData
-        });
+        state.errorMessage = "";
+        const jsonData = {
+            citizenship: state.citizenship.val,
+            about: state.about.val,
+            has_children: state.has_children.val,
+            marital_status_id: state.marital_status_id.val,
+            form_data: 'CITIZENSHIP_AND_FAMILY_DATA'
+        }
+        state.isLoading = true;
+        errors.value = {};
+        state.errorMessage = "";
 
-        console.log(resData);
+        const resData = await updateResume(draftID.value, jsonData);
+
         if (resData.status !== 'success'){
             return handleErrorResponse(resData.data);
         }
-
-        isSaved.value = true;
         isChanged.value = false;
-        setTimeout(() => {
-            isSaved.value = false;
-        }, 3000);
+        isSaved.value = false;
+        isUpdated.value = false;
+
+        await getResume(draftID.value);
 
     }
 }
+
+const isCompleted = computed(() => {
+    const myResume = resume.value;
+    if (myResume){
+        return myResume.citizenship && myResume.about && myResume.has_children && myResume.marital_status_id;
+    }
+    return false;
+});
+
 </script>
 
 <style scoped>

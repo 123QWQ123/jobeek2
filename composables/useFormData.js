@@ -15,7 +15,6 @@ export function useFormData(state, type = 'json') {
                     newData[item] = value;
                 }
             });
-            console.log(newData);
             return newData;
         } catch (e) {
             return {};

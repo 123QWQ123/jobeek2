@@ -87,11 +87,12 @@ const onSubmit = async () => {
   // console.log(isFormValid.value, state.i_agree);
   validateForm();
   if (state.isFormValid) {
+    state.phone.val = phoneMask.value.unmaskedValue;
+
     const response = await sendRecoveryCode({
       phone: state.phone.val,
     });
 
-    console.log(response);
     if (response.status === 'success'){
       state.token = response.data.token;
       tabs.isConfirmTab = true;

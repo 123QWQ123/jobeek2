@@ -31,6 +31,7 @@ const useApi = async (method, options = {}) => {
     // console.log(data);
     // return data;
 
+    // if request is made from client side
     if (!process.server) {
         // console.log(process.server);
         const token = localStorage.getItem('token');
@@ -60,13 +61,23 @@ const useApi = async (method, options = {}) => {
             }
             if (options.method.toUpperCase() === 'POST') {
                 if (!options.payload) throw new Error("No payload provided");
+                const body = options.payload;
+
+                if (options.content_type && options.content_type !== 'application/json'){
+                    body.append('_method', 'POST');
+                }else{
+                    options.content_type = 'application/json';
+                }
+
                 response = await axios.post(
                     url,
-                    options.payload,
+                    body,
                     {
                         headers: headers
                     },
                 );
+                console.log(response);
+
             }
             if (options.method.toUpperCase() === 'PUT') {
                 if (!options.payload) throw new Error("No payload provided");
@@ -106,18 +117,18 @@ const useApi = async (method, options = {}) => {
                 };
             }
         } catch (error) {
-            if (error.response && error.response.status === 403){
-                navigateTo({
-                    path: '/profile',
-                    query: {
-                        message: JSON.stringify({
-                            text: error.response.data.message,
-                            code: 403,
-                            type: 'error',
-                        }),
-                    }
-                })
-            }
+            // if (error.response && error.response.status === 403){
+            //     // navigateTo({
+            //     //     path: '/profile',
+            //     //     query: {
+            //     //         message: JSON.stringify({
+            //     //             text: error.response.data.message,
+            //     //             code: 403,
+            //     //             type: 'error',
+            //     //         }),
+            //     //     }
+            //     // })
+            // }
             if (error.response && 'data' in error.response && 'errors' in error.response.data) {
                 return {
                     status: 'error',
