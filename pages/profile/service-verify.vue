@@ -6,6 +6,8 @@ import {storeToRefs} from "pinia";
 import {useProfileStore} from "../../store/profile";
 import Swal from "sweetalert2";
 import {navigateTo} from "nuxt/app";
+import useApi from "~/hooks/useApi";
+import {useResumeStore} from "~/store/resume";
 
 definePageMeta({
   layout: "cabinet"
@@ -20,47 +22,35 @@ const route = useRoute();
 const isSuccess = ref("-");
 const {code, email} = route.query;
 
-const {verifyEmailConfirmation, getUser} = profileStore;
+const {getConnectedSeekerProviders, getSeeker} = profileStore;
 const {refreshSeeker} = useAuthStore();
 
 onMounted(async() => {
-  const resData = await verifyEmailConfirmation({code, email});
-  if (resData.status === 'success'){
+    // Swal.fire({
+    //   title: 'Успешно!',
+    //   text: "Вы успешно подключили",
+    //   icon: 'success',
+    //   confirmButtonText: 'ОК'
+    // });
 
-    isSuccess.value = true;
-
-    Swal.fire({
-      title: 'Успешно!',
-      text: resData.message,
-      icon: 'success',
-      confirmButtonText: 'ОК'
-    });
-
-    await getUser();
-
+    // await getUser();
+    //
     await refreshSeeker();
+
+  const resData = await getConnectedSeekerProviders();
+
+  console.log(resData);
 
     setTimeout(() => {
         navigateTo({
                 name:'profile', query:
                     {
-                        message: "Вы успешно потвердили ваш эмаил!"
+                        message: "У вас подключены эти сервисы: !"
                     }
             }
         );
     }, 500);
 
-    setTimeout(() => {
-        navigateTo({
-                name:'profile', query: {}
-            }
-        );
-    }, 5000);
-  }else{
-    isSuccess.value = false;
-
-    navigateTo({name:'404'});
-  }
 });
 
 </script>
@@ -70,7 +60,7 @@ onMounted(async() => {
     <div class="wrapper">
         <div class="w-box" v-if="isSuccess">
           <div class="w-box-head">
-            <h1 class="title">Ваш эмаил подтержден!</h1>
+            <h1 class="title">Вы успешно подключили!</h1>
           </div>
           <div class="w-box-body">
             <p>Через 5 секунд редиректится!</p>

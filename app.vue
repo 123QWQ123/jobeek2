@@ -1,14 +1,23 @@
 <template>
-<div>
-    <NuxtLayout> </NuxtLayout>
-</div>
+  <div>
+      <NuxtLayout> </NuxtLayout>
+  </div>
 </template>
 
 <script setup>
-import {useResumeStore} from "~/store/resume";
 
-const { getConnectedProviders } = useResumeStore();
-await getConnectedProviders();
+import {useProfileStore} from "~/store/profile";
+import {useAuthStore} from "~/store/auth";
+
+const { getConnectedSeekerProviders, getConnectedEmployerProviders } = useProfileStore();
+
+const authStore =  useAuthStore();
+const isEmployer = computed(() => authStore.isEmployer);
+if (isEmployer.value){
+  await getConnectedEmployerProviders();
+}else{
+  await getConnectedSeekerProviders();
+}
 </script>
 
 <style>

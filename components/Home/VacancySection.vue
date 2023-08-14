@@ -13,55 +13,44 @@
         </svg>
       </a>
     </div>
-    <div class="swiper cards-slider">
-      <ul class="vacancy-list swiper-wrapper">
-        <li class="swiper-slide">
-          <div class="vacancy-card">
-            <div class="vacancy-card-body">
-              <div class="company">
-                <div class="company-logo"><img src="~/assets/img/logos/megafon.svg" alt="#"></div>
-                <div class="company-name"> <strong>Мегафон</strong><span
-                    class="location">Москва</span></div>
-              </div><a class="vacancy-card-title" href="#">Специалист по недвижимости</a><span
-                class="vacancy-card-dop-info">от 85 000 ₽ / месяц</span>
-            </div>
-            <div class="vacancy-card-footer">
-                <a class="btn button-md" href="#">Откликнуться</a>
-            </div>
+
+    <swiper
+        :slides-per-view="'auto'"
+        :space-between="20"
+        :class="'cards-slider'"
+        :wrapper-class="'vacancy-list'"
+    >
+      <swiper-slide>
+        <div class="vacancy-card">
+          <div class="vacancy-card-body">
+            <div class="company">
+              <div class="company-logo"><img src="~/assets/img/logos/megafon.svg" alt="#"></div>
+              <div class="company-name"> <strong>Мегафон</strong><span
+                  class="location">Москва</span></div>
+            </div><a class="vacancy-card-title" href="#">Специалист по недвижимости</a><span
+              class="vacancy-card-dop-info">от 85 000 ₽ / месяц</span>
           </div>
-        </li>
-        <li class="swiper-slide">
-          <div class="vacancy-card">
-            <div class="vacancy-card-body">
-              <div class="company">
-                <div class="company-logo"><img src="~/assets/img/logos/mts.svg" alt="#"></div>
-                <div class="company-name"> <strong>МТС</strong><span
-                    class="location">Москва</span></div>
-              </div><a class="vacancy-card-title" href="#">Оператор Call-центра</a><span
-                class="vacancy-card-dop-info">от 85 000 ₽ / месяц</span>
-            </div>
-            <div class="vacancy-card-footer">
-                <a class="btn button-md" href="#">Откликнуться</a>
-            </div>
+          <div class="vacancy-card-footer">
+            <a class="btn button-md" href="#">Откликнуться</a>
           </div>
-        </li>
-        <li class="swiper-slide">
-          <div class="vacancy-card">
-            <div class="vacancy-card-body">
-              <div class="company">
-                <div class="company-logo"><img src="~/assets/img/logos/tele2.svg" alt="#"></div>
-                <div class="company-name"> <strong>Теле2</strong><span
-                    class="location">Москва</span></div>
-              </div><a class="vacancy-card-title" href="#">Менеджер по продажам сим-карт в
-              ...</a><span class="vacancy-card-dop-info">от 85 000 ₽ / месяц</span>
-            </div>
-            <div class="vacancy-card-footer">
-                <a class="btn button-md" href="#">Откликнуться</a>
-            </div>
+        </div>
+      </swiper-slide>
+      <swiper-slide>
+        <div class="vacancy-card">
+          <div class="vacancy-card-body">
+            <div class="company">
+              <div class="company-logo"><img src="~/assets/img/logos/mts.svg" alt="#"></div>
+              <div class="company-name"> <strong>МТС</strong><span
+                  class="location">Москва</span></div>
+            </div><a class="vacancy-card-title" href="#">Оператор Call-центра</a><span
+              class="vacancy-card-dop-info">от 85 000 ₽ / месяц</span>
           </div>
-        </li>
-      </ul>
-    </div>
+          <div class="vacancy-card-footer">
+            <a class="btn button-md" href="#">Откликнуться</a>
+          </div>
+        </div>
+      </swiper-slide>
+    </swiper>
   </section>
 </template>
 <script setup lang="ts">

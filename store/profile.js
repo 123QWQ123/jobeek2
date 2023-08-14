@@ -16,6 +16,10 @@ export const useProfileStore = defineStore('profile', {
       countries: [],
       regions: [],
       cities: [],
+      providers: {
+        hh: false,
+        superjob: false
+      }
     }
   },
   getters: {
@@ -31,6 +35,25 @@ export const useProfileStore = defineStore('profile', {
     },
   },
   actions: {
+
+    async getConnectedSeekerProviders(payload) {
+      const {data} = await useApi('seeker/used_providers', {
+        method: 'get',
+        payload
+      });
+      console.log(data);
+      if (data && 'data' in data){
+        console.log(data.data);
+        const providers = data.data;
+        this.providers = providers;
+        // this.providers.hh = providers.hh;
+        // this.providers.superjob = providers.superjob;
+        console.log(this.providers);
+        return this.providers;
+      }
+      return data;
+    },
+
     async getCountries(payload = {}) {
       const {data} = await useApi('area/countries', {
         method: 'get',
@@ -154,8 +177,8 @@ export const useProfileStore = defineStore('profile', {
       });
     },
 
-    async getSeekerProvidersAuthEndpoints(payload) {
-      const {data} = await useApi('services/auth/redirect-url?profile=seeker', {
+    async getSeekerProvidersAuthEndpoints(payload, redirect_to = '/profile/service-verify') {
+      const {data} = await useApi('services/auth/redirect-url?profile=seeker&redirect_to=' + redirect_to, {
         method: 'get',
         payload
       });

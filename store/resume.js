@@ -122,20 +122,6 @@ export const useResumeStore = defineStore('resume', {
       }
       return response;
     },
-    async getConnectedProviders(payload) {
-      const {data} = await useApi('seeker/used_providers', {
-        method: 'get',
-        payload
-      });
-      if (data && 'data' in data){
-        const providers = data.data;
-        this.providers.hh = providers.hh;
-        this.providers.superjob = providers.superjob;
-        console.log(this.providers);
-        return this.providers;
-      }
-      return data;
-    },
     async getMyFavoriteVacancies(payload) {
       const {data} = await useApi('resumes/search', {
         method: 'get',
