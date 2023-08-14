@@ -8,7 +8,6 @@
 
         <div class="w-box-body" :class="{collapse: isCollapsed}">
 
-            {{errors.social_networks}}
             <CreateResumeProviders v-model="state.providers.val" :errors="errors.providers"></CreateResumeProviders>
 
             <div class="input-row" v-if="!draftID">
@@ -445,9 +444,9 @@ const save = async () => {
 
             const unrefed = state.social_networks.val.map((item) => ({type: item.type, value:item.value}));
             console.log(unrefed);
-            // formData.delete('social_networks');
+            formData.delete('social_networks');
             formData.delete('providers');
-            // useCreateFormData(formData, 'social_networks', state.social_networks.val);
+            useCreateFormData(formData, 'social_networks', state.social_networks.val);
             useCreateFormData(formData, 'providers', state.providers.val);
 
             resData = await createResume(formData, 'multipart/form-data');

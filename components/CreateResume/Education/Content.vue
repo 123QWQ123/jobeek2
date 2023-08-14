@@ -41,7 +41,7 @@ const route = useRoute();
 const resumeStore = useResumeStore();
 const draftID = computed(() => route.query.draft_id);
 
-const educations = ref(resumeStore.resume?.education_histories.value ?? []);
+const educations = ref(resumeStore.resume?.education_histories ?? []);
 
 const isShown = ref(false);
 const isChanged = ref(false);

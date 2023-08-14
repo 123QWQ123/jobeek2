@@ -5,7 +5,6 @@
     </div>
     <div class="education_item">
         <CreateResumeSocialNetworksItem
-                v-if="selectedContacts.length"
                 class="mb-2"
                 v-for="(item, index) in selectedContacts" :item="item"
                 :key="item.id"
@@ -53,33 +52,31 @@ watch(() => selectedContacts.value, (newSelectedItems) => {
 
 const errors = ref(props.errors ?? null);
 watch(() => props.modelValue, (newData) => {
-    selectedContacts.value = newData;
+    selectedContacts.value = newData ?? [];
 });
 watch(() => props.errors, (newData) => {
     errors.value = newData;
     console.log(newData);
-    console.log()
     const newItems = selectedContacts.value;
-    if (!newData instanceof Array){
-        return;
-    }
-    selectedContacts.value.map((item, index) => {
+    if (newData instanceof Array){
+      selectedContacts.value.map((item, index) => {
 
-        newData?.map((error, errorIndex) => {
-            if (errorIndex === index){
-                if (!newItems[index]){
-                    newItems[index] = {};
-                }
-                if (!newItems[index].errors){
-                    newItems[index].errors = {};
-                }
-                Object.keys(error).map((errorKey) => {
-                    newItems[index].errors[errorKey] = error[errorKey];
-                });
+        newData.map((error, errorIndex) => {
+          if (errorIndex === index){
+            if (!newItems[index]){
+              newItems[index] = {};
             }
+            if (!newItems[index].errors){
+              newItems[index].errors = {};
+            }
+            Object.keys(error).map((errorKey) => {
+              newItems[index].errors[errorKey] = error[errorKey];
+            });
+          }
         })
-    })
-    errors.value = newItems;
+      })
+      errors.value = newItems;
+    }
 })
 const reset = () => {
     resetObject.id = uuidv4();
