@@ -41,7 +41,6 @@ const errorClass = computed(() => {
 
 
 onMounted(() => {
-
   if (route.query.message) {
     toast.info(route.query.message);
   }

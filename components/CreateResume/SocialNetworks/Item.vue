@@ -1,22 +1,22 @@
 <template>
-<!--      <span class="position-absolute absoluted_icon">-->
-<!--          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">-->
-<!--            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>-->
-<!--          </svg>-->
-<!--      </span>-->
-        <div class="col-12">
-            <div class="add-row input-row">
+        <div class="row position-relative ps-4">
+
+            <span class="position-absolute absoluted_icon" @click="deleteItem">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                  <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                </svg>
+            </span>
+            <div class="input-row">
                 <div class="add-row-select">
                     <CustomSelect :options="contactOptions" v-model="state.type.val"></CustomSelect>
+
                 </div>
-                <div class="input-wrapper">
+                <div class="input-wrapper col-12">
+
                     <input type="text" placeholder="" v-model="state.value.val">
-                    <button class="delete-row" type="button"  @click="deleteItem">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M18.9951 4.99512L5.00586 18.9843" stroke="#78757E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M19.0009 18.9928L5 4.98901" stroke="#78757E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
+                    <div class="text-danger d-block" v-if="errors.value">
+                      {{errors.value}}
+                    </div>
                 </div>
             </div>
         </div>

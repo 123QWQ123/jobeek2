@@ -30,7 +30,7 @@ const props  = defineProps({
     },
     errors: {
         required: true,
-        default: {}
+        default: null
     }
 });
 import {storeToRefs} from "pinia";

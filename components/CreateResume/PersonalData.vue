@@ -429,6 +429,7 @@ const save = async () => {
             const formData = useFormData(state, 'form_data')
             formData.append('form_data', 'personal_data');
             const unrefed = state.social_networks.val.map((item) => ({type: item.type, value:item.value}));
+            console.log(unrefed);
             formData.delete('social_networks');
             formData.delete('providers');
             formData.delete('title');
@@ -446,7 +447,7 @@ const save = async () => {
             console.log(unrefed);
             formData.delete('social_networks');
             formData.delete('providers');
-            useCreateFormData(formData, 'social_networks', state.social_networks.val);
+            useCreateFormData(formData, 'social_networks', unrefed);
             useCreateFormData(formData, 'providers', state.providers.val);
 
             resData = await createResume(formData, 'multipart/form-data');

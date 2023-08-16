@@ -51,6 +51,13 @@ const config = {
   },
   app: {
     // pageTransition: { name: 'layout', mode: 'out-in' }
+    head: {
+      link: [
+        {
+          rel: 'stylesheet', href: 'https://sem-dev.co.ua/jobeek.css'
+        }
+      ]
+    }
   },
   routeRules: {
     // Static page generated on-demand, revalidates in background

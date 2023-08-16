@@ -26,21 +26,8 @@
           </div>
           <div class="input-wrap has-label">
               <label for="salary">Город</label>
-
               <SelectWithSearch :options="cityOptions" v-model.number="city" :placeholder="'Город'" @input="updateCityInput" ></SelectWithSearch>
           </div>
-
-<!--          <div class="input-wrap has-label">-->
-<!--              <label for="salary">Регион</label>-->
-<!--              <SelectWithSearch-->
-<!--                      :options="regionOptions"-->
-<!--                      v-model="region"-->
-<!--                      :listStyles="searchSelectStyles"-->
-<!--                      :placeholder="'Выберите'"-->
-<!--                      @change="onRegionChange"-->
-<!--                      :listItemStyles="searchSelectItemStyles"-->
-<!--              />-->
-<!--          </div>-->
           <button class="button-accent submit-search-form" type="button" @click="onSubmit">Поиск </button>
         </div>
       </form>

@@ -167,7 +167,6 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      console.log(data);
       if (data && 'data' in data){
         this.industries = data.data ?? [];
         return this.industries;
@@ -179,7 +178,6 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      console.log(data);
       if (data && 'data' in data){
         this.educations = data.data?.education ?? [];
       }

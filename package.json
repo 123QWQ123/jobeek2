@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev --port=3033",
+    "dev": "npx nuxi clean && nuxt dev --port=3033",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
@@ -20,6 +20,7 @@
     "vite": "^3.2.5"
   },
   "dependencies": {
+    "@igortrindade/vue-number-format": "^1.6.1",
     "@nuxtjs/auth": "^4.5.1",
     "@nuxtjs/auth-next": "5.0.0-1667386184.dfbbb54",
     "@nuxtjs/axios": "^5.13.6",

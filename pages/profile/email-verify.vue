@@ -29,12 +29,12 @@ onMounted(async() => {
 
     isSuccess.value = true;
 
-    Swal.fire({
-      title: 'Успешно!',
-      text: resData.message,
-      icon: 'success',
-      confirmButtonText: 'ОК'
-    });
+    // Swal.fire({
+    //   title: 'Успешно!',
+    //   text: resData.message,
+    //   icon: 'success',
+    //   confirmButtonText: 'ОК'
+    // });
 
     await getUser();
 

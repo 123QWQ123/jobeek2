@@ -29,6 +29,7 @@ export function useFormData(state, type = 'json') {
             keys.map(item => {
                 let value = state[item].val;
                 if (typeof value === 'boolean'){
+                    console.log(item, value);
                     formData.append(item, Number(value))
                 }
                 else{

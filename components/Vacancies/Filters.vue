@@ -1,5 +1,5 @@
 <template>
-  <aside class="aside">
+  <aside class="aside" :class="{'active': isSidebarOpen}">
     <div class="filter-container">
       <div class="filter-head"> <strong>Фильтры</strong>
         <button class="clear-all" @click="resetFilters">Очистить все</button>
@@ -17,7 +17,7 @@
       <VacanciesFiltersWorkType @onFormChange="onFormChange"/>
       <VacanciesFiltersSchedule @onFormChange="onFormChange"/>
     </div>
-    <button class="close-aside">
+    <button class="close-aside" @click="toggleSidebar">
       <svg xmlns="http://www.w3.org/2000/svg"
            xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px"
            y="0px" width="20" height="20" viewBox="0 0 122.878 122.88"
@@ -36,6 +36,20 @@ import {useVacancyStore} from "../../store/vacancy";
 import {useRoute, useRouter} from "nuxt/app";
 import {useVacancyForm} from "../../composables/useVacancyForm";
 const vacancyStore = useVacancyStore();
+import {useUIStore}  from "~/store/ui";
+import {useNuxtApp} from "#app";
+const uiStore = useUIStore();
+const {toggleSidebar} = uiStore;
+const isSidebarOpen = computed(() => uiStore.isSidebarOpen);
+const {$isMobile} = useNuxtApp();
+
+const {turnOnMobileMode, turnOffMobileMode} = uiStore;
+const isMobile = computed(() => $isMobile());
+if (isMobile){
+  turnOnMobileMode();
+}else{
+  turnOffMobileMode()
+}
 
 const form = ref(useVacancyForm());
 

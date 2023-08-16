@@ -1,9 +1,13 @@
 const public_routes = [
     'index',
+    'vacancy',
+    'resume',
     'sign-up',
     'sign-up-confirm',
     'sign-in',
     'forgot-password',
+    'search-resumes',
+    'search-vacancies',
 ];
 
 const protected_routes = [

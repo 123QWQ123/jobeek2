@@ -1,11 +1,7 @@
 <template>
-  {{item}}
-
-  <VacanciesHHItem v-if="item && item.provider === 'hh'" :item="item"></VacanciesHHItem>
-  <VacanciesSuperjobItem v-if="item && item.provider === 'superjob'" :item="item"></VacanciesSuperjobItem>
-  <SkeletonCard v-else />
+  <VacanciesHHItem v-if="props.item && item.provider === 'hh'" :item="props.item"></VacanciesHHItem>
+  <VacanciesSuperjobItem v-else :item="props.item"></VacanciesSuperjobItem>
 </template>
 <script setup>
 const props = defineProps(['item']);
-const {item} = props;
 </script>

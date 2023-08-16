@@ -1,30 +1,23 @@
 <template>
-<!--      <PageLoader v-if="isLoading"/>-->
   <div class="content">
+    <div>
+      <ul class="favorites-list">
+        <VacanciesItem v-for="item in vacanciesItems" :key="item.id" :item="item" />
+      </ul>
 
-    <ClientOnly>
-      <Suspense>
-        <template #default>
-          <VacanciesAsyncList/>
-        </template>
-
-        <template #fallback>
-          <VacanciesLoadingList/>
-        </template>
-      </Suspense>
-
-    </ClientOnly>
-
+      <button ref="loadMoreButton" v-if="isMore" id="load_more_button" class="create-button show-more" @click="loadMore">
+        Показать еще
+        <div v-if="isLoading" class="ms-2 spinner-grow spinner-grow-sm" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <img v-else src="~/assets/img/svg/Arrow-Down2.svg" alt="#">
+      </button>
+    </div>
   </div>
 
 </template>
 
 <script setup>
-import { defineAsyncComponent } from 'vue';
-
-const AsyncList = defineAsyncComponent(() =>
-    import('./List.vue')
-);
 const loadVacancyList = async () => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -37,7 +30,7 @@ const loadVacancyList = async () => {
           bio: 'I run a VueJS community over at https://learnvue.co, develop web sites, and post whatever I find cool on the Internet.',
         }
       ])
-    }, 10000)
+    }, 1000)
   })
 }
 
@@ -53,25 +46,29 @@ const form = ref(useVacancyForm());
 
 const params = useVacancyForm(form.value, 'backend');
 // const res = await getVacancies({...params});
-const vacanciesItems = computed(async() => await loadVacancyList());
+const vacanciesItems = ref(await getVacancies({...params}));
 
 const loadMoreButton = ref();
 const isLoading = ref(false);
 const isMore = ref(false);
 
 const route = useRoute();
-// watch(vacancies, (newValues) => {
-//   vacanciesItems.value = newValues;
-//   if (newValues.length > 0){
-//     isMore.value = true;
-//   }
-// })
+onMounted(() => {
+  if (vacancies.value.length > 0){
+    isMore.value = true;
+  }
+})
+watch(vacancies, (newValues) => {
+  vacanciesItems.value = newValues;
+  if (newValues.length > 0){
+    isMore.value = true;
+  }
+});
 const loadMore = async() => {
   isLoading.value = true;
   const params = useVacancyForm(form.value, 'backend');
   const res = await getVacancies({...params, page: parseInt(current_page.value) + 1}, true);
-  console.log(res);
-  if (res.items.length < 1){
+  if (res.length < 1){
     isMore.value = false;
     Swal.fire({
       title: 'Больше вакансий не найдено!',

@@ -256,7 +256,7 @@ export const useAuthStore = defineStore('auth', {
           this.employer = this.user;
           return true;
         }catch (error){
-          console.log(error);
+          // console.log(error);
           console.log('UnAuthorized');
           this.logout();
           return false;

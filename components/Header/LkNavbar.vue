@@ -57,15 +57,12 @@
 const {$isMobile} = useNuxtApp();
 
 import { useAuthStore } from "~~/store/auth";
-
 const auth = useAuthStore();
-
 const isAuthed = computed(() => auth.isAuthed);
 const isEmployer = computed(() => auth.isEmployer);
 
 const user = computed(() => auth.user);
 
-const isMobile = computed(() => $isMobile());
 </script>
 
 <script>

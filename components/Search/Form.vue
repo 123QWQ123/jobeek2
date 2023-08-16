@@ -16,12 +16,6 @@
           <SelectWithSearch :options="cityOptions" v-model="city" :listStyles="searchSelectStyles" @change="onCityChange" :listItemStyles="searchSelectItemStyles"/>
         </div>
         <button class="button-accent submit-search-form" type="button" @click="onSubmit">Поиск </button>
-
-<!--        <div class="input-wrap has-label">-->
-<!--&lt;!&ndash;          <img class="icon" src="~/assets/img/svg/location.svg" alt="#">&ndash;&gt;-->
-<!--          <label for="region">Регион</label>-->
-<!--          <SelectWithSearch :options="regionOptions" v-model="region" :listStyles="searchSelectStyles" @change="onRegionChange" :listItemStyles="searchSelectItemStyles"/>-->
-<!--        </div>-->
       </div>
     </div>
   </form>
@@ -130,7 +124,4 @@ const searchSelectStyles = {
 
 <style scoped>
 
-.search-row{
-    grid-template-columns: 1fr 20% 20% 130px;
-}
 </style>
