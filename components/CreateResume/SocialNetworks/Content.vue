@@ -1,7 +1,8 @@
 <template>
 
-    <div class="text-danger d-block" v-if="props.errors">
-        {{props.errors}}
+
+    <div class="text-danger d-block p-4" v-if="errors?.message">
+      {{ errors.message }}
     </div>
     <div class="education_item">
         <CreateResumeSocialNetworksItem
@@ -56,7 +57,6 @@ watch(() => props.modelValue, (newData) => {
 });
 watch(() => props.errors, (newData) => {
     errors.value = newData;
-    console.log(newData);
     const newItems = selectedContacts.value;
     if (newData instanceof Array){
       selectedContacts.value.map((item, index) => {

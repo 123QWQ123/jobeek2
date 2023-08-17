@@ -12,9 +12,10 @@ export default function useFormValidation(state = null) {
         state[inputName] = null;
     }
     const handleErrorResponse = (response) => {
-        // console.log(response);
         if (response && response.status === 'failed') {
-            // errors.value = error.data.errors;
+            if (response.message){
+                errors.value.message = response.message;
+            }
             if (response.errors){
                 const newErrors = {};
                 Object.keys(response.errors).map(item => {
@@ -39,7 +40,7 @@ export default function useFormValidation(state = null) {
                         state[item].isValid = false;
                     }
                 });
-                errors.value = newErrors;
+                errors.value = {...newErrors, message: response.message};
             }
         } else {
             console.log(response);

@@ -1,5 +1,5 @@
 <template>
-        <div class="row position-relative ps-4">
+        <div class="row position-relative">
 
             <span class="position-absolute absoluted_icon" @click="deleteItem">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
@@ -11,13 +11,47 @@
                     <CustomSelect :options="contactOptions" v-model="state.type.val"></CustomSelect>
 
                 </div>
-                <div class="input-wrapper col-12">
 
-                    <input type="text" placeholder="" v-model="state.value.val">
-                    <div class="text-danger d-block" v-if="errors.value">
-                      {{errors.value}}
+              <div class="input-wrapper col-12">
+                <div class="c">
+
+                  <div>
+                    <input type="text" placeholder="Телефон" id="phone" ref="phoneInputElement">
+                  </div>
+                  <div class="from-to-block" v-if="state.type.val === 'phone'">
+                    <label>Отвечу на звонки</label>
+                    <div class="c2">
+
+                      <div>
+                        <CustomSelect :options="useHourOptions()" v-model="state.phone_time_start.val"  :label="'От'" @focusin="() => errors.phone_time_start = ''"></CustomSelect>
+
+                        <div class="text-danger d-block" v-if="errors.phone_time_start">
+                          {{ errors.phone_time_start }}
+                        </div>
+                      </div>
+                      <div>
+                        <CustomSelect :options="useHourOptions()" v-model="state.phone_time_end.val" :label="'До'" @focusin="() => errors.phone_time_end = ''"></CustomSelect>
+
+                        <div class="text-danger d-block" v-if="errors.phone_time_end">
+                          {{ errors.phone_time_end }}
+                        </div>
+                      </div>
                     </div>
+
+                  </div>
+                  <div class="text-danger d-block" v-if="errors.phone">
+                    {{ errors.phone }}
+                  </div>
+
                 </div>
+
+                <div class="с mt-4">
+                  <textarea type="text" class="form-control" placeholder="Коммент" v-model="state.comment.val" > </textarea>
+                  <div class="text-danger d-block" v-if="errors.comment">
+                    {{errors.comment}}
+                  </div>
+                </div>
+              </div>
             </div>
         </div>
 </template>
@@ -26,6 +60,8 @@
 import {useDictionaryStore} from "~/store/dictionary";
 import {useWatchStateValues} from "~/composables/useWatchStateValues";
 import {useContactOptions} from "~/composables/useContactOptions";
+import {useHourOptions} from "~/composables/useHourOptions";
+import IMask from "imask";
 
 const emit = defineEmits(['delete', 'update'])
 const props = defineProps({
@@ -54,6 +90,23 @@ const props = defineProps({
 const contactOptions = useContactOptions();
 
 const contacts = ref([]);
+
+const phoneInputElement = ref();
+const phoneMask = ref(null);
+
+onMounted(( ) => {
+  phoneMask.value = new IMask(phoneInputElement.value, {
+    mask: "+{7}(000)000-00-00",
+  });
+  phoneInputElement.value.addEventListener("input", (e) => {
+    console.log(state.type.val);
+    if (state.type.val === 'phone'){
+      state.value.val = phoneMask.value.unmaskedValue;
+    }else{
+      state.value.val = e.target.value;
+    }
+  });
+});
 
 
 const errors = ref(props.errors);
@@ -84,7 +137,30 @@ const state = reactive({
         val: props.value,
         isValid: null,
     },
+    phone_time_start: {
+        val: props.phone_time_start,
+        isValid: null,
+    },
+    phone_time_end: {
+        val: props.phone_time_start,
+        isValid: null,
+    },
+    comment: {
+        val: props.phone_time_start,
+        isValid: null,
+    },
 });
+
+watch(() => state.type.val, (newType) => {
+  console.log(newType);
+  if (newType === 'phone'){
+    phoneMask.value = new IMask(phoneInputElement.value, {
+      mask: "+{7}(000)000-00-00",
+    });
+  }else{
+    phoneMask.value.destroy();
+  }
+})
 const save = () => {
     emit('update', props.id, {type: state.type.val, value: state.value.val, id: props.id});
 }
@@ -97,7 +173,7 @@ watch(() => state.value.val,save);
 
 .absoluted_icon{
     position: absolute;
-    left: -.5rem;
+    left: -1.8rem;
     top: 0.5rem;
     font-size: 1rem;
     z-index: 1;

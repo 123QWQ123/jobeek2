@@ -5,10 +5,14 @@
         <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
 
       </div>
+
+      <div class="text-danger d-block p-4" v-if="errors.message">
+        {{ errors.message }}
+      </div>
       <transition>
           <div class="w-box-body" :class="{collapse: isCollapsed}">
               <div class="form_content" v-if="isShown">
-                  <CreateResumeSkillsContent v-model="skills"/>
+                  <CreateResumeSkillsContent v-model="skills" :errors="errors.skills"/>
               </div>
               <div class="empty-area" v-else>
                   <span>Здесь вы можете указать релевантный опыт в сфере которую вы выбарли</span>
@@ -28,7 +32,6 @@ import useFormValidation from "~/composables/useFormValidation";
 import {useResumeStore} from "~/store/resume";
 import {useDiff} from "~/composables/useDiff";
 import {useDictionaryStore} from "~/store/dictionary";
-const educationElement = ref(false);
 const route = useRoute();
 const resumeStore = useResumeStore();
 const dictionaryStore = useDictionaryStore();

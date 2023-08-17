@@ -1,5 +1,10 @@
 <template>
   <div class="w-100">
+
+
+      <div class="text-danger d-block p-4" v-if="props.message">
+        {{ props.message }}
+      </div>
       <CreateResumeSkillsForm
               v-if="selectedSkills.length"
               :is-new="isNew"
@@ -26,7 +31,7 @@
 <script setup>
 import {useDictionaryStore} from "~/store/dictionary";
 
-const props = defineProps(['modelValue']);
+const props = defineProps(['modelValue', 'errors']);
 const emit = defineEmits(['update:modelValue']);
 const dictionaryStore = useDictionaryStore();
 

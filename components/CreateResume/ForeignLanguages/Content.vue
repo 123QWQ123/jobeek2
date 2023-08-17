@@ -3,7 +3,10 @@
         <div class="w-box-head">
             <h3 class="title">Владение иностранными языками</h3>
             <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
+        </div>
 
+        <div class="text-danger d-block p-4" v-if="errors.message">
+          {{ errors.message }}
         </div>
         <transition>
             <div class="w-box-body" :class="{collapse: isCollapsed}">
@@ -28,7 +31,6 @@
 import useFormValidation from "~/composables/useFormValidation";
 import {useResumeStore} from "~/store/resume";
 import {useDiff} from "~/composables/useDiff";
-const educationElement = ref(false);
 const route = useRoute();
 const resumeStore = useResumeStore();
 const draftID = computed(() => route.query.draft_id);
