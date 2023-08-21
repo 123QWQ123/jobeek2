@@ -42,7 +42,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
                     path: '/profile',
                     query: {
                         message: JSON.stringify({
-                            text: "you have to complete your employer profile!",
+                            text: "Вы должны заполнить профиль работадателя!",
                             code: "405", type: 'error'
                         })
                     }
@@ -57,7 +57,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
                     path: '/profile',
                     query: {
                         message: JSON.stringify({
-                            text: "you have to complete your seeker profile!",
+                            text: "Вы должны заполнить профиль соискателя!",
                             code: "405", type: 'error'
                         })
                     }

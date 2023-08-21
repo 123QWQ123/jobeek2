@@ -1,10 +1,12 @@
 <template>
-    <div class="form-check d-inline-flex">
-        <input class="form-check-input" type="checkbox" id="working_in_days" v-model="value">
-        <label for="working_in_days">
-            Работа только по сб и вс
-        </label>
+    <div class="check-block">
+      <div class="checkbox">
+        <input type="checkbox" id="working_in_days" v-model="value">
+        <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
+      </div>
+      <label for="working_in_days">Работа только по сб и вс</label>
     </div>
+
 </template>
 
 <script setup>

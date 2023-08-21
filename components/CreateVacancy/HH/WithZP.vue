@@ -1,11 +1,11 @@
 <template>
-
-    <div class="form-check d-inline-flex">
-        <input class="form-check-input" type="checkbox" id="with_zp" v-model="value">
-        <label for="with_zp">
-            Вашу вакансию увидят больше людей. Мы разместим ее дополнительно на сервисе Зарплата.ру
-        </label>
+  <div class="check-block">
+    <div class="checkbox">
+      <input type="checkbox" id="with_zp" v-model="value">
+      <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
     </div>
+    <label for="with_zp">Вашу вакансию увидят больше людей. Мы разместим ее дополнительно на сервисе Зарплата.ру</label>
+  </div>
 </template>
 
 <script setup>

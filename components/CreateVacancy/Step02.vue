@@ -30,7 +30,7 @@
 <script setup>
 import {useDictionaryStore} from "~/store/dictionary";
 
-const emit = defineEmits(['set']);
+const emit = defineEmits(['set', 'prev']);
 import {storeToRefs} from "pinia";
 import {useVacancyStore} from "~/store/vacancy";
 const vacancyStore = useVacancyStore();
@@ -48,6 +48,9 @@ watch(vacancy_billing_type, (newValues) => {
 const updateState = (name, value) => emit('set', name, value);
 
 
+const goToPrevStep = () => {
+  emit('prev');
+}
 </script>
 
 <style scoped>

@@ -18,7 +18,7 @@ const emit = defineEmits(['set']);
 const props = defineProps({
     modelValue: {
         required: true,
-        default: true,
+        default: null,
     }
 })
 const value = ref(props.modelValue);

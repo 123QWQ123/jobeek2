@@ -1,10 +1,11 @@
 <template>
-    <div class="form-check d-inline-flex">
-        <input class="form-check-input" type="checkbox" id="accept_kids" v-model="value">
-        <label for="accept_kids">
-            Указание, что вакансия доступна для соискателей старше 14 лет
-        </label>
+  <div class="check-block">
+    <div class="checkbox">
+      <input type="checkbox" id="accept_kids" v-model="value">
+      <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
     </div>
+    <label for="accept_kids">Указание, что вакансия доступна для соискателей старше 14 лет</label>
+  </div>
 </template>
 
 <script setup>

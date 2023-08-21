@@ -26,6 +26,13 @@ const errorMessage = computed(() => {
     }
     return route.query.message
 });
+const alertType = computed(() => {
+    if (useCheckJSON(route.query.message)){
+      const alert = JSON.parse(route.query.message);
+      return alert.type;
+    }
+    return 'success'
+});
 const errorClass = computed(() => {
     if (useCheckJSON(route.query.message)){
         const code = JSON.parse(route.query.message).code;
@@ -40,25 +47,42 @@ const errorClass = computed(() => {
 });
 
 
-onMounted(() => {
-  if (route.query.message) {
-    toast.info(route.query.message);
+watch(() => route.query.message, () => {
+  if (errorMessage.value){
+    if (alertType.value === 'success'){
+      toast.success(errorMessage, {autoClose: 3000});
+    }
+    if (alertType.value === 'error'){
+      toast.error(errorMessage, {autoClose: 3000});
+    }
+    if (alertType.value === 'warning'){
+      toast.warning(errorMessage, {autoClose: 3000});
+    }
+
+    setTimeout(() => {
+      navigateTo({
+        name:'profile'
+      });
+    }, 3000)
   }
+
 })
+// onMounted(() => {
+//
+// })
 </script>
 
 <template>
   <main class="main cabinet profile-page bg-wrapper" role="main">
     <PersonalCabinetSearchMobile />
 
-
     <div class="has-sidebar has-sidebar--v2 wrapper wrapper-1290">
       <div class="content">
-        <div class="w-box w-box--main" v-if="error">
-          <div class="w-box-head " :class="errorClass">
-            <p class="descr text-light">{{errorMessage}}</p>
-          </div>
-        </div>
+<!--        <div class="w-box w-box&#45;&#45;main" v-if="error">-->
+<!--          <div class="w-box-head " :class="errorClass">-->
+<!--            <p class="descr text-light">{{errorMessage}}</p>-->
+<!--          </div>-->
+<!--        </div>-->
         <div class="w-box w-box--main">
           <div class="w-box-head">
             <h1 class="title">Профиль</h1>
