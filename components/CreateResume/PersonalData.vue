@@ -170,7 +170,7 @@ const {seeker} = profileStore;
 const {resume} = storeToRefs(resumeStore);
 const formTitle = computed(() => {
     if (resume.value){
-        return "Обновить резюме";
+        return "Создание резюме";
     }
 
     return "Создание резюме";
