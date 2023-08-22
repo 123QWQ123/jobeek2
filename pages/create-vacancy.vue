@@ -296,8 +296,6 @@ body{
     filter: blur(1rem);
 }
 
-//d-flex align-items-center justify-content-between
-
 .w-box-head{
 }
 

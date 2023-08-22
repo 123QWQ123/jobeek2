@@ -26,7 +26,7 @@
           </div>
           <div class="input-wrap has-label">
               <label for="salary">Город</label>
-              <SelectWithSearch :options="cityOptions" v-model.number="city" :placeholder="'Город'" @input="updateCityInput" ></SelectWithSearch>
+              <SelectWithSearch :options="cityOptions" v-model.number="city" :placeholder="'Город'" @input="updateCityInput" @change="onCityChange"></SelectWithSearch>
           </div>
           <button class="button-accent submit-search-form" type="button" @click="onSubmit">Поиск </button>
         </div>
@@ -43,16 +43,12 @@ import { storeToRefs } from "pinia";
 import {useProfileStore} from "~/store/profile";
 
 const auth = useAuthStore();
-const { logout } = auth;
 
 const isEmployer = computed(() => auth.isEmployer);
 const searchPlaceHolder = computed(() =>
     auth.isEmployer ? "Какой специалист вы ищете?" : "Какую вакансию вы ищете?"
 );
 
-const onChange = (e) => {
-    console.log(e);
-};
 const router = useRouter();
 const route = useRoute();
 
@@ -72,13 +68,13 @@ const form = ref(useVacancyForm());
 //         form.value.regions = [regionItem.value];
 //     }
 // };
-// const onCityChange = (regionItem) => {
-//     if (regionItem.value === "*") {
-//         form.value.regions = [];
-//     } else {
-//         form.value.regions = [regionItem.value];
-//     }
-// };
+const onCityChange = (cityItem) => {
+    if (cityItem.value === "*") {
+        form.value.cities = [];
+    } else {
+        form.value.cities = [cityItem.value];
+    }
+};
 
 const updateCityInput = async (newValue = '') => {
     const items = await searchCities({search: newValue}) ?? [];
@@ -88,10 +84,6 @@ const updateCityInput = async (newValue = '') => {
 const { getVacancies, getRegions, getCities } = vacancyStore;
 const vacancies = computed(() => vacancyStore.vacancies);
 
-const searchSelectItemStyles = {
-    width: "auto !important",
-    whiteSpace: "pre-wrap",
-};
 
 const { regions, cities } = storeToRefs(vacancyStore);
 const regionOptions = ref([]);
@@ -110,6 +102,10 @@ const prepareCities = () => {
 };
 
 const page = useRoute();
+
+// watch(city, async (newCity) => {
+//   form.value.cities = [newCity];
+// });
 
 watch(region, async (newRegion) => {
     if (region.value !== "*") {
@@ -147,6 +143,7 @@ const { clearVacancies } = vacancyStore;
 const onSubmit = async (e) => {
     isLoading.value = true;
     clearVacancies();
+    console.log(isEmployer.value);
     const params = useVacancyForm(form.value, "front");
     if (isEmployer.value) {
         router.push({ name: "search-resumes", query: params });

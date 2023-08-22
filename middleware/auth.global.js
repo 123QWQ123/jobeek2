@@ -28,9 +28,10 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
             return navigateTo({
                 path: '/sign-in',
                 query: {
-                    message_text: "Please, Sign in to have access!!!",
-                    message_code: "403",
-                    message_type: 'error'
+                    message: JSON.stringify({
+                        text: "Пожалуйста, зайдите в профиль",
+                        code: "403", type: 'error'
+                    })
                 }
             });
         }

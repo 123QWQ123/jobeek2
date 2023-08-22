@@ -10,6 +10,7 @@ export const useVacancyStore = defineStore('vacancy', {
   state: () => {
     return {
       vacancies: [],
+      vacancies_in_my_city: [],
       vacancy: null,
       total: 0,
       my_total: 0,
@@ -49,6 +50,9 @@ export const useVacancyStore = defineStore('vacancy', {
     },
     top_30: (state) => {
       return state.vacancies.slice(0, 30);
+    },
+    my_city_vacancies: (state) => {
+      return state.vacancies_in_my_city.slice(0, 3);
     }
   },
   actions: {
@@ -90,6 +94,17 @@ export const useVacancyStore = defineStore('vacancy', {
         }
         this.total = data.found;
         return this.vacancies;
+      }
+      return data;
+    },
+    async getCurrencyCityVacancies(payload) {
+      const {data} = await useApi('vacancies/search', {
+        method: 'get',
+        payload
+      });
+      if (data && 'items' in data){
+        this.vacancies_in_my_city = data.items;
+        return this.vacancies_in_my_city;
       }
       return data;
     },

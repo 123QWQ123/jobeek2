@@ -2,8 +2,7 @@
 <script setup>
 
 import {useAuthStore} from "../../store/auth";
-import {useCheckJSON} from "~/composables/useCheckJSON";
-import { toast } from 'vue3-toastify';
+import useAlert from "~/composables/useAlert";
 
 
 definePageMeta({
@@ -20,56 +19,14 @@ const route = useRoute();
 const error = computed(() => {
     return route.query.message;
 });
-const errorMessage = computed(() => {
-    if (useCheckJSON(route.query.message)){
-        return JSON.parse(route.query.message).text;
-    }
-    return route.query.message
-});
-const alertType = computed(() => {
-    if (useCheckJSON(route.query.message)){
-      const alert = JSON.parse(route.query.message);
-      return alert.type;
-    }
-    return 'success'
-});
-const errorClass = computed(() => {
-    if (useCheckJSON(route.query.message)){
-        const code = JSON.parse(route.query.message).code;
-        console.log(code);
-        if (code === 200 || code === 201){
-            return 'bg-success';
-        }
-        return 'bg-danger';
-    }else{
-        return 'bg-success';
-    }
-});
 
+const {handleAlert} = useAlert();
 
-watch(() => route.query.message, () => {
-  if (errorMessage.value){
-    if (alertType.value === 'success'){
-      toast.success(errorMessage, {autoClose: 3000});
-    }
-    if (alertType.value === 'error'){
-      toast.error(errorMessage, {autoClose: 3000});
-    }
-    if (alertType.value === 'warning'){
-      toast.warning(errorMessage, {autoClose: 3000});
-    }
+watch(() => route.query.message, handleAlert);
 
-    setTimeout(() => {
-      navigateTo({
-        name:'profile'
-      });
-    }, 3000)
-  }
-
+onMounted(() => {
+  handleAlert();
 })
-// onMounted(() => {
-//
-// })
 </script>
 
 <template>
