@@ -54,6 +54,6 @@ const {getLocation} = areaStore;
 
 const location = await getLocation({ip: '213.232.228.45'});
 console.log(location);
-await getCurrencyCityVacancies({countries: [location.country.id], region_ids: [location.region.id],city_id: location.city.id});
+await getCurrencyCityVacancies({countries: [location?.country?.id], region_ids: [location?.region?.id],city_id: location?.city?.id});
 const vacancies = computed(() => vacancyStore.my_city_vacancies);
 </script>

@@ -13,7 +13,6 @@ export const useUIStore = defineStore('ui', {
       this.isSidebarOpen = !this.isSidebarOpen;
     },
     async turnOnMobileMode() {
-      console.log(1);
       if (this.isSidebarOpen){
         this.isSidebarOpen = false;
       }

@@ -3,9 +3,7 @@ import {employer_routes, protected_routes, public_routes, seeker_routes} from "~
 import {useProfileStore} from "~/store/profile";
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
-    console.log(process.server);
     if (!process.server) {
-        console.log("middleware from client side");
         const authStore = useAuthStore();
         const profileStore = useProfileStore();
         const {getEmployer, getSeeker} = profileStore;

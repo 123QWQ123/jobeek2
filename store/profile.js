@@ -64,6 +64,20 @@ export const useProfileStore = defineStore('profile', {
       }
       return data;
     },
+
+    async searchPhone(payload = {}) {
+      // domain/api/
+      const {data} = await useApi('area/countries', {
+        method: 'get',
+        payload
+      });
+      if (data && 'data' in data){
+        this.searched_phones = data.data;
+        return data.data;
+      }
+      return data;
+    },
+
     async getRegions(payload = {}) {
       const {data} = await useApi('area/regions', {
         method: 'get',

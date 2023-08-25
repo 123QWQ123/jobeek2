@@ -58,6 +58,8 @@
 </template>
 
 <script setup>
+import useSort from "~/composables/useSort";
+
 const {selectedCountry} = defineProps(['selectedCountry']);
 const emit = defineEmits(['onFormChange'])
 import {useVacancyStore} from "../../../store/vacancy";
@@ -136,7 +138,7 @@ const router  = useRouter();
 const submitSearch = () => {
   emit('onFormChange', 'metros', selectedItems.value);
 }
-
+const {sort} = useSort();
 const prepare = (items, custom_items) => {
 
   let filterItems = items;
@@ -149,15 +151,8 @@ const prepare = (items, custom_items) => {
     return;
   }
 
-  filterItems = filterItems.sort(function (a, b) {
-    if (a.name < b.name) {
-      return -1;
-    }
-    if (a.name > b.name) {
-      return 1;
-    }
-    return 0;
-  });
+  filterItems = sort(filterItems, {by: 'alpha'});
+
   metros.value = filterItems;
   groupedFilterItems.value = [];
   metros.value.map((item, key) => {

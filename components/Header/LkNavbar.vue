@@ -33,6 +33,9 @@
           <li>
             <NuxtLink :to="{name: 'your-subscriptions'}"> <span>Подписки</span></NuxtLink>
           </li>
+          <li>
+            <NuxtLink :to="{name: 'search-phone'}"> <span>Подписки</span></NuxtLink>
+          </li>
           <li v-if="false">
             <NuxtLink :to="{name: 'your-messages'}"> <span>Сообщения</span></NuxtLink>
           </li>

@@ -57,7 +57,7 @@ export const useResumeStore = defineStore('resume', {
       }
       return data;
     },
-    async getVacancies(payload, add = false) {
+    async getResumes(payload, add = false) {
       const {data} = await useApi('resumes/search', {
         method: 'get',
         payload

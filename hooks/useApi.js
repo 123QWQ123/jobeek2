@@ -47,7 +47,16 @@ const useApi = async (method, options = {}) => {
         }
 
         const CONFIG = useRuntimeConfig();
-        let url = CONFIG.public.apiBase + method;
+
+        // TO DO prefix
+
+        // const host = null;
+        // if (options.hasOwnProperty('host')){
+        //     host = CONFIG.public.api +
+        // }
+        //
+        let url = CONFIG.public.base + "api/" + method;
+
         try {
             let response;
             if (options.method.toUpperCase() === 'GET') {
