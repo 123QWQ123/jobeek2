@@ -1,6 +1,6 @@
 <template>
   <div class="carryover-box">
-    <div class="carryover-box-label">Есть резюме на hh или SuperJob? Просто перенесите его!</div>
+    <div class="carryover-box-label">Есть вакансии на hh или SuperJob? Просто перенесите его!</div>
 
     <div class="import-grid">
       <div class="import-box" :class="{'import-is-complete': isHHEnabled}" @click="toggle('hh')">
@@ -49,7 +49,8 @@ import {useDictionaryStore} from "~/store/dictionary";
 const emit  = defineEmits(['update:modelValue']);
 const props  = defineProps({
     modelValue: {
-        required: true,
+        required: false,
+      default: {}
     }
 });
 const dictionaryStore = useDictionaryStore();

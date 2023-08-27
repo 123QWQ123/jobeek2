@@ -136,7 +136,6 @@ const updateInput = async (newValue = '') => {
 
 const {errors, handleErrorResponse} = useFormValidation();
 const save = async () => {
-    console.log(isChanged.value);
     if (isChanged.value){
         state.isLoading = true;
         errors.value = {};

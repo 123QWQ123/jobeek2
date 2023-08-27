@@ -30,7 +30,6 @@ watch(() => props.modelValue, (newValue) => {
 })
 const onInput = (input) => {
   current.value = quillEditor.value.getHTML();
-  console.log(quillEditor.value.getHTML())
 }
 
 const richEditorOptions = {

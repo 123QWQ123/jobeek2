@@ -28,6 +28,11 @@ export const useDictionaryStore = defineStore('dictionary', {
       payment_period: [],
       addresses: [],
       metro: [],
+      working_days: [],
+      working_time_intervals: [],
+      working_time_modes: [],
+      extend_vac: [],
+      covid_vaccination_requirement: [],
     }
   },
   getters: {
@@ -209,6 +214,57 @@ export const useDictionaryStore = defineStore('dictionary', {
       });
       if (data && 'data' in data){
         this.payment_period = data.data?.payment_period ?? [];
+      }
+      return data.data;
+    },
+
+    async getWorkingDayOptions(payload) {
+      const {data} = await useApi('dictionaries?groups[]=working_days', {
+        method: 'get',
+        payload
+      });
+      if (data && 'data' in data){
+        this.working_days = data.data?.working_days ?? [];
+      }
+      return data.data;
+    },
+    async getWorkingTimeIntervalsOptions(payload) {
+      const {data} = await useApi('dictionaries?groups[]=working_time_intervals', {
+        method: 'get',
+        payload
+      });
+      if (data && 'data' in data){
+        this.working_time_intervals = data.data?.working_time_intervals ?? [];
+      }
+      return data.data;
+    },
+    async getWorkingTimeModesOptions(payload) {
+      const {data} = await useApi('dictionaries?groups[]=working_time_modes', {
+        method: 'get',
+        payload
+      });
+      if (data && 'data' in data){
+        this.working_time_modes = data.data?.working_time_modes ?? [];
+      }
+      return data.data;
+    },
+    async getExtendVacOptions(payload) {
+      const {data} = await useApi('dictionaries?groups[]=extend_vac', {
+        method: 'get',
+        payload
+      });
+      if (data && 'data' in data){
+        this.extend_vac = data.data?.extend_vac ?? [];
+      }
+      return data.data;
+    },
+    async getCovidVacRequirements(payload) {
+      const {data} = await useApi('dictionaries?groups[]=covid_vaccination_requirement', {
+        method: 'get',
+        payload
+      });
+      if (data && 'data' in data){
+        this.covid_vaccination_requirement = data.data?.covid_vaccination_requirement ?? [];
       }
       return data.data;
     },
