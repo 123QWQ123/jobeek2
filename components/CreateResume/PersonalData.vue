@@ -6,9 +6,11 @@
             <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
         </div>
 
+        <div class="text-danger d-block p-4" v-if="errors.message">
+          {{ errors.message }}
+        </div>
         <div class="w-box-body" :class="{collapse: isCollapsed}">
 
-            {{errors.social_networks}}
             <CreateResumeProviders v-model="state.providers.val" :errors="errors.providers"></CreateResumeProviders>
 
             <div class="input-row" v-if="!draftID">
@@ -129,42 +131,6 @@
             </div>
 
             <div class="input-row">
-                <label for="phone">Телефон</label>
-                <div class="input-wrapper">
-                    <div class="c">
-
-                        <div>
-                            <input type="text" placeholder="Телефон" id="phone" ref="phoneInputElement">
-                        </div>
-                        <div class="from-to-block">
-                            <label>Отвечу на звонки</label>
-                            <div class="c2">
-
-                                <div>
-                                    <CustomSelect :options="useHourOptions()" v-model="state.phone_time_start.val"  :label="'От'" @focusin="() => errors.phone_time_start = ''"></CustomSelect>
-
-                                    <div class="text-danger d-block" v-if="errors.phone_time_start">
-                                        {{ errors.phone_time_start }}
-                                    </div>
-                                </div>
-                                <div>
-                                    <CustomSelect :options="useHourOptions()" v-model="state.phone_time_end.val" :label="'До'" @focusin="() => errors.phone_time_end = ''"></CustomSelect>
-
-                                    <div class="text-danger d-block" v-if="errors.phone_time_end">
-                                        {{ errors.phone_time_end }}
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="text-danger d-block" v-if="errors.phone">
-                            {{ errors.phone }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="input-row">
                 <label for="resume_email">Электронная почта</label>
                 <div class="input-wrapper">
                     <input id="resume_email" type="email" placeholder="Электронная почта" v-model="state.email.val" @focusin="() => errors.email = ''">
@@ -204,7 +170,7 @@ const {seeker} = profileStore;
 const {resume} = storeToRefs(resumeStore);
 const formTitle = computed(() => {
     if (resume.value){
-        return "Обновить резюме";
+        return "Создание резюме";
     }
 
     return "Создание резюме";
@@ -355,7 +321,7 @@ watch(() => sectionData.value, (newData, oldData) => {
         state['email'].val = newData['email'];
         state['phone'].val = newData['phone'];
         state['photo_url'].val = newData['photo'];
-        phoneMask.value.value = newData['phone'] ?? '';
+        // phoneMask.value.value = newData['phone'] ?? '';
         state['phone_time_start'].val = newData['phone_time_start'];
         state['phone_time_end'].val = newData['phone_time_end'];
         state['social_networks'].val = newData['social_networks'];
@@ -390,8 +356,6 @@ const {searchCities} = profileStore;
 const {getCountryCities} = profileStore;
 const cityOptions = ref([]);
 
-const phoneInputElement = ref();
-const phoneMask = ref(null);
 
 const updateCityInput = async (newValue = '') => {
     const items = await searchCities({search: newValue}) ?? [];
@@ -405,14 +369,6 @@ const getCities = async (newValue = '') => {
     }
 }
 
-onMounted(( ) => {
-    phoneMask.value = new IMask(phoneInputElement.value, {
-        mask: "+{7}(000)000-00-00",
-    });
-    phoneInputElement.value.addEventListener("input", (e) => {
-        state.phone.val = phoneMask.value.unmaskedValue;
-    });
-});
 
 const {updateResume, createResume} = resumeStore;
 
@@ -430,6 +386,7 @@ const save = async () => {
             const formData = useFormData(state, 'form_data')
             formData.append('form_data', 'personal_data');
             const unrefed = state.social_networks.val.map((item) => ({type: item.type, value:item.value}));
+            console.log(unrefed);
             formData.delete('social_networks');
             formData.delete('providers');
             formData.delete('title');
@@ -445,9 +402,9 @@ const save = async () => {
 
             const unrefed = state.social_networks.val.map((item) => ({type: item.type, value:item.value}));
             console.log(unrefed);
-            // formData.delete('social_networks');
+            formData.delete('social_networks');
             formData.delete('providers');
-            // useCreateFormData(formData, 'social_networks', state.social_networks.val);
+            useCreateFormData(formData, 'social_networks', unrefed);
             useCreateFormData(formData, 'providers', state.providers.val);
 
             resData = await createResume(formData, 'multipart/form-data');

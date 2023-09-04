@@ -1,15 +1,15 @@
 <template>
     <div class="step">
-        {{state}}
+<!--        {{state}}-->
         <!--                        <p class="text-center mb-4">первый этап</p>-->
-        <CreateVacancyProvidersIntegration
-            :is_valid="state.providers.is_valid"
-            :hh="state.providers.val.hh"
-            :superjob="state.providers.val.superjob"
-            @set="updateState"
-        />
+<!--        <CreateVacancyProvidersIntegration-->
+<!--            :is_valid="state.providers.is_valid"-->
+<!--            :hh="state.providers.val.hh"-->
+<!--            :superjob="state.providers.val.superjob"-->
+<!--            @set="updateState"-->
+<!--        />-->
 
-        <div class="sep"> </div>
+<!--        <div class="sep"> </div>-->
         <CreateVacancyName :is_valid="state.name.is_valid" @set="updateState"></CreateVacancyName>
         <div class="sep"> </div>
         <CreateVacancyFields :is_valid="state.specializations.is_valid" @set="updateState"></CreateVacancyFields>

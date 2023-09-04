@@ -1,10 +1,11 @@
 <template>
-    <div class="form-check d-inline-flex">
-        <input class="form-check-input" type="checkbox" id="response_notifications" v-model="value">
-        <label for="response_notifications">
-            Уведомлять ли менеджера о новых откликах
-        </label>
+  <div class="check-block">
+    <div class="checkbox">
+      <input type="checkbox" id="response_notification" v-model="value">
+      <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
     </div>
+    <label for="response_notification">Уведомлять ли менеджера о новых откликах</label>
+  </div>
 </template>
 
 <script setup>

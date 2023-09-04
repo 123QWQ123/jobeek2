@@ -3,9 +3,7 @@ import {employer_routes, protected_routes, public_routes, seeker_routes} from "~
 import {useProfileStore} from "~/store/profile";
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
-    console.log(process.server);
     if (!process.server) {
-        console.log("middleware from client side");
         const authStore = useAuthStore();
         const profileStore = useProfileStore();
         const {getEmployer, getSeeker} = profileStore;
@@ -28,9 +26,10 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
             return navigateTo({
                 path: '/sign-in',
                 query: {
-                    message_text: "Please, Sign in to have access!!!",
-                    message_code: "403",
-                    message_type: 'error'
+                    message: JSON.stringify({
+                        text: "Пожалуйста, зайдите в профиль",
+                        code: "403", type: 'error'
+                    })
                 }
             });
         }
@@ -42,7 +41,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
                     path: '/profile',
                     query: {
                         message: JSON.stringify({
-                            text: "you have to complete your employer profile!",
+                            text: "Вы должны заполнить профиль работадателя!",
                             code: "405", type: 'error'
                         })
                     }
@@ -57,7 +56,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
                     path: '/profile',
                     query: {
                         message: JSON.stringify({
-                            text: "you have to complete your seeker profile!",
+                            text: "Вы должны заполнить профиль соискателя!",
                             code: "405", type: 'error'
                         })
                     }

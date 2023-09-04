@@ -1,5 +1,5 @@
 <template>
-  <li>
+  <li v-if="item">
     <div class="favorites-card">
       <div class="favorites-card-head">
         <div class="company">
@@ -60,6 +60,9 @@
       </div>
     </div>
   </li>
+  <li v-else>
+    Loading...
+  </li>
 </template>
 
 <script setup>
@@ -68,9 +71,10 @@ import {useVacancyStore} from "../../store/vacancy";
 import Swal from "sweetalert2";
 
 const props = defineProps(["item"]);
-const { item } = props;
 
-const isFavorite = ref(item.is_favorite ?? false);
+const item = computed(() => props.item);
+
+const isFavorite = ref(item?.is_favorite ?? false);
 
 const vacancyStore = useVacancyStore();
 const {addToFavorite, removeFromFavorite} = vacancyStore;

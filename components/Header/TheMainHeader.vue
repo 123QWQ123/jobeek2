@@ -9,7 +9,7 @@
         <ModeSwitcher class="me-3"></ModeSwitcher>
       <div class="header-actions">
         <NuxtLink class="btn button-xs sign-in-btn" :to="{'name': 'sign-in'}" role="link">Войти</NuxtLink>
-        <NuxtLink class="btn button-xl sign-up-btn" :to="{'name': 'sign-up'}" role="link">Зарегистрироваться</NuxtLink>
+        <NuxtLink class="btn button-xl sign-up-btn" :to="{'name': 'sign-up'}" role="link">Регистрация</NuxtLink>
       </div>
     </div>
   </header>

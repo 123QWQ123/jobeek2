@@ -1,12 +1,18 @@
 <template>
+<!--  <div class="form-check ">-->
+<!--    <input class="form-check-input" type="checkbox" id="working_in_time_modes" v-model="value">-->
+<!--    <label for="working_in_time_modes">-->
 
-    <div class="form-check d-inline-flex">
-        <input class="form-check-input" type="checkbox" id="working_in_time_modes" v-model="value">
-        <label for="working_in_time_modes">
-            Можно начинать работать после 16:00
-        </label>
+<!--    </label>-->
+<!--  </div>-->
+
+  <div class="check-block">
+    <div class="checkbox">
+      <input type="checkbox" id="working_in_time_modes" v-model="value">
+      <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
     </div>
-
+    <label for="working_in_time_modes">Можно начинать работать после 16:00</label>
+  </div>
 </template>
 
 <script setup>

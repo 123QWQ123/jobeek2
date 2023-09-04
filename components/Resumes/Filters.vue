@@ -1,202 +1,92 @@
 <template>
-  <aside class="aside">
-    <button class="close-aside">
+  <aside class="aside" :class="{'active': isSidebarOpen}">
+    <div class="filter-container">
+      <div class="filter-head"> <strong>Фильтры</strong>
+        <button class="clear-all" @click="resetFilters">Очистить все</button>
+      </div>
+
+      <ResumesFiltersMetro @onFormChange="onFormChange" :selected-ids="form.metros"/>
+      <ResumesFiltersIndustry @onFormChange="onFormChange" :selected-ids="form.industries"/>
+      <ResumesFiltersSpecialization @onFormChange="onFormChange" :selected-ids="form.professional_roles"/>
+
+      <ResumesFiltersRegion :is-city-mode="isCityMode" :selected-country="form.country" @onFormChange="onFormChange"/>
+      <ResumesFiltersCity v-if="isCityMode" :selected-region="selectedRegion" @onFormChange="onFormChange" />
+      <ResumesFiltersPartTime @onFormChange="onFormChange"/>
+      <ResumesFiltersExperience @onFormChange="onFormChange"/>
+      <ResumesFiltersSalary @onFormChange="onFormChange"/>
+      <ResumesFiltersWorkType @onFormChange="onFormChange"/>
+      <ResumesFiltersSchedule @onFormChange="onFormChange"/>
+    </div>
+    <button class="close-aside" @click="toggleSidebar">
       <svg xmlns="http://www.w3.org/2000/svg"
            xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px"
            y="0px" width="20" height="20" viewBox="0 0 122.878 122.88"
            enable-background="new 0 0 122.878 122.88" xml:space="preserve">
-                                    <g>
-                                        <path
-                                            d="M1.426,8.313c-1.901-1.901-1.901-4.984,0-6.886c1.901-1.902,4.984-1.902,6.886,0l53.127,53.127l53.127-53.127 c1.901-1.902,4.984-1.902,6.887,0c1.901,1.901,1.901,4.985,0,6.886L68.324,61.439l53.128,53.128c1.901,1.901,1.901,4.984,0,6.886 c-1.902,1.902-4.985,1.902-6.887,0L61.438,68.326L8.312,121.453c-1.901,1.902-4.984,1.902-6.886,0 c-1.901-1.901-1.901-4.984,0-6.886l53.127-53.128L1.426,8.313L1.426,8.313z" />
-                                    </g>
-                                </svg>
+          <g>
+              <path
+                  d="M1.426,8.313c-1.901-1.901-1.901-4.984,0-6.886c1.901-1.902,4.984-1.902,6.886,0l53.127,53.127l53.127-53.127 c1.901-1.902,4.984-1.902,6.887,0c1.901,1.901,1.901,4.985,0,6.886L68.324,61.439l53.128,53.128c1.901,1.901,1.901,4.984,0,6.886 c-1.902,1.902-4.985,1.902-6.887,0L61.438,68.326L8.312,121.453c-1.901,1.902-4.984,1.902-6.886,0 c-1.901-1.901-1.901-4.984,0-6.886l53.127-53.128L1.426,8.313L1.426,8.313z" />
+          </g>
+      </svg>
     </button>
-    <div class="filter-container">
-      <div class="filter-head"> <strong>Фильтры</strong>
-        <button class="clear-all">Очистить все</button>
-      </div>
-      <div class="filter-box" :class="{'open': regionFilterClass}">
-        <div class="filter-box-handle" @click="regionFilterClass = !regionFilterClass">
-          <strong>Регион</strong>
-          <img src="~/assets/img/svg/Arrow-Down.svg" alt="#">
-        </div>
-        <div class="filter-box-body">
-          <div class="check-block-list">
-            <div class="check-block" v-for="item in regions">
-              <div class="checkbox">
-                <input type="radio" :checked="item?.is_checked">
-                <div class="radio-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
-              </div>
-              <div class="l-wrap" @click="handleRegionClick(item.id)">
-                <label>{{item.name}}</label>
-                <!--                <span class="count">1 200</span>-->
-              </div>
-            </div>
-          </div>
-          <!--          <button class="more-filters" data-default-text="Еще 25"-->
-          <!--                  data-hide-text="Скрыть">Еще 25 </button>-->
-        </div>
-      </div>
-      <div class="filter-box" :class="{'open': salaryFilterClass}">
-        <div class="filter-box-handle" @click="salaryFilterClass = !salaryFilterClass">
-          <strong>Зарплата</strong>
-          <img src="~/assets/img/svg/Arrow-Down.svg" alt="#">
-        </div>
-        <div class="filter-box-body">
-          <div class="check-block-list">
-            <div class="check-block" v-for="item in salaryRanges">
-              <div class="checkbox">
-                <input type="radio" :checked="item?.is_checked"/>
-                <div class="radio-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
-              </div>
-              <div class="l-wrap" @click="handleSalaryRangeClick(item.value)">
-                <label >
-                  {{item.name}}
-                </label>
-<!--                <span class="count">1 200</span>-->
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="filter-box" :class="{'open': specializationFilterClass}">
-        <div class="filter-box-handle" @click="specializationFilterClass = !specializationFilterClass">
-          <strong>Специализации</strong>
-          <img src="~/assets/img/svg/Arrow-Down.svg" alt="#"></div>
-        <div class="filter-box-body">
-          <div class="check-block-list">
-            <div v-for="item in specializations" :key="item.title" class="check-block">
-              <div class="checkbox">
-                <input type="checkbox" :checked="item?.is_checked">
-                <div class="checkbox-mask">
-                  <img src="~/assets/img/svg/check.svg" alt="#" />
-                </div>
-              </div>
-              <div class="l-wrap" @click="handleSpeciliazationClick(item.id)">
-                <label >{{ item.title }}</label>
-              </div>
-            </div>
-          </div>
-          <!--          <button class="more-filters" data-default-text="Еще 25"-->
-          <!--                  data-hide-text="Скрыть">-->
-          <!--            Еще 25-->
-          <!--          </button>-->
-        </div>
-      </div>
-      <div class="filter-box" :class="{'open': employmentTypeFilterClass}">
-        <div class="filter-box-handle" @click="employmentTypeFilterClass = !employmentTypeFilterClass">
-          <strong>Тип занятости</strong>
-          <img src="~/assets/img/svg/Arrow-Down.svg" alt="#"></div>
-        <div class="filter-box-body">
-          <div class="check-block">
-            <div class="checkbox">
-              <input type="checkbox" id="t1" checked>
-              <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
-            </div>
-            <div class="l-wrap">
-              <label for="t1">Полная занятость</label>
-              <!--              <span class="count">1 200</span>-->
-            </div>
-          </div>
-          <div class="check-block">
-            <div class="checkbox">
-              <input type="checkbox" id="t2" checked>
-              <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
-            </div>
-            <div class="l-wrap">
-              <label for="t1">Частичная занятость </label>
-              <!--              <span class="count">1 200</span>-->
-            </div>
-          </div>
-          <div class="check-block">
-            <div class="checkbox">
-              <input type="checkbox" checked>
-              <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
-            </div>
-            <div class="l-wrap">
-              <label for="t1">Стажировка </label>
-              <!--              <span class="count">1 200</span>-->
-            </div>
-          </div>
-          <div class="check-block">
-            <div class="checkbox">
-              <input type="checkbox" checked>
-              <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
-            </div>
-            <div class="l-wrap">
-              <label for="t1">Удаленная</label>
-              <!--              <span class="count">1 200</span>-->
-            </div>
-          </div>
-          <div class="check-block">
-            <div class="checkbox">
-              <input type="checkbox" checked>
-              <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
-            </div>
-            <div class="l-wrap">
-              <label for="t1">В офис</label>
-              <!--              <span class="count">1 200</span>-->
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </aside>
 </template>
 
 <script setup>
-
 import {useVacancyStore} from "../../store/vacancy";
-
+import {useRoute, useRouter} from "nuxt/app";
+import {useVacancyForm} from "../../composables/useVacancyForm";
 const vacancyStore = useVacancyStore();
+import {useUIStore}  from "~/store/ui";
+import {useNuxtApp} from "#app";
+const uiStore = useUIStore();
+const {toggleSidebar} = uiStore;
+const isSidebarOpen = computed(() => uiStore.isSidebarOpen);
+const {$isMobile} = useNuxtApp();
 
-const {getSpecializations, getRegions} = vacancyStore;
+const {turnOnMobileMode, turnOffMobileMode} = uiStore;
+const isMobile = computed(() => $isMobile());
+if (isMobile){
+  turnOnMobileMode();
+}else{
+  turnOffMobileMode()
+}
 
-const regionsItems = computed(() => vacancyStore.regions);
+const form = ref(useVacancyForm());
 
-const regions = ref(regionsItems);
-const salaryRanges = ref([
-  { name: 'С указанной зп', value: 'with_specified_salary' },
-  { name: 'От 20 000 ₽', value: 'from_20000' },
-  { name: 'От 50 000 ₽', value: 'from_50000' },
-  { name: 'От 100 000 ₽', value: 'from_100000' },
-]);
-
-const specializationsItems = computed(() => vacancyStore.industries)
-const specializations = ref(specializationsItems)
-
-
-
-const regionFilterClass = ref(true);
-const salaryFilterClass = ref(true);
-const specializationFilterClass = ref(true);
-const employmentTypeFilterClass = ref(true);
+const route = useRoute();
+const router = useRouter();
 
 
-onMounted(() => {
-  getRegions();
-  getSpecializations();
+const selectedRegion = computed(() => {
+  if (form.value.regions.length === 1){
+    return form.value.regions[0];
+  }
+});
+const isCityMode = computed(() => {
+  if (form.value.regions.length === 1){
+    return true;
+  }
+  return false;
 });
 
-const handleRegionClick = (region) => {
-  const selectedItem = regions.value.find(item => item.id === region);
-  if (selectedItem)
-    selectedItem.is_checked = !selectedItem.is_checked;
+const {clearVacancies, getVacancies} = vacancyStore;
 
+const resetFilters = () => {
+  const params = useVacancyForm(null, 'reset');
+  form.value = params;
+  const resetParams = useVacancyForm(form.value, 'front');
+  router.push({query: resetParams});
 }
-const handleSpeciliazationClick = (specialization) => {
-  const selectedItem = specializations.value.find(item => item.id === specialization);
-  if (selectedItem)
-    selectedItem.is_checked = !selectedItem.is_checked;
-}
-const handleSalaryRangeClick = (salaryRange) => {
-  const selectedItem = salaryRanges.value.find(item => item.value === salaryRange);
-  if (selectedItem)
-    selectedItem.is_checked = !selectedItem.is_checked;
+const onFormChange = (filter_name, filter_value) => {
+  form.value[filter_name] = filter_value;
+  const params = useVacancyForm(form.value, 'front');
+  router.push({query: params});
 }
 
 </script>
 
-<style scoped>
-
+<style>
+.check-block label{
+  white-space: pre-wrap;
+}
 </style>

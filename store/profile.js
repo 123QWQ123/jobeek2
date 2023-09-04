@@ -16,6 +16,10 @@ export const useProfileStore = defineStore('profile', {
       countries: [],
       regions: [],
       cities: [],
+      providers: {
+        hh: false,
+        superjob: false
+      }
     }
   },
   getters: {
@@ -31,16 +35,54 @@ export const useProfileStore = defineStore('profile', {
     },
   },
   actions: {
+
+    async getConnectedSeekerProviders(payload) {
+      const {data} = await useApi('seeker/used_providers', {
+        method: 'get',
+        payload
+      });
+      console.log(data);
+      if (data && 'data' in data){
+        console.log(data.data);
+        const providers = data.data;
+        this.providers = providers;
+        // this.providers.hh = providers.hh;
+        // this.providers.superjob = providers.superjob;
+        console.log(this.providers);
+        return this.providers;
+      }
+      return data;
+    },
+
     async getCountries(payload = {}) {
       const {data} = await useApi('area/countries', {
         method: 'get',
         payload
       });
       if (data && 'data' in data){
-        this.countries = data.data;
+        if (data.data.hasOwnProperty('countries')){
+          this.countries = data.data.countries;
+        }else{
+          this.countries = data.data;
+        }
       }
       return data;
     },
+
+    async searchPhone(payload = {}) {
+      // domain/api/
+      console.log(payload);
+      const {data} = await useApi('scam/getPhoneInfo', {
+        method: 'get',
+        payload
+      });
+      if (data && 'data' in data){
+        this.searched_phones = data.data;
+        return data.data;
+      }
+      return data;
+    },
+
     async getRegions(payload = {}) {
       const {data} = await useApi('area/regions', {
         method: 'get',
@@ -56,8 +98,12 @@ export const useProfileStore = defineStore('profile', {
         method: 'get',
         payload
       });
-      if ('data' in data){
-        this.cities = data.data;
+      if (data && 'data' in data){
+        if (data.data.hasOwnProperty('cities')){
+          this.cities = data.data.cities;
+        }else{
+          this.cities = data.data;
+        }
       }
       return data;
     },
@@ -154,8 +200,8 @@ export const useProfileStore = defineStore('profile', {
       });
     },
 
-    async getSeekerProvidersAuthEndpoints(payload) {
-      const {data} = await useApi('services/auth/redirect-url?profile=seeker', {
+    async getSeekerProvidersAuthEndpoints(payload, redirect_to = '/profile/service-verify') {
+      const {data} = await useApi('services/auth/redirect-url?profile=seeker&redirect_to=' + redirect_to, {
         method: 'get',
         payload
       });

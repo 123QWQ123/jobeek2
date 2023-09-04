@@ -74,8 +74,25 @@
   box-shadow: unset !important;
 }
 
+
+
 .search-row{
   grid-template-columns: 1fr 20% 20% 170px;
+}
+
+
+@media (max-width: 960px) {
+  .search-form .search-row{
+    grid-template-columns: 100%;
+  }
+}
+@media (min-width: 960px) {
+  .vacancy-list.swiper-wrapper{
+    display: grid;
+  }
+  .cards-grid.swiper-wrapper{
+    display: grid;
+  }
 }
 
 

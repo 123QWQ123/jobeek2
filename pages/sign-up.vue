@@ -101,21 +101,16 @@ const onSMSSubmit = async () => {
     await tryLogin(response.data.token);
     navigateTo({name: 'profile'});
   }else{
-    if ( 'errors' in response && response.message) {
-      Swal.fire({
-        title: 'Ошибка!',
-        text: response.data.message,
-        icon: "error",
-        confirmButtonText: 'ОК'
-      });
-    } else {
-      Swal.fire({
-        title: 'Ошибка!',
-        text: response.data.message,
-        icon: "error",
-        confirmButtonText: 'ОК'
-      });
+    let message = "Неизвестная ошибка!";
+    if (response && response.hasOwnProperty('message')) {
+        message = response.message;
     }
+    Swal.fire({
+      title: 'Ошибка!',
+      text: response.message,
+      icon: "error",
+      confirmButtonText: 'ОК'
+    });
   }
 };
 

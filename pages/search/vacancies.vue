@@ -13,17 +13,19 @@ const authStore = useAuthStore();
 
 const isEmployer = computed(() => authStore.isEmployer);
 
-watch(isEmployer, (new_value) => {
-  if (!new_value){
-    navigateTo({name: 'search-resumes'});
-  }
-})
 
 const route = useRoute();
 onMounted(async () => {
+  console.log('only client - vacancies')
   if (isEmployer.value){
     navigateTo({name: 'search-resumes'});
   }
+
+  watch(() => isEmployer.value, (new_value) => {
+    if (new_value){
+      navigateTo({name: 'search-resumes'});
+    }
+  })
 })
 </script>
 <template>

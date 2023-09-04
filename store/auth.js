@@ -60,7 +60,7 @@ export const useAuthStore = defineStore('auth', {
         method: 'post',
         payload
       });
-      if ('token' in data?.data){
+      if (data && data.data && data.data.hasOwnProperty('token')){
         localStorage.setItem('token', data?.data.token);
       }
       return data;
@@ -256,7 +256,7 @@ export const useAuthStore = defineStore('auth', {
           this.employer = this.user;
           return true;
         }catch (error){
-          console.log(error);
+          // console.log(error);
           console.log('UnAuthorized');
           this.logout();
           return false;

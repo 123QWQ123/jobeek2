@@ -1,12 +1,11 @@
 <template>
-
-    <div class="form-check d-inline-flex">
-        <input class="form-check-input" type="checkbox" id="working_in_time_intervals" v-model="value">
-        <label for="working_in_time_intervals">
-            Можно работать сменами по 4–6 часов в день
-        </label>
+  <div class="check-block">
+    <div class="checkbox">
+      <input type="checkbox" id="working_in_time_intervals" v-model="value">
+      <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
     </div>
-
+    <label for="working_in_time_intervals">Можно работать сменами по 4–6 часов в день</label>
+  </div>
 </template>
 
 <script setup>

@@ -11,6 +11,9 @@ useHead({
 
 import { useAuthStore } from "~~/store/auth";
 import IMask from "imask";
+import {useCheckJSON} from "~/composables/useCheckJSON";
+import {toast} from "vue3-toastify";
+import useAlert from "~/composables/useAlert";
 
 const auth = useAuthStore();
 const isAuthed = computed(() => auth.isAuthed);
@@ -110,6 +113,14 @@ function close(){
   state.error = null;
   state.success = null;
 }
+
+const {handleAlert} = useAlert();
+
+watch(() => route.query.message, handleAlert);
+
+onMounted(() => {
+  handleAlert();
+})
 </script>
 
 <template>
