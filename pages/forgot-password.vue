@@ -231,7 +231,7 @@ function close(){
           </div>
           <div class="note">
             <img src="~/assets/img/svg/i.svg" alt="#">
-            <p>Устаноните новый для аккаунта +{{state.phone.val}}</p>
+            <p>Устаноните новый пароль для аккаунта +{{state.phone.val}}</p>
           </div>
           <button class="btn button-accent" type="button" @click="onPasswordSubmit">Подтвердить</button>
         </form>

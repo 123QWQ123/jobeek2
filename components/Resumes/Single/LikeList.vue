@@ -1,11 +1,10 @@
 <template>
   <ul class="favorites-list" >
-    <ResumesSingleLikeItem v-for="i in 2" :key="i" :id="i"></ResumesSingleLikeItem>
+    <VacanciesSingleLikeItem v-for="i in 2" :key="i" :id="i"></VacanciesSingleLikeItem>
   </ul>
 </template>
 
 <script setup>
-import Resumes from "../../../pages/search/resumes";
 </script>
 
 <style scoped>

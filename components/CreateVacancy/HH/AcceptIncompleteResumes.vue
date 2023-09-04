@@ -1,11 +1,13 @@
 <template>
-    <div class="form-check d-inline-flex">
-        <input class="form-check-input" type="checkbox" id="accept_incomplete_resumes" v-model="value">
-        <label for="accept_incomplete_resumes">
-            Неполное резюме.
-            разрешен ли отклик на вакансию неполным резюме
-        </label>
+  <div class="check-block">
+    <div class="checkbox">
+      <input type="checkbox" id="accept_incomplete_resumes" v-model="value">
+      <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
     </div>
+    <label for="accept_incomplete_resumes">Неполное резюме.
+      разрешен ли отклик на вакансию неполным резюме</label>
+  </div>
+
 </template>
 
 <script setup>

@@ -1,5 +1,5 @@
 <template>
-    <div class="d-flex flex-row justify-content-between align-content-center gap-2">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-content-center gap-2">
         <label class="radio-label form-control" v-for="item in options" :class="{'active': current === item.value}">
             <input class="hidden" type="radio" :value="item.value"  v-model="current" />
             {{ item.name }}

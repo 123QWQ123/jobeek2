@@ -8,16 +8,19 @@
 </template>
 
 <script setup>
-
-import {storeToRefs} from "pinia";
-import {useVacancyStore} from "~/store/vacancy";
+const emit = defineEmits(['set']);
+const props = defineProps({
+  modelValue: {
+    required: false,
+    default: 15
+  }
+});
 import {useDictionaryStore} from "~/store/dictionary";
 const dictionaryStore = useDictionaryStore();
 const {getChildren} = dictionaryStore;
-const {children: childrens} = storeToRefs(dictionaryStore);
 await getChildren();
 
-const childrenOptions = computed(() => childrens.value.map(item => ({value: item.id, name: item.name})));
+const childrenOptions = computed(() => dictionaryStore.children.map(item => ({value: item.id, name: item.name})));
 console.log(childrenOptions);
 
 const children = ref(15);

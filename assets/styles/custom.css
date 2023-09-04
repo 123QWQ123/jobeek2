@@ -1,0 +1,39 @@
+.checker-box .v.active {
+    color: #0a2540;
+    text-shadow: none;
+}
+
+@media (max-width: 960px) {
+    .search-row {
+        grid-template-columns: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-wrapper--fxstart .header-actions[data-v-aa3304e1] {
+        margin-left: auto;
+        padding-left: 10px;
+    }
+
+    .header-wrapper--fxstart .header-actions[data-v-aa3304e1] .btn + .btn {
+        margin-left: 5px;
+    }
+
+    .header-wrapper--fxstart .header-actions[data-v-aa3304e1] .button-xs,
+    .header-wrapper--fxstart .header-actions[data-v-aa3304e1] .button-xl,
+    .profile-action .button-xs {
+        font-size: 14px;
+        padding: 9px 10px 10px;
+    }
+}
+
+@media screen and (min-color-index: 0) and(-webkit-min-device-pixel-ratio: 0) {
+    .input-wrapper > .end-0 {
+        right: 32px !important;
+    }
+}
+
+
+.vacancy-list{
+    display: grid !important;
+}

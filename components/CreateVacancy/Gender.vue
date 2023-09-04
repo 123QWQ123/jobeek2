@@ -24,7 +24,7 @@ const {getGenders} = useDictionaryStore();
 const {genders} = storeToRefs(vacancyStore);
 await getGenders();
 
-console.log(genders);
+// console.log(genders);
 
 const genderOptions = computed(() => genders?.value.map(item => ({value: item.id, name: item.name})));
 

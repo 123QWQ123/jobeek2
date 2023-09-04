@@ -33,6 +33,9 @@
           <li>
             <NuxtLink :to="{name: 'your-subscriptions'}"> <span>Подписки</span></NuxtLink>
           </li>
+          <li>
+            <NuxtLink :to="{name: 'services-search-phone'}"> <span>Scam checker</span></NuxtLink>
+          </li>
           <li v-if="false">
             <NuxtLink :to="{name: 'your-messages'}"> <span>Сообщения</span></NuxtLink>
           </li>
@@ -57,15 +60,12 @@
 const {$isMobile} = useNuxtApp();
 
 import { useAuthStore } from "~~/store/auth";
-
 const auth = useAuthStore();
-
 const isAuthed = computed(() => auth.isAuthed);
 const isEmployer = computed(() => auth.isEmployer);
 
 const user = computed(() => auth.user);
 
-const isMobile = computed(() => $isMobile());
 </script>
 
 <script>

@@ -1,12 +1,12 @@
 <template>
-    <div class="form-check d-inline-flex">
-        <input class="form-check-input" type="checkbox" id="accept_temporary" v-model="value">
-
-        <label for="accept_temporary">
-            Временное трудоустройство.
-            указание, что вакансия доступна с временным трудоустройством
-        </label>
+  <div class="check-block">
+    <div class="checkbox">
+      <input type="checkbox" id="accept_temporary" v-model="value">
+      <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
     </div>
+    <label for="accept_temporary">Временное трудоустройство.
+      указание, что вакансия доступна с временным трудоустройством</label>
+  </div>
 </template>
 
 <script setup>

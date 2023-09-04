@@ -12,6 +12,7 @@ export const useAreaStore = defineStore('area', {
       countries: [],
       regions: [],
       cities: [],
+      location: {},
     }
   },
   actions: {
@@ -22,6 +23,17 @@ export const useAreaStore = defineStore('area', {
       });
       if (data) {
         this.regions = data.data.regions;
+      }
+      return data;
+    },
+    async getLocation(payload) {
+      const {data} = await useApi('area/location', {
+        method: 'get',
+        payload
+      });
+      console.log(data);
+      if (data) {
+        this.location = data.data;
       }
       return data;
     }

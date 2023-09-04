@@ -14,16 +14,22 @@ v<template>
       </NuxtLink>
     </div>
     <div class="swiper cards-slider-row">
-      <ul class="cards-grid swiper-wrapper">
-        <li class="swiper-slide" v-for="item in vacancies">
+
+      <swiper
+          :slides-per-view="'auto'"
+          :space-between="20"
+          :class="'cards-slider'"
+          :wrapper-class="'cards-grid'"
+      >
+        <swiper-slide v-for="item in vacancies">
           <NuxtLink class="tile-card" :to="{name: 'search-vacancies', query: {countries: [1], regions: [22], professional_roles: getProfessionalRoles(item.professional_roles)} }">
             <h4 class="tile-card-title">{{ item.name }}</h4>
             <span class="tile-card-dop-info" v-if="item.salary_to">До {{vueNumberFormat(item.salary_to, {})}} ₽ / месяц</span>
             <span v-else class="tile-card-dop-info">От {{vueNumberFormat(item.salary_from, {})}} ₽ / месяц</span>
-<!--            <strong class="tile-card-count">2142 вакансии</strong>-->
+            <!--            <strong class="tile-card-count">2142 вакансии</strong>-->
           </NuxtLink>
-        </li>
-      </ul>
+        </swiper-slide>
+      </swiper>
     </div>
   </section>
 </template>

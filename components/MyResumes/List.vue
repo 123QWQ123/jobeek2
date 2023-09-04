@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper wrapper-1290">
 
-      <PageLoader v-if="isLoading" />
+<!--      <PageLoader v-if="isLoading" />-->
 
       <div class="notification mt-0">
           <div class="ic">

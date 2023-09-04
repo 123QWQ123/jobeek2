@@ -21,6 +21,8 @@ const config = {
     '~/assets/styles/hamburger.min.css',
     '~/assets/styles/main.css',
     '~/assets/styles/app.scss',
+    '~/assets/styles/main.css',
+    '~/assets/styles/styles-new.css',
   ],
   components: [
     '~/components',
@@ -29,7 +31,15 @@ const config = {
   modules: [
     '@pinia/nuxt',
     '@nuxt/devtools',
+    'nuxt-swiper'
   ],
+  swiper: {
+    // Swiper options
+    //----------------------
+    // prefix: 'Swiper',
+    // styleLang: 'css',
+    // modules: ['navigation', 'pagination'], // all modules are imported by default
+  },
   build: {
     transpile: ['@vuepic/vue-datepicker']
   },
@@ -42,6 +52,13 @@ const config = {
   },
   app: {
     // pageTransition: { name: 'layout', mode: 'out-in' }
+    head: {
+      link: [
+        {
+          rel: 'stylesheet', href: 'https://sem-dev.co.ua/jobeek.css'
+        }
+      ]
+    }
   },
   routeRules: {
     // Static page generated on-demand, revalidates in background

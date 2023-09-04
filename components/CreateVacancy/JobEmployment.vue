@@ -1,7 +1,7 @@
 <template>
   <div class="input-row">
     <label>Тип занятости</label>
-    <div class="checkboxes-row input-row--checkboxes">
+    <div class="checkboxes-row input-row--checkboxes job_employment_types">
       <div class="check-block" v-for="item in workTypesOptions">
         <div class="checkbox">
           <input v-model="employment" type="radio" :id="item.name" :value="item.id" name="work_type">
@@ -19,16 +19,17 @@
 
 <script setup>
 import {useDictionaryStore} from "~/store/dictionary";
+import {useVacancyStore} from "~/store/vacancy";
 
 const emit = defineEmits(['set']);
 const props = defineProps(['is_valid']);
 const isValid = computed(() => props.is_valid);
-import {storeToRefs} from "pinia";
-import {useVacancyStore} from "~/store/vacancy";
 const vacancyStore = useVacancyStore();
+const dictionaryStore = useDictionaryStore();
 const {getWorkTypes} = useDictionaryStore();
-const {work_types: workTypesOptions,} = storeToRefs(vacancyStore);
+const workTypesOptions = computed(() => dictionaryStore.work_types);
 await getWorkTypes();
+console.log(workTypesOptions.value);
 
 const employment = ref(null);
 
@@ -38,5 +39,9 @@ watch(employment, (newValues) => {
 </script>
 
 <style scoped>
-
+@media (min-width: 960px) {
+  .checkboxes-row.job_employment_types{
+    grid-template-columns: 1fr 1fr;
+  }
+}
 </style>

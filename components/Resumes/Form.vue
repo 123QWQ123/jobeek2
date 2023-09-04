@@ -1,84 +1,131 @@
 <template>
-  <form class="search-form" @submit.prevent="onSearchSubmit" role="form" autocomplete="off">
+  <form class="search-form" role="form" autocomplete="off">
     <div class="wrapper">
       <div class="search-row">
         <div class="input-wrap has-icon has-label"><img class="icon" src="~/assets/img/svg/search.svg" alt="#">
-          <label for="name">Названии вакансии </label>
-          <input v-model="form.keyword" type="text" name="name" id="name" placeholder="Какую вакансию вы ищете?"
+          <label for="name">Название</label>
+          <input v-model="form.name" type="text" name="name" id="name" :placeholder="'Какую вакансию вы ищете?'"
                  autocomplete="off">
         </div>
         <div class="input-wrap has-label">
-          <label for="salary">Желаемая зарплата </label>
+          <label for="salary">Зарплата</label>
           <HeaderSalarySelectInForm v-model="form.salary"></HeaderSalarySelectInForm>
         </div>
-        <div class="input-wrap has-icon">
-            <img class="icon" src="~/assets/img/svg/location.svg" alt="#">
-<!--          <input v-model="form.city" type="text" name="city" placeholder="Город" autocomplete="off">-->
-
-          <SelectWithSearch :options="cityOptions" v-model.number="city" :placeholder="'Город'" @input="updateCityInput" ></SelectWithSearch>
+        <div class="input-wrap has-label">
+          <label for="city">Город</label>
+          <SelectWithSearch :options="cityOptions" v-model="city" :listStyles="searchSelectStyles" @change="onCityChange" :listItemStyles="searchSelectItemStyles"/>
         </div>
-<!--        <div class="input-wrap has-icon"><img class="icon" src="~/assets/img/svg/location.svg" alt="#">-->
-<!--          <input v-model="form.country" type="text" name="country" placeholder="Страна" autocomplete="off">-->
-<!--        </div>-->
-        <button class="button-accent submit-search-form" type="submit">Поиск </button>
+        <button class="button-accent submit-search-form" type="button" @click="onSubmit">Поиск </button>
       </div>
     </div>
   </form>
 </template>
 
 <script setup>
-import {useProfileStore} from "~/store/profile";
-import {storeToRefs} from "pinia";
-import {useVacancyStore} from "~/store/vacancy";
+import {useAuthStore} from "~/store/auth";
 
-const profileStore = useProfileStore();
+import {useVacancyStore} from "../../store/vacancy";
+import {useVacancyForm} from "../../composables/useVacancyForm";
+import {useResumeStore} from "~/store/resume";
+import {useResumeForm} from "~/composables/useResumeForm";
 const vacancyStore = useVacancyStore();
-const { searchCities } = profileStore;
-const { getVacancies, getRegions, getCities } = vacancyStore;
-
-const onChange = (data) => {
-  console.log(data);
-}
-const form = ref({
-  keyword: "",
-  city: "",
-  country: "",
-  salary: "0",
-})
-
-const router = useRouter();
+const resumeStore = useResumeStore();
 const route = useRoute();
+const router = useRouter();
+const auth = useAuthStore();
 
-const { cities } = storeToRefs(vacancyStore);
-const city = ref(null);
-const cityOptions = ref([]);
-const updateCityInput = async (newValue = '') => {
-    const items = await searchCities({search: newValue}) ?? [];
-    cityOptions.value = items.map(item => ({value: item.city_id, name: item.city_name}));
-}
+const region = ref(null);
+const city = ref('*');
 
-
-const prepareCities = () => {
-    const c_items = cities.value.map((item) => ({
-        value: item.id,
-        name: item.name,
-    }));
-    c_items.unshift({
-        value: "*",
-        name: "Все",
-    });
-    cityOptions.value = c_items;
-};
+const form = ref(useResumeForm());
 
 
 onMounted(() => {
-  form.value = {...route.query};
+    if (Array.from(form.value.cities).length === 1){
+      city.value = form.value.cities[0];
+    }
 })
 
-const onSearchSubmit = (e) => {
-  console.log(form.value);
-  router.push({name: 'search-vacancies', query: form.value});
+const onCityChange = (regionItem) => {
+  if (regionItem.value === '*'){
+    form.value.cities = [];
+  }else{
+    form.value.cities = [regionItem.value];
+  }
 }
+const {getResumes, getRegions, getCities} = resumeStore;
+
+const vacancies = computed(() => vacancyStore.vacancies);
+
+const searchSelectItemStyles = {
+  width: 'auto !important',
+  whiteSpace: 'pre-wrap',
+}
+
+// const {regions, cities} = storeToRefs(vacancyStore);
+const cities = computed(() => vacancyStore.cities);
+const regions = computed(() => vacancyStore.regions);
+// const regionOptions = ref([]);
+const cityOptions = ref([]);
+
+const prepareCities = () => {
+  const c_items = cities.value.map((item) => ({value: item.id, name: item.name}));
+  c_items.unshift({
+    value: '*', name: 'Все'
+  });
+  cityOptions.value = c_items;
+}
+
+const page = useRoute();
+
+// watch(region, async(newRegion) => {
+//
+//   if (region.value !== '*'){
+//     await getCities({region_ids: [newRegion]});
+//   }
+//   prepareCities();
+// });
+
+
+const country = computed(() => {
+  if (form.value.countries.length === 0){
+    return form.value.countries[0];
+  } else return 1;
+});
+
+onMounted(async() => {
+
+    await getRegions({country_id: country.value});
+    // const region_ids = regions.value.map((item) => item.id);
+    // console.log(region_ids);
+    await getCities({country_id: country.value});
+    //
+    // console.log(regions.value);
+    // console.log(cities.value);
+
+    prepareCities();
+});
+
+
+const isLoading = ref(false);
+const {clearVacancies} = vacancyStore;
+const onSubmit = (e) => {
+  const params = useVacancyForm(form.value, 'front');
+  navigateTo({name: 'search-vacancies', query: params});
+}
+
+const searchPlaceHolder = computed(() =>
+    auth.isEmployer ? "Какой специалист вы ищете?" : "Какую вакансию вы ищете?"
+);
+
+const searchSelectStyles = {
+  left: 'unset',
+  right: '0px',
+  width: 'auto !important',
+  maxWidth: '20rem',
+  minWidth: '8rem',
+}
+
 </script>
 
 <style scoped>

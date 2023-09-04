@@ -5,9 +5,9 @@
       <div class="wrapper wrapper-1290">
         <form class="create-vacancy" action="" name="create-subscribe ">
           <div class="w-box w-box--main w-box-subscribe">
-            <div class="w-box-head d-flex align-items-center justify-content-between">
-              <h1 class="title col-6 ">Создание вакансии</h1>
-              <div class="form-header col-6 d-flex mb-4">
+            <div class="w-box-head create-vacancy_head">
+              <h1 class="title col-lg-6 ">Создание вакансии</h1>
+              <div class="form-header col-lg-6 col-md-6 d-flex mb-4">
                     <span
                             @click="currentStep = 'first'"
                             class="stepIndicator" :class="{'active': isFirstStep, 'finish': isThirdStep || isSecondStep}">1
@@ -25,10 +25,10 @@
                     </span>
               </div>
             </div>
-<!--              {{state}}-->
-<!--              {{hhState}}-->
             <div class="w-box-body">
-              <form id="signUpForm"  @submit.prevent="onSubmit">
+              <form id="createVacancyForm" class="create-vacancy__form"  @submit.prevent="onSubmit">
+
+                <CreateVacancyProviders/>
                   <!-- start step indicators -->
 
                   <!-- end step indicators -->
@@ -41,7 +41,8 @@
                     <CreateVacancyStep02 v-if="isSecondStep" :providers="providers" :class="{'d-block' : isFirstStep}" @set="updateState" @next="goToNextStep" @prev="goToPrevStep"/>
 
                     <!-- step three -->
-                    <CreateVacancyStep03 v-if="isThirdStep" :providers="providers" :class="{'d-block' : isThirdStep}" @set="updateState" @next="goToPrevStep"/>
+                    <CreateVacancyStep03 v-if="isThirdStep" :providers="providers" :class="{'d-block' : isThirdStep}" @set="updateState" @prev="goToPrevStep"/>
+
                   </transition-group>
                   <!-- start previous / next buttons -->
                   <!-- end previous / next buttons -->
@@ -153,6 +154,7 @@ const isThirdStep = computed(() => currentStep.value === 'third');
 
 const currentStep = ref('first');
 const goToPrevStep = () => {
+  console.log(2)
     let newStep = currentStep.value;
     if (currentStep.value === 'third'){
         newStep = 'second';
@@ -171,7 +173,6 @@ const goToNextStep = () => {
     if (currentStep.value === 'first'){
         newStep = 'second';
     }
-    console.log(newStep);
     currentStep.value = newStep;
 }
 const onSubmit = () => {
@@ -293,6 +294,25 @@ body{
 .step-leave-to {
     opacity: 0;
     filter: blur(1rem);
+}
+
+.w-box-head{
+}
+
+@media (min-width: 768px) {
+  .create-vacancy_head{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+@media (max-width: 768px) {
+  .create-vacancy_head .title{
+    text-align: center;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+  }
 }
 
 </style>

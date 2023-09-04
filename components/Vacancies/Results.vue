@@ -5,7 +5,9 @@
         <div class="search-head">
           <div class="col">
             <div class="search-item">{{ search_keyword }}</div>
-            <div class="found-count">Найдено {{total}} вакансий</div>
+            <div class="found-count">Найдено
+              {{total}}
+              вакансий</div>
           </div>
           <div class="col d-flex justify-content-end">
             <div class="d-inline-flex">
@@ -18,7 +20,7 @@
             </div>
           </div>
         </div>
-        <button class="mob-get-aside-btn">
+        <button class="mob-get-aside-btn" @click="toggle">
           <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
                width="20" height="20" viewBox="0 0 256 256" xml:space="preserve">
                             <desc>Created with Fabric.js 1.7.22</desc>
@@ -81,18 +83,26 @@
 <script setup>
 import CustomSelect from "../UI/CustomSelect";
 import {useVacancyStore} from "../../store/vacancy";
-import {storeToRefs} from "pinia";
 import {useCurrencyOptions} from "../../composables/useCurrencyOptions";
 import {useSortingOptions} from "../../composables/useSortingOptions";
 import {useVacancyForm} from "../../composables/useVacancyForm";
 import {navigateTo} from "nuxt/app";
 import {useDictionaryStore} from "~/store/dictionary";
-import vueNumberFormat from "~/plugins/vueNumberFormat";
+import {useUIStore}  from "~/store/ui";
 
-
+import {useNuxtApp} from "#app";
+const {$format_number} = useNuxtApp();
 const vacancyStore = useVacancyStore();
 const dictionaryStore = useDictionaryStore();
-const {total} = storeToRefs(vacancyStore);
+const uiStore = useUIStore();
+const total = computed(() => $format_number(vacancyStore.total));
+const isSidebarOpen = computed(() => uiStore.isSidebarOpen);
+const {toggleSidebar} = uiStore;
+
+const toggle = () => {
+  console.log(isSidebarOpen.value);
+  toggleSidebar();
+}
 
 const route = useRoute();
 const {name: search_keyword} = route.query;
@@ -100,13 +110,7 @@ const {name: search_keyword} = route.query;
 const currencyOptions = ref(useCurrencyOptions());
 const sortingOptions = ref(useSortingOptions());
 
-(() => {
-    console.log(total.value);
-    // vacancyStore.total = vueNumberFormat(total.value, {});
-});
-const onChange = (data) => {
-  console.log(data);
-}
+
 
 const form = ref(useVacancyForm());
 
@@ -126,6 +130,10 @@ const onChangeCurrency = (currency) => {
   navigateTo({query: params});
 }
 
+// const toggleSidebar = () => {
+//
+// }
+
 const listStyles = {
   'left': 'unset',
   'right': 0,
@@ -138,6 +146,32 @@ const listStyles = {
 .sort{
   align-items: baseline;
   justify-content: end;
+}
+
+@media (max-width: 960px) {
+  .sorting_forms{
+    flex-direction: column;
+  }
+  .reversed_forms{
+    flex-direction: column-reverse;
+  }
+
+  .sort{
+    justify-content: flex-start !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .sorting_forms{
+    flex-direction: column;
+  }
+  .reversed_forms{
+    flex-direction: column-reverse;
+  }
+
+  .sort{
+    flex-direction: column;
+  }
 }
 
 

@@ -47,7 +47,16 @@ const useApi = async (method, options = {}) => {
         }
 
         const CONFIG = useRuntimeConfig();
-        let url = CONFIG.public.apiBase + method;
+
+        // TO DO prefix
+
+        // const host = null;
+        // if (options.hasOwnProperty('host')){
+        //     host = CONFIG.public.api +
+        // }
+        //
+        let url = CONFIG.public.base + "api/" + method;
+
         try {
             let response;
             if (options.method.toUpperCase() === 'GET') {
@@ -219,8 +228,8 @@ const useApi = async (method, options = {}) => {
                 };
             }
         } catch (error) {
-            // console.log(error);
-            if (error.response && 'data' in error.response && 'errors' in error.response.data) {
+            console.log(error);
+            if (error.response && error.response.hasOwnProperty('data') && error.response.data.hasOwnProperty('errors')) {
                 return {
                     status: 'error',
                     data: error.response.data,
@@ -228,7 +237,7 @@ const useApi = async (method, options = {}) => {
                     errors: error.response.data.errors
                 };
             }
-            if (error.response && 'data' in error.response && 'message' in error.response.data) {
+            if (error.response && 'data' in error.response && error.response.data.hasOwnProperty('message')) {
                 return {
                     status: 'error',
                     data: error.response.data,

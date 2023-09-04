@@ -1,12 +1,12 @@
 <template>
-  <div class="row">
-      <div class="col-10">
+  <div class="row flex-xs-column">
+      <div class="col-12 col-lg-10 my-sm-2">
           <div class="input-wrapper">
               <input type="text" v-model="skill" />
           </div>
       </div>
-      <div class="col-2">
-          <div class="input-wrapper">
+      <div class="col-12 col-lg-2">
+          <div class="input-wrapper text-xs-end">
               <button class="btn btn-primary" v-if="props.isNew" type="button" @click="onSubmit">Добавить</button>
               <button class="btn btn-primary" v-else type="button" @click="onSubmit">Обновить</button>
           </div>
@@ -73,5 +73,10 @@ onMounted(() => {
 .absoluted_icon svg{
     width: 24px;
     height: 24px;
+}
+@media (max-width: 576px) {
+  .flex-sm-column-reverse{
+    flex-direction: column;
+  }
 }
 </style>

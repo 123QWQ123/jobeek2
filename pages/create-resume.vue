@@ -8,7 +8,7 @@ definePageMeta({
 
 const pageTitle = computed(() => {
   if (draftId.value) {
-      return "Обновить резюме - Jobeek"
+      return "Создание резюме - Jobeek"
   }
   return "Создание резюме - Jobeek";
 })

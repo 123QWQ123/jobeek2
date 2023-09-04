@@ -1,11 +1,12 @@
 <template>
-    <div class="form-check d-inline-flex">
-        <input class="form-check-input" type="checkbox" id="accept_handicapped" v-model="value">
-        <label for="accept_handicapped">
-            Соискатель с инвалидностью.
-            Указание, что вакансия доступна для соискателей с инвалидностью
-        </label>
+  <div class="check-block">
+    <div class="checkbox">
+      <input type="checkbox" id="accept_handicapped" v-model="value">
+      <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
     </div>
+    <label for="accept_handicapped">Соискатель с инвалидностью.
+      Указание, что вакансия доступна для соискателей с инвалидностью</label>
+  </div>
 </template>
 
 <script setup>
