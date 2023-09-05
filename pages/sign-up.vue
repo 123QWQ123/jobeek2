@@ -77,16 +77,22 @@ const onSubmit = async () => {
       isRegisterTab.value = false;
       state.session = response.data.session;
     }else{
-      if (response.data && 'errors' in response.data && response.data.message) {
-        state.error = response.data.errors.phone[0];
-      } else {
-        Swal.fire({
-          title: 'Ошибка!',
-          text: response.message,
-          icon: "error",
-          confirmButtonText: 'ОК'
-        });
+      let responseMessage = "Unknown error";
+      if (response){
+        if (response.data && 'errors' in response.data && response.data.message) {
+          responseMessage = response.data.message;
+          state.error = response.data.errors.phone[0];
+        } else {
+          responseMessage = response.message;
+        }
       }
+
+      Swal.fire({
+        title: 'Ошибка!',
+        text: responseMessage,
+        icon: "error",
+        confirmButtonText: 'ОК'
+      });
     }
   }
 };

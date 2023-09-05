@@ -1,10 +1,9 @@
 
 <script setup>
 
-import {useAuthStore} from "../../store/auth";
+import {useAuthStore} from "~/store/auth";
 import {storeToRefs} from "pinia";
-import {useProfileStore} from "../../store/profile";
-import Swal from "sweetalert2";
+import {useProfileStore} from "~/store/profile";
 import {navigateTo} from "nuxt/app";
 
 definePageMeta({
@@ -21,7 +20,7 @@ const isSuccess = ref("-");
 const {code, email} = route.query;
 
 const {verifyEmailConfirmation, getUser} = profileStore;
-const {refreshSeeker} = useAuthStore();
+const {refreshSeeker, refreshEmployer} = useAuthStore();
 
 onMounted(async() => {
   const resData = await verifyEmailConfirmation({code, email});
@@ -29,16 +28,10 @@ onMounted(async() => {
 
     isSuccess.value = true;
 
-    // Swal.fire({
-    //   title: 'Успешно!',
-    //   text: resData.message,
-    //   icon: 'success',
-    //   confirmButtonText: 'ОК'
-    // });
-
     await getUser();
 
     await refreshSeeker();
+    await refreshEmployer();
 
     setTimeout(() => {
         navigateTo({
