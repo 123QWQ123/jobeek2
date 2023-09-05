@@ -16,6 +16,7 @@ export const useProfileStore = defineStore('profile', {
       countries: [],
       regions: [],
       cities: [],
+      professional_roles: [],
       providers: {
         hh: false,
         superjob: false
@@ -114,6 +115,21 @@ export const useProfileStore = defineStore('profile', {
         return [];
       }
       return data ?? [];
+    },
+    async searchProfessionalRoles(payload = {})
+    {
+      if (this.professional_roles.length > 0) return this.professional_roles;
+
+      const response = await useApi('professional_roles', {
+        method: 'get',
+        payload
+      });
+      if (response.status === 'failed'){
+        return [];
+      }
+
+      this.professional_roles = response.data.data ?? [];
+      return response.data.data ?? [];
     },
     async getCountryCities(payload = {}) {
       const response = await useApi('area/cities', {

@@ -25,6 +25,7 @@ export const useDictionaryStore = defineStore('dictionary', {
       children: [],
       vacancy_billing_types: [],
       vacancy_types: [],
+      payment_period: [],
     }
   },
   getters: {
@@ -173,6 +174,17 @@ export const useDictionaryStore = defineStore('dictionary', {
       });
       if (data && 'data' in data){
         this.educations = data.data?.education ?? [];
+      }
+      return data.data;
+    },
+
+    async getPaymentPeriodOptions(payload) {
+      const {data} = await useApi('dictionaries?groups[]=payment_period', {
+        method: 'get',
+        payload
+      });
+      if (data && 'data' in data){
+        this.payment_period = data.data?.payment_period ?? [];
       }
       return data.data;
     },

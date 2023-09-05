@@ -1,7 +1,7 @@
 <template>
     <div class="multi-select_wrapper">
         <div v-click-outside="close" onfocusout="close" class="select2-container select2-container--default select2-container--below select2-container--focus nice-select n-select d-select" :class="{'open' : isOpen}" tabindex="0" @click.prevent="onClick">
-            <span class="current" contenteditable="true" @keyup="onChangeHandler">{{ searchInput }}</span>
+            <span class="current" contenteditable="true" @keyup="onChangeHandler">{{ labelOrSearchInput }}</span>
 
             <ul class="list" :style="listStyles">
                 <li v-for="item in options" @click="onSelect" :key="item.value" :data-value="item.value" class="option" :style="listItemStyles">{{ item.name }}</li>
@@ -80,13 +80,12 @@ function onSelect(e){
         if (!tempSelectedOptions.includes(String(selectedOptionItem.value))){
             tempSelectedOptions.push(String(selectedOptionItem.value));
             selectedOptions.value = tempSelectedOptions;
-            console.log(tempSelectedOptions);
         }
         // exclude from all options
         options.value = props.options.filter(item => !tempSelectedOptions.includes(String(item.value)));
         emit('change', selectedOptionItem)
     }
-    emit('update:modelValue', tempSelectedOptions);
+    emit('update:modelValue', Array.from(tempSelectedOptions));
   }
 }
 
@@ -108,7 +107,9 @@ function onClick(e){
 }
 
 const searchInput = ref("");
-
+const labelOrSearchInput = computed(() => {
+  return isOpen.value ? searchInput.value : props.label;
+})
 const onChangeHandler = (e) => {
   searchInput.value = e.target.textContent;
   isOpen.value = true;

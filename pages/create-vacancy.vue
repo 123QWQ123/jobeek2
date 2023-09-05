@@ -1,326 +1,97 @@
+<script setup>
+import {storeToRefs} from "pinia";
+import {useResumeStore} from "~/store/resume";
+
+definePageMeta({
+  layout: "cabinet",
+});
+
+const pageTitle = computed(() => {
+  if (draftId.value) {
+    return "Создание вакансии"
+  }
+  return "Создание вакансии";
+})
+const route = useRoute();
+
+const draftId = computed(() => route.query.draft_id);
+watch(() => route.query.draft_id, (newDraftId) => {
+  console.log(newDraftId)
+  if (newDraftId){
+    getResume(draftId.value);
+  }
+})
+
+const resumeStore = useResumeStore();
+const {resume} = storeToRefs(resumeStore);
+
+const isEditable = computed(() => {
+  if (resume.value){
+    return true;
+  }
+  return false;
+});
+
+const {getResume} = resumeStore;
+
+onMounted(() => {
+  if (draftId.value){
+    getResume(draftId.value);
+  }
+});
+
+const saveAsDraft = (e) => {
+  e.preventDefault();
+  console.log('saved as draft');
+}
+const save = (e) => {
+  e.preventDefault();
+  console.log('saving and publishing or redirecting to edit page');
+}
+// groups[]=
+</script>
 <template>
   <main class="main cabinet create-subscribe-page bg-wrapper" role="main">
+    <Head>
+      <Title>{{pageTitle}}  - Jobeek</Title>
+    </Head>
     <div class="bg-wrapper pt">
       <PersonalCabinetSearchMobile />
+
+      <!--        {{state}}-->
       <div class="wrapper wrapper-1290">
-        <form class="create-vacancy" action="" name="create-subscribe ">
-          <div class="w-box w-box--main w-box-subscribe">
-            <div class="w-box-head create-vacancy_head">
-              <h1 class="title col-lg-6 ">Создание вакансии</h1>
-              <div class="form-header col-lg-6 col-md-6 d-flex mb-4">
-                    <span
-                            @click="currentStep = 'first'"
-                            class="stepIndicator" :class="{'active': isFirstStep, 'finish': isThirdStep || isSecondStep}">1
-                      <span class="tab_name">Шаг</span>
-                    </span>
-                  <span
-                          @click="currentStep = 'second'"
-                          class="stepIndicator" :class="{'active': isSecondStep, 'finish': isThirdStep}">2
-                      <span class="tab_name">Шаг</span>
-                    </span>
-                  <span
-                          @click="currentStep = 'third'"
-                          class="stepIndicator" :class="{'active': isThirdStep}">3
-                      <span class="tab_name">Шаг</span>
-                    </span>
-              </div>
-            </div>
-            <div class="w-box-body">
-              <form id="createVacancyForm" class="create-vacancy__form"  @submit.prevent="onSubmit">
+        <form class="create-resume" action="" name="create-vacancy ">
 
-                <CreateVacancyProviders/>
-                  <!-- start step indicators -->
+          <CreateVacancyCreateDraft :title="pageTitle"/>
+<!--          <CreateVacancyPersonalData :title="pageTitle"></CreateVacancyPersonalData>-->
 
-                  <!-- end step indicators -->
+<!--          <CreateVacancyPositionAndIncome v-if="isEditable"></CreateVacancyPositionAndIncome>-->
 
-                  <transition-group name="step">
-                    <!-- step one -->
-                    <CreateVacancyStep01 v-if="isFirstStep" :providers="providers" :class="{'d-block' : isFirstStep}" @set="updateState" @next="goToNextStep"/>
+<!--          <CreateVacancyEducationContent v-if="isEditable"></CreateVacancyEducationContent>-->
 
-                    <!-- step two -->
-                    <CreateVacancyStep02 v-if="isSecondStep" :providers="providers" :class="{'d-block' : isFirstStep}" @set="updateState" @next="goToNextStep" @prev="goToPrevStep"/>
+<!--          <CreateVacancyEducationDocumentsContent v-if="isEditable"></CreateVacancyEducationDocumentsContent>-->
 
-                    <!-- step three -->
-                    <CreateVacancyStep03 v-if="isThirdStep" :providers="providers" :class="{'d-block' : isThirdStep}" @set="updateState" @prev="goToPrevStep"/>
+<!--          <CreateVacancyWorkExperienceContent v-if="isEditable"></CreateVacancyWorkExperienceContent>-->
 
-                  </transition-group>
-                  <!-- start previous / next buttons -->
-                  <!-- end previous / next buttons -->
-              </form>
+<!--          <CreateVacancyDriverLicenses v-if="isEditable"></CreateVacancyDriverLicenses>-->
 
-            </div>
-          </div>
-          <div class="form-submit-container">
-            <button class="btn btn-outline-primary" type="button" @click="onSubmit">Сохранить как черновик</button>
-            <button class="button-accent" type="button" @click="onSubmit">Опубликовать</button>
+<!--          <CreateVacancyKnowledgeAndSkills v-if="isEditable"></CreateVacancyKnowledgeAndSkills>-->
+
+<!--          <CreateVacancyForeignLanguagesContent v-if="isEditable"></CreateVacancyForeignLanguagesContent>-->
+
+<!--          <CreateVacancyCitizenshipAndFamily v-if="isEditable"></CreateVacancyCitizenshipAndFamily>-->
+
+          <!--          <CreateVacancyPortfolio></CreateVacancyPortfolio>-->
+
+          <p class="text-lg-end">При создании резюме вы соглашаетесь с <a href="#">правилами работы сервиса</a> и даете согласие на обработку персональных данных, разрешенных для распространения</p>
+          <div class="form-submit-container mt-2">
+
+
+            <button class="btn btn-outline-primary" type="button" @click="saveAsDraft">Сохранить как черновик</button>
+            <button class="button-accent" type="submit" @click="save">Сохранить и опубликовать</button>
           </div>
         </form>
       </div>
     </div>
   </main>
 </template>
-
-<script setup>
-import {useVacancyStore} from "../store/vacancy";
-import {useProfileStore} from "~/store/profile";
-import {useResumeStore} from "~/store/resume";
-
-
-definePageMeta({
-  layout: "cabinet",
-});
-
-useHead({
-    title: "Создание вакансии - Jobeek"
-})
-
-const providers = reactive({
-  hh: {
-    is_connected: true,
-    is_valid: true,
-    is_checked: true,
-  },
-  superjob: {
-    is_connected: false,
-    is_valid: false,
-    is_checked: false,
-  },
-});
-
-const hhState = reactive({
-    accept_kids: false,
-    accept_temporary: false,
-    accept_incomplete_resumes: false,
-    accept_handicapped: false,
-    allow_messages: false,
-    response_notification: false,
-    response_url: "",
-    with_zp: false,
-    working_days: null,
-    working_time_intervals: null,
-    working_time_modes: null,
-});
-const superjobState = reactive({
-    accept_kids: true,
-    accept_temporary: true,
-});
-const state =  reactive({
-  providers: {
-    val: {
-      hh: true,
-      superjob: true,
-    },
-    isValid: true
-  },
-  name: "",
-  specializations: [],
-  areas: [],
-  salary: {},
-  contacts: [],
-  employment: null,
-  education: null,
-  gender: null,
-  marital_status: null,
-  children: [],
-  experience: null,
-  place_of_work: null,
-  vacancy_type: null,
-  billing_type: null,
-  driver_license_types: null,
-  work_type: null,
-  key_skills: null,
-  age_from: null,
-  age_to: null,
-  firm_name: "",
-  firm_activity: "",
-  description: "",
-  schedule: "",
-});
-
-const updateState = (prop, value) => {
-    console.log(prop, value);
-  state[prop] = value;
-}
-
-const {getConnectedProviders} = useVacancyStore();
-onMounted(async() => {
-  const resData = await getConnectedProviders();
-  Object.keys(resData).map((item) => providers[item].is_connected = resData[item]);
-})
-
-const isFirstStep = computed(() => currentStep.value === 'first');
-const isSecondStep = computed(() => currentStep.value === 'second');
-const isThirdStep = computed(() => currentStep.value === 'third');
-
-const currentStep = ref('first');
-const goToPrevStep = () => {
-  console.log(2)
-    let newStep = currentStep.value;
-    if (currentStep.value === 'third'){
-        newStep = 'second';
-    }
-    if (currentStep.value === 'second'){
-        newStep = 'first';
-    }
-    currentStep.value = newStep;
-}
-const goToNextStep = () => {
-    console.log(currentStep.value);
-    let newStep = currentStep.value;
-    if (currentStep.value === 'second'){
-        newStep = 'third';
-    }
-    if (currentStep.value === 'first'){
-        newStep = 'second';
-    }
-    currentStep.value = newStep;
-}
-const onSubmit = () => {
-  console.log(state);
-}
-</script>
-
-
-<style>
-body{
-    font-family: 'Open Sans', sans-serif;
-}
-#signUpForm {
-    padding: 40px;
-    border-radius: 12px;
-}
-.create-vacancy .form-header {
-    gap: 5px;
-    text-align: center;
-    font-size: .9em;
-}
-
-.create-vacancy .form-header .stepIndicator {
-    cursor: pointer;
-    position: relative;
-    flex: 1;
-    padding-bottom: 30px;
-}
-
-.create-vacancy .form-header .stepIndicator .tab_name{
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: -24px;
-    width: 100%;
-}
-
-.create-vacancy .form-header .stepIndicator.active {
-    font-weight: 600;
-}
-.create-vacancy .form-header .stepIndicator.finish {
-    font-weight: 600;
-    color: #5375FD;
-
-}
-.create-vacancy .form-header .stepIndicator::before {
-    content: "";
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    transform: translateX(-50%);
-    z-index: 9;
-    width: 20px;
-    height: 20px;
-    background-color: #b0bdf8;
-    border-radius: 50%;
-    border: 3px solid #ecf5f4;
-}
-.create-vacancy .form-header .stepIndicator.active::before {
-    background-color: #5375FD;
-    border: 3px solid #5375FD;
-}
-.create-vacancy .form-header .stepIndicator.finish::before {
-    background-color: #5375FD;
-    border: 3px solid #5375FD;
-}
-.create-vacancy .form-header .stepIndicator::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    bottom: 8px;
-    width: 100%;
-    height: 3px;
-    background-color: #f3f3f3;
-}
-.create-vacancy .form-header .stepIndicator.active::after {
-    background-color: #f3f3f3;
-}
-.create-vacancy .form-header .stepIndicator.finish::after {
-    background-color: #5375FD;
-}
-.create-vacancy .form-header .stepIndicator:last-child:after {
-    display: none;
-}
-#signUpForm .step {
-    display: none;
-    /*padding-top: 2rem;*/
-}
-#signUpForm .form-footer{
-    overflow:auto;
-    gap: 20px;
-}
-#signUpForm .form-footer button{
-    background-color: #009688;
-    border: 1px solid #5375FD !important;
-    color: #ffffff;
-    border: none;
-    padding: 13px 30px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    border-radius: 5px;
-    flex: 1;
-    margin-top: 5px;
-}
-#signUpForm .form-footer button:hover {
-    opacity: 0.8;
-}
-
-#signUpForm .form-footer button {
-    background-color: #fff;
-    color: #5375FD;
-}
-
-.step-enter-active,
-.step-leave-active {
-    transition: all 0.4s;
-}
-.step-enter-from,
-.step-leave-to {
-    opacity: 0;
-    filter: blur(1rem);
-}
-
-.w-box-head{
-}
-
-@media (min-width: 768px) {
-  .create-vacancy_head{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-}
-@media (max-width: 768px) {
-  .create-vacancy_head .title{
-    text-align: center;
-    margin-top: 1rem;
-    margin-bottom: 2rem;
-  }
-}
-
-</style>
-
-<style>
-
-.input-row input.checkbox-mask {
-    width: 24px;
-    height: 24px;
-}
-</style>
