@@ -60,7 +60,7 @@ export const useAuthStore = defineStore('auth', {
         method: 'post',
         payload
       });
-      if ('token' in data?.data){
+      if (data && data.data && data.data.hasOwnProperty('token')){
         localStorage.setItem('token', data?.data.token);
       }
       return data;
