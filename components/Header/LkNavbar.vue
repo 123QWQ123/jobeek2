@@ -19,7 +19,7 @@
             <NuxtLink to="/"> <span>Главная</span></NuxtLink>
           </li>
           <li v-if="isEmployer">
-            <NuxtLink :to="{name: 'your-responses'}"><span>Отклики<div class="count">12</div></span></NuxtLink>
+            <NuxtLink :to="{name: 'your-responses'}"><span>Отклики<span class="count">12</span></span></NuxtLink>
           </li>
           <li v-if="!isEmployer">
             <NuxtLink :to="{name: 'my-resumes'}"> <span>Мои резюме</span></NuxtLink>
@@ -34,7 +34,7 @@
             <NuxtLink :to="{name: 'your-subscriptions'}"> <span>Подписки</span></NuxtLink>
           </li>
           <li>
-            <NuxtLink :to="{name: 'search-phone'}"> <span>Подписки</span></NuxtLink>
+            <NuxtLink :to="{name: 'services-search-phone'}"> <span>Scam checker</span></NuxtLink>
           </li>
           <li v-if="false">
             <NuxtLink :to="{name: 'your-messages'}"> <span>Сообщения</span></NuxtLink>

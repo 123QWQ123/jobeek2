@@ -44,11 +44,9 @@ export const useProfileStore = defineStore('profile', {
       console.log(data);
       if (data && 'data' in data){
         console.log(data.data);
-        const providers = data.data;
-        this.providers = providers;
+        this.providers = data.data;
         // this.providers.hh = providers.hh;
         // this.providers.superjob = providers.superjob;
-        console.log(this.providers);
         return this.providers;
       }
       return data;
@@ -60,14 +58,19 @@ export const useProfileStore = defineStore('profile', {
         payload
       });
       if (data && 'data' in data){
-        this.countries = data.data;
+        if (data.data.hasOwnProperty('countries')){
+          this.countries = data.data.countries;
+        }else{
+          this.countries = data.data;
+        }
       }
       return data;
     },
 
     async searchPhone(payload = {}) {
       // domain/api/
-      const {data} = await useApi('area/countries', {
+      console.log(payload);
+      const {data} = await useApi('scam/getPhoneInfo', {
         method: 'get',
         payload
       });
@@ -93,8 +96,12 @@ export const useProfileStore = defineStore('profile', {
         method: 'get',
         payload
       });
-      if ('data' in data){
-        this.cities = data.data;
+      if (data && 'data' in data){
+        if (data.data.hasOwnProperty('cities')){
+          this.cities = data.data.cities;
+        }else{
+          this.cities = data.data;
+        }
       }
       return data;
     },

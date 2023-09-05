@@ -22,6 +22,7 @@ const config = {
     '~/assets/styles/main.css',
     '~/assets/styles/app.scss',
     '~/assets/styles/main.css',
+    '~/assets/styles/styles-new.css',
   ],
   components: [
     '~/components',
