@@ -2,7 +2,7 @@
     <div class="step">
 <!--        {{state}}-->
         <!--                        <p class="text-center mb-4">первый этап</p>-->
-<!--        <CreateVacancyProvidersIntegration-->
+<!--        <CreateVacancyOldProvidersIntegration-->
 <!--            :is_valid="state.providers.is_valid"-->
 <!--            :hh="state.providers.val.hh"-->
 <!--            :superjob="state.providers.val.superjob"-->
@@ -10,23 +10,23 @@
 <!--        />-->
 
 <!--        <div class="sep"> </div>-->
-        <CreateVacancyName :is_valid="state.name.is_valid" @set="updateState"></CreateVacancyName>
+        <CreateVacancyOldName :is_valid="state.name.is_valid" @set="updateState"></CreateVacancyOldName>
         <div class="sep"> </div>
-        <CreateVacancyFields :is_valid="state.specializations.is_valid" @set="updateState"></CreateVacancyFields>
+        <CreateVacancyOldFields :is_valid="state.specializations.is_valid" @set="updateState"></CreateVacancyOldFields>
         <div class="sep"> </div>
-        <CreateVacancyAreas :is_valid="state.areas.is_valid" @set="updateState"></CreateVacancyAreas>
+        <CreateVacancyOldAreas :is_valid="state.areas.is_valid" @set="updateState"></CreateVacancyOldAreas>
         <div class="sep"> </div>
-        <CreateVacancyJobSalary :is_valid="state.salary.is_valid" @set="updateState" ref="jobSalary"></CreateVacancyJobSalary>
+        <CreateVacancyOldJobSalary :is_valid="state.salary.is_valid" @set="updateState" ref="jobSalary"></CreateVacancyOldJobSalary>
         <div class="sep"></div>
-        <CreateVacancyContacts ref="contacts" :is_valid="state.contacts.is_valid" @set="updateState"></CreateVacancyContacts>
+        <CreateVacancyOldContacts ref="contacts" :is_valid="state.contacts.is_valid" @set="updateState"></CreateVacancyOldContacts>
         <div class="sep"></div>
-        <CreateVacancyJobEmployment :is_valid="state.employment.is_valid" @set="updateState"></CreateVacancyJobEmployment>
+        <CreateVacancyOldJobEmployment :is_valid="state.employment.is_valid" @set="updateState"></CreateVacancyOldJobEmployment>
         <div class="sep"> </div>
-        <CreateVacancyEducation :is_valid="state.education.is_valid" @set="updateState"></CreateVacancyEducation>
+        <CreateVacancyOldEducation :is_valid="state.education.is_valid" @set="updateState"></CreateVacancyOldEducation>
         <div class="sep"> </div>
-        <CreateVacancyGender :is_valid="state.education.is_valid" @set="updateState"></CreateVacancyGender>
+        <CreateVacancyOldGender :is_valid="state.education.is_valid" @set="updateState"></CreateVacancyOldGender>
         <div class="sep"> </div>
-        <CreateVacancyMaritalStatus :is_valid="state.education.is_valid" @set="updateState"></CreateVacancyMaritalStatus>
+        <CreateVacancyOldMaritalStatus :is_valid="state.education.is_valid" @set="updateState"></CreateVacancyOldMaritalStatus>
         <div class="sep"> </div>
 
         <div class="w-box-foot">

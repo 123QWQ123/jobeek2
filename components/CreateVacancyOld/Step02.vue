@@ -2,19 +2,19 @@
     <div class="step d-block">
         <!--                        <p class="text-center mb-4">Второй этап</p>-->
 
-        <CreateVacancyChildren @set="updateState"></CreateVacancyChildren>
+        <CreateVacancyOldChildren @set="updateState"></CreateVacancyOldChildren>
         <div class="sep"> </div>
-        <CreateVacancyExperience2 @set="updateState"></CreateVacancyExperience2>
+        <CreateVacancyOldExperience2 @set="updateState"></CreateVacancyOldExperience2>
         <div class="sep"> </div>
-        <CreateVacancyPlaceOfWork @set="updateState"></CreateVacancyPlaceOfWork>
+        <CreateVacancyOldPlaceOfWork @set="updateState"></CreateVacancyOldPlaceOfWork>
         <div class="sep"> </div>
-        <CreateVacancyLicenses @set="updateState"></CreateVacancyLicenses>
+        <CreateVacancyOldLicenses @set="updateState"></CreateVacancyOldLicenses>
         <div class="sep"> </div>
-        <CreateVacancySkills @set="updateState"></CreateVacancySkills>
+        <CreateVacancyOldSkills @set="updateState"></CreateVacancyOldSkills>
         <div class="sep"> </div>
-        <CreateVacancyAge @set="updateState"></CreateVacancyAge>
+        <CreateVacancyOldAge @set="updateState"></CreateVacancyOldAge>
         <div class="sep"> </div>
-        <CreateVacancyForeignLanguages @set="updateState"></CreateVacancyForeignLanguages>
+        <CreateVacancyOldForeignLanguages @set="updateState"></CreateVacancyOldForeignLanguages>
         <div class="sep"> </div>
 
 

@@ -2,67 +2,67 @@
     <div class="step step3 pb-3">
         <!--                      <p class="text-center mb-4">Третый этап</p>-->
 
-        <CreateVacancyFirmName @set="updateState"></CreateVacancyFirmName>
+        <CreateVacancyOldFirmName @set="updateState"></CreateVacancyOldFirmName>
         <div class="sep"> </div>
-        <CreateVacancyFirmActivity @set="updateState"></CreateVacancyFirmActivity>
+        <CreateVacancyOldFirmActivity @set="updateState"></CreateVacancyOldFirmActivity>
         <div class="sep"> </div>
-        <CreateVacancyDescription @set="updateState"></CreateVacancyDescription>
-        <div class="sep"> </div>
-
-        <div class="c2">
-            <div class="input-wrapper--flex">
-                <CreateVacancyHHAcceptKids v-model="hhState.accept_kids"/>
-            </div>
-            <div class="input-wrapper--flex">
-                <CreateVacancyHHAcceptTemporary v-model="hhState.accept_temporary"/>
-
-            </div>
-        </div>
-        <div class="sep"></div>
-        <div class="c2">
-            <div class="input-wrapper--flex">
-                <CreateVacancyHHAcceptIncompleteResumes v-model="hhState.accept_incomplete_resumes"/>
-            </div>
-            <div class="input-wrapper--flex">
-                <CreateVacancyHHAcceptHandicapped v-model="hhState.accept_handicapped"/>
-            </div>
-        </div>
-        <div class="sep"></div>
-        <div class="c2">
-            <div class="input-wrapper--flex">
-                <CreateVacancyHHAllowMessages v-model="hhState.allow_messages"/>
-            </div>
-            <div class="input-wrapper--flex">
-                <CreateVacancyHHResponseNotifcation v-model="hhState.response_notification"/>
-            </div>
-        </div>
-        <div class="sep"></div>
-        <div class="c2">
-            <div class="input-wrapper--flex">
-                <CreateVacancyHHWithZP v-model="hhState.with_zp"/>
-            </div>
-            <div class="input-wrapper--flex">
-                <CreateVacancyHHWorkinDays v-model="hhState.working_days"/>
-            </div>
-        </div>
-        <div class="sep"></div>
-        <div class="c2">
-            <div class="input-wrapper--flex">
-                <CreateVacancyHHWorkinTimeIntervals v-model="hhState.working_time_intervals"/>
-            </div>
-            <div class="input-wrapper--flex">
-                <CreateVacancyHHWorkinTimeModes v-model="hhState.working_time_modes"/>
-            </div>
-        </div>
-        <div class="sep"></div>
-        <CreateVacancyHHResponseUrl v-model="hhState.response_url"/>
-        <div class="sep"></div>
-        <CreateVacancyVacancytype @set="updateState"></CreateVacancyVacancytype>
-        <div class="sep"> </div>
-        <CreateVacancyBillingType @set="updateState"></CreateVacancyBillingType>
+        <CreateVacancyOldDescription @set="updateState"></CreateVacancyOldDescription>
         <div class="sep"> </div>
 
-        <CreateVacancyNotifications @set="updateState"></CreateVacancyNotifications>
+        <div class="c2">
+            <div class="input-wrapper--flex">
+                <CreateVacancyOldHHAcceptKids v-model="hhState.accept_kids"/>
+            </div>
+            <div class="input-wrapper--flex">
+                <CreateVacancyOldHHAcceptTemporary v-model="hhState.accept_temporary"/>
+
+            </div>
+        </div>
+        <div class="sep"></div>
+        <div class="c2">
+            <div class="input-wrapper--flex">
+                <CreateVacancyOldHHAcceptIncompleteResumes v-model="hhState.accept_incomplete_resumes"/>
+            </div>
+            <div class="input-wrapper--flex">
+                <CreateVacancyOldHHAcceptHandicapped v-model="hhState.accept_handicapped"/>
+            </div>
+        </div>
+        <div class="sep"></div>
+        <div class="c2">
+            <div class="input-wrapper--flex">
+                <CreateVacancyOldHHAllowMessages v-model="hhState.allow_messages"/>
+            </div>
+            <div class="input-wrapper--flex">
+                <CreateVacancyOldHHResponseNotifcation v-model="hhState.response_notification"/>
+            </div>
+        </div>
+        <div class="sep"></div>
+        <div class="c2">
+            <div class="input-wrapper--flex">
+                <CreateVacancyOldHHWithZP v-model="hhState.with_zp"/>
+            </div>
+            <div class="input-wrapper--flex">
+                <CreateVacancyOldHHWorkinDays v-model="hhState.working_days"/>
+            </div>
+        </div>
+        <div class="sep"></div>
+        <div class="c2">
+            <div class="input-wrapper--flex">
+                <CreateVacancyOldHHWorkinTimeIntervals v-model="hhState.working_time_intervals"/>
+            </div>
+            <div class="input-wrapper--flex">
+                <CreateVacancyOldHHWorkinTimeModes v-model="hhState.working_time_modes"/>
+            </div>
+        </div>
+        <div class="sep"></div>
+        <CreateVacancyOldHHResponseUrl v-model="hhState.response_url"/>
+        <div class="sep"></div>
+        <CreateVacancyOldVacancytype @set="updateState"></CreateVacancyOldVacancytype>
+        <div class="sep"> </div>
+        <CreateVacancyOldBillingType @set="updateState"></CreateVacancyOldBillingType>
+        <div class="sep"> </div>
+
+        <CreateVacancyOldNotifications @set="updateState"></CreateVacancyOldNotifications>
         <div class="sep"> </div>
 
 
