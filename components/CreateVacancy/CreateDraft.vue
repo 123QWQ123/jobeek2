@@ -2,14 +2,14 @@
     <div class="w-box w-box--main w-box-resume pb-4" v-click-outside="save">
         <div class="w-box-head">
             <h1 class="title">{{ formTitle }}</h1>
-<!--            <div class="descr">Получайте уведомления о новых  по созданному запросу</div>-->
-            <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
+            <div class="descr">Получайте уведомления о новых  по созданному запросу</div>
+            <span class="arrow" ></span>
         </div>
 
         <div class="text-danger d-block p-4" v-if="errors.message">
           {{ errors.message }}
         </div>
-        <div class="w-box-body" :class="{collapse: isCollapsed}">
+        <div class="w-box-body" >
 
 <!--            <CreateResumeProviders v-model="state.providers.val" :errors="errors.providers"></CreateResumeProviders>-->
 
@@ -52,15 +52,17 @@
             </div>
 
             <div class="input-row">
-                <label for="description">Описание:</label>
+                <label for="description">Quil Editor:</label>
                 <div class="input-wrapper">
-                  <textarea class="form-control" rows="7" id="description" placeholder="не менее 200 символов" v-model="state.description.val" @focusin="() => errors.description = ''"> </textarea>
+                  <RichEditor v-model="state.description.val"/>
+<!--                  <textarea class="form-control" rows="7" id="description" placeholder="не менее 200 символов" v-model="state.description.val" @focusin="() => errors.description = ''"> </textarea>-->
                     <div class="text-danger d-block" v-if="errors.description">
                         {{errors.description}}
                     </div>
                 </div>
             </div>
 
+          {{errors}}
             <CreateVacancySalary v-model="state.salary.val" :errors="errors.salary"/>
             <br/>
         </div>
@@ -79,8 +81,6 @@ import {useRuntimeConfig} from "#app";
 import useFormValidation from "~/composables/useFormValidation";
 import {storeToRefs} from "pinia";
 import {useWatchStateValues} from "~/composables/useWatchStateValues";
-import {useDiff} from "~/composables/useDiff";
-import {useCreateFormData} from "~/composables/useCreateFormData";
 const resumeStore = useResumeStore();
 const profileStore = useProfileStore();
 const vacancyStore = useVacancyStore();
@@ -136,7 +136,6 @@ const state = reactive({
 });
 
 watch(() => useWatchStateValues(state, true, true),   (newState, oldState) => {
-    console.log(newState);
     if (!isFirst.value){
         isChanged.value = true;
     }else{
@@ -152,7 +151,8 @@ const professionalRoleOptions = ref([]);
 
 const updateCityInput = async (newValue = '') => {
     const items = await searchCities({search: newValue}) ?? [];
-    cityOptions.value = items.map(item => ({value: item.city_id, name: item.city_name}));
+  console.log(items);
+    cityOptions.value = items.map(item => ({value: item.cityId, name: item.city_name}));
 }
 
 const updateProfessionalInput = async (newValue = '') => {
@@ -180,15 +180,18 @@ const save = async () => {
         let resData = {};
         const formData = useFormData(state);
       console.log(formData);
+        formData.professional_roles = formData.professional_roles.map(item => parseInt(item));
+        formData.cities = formData.cities.map(item => parseInt(item));
+      console.log(formData);
 
         resData = await createVacancy(formData);
 
         if (resData.status === 'success'){
-          const resume_id = resData.data.data.id;
+          const vacancy_id = resData.data.data.id;
           state.isNew = false;
           setTimeout(() => {
             console.log('redirecting...')
-            navigateTo({name: 'create-resume', query: {draft_id: resume_id}})
+            navigateTo({name: 'create-vacancy', query: {draft_id: vacancy_id}})
           }, 100);
         }
 
@@ -202,14 +205,6 @@ const save = async () => {
 
     }
 }
-
-const isCompleted = computed(() => {
-    const myResume = resume.value;
-    if (myResume){
-        return (myResume.first_name && myResume.last_name && myResume.id && myResume.birth_date && myResume.city_id && myResume.phone && myResume.phone_time_start && myResume.phone_time_end && myResume.email);
-    }
-    return false;
-});
 
 </script>
 

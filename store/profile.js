@@ -114,7 +114,7 @@ export const useProfileStore = defineStore('profile', {
       if (data.status === 'failed'){
         return [];
       }
-      return data ?? [];
+      return data.data ?? [];
     },
     async searchProfessionalRoles(payload = {})
     {

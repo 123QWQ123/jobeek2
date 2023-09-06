@@ -25,6 +25,7 @@
     "@nuxtjs/auth-next": "5.0.0-1667386184.dfbbb54",
     "@nuxtjs/axios": "^5.13.6",
     "@pinia/nuxt": "^0.4.6",
+    "@vueup/vue-quill": "^1.2.0",
     "autoprefixer": "^10.4.13",
     "axios": "^1.2.3",
     "bootstrap": "^5.2.3",

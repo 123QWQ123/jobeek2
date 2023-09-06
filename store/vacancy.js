@@ -12,6 +12,7 @@ export const useVacancyStore = defineStore('vacancy', {
       vacancies: [],
       vacancies_in_my_city: [],
       vacancy: null,
+      my_vacancy: null,
       total: 0,
       my_total: 0,
       data: null,
@@ -121,6 +122,18 @@ export const useVacancyStore = defineStore('vacancy', {
     async clearVacancies() {
       this.vacancies = [];
     },
+
+    async createVacancy( payload, content_type = 'application/json') {
+      const response = await useApi('employer/vacancy/draft/create', {
+        method: 'post',
+        content_type,
+        payload
+      });
+      // if ('data' in response){
+      //   this.resume = response.data;
+      // }
+      return response;
+    },
     async getMyVacancies(payload) {
       const response = await useApi('employer/vacancies', {
         method: 'get',
@@ -131,6 +144,16 @@ export const useVacancyStore = defineStore('vacancy', {
         this.my_vacancies = response.data.items;
         this.my_total = response.data.found;
         this.current_page = response.data.current_page;
+      }
+      return response;
+    },
+    async getMyVacancy(payload) {
+      const response = await useApi('employer/vacancy/' + payload, {
+        method: 'get',
+      });
+      console.log(response);
+      if (response && 'data' in response && response.data && 'items' in response.data){
+        this.my_vacancy = response.data;
       }
       return response;
     },

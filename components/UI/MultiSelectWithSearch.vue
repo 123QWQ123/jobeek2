@@ -1,7 +1,7 @@
 <template>
     <div class="multi-select_wrapper">
         <div v-click-outside="close" onfocusout="close" class="select2-container select2-container--default select2-container--below select2-container--focus nice-select n-select d-select" :class="{'open' : isOpen}" tabindex="0" @click.prevent="onClick">
-            <span class="current" contenteditable="true" @keyup="onChangeHandler">{{ labelOrSearchInput }}</span>
+            <span ref="inputElement" class="current" contenteditable="true" @keyup="onChangeHandler">{{ labelOrSearchInput }}</span>
 
             <ul class="list" :style="listStyles">
                 <li v-for="item in options" @click="onSelect" :key="item.value" :data-value="item.value" class="option" :style="listItemStyles">{{ item.name }}</li>
@@ -67,6 +67,7 @@ watch(props, (newProps) => {
 });
 
 
+const inputElement = ref();
 const selectedOption = ref(null);
 const selectedOptions = ref(props.selectedItems ?? []);
 
@@ -92,9 +93,9 @@ function onSelect(e){
 function onUnselect(deleteId){
     let tempOptions = props.options;
     let tempSelectedOptions = selectedOptions.value;
-    const selectedOptionItemIndex = props.options.findIndex(item => String(item.value) == String(deleteId));
+    const selectedOptionItemIndex = props.options.findIndex(item => String(item.value) === String(deleteId));
     if (selectedOptionItemIndex !== -1){
-        selectedOptions.value = tempSelectedOptions.filter(item => String(item) != String(deleteId));
+        selectedOptions.value = tempSelectedOptions.filter(item => String(item) !== String(deleteId));
         options.value = tempOptions.filter(item => !selectedOptions.value.includes(String(item.value)));
         emit('unselect', deleteId)
     }
@@ -103,6 +104,9 @@ function onUnselect(deleteId){
 function onClick(e){
   if (e.target.classList.contains('current') || e.target.classList.contains('nice-select')){
     isOpen.value = !isOpen.value;
+  }
+  if (isOpen.value){
+    inputElement.value.focus();
   }
 }
 
