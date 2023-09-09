@@ -92,6 +92,8 @@ const save = (e) => {
 
           <CreateVacancyCities />
           <CreateVacancyProfessionalRoles  />
+          <CreateVacancyTypeAndUrl/>
+<!--          <CreateVacancyVacancyTypeAndUrl />-->
 
 <!--          <CreateVacancyPositionAndIncome v-if="isEditable"></CreateVacancyPositionAndIncome>-->
 
