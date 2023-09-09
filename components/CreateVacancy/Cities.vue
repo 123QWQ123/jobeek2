@@ -126,15 +126,6 @@ const updateCityInput = async (newValue = '') => {
   }
 }
 
-const getCities = async (newValue = '') => {
-    if (newValue){
-        const items = await getCountryCities({city_id: newValue}) ?? [];
-        const newOptions = items.map(item => ({value: item.cityId, name: item.name}));
-        cityOptions.value = newOptions.concat(selectedOptions.value);
-    }
-}
-
-
 
 const {errors, handleErrorResponse} = useFormValidation();
 const save = async () => {

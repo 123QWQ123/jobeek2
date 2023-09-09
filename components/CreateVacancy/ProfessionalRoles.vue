@@ -2,7 +2,7 @@
 
   <div class="w-box" v-click-outside="save">
     <div class="w-box-head">
-      <h3 class="title">Сфера деятелности?</h3>
+      <h3 class="title">Сфера деятельности?</h3>
       <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
 
     </div>
@@ -16,9 +16,9 @@
         <div class="input-row">
           <label>Список деятелности:<b>*</b></label>
           <div class="input-wrapper mt-2">
-            <MultiSelectWithSearch :options="profRoleOptions" v-model="state.cities.val" :label="'Выберите сферу'" @input="updateInput" @focusin="() => errors.cities = ''"></MultiSelectWithSearch>
+            <MultiSelectWithSearch :options="profRoleOptions" v-model="state.professional_roles.val" :label="'Выберите сферу'" @input="updateInput" @focusin="() => errors.professional_roles = ''"></MultiSelectWithSearch>
 
-            <div class="text-danger d-block" v-if="errors.cities">
+            <div class="text-danger d-block" v-if="errors.professional_roles">
               Вам нужно выбрать город для публикации!
             </div>
 
@@ -65,7 +65,7 @@ const isUpdated = ref(false);
 
 
 const state = reactive({
-    cities: {
+  professional_roles: {
         val:  [],
         isValid: true
     },
@@ -89,11 +89,11 @@ const sectionData = ref({});
 watch(() => sectionData.value, (newData, oldData) => {
     const diffData =  useDiff(newData, oldData);
     if (Object.keys(diffData).length){
-        if (newData['cities'].length > 0){
-          selectedOptions.value = newData['cities'].map((item) => ({value: item.id, name: `${item.name}` }));
+        if (newData['professional_roles'].length > 0){
+          selectedOptions.value = newData['professional_roles'].map((item) => ({value: item.id, name: `${item.name}` }));
           const newOptions = profRoleOptions.value;
           profRoleOptions.value = newOptions.concat(selectedOptions.value);
-          state['cities'].val = newData['cities'].map((item) => item.id);
+          state['professional_roles'].val = newData['professional_roles'].map((item) => item.id);
         }
     }
 })
@@ -104,7 +104,7 @@ watch(() => vacancyStore.my_vacancy, (newVacancy) => {
     }
     if (newVacancy){
         sectionData.value = {
-            cities: newVacancy.cities,
+          professional_roles: newVacancy.professional_roles,
         };
     }
 })
@@ -124,16 +124,6 @@ const updateInput = async (newValue = '') => {
 
   }
 }
-
-const getProfRoles = async (newValue = '') => {
-    if (newValue){
-        const items = await searchProfessionalRoles({search: newValue}) ?? [];
-        const newOptions = items.map(item => ({value: item.id, name: item.name}));
-        profRoleOptions.value = newOptions.concat(selectedOptions.value);
-    }
-}
-
-
 
 const {errors, handleErrorResponse} = useFormValidation();
 const save = async () => {
