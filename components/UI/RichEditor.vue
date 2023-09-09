@@ -1,5 +1,5 @@
 <template>
-  <QuillEditor class="rich_editor" ref="quillEditor" toolbar="minimal" @textChange="onInput" :contentType="'html'" />
+  <QuillEditor class="rich_editor" :options="richEditorOptions" ref="quillEditor" toolbar="minimal" @textChange="onInput" :contentType="'html'" />
 </template>
 
 <script>
@@ -29,6 +29,9 @@ const onInput = (input) => {
   console.log(quillEditor.value.getHTML())
 }
 
+const richEditorOptions = {
+  compatibilityMode: false
+}
 </script>
 
 <style>

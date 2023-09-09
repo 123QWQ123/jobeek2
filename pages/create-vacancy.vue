@@ -90,7 +90,8 @@ const save = (e) => {
         </form>
         <form class="update-vacancy" action="" name="update-vacancy " v-else>
 
-<!--          <CreateVacancyPersonalData :title="pageTitle"></CreateVacancyPersonalData>-->
+          <CreateVacancyCities />
+          <CreateVacancyProfessionalRoles  />
 
 <!--          <CreateVacancyPositionAndIncome v-if="isEditable"></CreateVacancyPositionAndIncome>-->
 

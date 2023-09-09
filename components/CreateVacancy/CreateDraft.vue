@@ -99,7 +99,7 @@ const isFirst = ref(true);
 const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
-const {createVacancy} = vacancyStore;
+const {createDraft} = vacancyStore;
 
 const state = reactive({
     name: {
@@ -184,7 +184,7 @@ const save = async () => {
         formData.cities = formData.cities.map(item => parseInt(item));
       console.log(formData);
 
-        resData = await createVacancy(formData);
+        resData = await createDraft(formData);
 
         if (resData.status === 'success'){
           const vacancy_id = resData.data.data.id;

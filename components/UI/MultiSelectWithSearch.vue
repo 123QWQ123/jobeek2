@@ -1,7 +1,7 @@
 <template>
     <div class="multi-select_wrapper">
         <div v-click-outside="close" onfocusout="close" class="select2-container select2-container--default select2-container--below select2-container--focus nice-select n-select d-select" :class="{'open' : isOpen}" tabindex="0" @click.prevent="onClick">
-            <span ref="inputElement" class="current" contenteditable="true" @keyup="onChangeHandler">{{ labelOrSearchInput }}</span>
+            <span ref="inputElement"  class="current" contenteditable="true" @keyup="onChangeHandler">{{ labelOrSearchInput }}</span>
 
             <ul class="list" :style="listStyles">
                 <li v-for="item in options" @click="onSelect" :key="item.value" :data-value="item.value" class="option" :style="listItemStyles">{{ item.name }}</li>
@@ -28,6 +28,8 @@ export default {
 </script>
 
 <script setup>
+import useSort from "~/composables/useSort";
+
 const emit = defineEmits(['change', 'update:modelValue', 'input', 'unselect']);
 const props = defineProps({
   options: {
@@ -45,9 +47,6 @@ const props = defineProps({
   modelValue: {
     required: true
   },
-  selectedItems: {
-    required: false
-  },
   sort_by: {
     required: false,
       default: 'asc'
@@ -56,20 +55,21 @@ const props = defineProps({
 
 const isOpen = ref(false);
 const options = ref(props.options);
+const {sort} = useSort();
 watch(props, (newProps) => {
-  options.value = newProps.options.sort(function(a, b) {
-      let textA = a.name.toUpperCase();
-      let textB = b.name.toUpperCase();
-      return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
-  });
 
-  selectedOption.value = options.value.find(item => String(item.value) === String(props.modelValue));
+  options.value = sort(newProps.options, {by: 'alpha'});
+  // selectedOption.value = options.value.find(item => String(item.value) === String(props.modelValue));
+
+  if (newProps.modelValue){
+    selectedOptions.value = newProps.modelValue;
+  }
 });
 
 
 const inputElement = ref();
 const selectedOption = ref(null);
-const selectedOptions = ref(props.selectedItems ?? []);
+const selectedOptions = ref(props.modelValue ?? []);
 
 function onSelect(e){
   if (e.target.classList.contains('option')){
@@ -106,7 +106,21 @@ function onClick(e){
     isOpen.value = !isOpen.value;
   }
   if (isOpen.value){
-    inputElement.value.focus();
+    if (inputElement.value){
+      // setting cursor position to end
+      nextTick(() => {
+        if (inputElement.value.type !== "textarea" && inputElement.value.getAttribute("contenteditable") === "true") {
+          inputElement.value.focus()
+          window.getSelection().selectAllChildren(inputElement.value)
+          window.getSelection().collapseToEnd()
+        } else {
+          // Place cursor at the end of text areas and input elements
+          inputElement.value.focus()
+          inputElement.value.select()
+          window.getSelection().collapseToEnd()
+        }
+      })
+    }
   }
 }
 
@@ -118,7 +132,7 @@ const onChangeHandler = (e) => {
   searchInput.value = e.target.textContent;
   isOpen.value = true;
   const typedName = e.target.textContent.toLowerCase();
-  emit('input', searchInput.value);
+  emit('input', typedName);
 }
 
 function getSelectedOptionName(value){
