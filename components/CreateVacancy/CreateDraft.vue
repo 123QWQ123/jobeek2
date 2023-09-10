@@ -62,7 +62,6 @@
                 </div>
             </div>
 
-          {{errors}}
             <CreateVacancySalary v-model="state.salary.val" :errors="errors.salary"/>
             <br/>
         </div>
@@ -171,7 +170,6 @@ const getCities = async (newValue = '') => {
 
 const {errors, handleErrorResponse} = useFormValidation();
 const save = async () => {
-    console.log(isChanged.value);
     if (isChanged.value){
         state.isLoading = true;
         // validate();
@@ -179,10 +177,8 @@ const save = async () => {
         state.errorMessage = "";
         let resData = {};
         const formData = useFormData(state);
-      console.log(formData);
         formData.professional_roles = formData.professional_roles.map(item => parseInt(item));
         formData.cities = formData.cities.map(item => parseInt(item));
-      console.log(formData);
 
         resData = await createDraft(formData);
 

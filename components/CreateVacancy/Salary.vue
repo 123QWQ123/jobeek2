@@ -67,19 +67,20 @@
 <script setup>
 import {useVacancyStore} from "~/store/vacancy";
 
+import {useCurrencyOptions} from "~/composables/useCurrencyOptions";
+import {useDictionaryStore} from "~/store/dictionary";
+
 const emit = defineEmits(['update:modelValue', 'clearError']);
 const props = defineProps({
     modelValue: {
         required: true,
+        default: {}
     },
     errors: {
         required: true,
         default: {}
     }
 })
-
-import {useCurrencyOptions} from "~/composables/useCurrencyOptions";
-import {useDictionaryStore} from "~/store/dictionary";
 
 
 const vacancyStore = useVacancyStore();
@@ -120,18 +121,18 @@ const salary = reactive({
 });
 
 watch(() => props.modelValue, (newValue) => {
-    salary.from.val = newValue.from;
-    salary.to.val = newValue.to;
-    salary.gross.val = newValue.gross;
-    salary.period.val = newValue.period;
-    salary.currency.val = newValue.currency;
+    salary.from.val = newValue?.from;
+    salary.to.val = newValue?.to;
+    salary.gross.val = newValue?.gross;
+    salary.period.val = newValue?.period;
+    salary.currency.val = newValue?.currency;
 })
 onMounted(() => {
-    salary.from.val = props.modelValue.from;
-    salary.to.val = props.modelValue.to;
-    salary.gross.val = props.modelValue.gross;
-    salary.period.val = props.modelValue.period;
-    salary.currency.val = props.modelValue.currency;
+    salary.from.val = props.modelValue?.from;
+    salary.to.val = props.modelValue?.to;
+    salary.gross.val = props.modelValue?.gross;
+    salary.period.val = props.modelValue?.period;
+    salary.currency.val = props.modelValue?.currency;
 })
 const validate = () => {
     salary.from.isChecked = true;

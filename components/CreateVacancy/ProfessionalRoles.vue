@@ -77,7 +77,6 @@ const state = reactive({
 });
 
 watch(() => useWatchStateValues(state, true, true),   (newState, oldState) => {
-    console.log('update');
     if (!isFirst.value){
         isChanged.value = true;
     }else{
@@ -127,7 +126,6 @@ const updateInput = async (newValue = '') => {
 
 const {errors, handleErrorResponse} = useFormValidation();
 const save = async () => {
-    console.log(isChanged.value);
     if (isChanged.value){
         state.isLoading = true;
         // validate();
@@ -151,7 +149,7 @@ const save = async () => {
 const isCompleted = computed(() => {
     const myVacancy = my_vacancy.value;
     if (myVacancy){
-        return (myVacancy.first_name && myVacancy.last_name && myVacancy.id && myVacancy.birth_date && myVacancy.city_id && myVacancy.phone && myVacancy.phone_time_start && myVacancy.phone_time_end && myVacancy.email);
+        return (myVacancy.professional_roles.length > 0);
     }
     return false;
 });
