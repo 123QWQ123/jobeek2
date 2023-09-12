@@ -51,12 +51,12 @@
 
         <div class="check-block mt-2">
           <div class="checkbox">
-            <input type="checkbox" id="hide_birthday" v-model.number="salary.gross.val" @focusin="() => errors.gross = ''">
+            <input type="checkbox" id="salary_gross" v-model.number="salary.gross.val" @focusin="() => errors.gross = ''">
             <div class="checkbox-mask">
               <img src="~/assets/img/svg/check.svg" alt="#" />
             </div>
           </div>
-          <label for="hide_birthday" class="fs-14">до вычета налогов</label>
+          <label for="salary_gross" class="fs-14">до вычета налогов</label>
         </div>
       </div>
 
@@ -94,46 +94,40 @@ const periodOptions = computed(() => {
 
 const salary = reactive({
     from: {
-        val: null,
+        val: props.modelValue?.from,
         isChecked: false,
         isValid: false,
     },
     to: {
-        val: null,
+        val: props.modelValue?.to,
         isChecked: false,
         isValid: false,
     },
     gross: {
-        val: false,
+        val: props.modelValue?.gross ?? false,
         isChecked: false,
         isValid: false,
     },
     period: {
-        val: null,
+        val: props.modelValue?.period,
         isChecked: false,
         isValid: false,
     },
     currency: {
-        val: null,
+        val: props.modelValue?.currency,
         isChecked: false,
         isValid: false,
     },
 });
-
+const isFirst = ref(true);
 watch(() => props.modelValue, (newValue) => {
-    salary.from.val = newValue?.from;
-    salary.to.val = newValue?.to;
-    salary.gross.val = newValue?.gross;
-    salary.period.val = newValue?.period;
-    salary.currency.val = newValue?.currency;
+  salary.from.val = newValue?.from;
+  salary.to.val = newValue?.to;
+  salary.gross.val = newValue?.gross;
+  salary.period.val = newValue?.period;
+  salary.currency.val = newValue?.currency;
 })
-onMounted(() => {
-    salary.from.val = props.modelValue?.from;
-    salary.to.val = props.modelValue?.to;
-    salary.gross.val = props.modelValue?.gross;
-    salary.period.val = props.modelValue?.period;
-    salary.currency.val = props.modelValue?.currency;
-})
+
 const validate = () => {
     salary.from.isChecked = true;
     if (parseInt(salary.from.val) > 0){
@@ -152,7 +146,11 @@ const validate = () => {
     }else{
         salary.currency.isValid = false;
     }
-    emit('update:modelValue', {from: salary.from.val,to: salary.to.val,gross: salary.gross.val,period: salary.period.val, currency: salary.currency.val});
+    if (!isFirst.value){
+      emit('update:modelValue', {from: salary.from.val,to: salary.to.val,gross: salary.gross.val,period: salary.period.val, currency: salary.currency.val});
+    }else{
+      isFirst.value = false;
+    }
 }
 watch(salary, validate);
 const skyBlueBG = {

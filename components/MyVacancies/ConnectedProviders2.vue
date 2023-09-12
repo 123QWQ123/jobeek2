@@ -7,7 +7,7 @@
           <div class="list-of-providers">
             <a @click="openProviderAuthUrl(providers.hh.url)"  class="provider-item">
                   <span class="provider-label success">
-                    <svg v-if="providers.hh.is_connected" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="limegreen" class="bi bi-check"
+                    <svg v-if="isHHConnected" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="limegreen" class="bi bi-check"
                          viewBox="0 0 16 16">
                       <path
                           d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z" />
@@ -22,7 +22,7 @@
             </a>
             <a @click="openProviderAuthUrl(providers.superjob.url)"  class="provider-item">
                   <span class="provider-label success">
-                    <svg v-if="providers.superjob.is_connected" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="limegreen" class="bi bi-check"
+                    <svg v-if="isSuperjobConnected" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="limegreen" class="bi bi-check"
                          viewBox="0 0 16 16">
                       <path
                           d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z" />
@@ -49,13 +49,11 @@
 
 import {useVacancyStore} from "../../store/vacancy";
 import {useProfileStore} from "~/store/profile";
-import {useResumeStore} from "~/store/resume";
-
 
 const vacancyStore = useVacancyStore();
-const resumeStore = useResumeStore();
-const { getSeekerProvidersAuthEndpoints } = useProfileStore();
-const { getConnectedProviders } = resumeStore;
+const profileStore = useProfileStore();
+const { getEmployerProvidersAuthEndpoints, getConnectedEmployerProviders } = vacancyStore;
+await getConnectedEmployerProviders();
 
 
 const providers = ref({
@@ -71,10 +69,16 @@ const providers = ref({
   },
 });
 
-providers.value.hh.is_connected = resumeStore.providers.hh;
-providers.value.superjob.is_connected = resumeStore.providers.superjob;
+const isSuperjobConnected = computed(() => {
+  return vacancyStore.providers.superjob;
+})
+const isHHConnected = computed(() => {
+  return vacancyStore.providers.hh;
+})
+providers.value.hh.is_connected = vacancyStore.providers.hh;
+providers.value.superjob.is_connected = vacancyStore.providers.superjob;
 
-watch(() => resumeStore.providers, (newProviders) => {
+watch(() => vacancyStore.providers, (newProviders) => {
     console.log(newProviders);
 
     providers.value.hh.is_connected = newProviders.hh;
@@ -82,21 +86,17 @@ watch(() => resumeStore.providers, (newProviders) => {
 })
 
 const isAllConnected = computed(() => {
-    if (resumeStore.providers.hh && resumeStore.providers.superjob)
+    if (vacancyStore.providers.hh && vacancyStore.providers.superjob)
         return true;
     else return false;
 });
 
 onMounted(async () => {
-    if (resumeStore.providers.hh === null && !resumeStore.providers.superjob === null){
-        getConnectedProviders();
-    }
     if (!isAllConnected.value){
-        const authData = await getSeekerProvidersAuthEndpoints();
+        const authData = await getEmployerProvidersAuthEndpoints();
         providers.value.hh.url = authData.hh;
         providers.value.superjob.url = authData.superjob;
     }
-
 });
 
 

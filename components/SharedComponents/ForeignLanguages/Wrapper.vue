@@ -1,26 +1,3 @@
-<template>
-
-    <div class="w-box-body">
-        <div class="" >
-            <div class="" v-if="selectedItems.length">
-                <CreateResumeForeignLanguagesItem
-                    class="w-100 mb-2"
-                    v-for="item in selectedItems" :item="item"
-                    :key="item.id"
-                    :id="item.id"
-                    :language_id="item.language_id"
-                    :level="item.level"
-                    :errors="item.errors"
-                    @update="updateItem"
-                    @delete="deleteItem" />
-            </div>
-            <button type="button" class="btn btn-primary mt-2" v-else-if="selectedItems.length === 0" @click="reset">Добавить</button>
-            <button type="button" class="btn btn-primary mt-2" v-if="selectedItems.length !== 0" @click="create">Добавить еще</button>
-        </div>
-    </div>
-
-</template>
-
 <script setup>
 import {useDictionaryStore} from "~/store/dictionary";
 
@@ -115,3 +92,24 @@ onMounted(() => {
 <style scoped>
 
 </style>
+
+<template>
+
+  <div class="" >
+    <div class="" v-if="selectedItems.length">
+      <CreateResumeForeignLanguagesItem
+          class="w-100 mb-2"
+          v-for="item in selectedItems" :item="item"
+          :key="item.id"
+          :id="item.id"
+          :language_id="item.language_id"
+          :level_id="item.level_id"
+          :errors="item.errors"
+          @update="updateItem"
+          @delete="deleteItem" />
+    </div>
+    <button type="button" class="btn btn-primary mt-2" v-else-if="selectedItems.length === 0" @click="reset">Добавить</button>
+    <button type="button" class="btn btn-primary mt-2" v-if="selectedItems.length !== 0" @click="create">Добавить еще</button>
+  </div>
+
+</template>

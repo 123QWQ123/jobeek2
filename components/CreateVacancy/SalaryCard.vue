@@ -13,7 +13,7 @@
     <transition>
       <div class="w-box-body" :class="{collapse: isCollapsed}">
 
-        <CreateVacancySalary v-model="state.salary.val" :errors="errors.salary"/>
+        <CreateVacancySalary v-if="my_vacancy" v-model="state.salary.val" :errors="errors.salary"/>
 
       </div>
     </transition>
@@ -68,7 +68,6 @@ const state = reactive({
 });
 
 watch(() => useWatchStateValues(state, true, true),   (newState, oldState) => {
-    console.log('update');
     if (!isFirst.value){
         isChanged.value = true;
     }else{
@@ -84,7 +83,6 @@ watch(() => sectionData.value, (newData, oldData) => {
     }
 })
 watch(() => vacancyStore.my_vacancy, (newVacancy) => {
-  console.log(newVacancy);
     if (isUpdated.value){
         isUpdated.value = false;
         return;
@@ -122,7 +120,7 @@ const save = async () => {
 
 const isCompleted = computed(() => {
     const myVacancy = my_vacancy.value;
-    if (myVacancy){
+    if (myVacancy && myVacancy.salary){
         return (myVacancy.salary.period && myVacancy.salary.currency);
     }
     return false;

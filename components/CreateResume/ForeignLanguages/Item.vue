@@ -15,10 +15,10 @@
                     </div>
                 </div>
                 <div class="input-wrapper">
-                    <CustomSelect :label="'Уровен'" :options="languageLevelOptions" v-model.number="state.level.val"></CustomSelect>
+                    <CustomSelect :label="'Уровен'" :options="languageLevelOptions" v-model.number="state.level_id.val"></CustomSelect>
 
-                    <div class="text-danger d-block" v-if="errors.level">
-                        {{ errors.level }}
+                    <div class="text-danger d-block" v-if="errors.level_id">
+                        {{ errors.level_id }}
                     </div>
                 </div>
             </div>
@@ -31,9 +31,6 @@
 import {useDictionaryStore} from "~/store/dictionary";
 
 const dictionaryStore = useDictionaryStore();
-
-const {getForeignLanguages} = dictionaryStore;
-await getForeignLanguages();
 
 const emit = defineEmits(['delete', 'update'])
 const props = defineProps({
@@ -49,7 +46,7 @@ const props = defineProps({
         required: true,
         default: null
     },
-    level: {
+    level_id: {
         required: true,
         default: null
     },
@@ -67,8 +64,8 @@ const state = reactive({
         val: props.language_id,
         isValid: true,
     },
-    level: {
-        val: props.level,
+    level_id: {
+        val: props.level_id,
         isValid: true,
     },
 });
@@ -87,7 +84,7 @@ const save = () => {
 }
 
 watch(() => state.language_id.val, save);
-watch(() => state.level.val, save);
+watch(() => state.level_id.val, save);
 const deleteItem = (id = null) => {
     emit('delete', props.id);
 }
@@ -95,7 +92,7 @@ const deleteItem = (id = null) => {
 onMounted(() => {
     state['id'].val = props.id;
     state['language_id'].val = props.language_id;
-    state['level'].val = props.level;
+    state['level_id'].val = props.level_id;
     if (props.id){
         isNew.value = false;
     }
@@ -107,7 +104,7 @@ onMounted(() => {
 
 .absoluted_icon{
     position: absolute;
-    left: -2rem;
+    right: -2rem;
     top: 0.5rem;
     font-size: 1rem;
     z-index: 1;

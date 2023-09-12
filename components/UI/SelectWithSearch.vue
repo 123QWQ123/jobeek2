@@ -86,7 +86,21 @@ function toggle(){
     }
     isOpen.value = !isOpen.value;
     if (isOpen.value){
-        setTimeout(() => searchInputElement.value?.focus(), 0);
+      if (searchInputElement.value){
+        // setting cursor position to end
+        nextTick(() => {
+          if (searchInputElement.value.type !== "textarea" && searchInputElement.value.getAttribute("contenteditable") === "true") {
+            searchInputElement.value.focus()
+            window.getSelection().selectAllChildren(searchInputElement.value)
+            window.getSelection().collapseToEnd()
+          } else {
+            // Place cursor at the end of text areas and input elements
+            searchInputElement.value.focus()
+            searchInputElement.value.select()
+            window.getSelection().collapseToEnd()
+          }
+        })
+      }
     }
 }
 function onSelect(id){

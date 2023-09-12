@@ -13,7 +13,7 @@ export default function useFormValidation(state = null) {
     }
     const handleErrorResponse = (response) => {
         // console.log(response);
-        if (response && response.status === 'failed') {
+        if (response && (response.status === 'failed' || response.status === 'error')) {
             if (response.message){
                 errors.value.message = response.message;
             }
@@ -32,9 +32,9 @@ export default function useFormValidation(state = null) {
                             }
                             newErrors[itemMatches[1]][itemMatches[2]][itemMatches[3]] = response.errors[item][0];
                         }
-                    }else if ((/([a-z0-9]+)\.([a-z0-9]+)/g).test(item)){
+                    }else if ((/([a-z0-9_]+)\.([a-z0-9_]+)/g).test(item)){
                         // dot seperated errors from backend
-                        const itemMatch = item.match(/([a-z0-9]+)\.([a-z0-9]+)/g);
+                        const itemMatch = item.match(/([a-z0-9_]+)\.([a-z0-9_]+)/g);
                         const keys = itemMatch[0].split(".");
                         if (!newErrors[keys[0]])
                             newErrors[keys[0]] = {};
@@ -50,7 +50,11 @@ export default function useFormValidation(state = null) {
                         state[item].isValid = false;
                     }
                 });
-                errors.value = {...newErrors, message: response.message};
+                if (errors.value){
+                    errors.value = {...newErrors, message: response.message};
+                }else{
+                    Object.assign(errors, {...newErrors, message: response.message});
+                }
             }
         } else {
             console.log(response);

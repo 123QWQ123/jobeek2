@@ -57,6 +57,29 @@ export const useResumeStore = defineStore('resume', {
       }
       return data;
     },
+
+    async getConnectedSeekerProviders(payload) {
+      const {data} = await useApi('seeker/used_providers', {
+        method: 'get',
+        payload
+      });
+      if (data && 'data' in data){
+        this.providers = data.data;
+        return this.providers;
+      }
+      return data;
+    },
+
+    async getSeekerProvidersAuthEndpoints(payload, redirect_to = '/profile/service-verify') {
+      const {data} = await useApi('services/auth/redirect-url?profile=seeker&redirect_to=' + redirect_to, {
+        method: 'get',
+        payload
+      });
+      if ('data' in data){
+        return data.data;
+      }
+      return data;
+    },
     async getResumes(payload, add = false) {
       const {data} = await useApi('resumes/search', {
         method: 'get',
@@ -114,7 +137,6 @@ export const useResumeStore = defineStore('resume', {
         method: 'get',
         payload
       });
-      console.log(response);
       if (response && 'data' in response && 'items' in response.data){
         this.my_resumes = response.data.items;
         this.my_total = response.data.found;

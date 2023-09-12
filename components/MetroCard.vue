@@ -2,7 +2,7 @@
 
   <div class="w-box" v-click-outside="save">
     <div class="w-box-head">
-      <h3 class="title">Детали вакансий</h3>
+      <h3 class="title">Метро</h3>
       <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
 
     </div>
@@ -14,37 +14,17 @@
       <div class="w-box-body" :class="{collapse: isCollapsed}">
 
         <div class="input-row">
-          <label>Тип вакансии:<b>*</b></label>
+          <label>Список городов:<b>*</b></label>
           <div class="input-wrapper mt-2">
-            <CustomSelect :options="vacancyTypeOptions" v-model="state.type_id.val" :label="'Выберите'" @focusin="() => errors.type_id = ''"></CustomSelect>
-            <div class="text-danger d-block" v-if="errors.type_id">
-              Вам нужно выбрать тип ваканции!
+            <MultiSelectWithSearch :options="metroOptions" v-model="state.metro.val" :label="'Выберите город'" @input="updateInput" @focusin="() => errors.metro = ''"></MultiSelectWithSearch>
+
+            <div class="text-danger d-block" v-if="errors.metro">
+              Вам нужно выбрать метро!
             </div>
+
           </div>
+
         </div>
-
-        <div class="input-row" v-if="isAnonymous">
-          <label>название компании для анонимных вакансий:</label>
-          <div class="input-wrapper mt-2">
-            <input  v-model="state.custom_employer_name.val"  @focusin="() => errors.custom_employer_name = ''"/>
-            <div class="text-danger d-block" v-if="errors.custom_employer_name">
-              Вам нужно ввести название для анонимных ваканций!
-            </div>
-          </div>
-        </div>
-
-
-        <div class="input-row" v-if="isDirect">
-          <label>URL отклика для прямых вакансий:</label>
-          <div class="input-wrapper mt-2">
-            <input v-model="state.response_url.val" @focusin="() => errors.response_url = ''" />
-            <div class="text-danger d-block" v-if="errors.response_url">
-              Вам нужно ввести URL для прямых ваканций!
-            </div>
-          </div>
-        </div>
-
-
       </div>
     </transition>
 
@@ -86,16 +66,8 @@ const isUpdated = ref(false);
 
 
 const state = reactive({
-    type_id: {
-        val:  null,
-        isValid: true
-    },
-    custom_employer_name: {
-        val:  null,
-        isValid: true
-    },
-    response_url: {
-        val:  null,
+    metro: {
+        val:  [],
         isValid: true
     },
     isFormValid: true,
@@ -117,9 +89,12 @@ const sectionData = ref({});
 watch(() => sectionData.value, (newData, oldData) => {
     const diffData =  useDiff(newData, oldData);
     if (Object.keys(diffData).length){
-      state.type_id.val = newData.type_id;
-      state.custom_employer_name.val = newData.custom_employer_name;
-      state.response_url.val = newData.response_url;
+        if (newData['cities'].length > 0){
+          selectedOptions.value = newData['metro'].map((item) => ({name: item.name, value: item.id}));
+          const newOptions = metroOptions.value;
+          metroOptions.value = newOptions.concat(selectedOptions.value);
+          state['metro'].val = newData['metro'].map((item) => item.id);
+        }
     }
 })
 watch(() => vacancyStore.my_vacancy, (newVacancy) => {
@@ -129,34 +104,36 @@ watch(() => vacancyStore.my_vacancy, (newVacancy) => {
     }
     if (newVacancy){
         sectionData.value = {
-          type_id: newVacancy.type?.id,
-          custom_employer_name: newVacancy.type?.custom_employer_name,
-          response_url: newVacancy.type?.response_url,
+            metro: newVacancy.metro,
         };
     }
 })
 
-const isAnonymous = computed(() => state.type_id.val?.toString() === "48");
-const isDirect = computed(() => state.type_id.val?.toString() === "49");
+const {searchMetro} = useDictionaryStore();
+const {getCountryCities} = profileStore;
+const selectedOptions = ref([]);
+const metroOptions = ref([]);
 
-const dictionaryStore = useDictionaryStore();
-const {getVacancyTypes} = dictionaryStore;
-await getVacancyTypes();
-const vacancyTypeOptions = computed(() => {
-  return dictionaryStore.vacancy_types.map((item) => ({name: item.name, value: item.id}));
-});
+
+const updateInput = async (newValue = '') => {
+  if (newValue.length > 2){
+    const items = await searchMetro({search: newValue}) ?? [];
+    let newOptions = items.filter(item => item.cityId).map(item => ({value: item.cityId, name: `${item.city_name}, ${item.region_name}, ${item.country_name}` }));
+    // newOptions = [...new Map(newOptions.map(item =>  [item[key], item])).values()];
+    metroOptions.value = newOptions.concat(selectedOptions.value);
+  }
+}
 
 
 const {errors, handleErrorResponse} = useFormValidation();
 const save = async () => {
     if (isChanged.value){
         state.isLoading = true;
-        // validate();
         errors.value = {};
         state.errorMessage = "";
         let resData = {};
         const jsonData = useFormData(state);
-        jsonData.action = 'UpdateType';
+        jsonData.action = 'UpdateCities';
         resData = await updateVacancy(draftID.value, jsonData);
         isUpdated.value = true;
         if (resData.status !== 'success'){
@@ -165,14 +142,13 @@ const save = async () => {
         isChanged.value = false;
         isSaved.value = false;
         isUpdated.value = false;
-
     }
 }
 
 const isCompleted = computed(() => {
     const myVacancy = my_vacancy.value;
     if (myVacancy){
-        return (myVacancy.type && myVacancy.type.id);
+        return (myVacancy.first_name && myVacancy.last_name && myVacancy.id && myVacancy.birth_date && myVacancy.city_id && myVacancy.phone && myVacancy.phone_time_start && myVacancy.phone_time_end && myVacancy.email);
     }
     return false;
 });

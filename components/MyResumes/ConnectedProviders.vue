@@ -54,8 +54,9 @@ import {useResumeStore} from "~/store/resume";
 
 const vacancyStore = useVacancyStore();
 const resumeStore = useResumeStore();
-const { getSeekerProvidersAuthEndpoints } = useProfileStore();
-const { getConnectedProviders } = resumeStore;
+const profileStore = useProfileStore();
+const { getSeekerProvidersAuthEndpoints, getConnectedSeekerProviders } = resumeStore;
+await getConnectedSeekerProviders();
 
 
 const providers = ref({
@@ -71,12 +72,10 @@ const providers = ref({
   },
 });
 
-providers.value.hh.is_connected = resumeStore.providers.hh;
-providers.value.superjob.is_connected = resumeStore.providers.superjob;
+providers.value.hh.is_connected = profileStore.providers.hh;
+providers.value.superjob.is_connected = profileStore.providers.superjob;
 
-watch(() => resumeStore.providers, (newProviders) => {
-    console.log(newProviders);
-
+watch(() => profileStore.providers, (newProviders) => {
     providers.value.hh.is_connected = newProviders.hh;
     providers.value.superjob.is_connected = newProviders.superjob;
 })
@@ -88,9 +87,6 @@ const isAllConnected = computed(() => {
 });
 
 onMounted(async () => {
-    if (resumeStore.providers.hh === null && !resumeStore.providers.superjob === null){
-        getConnectedProviders();
-    }
     if (!isAllConnected.value){
         const authData = await getSeekerProvidersAuthEndpoints();
         providers.value.hh.url = authData.hh;

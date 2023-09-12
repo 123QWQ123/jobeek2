@@ -26,6 +26,7 @@ export const useDictionaryStore = defineStore('dictionary', {
       vacancy_billing_types: [],
       vacancy_types: [],
       payment_period: [],
+      addresses: [],
     }
   },
   getters: {
@@ -64,6 +65,27 @@ export const useDictionaryStore = defineStore('dictionary', {
       });
       if (data && 'data' in data){
         this.vacancy_types = data.data?.vacancy_type ?? [];
+      }
+      return data;
+    },
+    async searchAddresses(payload) {
+      const {data} = await useApi('employer/addresses?providers[]=hh&page=0&per_page=100', {
+        method: 'get',
+        payload
+      });
+      if (data){
+        this.addresses = data ?? [];
+      }
+      return data;
+    },
+    async searchMetro(payload) {
+      const {data} = await useApi('metro', {
+        method: 'get',
+        payload
+      });
+      console.log(data);
+      if (data){
+        this.addresses = data ?? [];
       }
       return data;
     },
@@ -108,12 +130,12 @@ export const useDictionaryStore = defineStore('dictionary', {
       return data;
     },
     async getForeignLanguages(payload) {
-      const {data} = await useApi('dictionaries?groups[]=language', {
+      const {data} = await useApi('languages', {
         method: 'get',
         payload
       });
       if (data && 'data' in data){
-        this.foreign_languages = data.data?.language ?? [];
+        this.foreign_languages = data.data ?? [];
       }
       return data;
     },

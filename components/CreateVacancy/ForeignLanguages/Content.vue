@@ -12,7 +12,9 @@
             <div class="w-box-body" :class="{collapse: isCollapsed}">
                 <div class="" v-if="isShown">
                     <div class="row">
+                      <div class="w-box-body">
                         <SharedComponentsForeignLanguagesWrapper ref="componentElement" v-model="foreign_languages" :errors="errors.languages ?? []" />
+                      </div>
                     </div>
                 </div>
                 <div class="empty-area" v-else>

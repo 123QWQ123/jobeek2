@@ -1,12 +1,11 @@
 <template>
   <div class="w-100">
 
-
       <div class="text-danger d-block p-4" v-if="props.message">
         {{ props.message }}
       </div>
       <CreateResumeSkillsForm
-              v-if="selectedSkills.length"
+              v-if="state.skills.val.length"
               :is-new="isNew"
               :id="currentSkillId"
               :skill="currentSkill"
@@ -35,7 +34,14 @@ const props = defineProps(['modelValue', 'errors']);
 const emit = defineEmits(['update:modelValue']);
 const dictionaryStore = useDictionaryStore();
 
-const selectedSkills = ref([...props.modelValue]);
+
+const state = reactive({
+  skills: {
+    val: props.modelValue ?? [],
+    isValid: true
+  }
+});
+const isFirst = ref(true);
 
 const currentSkillId = ref(null);
 const currentSkill = ref(null);
@@ -47,44 +53,66 @@ const isNew = computed(() => {
     return true;
 })
 const computedSelectedSkills = computed(() => {
-    return selectedSkills.value.filter(item => item);
+    return state.skills.val.filter(item => item);
 })
 const setCurrent = (index) => {
     currentSkillId.value = index;
-    currentSkill.value = selectedSkills.value[index];
+    currentSkill.value = state.skills.val[index];
+    if (isFirst.value){
+      isFirst.value = false;
+    }
 }
 const reset = () => {
-    selectedSkills.value = [null];
+  state.skills.val = [null];
 }
 const addItem = (newItem) => {
-    const newItems = selectedSkills.value.filter((item) => item);
+    const newItems = state.skills.val.filter((item) => item);
     newItems.push(newItem);
     newItems.push(null);
-    selectedSkills.value = newItems;
+    state.skills.val = newItems;
+    if (isFirst.value){
+      isFirst.value = false;
+    }
 }
 
 
 const updateItem = (id, newItem) => {
     // const newItems = selectedLanguages.value;
-    const newItems = selectedSkills.value.map((item, index) => {
+    const newItems = state.skills.val.map((item, index) => {
         if (index === id){
             return newItem;
         }
         return item;
     });
-    selectedSkills.value = newItems;
+    state.skills.val = newItems;
     currentSkillId.value = null;
     currentSkill.value = null;
+    if (isFirst.value){
+      isFirst.value = false;
+    }
 }
 const deleteItem = (deleteItem) => {
-    const newItems = selectedSkills.value.filter(item => item !== deleteItem);
-    selectedSkills.value = newItems;
+    const newItems = state.skills.val.filter(item => item !== deleteItem);
+    state.skills.val = newItems;
+    if (isFirst.value){
+      isFirst.value = false;
+    }
 }
 
-watch(selectedSkills, (newValues) => {
-  emit('update:modelValue', newValues.filter(item => item));
+watch(() => state.skills.val, (newValues) => {
+  console.log(newValues);
+  if (!isFirst.value){
+    emit('update:modelValue', newValues.filter(item => item));
+  }else{
+    isFirst.value = false;
+  }
 })
 
+const errors = ref({});
+watch(() => props.errors, (newErrors) => {
+  console.log(errors.value, newErrors);
+  errors.value = newErrors;
+})
 
 </script>
 

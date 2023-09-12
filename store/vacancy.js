@@ -40,6 +40,11 @@ export const useVacancyStore = defineStore('vacancy', {
       childrens: [],
       vacancy_billing_types: [],
       vacancy_types: [],
+
+      providers: {
+        hh: null,
+        superjob: null
+      },
     }
   },
   getters: {
@@ -58,12 +63,24 @@ export const useVacancyStore = defineStore('vacancy', {
   },
   actions: {
 
-    async getConnectedProviders(payload) {
+    async getConnectedEmployerProviders(payload) {
       const {data} = await useApi('employer/used_providers', {
         method: 'get',
         payload
       });
       console.log(data);
+      if ('data' in data){
+        this.providers = data.data;
+        return this.providers;
+      }
+      return data;
+    },
+
+    async getEmployerProvidersAuthEndpoints(payload, redirect_to = '/profile/service-verify') {
+      const {data} = await useApi('services/auth/redirect-url?profile=employer&redirect_to=' + redirect_to, {
+        method: 'get',
+        payload
+      });
       if ('data' in data){
         return data.data;
       }

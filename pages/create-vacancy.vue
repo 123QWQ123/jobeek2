@@ -94,6 +94,12 @@ const save = (e) => {
           <CreateVacancyProfessionalRoles  />
           <CreateVacancyTypeAndUrl/>
           <CreateVacancySalaryCard />
+          <CreateVacancySkillsCard />
+          <CreateVacancyAddressCard />
+          <CreateVacancyDriverLicensesCard />
+          <CreateVacancyContactsCard />
+          <CreateVacancyLanguagesCard />
+          <CreateVacancyBillingTypeCard />
 
 <!--          <CreateVacancyVacancyTypeAndUrl />-->
 
