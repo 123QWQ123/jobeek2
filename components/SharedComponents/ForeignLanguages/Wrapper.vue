@@ -19,11 +19,19 @@ await getForeignLanguages();
 await getLanguageLevels();
 
 
-const selectedItems = ref(props.modelValue ?? []);
+let items = [];
+if (props.modelValue && props.modelValue.length){
+  items = props.modelValue.map((item) => {
+    return {
+    ...item, id: uuidv4(),
+    };
+  });
+}
+const selectedItems = ref(items);
 const errors = ref(props.errors ?? []);
 const resetObject = {
     "language_id": null,
-    "level": null,
+    "level_id": null,
     "errors": {},
 };
 
@@ -48,10 +56,12 @@ watch(() => props.errors, (newData) => {
 })
 
 const reset = () => {
+  console.log(1);
     resetObject.id = uuidv4();
     selectedItems.value = [ resetObject ];
 }
 const create = () => {
+  console.log(2);
     const newItems = selectedItems.value;
     resetObject.id = uuidv4();
     newItems.push(resetObject);
@@ -60,6 +70,7 @@ const create = () => {
 
 
 const updateItem = (id, newItem) => {
+  console.log(3);
     const newItems = selectedItems.value.map(item => {
         if (item.id === id){
             return newItem;
@@ -69,22 +80,19 @@ const updateItem = (id, newItem) => {
     selectedItems.value = newItems;
 }
 const deleteItem = (deleteItem) => {
+  console.log(4);
     const newItems = selectedItems.value.filter((item) => item.id !== deleteItem);
     selectedItems.value = newItems;
 }
 
 watch(() => selectedItems.value, (newData) => {
+  console.log('update in wrapper');
   emit('update:modelValue', selectedItems.value);
 })
 
 onMounted(() => {
     if (selectedItems.value.length === 0){
         reset();
-    }else{
-        selectedItems.value = selectedItems.value.map(item => {
-            item.id = uuidv4();
-            return item;
-        });
     }
 })
 </script>

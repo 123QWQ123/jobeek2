@@ -52,10 +52,9 @@
             </div>
 
             <div class="input-row">
-                <label for="description">Quil Editor:</label>
+                <label for="description">Описание:</label>
                 <div class="input-wrapper">
                   <RichEditor v-model="state.description.val"/>
-<!--                  <textarea class="form-control" rows="7" id="description" placeholder="не менее 200 символов" v-model="state.description.val" @focusin="() => errors.description = ''"> </textarea>-->
                     <div class="text-danger d-block" v-if="errors.description">
                         {{errors.description}}
                     </div>

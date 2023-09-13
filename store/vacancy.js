@@ -181,7 +181,6 @@ export const useVacancyStore = defineStore('vacancy', {
       const response = await useApi('employer/vacancy/draft/' + payload, {
         method: 'get',
       });
-      console.log(response);
       if (response && 'data' in response && response.data && 'data' in response.data){
         this.my_vacancy = response.data.data;
       }

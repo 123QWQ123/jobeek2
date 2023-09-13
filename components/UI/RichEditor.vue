@@ -23,6 +23,10 @@ const quillEditor = ref();
 
 onMounted(() => {
   quillEditor.value.setHTML(props.modelValue ?? '');
+});
+
+watch(() => props.modelValue, (newValue) => {
+  quillEditor.value.setHTML(newValue ?? '');
 })
 const onInput = (input) => {
   current.value = quillEditor.value.getHTML();

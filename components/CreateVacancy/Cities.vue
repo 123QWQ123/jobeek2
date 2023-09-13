@@ -77,6 +77,7 @@ const state = reactive({
 });
 
 watch(() => useWatchStateValues(state, true, true),   (newState, oldState) => {
+    console.log('city update');
     if (!isFirst.value){
         isChanged.value = true;
     }else{
@@ -109,7 +110,6 @@ watch(() => vacancyStore.my_vacancy, (newVacancy) => {
 })
 
 const {searchCities} = profileStore;
-const {getCountryCities} = profileStore;
 const selectedOptions = ref([]);
 const cityOptions = ref([]);
 
@@ -118,7 +118,6 @@ const updateCityInput = async (newValue = '') => {
   if (newValue.length > 2){
     const items = await searchCities({search: newValue}) ?? [];
     let newOptions = items.filter(item => item.cityId).map(item => ({value: item.cityId, name: `${item.city_name}, ${item.region_name}, ${item.country_name}` }));
-    // newOptions = [...new Map(newOptions.map(item =>  [item[key], item])).values()];
     cityOptions.value = newOptions.concat(selectedOptions.value);
   }
 }

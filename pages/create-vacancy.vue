@@ -90,7 +90,9 @@ const save = (e) => {
         </form>
         <form class="update-vacancy" action="" name="update-vacancy " v-else>
 
+          <CreateVacancyAdvancedFieldsCard />
           <CreateVacancyCities />
+          <CreateVacancyMetroCard />
           <CreateVacancyProfessionalRoles  />
           <CreateVacancyTypeAndUrl/>
           <CreateVacancySalaryCard />

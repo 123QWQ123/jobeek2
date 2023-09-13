@@ -2,7 +2,7 @@
 
   <div class="w-box" v-click-outside="save">
     <div class="w-box-head">
-      <h3 class="title">Языки</h3>
+      <h3 class="title">Metro</h3>
       <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
 
     </div>
@@ -13,8 +13,18 @@
     <transition>
       <div class="w-box-body" :class="{collapse: isCollapsed}">
 
-        <SharedComponentsForeignLanguagesWrapper v-if="my_vacancy" v-model="state.languages.val" :errors="errors.languages ?? []" />
+        <div class="input-row">
+          <label>Список метро:<b>*</b></label>
+          <div class="input-wrapper mt-2">
+            <MultiSelectWithSearch :options="metroOptions" v-model="state.metro.val" :label="'Выберите'" @input="updateInput" @focusin="() => errors.metro = ''"></MultiSelectWithSearch>
 
+            <div class="text-danger d-block" v-if="errors.metro">
+              Вам нужно выбрать metro для публикации!
+            </div>
+
+          </div>
+
+        </div>
       </div>
     </transition>
 
@@ -56,8 +66,8 @@ const isUpdated = ref(false);
 
 
 const state = reactive({
-  languages: {
-        val: vacancyStore.my_vacancy?.languages?.map(item => ({language_id: item.language.id, level_id: item.level.id})) ?? [],
+    metro: {
+        val:  vacancyStore.my_vacancy?.metro?.map((item) => item.id) ?? [],
         isValid: true
     },
     isFormValid: true,
@@ -68,6 +78,7 @@ const state = reactive({
 });
 
 watch(() => useWatchStateValues(state, true, true),   (newState, oldState) => {
+  console.log('update')
     if (!isFirst.value){
         isChanged.value = true;
     }else{
@@ -79,7 +90,12 @@ const sectionData = ref({});
 watch(() => sectionData.value, (newData, oldData) => {
     const diffData =  useDiff(newData, oldData);
     if (Object.keys(diffData).length){
-      state.languages.val = newData.languages ?? [];
+        if (newData['metro'].length > 0){
+          selectedOptions.value = newData['metro'].map((item) => ({name: item.name, value: item.id}));
+          const newOptions = metroOptions.value;
+          metroOptions.value = newOptions.concat(selectedOptions.value);
+          state['metro'].val = newData['metro'].map((item) => item.id);
+        }
     }
 })
 watch(() => vacancyStore.my_vacancy, (newVacancy) => {
@@ -89,24 +105,45 @@ watch(() => vacancyStore.my_vacancy, (newVacancy) => {
     }
     if (newVacancy){
         sectionData.value = {
-          languages: newVacancy.languages?.map(item => ({language_id: item.language.id, level_id: item.level.id})),
+          metro: newVacancy.metro,
         };
     }
 })
 
-const dictionaryStore = useDictionaryStore();
+onMounted(() => {
+  updateInput("tes");
+  if (vacancyStore.my_vacancy){
+    sectionData.value = {
+      metro: vacancyStore.my_vacancy.metro,
+    };
+  }
+})
+
+const {searchMetro} = useDictionaryStore();
+const selectedOptions = ref([]);
+const metroOptions = ref([]);
+
+
+const updateInput = async (newValue = '') => {
+  if (newValue.length > 2){
+    const ids = vacancyStore.my_vacancy?.cities.map(item => item.id);
+    const items = await searchMetro({city_ids: ids}) ?? [];
+    let newOptions = items.map(item => ({value: item.id, name: `${item.name}` }));
+    metroOptions.value = newOptions.concat(selectedOptions.value);
+  }
+}
+
 
 const {errors, handleErrorResponse} = useFormValidation();
 const save = async () => {
+    console.log(isChanged.value);
     if (isChanged.value){
         state.isLoading = true;
-        // validate();
         errors.value = {};
         state.errorMessage = "";
         let resData = {};
         const jsonData = useFormData(state);
-        jsonData.action = 'UpdateLanguages';
-      console.log(jsonData);
+        jsonData.action = 'UpdateMetro';
         resData = await updateVacancy(draftID.value, jsonData);
         isUpdated.value = true;
         if (resData.status !== 'success'){
@@ -115,14 +152,13 @@ const save = async () => {
         isChanged.value = false;
         isSaved.value = false;
         isUpdated.value = false;
-
     }
 }
 
 const isCompleted = computed(() => {
     const myVacancy = my_vacancy.value;
     if (myVacancy){
-        return (myVacancy.key_skills.length > 0);
+        return (myVacancy.first_name && myVacancy.last_name && myVacancy.id && myVacancy.birth_date && myVacancy.city_id && myVacancy.phone && myVacancy.phone_time_start && myVacancy.phone_time_end && myVacancy.email);
     }
     return false;
 });

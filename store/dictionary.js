@@ -27,6 +27,7 @@ export const useDictionaryStore = defineStore('dictionary', {
       vacancy_types: [],
       payment_period: [],
       addresses: [],
+      metro: [],
     }
   },
   getters: {
@@ -85,7 +86,8 @@ export const useDictionaryStore = defineStore('dictionary', {
       });
       console.log(data);
       if (data){
-        this.addresses = data ?? [];
+        this.metro = data.data ?? [];
+        return this.metro;
       }
       return data;
     },
