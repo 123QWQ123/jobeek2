@@ -19,6 +19,12 @@ const route = useRoute();
 const vacancyStore = useVacancyStore();
 const my_vacancy = computed(() => vacancyStore.my_vacancy);
 
+const state = ref({
+  providers: {
+    val: {}
+  }
+})
+
 const {getMyVacancy} = vacancyStore;
 const draftId = computed(() => route.query.draft_id);
 watch(() => route.query.draft_id, (newDraftId) => {
@@ -74,7 +80,7 @@ const save = (e) => {
     <div class="bg-wrapper pt">
       <PersonalCabinetSearchMobile />
 
-      <!--        {{state}}-->
+      {{state.providers.val}}
       <div class="wrapper wrapper-1290">
         <form class="create-vacancy" action="" name="create-vacancy " v-if="!draftId">
 
@@ -89,7 +95,7 @@ const save = (e) => {
           </div>
         </form>
         <form class="update-vacancy" action="" name="update-vacancy " v-else>
-          <CreateVacancyProviders />
+          <CreateVacancyProviders v-model="state.providers.val" />
 
           <CreateVacancyAdvancedFieldsCard />
           <CreateVacancyCities />
@@ -103,26 +109,6 @@ const save = (e) => {
           <CreateVacancyContactsCard />
           <CreateVacancyLanguagesCard />
           <CreateVacancyBillingTypeCard />
-
-<!--          <CreateVacancyVacancyTypeAndUrl />-->
-
-<!--          <CreateVacancyPositionAndIncome v-if="isEditable"></CreateVacancyPositionAndIncome>-->
-
-<!--          <CreateVacancyEducationContent v-if="isEditable"></CreateVacancyEducationContent>-->
-
-<!--          <CreateVacancyEducationDocumentsContent v-if="isEditable"></CreateVacancyEducationDocumentsContent>-->
-
-<!--          <CreateVacancyWorkExperienceContent v-if="isEditable"></CreateVacancyWorkExperienceContent>-->
-
-<!--          <CreateVacancyDriverLicenses v-if="isEditable"></CreateVacancyDriverLicenses>-->
-
-<!--          <CreateVacancyKnowledgeAndSkills v-if="isEditable"></CreateVacancyKnowledgeAndSkills>-->
-
-<!--          <CreateVacancyForeignLanguagesContent v-if="isEditable"></CreateVacancyForeignLanguagesContent>-->
-
-<!--          <CreateVacancyCitizenshipAndFamily v-if="isEditable"></CreateVacancyCitizenshipAndFamily>-->
-
-          <!--          <CreateVacancyPortfolio></CreateVacancyPortfolio>-->
 
           <p class="text-lg-end">При создании ваканции вы соглашаетесь с <a href="#">правилами работы сервиса</a> и даете согласие на обработку персональных данных, разрешенных для распространения</p>
           <div class="form-submit-container mt-2">

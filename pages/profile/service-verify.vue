@@ -8,6 +8,7 @@ import Swal from "sweetalert2";
 import {navigateTo} from "nuxt/app";
 import useApi from "~/hooks/useApi";
 import {useResumeStore} from "~/store/resume";
+import {useVacancyStore} from "~/store/vacancy";
 
 definePageMeta({
   layout: "cabinet"
@@ -21,8 +22,10 @@ const {isEmployer} = storeToRefs(authStore);
 const route = useRoute();
 const isSuccess = ref("-");
 const {code, email} = route.query;
-
-const {getConnectedSeekerProviders, getSeeker} = profileStore;
+const vacancyStore = useVacancyStore();
+const resumeStore = useResumeStore();
+const {getConnectedEmployerProviders} = vacancyStore;
+const {getConnectedSeekerProviders} = resumeStore;
 const {refreshSeeker} = useAuthStore();
 
 onMounted(async() => {
@@ -35,21 +38,20 @@ onMounted(async() => {
 
     // await getUser();
     //
-    await refreshSeeker();
+    // await refreshSeeker();
 
-  const resData = await getConnectedSeekerProviders();
-
-  console.log(resData);
+  await getConnectedEmployerProviders();
+  await getConnectedSeekerProviders();
 
     setTimeout(() => {
         navigateTo({
                 name:'profile', query:
                     {
-                        message: "У вас подключены эти сервисы: !"
+                        message: "У вас подключенные сервисы!"
                     }
             }
         );
-    }, 500);
+    }, 5000);
 
 });
 

@@ -11,8 +11,7 @@
         </div>
         <div class="w-box-body" >
 
-<!--            <CreateResumeProviders v-model="state.providers.val" :errors="errors.providers"></CreateResumeProviders>-->
-
+          {{state}}
             <div class="input-row">
                 <label for="name">Название вакансии<b>*</b></label>
                 <div class="input-wrapper">

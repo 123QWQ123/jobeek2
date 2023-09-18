@@ -56,7 +56,7 @@ const isUpdated = ref(false);
 
 
 const state = reactive({
-  languages: {
+    languages: {
         val: vacancyStore.my_vacancy?.languages?.map(item => ({language_id: item.language.id, level_id: item.level.id})) ?? [],
         isValid: true
     },

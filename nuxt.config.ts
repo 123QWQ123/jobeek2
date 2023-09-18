@@ -24,6 +24,9 @@ const config = {
     '~/assets/styles/main.css',
     '~/assets/styles/styles-new.css',
   ],
+  plugins: [
+    // { src: '@/plugins/vue-mavon-editor', ssr: false }
+  ],
   components: [
     '~/components',
     '~/components/UI'

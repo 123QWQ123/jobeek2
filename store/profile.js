@@ -17,10 +17,6 @@ export const useProfileStore = defineStore('profile', {
       regions: [],
       cities: [],
       professional_roles: [],
-      providers: {
-        hh: false,
-        superjob: false
-      }
     }
   },
   getters: {

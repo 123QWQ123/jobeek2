@@ -41,7 +41,7 @@ onMounted(async () => {
     <PersonalCabinetSearchMobile />
     <div class="bg-wrapper pt position-relative">
 
-      <MyVacanciesConnectedProviders2/>
+      <MyVacanciesConnectedProviders/>
       <MyVacanciesList ></MyVacanciesList >
     </div>
 

@@ -16,12 +16,12 @@ const { getConnectedSeekerProviders } = useResumeStore();
 
 const authStore =  useAuthStore();
 const isEmployer = computed(() => authStore.isEmployer);
-// onMounted(async() => {
-//   setTimeout(() => {
-//     getConnectedEmployerProviders();
-//     getConnectedSeekerProviders();
-//   }, 1000)
-// })
+onMounted(async() => {
+  setTimeout(() => {
+    getConnectedEmployerProviders();
+    getConnectedSeekerProviders();
+  }, 1000)
+})
 
 </script>
 

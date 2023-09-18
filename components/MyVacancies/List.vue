@@ -20,43 +20,6 @@
 
     <div class="col d-flex justify-content-between mt-4" >
       <h1 ref="filterRef" class="lk-page-title mt-4">Ваши вакансии({{ my_total }})</h1>
-
-<!--      {{providers}}-->
-<!--      <div class="d-inline-flex">-->
-<!--        <div class="option-group selector-group">-->
-<!--          <div class="option" @click="onProviderToggle('hh')">-->
-<!--            <div class="custom-check-wrap">-->
-<!--              <div class="theme-checker theme-checker&#45;&#45;blue">-->
-<!--                <input type="checkbox" id="hh" :checked="providers.hh" />-->
-<!--                <div class="theme-checker-ui">-->
-<!--                  <div class="circle" :class="{'right' : providers.hh, 'left': !providers.hh}"></div>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--              <label for="hh"-->
-<!--              ><img-->
-<!--                  src="~/assets/img/logos/hhmini.svg"-->
-<!--                  alt="#"-->
-<!--              /><span>Hh.ru</span></label-->
-<!--              >-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <div class="option" @click="onProviderToggle('superjob')">-->
-<!--            <div class="custom-check-wrap">-->
-<!--              <div class="theme-checker theme-checker&#45;&#45;blue">-->
-<!--                <input type="checkbox" id="sj" :checked="providers.superjob" />-->
-<!--                <div class="theme-checker-ui">-->
-<!--                  <div class="circle" :class="{'right' : providers.superjob, 'left': !providers.superjob}"></div>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--              <label for="sj"-->
-<!--              ><img src="~/assets/img/logos/sj.svg" alt="#" /><span-->
-<!--              >Superjob.ru-->
-<!--                          </span></label-->
-<!--              >-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
     </div>
     <div class="col d-flex justify-content-between align-items-center" >
         <div class="d-inline-flex">
@@ -151,7 +114,6 @@ onMounted(async() => {
     isLoading.value = false;
     const params = useMyVacancyForm(form.value, 'backend');
     const res = await getMyVacancies(params);
-    console.log(res);
     isLoading.value = false;
 })
 

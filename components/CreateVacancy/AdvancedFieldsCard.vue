@@ -394,7 +394,7 @@ const state = reactive({
     isValid: true
   },
   vacancyVideoUrl: {
-    val:  false,
+    val:  null,
     isValid: true
   },
   age_from: {

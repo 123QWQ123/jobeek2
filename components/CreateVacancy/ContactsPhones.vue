@@ -1,22 +1,10 @@
 <template>
 
-  <div class="w-box" v-click-outside="save">
-    <div class="w-box-head">
-      <h3 class="title">Контакты</h3>
-      <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
-
-    </div>
-
-    <div class="text-danger d-block p-4" v-if="errors.message">
-      {{ errors.message }}
-    </div>
-    <transition>
-      <div class="w-box-body" :class="{collapse: isCollapsed}">
 
         <div class="input-row" >
           <label>имя:</label>
           <div class="input-wrapper mt-2">
-            <input  v-model="state.name.val"  @focusin="onFocusInput('name')"/>
+            <input  v-model="state.phone.val"  @focusin="onFocusInput('name')"/>
             <div class="text-danger d-block" v-if="errors.contacts?.name">
 <!--              Вам нужно ввести имя!-->
               {{errors.contacts?.name}}
@@ -34,56 +22,6 @@
             </div>
           </div>
         </div>
-
-        <div class="input-row" >
-          <label>Название компании:</label>
-          <div class="input-wrapper mt-2">
-            <input  v-model="state.company_name.val"  @focusin="onFocusInput('company_name')"/>
-            <div class="text-danger d-block" v-if="errors.contacts?.company_name">
-<!--              Вам нужно ввести название компании!-->
-              {{errors.contacts?.company_name}}
-            </div>
-          </div>
-        </div>
-
-        <div class="input-row" >
-          <label>Адрес:</label>
-          <div class="input-wrapper mt-2">
-            <input  v-model="state.company_url.val"  @focusin="onFocusInput('company_url')"/>
-            <div class="text-danger d-block" v-if="errors.contacts?.company_url">
-<!--              Вам нужно ввести URL!-->
-              {{errors.contacts?.company_url}}
-            </div>
-          </div>
-        </div>
-        <div class="input-row" >
-          <label>Лого URL:</label>
-          <div class="input-wrapper mt-2">
-            <input  v-model="state.company_logo.val"  @focusin="onFocusInput('company_logo')"/>
-            <div class="text-danger d-block" v-if="errors.contacts?.company_logo">
-<!--              Вам нужно ввести company_logo!-->
-              {{errors.contacts?.company_logo}}
-            </div>
-          </div>
-        </div>
-
-        <div class="input-row" >
-          <label>О компании:</label>
-          <div class="input-wrapper mt-2">
-            <textarea class="form-control" v-model="state.company_description.val"  @focusin="() => errors.contacts.company_description = ''" > </textarea>
-            <div class="text-danger d-block" v-if="errors.contacts?.company_description">
-<!--              Вам нужно ввести о компании!-->
-              {{ errors.contacts?.company_description }}
-            </div>
-          </div>
-        </div>
-
-        <CreateVacancyOldContactsPhones />
-
-      </div>
-    </transition>
-
-  </div>
 
 
 </template>

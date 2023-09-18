@@ -3,7 +3,7 @@
         <div class="accordion mb-2"
              v-if="selectedPhones.length"
         >
-            <CreateVacancyContactsPhonesItem
+            <CreateVacancyOldContactsPhonesItem
                 v-for="(item, index) in selectedPhones" :item="item"
                 :key="index"
                 :index="index"

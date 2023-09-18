@@ -72,10 +72,10 @@ const providers = ref({
   },
 });
 
-providers.value.hh.is_connected = profileStore.providers.hh;
-providers.value.superjob.is_connected = profileStore.providers.superjob;
+providers.value.hh.is_connected = resumeStore.providers.hh;
+providers.value.superjob.is_connected = resumeStore.providers.superjob;
 
-watch(() => profileStore.providers, (newProviders) => {
+watch(() => resumeStore.providers, (newProviders) => {
     providers.value.hh.is_connected = newProviders.hh;
     providers.value.superjob.is_connected = newProviders.superjob;
 })
