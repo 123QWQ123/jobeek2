@@ -77,7 +77,6 @@ const state = reactive({
 });
 
 watch(() => useWatchStateValues(state, true, true),   (newState, oldState) => {
-    console.log('city update');
     if (!isFirst.value){
         isChanged.value = true;
     }else{

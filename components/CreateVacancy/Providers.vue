@@ -3,12 +3,15 @@
     <div class="carryover-box-label">Есть вакансии на hh или SuperJob? Просто перенесите его!</div>
 
     {{enabledProviders}}
+    {{selectedProviders}}
     <div class="import-grid">
-      <div class="import-box" :class="{'import-is-complete': isHHSelected, 'disabled': !isHHEnabled}" @click="toggle('hh')">
+      <div class="import-box" :class="{'import-is-complete': isHHSelected, 'disabled': !isHHEnabled, 'is-connected': isHHEnabled}" @click="toggle('hh')">
         <div class="import-box-dvnld">
-<!--          <input type="file">-->
-          <div class="logo"> <img src="~/assets/img/logos/hh.svg" alt="#">
-            <div class="check"> <img src="~/assets/img/svg/complete.svg" alt="#"></div>
+          <div class="logo">
+            <img src="~/assets/img/logos/hh.svg" alt="#">
+            <div class="check">
+              <img src="~/assets/img/svg/complete.svg" alt="#">
+            </div>
           </div><span>Опубликовать на HeadHunters.ru</span>
         </div>
         <div class="import-complete">
@@ -22,7 +25,7 @@
           </button>
         </div>
       </div>
-      <div class="import-box" :class="{'import-is-complete': isSuperjobSelected, 'disabled': !isSuperjobEnabled}" @click="toggle('superjob')">
+      <div class="import-box" :class="{'import-is-complete': isSuperjobSelected, 'disabled': !isSuperjobEnabled, 'is-connected': isHHEnabled}" @click="toggle('superjob')">
         <div class="import-box-dvnld">
           <div class="logo"> <img src="~/assets/img/logos/sb.svg" alt="#">
             <div class="check"> <img src="~/assets/img/svg/complete.svg" alt="#"></div>
@@ -60,7 +63,6 @@ const dictionaryStore = useDictionaryStore();
 const vacancyStore = useVacancyStore();
 const {getConnectedEmployerProviders, getEmployerProvidersAuthEndpoints} = vacancyStore;
 await getConnectedEmployerProviders();
-console.log(vacancyStore.providers);
 
 const enabledProviders = ref(vacancyStore.providers);
 const isHHEnabled = computed(() => enabledProviders.value.hh);
@@ -82,9 +84,7 @@ const reset = () => {
     selectedProviders.value = resetObject;
 }
 const route = useRoute();
-const providers = ref({
-
-})
+// const providers = ref(resetObject);
 const toggle = async (provider) => {
   if (!selectedProviders.value[provider]){
     console.log(provider);
@@ -92,9 +92,8 @@ const toggle = async (provider) => {
         const providerParams = new URLSearchParams();
         providerParams.set('providers[]', provider);
         const resData = await getEmployerProvidersAuthEndpoints(providerParams, route.fullPath);
-        console.log(resData);
         if (resData.hasOwnProperty(provider)){
-          // openProviderAuthUrl(resData[provider]);
+          openProviderAuthUrl(resData[provider]);
         }else{
           alert(resData.message);
         }
@@ -104,8 +103,6 @@ const toggle = async (provider) => {
   }
 
   selectedProviders.value[provider] = !selectedProviders.value[provider];
-
-
 }
 
 const openProviderAuthUrl = (url) => {
@@ -117,7 +114,9 @@ const openProviderAuthUrl = (url) => {
 .import-box{
     cursor: pointer;
 }
-
+.is-connected .import-box-dvnld .logo .check{
+  display: block;
+}
 .import-box.disabled{
   background: #FFFFFF;
   box-shadow: 0px 0px 20px rgb(0 0 0 / 4%);

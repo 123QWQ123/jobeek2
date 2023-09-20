@@ -15,9 +15,12 @@ export const useVacancyStore = defineStore('vacancy', {
       my_vacancy: null,
       total: 0,
       my_total: 0,
+      my_draft_total: 0,
       data: null,
       current_page: 1,
+      my_draft_current_page: 1,
       my_vacancies: [],
+      my_drafts: [],
       my_favorite_vacancies: [],
       specializations: [],
       industries: [],
@@ -68,7 +71,7 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      console.log(data);
+
       if ('data' in data){
         this.providers = data.data;
         return this.providers;
@@ -170,10 +173,27 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      if (response && 'data' in response && response.data && 'items' in response.data){
-        this.my_vacancies = response.data.items;
+      console.log(response);
+      if (response.hasOwnProperty('data') && 'data' in response.data){
+        console.log(response.data.data);
+        this.my_vacancies = response.data.data;
         this.my_total = response.data.found;
         this.current_page = response.data.current_page;
+      }
+      return response;
+    },
+    async getMyDrafts(payload) {
+      const response = await useApi('employer/vacancy/drafts', {
+        method: 'get',
+        payload
+      });
+      console.log(response);
+      if (response.hasOwnProperty('data') && 'data' in response.data){
+        console.log(response.data.data);
+        this.my_drafts = response.data.data;
+        this.my_draft_total = response.data.found;
+        this.my_draft_current_page = response.data.current_page;
+        return this.my_drafts;
       }
       return response;
     },

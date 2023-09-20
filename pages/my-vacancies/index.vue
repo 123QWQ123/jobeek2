@@ -37,9 +37,9 @@ onMounted(async () => {
 
 </script>
 <template>
-  <main class="main cabinet subs-page" role="main">
+  <main class="main cabinet my-vacancies-page" role="main">
     <PersonalCabinetSearchMobile />
-    <div class="bg-wrapper pt position-relative">
+    <div class="bg-wrapper position-relative">
 
       <MyVacanciesConnectedProviders/>
       <MyVacanciesList ></MyVacanciesList >

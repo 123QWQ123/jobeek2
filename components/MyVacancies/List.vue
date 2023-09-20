@@ -1,62 +1,60 @@
 <template>
     <PageLoader v-if="isLoading" />
-  <div class="wrapper wrapper-1290">
-      <div class="notification mt-0">
-        <div class="ic">
-          <img src="~/assets/img/svg/crown2.svg" alt="#" />
+    <div class="wrapper wrapper-1290 pb-5">
+        <div class="notification mt-0">
+          <div class="ic">
+            <img src="~/assets/img/svg/crown2.svg" alt="#" />
+          </div>
+          <div class="notification-text">
+            <strong class="title">Подключите премиум</strong>
+            <p>
+              У вас стоит лимит на создание подписок: 3 шт. Чтобы создавать
+              неограниченное кол-во подписок, подключите премиум
+            </p>
+          </div>
+          <a class="notification-button button-accent" href="#">Подключить </a>
         </div>
-        <div class="notification-text">
-          <strong class="title">Подключите премиум</strong>
-          <p>
-            У вас стоит лимит на создание подписок: 3 шт. Чтобы создавать
-            неограниченное кол-во подписок, подключите премиум
-          </p>
+        <NuxtLink class="create-button" type="link" :to="{name: 'create-vacancy'}" >Создать вакансию</NuxtLink>
+        <div class="col d-flex justify-content-between mt-4" >
+          <h1 ref="filterRef" class="lk-page-title mt-4">Ваши вакансии({{ my_vacancies.length }})</h1>
         </div>
-        <a class="notification-button button-accent" href="#">Подключить </a>
-      </div>
-      <NuxtLink class="create-button" type="link" :to="{name: 'create-vacancy'}" >Создать вакансию</NuxtLink>
+        <div class="col d-flex justify-content-between align-items-center py-4" >
+            <div class="d-inline-flex">
 
+              <form class="sort mx-2 ms-auto" action="#">
+                <span>Поставщик:</span>
+                <CustomSelect :options="providerOptions" v-model="form.provider" @change="onProviderChange" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
+              </form>
+              <form class="sort mx-2 ms-auto" action="#">
+                <span>Фильтр:</span>
+                <CustomSelect :options="filterOptions" v-model="form.status" @change="onFilterChange" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
+              </form>
+            </div>
 
-
-    <div class="col d-flex justify-content-between mt-4" >
-      <h1 ref="filterRef" class="lk-page-title mt-4">Ваши вакансии({{ my_total }})</h1>
-    </div>
-    <div class="col d-flex justify-content-between align-items-center" >
-        <div class="d-inline-flex">
-
-          <form class="sort mx-2 ms-auto" action="#">
-            <span>Поставщик:</span>
-            <CustomSelect :options="providerOptions" v-model="form.provider" @change="onProviderChange" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
-          </form>
-          <form class="sort mx-2 ms-auto" action="#">
-            <span>Фильтр:</span>
-            <CustomSelect :options="filterOptions" v-model="form.status" @change="onFilterChange" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
-          </form>
+            <div class="d-inline-flex">
+              <form class="sort mx-1" action="#">
+                <span>Показать:</span>
+                <CustomSelect v-model="form.per_page" :options="perPageOptions" @change="onChangePerPage" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
+              </form>
+              <form class="sort mx-1" action="#">
+                <span>Сортировать:</span>
+                <CustomSelect v-model="form.order_by" :options="sortingOptions" @change="onChangeSorting" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
+              </form>
+            </div>
+          </div>
+  <!--      <ul class="resume-list mt-4" v-if="my_vacancies.length > 0">-->
+  <!--        <MyVacanciesItem v-for="item in my_vacancies" :key="item.id" :item="item"></MyVacanciesItem>-->
+  <!--      </ul>-->
+        <MyVacanciesDraftList :items="vacancyStore.my_drafts"/>
+  <!--      <div class="d-flex mt-4 pb-4 justify-content-center" v-else>-->
+  <!--        <p>Ничего не найдено!</p>-->
+  <!--      </div>-->
+        <div class="d-flex mt-4 justify-content-between" v-if="my_total > 0">
+          <button class="btn btn-primary btn-group-sm" :class="{disabled: isPrevDisabled}"  @click="prevPage">Prev</button>
+          <p>{{current_page}}</p>
+          <button class="btn btn-primary btn-group-sm" @click="nextPage">Next</button>
         </div>
-
-        <div class="d-inline-flex">
-          <form class="sort mx-1" action="#">
-            <span>Показать:</span>
-            <CustomSelect v-model="form.per_page" :options="perPageOptions" @change="onChangePerPage" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
-          </form>
-          <form class="sort mx-1" action="#">
-            <span>Сортировать:</span>
-            <CustomSelect v-model="form.order_by" :options="sortingOptions" @change="onChangeSorting" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
-          </form>
-        </div>
       </div>
-      <ul class="resume-list mt-4" v-if="my_total > 0">
-        <MyVacanciesItem v-for="item in my_vacancies" :key="item.id" :item="item"></MyVacanciesItem>
-      </ul>
-      <div class="d-flex mt-4 pb-4 justify-content-center" v-else>
-        <p>Ничего не найдено!</p>
-      </div>
-      <div class="d-flex mt-4 justify-content-between" v-if="my_total > 0">
-        <button class="btn btn-primary btn-group-sm" :class="{disabled: isPrevDisabled}"  @click="prevPage">Prev</button>
-        <p>{{current_page}}</p>
-        <button class="btn btn-primary btn-group-sm" @click="nextPage">Next</button>
-      </div>
-    </div>
 </template>
 
 <script setup>
@@ -79,7 +77,7 @@ import {useMyVacanciesFilterOptions} from "../../composables/useMyVacanciesFilte
 
 const router = useRouter();
 const vacancyStore = useVacancyStore();
-const {getMyVacancies} = vacancyStore;
+const {getMyVacancies, getMyDrafts} = vacancyStore;
 
 const sortingOptions = ref(useMyVacancySortingOptions());
 const perPageOptions = ref(useMyVacancyPerPageOptions());
@@ -109,16 +107,24 @@ const onProviderToggle = (provider) => {
 }
 
 const vacancies = ref([]);
+const my_drafts = ref([]);
 const isLoading = ref(true);
 onMounted(async() => {
     isLoading.value = false;
     const params = useMyVacancyForm(form.value, 'backend');
-    const res = await getMyVacancies(params);
+    await getMyVacancies(params);
+    await getMyDrafts(params);
     isLoading.value = false;
 })
 
 watch(() => vacancyStore.my_vacancies, (newMyVacancies) => {
+  console.log(newMyVacancies)
     vacancies.value = newMyVacancies;
+});
+
+watch(() => vacancyStore.my_drafts, (newMyDrafts) => {
+  console.log(newMyDrafts)
+    my_drafts.value = newMyDrafts;
 });
 
 const hhFilters = ['active', 'archived', 'deleted'];

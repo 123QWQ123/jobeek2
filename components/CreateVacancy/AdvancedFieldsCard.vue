@@ -111,7 +111,7 @@
         </div>
 
         <div class="input-row">
-          <label>график работы:</label>
+          <label>Рабочие дни:</label>
           <div class="input-wrapper mt-2">
             <CustomSelect :options="workingDaysOptions" v-model="state.working_days.val" :label="'Выберите'"  @focusin="() => errors.working_days = ''"></CustomSelect>
             <div class="text-danger d-block" v-if="errors.working_days">
@@ -287,6 +287,25 @@ const isFirst = ref(true);
 const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
+const fields = ref({
+  hh: {
+    accept_kids: false,
+    accept_temporary: false,
+    accept_incomplete_resumes: false,
+    accept_handicapped: false,
+    allow_messages: false,
+    response_letter_required: false,
+    response_notifications: false,
+    with_zp: false,
+    working_days: false,
+    working_time_intervals: false,
+    working_time_modes: false,
+  },
+  superjob: {
+    allow_applicant_without_resume: true,
+    refresh_vac: true
+  }
+})
 
 const state = reactive({
   name: {
@@ -440,14 +459,17 @@ watch(() => vacancyStore.my_vacancy, (newVacancy) => {
       description: newVacancy.description,
       accept_kids: newVacancy.accept_kids,
       response_letter_required: newVacancy.response_letter_required,
-      work_type_id: newVacancy.work_type_id,
-      experience_id: newVacancy.experience_id,
+      work_type_id: newVacancy.work_type?.id,
+      experience_id: newVacancy.experience?.id,
+      schedule_id: newVacancy.schedule?.id,
+      working_time_intervals: newVacancy.working_time_intervals,
     };
   }
 })
 
 watch(() => sectionData.value, (newData, oldData) => {
   const diffData =  useDiff(newData, oldData);
+  console.log(Object.keys(diffData).length);
   if (Object.keys(diffData).length){
     state.name.val = newData.name;
     state.description.val = newData.description;
@@ -455,6 +477,9 @@ watch(() => sectionData.value, (newData, oldData) => {
     state.response_letter_required.val = newData.response_letter_required;
     state.work_type_id.val = newData.work_type_id;
     state.experience_id.val = newData.experience_id;
+    state.schedule_id.val = newData.schedule_id;
+    state.working_days.val = newData.schedule_id;
+    state.working_time_intervals.val = newData.working_time_intervals;
   }
 })
 

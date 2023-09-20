@@ -47,9 +47,7 @@ export const useDictionaryStore = defineStore('dictionary', {
         method: 'get',
         payload
       });
-      console.log(data);
       if (data && 'data' in data){
-        console.log(1);
         this.work_types = data.data?.work_type ?? [];
       }
       return data;
@@ -89,7 +87,6 @@ export const useDictionaryStore = defineStore('dictionary', {
         method: 'get',
         payload
       });
-      console.log(data);
       if (data){
         this.metro = data.data ?? [];
         return this.metro;

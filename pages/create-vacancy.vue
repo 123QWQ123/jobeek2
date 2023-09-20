@@ -19,10 +19,9 @@ const route = useRoute();
 const vacancyStore = useVacancyStore();
 const my_vacancy = computed(() => vacancyStore.my_vacancy);
 
-const state = ref({
-  providers: {
-    val: {}
-  }
+const providers = ref({
+  superjob: false,
+  hh: false,
 })
 
 const {getMyVacancy} = vacancyStore;
@@ -80,7 +79,7 @@ const save = (e) => {
     <div class="bg-wrapper pt">
       <PersonalCabinetSearchMobile />
 
-      {{state.providers.val}}
+      {{providers}}
       <div class="wrapper wrapper-1290">
         <form class="create-vacancy" action="" name="create-vacancy " v-if="!draftId">
 
@@ -95,20 +94,20 @@ const save = (e) => {
           </div>
         </form>
         <form class="update-vacancy" action="" name="update-vacancy " v-else>
-          <CreateVacancyProviders v-model="state.providers.val" />
+          <CreateVacancyProviders v-model="providers" />
 
-          <CreateVacancyAdvancedFieldsCard />
-          <CreateVacancyCities />
-          <CreateVacancyMetroCard />
-          <CreateVacancyProfessionalRoles  />
-          <CreateVacancyTypeAndUrl/>
-          <CreateVacancySalaryCard />
-          <CreateVacancySkillsCard />
-          <CreateVacancyAddressCard />
-          <CreateVacancyDriverLicensesCard />
-          <CreateVacancyContactsCard />
-          <CreateVacancyLanguagesCard />
-          <CreateVacancyBillingTypeCard />
+          <CreateVacancyAdvancedFieldsCard :providers="providers" />
+          <CreateVacancyCities :providers="providers"/>
+          <CreateVacancyMetroCard :providers="providers"/>
+          <CreateVacancyProfessionalRoles  :providers="providers"/>
+          <CreateVacancyTypeAndUrl :providers="providers"/>
+          <CreateVacancySalaryCard :providers="providers"/>
+          <CreateVacancySkillsCard :providers="providers"/>
+          <CreateVacancyAddressCard :providers="providers"/>
+          <CreateVacancyDriverLicensesCard :providers="providers"/>
+          <CreateVacancyContactsCard :providers="providers"/>
+<!--          <CreateVacancyLanguagesCard :providers="providers"/>-->
+          <CreateVacancyBillingTypeCard :providers="providers"/>
 
           <p class="text-lg-end">При создании ваканции вы соглашаетесь с <a href="#">правилами работы сервиса</a> и даете согласие на обработку персональных данных, разрешенных для распространения</p>
           <div class="form-submit-container mt-2">
