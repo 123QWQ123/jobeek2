@@ -1,6 +1,6 @@
 <template>
 
-  <div class="w-box" v-click-outside="save">
+  <div v-if="isHidden" class="w-box" v-click-outside="save">
     <div class="w-box-head">
       <h3 class="title">Биллинг</h3>
       <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
@@ -29,13 +29,12 @@
 
   </div>
 
-
 </template>
 
 <script setup>
 import {useVacancyStore} from "~/store/vacancy";
 
-const props = defineProps(['title']);
+const props = defineProps(['title', 'providers']);
 
 import {useProfileStore} from "~/store/profile";
 import {useFormData} from "~/composables/useFormData";
@@ -43,8 +42,6 @@ import {useRuntimeConfig} from "#app";
 import useFormValidation from "~/composables/useFormValidation";
 import {useWatchStateValues} from "~/composables/useWatchStateValues";
 import {useDiff} from "~/composables/useDiff";
-import {v4 as uuidv4} from "uuid";
-import {useCreateFormData} from "~/composables/useCreateFormData";
 import {useDictionaryStore} from "~/store/dictionary";
 const vacancyStore = useVacancyStore();
 const profileStore = useProfileStore();
@@ -57,12 +54,18 @@ const {updateVacancy, getMyVacancy} = vacancyStore;
 const {employer} = profileStore;
 const my_vacancy = computed(() => vacancyStore.my_vacancy);
 
+const isHidden = ref(props.providers.hh ?? false);
 const isSaved = ref(false);
 const isChanged = ref(false);
 const isFirst = ref(true);
-const isCollapsed = ref(false);
+const isCollapsed = ref(true);
 const isUpdated = ref(false);
 
+const providers = computed(() => props.providers)
+
+watch(props.providers, (newProviders) => {
+    isHidden.value = newProviders.hh;
+})
 
 const state = reactive({
   billing_type_id: {
@@ -136,7 +139,7 @@ const save = async () => {
 
 const isCompleted = computed(() => {
     const myVacancy = my_vacancy.value;
-    if (myVacancy){
+    if (myVacancy && !isCollapsed.value){
         return (myVacancy.type && myVacancy.type.id);
     }
     return false;

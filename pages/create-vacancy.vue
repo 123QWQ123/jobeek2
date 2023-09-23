@@ -79,7 +79,6 @@ const save = (e) => {
     <div class="bg-wrapper pt">
       <PersonalCabinetSearchMobile />
 
-      {{providers}}
       <div class="wrapper wrapper-1290">
         <form class="create-vacancy" action="" name="create-vacancy " v-if="!draftId">
 
@@ -106,7 +105,7 @@ const save = (e) => {
           <CreateVacancyAddressCard :providers="providers"/>
           <CreateVacancyDriverLicensesCard :providers="providers"/>
           <CreateVacancyContactsCard :providers="providers"/>
-<!--          <CreateVacancyLanguagesCard :providers="providers"/>-->
+          <CreateVacancyLanguagesCard :providers="providers"/>
           <CreateVacancyBillingTypeCard :providers="providers"/>
 
           <p class="text-lg-end">При создании ваканции вы соглашаетесь с <a href="#">правилами работы сервиса</a> и даете согласие на обработку персональных данных, разрешенных для распространения</p>

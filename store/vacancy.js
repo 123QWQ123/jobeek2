@@ -298,6 +298,21 @@ export const useVacancyStore = defineStore('vacancy', {
       return response;
     },
 
+    async deleteVacancy(id, payload = URLSearchParams) {
+      const response = await useApi('employer/vacancy/' + id + '?' + payload.toString(), {
+        method: 'delete',
+
+      });
+      console.log(response);
+      return response;
+    },
+    async deleteDraft(id, payload = URLSearchParams) {
+      const response = await useApi('employer/vacancy/draft/' + id, {
+        method: 'delete',
+      });
+      return response;
+    },
+
   },
 })
 

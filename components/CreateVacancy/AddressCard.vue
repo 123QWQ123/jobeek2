@@ -20,6 +20,9 @@
             <div class="text-danger d-block" v-if="errors.address_id">
               Вам нужно выбрать тип ваканции!
             </div>
+            <div class="text-danger d-block" v-if="addressErrorMessage">
+              {{addressErrorMessage}}
+            </div>
           </div>
         </div>
 
@@ -71,6 +74,7 @@ import {useDiff} from "~/composables/useDiff";
 import {v4 as uuidv4} from "uuid";
 import {useCreateFormData} from "~/composables/useCreateFormData";
 import {useDictionaryStore} from "~/store/dictionary";
+import Swal from "sweetalert2";
 const vacancyStore = useVacancyStore();
 const profileStore = useProfileStore();
 const CONFIG = useRuntimeConfig();
@@ -85,7 +89,7 @@ const my_vacancy = computed(() => vacancyStore.my_vacancy);
 const isSaved = ref(false);
 const isChanged = ref(false);
 const isFirst = ref(true);
-const isCollapsed = ref(false);
+const isCollapsed = ref(true);
 const isUpdated = ref(false);
 
 
@@ -148,7 +152,11 @@ const addressOptions = computed(() => {
 });
 
 const {searchAddresses} = dictionaryStore;
-await searchAddresses();
+const addressErrorMessage = ref(null);
+const resData = await searchAddresses();
+if (resData.hasOwnProperty('message')){
+  addressErrorMessage.value = resData.message;
+}
 
 const onAddressSearch  = async(newString) => {
   console.log(newString);
@@ -178,7 +186,7 @@ const save = async () => {
 
 const isCompleted = computed(() => {
     const myVacancy = my_vacancy.value;
-    if (myVacancy){
+    if (myVacancy && !isCollapsed.value){
         return (myVacancy.address && myVacancy.address.address);
     }
     return false;

@@ -32,10 +32,6 @@ watch(
 const quillEditor = ref();
 const vueEditor = ref();
 
-onMounted(() => {
-  console.log(props.modelValue);
-});
-
 watch(() => props.modelValue, (newValue) => {
   current.value = newValue;
 });

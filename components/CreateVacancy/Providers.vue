@@ -2,8 +2,6 @@
   <div class="carryover-box">
     <div class="carryover-box-label">Есть вакансии на hh или SuperJob? Просто перенесите его!</div>
 
-    {{enabledProviders}}
-    {{selectedProviders}}
     <div class="import-grid">
       <div class="import-box" :class="{'import-is-complete': isHHSelected, 'disabled': !isHHEnabled, 'is-connected': isHHEnabled}" @click="toggle('hh')">
         <div class="import-box-dvnld">
@@ -25,7 +23,7 @@
           </button>
         </div>
       </div>
-      <div class="import-box" :class="{'import-is-complete': isSuperjobSelected, 'disabled': !isSuperjobEnabled, 'is-connected': isHHEnabled}" @click="toggle('superjob')">
+      <div class="import-box" :class="{'import-is-complete': isSuperjobSelected, 'disabled': !isSuperjobEnabled, 'is-connected': isSuperjobEnabled}" @click="toggle('superjob')">
         <div class="import-box-dvnld">
           <div class="logo"> <img src="~/assets/img/logos/sb.svg" alt="#">
             <div class="check"> <img src="~/assets/img/svg/complete.svg" alt="#"></div>

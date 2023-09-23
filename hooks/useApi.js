@@ -105,12 +105,11 @@ const useApi = async (method, options = {}) => {
                 );
             }
             if (options.method.toUpperCase() === 'DELETE') {
-                if (!options.payload) throw new Error("No payload provided");
-                response = await axios.post(
+                // if (!options.payload) throw new Error("No payload provided");
+                response = await axios.delete(
                     url,
-                    options.payload,
                     {
-                        headers: headers
+                        headers: headers,
                     },
                 );
             }

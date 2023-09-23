@@ -1,6 +1,6 @@
 <template>
 
-  <div class="w-box" v-click-outside="save">
+  <div v-if="isHidden" class="w-box" v-click-outside="save">
     <div class="w-box-head">
       <h3 class="title">Языки</h3>
       <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
@@ -48,10 +48,11 @@ const {updateVacancy, getMyVacancy} = vacancyStore;
 const {employer} = profileStore;
 const my_vacancy = computed(() => vacancyStore.my_vacancy);
 
+const isHidden = ref(false);
 const isSaved = ref(false);
 const isChanged = ref(false);
 const isFirst = ref(true);
-const isCollapsed = ref(false);
+const isCollapsed = ref(true);
 const isUpdated = ref(false);
 
 
@@ -121,7 +122,7 @@ const save = async () => {
 
 const isCompleted = computed(() => {
     const myVacancy = my_vacancy.value;
-    if (myVacancy){
+    if (myVacancy && !isCollapsed.value){
         return (myVacancy.key_skills.length > 0);
     }
     return false;

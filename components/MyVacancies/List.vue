@@ -16,7 +16,7 @@
         </div>
         <NuxtLink class="create-button" type="link" :to="{name: 'create-vacancy'}" >Создать вакансию</NuxtLink>
         <div class="col d-flex justify-content-between mt-4" >
-          <h1 ref="filterRef" class="lk-page-title mt-4">Ваши вакансии({{ my_vacancies.length }})</h1>
+          <h1 ref="filterRef" class="lk-page-title mt-4">Ваши вакансии({{ total }})</h1>
         </div>
         <div class="col d-flex justify-content-between align-items-center py-4" >
             <div class="d-inline-flex">
@@ -91,12 +91,21 @@ const providerOptions = ref([
 
 const {my_vacancies, current_page, my_total} = storeToRefs(vacancyStore);
 
+
 const isPrevDisabled = computed(() => {
   if (parseInt(current_page.value) === 1) return true;
   return false;
 })
 const form = ref(useMyVacancyForm());
 
+const total = computed(() => {
+  if (form.value.status === 'draft'){
+    return vacancyStore.my_drafts.length;
+  }
+  if (form.value.status === 'active' || form.value.status === 'archived'){
+    return vacancyStore.my_vacancies.length;
+  }
+})
 const providers = ref({
   hh: true,
   superjob: true

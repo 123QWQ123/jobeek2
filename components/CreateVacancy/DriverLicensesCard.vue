@@ -53,7 +53,7 @@ const my_vacancy = computed(() => vacancyStore.my_vacancy);
 const isSaved = ref(false);
 const isChanged = ref(false);
 const isFirst = ref(true);
-const isCollapsed = ref(false);
+const isCollapsed = ref(true);
 const isUpdated = ref(false);
 
 
@@ -124,7 +124,7 @@ const save = async () => {
 
 const isCompleted = computed(() => {
     const myVacancy = my_vacancy.value;
-    if (myVacancy){
+    if (myVacancy && !isCollapsed.value){
         return (myVacancy.driver_license_types.length > 0);
     }
     return false;

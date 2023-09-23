@@ -173,7 +173,7 @@ const save = async () => {
 
 const isCompleted = computed(() => {
     const myVacancy = my_vacancy.value;
-    if (myVacancy){
+    if (myVacancy && !isCollapsed.value){
         return (myVacancy.address && myVacancy.address.address);
     }
     return false;

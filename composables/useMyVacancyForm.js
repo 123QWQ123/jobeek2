@@ -25,7 +25,7 @@ export function useMyVacancyForm(data = null, to_ = 'front') {
         return {
             name: "",
             page: page,
-            status: 'active',
+            status: 'draft',
             provider: '*',
             order_by: null,
             per_page: 10,
@@ -37,7 +37,7 @@ export function useMyVacancyForm(data = null, to_ = 'front') {
         page: data?.page ?? 1,
         per_page: data?.per_page ?? params.per_page ?? 10,
         order_by: data?.order_by ?? params.order_by ?? null,
-        status: data?.status ?? params.status ?? 'active',
+        status: data?.status ?? params.status ?? 'draft',
         provider: data?.provider ?? params.provider ?? '*',
     };
 
@@ -49,7 +49,7 @@ export function useMyVacancyForm(data = null, to_ = 'front') {
         name: data.name ?? null,
         page: data.page ?? 1,
         order_by: null,
-        status: 'active',
+        status: 'draft',
         provider: '*',
         per_page: 10,
     };
@@ -58,7 +58,7 @@ export function useMyVacancyForm(data = null, to_ = 'front') {
         name: null,
         page: null,
         order_by: null,
-        status: 'active',
+        status: 'draft',
         provider: null,
         per_page: 10,
     };

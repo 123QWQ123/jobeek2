@@ -8,10 +8,9 @@
             <img class="w-100" :src="employerLogo" alt="#" />
           </div>
           <div class="resume-card-name">
-            <strong class="title">
+            <nuxt-link :to="{name: 'create-vacancy', query: {draft_id: item.id}}" class="title">
               {{item.name}}
-            </strong
-            >
+            </nuxt-link>
             <span class="location">{{ cityAddress }} </span
             >
             <span class="price">От {{vueNumberFormat(item.salary, {})}} ₽</span>
@@ -41,32 +40,29 @@
           <div class="option">
             <div class="custom-check-wrap">
               <div class="theme-checker theme-checker--blue">
-                <input type="checkbox" id="hh" />
+                <input type="checkbox" id="sj" :checked="item.can_publish.hh" />
                 <div class="theme-checker-ui">
                   <div class="circle"></div>
                 </div>
               </div>
-              <label for="hh"
-              ><img
-                  src="~/assets/img/logos/hhmini.svg"
-                  alt="#"
-              /><span>Hh.ru</span></label
-              >
+              <label for="sj">
+                <img src="~/assets/img/logos/hhmini.svg" alt="#" />
+                <span>Superjob.ru</span>
+              </label>
             </div>
           </div>
           <div class="option">
             <div class="custom-check-wrap">
               <div class="theme-checker theme-checker--blue">
-                <input type="checkbox" id="sj" checked />
+                <input type="checkbox" id="sj" :checked="item.can_publish.superjob" />
                 <div class="theme-checker-ui">
                   <div class="circle"></div>
                 </div>
               </div>
-              <label for="sj"
-              ><img src="~/assets/img/logos/sj.svg" alt="#" /><span
-              >Superjob.ru
-                          </span></label
-              >
+              <label for="sj">
+                <img src="~/assets/img/logos/sj.svg" alt="#" />
+                <span>Superjob.ru</span>
+              </label>
             </div>
           </div>
         </div>
@@ -113,9 +109,13 @@
                     />
                   </svg>
                 </div>
-                <span>Редактировать </span>
+                <span>
+                  <nuxt-link :to="{name: 'create-vacancy', query: {draft_id: item.id}}" class="title">
+                      Редактировать
+                  </nuxt-link>
+                </span>
               </button>
-              <button class="b-action">
+              <button class="b-action" @click="onDelete(item.id)">
                 <div class="card-action">
                   <svg
                       width="25"
@@ -170,6 +170,8 @@
 <script setup>
 import moment from "moment";
 import 'moment/locale/ru';
+import {useVacancyStore} from "~/store/vacancy";
+import Swal from "sweetalert2";
 const props = defineProps(['item']);
 const {item} = props;
 const cityAddress = computed(() => {
@@ -201,6 +203,20 @@ const employerLogo = computed(() => {
 
 const published_date = moment(item?.published_date).locale('ru');
 
+const {deleteDraft} = useVacancyStore();
+const onDelete = async(id) => {
+  const resData = await deleteDraft(id);
+  if(resData.status !== 'success'){
+    Swal.fire({
+      title: 'Ошибка!',
+      text: resData.message,
+      icon: "error",
+      confirmButtonText: 'ОК'
+    });
+    return;
+  }
+  window.location.reload();
+}
 
 
 </script>

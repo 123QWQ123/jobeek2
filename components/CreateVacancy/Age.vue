@@ -3,11 +3,11 @@
     <label for="remote-work">Возрасть</label>
     <div class="input-wrapper">
         <div class="c2">
-            <input type="number" v-model="age.from" placeholder="От">
+            <input type="number" v-model="from" placeholder="От">
             <div class="text-danger d-block" v-if="errors.age_from">
               {{errors.age_from}}
             </div>
-            <input type="number" v-model="age.to" placeholder="До">
+            <input type="number" v-model="to" placeholder="До">
             <div class="text-danger d-block" v-if="errors.age_to">
               {{errors.age_to}}
             </div>
@@ -22,8 +22,8 @@ const props = defineProps({
   modelValue: {
     required: true,
     default: {
-      age_from: null,
-      age_to: null,
+      from: null,
+      to: null,
     }
   },
   errors: {
@@ -31,17 +31,25 @@ const props = defineProps({
     default: {}
   }
 })
+
 import {useVacancyStore} from "~/store/vacancy";
 const vacancyStore = useVacancyStore();
 
-const age = ref({
-  age_from: null,
-  age_to: null,
+const from = ref(null);
+const to = ref(null);
+
+watch(() => from.value, (newValue) => {
+  emit('update:modelValue', {from: newValue, to: to.value});
+})
+watch(() => to.value, (newValue) => {
+  emit('update:modelValue', {from: from.value, to: newValue});
 });
 
-watch(age, (newValues) => {
-  emit('update:modelValue', newValues);
-})
+watch(props.modelValue, (newValue) => {
+  from.value = newValue.from;
+  to.value = newValue.to;
+});
+
 </script>
 
 <style scoped>

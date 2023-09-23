@@ -7,12 +7,17 @@ export function useFormData(state, type = 'json') {
             const keys = Object.keys(state).filter(item => state[item] instanceof Object);
             const newData = {};
             keys.map((item) => {
-                let value = state[item].val;
-                if (typeof value === 'boolean'){
-                    newData[item] = Number(value);
-                }
-                else{
-                    newData[item] = value;
+                if (state[item]){
+                    let value = state[item].val;
+                    if (state[item].is_hidden && state[item].is_hidden === true){
+                        return;
+                    }
+                    if (typeof value === 'boolean'){
+                        newData[item] = Number(value);
+                    }
+                    else{
+                        newData[item] = value;
+                    }
                 }
             });
             return newData;
@@ -28,11 +33,16 @@ export function useFormData(state, type = 'json') {
             const keys = Object.keys(state).filter(item => state[item] instanceof Object);
             keys.map(item => {
                 let value = state[item].val;
-                if (typeof value === 'boolean'){
-                    formData.append(item, Number(value))
-                }
-                else{
-                    formData.append(item, value)
+                if (state[item]){
+                    if (state[item].is_hidden && state[item].is_hidden === true){
+                        return;
+                    }
+                    if (typeof value === 'boolean'){
+                        formData.append(item, Number(value))
+                    }
+                    else{
+                        formData.append(item, value)
+                    }
                 }
             });
             return formData;
