@@ -1,4 +1,41 @@
 <template>
+<!--  <div class="resume-card">-->
+<!--    <div class="resume-card-body">-->
+<!--      <div class="resume-card-body-col">-->
+<!--        <div class="photo"><img src="img/photo.png" alt="#"></div>-->
+<!--        <div class="resume-card-name"> <strong class="title">Продавец-консультант и рабоник зала</strong><span class="location">Омск </span><span class="price">От 1 000 000 ₽</span></div>-->
+<!--      </div>-->
+<!--      <div class="resume-card-body-col">-->
+<!--        <div class="date">с 16 января по 24 марта</div>-->
+<!--        <div class="resume-counts">-->
+<!--          <div class="count"> <strong class="js-view-stat">24</strong><span>Показа</span></div>-->
+<!--          <div class="count"> <strong class="js-view-stat">12</strong><span>Просмотров</span></div>-->
+<!--          <div class="count"> <strong>0</strong><span>Отклики     </span></div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="resume-card-stats active">-->
+<!--      <div class="resume-card-stats-head">-->
+<!--        <div class="name">Показы</div>-->
+<!--        <button class="close close-stats">Скрыть</button>-->
+<!--      </div>-->
+<!--      <div class="resume-card-stats-body">-->
+<!--        <div class="stat"> <strong>24</strong><a href="#">Все  </a></div>-->
+<!--        <div class="stat"> <strong>15</strong><a href="#"><img src="img/svg/hh.svg" alt="#">Hh.ru </a></div>-->
+<!--        <div class="stat"> <strong>9</strong><a href="#"><img src="img/svg/sb.svg" alt="#">Superjob.ru   </a></div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="resume-card-moddle">-->
+<!--      <div class="resume-filled-progress"> <span>Заполнено 45%</span>-->
+<!--        <div class="progress-container" data-progress="45">-->
+<!--          <div class="progress" style="width: 45%;"></div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div class="mini-notification"><img src="img/svg/notification.svg" alt="#">-->
+<!--        <div class="text"><a href="#">Укажите зарплату</a>, чтобы быстрее найти высокооплачиваемую работу        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
   <li >
     <div class="resume-card">
       <div class="resume-card-body">
@@ -12,7 +49,6 @@
             </nuxt-link>
             <span class="location">{{ cityAddress }} </span
             >
-
             <span v-if="salary_from && salary_to">
               <span class="price">{{vueNumberFormat(salary_from, {})}}</span>
               -
@@ -28,10 +64,34 @@
         <div class="resume-card-body-col">
           <div class="date">в {{ published_date.format('D') }} {{ published_date.format('MMMM') }}</div>
           <!--          <div class="date">с {{ published_date.format('D') }} {{ published_date.format('MMMM') }} по 24 марта</div>-->
+          <div class="resume-counts">
+            <div class="count cursor-pointer" @click.prevent="toggleViews">
+              <strong class="js-view-stat">{{item.views_count}}</strong><span>Показы</span>
+            </div>
+<!--            <div class="count">-->
+<!--              <strong>{{item.new_views}}</strong><span>Просмотров</span>-->
+<!--            </div>-->
+            <!--            <div class="count">-->
+            <!--              <strong>{{item.unread_responses}}</strong><span>Откликов</span>-->
+            <!--            </div>-->
+          </div>
+        </div>
+
+      </div>
+      <div class="resume-card-stats active" v-if="isViewsShown">
+        <div class="resume-card-stats-head">
+          <div class="name">Показы</div>
+          <button class="close close-stats" @click.preven="toggleViews">Скрыть</button>
+        </div>
+        <div class="resume-card-stats-body" >
+          <div class="stat"> <strong>{{ item.views_count }}</strong><a href="#">Все  </a></div>
+          <div class="stat"> <strong>15</strong><a href="#"><img src="~/assets/img/svg/hh.svg" alt="#">Hh.ru </a></div>
+          <div class="stat"> <strong>9</strong><a href="#"><img src="~/assets/img/svg/sb.svg" alt="#">Superjob.ru   </a></div>
         </div>
       </div>
+
       <div class="resume-card-options">
-        <!--        <span class="status">Обновлено в {{ moment(item.published_date).format('HH:mm') }}</span>-->
+        <span class="status">Обновлено в {{ moment(item.updated_at).format('HH:mm') }}</span>
         <div class="option-group selector-group">
           <div class="option">
             <div class="custom-check-wrap">
@@ -80,35 +140,12 @@
 
           <div class="params-box " style="left:unset;right:0" :style="{display: isContextMenuShown ? 'block' : 'none'}" >
             <div class="group">
-              <button class="b-action">
+              <button class="b-action"  @click="onRestore(item.id)">
                 <div class="card-action">
-                  <svg
-                      width="28"
-                      height="28"
-                      viewBox="0 0 28 28"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                        d="M4.02539 23.9749H23.9754"
-                        stroke="#5375FD"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    />
-                    <path
-                        d="M14.2462 7.15927L19.7324 12.6455M14.2462 7.15927L17.3806 4.0249L22.8668 9.51115L19.7324 12.6455L14.2462 7.15927ZM14.2462 7.15927L8.03177 13.3737C7.82391 13.5815 7.70709 13.8634 7.70703 14.1573V19.1847H12.7344C13.0284 19.1846 13.3102 19.0678 13.518 18.8599L19.7324 12.6455L14.2462 7.15927Z"
-                        stroke="#5375FD"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    />
-                  </svg>
+                  <svg height="24" viewBox="0 0 48 48" width="48" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h48v48h-48z" fill="none"/><path fill="#5375FD" d="M25.99 6c-9.95 0-17.99 8.06-17.99 18h-6l7.79 7.79.14.29 8.07-8.08h-6c0-7.73 6.27-14 14-14s14 6.27 14 14-6.27 14-14 14c-3.87 0-7.36-1.58-9.89-4.11l-2.83 2.83c3.25 3.26 7.74 5.28 12.71 5.28 9.95 0 18.01-8.06 18.01-18s-8.06-18-18.01-18zm-1.99 10v10l8.56 5.08 1.44-2.43-7-4.15v-8.5h-3z"/></svg>
                 </div>
                 <span>
-                  <nuxt-link :to="{name: 'create-vacancy', query: {draft_id: item.id}}" class="title">
-                      Редактировать
-                  </nuxt-link>
+                      Восстановить
                 </span>
               </button>
               <button class="b-action" @click="onDelete(item.id)">
@@ -170,29 +207,27 @@ import {useVacancyStore} from "~/store/vacancy";
 import Swal from "sweetalert2";
 const props = defineProps(['item']);
 const {item} = props;
-
 const salary_from = computed(() => {
-  if (props.item.salary_from){
-    return props.item.salary_from;
+  if (props.item.salary && props.item.salary.hasOwnProperty('from')){
+    return props.item.salary.from;
   }
   return false;
 });
 const salary_to = computed(() => {
-  if (props.item.salary_to){
-    return props.item.salary_to;
+  if (props.item.salary && props.item.salary.hasOwnProperty('to')){
+    return props.item.salary.to;
   }
   return false;
 });
 const currency = computed(() => {
-  if (props.item.salary_currency){
+  if (props.item.salary && props.item.salary.hasOwnProperty('currency')){
     const options = useCurrencyOptions();
-    const found = options.find((item) => item.value === props.item.salary_currency);
+    const found = options.find((item) => item.value === props.item.salary.currency);
     if (found) return found.symbol;
-    return props.item.salary_currency;
+    return props.item.salary.currency;
   }
   return 'RUB';
 });
-
 const cityAddress = computed(() => {
   if (item.hasOwnProperty('cities')){
     if (item.cities.length === 1){
@@ -204,6 +239,10 @@ const cityAddress = computed(() => {
 })
 
 const isContextMenuShown = ref(false);
+const isViewsShown = ref(false);
+const toggleViews = () => {
+  isViewsShown.value = !isViewsShown.value;
+}
 
 const toggleContextMenu = () => {
   isContextMenuShown.value = !isContextMenuShown.value;
@@ -237,13 +276,23 @@ const onDelete = async(id) => {
   window.location.reload();
 }
 
+const onRestore = async(id) => {
+  const resData = await restoreVacancy(id);
+  if(resData.status !== 'success'){
+    Swal.fire({
+      title: 'Ошибка!',
+      text: resData.message,
+      icon: "error",
+      confirmButtonText: 'ОК'
+    });
+    return;
+  }
+  window.location.reload();
+}
+
 
 </script>
 
 <style scoped>
-.b-action a{
-  font-size: 16px;
-  line-height: 22px;
-  color: #0A2540;
-}
+
 </style>

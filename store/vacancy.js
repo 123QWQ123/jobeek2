@@ -308,6 +308,13 @@ export const useVacancyStore = defineStore('vacancy', {
       return response;
     },
 
+    async restoreVacancy(id, payload = URLSearchParams) {
+      const response = await useApi('employer/vacancy/draft/' + id, {
+        method: 'delete',
+      });
+      return response;
+    },
+
   },
 })
 

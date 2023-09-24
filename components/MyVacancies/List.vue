@@ -21,39 +21,36 @@
         <div class="col d-flex justify-content-between align-items-center py-4" >
             <div class="d-inline-flex">
 
-              <form class="sort mx-2 ms-auto" action="#">
-                <span>Поставщик:</span>
-                <CustomSelect :options="providerOptions" v-model="form.provider" @change="onProviderChange" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
-              </form>
-              <form class="sort mx-2 ms-auto" action="#">
+<!--              <form class="sort mx-2 ms-auto" action="#">-->
+<!--                <span>Поставщик:</span>-->
+<!--                <CustomSelect :options="providerOptions" v-model="form.provider" @change="onProviderChange" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>-->
+<!--              </form>-->
+              <form class="sort">
                 <span>Фильтр:</span>
                 <CustomSelect :options="filterOptions" v-model="form.status" @change="onFilterChange" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
               </form>
             </div>
 
-            <div class="d-inline-flex">
-              <form class="sort mx-1" action="#">
-                <span>Показать:</span>
-                <CustomSelect v-model="form.per_page" :options="perPageOptions" @change="onChangePerPage" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
-              </form>
-              <form class="sort mx-1" action="#">
-                <span>Сортировать:</span>
-                <CustomSelect v-model="form.order_by" :options="sortingOptions" @change="onChangeSorting" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
-              </form>
-            </div>
+<!--            <div class="d-inline-flex">-->
+<!--              <form class="sort mx-1" action="#">-->
+<!--                <span>Показать:</span>-->
+<!--                <CustomSelect v-model="form.per_page" :options="perPageOptions" @change="onChangePerPage" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>-->
+<!--              </form>-->
+<!--              <form class="sort mx-1" action="#">-->
+<!--                <span>Сортировать:</span>-->
+<!--                <CustomSelect v-model="form.order_by" :options="sortingOptions" @change="onChangeSorting" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>-->
+<!--              </form>-->
+<!--            </div>-->
           </div>
-  <!--      <ul class="resume-list mt-4" v-if="my_vacancies.length > 0">-->
-  <!--        <MyVacanciesItem v-for="item in my_vacancies" :key="item.id" :item="item"></MyVacanciesItem>-->
-  <!--      </ul>-->
-        <MyVacanciesDraftList :items="vacancyStore.my_drafts"/>
-  <!--      <div class="d-flex mt-4 pb-4 justify-content-center" v-else>-->
-  <!--        <p>Ничего не найдено!</p>-->
-  <!--      </div>-->
-        <div class="d-flex mt-4 justify-content-between" v-if="my_total > 0">
-          <button class="btn btn-primary btn-group-sm" :class="{disabled: isPrevDisabled}"  @click="prevPage">Prev</button>
-          <p>{{current_page}}</p>
-          <button class="btn btn-primary btn-group-sm" @click="nextPage">Next</button>
-        </div>
+
+          <MyVacanciesDraftList v-if="form.status === 'draft'" :items="vacancyStore.my_drafts"/>
+          <MyVacanciesUndraftedList v-else :items="vacancyStore.my_vacancies"/>
+
+          <div class="d-flex mt-4 justify-content-between" v-if="my_total > 0">
+            <button class="btn btn-primary btn-group-sm" :class="{disabled: isPrevDisabled}"  @click="prevPage">Prev</button>
+            <p>{{current_page}}</p>
+            <button class="btn btn-primary btn-group-sm" @click="nextPage">Next</button>
+          </div>
       </div>
 </template>
 
@@ -98,6 +95,7 @@ const isPrevDisabled = computed(() => {
 })
 const form = ref(useMyVacancyForm());
 
+
 const total = computed(() => {
   if (form.value.status === 'draft'){
     return vacancyStore.my_drafts.length;
@@ -124,15 +122,13 @@ onMounted(async() => {
     await getMyVacancies(params);
     await getMyDrafts(params);
     isLoading.value = false;
-})
+});
 
 watch(() => vacancyStore.my_vacancies, (newMyVacancies) => {
-  console.log(newMyVacancies)
     vacancies.value = newMyVacancies;
 });
 
 watch(() => vacancyStore.my_drafts, (newMyDrafts) => {
-  console.log(newMyDrafts)
     my_drafts.value = newMyDrafts;
 });
 
@@ -243,8 +239,12 @@ const onChangeSorting = async(sorting) => {
 const onFilterChange = async(filter) => {
     isLoading.value = true;
     form.value.status = filter;
-    const params = useMyVacancyForm(form.value, 'front');
-    await getMyVacancies(params);
+    const params = useMyVacancyForm(form.value, 'backend');
+    if (filter === 'draft'){
+      await getMyDrafts(params);
+    }else{
+      await getMyVacancies(params);
+    }
     isLoading.value = false;
 }
 const onProviderChange = async(provider) => {
@@ -267,8 +267,8 @@ const onProviderChange = async(provider) => {
 }
 
 const listStyles = {
-    'left': 'unset',
-    'right': 0,
+    'left': 0,
+    'right': 'unset',
     'width': 'auto !important'
 }
 </script>
