@@ -240,10 +240,5 @@ const onDelete = async(id) => {
 
 </script>
 
-<style scoped>
-.b-action a{
-  font-size: 16px;
-  line-height: 22px;
-  color: #0A2540;
-}
+<style>
 </style>
