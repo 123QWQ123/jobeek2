@@ -33,6 +33,8 @@ export const useDictionaryStore = defineStore('dictionary', {
       working_time_modes: [],
       extend_vac: [],
       covid_vaccination_requirement: [],
+      subscription_keywords_srws: [],
+      subscription_keywords_skwc: [],
     }
   },
   getters: {
@@ -43,6 +45,10 @@ export const useDictionaryStore = defineStore('dictionary', {
       return vueNumberFormat(value,  {});
     },
     async getWorkTypes(payload) {
+
+      if (this.work_types.length > 0){
+        return this.work_types;
+      }
       const {data} = await useApi('dictionaries?groups[]=work_type', {
         method: 'get',
         payload
@@ -53,6 +59,10 @@ export const useDictionaryStore = defineStore('dictionary', {
       return data;
     },
     async getVacancyBillingTypes(payload) {
+
+      if (this.vacancy_billing_types.length > 0){
+        return this.vacancy_billing_types;
+      }
       const {data} = await useApi('dictionaries?groups[]=vacancy_billing_type', {
         method: 'get',
         payload
@@ -63,6 +73,10 @@ export const useDictionaryStore = defineStore('dictionary', {
       return data;
     },
     async getVacancyTypes(payload) {
+
+      if (this.vacancy_types.length > 0){
+        return this.vacancy_types;
+      }
       const {data} = await useApi('dictionaries?groups[]=vacancy_type', {
         method: 'get',
         payload
@@ -73,6 +87,10 @@ export const useDictionaryStore = defineStore('dictionary', {
       return data;
     },
     async searchAddresses(payload) {
+
+      if (this.addresses.length > 0){
+        return this.addresses;
+      }
       const {data} = await useApi('employer/addresses?providers[]=hh&page=0&per_page=100', {
         method: 'get',
         payload
@@ -83,6 +101,10 @@ export const useDictionaryStore = defineStore('dictionary', {
       return data;
     },
     async searchMetro(payload) {
+
+      if (this.metro.length > 0){
+        return this.metro;
+      }
       const {data} = await useApi('metro', {
         method: 'get',
         payload
@@ -94,6 +116,10 @@ export const useDictionaryStore = defineStore('dictionary', {
       return data;
     },
     async getGenders(payload) {
+
+      if (this.genders.length > 0){
+        return this.genders;
+      }
       const {data} = await useApi('dictionaries?groups[]=gender', {
         method: 'get',
         payload
@@ -104,6 +130,10 @@ export const useDictionaryStore = defineStore('dictionary', {
       return data;
     },
     async getChildren(payload) {
+
+      if (this.children.length > 0){
+        return this.children;
+      }
       const {data} = await useApi('dictionaries?groups[]=children', {
         method: 'get',
         payload
@@ -114,6 +144,10 @@ export const useDictionaryStore = defineStore('dictionary', {
       return data;
     },
     async getMaritalStatus(payload) {
+
+      if (this.marital_statuses.length > 0){
+        return this.marital_statuses;
+      }
       const {data} = await useApi('dictionaries?groups[]=marital_status', {
         method: 'get',
         payload
@@ -124,6 +158,10 @@ export const useDictionaryStore = defineStore('dictionary', {
       return data;
     },
     async getPlaceOfWorks(payload) {
+
+      if (this.place_of_works.length > 0){
+        return this.place_of_works;
+      }
       const {data} = await useApi('dictionaries?groups[]=place_of_work', {
         method: 'get',
         payload
@@ -134,6 +172,10 @@ export const useDictionaryStore = defineStore('dictionary', {
       return data;
     },
     async getForeignLanguages(payload) {
+
+      if (this.foreign_languages.length > 0){
+        return this.foreign_languages;
+      }
       const {data} = await useApi('languages', {
         method: 'get',
         payload
@@ -144,6 +186,10 @@ export const useDictionaryStore = defineStore('dictionary', {
       return data;
     },
     async getLanguageLevels(payload) {
+
+      if (this.language_levels.length > 0){
+        return this.language_levels;
+      }
       const {data} = await useApi('dictionaries?groups[]=language_level', {
         method: 'get',
         payload
@@ -154,6 +200,10 @@ export const useDictionaryStore = defineStore('dictionary', {
       return data;
     },
     async getDriverLicenses(payload) {
+
+      if (this.driver_licenses.length > 0){
+        return this.driver_licenses;
+      }
       const {data} = await useApi('dictionaries?groups[]=driver_license_types', {
         method: 'get',
         payload
@@ -164,6 +214,10 @@ export const useDictionaryStore = defineStore('dictionary', {
       return data;
     },
     async getSchedules(payload = {}) {
+
+      if (this.schedules.length > 0){
+        return this.schedules;
+      }
       const {data} = await useApi('dictionaries?groups[]=schedule', {
         method: 'get',
         payload
@@ -174,6 +228,10 @@ export const useDictionaryStore = defineStore('dictionary', {
       return data;
     },
     async getExperiences(payload = {}) {
+
+      if (this.experiences.length > 0){
+        return this.experiences;
+      }
       const {data} = await useApi('dictionaries?groups[]=experience', {
         method: 'get',
         payload
@@ -184,6 +242,10 @@ export const useDictionaryStore = defineStore('dictionary', {
       return data;
     },
     async getPartTimes(payload = {}) {
+
+      if (this.part_times.length > 0){
+        return this.part_times;
+      }
       const {data} = await useApi('dictionaries?groups[]=part_time', {
         method: 'get',
         payload
@@ -193,18 +255,11 @@ export const useDictionaryStore = defineStore('dictionary', {
       }
       return data;
     },
-    async getEducations(payload) {
-      const {data} = await useApi('dictionaries?groups[]=education', {
-        method: 'get',
-        payload
-      });
-      if (data && 'data' in data){
-        this.educations = data.data?.education ?? [];
-      }
-      return data.data;
-    },
-
     async getPaymentPeriodOptions(payload) {
+
+      if (this.payment_period.length > 0){
+        return this.payment_period;
+      }
       const {data} = await useApi('dictionaries?groups[]=payment_period', {
         method: 'get',
         payload
@@ -216,6 +271,10 @@ export const useDictionaryStore = defineStore('dictionary', {
     },
 
     async getWorkingDayOptions(payload) {
+
+      if (this.working_days.length > 0){
+        return this.working_days;
+      }
       const {data} = await useApi('dictionaries?groups[]=working_days', {
         method: 'get',
         payload
@@ -226,6 +285,10 @@ export const useDictionaryStore = defineStore('dictionary', {
       return data.data;
     },
     async getWorkingTimeIntervalsOptions(payload) {
+
+      if (this.working_time_intervals.length > 0){
+        return this.working_time_intervals;
+      }
       const {data} = await useApi('dictionaries?groups[]=working_time_intervals', {
         method: 'get',
         payload
@@ -236,6 +299,9 @@ export const useDictionaryStore = defineStore('dictionary', {
       return data.data;
     },
     async getWorkingTimeModesOptions(payload) {
+      if (this.working_time_modes.length > 0){
+        return this.working_time_modes;
+      }
       const {data} = await useApi('dictionaries?groups[]=working_time_modes', {
         method: 'get',
         payload
@@ -246,6 +312,9 @@ export const useDictionaryStore = defineStore('dictionary', {
       return data.data;
     },
     async getExtendVacOptions(payload) {
+      if (this.extend_vac.length > 0){
+        return this.extend_vac;
+      }
       const {data} = await useApi('dictionaries?groups[]=extend_vac', {
         method: 'get',
         payload
@@ -256,6 +325,9 @@ export const useDictionaryStore = defineStore('dictionary', {
       return data.data;
     },
     async getCovidVacRequirements(payload) {
+      if (this.covid_vaccination_requirement.length > 0){
+        return this.covid_vaccination_requirement;
+      }
       const {data} = await useApi('dictionaries?groups[]=covid_vaccination_requirement', {
         method: 'get',
         payload
@@ -266,6 +338,46 @@ export const useDictionaryStore = defineStore('dictionary', {
       return data.data;
     },
 
+    async getEducations(payload) {
+      if (this.educations.length > 0){
+        return this.educations;
+      }
+      const {data} = await useApi('dictionaries?groups[]=education', {
+        method: 'get',
+        payload
+      });
+      if (data && 'data' in data){
+        this.educations = data.data?.education ?? [];
+      }
+      return data.data;
+    },
+    async getSubscriptionKeywordsSrws(payload) {
+
+      if (this.subscription_keywords_srws.length > 0){
+        return this.subscription_keywords_srws;
+      }
+      const {data} = await useApi('dictionaries?groups[]=subscriptionKeywords_srws', {
+        method: 'get',
+        payload
+      });
+      if (data && 'data' in data){
+        this.subscription_keywords_srws = data.data?.subscriptionKeywords_srws ?? [];
+      }
+      return data.data;
+    },
+    async getSubscriptionKeywordsSkwc(payload) {
+      if (this.subscription_keywords_skwc.length > 0){
+        return this.subscription_keywords_skwc;
+      }
+      const {data} = await useApi('dictionaries?groups[]=subscriptionKeywords_skwc', {
+        method: 'get',
+        payload
+      });
+      if (data && 'data' in data){
+        this.subscription_keywords_skwc = data.data?.subscriptionKeywords_skwc ?? [];
+      }
+      return data.data;
+    },
   },
 })
 

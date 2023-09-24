@@ -20,7 +20,7 @@
   <div class="input-row">
     <label for="remote-work"></label>
     <div class="input-wrapper">
-        <CreateVacancyContactsPhones  v-model="contacts.phones"/>
+        <CreateVacancyOldContactsPhones  v-model="contacts.phones"/>
     </div>
   </div>
 </template>

@@ -34,7 +34,6 @@ export const useVacancyStore = defineStore('vacancy', {
       part_times: [],
       metros: [],
       driver_licenses: [],
-      educations: [],
       genders: [],
       place_of_works: [],
       foreign_languages: [],
@@ -43,7 +42,6 @@ export const useVacancyStore = defineStore('vacancy', {
       childrens: [],
       vacancy_billing_types: [],
       vacancy_types: [],
-
       providers: {
         hh: null,
         superjob: null
@@ -187,7 +185,6 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      console.log(response);
       if (response.hasOwnProperty('data') && 'data' in response.data){
         console.log(response.data.data);
         this.my_drafts = response.data.data;
@@ -207,6 +204,7 @@ export const useVacancyStore = defineStore('vacancy', {
       return response;
     },
     async getMyFavoriteVacancies(payload) {
+
       const {data} = await useApi('vacancies/search', {
         method: 'get',
         payload
@@ -240,6 +238,10 @@ export const useVacancyStore = defineStore('vacancy', {
       return data;
     },
     async getSpecializations(payload) {
+
+      if (this.specializations.length > 0){
+        return this.specializations;
+      }
       const {data} = await useApi('specializations', {
         method: 'get',
         payload
@@ -250,6 +252,9 @@ export const useVacancyStore = defineStore('vacancy', {
       return data;
     },
     async getIndustries(payload) {
+      if (this.industries.length > 0){
+        return this.industries;
+      }
       const {data} = await useApi('industries', {
         method: 'get',
         payload
@@ -259,16 +264,6 @@ export const useVacancyStore = defineStore('vacancy', {
         return this.industries;
       }
       return data;
-    },
-    async getEducations(payload) {
-      const {data} = await useApi('dictionaries?groups[]=education', {
-        method: 'get',
-        payload
-      });
-      if (data && 'data' in data){
-        this.educations = data.data?.education ?? [];
-      }
-      return data.data;
     },
     async getMetros(payload) {
       const {data} = await useApi('metro', {

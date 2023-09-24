@@ -142,9 +142,9 @@ const updateState = (prop, value) => {
   state[prop] = value;
 }
 
-const {getConnectedProviders} = useVacancyStore();
+const {getConnectedEmployerProviders} = useVacancyStore();
 onMounted(async() => {
-  const resData = await getConnectedProviders();
+  const resData = await getConnectedEmployerProviders();
   Object.keys(resData).map((item) => providers[item].is_connected = resData[item]);
 })
 

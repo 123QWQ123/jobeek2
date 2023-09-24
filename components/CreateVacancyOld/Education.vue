@@ -12,17 +12,19 @@
 </template>
 
 <script setup>
+import {useDictionaryStore} from "~/store/dictionary";
+
 const emit = defineEmits(['set']);
 const props = defineProps(['is_valid']);
 const isValid = computed(() => props.is_valid);
 import {storeToRefs} from "pinia";
 import {useVacancyStore} from "~/store/vacancy";
 const vacancyStore = useVacancyStore();
-const {getEducations} = vacancyStore;
-const {educations} = storeToRefs(vacancyStore);
+const dictionaryStore = useDictionaryStore();
+const {getEducations} = dictionaryStore;
 await getEducations();
 
-const educationOptions = computed(() => educations.value.map(item => ({value: item.id, name: item.name})));
+const educationOptions = computed(() => dictionaryStore.educations.map(item => ({value: item.id, name: item.name})));
 const education = ref(54);
 
 watch(education, (newValues) => {

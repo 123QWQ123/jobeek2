@@ -184,6 +184,12 @@
             :errors="errors"
         />
 
+        {{state.subscriptionKeywords.val}}
+        <CreateVacancySubscriptionKeywords
+            v-model="state.subscriptionKeywords.val"
+            :errors="errors"
+        />
+
         <div class="input-row" v-if="!state.place_of_work_id.is_hidden">
           <label>Место работы:</label>
           <div class="input-wrapper mt-2">
@@ -485,6 +491,17 @@ const state = reactive({
   },
   resume_subscription_status: {
     val:  false,
+    isValid: true,
+    is_hidden: false,
+  },
+  subscriptionKeywords: {
+    val:  [
+      {
+        keyword: null,
+        srws: null,
+        skwc: null
+      }
+    ],
     isValid: true,
     is_hidden: false,
   },
