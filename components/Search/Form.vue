@@ -125,5 +125,4 @@ const searchSelectStyles = {
 </script>
 
 <style scoped>
-
 </style>
