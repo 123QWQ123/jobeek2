@@ -1,50 +1,71 @@
 <template>
 
-
         <div class="input-row" >
-          <label>имя:</label>
+          <label>Телефон:</label>
           <div class="input-wrapper mt-2">
-            <input  v-model="state.phone.val"  @focusin="onFocusInput('name')"/>
-            <div class="text-danger d-block" v-if="errors.contacts?.name">
-<!--              Вам нужно ввести имя!-->
-              {{errors.contacts?.name}}
+            <input ref="phone_element"  @focusin="onFocusInput('phone')"/>
+            <div class="text-danger d-block" v-if="errors.phone">
+              {{errors.phone}}
             </div>
           </div>
         </div>
 
-        <div class="input-row" >
-          <label>Email:</label>
+        <div class="input-row mt-0" >
+          <label>Коммент к телефон:</label>
           <div class="input-wrapper mt-2">
-            <input  v-model="state.email.val"  @focusin="onFocusInput('email')"/>
-            <div class="text-danger d-block" v-if="errors.contacts?.email">
-<!--              Вам нужно ввести email!-->
-              {{errors.contacts?.email}}
+            <textarea class="form-control"  v-model="state.phone_comment.val"  @focusin="onFocusInput('phone_comment')" > </textarea>
+            <div class="text-danger d-block" v-if="errors.phone_comment">
+              {{errors.phone_comment}}
             </div>
+            <button class="btn btn-primary mt-2" v-if="!isAdditionalPhoneShown" @click.prevent="isAdditionalPhoneShown = true">Добавить еще</button>
           </div>
         </div>
 
+        <div class="row" v-if="isAdditionalPhoneShown">
+
+          <div class="input-row" >
+            <label>Доп. телефон:</label>
+            <div class="input-wrapper mt-2">
+              <input ref="additional_phone_element" @focusin="onFocusInput('additional_phone')"/>
+              <div class="text-danger d-block" v-if="errors.additional_phone">
+                {{errors.additional_phone}}
+              </div>
+            </div>
+          </div>
+
+          <div class="input-row mt-0" >
+            <label>Коммент к телефон:</label>
+            <div class="input-wrapper mt-2">
+              <textarea class="form-control" v-model="state.additional_phone_comment.val"  @focusin="onFocusInput('additional_phone_comment')" > </textarea>
+              <div class="text-danger d-block" v-if="errors.additional_phone_comment">
+                {{errors.additional_phone_comment}}
+              </div>
+              <button class="btn btn-primary mt-2" v-if="isAdditionalPhoneShown" @click.prevent="isAdditionalPhoneShown = false">Отменить</button>
+            </div>
+          </div>
+
+        </div>
 
 </template>
 
 <script setup>
 import {useVacancyStore} from "~/store/vacancy";
 
-const props = defineProps(['title']);
+const emit = defineEmits(['update:modelValue']);
+const props = defineProps(['modelValue', 'errors']);
 
 import {useProfileStore} from "~/store/profile";
-import {useFormData} from "~/composables/useFormData";
-import {useRuntimeConfig} from "#app";
-import useFormValidation from "~/composables/useFormValidation";
-import {useWatchStateValues} from "~/composables/useWatchStateValues";
-import {useDiff} from "~/composables/useDiff";
-import {v4 as uuidv4} from "uuid";
-import {useCreateFormData} from "~/composables/useCreateFormData";
 import {useDictionaryStore} from "~/store/dictionary";
-import CreateVacancy from "~/pages/create-vacancy.vue";
+import IMask from "imask";
+import {useWatchStateValues} from "~/composables/useWatchStateValues";
 const vacancyStore = useVacancyStore();
 const profileStore = useProfileStore();
-const CONFIG = useRuntimeConfig();
 const route = useRoute();
+
+const errors = ref(props.errors);
+watch(() => props.errors, (newValue) => {
+  errors.value = newValue;
+})
 
 const draftID = computed(() => route.query.draft_id);
 const {updateVacancy, getMyVacancy} = vacancyStore;
@@ -58,126 +79,107 @@ const isFirst = ref(true);
 const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
+const phone_element = ref();
+const phone_mask = ref();
+const additional_phone_element = ref();
+const additional_phone_mask = ref();
+
+
+const isAdditionalPhoneShown = ref(false);
 
 const state = reactive({
-  name: {
-        val:  null,
-        isValid: true
-    },
-    email: {
-        val:  null,
-        isValid: true
-    },
-    company_name: {
-        val:  "",
-        isValid: true
-    },
-    company_url: {
-        val:  "",
-        isValid: true
-    },
-    company_logo: {
-        val:  "",
-        isValid: true
-    },
-  company_description: {
-        val:  "",
-        isValid: true
-    },
-    isFormValid: true,
-    isNew: true,
-    isLoading: false,
-    error: null,
-    success: null,
-});
-
-watch(() => useWatchStateValues(state, true, true),   (newState, oldState) => {
-    if (!isFirst.value){
-        isChanged.value = true;
-    }else{
-        isFirst.value = false;
-    }
-});
-
-const sectionData = ref({});
-watch(() => sectionData.value, (newData, oldData) => {
-    const diffData =  useDiff(newData, oldData);
-    if (Object.keys(diffData).length){
-      state.name.val = newData.name;
-      state.email.val = newData.email;
-      state.company_name.val = newData.company_name;
-      state.company_url.val = newData.company_url;
-      state.company_logo.val = newData.company_logo;
-      state.company_description.val = newData.company_description;
-    }
+  phone: {
+    val:  null,
+    isValid: true,
+    is_hidden: false,
+  },
+  phone_comment: {
+    val:  null,
+    isValid: true,
+    is_hidden: false,
+  },
+  additional_phone: {
+    val:  null,
+    isValid: true,
+    is_hidden: true,
+  },
+  additional_phone_comment: {
+    val:  null,
+    isValid: true,
+    is_hidden: true,
+  },
 })
-watch(() => vacancyStore.my_vacancy, (newVacancy) => {
-    if (isUpdated.value){
-        isUpdated.value = false;
-        return;
-    }
-    if (newVacancy){
-        sectionData.value = {
-          name: newVacancy.contacts?.name,
-          email: newVacancy.contacts?.email,
-          company_name: newVacancy.contacts?.company_name,
-          company_url: newVacancy.contacts?.company_url,
-          company_logo: newVacancy.contacts?.company_logo,
-          company_description: newVacancy.contacts?.company_description,
-        };
-    }
-})
+const phone = ref(null);
+const phone_comment = ref(null);
+const additional_phone = ref(null);
+const additional_phone_comment = ref(null);
 
-const dictionaryStore = useDictionaryStore();
-const {getVacancyTypes} = dictionaryStore;
-await getVacancyTypes();
-const addressOptions = computed(() => {
-  return dictionaryStore.addresses.map((item) => ({name: item.raw, value: item.id}));
-});
+const emitChanges = (key, value) => {
+  const passData = {
+    phone: '+' + state['phone'].val,
+    phone_comment: state['phone_comment'].val,
+    additional_phone: '+' + state['additional_phone'].val,
+    additional_phone_comment: state['additional_phone_comment'].val,
+  };
+  if (!isAdditionalPhoneShown.value){
+    delete passData['additional_phone'];
+    delete passData["additional_phone_comment"];
+  }
 
-const {searchAddresses} = dictionaryStore;
-await searchAddresses();
-
-const onAddressSearch  = async(newString) => {
-  console.log(newString);
+  emit('update:modelValue', passData);
 }
-const {errors, handleErrorResponse} = useFormValidation();
+
+watch(() => useWatchStateValues(state), emitChanges);
+
+onMounted(() => {
+  phone_mask.value = new IMask(phone_element.value, {
+    mask: "+{7}(000)000-00-00",
+  });
+  phone_element.value.addEventListener("input", (e) => {
+    state.phone.val = phone_mask.value.unmaskedValue;
+  });
+
+  const newValue = props.modelValue;
+  phone_mask.value.value = (newValue.phone ?? "").replace('+', '');
+  state.phone.val = (newValue.phone ?? "").replace('+', '');
+  state.phone_comment.val = newValue.phone_comment;
+  if (newValue.additional_phone){
+    isAdditionalPhoneShown.value = true;
+    nextTick(() => {
+      additional_phone_mask.value.value = (newValue.additional_phone ?? "").replace('+', '');
+      state.additional_phone.val = (newValue.additional_phone ?? "").replace('+', '');
+    });
+    state.additional_phone_comment.val = newValue.additional_phone_comment;
+  }
+});
+
+watch(() => isAdditionalPhoneShown.value, (newIsAdditionalPhoneShown) => {
+  if (newIsAdditionalPhoneShown){
+    nextTick(() => {
+      additional_phone_mask.value = new IMask(additional_phone_element.value, {
+        mask: "+{7}(000)000-00-00",
+      });
+      if (additional_phone.value){
+        additional_phone_element.value.addEventListener("input", (e) => {
+          state.additional_phone.val = additional_phone_mask.value.unmaskedValue;
+        });
+        additional_phone_mask.value.value = additional_phone.value.toString();
+      }else{
+        additional_phone_element.value.addEventListener("input", (e) => {
+          state.additional_phone.val = additional_phone_mask.value.unmaskedValue;
+        });
+      }
+    })
+  }else{
+    state.additional_phone.val = additional_phone_mask.value.unmaskedValue;
+  }
+})
+const dictionaryStore = useDictionaryStore();
 const onFocusInput = (key) => {
-  if (errors.value.contacts instanceof Object){
-    errors.value.contacts[key] = '';
+  if (errors.value instanceof Object){
+    errors.value[key] = '';
   }
 }
-// Object.assign(errors, {contacts: {}});
-const save = async () => {
-    if (isChanged.value){
-        state.isLoading = true;
-        // validate();
-        errors.value = {};
-        state.errorMessage = "";
-        let resData = {};
-        const jsonData = {contacts: useFormData(state)};
-
-        jsonData.action = 'UpdateContacts';
-        resData = await updateVacancy(draftID.value, jsonData);
-        console.log(resData);
-        isUpdated.value = true;
-        if (resData.status !== 'success'){
-            return handleErrorResponse(resData.data);
-        }
-        isChanged.value = false;
-        isSaved.value = false;
-        isUpdated.value = false;
-
-    }
-}
-
-const isCompleted = computed(() => {
-    const myVacancy = my_vacancy.value;
-    if (myVacancy && !isCollapsed.value){
-        return (myVacancy.address && myVacancy.address.address);
-    }
-    return false;
-});
 
 </script>
 

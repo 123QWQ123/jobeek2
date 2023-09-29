@@ -47,7 +47,7 @@
         </div>
 
         <div class="input-row" >
-          <label>Адрес:</label>
+          <label>Адрес сайта:</label>
           <div class="input-wrapper mt-2">
             <input  v-model="state.company_url.val"  @focusin="onFocusInput('company_url')"/>
             <div class="text-danger d-block" v-if="errors.contacts?.company_url">
@@ -70,8 +70,9 @@
         <div class="input-row" >
           <label>О компании:</label>
           <div class="input-wrapper mt-2">
-            <textarea class="form-control" v-model="state.company_description.val"  @focusin="() => errors.contacts.company_description = ''" > </textarea>
-            <div class="text-danger d-block" v-if="errors.contacts?.company_description">
+            <textarea class="form-control" v-model="state.company_description.val"
+                      @focusin="() => errors.company_description = ''" > </textarea>
+            <div class="text-danger d-block" v-if="errors.company_description">
 <!--              Вам нужно ввести о компании!-->
               {{ errors.contacts?.company_description }}
             </div>
@@ -79,7 +80,7 @@
         </div>
 
         <br/>
-        <CreateVacancyOldContactsPhones />
+        <CreateVacancyContactsPhones v-if="my_vacancy" v-model="state.phones.val" :errors="phonesErrors"/>
 
       </div>
     </transition>
@@ -143,8 +144,17 @@ const state = reactive({
         val:  "",
         isValid: true
     },
-  company_description: {
+    company_description: {
         val:  "",
+        isValid: true
+    },
+    phones: {
+        val:  {
+          phone: null,
+          phone_comment: null,
+          additional_phone: null,
+          additional_phone_comment: null,
+        },
         isValid: true
     },
     isFormValid: true,
@@ -172,6 +182,7 @@ watch(() => sectionData.value, (newData, oldData) => {
       state.company_url.val = newData.company_url;
       state.company_logo.val = newData.company_logo;
       state.company_description.val = newData.company_description;
+      state.phones.val = newData.phones;
     }
 })
 watch(() => vacancyStore.my_vacancy, (newVacancy) => {
@@ -187,6 +198,7 @@ watch(() => vacancyStore.my_vacancy, (newVacancy) => {
           company_url: newVacancy.contacts?.company_url,
           company_logo: newVacancy.contacts?.company_logo,
           company_description: newVacancy.contacts?.company_description,
+          phones: newVacancy.contacts.phones,
         };
     }
 })
@@ -205,6 +217,12 @@ const onAddressSearch  = async(newString) => {
   console.log(newString);
 }
 const {errors, handleErrorResponse} = useFormValidation();
+const phonesErrors = computed(() => {
+  if (errors.value.contacts?.phones){
+    return errors.value.contacts.phones;
+  }
+  return {};
+});
 const onFocusInput = (key) => {
   if (errors.value.contacts instanceof Object){
     errors.value.contacts[key] = '';

@@ -162,7 +162,6 @@ export const useVacancyStore = defineStore('vacancy', {
       // if ('data' in response && response.data.status === 'success'){
       //   this.resume = response.data;
       // }
-      console.log(response);
       return response;
     },
 

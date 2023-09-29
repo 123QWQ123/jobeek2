@@ -11,7 +11,6 @@
         </div>
         <div class="w-box-body" >
 
-          {{state}}
             <div class="input-row">
                 <label for="name">Название вакансии<b>*</b></label>
                 <div class="input-wrapper">
@@ -30,7 +29,7 @@
                     <MultiSelectWithSearch :options="cityOptions" v-model="state.cities.val" :label="'Выберите город'" @input="updateCityInput" @focusin="() => errors.cities = ''"></MultiSelectWithSearch>
 
                     <div class="text-danger d-block" v-if="errors.cities">
-                        Вам нужно выбрать город для публикации!
+                        {{errors.cities}}
                     </div>
 
                 </div>
@@ -43,7 +42,7 @@
                     <MultiSelectWithSearch :options="professionalRoleOptions" v-model="state.professional_roles.val" :label="'Выберите специализацию'" @input="updateProfessionalInput" @focusin="() => errors.professional_roles = ''"></MultiSelectWithSearch>
 
                     <div class="text-danger d-block" v-if="errors.professional_roles">
-                        Вам нужно выбрать город для публикации!
+                        {{errors.professional_roles}}
                     </div>
 
                 </div>

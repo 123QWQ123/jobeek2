@@ -32,13 +32,29 @@ export default function useFormValidation(state = null) {
                             }
                             newErrors[itemMatches[1]][itemMatches[2]][itemMatches[3]] = response.errors[item][0];
                         }
-                    }else if ((/([a-z0-9_]+)\.([a-z0-9_]+)/g).test(item)){
+                    }else if ((/^([a-z0-9_]+)\.([a-z0-9_]+$)/g).test(item)){
                         // dot seperated errors from backend
                         const itemMatch = item.match(/([a-z0-9_]+)\.([a-z0-9_]+)/g);
                         const keys = itemMatch[0].split(".");
                         if (!newErrors[keys[0]])
                             newErrors[keys[0]] = {};
                         newErrors[keys[0]][keys[1]] = response.errors[item][0];
+                    }else if ((/^([a-z0-9_]+)\.([a-z0-9_]+).([a-z0-9_]+$)/g).test(item)){
+                        // dot seperated errors from backend
+                        const itemMatch = item.match(/^([a-z0-9_]+)\.([a-z0-9_]+).([a-z0-9_]+$)/g);
+                        const keys = itemMatch[0].split(".");
+                        console.log(newErrors);
+                        console.log(keys);
+                        if (!newErrors[keys[0]])
+                            newErrors[keys[0]] = {};
+                        if (!newErrors[keys[0]] instanceof Object)
+                            newErrors[keys[0]] = {};
+                        if (!newErrors[keys[0]][keys[1]])
+                            newErrors[keys[0]][keys[1]] = {};
+
+                        if (!newErrors[keys[0]][keys[1]] instanceof Object)
+                            newErrors[keys[0]][keys[1]] = {};
+                        newErrors[keys[0]][keys[1]][keys[2]] = response.errors[item][0];
                     }
                     else{
                         newErrors[item] = response.errors[item][0];
