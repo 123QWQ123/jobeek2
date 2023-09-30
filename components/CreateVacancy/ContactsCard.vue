@@ -24,7 +24,7 @@
           </div>
         </div>
 
-        <div class="input-row" >
+        <div class="input-row" v-if="!state.email.is_hidden">
           <label>Email:</label>
           <div class="input-wrapper mt-2">
             <input  v-model="state.email.val"  @focusin="onFocusInput('email')"/>
@@ -35,7 +35,7 @@
           </div>
         </div>
 
-        <div class="input-row" >
+        <div class="input-row" v-if="!state.company_name.is_hidden">
           <label>Название компании:</label>
           <div class="input-wrapper mt-2">
             <input  v-model="state.company_name.val"  @focusin="onFocusInput('company_name')"/>
@@ -46,7 +46,7 @@
           </div>
         </div>
 
-        <div class="input-row" >
+        <div class="input-row" v-if="!state.company_url.is_hidden">
           <label>Адрес сайта:</label>
           <div class="input-wrapper mt-2">
             <input  v-model="state.company_url.val"  @focusin="onFocusInput('company_url')"/>
@@ -56,7 +56,7 @@
             </div>
           </div>
         </div>
-        <div class="input-row" >
+        <div class="input-row" v-if="!state.company_logo.is_hidden">
           <label>Лого URL:</label>
           <div class="input-wrapper mt-2">
             <input  v-model="state.company_logo.val"  @focusin="onFocusInput('company_logo')"/>
@@ -67,7 +67,7 @@
           </div>
         </div>
 
-        <div class="input-row" >
+        <div class="input-row" v-if="!state.company_description.is_hidden">
           <label>О компании:</label>
           <div class="input-wrapper mt-2">
             <textarea class="form-control" v-model="state.company_description.val"
@@ -80,7 +80,7 @@
         </div>
 
         <br/>
-        <CreateVacancyContactsPhones v-if="my_vacancy" v-model="state.phones.val" :errors="phonesErrors"/>
+        <CreateVacancyContactsPhones v-if="my_vacancy" :providers="props.providers"  v-model="state.phones.val" :errors="phonesErrors"/>
 
       </div>
     </transition>
@@ -93,7 +93,7 @@
 <script setup>
 import {useVacancyStore} from "~/store/vacancy";
 
-const props = defineProps(['title']);
+const props = defineProps(['title', 'providers']);
 
 import {useProfileStore} from "~/store/profile";
 import {useFormData} from "~/composables/useFormData";
@@ -105,6 +105,7 @@ import {v4 as uuidv4} from "uuid";
 import {useCreateFormData} from "~/composables/useCreateFormData";
 import {useDictionaryStore} from "~/store/dictionary";
 import CreateVacancy from "~/pages/create-vacancy.vue";
+import useProviderFields from "~/composables/useProviderFields";
 const vacancyStore = useVacancyStore();
 const profileStore = useProfileStore();
 const CONFIG = useRuntimeConfig();
@@ -126,27 +127,34 @@ const isUpdated = ref(false);
 const state = reactive({
   name: {
         val:  null,
-        isValid: true
+        isValid: true,
+        is_hidden: false,
     },
     email: {
         val:  null,
-        isValid: true
+        isValid: true,
+        is_hidden: false,
     },
     company_name: {
         val:  "",
-        isValid: true
+        isValid: true,
+        is_hidden: false,
     },
     company_url: {
         val:  "",
-        isValid: true
+        isValid: true,
+        is_hidden: false,
+
     },
     company_logo: {
         val:  "",
-        isValid: true
+        isValid: true,
+        is_hidden: false,
     },
     company_description: {
         val:  "",
-        isValid: true
+        isValid: true,
+        is_hidden: false,
     },
     phones: {
         val:  {
@@ -164,7 +172,26 @@ const state = reactive({
     success: null,
 });
 
-watch(() => useWatchStateValues(state, true, true),   (newState, oldState) => {
+const fields = ref({
+  hh: {
+  },
+  superjob: {
+    email: false,
+    company_name: true,
+    company_description: true,
+    company_url: true,
+    company_logo: true,
+  }
+});
+
+const {walkThroughFields} = useProviderFields(state, fields);
+watch(props.providers, walkThroughFields);
+
+onMounted(() => {
+  walkThroughFields(props.providers);
+});
+
+watch(() => useWatchStateValues(state, true),   (newState, oldState) => {
     if (!isFirst.value){
         isChanged.value = true;
     }else{

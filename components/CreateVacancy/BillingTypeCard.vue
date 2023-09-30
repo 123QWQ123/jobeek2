@@ -54,7 +54,7 @@ const {updateVacancy, getMyVacancy} = vacancyStore;
 const {employer} = profileStore;
 const my_vacancy = computed(() => vacancyStore.my_vacancy);
 
-const isHidden = ref(props.providers.hh ?? false);
+
 const isSaved = ref(false);
 const isChanged = ref(false);
 const isFirst = ref(true);
@@ -62,7 +62,7 @@ const isCollapsed = ref(true);
 const isUpdated = ref(false);
 
 const providers = computed(() => props.providers)
-
+const isHidden = ref(props.providers.hh ?? false);
 watch(props.providers, (newProviders) => {
     isHidden.value = newProviders.hh;
 })

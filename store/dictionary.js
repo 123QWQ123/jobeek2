@@ -95,7 +95,7 @@ export const useDictionaryStore = defineStore('dictionary', {
         method: 'get',
         payload
       });
-      if (data && data.hasOwnProperty('data')){
+      if (data){
         this.addresses = data ?? [];
       }
       return data;

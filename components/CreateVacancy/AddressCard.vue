@@ -13,7 +13,7 @@
     <transition>
       <div class="w-box-body" :class="{collapse: isCollapsed}">
 
-        <div class="input-row">
+        <div class="input-row" v-if="!state.address_id.is_hidden">
           <label>Список Адресов компании:<b>*</b></label>
           <div class="input-wrapper mt-2">
             <CustomSelect :options="addressOptions" v-model="state.address_id.val" :label="'Выберите'"  @focusin="() => errors.address_id = ''"></CustomSelect>
@@ -26,17 +26,17 @@
           </div>
         </div>
 
-        <div class="input-row" >
+        <div class="input-row" v-if="!state.address.is_hidden">
           <label>Адрес:</label>
           <div class="input-wrapper mt-2">
-            <input  v-model="state.address.val"  @focusin="() => errors.address = ''"/>
+            <input  v-model="state.address.val" @focusin="() => errors.address = ''"/>
             <div class="text-danger d-block" v-if="errors.address">
               Вам нужно ввести адрес!
             </div>
           </div>
         </div>
 
-        <div class="input-row" >
+        <div class="input-row" v-if="!state.show_metro_only.is_hidden">
           <label>Метро:</label>
           <div class="input-wrapper mt-2">
 
@@ -63,7 +63,18 @@
 <script setup>
 import {useVacancyStore} from "~/store/vacancy";
 
-const props = defineProps(['title']);
+const props = defineProps({
+  title: {
+    default: "",
+    required: false
+  },
+  providers: {
+    required: true,
+    default: {
+
+    },
+  }
+});
 
 import {useProfileStore} from "~/store/profile";
 import {useFormData} from "~/composables/useFormData";
@@ -75,6 +86,7 @@ import {v4 as uuidv4} from "uuid";
 import {useCreateFormData} from "~/composables/useCreateFormData";
 import {useDictionaryStore} from "~/store/dictionary";
 import Swal from "sweetalert2";
+import useProviderFields from "~/composables/useProviderFields";
 const vacancyStore = useVacancyStore();
 const profileStore = useProfileStore();
 const CONFIG = useRuntimeConfig();
@@ -96,21 +108,44 @@ const isUpdated = ref(false);
 const state = reactive({
     address: {
         val:  null,
-        isValid: true
+        isValid: true,
+        is_hidden: false,
+
     },
     address_id: {
         val:  null,
-        isValid: true
+        isValid: true,
+        is_hidden: false,
+
     },
     show_metro_only: {
         val:  false,
-        isValid: true
+        isValid: true,
+        is_hidden: false,
     },
     isFormValid: true,
     isNew: true,
     isLoading: false,
     error: null,
     success: null,
+});
+
+const fields = ref({
+  hh: {
+    address_id: false,
+    show_metro_only : false,
+  },
+  superjob: {
+    address: false,
+  }
+});
+
+const {walkThroughFields} = useProviderFields(state, fields);
+watch(props.providers, walkThroughFields);
+
+onMounted(() => {
+  console.log(props.providers);
+  walkThroughFields(props.providers);
 });
 
 watch(() => useWatchStateValues(state, true, true),   (newState, oldState) => {

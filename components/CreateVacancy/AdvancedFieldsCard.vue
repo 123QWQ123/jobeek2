@@ -293,6 +293,7 @@ import useFormValidation from "~/composables/useFormValidation";
 import {useWatchStateValues} from "~/composables/useWatchStateValues";
 import {useDiff} from "~/composables/useDiff";
 import {useDictionaryStore} from "~/store/dictionary";
+import useProviderFields from "~/composables/useProviderFields";
 const vacancyStore = useVacancyStore();
 const profileStore = useProfileStore();
 const CONFIG = useRuntimeConfig();
@@ -310,93 +311,6 @@ const isFirst = ref(true);
 const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
-const fields = ref({
-  hh: {
-    accept_kids: false,
-    accept_temporary: false,
-    accept_incomplete_resumes: false,
-    accept_handicapped: false,
-    allow_messages: false,
-    response_letter_required: false,
-    response_notifications: false,
-    with_zp: false,
-    working_days: false,
-    working_time_intervals: false,
-    working_time_modes: false,
-  },
-  superjob: {
-    allow_applicant_without_resume: false,
-    refresh_vac: false,
-    extend_vac_id: false,
-    place_of_work_id: false,
-    education_id: false,
-    marital_status_id: false,
-    covid_vaccination_requirement_id: true,
-    age_from: true,
-    age_to: true,
-    video_url: true,
-  }
-});
-
-const walkThroughFields = (newProviders) => {
-  if (newProviders.hh && newProviders.superjob){
-    Object.keys(fields.value.hh).map((item) => {
-      if (state[item]){
-        state[item].is_hidden = false;
-      }
-    });
-    Object.keys(fields.value.superjob).map((item) => {
-      if (state[item]){
-        state[item].is_hidden = false;
-      }
-    });
-    return;
-  }
-  if (!newProviders.hh && !newProviders.superjob){
-    Object.keys(fields.value.hh).map((item) => {
-      if (state[item]){
-        state[item].is_hidden = true;
-      }
-    });
-    Object.keys(fields.value.superjob).map((item) => {
-      if (state[item]){
-        state[item].is_hidden = true;
-      }
-    });
-    return;
-  }
-  if (newProviders.hh && !newProviders.superjob){
-    Object.keys(fields.value.hh).map((item) => {
-      if (state[item]){
-        state[item].is_hidden = false;
-      }
-    });
-    Object.keys(fields.value.superjob).map((item) => {
-      if (state[item]){
-        state[item].is_hidden = true;
-      }
-    });
-    return;
-  }
-  if (!newProviders.hh && newProviders.superjob){
-    Object.keys(fields.value.superjob).map((item) => {
-      if (state[item]){
-        state[item].is_hidden = false;
-      }
-    });
-    Object.keys(fields.value.hh).map((item) => {
-      if (state[item]){
-        state[item].is_hidden = true;
-      }
-    });
-    return;
-  }
-}
-watch(props.providers, walkThroughFields);
-
-onMounted(() => {
-  walkThroughFields(props.providers);
-})
 
 const state = reactive({
   name: {
@@ -561,6 +475,42 @@ const state = reactive({
   error: null,
   success: null,
 });
+
+
+const fields = ref({
+  hh: {
+    accept_kids: false,
+    accept_temporary: false,
+    accept_incomplete_resumes: false,
+    accept_handicapped: false,
+    allow_messages: false,
+    response_letter_required: false,
+    response_notifications: false,
+    with_zp: false,
+    working_days: false,
+    working_time_intervals: false,
+    working_time_modes: false,
+  },
+  superjob: {
+    allow_applicant_without_resume: false,
+    refresh_vac: false,
+    extend_vac_id: false,
+    place_of_work_id: false,
+    education_id: false,
+    marital_status_id: false,
+    covid_vaccination_requirement_id: true,
+    age_from: true,
+    age_to: true,
+    video_url: true,
+  }
+});
+
+const {walkThroughFields} = useProviderFields(state, fields);
+watch(props.providers, walkThroughFields);
+
+onMounted(() => {
+  walkThroughFields(props.providers);
+})
 
 const age = ref({
   from: state.age_from.val,
