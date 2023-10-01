@@ -23,7 +23,7 @@
       </div>
 
       <div class="row">
-        <div class="col-6">
+        <div class="col-6" v-if="!salary.period.is_hidden">
           <CustomSelect class="skyBlueBG" :label="'Период'"
             :options="periodOptions"
             :style="skyBlueBG" v-model="salary.period.val"
@@ -47,7 +47,7 @@
         </div>
       </div>
 
-      <div class="row">
+      <div class="row" v-if="!salary.gross.is_hidden">
 
         <div class="check-block mt-2">
           <div class="checkbox">
@@ -69,6 +69,7 @@ import {useVacancyStore} from "~/store/vacancy";
 
 import {useCurrencyOptions} from "~/composables/useCurrencyOptions";
 import {useDictionaryStore} from "~/store/dictionary";
+import useProviderFields from "~/composables/useProviderFields";
 
 const emit = defineEmits(['update:modelValue', 'clearError']);
 const props = defineProps({
@@ -79,12 +80,22 @@ const props = defineProps({
     errors: {
         required: true,
         default: {}
-    }
+    },
+    providers: {
+      required: true,
+      default: {
+
+      },
+  }
 })
 
 
 const vacancyStore = useVacancyStore();
 const dictionaryStore = useDictionaryStore();
+
+const isFirst = ref(true);
+
+
 const {getPaymentPeriodOptions} = dictionaryStore;
 await getPaymentPeriodOptions();
 const currencyOptions = ref(useCurrencyOptions());
@@ -97,29 +108,51 @@ const salary = reactive({
         val: props.modelValue?.from,
         isChecked: false,
         isValid: false,
+        is_hidden: false,
     },
     to: {
         val: props.modelValue?.to,
         isChecked: false,
         isValid: false,
+        is_hidden: false,
+
     },
     gross: {
         val: props.modelValue?.gross ?? false,
         isChecked: false,
         isValid: false,
+        is_hidden: false,
+
     },
     period: {
         val: props.modelValue?.period,
         isChecked: false,
         isValid: false,
+        is_hidden: false,
+
     },
     currency: {
         val: props.modelValue?.currency,
         isChecked: false,
         isValid: false,
+        is_hidden: false,
     },
 });
-const isFirst = ref(true);
+const fields = ref({
+  hh: {
+    gross: false
+  },
+  superjob: {
+    period: false
+  }
+});
+
+const {walkThroughFields} = useProviderFields(salary, fields);
+watch(props.providers, walkThroughFields);
+
+onMounted(() => {
+  walkThroughFields(props.providers);
+})
 watch(() => props.modelValue, (newValue) => {
   salary.from.val = newValue?.from;
   salary.to.val = newValue?.to;

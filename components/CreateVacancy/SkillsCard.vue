@@ -1,6 +1,6 @@
 <template>
 
-  <div class="w-box" v-click-outside="save">
+  <div class="w-box" v-if="!isHidden" v-click-outside="save">
     <div class="w-box-head">
       <h3 class="title">Навыки</h3>
       <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
@@ -26,7 +26,19 @@
 <script setup>
 import {useVacancyStore} from "~/store/vacancy";
 
-const props = defineProps(['title']);
+const props = defineProps({
+  title: {
+    default: "-",
+    required: false,
+  },
+  providers: {
+    default: {
+      hh: false,
+      superjob: false,
+    },
+    required: true,
+  },
+});
 
 import {useProfileStore} from "~/store/profile";
 import {useFormData} from "~/composables/useFormData";
@@ -54,6 +66,12 @@ const isFirst = ref(true);
 const isCollapsed = ref(true);
 const isUpdated = ref(false);
 
+const isHidden = computed(() => {
+  if (!!props.providers.superjob || !!props.providers.hh){
+    return false;
+  }
+  return true;
+})
 
 const state = reactive({
     key_skills: {

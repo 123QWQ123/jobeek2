@@ -13,7 +13,7 @@
     <transition>
       <div class="w-box-body" :class="{collapse: isCollapsed}">
 
-        <CreateVacancySalary v-if="my_vacancy" v-model="state.salary.val" :errors="errors.salary"/>
+        <CreateVacancySalary :providers="props.providers" v-if="my_vacancy" v-model="state.salary.val" :errors="errors.salary"/>
 
       </div>
     </transition>
@@ -25,8 +25,19 @@
 
 <script setup>
 import {useVacancyStore} from "~/store/vacancy";
-
-const props = defineProps(['title']);
+const props = defineProps({
+  title: {
+    default: "-",
+    required: false,
+  },
+  providers: {
+    default: {
+      hh: false,
+      superjob: false,
+    },
+    required: true,
+  },
+});
 
 import {useProfileStore} from "~/store/profile";
 import {useFormData} from "~/composables/useFormData";
@@ -53,7 +64,6 @@ const isChanged = ref(false);
 const isFirst = ref(true);
 const isCollapsed = ref(true);
 const isUpdated = ref(false);
-
 
 const state = reactive({
     salary: {
