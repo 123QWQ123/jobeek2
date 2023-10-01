@@ -70,6 +70,7 @@ import {useVacancyStore} from "~/store/vacancy";
 import {useCurrencyOptions} from "~/composables/useCurrencyOptions";
 import {useDictionaryStore} from "~/store/dictionary";
 import useProviderFields from "~/composables/useProviderFields";
+import {useWatchStateValues} from "~/composables/useWatchStateValues";
 
 const emit = defineEmits(['update:modelValue', 'clearError']);
 const props = defineProps({
@@ -153,13 +154,13 @@ watch(props.providers, walkThroughFields);
 onMounted(() => {
   walkThroughFields(props.providers);
 })
-watch(() => props.modelValue, (newValue) => {
-  salary.from.val = newValue?.from;
-  salary.to.val = newValue?.to;
-  salary.gross.val = newValue?.gross;
-  salary.period.val = newValue?.period;
-  salary.currency.val = newValue?.currency;
-})
+// watch(() => props.modelValue, (newValue) => {
+//   salary.from.val = newValue?.from;
+//   salary.to.val = newValue?.to;
+//   salary.gross.val = newValue?.gross;
+//   salary.period.val = newValue?.period;
+//   salary.currency.val = newValue?.currency;
+// })
 
 const validate = () => {
     salary.from.isChecked = true;
@@ -180,12 +181,28 @@ const validate = () => {
         salary.currency.isValid = false;
     }
     if (!isFirst.value){
-      emit('update:modelValue', {from: salary.from.val,to: salary.to.val,gross: salary.gross.val,period: salary.period.val, currency: salary.currency.val});
+      emitChanges();
     }else{
       isFirst.value = false;
     }
 }
-watch(salary, validate);
+const emitChanges = (key, value) => {
+  const passData = {
+    from: salary['from'].val,
+    to: salary['to'].val,
+    gross: salary['gross'].val,
+    period: salary['period'].val,
+    currency: salary['currency'].val,
+  };
+  if (!props.providers.hh){
+    delete passData['gross'];
+  }
+  if (!props.providers.superjob){
+    delete passData['period'];
+  }
+  emit('update:modelValue', passData);
+}
+watch(() => useWatchStateValues(salary), emitChanges);
 const skyBlueBG = {
     background: "#F5F8FA"
 }

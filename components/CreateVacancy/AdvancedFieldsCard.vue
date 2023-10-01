@@ -7,7 +7,6 @@
 
     </div>
 
-    {{providers}}
     <div class="text-danger d-block p-4" v-if="errors.message">
       {{ errors.message }}
     </div>

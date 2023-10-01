@@ -76,6 +76,7 @@ const props = defineProps({
 import {useProfileStore} from "~/store/profile";
 import {useDictionaryStore} from "~/store/dictionary";
 import IMask from "imask";
+import {useWatchStateValues} from "~/composables/useWatchStateValues";
 const vacancyStore = useVacancyStore();
 const profileStore = useProfileStore();
 const route = useRoute();
@@ -136,10 +137,10 @@ const state = ref({
 })
 const emitChanges = (key, value) => {
   const passData = {
-    phone: '+' + state['phone'].val,
-    phone_comment: state['phone_comment'].val,
-    additional_phone: '+' + state['additional_phone'].val,
-    additional_phone_comment: state['additional_phone_comment'].val,
+    phone: '+' + state.value['phone'].val,
+    phone_comment: state.value['phone_comment'].val,
+    additional_phone: '+' + state.value['additional_phone'].val,
+    additional_phone_comment: state.value['additional_phone_comment'].val,
   };
   if (!isAdditionalPhoneShown.value){
     delete passData['additional_phone'];
@@ -149,7 +150,7 @@ const emitChanges = (key, value) => {
   emit('update:modelValue', passData);
 }
 
-watch(() => state.value, emitChanges);
+watch(() => useWatchStateValues(state.value, true), emitChanges);
 
 const phone_element = ref();
 const phone_mask = ref();

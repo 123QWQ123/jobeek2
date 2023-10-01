@@ -56,7 +56,19 @@
 <script setup>
 import {useVacancyStore} from "~/store/vacancy";
 
-const props = defineProps(['title']);
+const props = defineProps({
+  title: {
+    default: "-",
+    required: false,
+  },
+  providers: {
+    default: {
+      hh: false,
+      superjob: false,
+    },
+    required: true,
+  },
+});
 
 import {useProfileStore} from "~/store/profile";
 import {useFormData} from "~/composables/useFormData";
@@ -136,8 +148,18 @@ watch(() => vacancyStore.my_vacancy, (newVacancy) => {
     }
 })
 
-const isAnonymous = computed(() => state.type_id.val?.toString() === "48");
-const isDirect = computed(() => state.type_id.val?.toString() === "49");
+const isAnonymous = computed(() => {
+  if (props.providers.hh){
+    return state.type_id.val?.toString() === "48";
+  }
+  return false;
+});
+const isDirect = computed(() => {
+  if (props.providers.hh){
+    return state.type_id.val?.toString() === "49";
+  }
+  return false;
+});
 
 const dictionaryStore = useDictionaryStore();
 const {getVacancyTypes} = dictionaryStore;
