@@ -183,7 +183,6 @@
             :errors="errors"
         />
 
-        {{state.subscriptionKeywords.val}}
         <CreateVacancySubscriptionKeywords
             v-model="state.subscriptionKeywords.val"
             :errors="errors"
@@ -282,8 +281,6 @@
 import {useVacancyStore} from "~/store/vacancy";
 
 const props = defineProps(['title', 'providers']);
-
-// const {providers} = toRefs(props);
 
 import {useProfileStore} from "~/store/profile";
 import {useFormData} from "~/composables/useFormData";

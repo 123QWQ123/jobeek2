@@ -128,12 +128,25 @@ const onProviderToggle = (provider) => {
 const vacancies = ref([]);
 const my_drafts = ref([]);
 const isLoading = ref(true);
+
+const route = useRoute();
 onMounted(async() => {
-    isLoading.value = false;
-    const params = useMyVacancyForm(form.value, 'backend');
-    await getMyVacancies(params);
-    await getMyDrafts(params);
-    isLoading.value = false;
+  console.log(route.query.status);
+  if (form.value.status !== route.query.status){
+    if (filterOptions.value.includes(route.query.status)){
+      form.value.status = route.query.status;
+    }else{
+      form.value.status = 'draft';
+    }
+  }
+  navigateTo({
+    query: {status: form.value.status}
+  })
+  isLoading.value = false;
+  const params = useMyVacancyForm(form.value, 'backend');
+  await getMyVacancies(params);
+  await getMyDrafts(params);
+  isLoading.value = false;
 });
 
 watch(() => vacancyStore.my_vacancies, (newMyVacancies) => {

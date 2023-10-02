@@ -83,7 +83,7 @@ const props = defineProps({
         default: {}
     },
     providers: {
-      required: true,
+      required: false,
       default: {
 
       },

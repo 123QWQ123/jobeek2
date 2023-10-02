@@ -33,10 +33,10 @@
       <div class="resume-card-options">
         <!--        <span class="status">Обновлено в {{ moment(item.published_date).format('HH:mm') }}</span>-->
         <div class="option-group selector-group">
-          <div class="option">
+          <div class="option" >
             <div class="custom-check-wrap">
               <div class="theme-checker theme-checker--blue">
-                <input type="checkbox" id="sj" :checked="item.can_publish.hh" />
+                <input type="checkbox" id="hh" :checked="item.can_publish.hh"  @click="onChangeProviderStatus('hh', item.can_publish.hh)" />
                 <div class="theme-checker-ui">
                   <div class="circle"></div>
                 </div>
@@ -235,6 +235,22 @@ const onDelete = async(id) => {
     return;
   }
   window.location.reload();
+}
+
+const onChangeProviderStatus = async(provider) => {
+  console.log(provider);
+  console.log(item);
+  // const resData = await deleteDraft(id);
+  // if(resData.status !== 'success'){
+  //   Swal.fire({
+  //     title: 'Ошибка!',
+  //     text: resData.message,
+  //     icon: "error",
+  //     confirmButtonText: 'ОК'
+  //   });
+  //   return;
+  // }
+
 }
 
 

@@ -17,6 +17,7 @@ const pageTitle = computed(() => {
 const route = useRoute();
 
 const vacancyStore = useVacancyStore();
+const {publishDraft} = vacancyStore;
 const my_vacancy = computed(() => vacancyStore.my_vacancy);
 
 const providers = ref({
@@ -65,9 +66,28 @@ const saveAsDraft = (e) => {
   e.preventDefault();
   console.log('saved as draft');
 }
-const save = (e) => {
+const paramProviders = computed(() => {
+  if (providers.value.hh && providers.value.superjob){
+    return ['hh', 'superjob'];
+  }
+  if (providers.value.hh){
+    return ['hh'];
+  }
+  if (providers.value.superjob){
+    return ['superjob'];
+  }
+  return [];
+})
+const save = async(e) => {
   e.preventDefault();
   console.log('saving and publishing or redirecting to edit page');
+  // employer/vacancy/publish/408
+  console.log(paramProviders.value);
+  const payload = {
+    providers: paramProviders.value
+  }
+  const resData = await publishDraft(draftId.value, payload);
+  console.log(resData);
 }
 // groups[]=
 </script>

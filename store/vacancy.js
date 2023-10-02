@@ -166,6 +166,19 @@ export const useVacancyStore = defineStore('vacancy', {
       return response;
     },
 
+    async publishDraft(id, payload = {}, content_type = 'application/json') {
+      const response = await useApi('employer/vacancy/' + id, {
+        method: 'POST',
+        content_type,
+        payload
+      });
+      console.log(response);
+      // if ('data' in response && response.data.status === 'success'){
+      //   this.resume = response.data;
+      // }
+      return response;
+    },
+
     async getMyVacancies(payload) {
       const response = await useApi('employer/vacancies', {
         method: 'get',
