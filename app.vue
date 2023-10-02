@@ -17,9 +17,10 @@ const { getConnectedSeekerProviders } = useResumeStore();
 const authStore =  useAuthStore();
 const isEmployer = computed(() => authStore.isEmployer);
 onMounted(async() => {
+
+  await getConnectedEmployerProviders();
+  await getConnectedSeekerProviders();
   setTimeout(() => {
-    getConnectedEmployerProviders();
-    getConnectedSeekerProviders();
   }, 1000)
 })
 

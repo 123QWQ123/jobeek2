@@ -18,7 +18,6 @@
           <div class="input-wrapper mt-2">
             <input  v-model="state.name.val"  @focusin="onFocusInput('name')"/>
             <div class="text-danger d-block" v-if="errors.contacts?.name">
-<!--              Вам нужно ввести имя!-->
               {{errors.contacts?.name}}
             </div>
           </div>
