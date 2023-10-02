@@ -19,18 +19,30 @@
           <h1 ref="filterRef" class="lk-page-title mt-4">Ваши вакансии({{ total }})</h1>
         </div>
         <div class="col d-flex justify-content-between align-items-center py-4" >
+
+          <ul class="nav nav-tabs w-100">
+            <li class="nav-item" :class="{'active': form.status === 'draft'}" @click="onFilterChange('draft')">
+              <a  class="nav-link"  :class="{'active': form.status === 'draft'}" aria-current="page" href="#">Черновек</a>
+            </li>
+            <li class="nav-item" :class="{'active': form.status === 'active'}" @click="onFilterChange('active')">
+              <a class="nav-link" :class="{'active': form.status === 'active'}" href="#">Активные</a>
+            </li>
+            <li class="nav-item" :class="{'active': form.status === 'archived'}" @click="onFilterChange('archived')">
+              <a class="nav-link" :class="{'active': form.status === 'archived'}" href="#">В архиве</a>
+            </li>
+          </ul>
             <div class="d-inline-flex">
 
 <!--              <form class="sort mx-2 ms-auto" action="#">-->
 <!--                <span>Поставщик:</span>-->
 <!--                <CustomSelect :options="providerOptions" v-model="form.provider" @change="onProviderChange" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>-->
 <!--              </form>-->
-              <form class="sort">
-                <span>Фильтр:</span>
-                <CustomSelect :options="filterOptions" v-model="form.status" @change="onFilterChange" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>
-              </form>
             </div>
 
+<!--          <form class="sort">-->
+<!--            <span>Фильтр:</span>-->
+<!--            <CustomSelect :options="filterOptions" v-model="form.status" @change="onFilterChange" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>-->
+<!--          </form>-->
 <!--            <div class="d-inline-flex">-->
 <!--              <form class="sort mx-1" action="#">-->
 <!--                <span>Показать:</span>-->
@@ -237,7 +249,7 @@ const onChangeSorting = async(sorting) => {
 
 }
 const onFilterChange = async(filter) => {
-    isLoading.value = true;
+    // isLoading.value = true;
     form.value.status = filter;
     const params = useMyVacancyForm(form.value, 'backend');
     if (filter === 'draft'){
@@ -245,7 +257,7 @@ const onFilterChange = async(filter) => {
     }else{
       await getMyVacancies(params);
     }
-    isLoading.value = false;
+    // isLoading.value = false;
 }
 const onProviderChange = async(provider) => {
     form.value.provider = provider;
