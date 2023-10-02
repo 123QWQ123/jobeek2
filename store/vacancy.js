@@ -121,6 +121,7 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
+      console.log(data);
       if (data && 'items' in data){
         this.vacancies_in_my_city = data.items;
         return this.vacancies_in_my_city;

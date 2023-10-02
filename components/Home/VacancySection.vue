@@ -26,10 +26,12 @@
           <div class="vacancy-card-body">
             <div class="company">
               <div class="company-logo"><img src="~/assets/img/logos/megafon.svg" alt="#"></div>
-              <div class="company-name"> <strong>{{ item.company }}</strong><span
-                  class="location">{{ item.city }}</span></div>
+              <div class="company-name">
+                <strong>{{ item.company }}</strong>
+                <span class="location">{{ item.city }}</span>
+              </div>
             </div>
-            <a class="vacancy-card-title" href="#">{{ item.name }}</a>
+            <nuxt-link :to="{name: 'vacancies-slug', params: {slug: item.id}}" class="vacancy-card-title">{{ item.name }}</nuxt-link>
             <span class="vacancy-card-dop-info" v-if="item.salary_from">От {{$format_number(item.salary_from)}} ₽</span>
             <span class="vacancy-card-dop-info" v-else>До {{$format_number(item.salary_to)}} ₽</span>
           </div>
@@ -52,8 +54,10 @@ const areaStore = useAreaStore();
 const {getCurrencyCityVacancies} = vacancyStore;
 const {getLocation} = areaStore;
 
-const location = await getLocation({ip: '213.232.228.45'});
-console.log(location);
-await getCurrencyCityVacancies({countries: [location?.country?.id], region_ids: [location?.region?.id],city_id: location?.city?.id});
-const vacancies = computed(() => vacancyStore.my_city_vacancies);
+onMounted(async() => {
+  const location = await getLocation({ip: '213.232.228.45'});
+  await getCurrencyCityVacancies({countries: [location?.country?.id], region_ids: [location?.region?.id],city_id: location?.city?.id});
+
+})
+const vacancies = computed(() => vacancyStore.vacancies_in_my_city.sort());
 </script>

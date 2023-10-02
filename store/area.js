@@ -31,7 +31,6 @@ export const useAreaStore = defineStore('area', {
         method: 'get',
         payload
       });
-      console.log(data);
       if (data) {
         this.location = data.data;
       }
