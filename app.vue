@@ -6,13 +6,17 @@
 
 <script setup>
 
-import {useProfileStore} from "~/store/profile";
 import {useAuthStore} from "~/store/auth";
 import {useVacancyStore} from "~/store/vacancy";
 import {useResumeStore} from "~/store/resume";
+import {toast} from "vue3-toastify";
+import {storeToRefs} from "pinia";
 
-const { getConnectedEmployerProviders } = useVacancyStore();
+const { getConnectedEmployerProviders, importVacancies } = useVacancyStore();
 const { getConnectedSeekerProviders } = useResumeStore();
+const vacancyStore = useVacancyStore();
+const {employerMessage} = storeToRefs(vacancyStore);
+
 
 const authStore =  useAuthStore();
 const isEmployer = computed(() => authStore.isEmployer);
@@ -20,8 +24,17 @@ onMounted(async() => {
 
   await getConnectedEmployerProviders();
   await getConnectedSeekerProviders();
-  setTimeout(() => {
-  }, 1000)
+
+
+  setTimeout(async() => {
+    const resData = await importVacancies();
+
+    if (resData.hasOwnProperty('message')){
+      toast.info(resData.message, {autoClose: 3000});
+    }
+  }, 4000)
+
+
 })
 
 </script>

@@ -67,7 +67,7 @@
         </div>
 
         <div class="input-row" v-if="!state.company_description.is_hidden">
-          <label>О компании:</label>
+          <label>О компании(мин 10 символов):</label>
           <div class="input-wrapper mt-2">
             <textarea class="form-control" v-model="state.company_description.val"
                       @focusin="() => errors.company_description = ''" > </textarea>

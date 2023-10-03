@@ -87,10 +87,12 @@ const isAnyProviderConnected = computed(() => {
         return true;
     else return false;
 });
-
+const route = useRoute();
+console.log(route.path);
 onMounted(async () => {
     if (!isAnyProviderConnected.value){
-        const authData = await getEmployerProvidersAuthEndpoints();
+        const authData = await getEmployerProvidersAuthEndpoints({}, route.path);
+      console.log(authData);
         providers.value.hh.url = authData.hh;
         providers.value.superjob.url = authData.superjob;
     }

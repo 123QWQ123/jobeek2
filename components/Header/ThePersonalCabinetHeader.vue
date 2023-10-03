@@ -3,6 +3,8 @@
 import { useAuthStore } from "~~/store/auth";
 import TheMainHeader from "~/components/Header/TheMainHeader.vue";
 import {protected_routes, search_exception_routes} from "~/config";
+import {useVacancyStore} from "~/store/vacancy";
+import {toast} from "vue3-toastify";
 
 const auth = useAuthStore();
 const { logout, toggleUserMode } = auth;

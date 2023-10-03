@@ -85,7 +85,6 @@ const useApi = async (method, options = {}) => {
                         headers: headers
                     },
                 );
-                console.log(response);
 
             }
             if (options.method.toUpperCase() === 'PUT') {

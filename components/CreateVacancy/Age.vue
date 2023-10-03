@@ -1,5 +1,5 @@
 <template>
-  <div class="input-row">
+  <div class="input-row" v-if="isHidden">
     <label for="remote-work">Возрасть</label>
     <div class="input-wrapper">
         <div class="c2">
@@ -29,11 +29,21 @@ const props = defineProps({
   errors: {
     required: false,
     default: {}
-  }
+  },
+  providers: {
+    required: true,
+    default: {
+      hh: false,
+      superjob: false,
+    }
+  },
 })
 
 import {useVacancyStore} from "~/store/vacancy";
 const vacancyStore = useVacancyStore();
+const isHidden = computed(() => {
+  return props.providers.superjob
+});
 
 const from = ref(null);
 const to = ref(null);

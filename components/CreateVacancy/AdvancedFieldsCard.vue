@@ -184,6 +184,7 @@
         />
 
         <CreateVacancySubscriptionKeywords
+            v-if="!state.subscriptionKeywords.is_hidden"
             v-model="state.subscriptionKeywords.val"
             :errors="errors"
         />
@@ -267,8 +268,9 @@
           </div>
         </div>
 
-        <CreateVacancyAge v-model="age" :errors="errors"/>
+        <CreateVacancyAge v-model="age" :errors="errors" :providers="props.providers"/>
 
+        {{props.providers}}
       </div>
     </transition>
 
@@ -280,7 +282,19 @@
 <script setup>
 import {useVacancyStore} from "~/store/vacancy";
 
-const props = defineProps(['title', 'providers']);
+const props = defineProps({
+  title: {
+    default: "-",
+    required: false,
+  },
+  providers: {
+    default: {
+      hh: false,
+      superjob: false,
+    },
+    required: true,
+  },
+});
 
 import {useProfileStore} from "~/store/profile";
 import {useFormData} from "~/composables/useFormData";
@@ -483,9 +497,9 @@ const fields = ref({
     response_letter_required: false,
     response_notifications: false,
     with_zp: false,
-    working_days: false,
-    working_time_intervals: false,
-    working_time_modes: false,
+    working_days_id: false,
+    working_time_intervals_id: false,
+    working_time_modes_id: false,
   },
   superjob: {
     allow_applicant_without_resume: false,
@@ -493,16 +507,21 @@ const fields = ref({
     extend_vac_id: false,
     place_of_work_id: false,
     education_id: false,
+    children_id: false,
     marital_status_id: false,
     covid_vaccination_requirement_id: true,
-    age_from: true,
-    age_to: true,
-    video_url: true,
+    age_from: false,
+    age_to: false,
+    video_url: false,
+    resume_subscription_status: false,
+    subscriptionKeywords: false,
+    move_able: false,
+    gender_id: false,
   }
 });
 
 const {walkThroughFields} = useProviderFields(state, fields);
-watch(props.providers, walkThroughFields);
+watch(() => props.providers, walkThroughFields);
 
 onMounted(() => {
   walkThroughFields(props.providers);

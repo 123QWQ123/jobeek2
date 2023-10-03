@@ -42,10 +42,12 @@ export const useVacancyStore = defineStore('vacancy', {
       childrens: [],
       vacancy_billing_types: [],
       vacancy_types: [],
+
       providers: {
         hh: null,
         superjob: null
       },
+      employerMessage: ""
     }
   },
   getters: {
@@ -74,6 +76,28 @@ export const useVacancyStore = defineStore('vacancy', {
         this.providers = data.data;
         return this.providers;
       }
+      return data;
+    },
+    async importVacancies() {
+      const payload = [];
+      // providers[]=superjob&providers[]=hh
+      if (this.providers.hh){
+        payload.push('hh');
+      }
+      if (this.providers.superjob){
+        payload.push('superjob');
+      }
+
+      const {data} = await useApi('employer/vacancies/import', {
+        method: 'post',
+        payload
+      });
+
+      // console.log(data.message);
+      //
+      // if (data.hasOwnProperty('message')){
+      //   this.employerMessage = data.message;
+      // }
       return data;
     },
 
@@ -155,6 +179,7 @@ export const useVacancyStore = defineStore('vacancy', {
     },
 
     async updateVacancy(id, payload, content_type = 'application/json') {
+      console.log(id, payload, content_type);
       const response = await useApi('employer/vacancy/draft/' + id, {
         method: 'PUT',
         content_type,
@@ -172,7 +197,6 @@ export const useVacancyStore = defineStore('vacancy', {
         content_type,
         payload
       });
-      console.log(response);
       // if ('data' in response && response.data.status === 'success'){
       //   this.resume = response.data;
       // }
@@ -184,9 +208,7 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      console.log(response);
       if (response.hasOwnProperty('data') && 'data' in response.data){
-        console.log(response.data.data);
         this.my_vacancies = response.data.data;
         this.my_total = response.data.found;
         this.current_page = response.data.current_page;
@@ -199,7 +221,6 @@ export const useVacancyStore = defineStore('vacancy', {
         payload
       });
       if (response.hasOwnProperty('data') && 'data' in response.data){
-        console.log(response.data.data);
         this.my_drafts = response.data.data;
         this.my_draft_total = response.data.found;
         this.my_draft_current_page = response.data.current_page;

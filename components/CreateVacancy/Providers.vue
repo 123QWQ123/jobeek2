@@ -43,6 +43,7 @@
       </div>
     </div>
   </div>
+  {{vacancyProviders}}
 </template>
 
 <script setup>
@@ -51,6 +52,8 @@
 
 import {useDictionaryStore} from "~/store/dictionary";
 import {useVacancyStore} from "~/store/vacancy";
+import {useFormData} from "~/composables/useFormData";
+import {toast} from "vue3-toastify";
 const emit  = defineEmits(['update:modelValue']);
 const props  = defineProps({
     modelValue: {
@@ -60,9 +63,32 @@ const props  = defineProps({
 });
 const dictionaryStore = useDictionaryStore();
 
+const route = useRoute();
+
+const draftID = computed(() => route.query.draft_id);
+
 const vacancyStore = useVacancyStore();
-const {getConnectedEmployerProviders, getEmployerProvidersAuthEndpoints} = vacancyStore;
+const {getConnectedEmployerProviders, getEmployerProvidersAuthEndpoints, getMyVacancy} = vacancyStore;
 await getConnectedEmployerProviders();
+
+
+// watch(vacancyProviders.value, (newValues) => {
+//   console.log(newValues);
+//   const providersNewValues = {...resetObject};
+//
+//   if (newValues.includes('hh')){
+//     providersNewValues.hh = true;
+//   }else{
+//     providersNewValues.superjob = false;
+//   }
+//   if (newValues.includes('superjob')){
+//     providersNewValues.superjob = true;
+//   }else{
+//     providersNewValues.superjob = false;
+//   }
+//   console.log(providersNewValues);
+//   selectedProviders.value = providersNewValues;
+// });
 
 const enabledProviders = ref(vacancyStore.providers);
 const isHHEnabled = computed(() => enabledProviders.value.hh);
@@ -73,17 +99,54 @@ const resetObject = {
     superjob: false,
     hh: false,
 };
+const vacancyProviders = computed(() => {
+  let selectedProvidersValue = [];
+  if (!vacancyStore.my_vacancy){
+    return resetObject;
+  }
+  if (vacancyStore.my_vacancy.providers.length > 0){
+    selectedProvidersValue = vacancyStore.my_vacancy.providers.map(item => item.name);
+  }
+  // return selectedProvidersValue;
+  const providersNewValues = {...resetObject};
+
+  if (selectedProvidersValue.includes('hh')){
+    providersNewValues.hh = true;
+  }else{
+    providersNewValues.superjob = false;
+  }
+  if (selectedProvidersValue.includes('superjob')){
+    providersNewValues.superjob = true;
+  }else{
+    providersNewValues.superjob = false;
+  }
+  return providersNewValues;
+  // console.log(providersNewValues);
+  // selectedProviders.value = providersNewValues;
+  // emit('update:modelValue', providersNewValues);
+  // return selectedProvidersValue;
+});
+watch(() => vacancyProviders.value, (newValue) => {
+  console.log(newValue);
+  selectedProviders.value = newValue;
+})
 const selectedProviders = ref( props.modelValue ?? resetObject);
 watch(() => selectedProviders.value, (newSelectedItems) => {
+  console.log(newSelectedItems);
     emit('update:modelValue', newSelectedItems);
 })
+
 const errors = computed(() => props.errors);
 const isHHSelected = computed(() => selectedProviders.value.hh);
 const isSuperjobSelected = computed(() => selectedProviders.value.superjob);
 const reset = () => {
     selectedProviders.value = resetObject;
 }
-const route = useRoute();
+
+onMounted(() => {
+  console.log(vacancyProviders.value);
+})
+const {updateVacancy} = vacancyStore;
 // const providers = ref(resetObject);
 const toggle = async (provider) => {
   if (!selectedProviders.value[provider]){
@@ -103,8 +166,26 @@ const toggle = async (provider) => {
   }
 
   selectedProviders.value[provider] = !selectedProviders.value[provider];
-}
 
+  const providerParams = [];
+  if (selectedProviders.value.hh){
+    providerParams.push('hh');
+  }
+  if (selectedProviders.value.superjob){
+    providerParams.push('superjob');
+  }
+
+  const data = {
+    providers: providerParams
+  };
+  data.action = 'UpdateProviders';
+  const resData = await updateVacancy(draftID.value, data);
+  if (resData.status !== 'success'){
+    toast.info(resData.message, {autoClose: 3000});
+  }
+
+  await getMyVacancy(draftID.value);
+}
 const openProviderAuthUrl = (url) => {
   window.open(url);
 }
