@@ -121,18 +121,12 @@ const vacancyProviders = computed(() => {
     providersNewValues.superjob = false;
   }
   return providersNewValues;
-  // console.log(providersNewValues);
-  // selectedProviders.value = providersNewValues;
-  // emit('update:modelValue', providersNewValues);
-  // return selectedProvidersValue;
 });
 watch(() => vacancyProviders.value, (newValue) => {
-  console.log(newValue);
   selectedProviders.value = newValue;
 })
 const selectedProviders = ref( props.modelValue ?? resetObject);
 watch(() => selectedProviders.value, (newSelectedItems) => {
-  console.log(newSelectedItems);
     emit('update:modelValue', newSelectedItems);
 })
 

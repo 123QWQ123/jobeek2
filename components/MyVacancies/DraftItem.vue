@@ -43,7 +43,7 @@
               </div>
               <label for="sj">
                 <img src="~/assets/img/logos/hhmini.svg" alt="#" />
-                <span>Superjob.ru</span>
+                <span>HH</span>
               </label>
             </div>
           </div>
@@ -57,7 +57,7 @@
               </div>
               <label for="sj">
                 <img src="~/assets/img/logos/sj.svg" alt="#" />
-                <span>Superjob.ru</span>
+                <span>Superjob</span>
               </label>
             </div>
           </div>

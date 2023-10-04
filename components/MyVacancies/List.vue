@@ -261,15 +261,25 @@ const onChangeSorting = async(sorting) => {
     isLoading.value = false;
 
 }
-const onFilterChange = async(filter) => {
+
+// const router = useRouter();
+const onFilterChange = (filter) => {
     // isLoading.value = true;
     form.value.status = filter;
-    const params = useMyVacancyForm(form.value, 'backend');
-    if (filter === 'draft'){
-      await getMyDrafts(params);
-    }else{
-      await getMyVacancies(params);
-    }
+    // const params = useMyVacancyForm(form.value, 'front');
+    router.replace({query: {status: filter }});
+    navigateTo({name: 'my-vacancies', query: {status: filter }});
+    // navigateTo({
+    //   name: 'my-vacancies',
+    //   query: {
+    //     status: filter
+    //   }
+    // })
+    // if (filter === 'draft'){
+    //   await getMyDrafts(params);
+    // }else{
+    //   await getMyVacancies(params);
+    // }
     // isLoading.value = false;
 }
 const onProviderChange = async(provider) => {

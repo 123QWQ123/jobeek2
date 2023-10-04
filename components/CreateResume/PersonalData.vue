@@ -106,7 +106,7 @@
             <div class="input-row">
                 <label>Город проживания <b>*</b></label>
                 <div class="input-wrapper mt-2">
-                    <SelectWithSearch :options="cityOptions" v-model.number="state.city_id.val" :placeholder="'Ишите город'" @input="updateCityInput" @focusin="() => errors.city_id = ''"></SelectWithSearch>
+                    <SelectWithSearch :options="cityOptions" v-model="state.city_id.val" :placeholder="'Ишите город'" @input="updateCityInput" @focusin="() => errors.city_id = ''"></SelectWithSearch>
 
                     <div class="text-danger d-block" v-if="errors.city_id">
                         Вам нужно выбрать город проживания!
@@ -359,7 +359,7 @@ const cityOptions = ref([]);
 
 const updateCityInput = async (newValue = '') => {
     const items = await searchCities({search: newValue}) ?? [];
-    cityOptions.value = items.map(item => ({value: item.city_id, name: item.city_name}));
+    cityOptions.value = items.map(item => ({value: item.cityId, name: item.city_name}));
 }
 
 const getCities = async (newValue = '') => {
