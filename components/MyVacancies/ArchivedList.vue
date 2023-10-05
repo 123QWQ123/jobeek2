@@ -1,6 +1,6 @@
 <template>
-  <ul class="resume-list mt-4" v-if="my_drafts.length > 0">
-    <MyVacanciesUndraftItem v-for="item in my_drafts" :key="item.id" :item="item" />
+  <ul class="resume-list mt-4" v-if="my_vacancies.length > 0">
+    <MyVacanciesArchivedItem v-for="item in my_vacancies" :key="item.id" :item="item" />
   </ul>
   <div class="d-flex mt-4 pb-4 justify-content-center" v-else>
     <p>Ничего не найдено - undrafted!</p>
@@ -16,7 +16,7 @@ const props = defineProps({
 });
 import {useVacancyStore} from "~/store/vacancy";
 
-const my_drafts = computed(() => props.items);
+const my_vacancies = computed(() => props.items);
 
 // const vacancyStore = useVacancyStore();
 // const {getMyDrafts} = vacancyStore;

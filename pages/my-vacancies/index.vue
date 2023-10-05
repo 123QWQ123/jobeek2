@@ -12,27 +12,15 @@ useHead({
 });
 
 const authStore = useAuthStore();
-const vacancyStore = useVacancyStore();
 
 const isEmployer = computed(() => authStore.isEmployer);
 const user = computed(() => authStore.user);
 const employer = computed(() => authStore.employer);
 
-const isLoading = ref(false);
-
 watch(isEmployer, (new_value) => {
   if (!new_value) {
     navigateTo({ name: 'my-resumes' });
   }
-});
-
-const route = useRoute();
-
-const isShownRestContent = ref(false);
-
-const form = useVacancyForm();
-onMounted(async () => {
-    isShownRestContent.value = true;
 });
 
 </script>

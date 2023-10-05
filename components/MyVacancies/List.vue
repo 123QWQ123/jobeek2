@@ -20,15 +20,15 @@
         </div>
         <div class="col d-flex justify-content-between align-items-center py-4" >
 
-          <ul class="nav nav-tabs w-100">
-            <li class="nav-item" :class="{'active': form.status === 'draft'}" @click="onFilterChange('draft')">
-              <a  class="nav-link"  :class="{'active': form.status === 'draft'}" aria-current="page" href="#">Черновек</a>
+          <ul class="nav nav-tabs vacancy_tabs w-100 ">
+            <li class="nav-item " :class="{'active': form.status === 'draft'}" @click="onFilterChange('draft')">
+              <a  class="nav-link"  :class="{'active': form.status === 'draft'}" aria-current="page" href="#">Черновек({{ totalDrafts }})</a>
             </li>
             <li class="nav-item" :class="{'active': form.status === 'active'}" @click="onFilterChange('active')">
-              <a class="nav-link" :class="{'active': form.status === 'active'}" href="#">Активные</a>
+              <a class="nav-link" :class="{'active': form.status === 'active'}" href="#">Активные({{ totalActiveVacancies }})</a>
             </li>
             <li class="nav-item" :class="{'active': form.status === 'archived'}" @click="onFilterChange('archived')">
-              <a class="nav-link" :class="{'active': form.status === 'archived'}" href="#">В архиве</a>
+              <a class="nav-link" :class="{'active': form.status === 'archived'}" href="#">В архиве({{ totalArchivedVacancies }})</a>
             </li>
           </ul>
             <div class="d-inline-flex">
@@ -56,7 +56,8 @@
           </div>
 
           <MyVacanciesDraftList v-if="form.status === 'draft'" :items="vacancyStore.my_drafts"/>
-          <MyVacanciesUndraftedList v-else :items="vacancyStore.my_vacancies"/>
+          <MyVacanciesActiveList v-else-if="form.status === 'active'" :items="vacancyStore.my_vacancies"/>
+          <MyVacanciesArchivedList  v-else :items="vacancyStore.my_archived_vacancies"/>
 
           <div class="d-flex mt-4 justify-content-between" v-if="my_total > 0">
             <button class="btn btn-primary btn-group-sm" :class="{disabled: isPrevDisabled}"  @click="prevPage">Prev</button>
@@ -86,7 +87,7 @@ import {useMyVacanciesFilterOptions} from "../../composables/useMyVacanciesFilte
 
 const router = useRouter();
 const vacancyStore = useVacancyStore();
-const {getMyVacancies, getMyDrafts} = vacancyStore;
+const {getMyVacancies, getMyDrafts, getArchivedVacancies} = vacancyStore;
 
 const sortingOptions = ref(useMyVacancySortingOptions());
 const perPageOptions = ref(useMyVacancyPerPageOptions());
@@ -116,6 +117,9 @@ const total = computed(() => {
     return vacancyStore.my_vacancies.length;
   }
 })
+const totalDrafts = computed(() =>  vacancyStore.my_drafts.length);
+const totalActiveVacancies = computed(() =>  vacancyStore.my_vacancies.length);
+const totalArchivedVacancies = computed(() =>  vacancyStore.my_archived_vacancies.length);
 const providers = ref({
   hh: true,
   superjob: true
@@ -263,24 +267,18 @@ const onChangeSorting = async(sorting) => {
 }
 
 // const router = useRouter();
-const onFilterChange = (filter) => {
-    // isLoading.value = true;
+const onFilterChange = async(filter) => {
     form.value.status = filter;
-    // const params = useMyVacancyForm(form.value, 'front');
-    router.replace({query: {status: filter }});
-    navigateTo({name: 'my-vacancies', query: {status: filter }});
-    // navigateTo({
-    //   name: 'my-vacancies',
-    //   query: {
-    //     status: filter
-    //   }
-    // })
-    // if (filter === 'draft'){
-    //   await getMyDrafts(params);
-    // }else{
-    //   await getMyVacancies(params);
-    // }
-    // isLoading.value = false;
+    const params = {
+        status: filter
+    };
+    if (filter === 'draft'){
+      await getMyDrafts(params);
+    }else if(filter === 'active'){
+      await getMyVacancies(params);
+    }else{
+      await getArchivedVacancies(params);
+    }
 }
 const onProviderChange = async(provider) => {
     form.value.provider = provider;
@@ -310,6 +308,9 @@ const listStyles = {
 
 <style scoped>
 
+.vacancy_tabs .nav-link{
+  padding: 0.5rem 2rem;
+}
 .theme-checker input ~ .theme-checker-ui .circle.left{
   transform: translate(3px, -50%);
 }

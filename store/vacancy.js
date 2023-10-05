@@ -21,6 +21,7 @@ export const useVacancyStore = defineStore('vacancy', {
       my_draft_current_page: 1,
       my_vacancies: [],
       my_drafts: [],
+      my_archived_vacancies: [],
       my_favorite_vacancies: [],
       specializations: [],
       industries: [],
@@ -203,13 +204,25 @@ export const useVacancyStore = defineStore('vacancy', {
       return response;
     },
 
-    async getMyVacancies(payload) {
-      const response = await useApi('employer/vacancies', {
+    async getUserVacancies(payload) {
+      return useApi('employer/vacancies', {
         method: 'get',
         payload
       });
+    },
+    async getMyVacancies(payload) {
+      const response = await this.getUserVacancies(payload);
       if (response.hasOwnProperty('data') && 'data' in response.data){
         this.my_vacancies = response.data.data;
+        this.my_total = response.data.found;
+        this.current_page = response.data.current_page;
+      }
+      return response;
+    },
+    async getArchivedVacancies(payload) {
+      const response = await this.getUserVacancies(payload);
+      if (response.hasOwnProperty('data') && 'data' in response.data){
+        this.my_archived_vacancies = response.data.data;
         this.my_total = response.data.found;
         this.current_page = response.data.current_page;
       }
