@@ -181,7 +181,11 @@ watch(() => vacancyStore.my_vacancy, (newVacancy) => {
 
 const dictionaryStore = useDictionaryStore();
 const {getVacancyTypes} = dictionaryStore;
-await getVacancyTypes();
+onMounted(() => {
+  setTimeout(async() => {
+    await getVacancyTypes();
+  }, 500)
+})
 const addressOptions = computed(() => {
   return dictionaryStore.addresses.map((item) => ({name: item.raw, value: item.id}));
 });

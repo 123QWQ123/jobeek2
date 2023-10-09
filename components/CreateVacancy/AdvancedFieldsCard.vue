@@ -646,62 +646,67 @@ const {
   getGenders,
   getCovidVacRequirements,
 } = dictionaryStore;
-await getWorkTypes();
 const workTypeOptions = computed(() => {
   return dictionaryStore.work_types.map((item) => ({name: item.name, value: item.id}));
 });
-await getExperiences();
+
+
 const experienceOptions = computed(() => {
   return dictionaryStore.experiences.map((item) => ({name: item.name, value: item.id}));
 });
-await getSchedules();
 const scheduleOptions = computed(() => {
   return dictionaryStore.schedules.map((item) => ({name: item.name, value: item.id}));
 });
-await getWorkingDayOptions();
 const workingDaysOptions = computed(() => {
   return dictionaryStore.working_days.map((item) => ({name: item.name, value: item.id}));
 });
-await getWorkingTimeIntervalsOptions();
 const workingTimeIntervalOptions = computed(() => {
   return dictionaryStore.working_time_intervals.map((item) => ({name: item.name, value: item.id}));
 });
-await getWorkingTimeModesOptions();
 const workingTimeModesOptions = computed(() => {
   return dictionaryStore.working_time_modes.map((item) => ({name: item.name, value: item.id}));
 });
-await getExtendVacOptions();
 const extendVacOptions = computed(() => {
   return dictionaryStore.extend_vac.map((item) => ({name: item.name, value: item.id}));
 });
-await getPlaceOfWorks();
 const placeOfWorkOptions = computed(() => {
   return dictionaryStore.place_of_works.map((item) => ({name: item.name, value: item.id}));
 });
-await getEducations();
 const educationOptions = computed(() => {
   return dictionaryStore.educations.map((item) => ({name: item.name, value: item.id}));
 });
-await getMaritalStatus();
 const maritalStatusOptions = computed(() => {
   return dictionaryStore.marital_statuses.map((item) => ({name: item.name, value: item.id}));
 });
-await getChildren();
 const childrenOptions = computed(() => {
   return dictionaryStore.children.map((item) => ({name: item.name, value: item.id}));
 });
-await getGenders();
 const genderOptions = computed(() => {
   return dictionaryStore.genders.map((item) => ({name: item.name, value: item.id}));
 });
-await getCovidVacRequirements();
 const covidVacReqOptions = computed(() => {
   return dictionaryStore.covid_vaccination_requirement.map((item) => ({name: item.name, value: item.id}));
 });
 
 const {searchAddresses} = dictionaryStore;
-await searchAddresses();
-
+onMounted(() => {
+  setTimeout(async() => {
+    await getWorkTypes();
+    await getExperiences();
+    await getSchedules();
+    await getWorkingDayOptions();
+    await getWorkingTimeIntervalsOptions();
+    await getWorkingTimeModesOptions();
+    await getExtendVacOptions();
+    await getPlaceOfWorks();
+    await getEducations();
+    await getMaritalStatus();
+    await getChildren();
+    await getGenders();
+    await getCovidVacRequirements();
+    await searchAddresses();
+  }, 500)
+})
 const onAddressSearch  = async(newString) => {
   console.log(newString);
 }

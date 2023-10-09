@@ -15,8 +15,12 @@ import {v4 as uuidv4} from "uuid";
 
 const dictionaryStore = useDictionaryStore();
 const {getForeignLanguages, getLanguageLevels} = dictionaryStore;
-await getForeignLanguages();
-await getLanguageLevels();
+onMounted(() => {
+  setTimeout(async() => {
+    await getForeignLanguages();
+    await getLanguageLevels();
+  })
+})
 
 
 let items = [];

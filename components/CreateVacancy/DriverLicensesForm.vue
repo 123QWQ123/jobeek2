@@ -43,7 +43,11 @@ const driver_licenses_ids = props.modelValue.map((item) => {
 
 const driver_licenses = ref(driver_licenses_ids ?? []);
 const {getDriverLicenses} = dictionaryStore;
-await getDriverLicenses();
+onMounted(() => {
+  setTimeout(async() => {
+    await getDriverLicenses();
+  })
+})
 const check = (id) => {
     return driver_licenses.value.includes(id);
 }

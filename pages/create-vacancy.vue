@@ -108,8 +108,7 @@ const save = async(e) => {
           <div class="form-submit-container mt-2">
 
 
-            <button class="btn btn-outline-primary" type="button" @click="saveAsDraft">Сохранить как черновик</button>
-            <button class="button-accent" type="submit" @click="save">Сохранить и опубликовать</button>
+            <button class="btn btn-outline-primary" type="button" @click="saveAsDraft">Создать черновек</button>
           </div>
         </form>
         <form class="update-vacancy" action="" name="update-vacancy " v-else>

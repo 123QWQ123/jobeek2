@@ -115,8 +115,11 @@ watch(() => vacancyStore.my_vacancy, (newVacancy) => {
 
 const dictionaryStore = useDictionaryStore();
 const {getDriverLicenses} = dictionaryStore;
-await getDriverLicenses();
-
+onMounted(() => {
+  setTimeout(async() => {
+    await getDriverLicenses();
+  }, 500)
+})
 const {errors, handleErrorResponse} = useFormValidation();
 const save = async () => {
     if (isChanged.value){

@@ -3,7 +3,7 @@
     <MyVacanciesArchivedItem v-for="item in my_vacancies" :key="item.id" :item="item" />
   </ul>
   <div class="d-flex mt-4 pb-4 justify-content-center" v-else>
-    <p>Ничего не найдено - undrafted!</p>
+    <p>Ничего не найдено - archived!</p>
   </div>
 </template>
 

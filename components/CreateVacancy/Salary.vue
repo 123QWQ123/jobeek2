@@ -98,7 +98,11 @@ const isFirst = ref(true);
 
 
 const {getPaymentPeriodOptions} = dictionaryStore;
-await getPaymentPeriodOptions();
+onMounted(() => {
+  setTimeout(async() => {
+    await getPaymentPeriodOptions();
+  })
+})
 const currencyOptions = ref(useCurrencyOptions());
 const periodOptions = computed(() => {
   return dictionaryStore.payment_period.map((item) => ({name: item.name, value: item.id}));

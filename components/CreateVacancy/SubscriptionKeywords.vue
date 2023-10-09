@@ -27,7 +27,18 @@
 </template>
 
 <script setup>
+import {useDictionaryStore} from "~/store/dictionary";
+
 const emit = defineEmits(['update:modelValue']);
+
+const dictionaryStore = useDictionaryStore();
+const {getSubscriptionKeywordsSrws, getSubscriptionKeywordsSkwc} = dictionaryStore;
+onMounted(() => {
+  setTimeout(async()=>{
+    await getSubscriptionKeywordsSrws();
+    await getSubscriptionKeywordsSkwc();
+  }, 500)
+})
 
 const defaultOption = { srws: null, skwc: null, keyword: null, };
 const selectedKeywords = ref([ defaultOption ]);

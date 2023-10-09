@@ -109,7 +109,11 @@ watch(() => vacancyStore.my_vacancy, (newVacancy) => {
 
 const dictionaryStore = useDictionaryStore();
 const {getVacancyBillingTypes} = dictionaryStore;
-await getVacancyBillingTypes();
+onMounted(() => {
+  setTimeout(async () => {
+    await getVacancyBillingTypes();
+  }, 500)
+})
 const vacancyBillingTypeOptions = computed(() => {
   return dictionaryStore.vacancy_billing_types.map((item) => ({name: item.name, value: item.id}));
 });

@@ -143,13 +143,14 @@ onMounted(async() => {
       form.value.status = 'draft';
     }
   }
-  navigateTo({
-    query: {status: form.value.status}
-  })
+  // navigateTo({
+  //   query: {status: form.value.status}
+  // })
   isLoading.value = false;
   const params = useMyVacancyForm(form.value, 'backend');
-  await getMyVacancies(params);
-  await getMyDrafts(params);
+  await getMyDrafts({status: 'draft'});
+  await getMyVacancies({status: 'active'});
+  await getArchivedVacancies({status: 'archived'});
   isLoading.value = false;
 });
 

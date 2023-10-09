@@ -9,7 +9,6 @@
 import {useAuthStore} from "~/store/auth";
 import {useVacancyStore} from "~/store/vacancy";
 import {useResumeStore} from "~/store/resume";
-import {toast} from "vue3-toastify";
 import {storeToRefs} from "pinia";
 
 const { getConnectedEmployerProviders, importVacancies } = useVacancyStore();
@@ -24,16 +23,6 @@ onMounted(async() => {
 
   await getConnectedEmployerProviders();
   await getConnectedSeekerProviders();
-
-
-  setTimeout(async() => {
-    const resData = await importVacancies();
-
-    if (resData.hasOwnProperty('message')){
-      toast.info(resData.message, {autoClose: 3000});
-    }
-  }, 4000)
-
 
 })
 

@@ -90,9 +90,6 @@ const keyword = ref(props.keyword);
 const srws = ref(props.srws)
 const skwc = ref(props.skwc)
 const dictionaryStore = useDictionaryStore();
-const {getSubscriptionKeywordsSrws, getSubscriptionKeywordsSkwc} = dictionaryStore;
-await getSubscriptionKeywordsSrws();
-await getSubscriptionKeywordsSkwc();
 const subscription_keywords_srwsOptions = computed(() => {
   return dictionaryStore.subscription_keywords_srws.map((item) => ({name: item.name, value: item.id}));
 });

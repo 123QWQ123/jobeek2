@@ -163,7 +163,11 @@ const isDirect = computed(() => {
 
 const dictionaryStore = useDictionaryStore();
 const {getVacancyTypes} = dictionaryStore;
-await getVacancyTypes();
+onMounted(() => {
+  setTimeout(async() => {
+    await getVacancyTypes();
+  }, 500)
+})
 const vacancyTypeOptions = computed(() => {
   return dictionaryStore.vacancy_types.map((item) => ({name: item.name, value: item.id}));
 });
