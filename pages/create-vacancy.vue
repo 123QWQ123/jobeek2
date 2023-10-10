@@ -104,11 +104,8 @@ const save = async(e) => {
 
           <CreateVacancyCreateDraft :title="pageTitle"/>
 
-          <p class="text-lg-end">При создании резюме вы соглашаетесь с <a href="#">правилами работы сервиса</a> и даете согласие на обработку персональных данных, разрешенных для распространения</p>
           <div class="form-submit-container mt-2">
-
-
-            <button class="btn btn-outline-primary" type="button" @click="saveAsDraft">Создать черновек</button>
+            <button class="btn btn-outline-primary" type="button" @click="saveAsDraft">Далее</button>
           </div>
         </form>
         <form class="update-vacancy" action="" name="update-vacancy " v-else>

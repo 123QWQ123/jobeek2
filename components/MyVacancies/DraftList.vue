@@ -5,6 +5,7 @@
   <div class="d-flex mt-4 pb-4 justify-content-center" v-else>
     <p>Ничего не найдено!</p>
   </div>
+
 </template>
 
 <script setup>

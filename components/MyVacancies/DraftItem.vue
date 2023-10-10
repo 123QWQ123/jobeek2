@@ -35,8 +35,8 @@
         <div class="option-group selector-group">
           <div class="option" >
             <div class="custom-check-wrap">
-              <div class="theme-checker theme-checker--blue">
-                <input type="checkbox" id="hh" :checked="item.can_publish.hh"  @click="onChangeProviderStatus('hh', item.can_publish.hh)" />
+              <div class="theme-checker theme-checker--blue" :class="{'disabled': !canHHBeEnabled}">
+                <input type="checkbox" id="hh" :checked="hhProviderEnabled"  @click="toggle('hh')" />
                 <div class="theme-checker-ui">
                   <div class="circle"></div>
                 </div>
@@ -49,8 +49,8 @@
           </div>
           <div class="option">
             <div class="custom-check-wrap">
-              <div class="theme-checker theme-checker--blue">
-                <input type="checkbox" id="sj" :checked="item.can_publish.superjob" />
+              <div class="theme-checker theme-checker--blue" :class="{'disabled': !canSuperjobBeEnabled}" >
+                <input type="checkbox" id="sj" :checked="superjobProviderEnabled" @click="toggle('superjob')"/>
                 <div class="theme-checker-ui">
                   <div class="circle"></div>
                 </div>
@@ -132,7 +132,7 @@
             <div class="group">
               <div class="check-block">
                 <div class="checkbox">
-                  <input type="checkbox" id="enable-push" checked />
+                  <input type="checkbox" id="enable-push" />
                   <div class="checkbox-mask">
                     <img src="~/assets/img/svg/check.svg" alt="#" />
                   </div>
@@ -168,8 +168,37 @@ import moment from "moment";
 import 'moment/locale/ru';
 import {useVacancyStore} from "~/store/vacancy";
 import Swal from "sweetalert2";
+import {toast} from "vue3-toastify";
 const props = defineProps(['item']);
-const {item} = props;
+const item = computed(() => props.item);
+
+const hhProviderEnabled = computed(() => {
+  if (item.value){
+    return !!item.value.providers.find((prov) => prov.name=='hh');
+  }
+  return false;
+})
+
+const superjobProviderEnabled = computed(() => {
+  if (item.value){
+    return !!item.value.providers.find((prov) => prov.name=='superjob');
+  }
+  return false;
+})
+
+const canHHBeEnabled = computed(() => {
+  if (item.value){
+    return vacancyStore.providers.hh;
+  }
+  return false;
+})
+
+const canSuperjobBeEnabled = computed(() => {
+  if (item.value){
+    return vacancyStore.providers.superjob;
+  }
+  return false;
+})
 
 const salary_from = computed(() => {
   if (props.item.salary_from){
@@ -220,7 +249,7 @@ const employerLogo = computed(() => {
 });
 
 
-const published_date = moment(item?.published_date).locale('ru');
+const published_date = computed(() => moment(item.value?.published_date).locale('ru'));
 
 const {deleteDraft} = useVacancyStore();
 const onDelete = async(id) => {
@@ -237,24 +266,49 @@ const onDelete = async(id) => {
   window.location.reload();
 }
 
-const onChangeProviderStatus = async(provider) => {
-  console.log(provider);
-  console.log(item);
-  // const resData = await deleteDraft(id);
-  // if(resData.status !== 'success'){
-  //   Swal.fire({
-  //     title: 'Ошибка!',
-  //     text: resData.message,
-  //     icon: "error",
-  //     confirmButtonText: 'ОК'
-  //   });
-  //   return;
-  // }
+const vacancyStore = useVacancyStore();
+const {getConnectedEmployerProviders, getEmployerProvidersAuthEndpoints, getMyVacancy, updateVacancy, getMyDrafts} = vacancyStore;
+await getConnectedEmployerProviders();
 
+const resetObject = computed(() => {
+  return {
+    superjob: superjobProviderEnabled.value,
+    hh: hhProviderEnabled.value,
+  }
+});
+
+console.log(resetObject.value);
+const selectedProviders = ref(resetObject.value);
+
+const toggle = async (provider) => {
+    selectedProviders.value[provider] = !selectedProviders.value[provider];
+    const providerParams = [];
+    if (selectedProviders.value.hh){
+      providerParams.push('hh');
+    }
+    if (selectedProviders.value.superjob){
+      providerParams.push('superjob');
+    }
+
+    const data = {
+      providers: providerParams
+    };
+    data.action = 'UpdateProviders';
+    const resData = await updateVacancy(item.value.id, data);
+    if (resData.status !== 'success'){
+      toast.info(resData.message, {autoClose: 3000});
+    }
+    await getMyDrafts()
 }
-
-
+const openProviderAuthUrl = (url) => {
+  window.open(url);
+}
 </script>
 
-<style>
+<style scoped>
+
+.theme-checker.disabled *{
+  -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+  filter: grayscale(100%);
+}
 </style>

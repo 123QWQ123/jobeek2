@@ -228,11 +228,12 @@ export const useVacancyStore = defineStore('vacancy', {
       }
       return response;
     },
-    async getMyDrafts(payload) {
+    async getMyDrafts(payload = {}) {
       const response = await useApi('employer/vacancy/drafts', {
         method: 'get',
         payload
       });
+      console.log(response);
       if (response.hasOwnProperty('data') && 'data' in response.data){
         this.my_drafts = response.data.data;
         this.my_draft_total = response.data.found;
@@ -284,7 +285,7 @@ export const useVacancyStore = defineStore('vacancy', {
       }
       return data;
     },
-    async getSpecializations(payload) {
+    async getSpecializations(payload = URLSearchParams) {
 
       if (this.specializations.length > 0){
         return this.specializations;
@@ -298,7 +299,7 @@ export const useVacancyStore = defineStore('vacancy', {
       }
       return data;
     },
-    async getIndustries(payload) {
+    async getIndustries(payload = URLSearchParams) {
       if (this.industries.length > 0){
         return this.industries;
       }
@@ -312,7 +313,7 @@ export const useVacancyStore = defineStore('vacancy', {
       }
       return data;
     },
-    async getMetros(payload) {
+    async getMetros(payload = URLSearchParams) {
       const {data} = await useApi('metro', {
         method: 'get',
         payload
@@ -324,7 +325,7 @@ export const useVacancyStore = defineStore('vacancy', {
       return data;
     },
 
-    async addToFavorite(payload) {
+    async addToFavorite(payload = URLSearchParams) {
       const response = await useApi('vacancy/favorite', {
         method: 'post',
         payload
@@ -332,7 +333,7 @@ export const useVacancyStore = defineStore('vacancy', {
       return response;
     },
 
-    async removeFromFavorite(payload) {
+    async removeFromFavorite(payload = URLSearchParams) {
       const response = await useApi('vacancy/favorite', {
         method: 'delete',
         payload
@@ -357,10 +358,20 @@ export const useVacancyStore = defineStore('vacancy', {
 
     async restoreVacancy(id, payload = URLSearchParams) {
       const response = await useApi('employer/vacancy/draft/' + id, {
-        method: 'delete',
+        method: 'POST',
       });
       return response;
     },
+
+    async archiveActiveVacancy(id, payload = URLSearchParams) {
+      const response = await useApi('employer/vacancy/archiving/' + id, {
+        method: 'PUT',
+        content_type: 'application/json',
+        payload
+      });
+      return response;
+    },
+
 
   },
 })

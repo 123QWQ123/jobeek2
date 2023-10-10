@@ -310,7 +310,7 @@ const listStyles = {
 <style scoped>
 
 .vacancy_tabs .nav-link{
-  padding: 0.5rem 2rem;
+  padding: 0.8rem 2rem 0.5rem 2rem;
 }
 .theme-checker input ~ .theme-checker-ui .circle.left{
   transform: translate(3px, -50%);

@@ -66,7 +66,7 @@
           <!--          <div class="date">с {{ published_date.format('D') }} {{ published_date.format('MMMM') }} по 24 марта</div>-->
           <div class="resume-counts">
             <div class="count cursor-pointer" @click.prevent="toggleViews">
-              <strong class="js-view-stat">{{item.views_count}}</strong><span>Показы</span>
+              <strong class="js-view-stat">{{totalViewCount}}</strong><span>Показы</span>
             </div>
 <!--            <div class="count">-->
 <!--              <strong>{{item.new_views}}</strong><span>Просмотров</span>-->
@@ -84,9 +84,9 @@
           <button class="close close-stats" @click.preven="toggleViews">Скрыть</button>
         </div>
         <div class="resume-card-stats-body" >
-          <div class="stat"> <strong>{{ item.views_count }}</strong><a href="#">Все  </a></div>
-          <div class="stat"> <strong>15</strong><a href="#"><img src="~/assets/img/svg/hh.svg" alt="#">Hh.ru </a></div>
-          <div class="stat"> <strong>9</strong><a href="#"><img src="~/assets/img/svg/sb.svg" alt="#">Superjob.ru   </a></div>
+          <div class="stat"> <strong>{{ totalViewCount }}</strong><a href="#">Все  </a></div>
+          <div class="stat"> <strong>{{ hhTotalCount }}</strong><a href="#"><img src="~/assets/img/svg/hh.svg" alt="#">Hh.ru </a></div>
+          <div class="stat"> <strong>{{superjobTotalCount}}</strong><a href="#"><img src="~/assets/img/svg/sb.svg" alt="#">Superjob.ru   </a></div>
         </div>
       </div>
 
@@ -103,7 +103,7 @@
               </div>
               <label for="sj">
                 <img src="~/assets/img/logos/hhmini.svg" alt="#" />
-                <span>Superjob.ru</span>
+                <span>HH</span>
               </label>
             </div>
           </div>
@@ -117,7 +117,7 @@
               </div>
               <label for="sj">
                 <img src="~/assets/img/logos/sj.svg" alt="#" />
-                <span>Superjob.ru</span>
+                <span>Superjob</span>
               </label>
             </div>
           </div>
@@ -167,7 +167,7 @@
                 </div>
                 <span>
                   <nuxt-link :to="{name: 'create-vacancy', query: {draft_id: item.id}}" class="title">
-                      Редактировать
+                      Создать копию
                   </nuxt-link>
                 </span>
               </button>
@@ -230,6 +230,28 @@ import {useVacancyStore} from "~/store/vacancy";
 import Swal from "sweetalert2";
 const props = defineProps(['item']);
 const {item} = props;
+
+const hhTotalCount = computed(() => {
+  let total = 0;
+  if (props.item.providers.length){
+    total += props.item.providers.reduce((acc, item) => {
+      return item.name==='hh' ? acc + item.views_count : acc;
+    }, 0) ;
+  }
+  return total;
+});
+const superjobTotalCount = computed(() => {
+  let total = 0;
+  if (props.item.providers.length){
+    total += props.item.providers.reduce((acc, item) => {
+      return item.name==='superjob' ? acc + item.views_count : acc;
+    }, 0) ;
+  }
+  return total;
+});
+const totalViewCount = computed(() => {
+  return superjobTotalCount.value + hhTotalCount.value;
+});
 const salary_from = computed(() => {
   if (props.item.salary && props.item.salary.hasOwnProperty('from')){
     return props.item.salary.from;

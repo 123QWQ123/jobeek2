@@ -14,7 +14,7 @@
       <div class="w-box-body" :class="{collapse: isCollapsed}">
 
         <div class="input-row" >
-          <label>имя:</label>
+          <label>Имя:</label>
           <div class="input-wrapper mt-2">
             <input  v-model="state.name.val"  @focusin="onFocusInput('name')"/>
             <div class="text-danger d-block" v-if="errors.contacts?.name">

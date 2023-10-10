@@ -95,6 +95,7 @@ const useApi = async (method, options = {}) => {
                 }else{
                     body._method = 'PUT';
                 }
+                console.log(body);
                 response = await axios.post(
                     url,
                     body,
