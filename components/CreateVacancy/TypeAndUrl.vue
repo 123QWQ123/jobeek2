@@ -203,6 +203,9 @@ const isCompleted = computed(() => {
     return false;
 });
 
+defineExpose({
+  save
+})
 </script>
 
 <style>

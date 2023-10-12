@@ -16,7 +16,7 @@
         </div>
         <NuxtLink class="create-button" type="link" :to="{name: 'create-vacancy'}" >Создать вакансию</NuxtLink>
         <div class="col d-flex justify-content-between mt-4" >
-          <h1 ref="filterRef" class="lk-page-title mt-4">Ваши вакансии({{ total }})</h1>
+          <h1 ref="filterRef" class="lk-page-title mt-4">Ваши вакансии</h1>
         </div>
         <div class="col d-flex justify-content-between align-items-center py-4" >
 

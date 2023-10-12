@@ -1,8 +1,7 @@
 <script setup>
-import {storeToRefs} from "pinia";
-import {useResumeStore} from "~/store/resume";
 import {useVacancyStore} from "~/store/vacancy";
 import useAlert from "~/composables/useAlert";
+import Swal from "sweetalert2";
 
 definePageMeta({
   layout: "cabinet",
@@ -78,8 +77,77 @@ const paramProviders = computed(() => {
   }
   return [];
 })
+
+const advanced_fields_el = ref();
+const cities_el = ref();
+const metro_el = ref();
+const prof_roles_el = ref();
+const type_el = ref();
+const salary_el = ref();
+const skills_el = ref();
+const address_el = ref();
+const driver_lic_el = ref();
+const contacts_el = ref();
+const languages_el = ref();
+const billing_el = ref();
+
+const saveAllSections = async () => {
+  return Promise.all([
+    new Promise((resolve, reject) => {
+      advanced_fields_el.value.save();
+      setTimeout(() => resolve(1), 0);
+    }),
+    new Promise((resolve, reject) => {
+      cities_el.value.save();
+      setTimeout(() => resolve(1), 0);
+    }),
+    new Promise((resolve, reject) => {
+      metro_el.value.save();
+      setTimeout(() => resolve(1), 0);
+    }),
+    new Promise((resolve, reject) => {
+      prof_roles_el.value.save();
+      setTimeout(() => resolve(1), 0);
+    }),
+    new Promise((resolve, reject) => {
+      type_el.value.save();
+      setTimeout(() => resolve(1), 0);
+    }),
+    new Promise((resolve, reject) => {
+      salary_el.value.save();
+      setTimeout(() => resolve(1), 0);
+    }),
+    new Promise((resolve, reject) => {
+      skills_el.value.save();
+      setTimeout(() => resolve(1), 0);
+    }),
+    new Promise((resolve, reject) => {
+      address_el.value.save();
+      setTimeout(() => resolve(1), 0);
+    }),
+    new Promise((resolve, reject) => {
+      driver_lic_el.value.save();
+      setTimeout(() => resolve(1), 0);
+    }),
+    new Promise((resolve, reject) => {
+      contacts_el.value.save();
+      setTimeout(() => resolve(1), 0);
+    }),
+    new Promise((resolve, reject) => {
+      languages_el.value.save();
+      setTimeout(() => resolve(1), 0);
+    }),
+    new Promise((resolve, reject) => {
+      billing_el.value.save();
+      setTimeout(() => resolve(1), 0);
+    }),
+  ])
+}
 const save = async(e) => {
   e.preventDefault();
+
+  const resAll = await saveAllSections();
+  console.log(resAll);
   console.log('saving and publishing or redirecting to edit page');
   // employer/vacancy/publish/408
   console.log(paramProviders.value);
@@ -87,6 +155,14 @@ const save = async(e) => {
     providers: paramProviders.value
   }
   const resData = await publishDraft(draftId.value, payload);
+  if (resData.hasOwnProperty('status') && resData.status !== 'success'){
+    Swal.fire({
+      title: 'Ошибка!',
+      text: resData.message,
+      icon: "error",
+      confirmButtonText: 'ОК'
+    });
+  }
   console.log(resData);
 }
 // groups[]=
@@ -111,18 +187,18 @@ const save = async(e) => {
         <form class="update-vacancy" action="" name="update-vacancy " v-else>
           <CreateVacancyProviders v-model="providers" />
 
-          <CreateVacancyAdvancedFieldsCard :providers="providers" />
-          <CreateVacancyCities :providers="providers"/>
-          <CreateVacancyMetroCard :providers="providers"/>
-          <CreateVacancyProfessionalRoles  :providers="providers"/>
-          <CreateVacancyTypeAndUrl :providers="providers"/>
-          <CreateVacancySalaryCard :providers="providers"/>
-          <CreateVacancySkillsCard :providers="providers"/>
-          <CreateVacancyAddressCard :providers="providers"/>
-          <CreateVacancyDriverLicensesCard :providers="providers"/>
-          <CreateVacancyContactsCard :providers="providers"/>
-          <CreateVacancyLanguagesCard :providers="providers"/>
-          <CreateVacancyBillingTypeCard :providers="providers"/>
+          <CreateVacancyAdvancedFieldsCard ref="advanced_fields_el" :providers="providers" />
+          <CreateVacancyCities ref="cities_el" :providers="providers"/>
+          <CreateVacancyMetroCard ref="metro_el" :providers="providers"/>
+          <CreateVacancyProfessionalRoles ref="prof_roles_el" :providers="providers"/>
+          <CreateVacancyTypeAndUrl ref="type_el" :providers="providers"/>
+          <CreateVacancySalaryCard ref="salary_el" :providers="providers"/>
+          <CreateVacancySkillsCard ref="skills_el" :providers="providers"/>
+          <CreateVacancyAddressCard ref="address_el" :providers="providers"/>
+          <CreateVacancyDriverLicensesCard ref="driver_lic_el" :providers="providers"/>
+          <CreateVacancyContactsCard ref="contacts_el" :providers="providers"/>
+          <CreateVacancyLanguagesCard ref="languages_el" :providers="providers"/>
+          <CreateVacancyBillingTypeCard ref="billing_el" :providers="providers"/>
 
           <p class="text-lg-end">При создании ваканции вы соглашаетесь с <a href="#">правилами работы сервиса</a> и даете согласие на обработку персональных данных, разрешенных для распространения</p>
           <div class="form-submit-container mt-2">

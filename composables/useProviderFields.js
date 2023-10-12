@@ -17,7 +17,6 @@ export default function useProviderFields(state = null, fields = null) {
             });
             return;
         }
-        // console.log(!newProviders.hh && !newProviders.superjob);
         if (!newProviders.hh && !newProviders.superjob){
             Object.keys(fields.value.hh).map((item) => {
                 if (state[item]){

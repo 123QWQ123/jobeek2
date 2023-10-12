@@ -63,7 +63,7 @@ const isUpdated = ref(false);
 
 const providers = computed(() => props.providers)
 const isHidden = ref(props.providers.hh ?? false);
-watch(props.providers, (newProviders) => {
+watch(() => props.providers, (newProviders) => {
     isHidden.value = newProviders.hh;
 })
 
@@ -149,6 +149,9 @@ const isCompleted = computed(() => {
     return false;
 });
 
+defineExpose({
+  save
+})
 </script>
 
 <style>

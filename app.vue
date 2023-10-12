@@ -11,10 +11,9 @@ import {useVacancyStore} from "~/store/vacancy";
 import {useResumeStore} from "~/store/resume";
 import {storeToRefs} from "pinia";
 
-const { getConnectedEmployerProviders, importVacancies } = useVacancyStore();
+const { getConnectedEmployerProviders } = useVacancyStore();
 const { getConnectedSeekerProviders } = useResumeStore();
 const vacancyStore = useVacancyStore();
-const {employerMessage} = storeToRefs(vacancyStore);
 
 
 const authStore =  useAuthStore();

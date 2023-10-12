@@ -57,7 +57,6 @@
 
   </div>
 
-
 </template>
 
 <script setup>
@@ -141,7 +140,7 @@ const fields = ref({
 });
 
 const {walkThroughFields} = useProviderFields(state, fields);
-watch(props.providers, walkThroughFields);
+watch(() => props.providers, walkThroughFields);
 
 onMounted(() => {
   console.log(props.providers);
@@ -192,10 +191,14 @@ const addressOptions = computed(() => {
 
 const {searchAddresses} = dictionaryStore;
 const addressErrorMessage = ref(null);
-const resData = await searchAddresses();
-if (resData.hasOwnProperty('message')){
-  addressErrorMessage.value = resData.message;
-}
+onMounted(() => {
+  setTimeout(async() => {
+    const resData = await searchAddresses();
+    if (resData.hasOwnProperty('message')){
+      addressErrorMessage.value = resData.message;
+    }
+  }, 500)
+})
 
 const onAddressSearch  = async(newString) => {
   console.log(newString);
@@ -231,6 +234,9 @@ const isCompleted = computed(() => {
     return false;
 });
 
+defineExpose({
+  save
+})
 </script>
 
 <style>

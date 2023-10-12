@@ -180,7 +180,6 @@ export const useVacancyStore = defineStore('vacancy', {
     },
 
     async updateVacancy(id, payload, content_type = 'application/json') {
-      console.log(id, payload, content_type);
       const response = await useApi('employer/vacancy/draft/' + id, {
         method: 'PUT',
         content_type,
@@ -193,11 +192,12 @@ export const useVacancyStore = defineStore('vacancy', {
     },
 
     async publishDraft(id, payload = {}, content_type = 'application/json') {
-      const response = await useApi('employer/vacancy/' + id, {
+      const response = await useApi('employer/vacancy/publish/' + id, {
         method: 'POST',
         content_type,
         payload
       });
+
       // if ('data' in response && response.data.status === 'success'){
       //   this.resume = response.data;
       // }

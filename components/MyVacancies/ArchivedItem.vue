@@ -122,6 +122,35 @@
             </div>
           </div>
         </div>
+        <div class="d-inline-flex ms-0 ms-lg-auto">
+          <div class="d-inline-flex flex-column flex-lg-row mt-4 mt-lg-0 mt-md-0" >
+            <div class="check-block mb-2 mb-lg-0 mb-md-0">
+              <div class="checkbox">
+                <input type="checkbox" id="enable-push" />
+                <div class="checkbox-mask">
+                  <img src="~/assets/img/svg/check.svg" alt="#" />
+                </div>
+              </div>
+              <label for="enable-push"
+              >Подключить Push-уведомления
+              </label>
+            </div>
+            <div class="check-block">
+              <div class="checkbox">
+                <input
+                    type="checkbox"
+                    id="enable-email-notification"
+                />
+                <div class="checkbox-mask">
+                  <img src="~/assets/img/svg/check.svg" alt="#" />
+                </div>
+              </div>
+              <label for="enable-email-notification"
+              >Подключить E-mail уведомления</label
+              >
+            </div>
+          </div>
+        </div>
         <div class="params-button-container ms-auto"  v-click-outside.once="closeContextMenu">
           <button class="resume-action params-button" @click="toggleContextMenu">
             <svg
@@ -188,33 +217,6 @@
                 </div>
                 <span>Удалить </span>
               </button>
-            </div>
-            <div class="group">
-              <div class="check-block">
-                <div class="checkbox">
-                  <input type="checkbox" id="enable-push" checked />
-                  <div class="checkbox-mask">
-                    <img src="~/assets/img/svg/check.svg" alt="#" />
-                  </div>
-                </div>
-                <label for="enable-push"
-                >Подключить Push-уведомления
-                </label>
-              </div>
-              <div class="check-block">
-                <div class="checkbox">
-                  <input
-                      type="checkbox"
-                      id="enable-email-notification"
-                  />
-                  <div class="checkbox-mask">
-                    <img src="~/assets/img/svg/check.svg" alt="#" />
-                  </div>
-                </div>
-                <label for="enable-email-notification"
-                >Подключить E-mail уведомления</label
-                >
-              </div>
             </div>
           </div>
         </div>
