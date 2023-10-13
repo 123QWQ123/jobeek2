@@ -92,78 +92,56 @@ const languages_el = ref();
 const billing_el = ref();
 
 const saveAllSections = async () => {
-  return Promise.all([
-    new Promise((resolve, reject) => {
-      advanced_fields_el.value.save();
-      setTimeout(() => resolve(1), 0);
-    }),
-    new Promise((resolve, reject) => {
-      cities_el.value.save();
-      setTimeout(() => resolve(1), 0);
-    }),
-    new Promise((resolve, reject) => {
-      metro_el.value.save();
-      setTimeout(() => resolve(1), 0);
-    }),
-    new Promise((resolve, reject) => {
-      prof_roles_el.value.save();
-      setTimeout(() => resolve(1), 0);
-    }),
-    new Promise((resolve, reject) => {
-      type_el.value.save();
-      setTimeout(() => resolve(1), 0);
-    }),
-    new Promise((resolve, reject) => {
-      salary_el.value.save();
-      setTimeout(() => resolve(1), 0);
-    }),
-    new Promise((resolve, reject) => {
-      skills_el.value.save();
-      setTimeout(() => resolve(1), 0);
-    }),
-    new Promise((resolve, reject) => {
-      address_el.value.save();
-      setTimeout(() => resolve(1), 0);
-    }),
-    new Promise((resolve, reject) => {
-      driver_lic_el.value.save();
-      setTimeout(() => resolve(1), 0);
-    }),
-    new Promise((resolve, reject) => {
-      contacts_el.value.save();
-      setTimeout(() => resolve(1), 0);
-    }),
-    new Promise((resolve, reject) => {
-      languages_el.value.save();
-      setTimeout(() => resolve(1), 0);
-    }),
-    new Promise((resolve, reject) => {
-      billing_el.value.save();
-      setTimeout(() => resolve(1), 0);
-    }),
-  ])
+  const promises = await Promise.all([
+    advanced_fields_el.value.save(true),
+    cities_el.value.save(true),
+    metro_el.value.save(true),
+    prof_roles_el.value.save(true),
+    type_el.value.save(true),
+    salary_el.value.save(true),
+    skills_el.value.save(true),
+    address_el.value.save(true),
+    driver_lic_el.value.save(true),
+    contacts_el.value.save(true),
+    languages_el.value.save(true),
+    billing_el.value.save(true),
+  ]);
+
+  console.log(promises);
+  const promisesResult = promises.every((item) => item === true);
+
+  console.log(promisesResult);
+  return new Promise((resolve, reject) => promisesResult ? resolve(true) : reject(false));
+
 }
 const save = async(e) => {
   e.preventDefault();
 
-  const resAll = await saveAllSections();
-  console.log(resAll);
-  console.log('saving and publishing or redirecting to edit page');
-  // employer/vacancy/publish/408
-  console.log(paramProviders.value);
-  const payload = {
-    providers: paramProviders.value
-  }
-  const resData = await publishDraft(draftId.value, payload);
-  if (resData.hasOwnProperty('status') && resData.status !== 'success'){
-    Swal.fire({
-      title: 'Ошибка!',
-      text: resData.message,
-      icon: "error",
-      confirmButtonText: 'ОК'
-    });
-  }
-  console.log(resData);
+  console.log(1);
+  saveAllSections().then(() => {
+    console.log('success');
+  }).catch(() => {
+    console.log('error');
+  });
+
+  // console.log(resAll);
+  // console.log(resAll);
+  // console.log('saving and publishing or redirecting to edit page');
+  // // employer/vacancy/publish/408
+  // console.log(paramProviders.value);
+  // const payload = {
+  //   providers: paramProviders.value
+  // }
+  // const resData = await publishDraft(draftId.value, payload);
+  // if (resData.hasOwnProperty('status') && resData.status !== 'success'){
+  //   Swal.fire({
+  //     title: 'Ошибка!',
+  //     text: resData.message,
+  //     icon: "error",
+  //     confirmButtonText: 'ОК'
+  //   });
+  // }
+  // console.log(resData);
 }
 // groups[]=
 </script>
@@ -184,7 +162,7 @@ const save = async(e) => {
             <button class="btn btn-outline-primary" type="button" @click="saveAsDraft">Далее</button>
           </div>
         </form>
-        <form class="update-vacancy" action="" name="update-vacancy " v-else>
+        <form class="update-vacancy" v-else>
           <CreateVacancyProviders v-model="providers" />
 
           <CreateVacancyAdvancedFieldsCard ref="advanced_fields_el" :providers="providers" />
@@ -205,7 +183,7 @@ const save = async(e) => {
 
 
             <button class="btn btn-outline-primary" type="button" @click="saveAsDraft">Сохранить как черновик</button>
-            <button class="button-accent" type="submit" @click="save">Сохранить и опубликовать</button>
+            <button class="button-accent" type="submit" @click.prevent="save">Сохранить и опубликовать</button>
           </div>
         </form>
       </div>

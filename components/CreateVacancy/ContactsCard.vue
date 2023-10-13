@@ -2,7 +2,7 @@
 
   <div class="w-box" v-click-outside="save">
     <div class="w-box-head">
-      <h3 class="title">Контакты</h3>
+      <h3 class="title">Контакты({{ isChanged }})</h3>
       <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
 
     </div>
@@ -71,8 +71,7 @@
           <div class="input-wrapper mt-2">
             <textarea class="form-control" v-model="state.company_description.val"
                       @focusin="() => errors.company_description = ''" > </textarea>
-            <div class="text-danger d-block" v-if="errors.company_description">
-<!--              Вам нужно ввести о компании!-->
+            <div class="text-danger d-block" v-if="errors.contacts?.company_description">
               {{ errors.contacts?.company_description }}
             </div>
           </div>
@@ -184,7 +183,7 @@ const fields = ref({
 });
 
 const {walkThroughFields} = useProviderFields(state, fields);
-watch(props.providers, walkThroughFields);
+watch(() => props.providers, walkThroughFields);
 
 onMounted(() => {
   walkThroughFields(props.providers);
@@ -232,16 +231,7 @@ watch(() => vacancyStore.my_vacancy, (newVacancy) => {
 const dictionaryStore = useDictionaryStore();
 const {getVacancyTypes} = dictionaryStore;
 await getVacancyTypes();
-const addressOptions = computed(() => {
-  return dictionaryStore.addresses.map((item) => ({name: item.raw, value: item.id}));
-});
 
-const {searchAddresses} = dictionaryStore;
-// await searchAddresses();
-
-const onAddressSearch  = async(newString) => {
-  console.log(newString);
-}
 const {errors, handleErrorResponse} = useFormValidation();
 const phonesErrors = computed(() => {
   if (errors.value.contacts?.phones){
@@ -255,8 +245,9 @@ const onFocusInput = (key) => {
   }
 }
 // Object.assign(errors, {contacts: {}});
-const save = async () => {
-    if (isChanged.value){
+const save = async (is_from_parent = false) => {
+
+  if (isChanged.value){
         state.isLoading = true;
         // validate();
         errors.value = {};
@@ -269,11 +260,18 @@ const save = async () => {
         console.log(resData);
         isUpdated.value = true;
         if (resData.status !== 'success'){
-            return handleErrorResponse(resData.data);
+          return handleErrorResponse(resData.data);
         }
+
         isChanged.value = false;
         isSaved.value = false;
         isUpdated.value = false;
+        if (is_from_parent)
+        {
+          return new Promise((resolve, reject) => {
+            resolve(true);
+          });
+        }
 
     }
 }

@@ -2,7 +2,7 @@
 
   <div class="w-box" v-click-outside="save">
     <div class="w-box-head">
-      <h3 class="title">Где публиковать?</h3>
+      <h3 class="title">Где публиковать?({{isChanged}})</h3>
       <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
 
     </div>
@@ -123,8 +123,9 @@ const updateCityInput = async (newValue = '') => {
 
 
 const {errors, handleErrorResponse} = useFormValidation();
-const save = async () => {
-    if (isChanged.value){
+const save = async (is_from_parent = false) => {
+
+  if (isChanged.value){
         state.isLoading = true;
         errors.value = {};
         state.errorMessage = "";
@@ -134,12 +135,19 @@ const save = async () => {
         resData = await updateVacancy(draftID.value, jsonData);
         isUpdated.value = true;
         if (resData.status !== 'success'){
-            return handleErrorResponse(resData.data);
-        }
-        isChanged.value = false;
-        isSaved.value = false;
-        isUpdated.value = false;
+      return handleErrorResponse(resData.data);
     }
+
+    isChanged.value = false;
+    isSaved.value = false;
+    isUpdated.value = false;
+    if (is_from_parent)
+    {
+      return new Promise((resolve, reject) => {
+        resolve(true);
+      });
+    }
+  }
 }
 
 const isCompleted = computed(() => {

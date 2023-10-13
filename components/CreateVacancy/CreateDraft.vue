@@ -166,8 +166,9 @@ const getCities = async (newValue = '') => {
 
 
 const {errors, handleErrorResponse} = useFormValidation();
-const save = async () => {
-    if (isChanged.value){
+const save = async (is_from_parent = false) => {
+
+  if (isChanged.value){
         state.isLoading = true;
         // validate();
         errors.value = {};
@@ -190,8 +191,14 @@ const save = async () => {
 
 
         if (resData.status !== 'success'){
-            return handleErrorResponse(resData.data);
-        }
+      return handleErrorResponse(resData.data);
+    }
+    if (is_from_parent)
+    {
+      return new Promise((resolve, reject) => {
+        resolve(true);
+      });
+    }
         isChanged.value = false;
         isSaved.value = false;
         isUpdated.value = false;

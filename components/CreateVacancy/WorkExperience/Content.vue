@@ -92,16 +92,23 @@ watch(() => isCollapsed.value, (newData) => {
 const {getResume, updateResume} = resumeStore;
 
 const {errors, handleErrorResponse} = useFormValidation();
-const save = async () => {
-    if (isChanged.value){
+const save = async (is_from_parent = false) => {
+
+  if (isChanged.value){
         const resData = await updateResume(draftID.value, {
             form_data: 'EXPERIENCE_DATA',
             work_histories: work_histories.value
         });
 
         if (resData.status !== 'success'){
-            return handleErrorResponse(resData.data);
-        }
+      return handleErrorResponse(resData.data);
+    }
+    if (is_from_parent)
+    {
+      return new Promise((resolve, reject) => {
+        resolve(true);
+      });
+    }
         isChanged.value = false;
         isSaved.value = false;
         isUpdated.value = true;

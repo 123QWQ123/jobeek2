@@ -2,7 +2,7 @@
 
   <div class="w-box" v-click-outside="save">
     <div class="w-box-head">
-      <h3 class="title">Детали вакансии</h3>
+      <h3 class="title">Детали вакансии({{ isChanged }})</h3>
       <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
 
     </div>
@@ -711,7 +711,8 @@ const onAddressSearch  = async(newString) => {
   console.log(newString);
 }
 const {errors, handleErrorResponse} = useFormValidation();
-const save = async () => {
+const save = async (is_from_parent = false) => {
+
   if (isChanged.value){
     state.isLoading = true;
     // validate();
@@ -722,6 +723,7 @@ const save = async () => {
 
     jsonData.action = 'UpdateAdvancedField';
     resData = await updateVacancy(draftID.value, jsonData);
+
     isUpdated.value = true;
     if (resData.status !== 'success'){
       return handleErrorResponse(resData.data);
@@ -729,6 +731,12 @@ const save = async () => {
     isChanged.value = false;
     isSaved.value = false;
     isUpdated.value = false;
+    if (is_from_parent)
+    {
+      return new Promise((resolve, reject) => {
+        resolve(true);
+      });
+    }
 
   }
 }
