@@ -75,7 +75,7 @@ const isHidden = computed(() => {
   return true;
 })
 const state = reactive({
-  driver_license_types: {
+    driver_license_types: {
         val:  vacancyStore.my_vacancy?.driver_license_types ?? [],
         isValid: true
     },

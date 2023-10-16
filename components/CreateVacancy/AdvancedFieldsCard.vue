@@ -597,7 +597,6 @@ watch(() => vacancyStore.my_vacancy, (newVacancy) => {
 
 watch(() => sectionData.value, (newData, oldData) => {
   const diffData =  useDiff(newData, oldData);
-  console.log(Object.keys(diffData).length);
   if (Object.keys(diffData).length){
     state.name.val = newData.name;
     state.description.val = newData.description;

@@ -40,11 +40,9 @@ export default {
   // });
   const selectedValue = computed(() => props.modelValue);
   const selectedOption = ref(null);
-  console.log(props.options);
   const selectedItem = props.options.find(
       (item) => String(selectedValue.value) === String(item.value)
   );
-  console.log(selectedItem);
   if (selectedItem){
     selectedOption.value = selectedItem;
   }
