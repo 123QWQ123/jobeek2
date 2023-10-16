@@ -140,7 +140,8 @@ const save = async (is_from_parent = false) => {
           });
         }
 
-    }
+  }
+  return true;
 }
 
 const isCompleted = computed(() => {

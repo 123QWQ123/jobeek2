@@ -273,7 +273,11 @@ const save = async (is_from_parent = false) => {
           });
         }
 
-    }
+  }
+
+  else{
+    return true;
+  }
 }
 
 const isCompleted = computed(() => {

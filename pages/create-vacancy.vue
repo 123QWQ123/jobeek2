@@ -65,6 +65,7 @@ const saveAsDraft = (e) => {
   e.preventDefault();
   console.log('saved as draft');
 }
+
 const paramProviders = computed(() => {
   if (providers.value.hh && providers.value.superjob){
     return ['hh', 'superjob'];
@@ -76,6 +77,15 @@ const paramProviders = computed(() => {
     return ['superjob'];
   }
   return [];
+})
+
+const canBePublished = computed(() => {
+  if (my_vacancy.value){
+    if (my_vacancy.value.can_publish.hh || my_vacancy.value.can_publish.superjob){
+      return true;
+    }
+  }
+  return false;
 })
 
 const advanced_fields_el = ref();
@@ -114,34 +124,53 @@ const saveAllSections = async () => {
   return new Promise((resolve, reject) => promisesResult ? resolve(true) : reject(false));
 
 }
+
+const errorMessage = ref(null);
+const hhErrorMessage = ref(null);
 const save = async(e) => {
   e.preventDefault();
 
-  console.log(1);
-  saveAllSections().then(() => {
-    console.log('success');
-  }).catch(() => {
-    console.log('error');
-  });
+  const resAll = await saveAllSections();
 
-  // console.log(resAll);
-  // console.log(resAll);
+  if (resAll){
+    const payload = {
+      providers: paramProviders.value
+    }
+    const resData = await publishDraft(draftId.value, payload);
+    console.log(resData);
+    if (resData.hasOwnProperty('status') && resData.status !== 'success'){
+      Swal.fire({
+        title: 'Ошибка!',
+        text: resData.message,
+        icon: "error",
+        confirmButtonText: 'ОК'
+      });
+
+      errorMessage.value = '';
+      if (resData.hasOwnProperty('errors')){
+        const {errors} = resData;
+        const {hh, superjob} = errors
+
+        console.log(hh);
+        console.log(hh[0]);
+
+
+      }
+    }
+    console.log(resData);
+  }else{
+    Swal.fire({
+      title: 'Ошибка!',
+      text: "не все обязательные поля заполнены верно!",
+      icon: "error",
+      confirmButtonText: 'ОК'
+    });
+  }
+
   // console.log('saving and publishing or redirecting to edit page');
   // // employer/vacancy/publish/408
   // console.log(paramProviders.value);
-  // const payload = {
-  //   providers: paramProviders.value
-  // }
-  // const resData = await publishDraft(draftId.value, payload);
-  // if (resData.hasOwnProperty('status') && resData.status !== 'success'){
-  //   Swal.fire({
-  //     title: 'Ошибка!',
-  //     text: resData.message,
-  //     icon: "error",
-  //     confirmButtonText: 'ОК'
-  //   });
-  // }
-  // console.log(resData);
+
 }
 // groups[]=
 </script>
@@ -166,10 +195,10 @@ const save = async(e) => {
           <CreateVacancyProviders v-model="providers" />
 
           <CreateVacancyAdvancedFieldsCard ref="advanced_fields_el" :providers="providers" />
-          <CreateVacancyCities ref="cities_el" :providers="providers"/>
+          <CreateVacancyCitiesCard ref="cities_el" :providers="providers"/>
           <CreateVacancyMetroCard ref="metro_el" :providers="providers"/>
           <CreateVacancyProfessionalRoles ref="prof_roles_el" :providers="providers"/>
-          <CreateVacancyTypeAndUrl ref="type_el" :providers="providers"/>
+          <CreateVacancyTypeAndUrlCard ref="type_el" :providers="providers"/>
           <CreateVacancySalaryCard ref="salary_el" :providers="providers"/>
           <CreateVacancySkillsCard ref="skills_el" :providers="providers"/>
           <CreateVacancyAddressCard ref="address_el" :providers="providers"/>
@@ -183,10 +212,16 @@ const save = async(e) => {
 
 
             <button class="btn btn-outline-primary" type="button" @click="saveAsDraft">Сохранить как черновик</button>
-            <button class="button-accent" type="submit" @click.prevent="save">Сохранить и опубликовать</button>
+            <button class="button-accent" :class="{'disabled' : !canBePublished}" type="submit" @click.prevent="save">Сохранить и опубликовать</button>
           </div>
         </form>
       </div>
     </div>
   </main>
 </template>
+
+<style scoped>
+.button-accent.disabled{
+    filter: grayscale(180%);
+}
+</style>

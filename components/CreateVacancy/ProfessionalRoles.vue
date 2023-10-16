@@ -19,7 +19,7 @@
             <MultiSelectWithSearch :options="profRoleOptions" v-model="state.professional_roles.val" :label="'Выберите сферу'" @input="updateInput" @focusin="() => errors.professional_roles = ''"></MultiSelectWithSearch>
 
             <div class="text-danger d-block" v-if="errors.professional_roles">
-              Вам нужно выбрать город для публикации!
+              Вам нужно выбрать деятелность для публикации!
             </div>
 
           </div>
@@ -112,8 +112,8 @@ const {searchProfessionalRoles} = profileStore;
 const selectedOptions = ref([]);
 const profRoleOptions = ref([]);
 
-
 const updateInput = async (newValue = '') => {
+  console.log(newValue);
   if (newValue.length > 2){
     const items = await searchProfessionalRoles({search: newValue}) ?? [];
     console.log(items);
@@ -151,7 +151,8 @@ const save = async (is_from_parent = false) => {
           });
         }
 
-    }
+  }
+  return true;
 }
 
 const isCompleted = computed(() => {

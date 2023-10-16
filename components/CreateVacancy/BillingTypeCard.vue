@@ -58,7 +58,7 @@ const my_vacancy = computed(() => vacancyStore.my_vacancy);
 const isSaved = ref(false);
 const isChanged = ref(false);
 const isFirst = ref(true);
-const isCollapsed = ref(true);
+const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
 const providers = computed(() => props.providers)
@@ -146,7 +146,10 @@ const save = async (is_from_parent = false) => {
           });
         }
 
-    }
+  }
+  else{
+    return true;
+  }
 }
 
 const isCompleted = computed(() => {

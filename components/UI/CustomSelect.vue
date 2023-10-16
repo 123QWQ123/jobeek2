@@ -7,6 +7,7 @@
         </ul>
       </transition>
   </div>
+
 </template>
 
 <script>
@@ -39,23 +40,27 @@ export default {
   // });
   const selectedValue = computed(() => props.modelValue);
   const selectedOption = ref(null);
+  console.log(props.options);
   const selectedItem = props.options.find(
       (item) => String(selectedValue.value) === String(item.value)
   );
+  console.log(selectedItem);
   if (selectedItem){
     selectedOption.value = selectedItem;
   }
 
-  watch(
-      selectedValue,
-      (newValue) => {
+
+  const reApply = (newValue) => {
     const selectedItem = props.options.find(
-        (item) => String(newValue) === String(item.value)
+        (item) => String(props.modelValue) === String(item.value)
     );
     if (selectedItem){
       selectedOption.value = selectedItem;
     }
-  })
+  };
+
+  watch(() => props.modelValue,reApply)
+  watch(() => props.options,reApply)
 
   function onClick(e){
     if (e.target.classList.contains('current') || e.target.classList.contains('nice-select')){

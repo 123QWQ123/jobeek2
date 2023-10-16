@@ -163,7 +163,7 @@ const save = async (is_from_parent = false) => {
             resolve(true);
           });
         }
-    }
+  }
 
   return true;
 }
