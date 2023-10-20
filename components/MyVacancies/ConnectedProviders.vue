@@ -7,7 +7,7 @@
           <div class="row align-baseline justify-between ">
             <div class="col-6 list-of-providers">
               <button class="provider-item" @click="onOpen(providers.hh.url)" :class="{'navigated': isHHConnected}" >
-                  <span class="remove-text">Отключить</span>
+<!--                  <span class="remove-text">Отключить</span>-->
 
                   <span class="provider-label success">
 
@@ -31,7 +31,7 @@
                 <img :src="'https://tech.hh.ru/api/logos/min-hh-red.png'" class="w-100"/>
               </button>
               <button  class="provider-item" @click="onOpen(providers.superjob.url)" :class="{'navigated': isSuperjobConnected}">
-                <span class="remove-text">Отключить</span>
+<!--                <span class="remove-text">Отключить</span>-->
 
                   <span class="provider-label success">
                     <svg v-if="isSuperjobConnected" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="limegreen" class="bi bi-check connected"
@@ -45,7 +45,7 @@
                           d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
                     </svg>
 
-                    <svg  @click="onDisconnect('superjob')" v-if="isHHConnected" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#f14646" class="bi bi-x remove"
+                    <svg @click="onDisconnect('superjob')" v-if="isHHConnected" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#f14646" class="bi bi-x remove"
                           viewBox="0 0 16 16">
                       <path
                           d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
@@ -115,6 +115,9 @@ const onSync = async() => {
     toast.info(resData.message, {autoClose: 3000});
   }
   isSyncing.value = false;
+  console.log(resData);
+  // window.location.reload();
+
 };
 
 const onDisconnect = () => {
@@ -122,7 +125,6 @@ const onDisconnect = () => {
 };
 
 const onOpen = (url) => {
-  console.log(url);
   window.open(url);
 };
 
@@ -147,9 +149,8 @@ const isAnyProviderConnected = computed(() => {
 });
 const route = useRoute();
 onMounted(async () => {
-  console.log(isAnyProviderConnected.value);
     if (!isAnyProviderConnected.value){
-        const authData = await getEmployerProvidersAuthEndpoints({}, route.path);
+        const authData = await getEmployerProvidersAuthEndpoints({}, route.fullPath.replace(route.fullPath.substring(0, 1), ""));
         console.log(authData);
         providers.value.hh.url = authData.hh;
         providers.value.superjob.url = authData.superjob;

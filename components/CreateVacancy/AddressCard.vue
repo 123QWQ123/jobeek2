@@ -186,7 +186,7 @@ onMounted(() => {
   }, 500)
 })
 const addressOptions = computed(() => {
-  return dictionaryStore.addresses.map((item) => ({name: item.raw, value: item.id}));
+  return dictionaryStore.addresses?.map((item) => ({name: item.raw, value: item.id}));
 });
 
 const {searchAddresses} = dictionaryStore;

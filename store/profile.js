@@ -98,7 +98,12 @@ export const useProfileStore = defineStore('profile', {
     },
     async searchProfessionalRoles(payload = {})
     {
-      if (this.professional_roles.length > 0) return this.professional_roles;
+      if (this.professional_roles.length > 0) {
+        if (payload.search){
+          return this.professional_roles.filter((item) => item.name.toLowerCase().includes(payload.search))
+        }
+        return this.professional_roles;
+      }
 
       const response = await useApi('professional_roles', {
         method: 'get',

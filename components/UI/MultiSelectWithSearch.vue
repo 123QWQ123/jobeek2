@@ -8,7 +8,7 @@
             </ul>
 
         </div>
-        <div class="selection selected-options" v-if="selectedOptions.length">
+        <div class="selection selected-options" v-if="!hide_selection && selectedOptions.length">
             <ul class="selected-options" id="select2--container">
                 <li v-for="item in selectedOptions" class="multi-select_selected-item" @click="onUnselect(item)">
                     <button type="button" class="select2-selection__choice__remove" >
@@ -50,9 +50,14 @@ const props = defineProps({
   sort_by: {
     required: false,
       default: 'asc'
+  },
+  hide_selection: {
+    required: false,
+    default: false
   }
 });
 
+const hide_selection = props.hide_selection;
 const isOpen = ref(false);
 const options = ref(props.options);
 const {sort} = useSort();
@@ -152,7 +157,7 @@ function close(){
 }
 
 </style>
-<style scoped>
+<style>
 .multi-select_wrapper{
 
 }

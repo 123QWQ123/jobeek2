@@ -197,7 +197,7 @@ const save = async(e) => {
           <CreateVacancyAdvancedFieldsCard ref="advanced_fields_el" :providers="providers" />
           <CreateVacancyCitiesCard ref="cities_el" :providers="providers"/>
           <CreateVacancyMetroCard ref="metro_el" :providers="providers"/>
-          <CreateVacancyProfessionalRoles ref="prof_roles_el" :providers="providers"/>
+          <CreateVacancyProfessionalRolesCard ref="prof_roles_el" :providers="providers"/>
           <CreateVacancyTypeAndUrlCard ref="type_el" :providers="providers"/>
           <CreateVacancySalaryCard ref="salary_el" :providers="providers"/>
           <CreateVacancySkillsCard ref="skills_el" :providers="providers"/>

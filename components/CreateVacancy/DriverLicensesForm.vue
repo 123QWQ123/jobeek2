@@ -1,5 +1,5 @@
 <template>
-      <div class="form_content" v-if="isShown">
+      <div class="form_content">
           <div class="checkboxes-row" >
               <div class="check-block" v-for="item in driving_license_item_options">
                   <div class="checkbox" @click="toggle(item.id)">
@@ -10,12 +10,10 @@
               </div>
           </div>
       </div>
-      <div class="empty-area" v-else>
-          <span>Здесь вы можете выбрать права</span>
-          <button class="add" type="button" @click="isShown = !isShown">Добавить </button>
-      </div>
-  {{props.modelValue}}
-  {{driver_licenses_ids}}
+<!--      <div class="empty-area" v-else>-->
+<!--          <span>Здесь вы можете выбрать права</span>-->
+<!--          <button class="add" type="button" @click="isShown = !isShown">Добавить </button>-->
+<!--      </div>-->
 </template>
 
 <script setup>
@@ -36,23 +34,27 @@ const route = useRoute();
 const dictionaryStore = useDictionaryStore();
 const draftID = computed(() => route.query.draft_id);
 
-const driving_license_options = ref([]);
+const selectedItems = ref(props.modelValue ?? []);
+
 const driving_license_item_options = ref([]);
 
-
-console.log(props.modelValue, driving_license_options.value);
 const driver_licenses_ids = computed(() => {
-  return props.modelValue.map((item) => {
+  return selectedItems.value.map((item) => {
     console.log(item);
     const res = dictionaryStore.driver_licenses.find(sub => sub.name === item.toString());
     if (res) return res.id;
   })
-})
+});
 
-// watch(() => dictionaryStore.driver_licenses, (newValues) => driving_license_options.value = dictionaryStore.driver_licenses);
-watch(() => driver_licenses_ids.value, (newValues) => driving_license_options.value = dictionaryStore.driver_licenses);
 
-console.log(driver_licenses_ids.value)
+
+watch(() => dictionaryStore.driver_licenses, (newValues) => {
+  driving_license_item_options.value = newValues;
+});
+
+watch(() => driver_licenses_ids.value, (newValues) => {
+  driver_licenses.value = newValues;
+});
 
 const driver_licenses = ref(driver_licenses_ids.value ?? []);
 const {getDriverLicenses} = dictionaryStore;
@@ -62,8 +64,7 @@ onMounted(() => {
   })
 })
 const check = (id) => {
-    console.log(id);
-    return driver_licenses.value.includes(id);
+    return driver_licenses_ids.value.includes(id);
 }
 const toggle = (id) => {
     const IDs = [...driver_licenses.value];
@@ -73,7 +74,7 @@ const toggle = (id) => {
         const deleteIndex = IDs.indexOf(id);
         IDs.splice(deleteIndex, 1);
     }
-    driver_licenses.value = IDs;
+  driver_licenses.value = IDs;
 }
 
 const isShown = ref(props.modelValue.length > 0 ? true : false);
