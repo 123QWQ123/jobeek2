@@ -12,7 +12,6 @@
           <VacanciesLoadingList/>
         </template>
       </Suspense>
-
     </ClientOnly>
 
   </div>

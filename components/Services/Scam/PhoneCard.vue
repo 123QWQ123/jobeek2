@@ -1,6 +1,8 @@
 <script setup>
 
 import {useNuxtApp} from "#app";
+import {useScamStore} from "~/store/scam";
+import Swal from "sweetalert2";
 
 const props = defineProps({
   phone: {
@@ -19,15 +21,77 @@ const props = defineProps({
 
 const {$format_phone} = useNuxtApp();
 const phone = computed(() => props.phone.number);
+const phone_id = computed(() => props.phone.id);
+const address = computed(() => props.phone.address ?? "нет адреса");
+const operator = computed(() => props.phone.operator);
+const typePhone = computed(() => props.phone.type_phone);
+const link_map = computed(() => `https://www.google.ru/maps/search/` + props.phone.address );
 const comments = computed(() => props.phone.comments ?? []);
-const categories = computed(() => {
-  return comments.value.map((item) => {
-    return item.categories.map((sub_item) => sub_item.name);
-  }).flat(2);
+const categories = computed(() => props.phone.categories);
+const frequencyValue = computed(() => props.phone.frequencyCall.cost);
+const frequencyTitle = computed(() => props.phone.frequencyCall.title);
+const ratingValue = computed(() => props.phone.rating.cost);
+const ratingTitle = computed(() => props.phone.rating.title);
+const isFavoured = computed(() => props.phone?.is_favorite);
+const scamStore = useScamStore();
+const categoryOptions = computed(() => scamStore.categories.map((item) => {
+  return {name: item.name, value: item.id}
+}));
+const rateOptions = computed(() => scamStore.rate_options.map((item) => {
+  return {name: item.title, value: item.key}
+}));
+const frequencyOptions = computed(() => scamStore.frequency_options.map((item) => {
+  return {name: item.title, value: item.key}
+}));
+
+const {addFavorite, removeFavorite, saveComment} = useScamStore();
+const toggleFavorite = async(is_favor) => {
+  if (!is_favor){
+    const resData = await addFavorite({phone_id: phone_id.value})
+    console.log(resData);
+    if (resData.status === 'success'){
+      Swal.fire({
+        text: "Вы успешно подписались!",
+        icon: "success",
+      });
+      return;
+    }
+
+  }else{
+    const resData = await removeFavorite({phone_id: phone_id.value})
+    if (resData.status === 'success'){
+      Swal.fire({
+        text: "Вы успешно отписались!",
+        icon: "success",
+      });
+      return;
+    }
+  }
+
+
+}
+
+const form = ref({
+  category_ids: [],
+  frequency_call: null,
+  rating: null,
+  comment: null,
 });
-const frequencies = computed(() => {
-  return comments.value.map((item) => item.frequency_call);
-});
+
+const onSubmit = async() => {
+  const data = form.value;
+  data.category_ids = data.category_ids.map(item => parseInt(item));
+  data.phone_id = phone_id.value;
+  const resData = await saveComment(data);
+  if (resData.status === 'success'){
+    Swal.fire({
+      text: "Ваш коммент успешно добавлено!",
+      icon: "success",
+    });
+    return;
+  }
+  console.log(resData);
+}
 </script>
 
 <template>
@@ -35,38 +99,30 @@ const frequencies = computed(() => {
     <div class="favorites-card-head align-start">
       <div class="company">
         <div class="company-logo">
-          <img src="~/assets/img/logos/megafon.svg"/>
+          <img src="~/assets/img/logos/megafon.svg" alt="#">
         </div>
         <div class="company-name">
-          <a>{{$format_phone(phone)}}</a>
-          <span class="count">Мегафон</span>
+          <a href="#">{{$format_phone(phone)}}</a><span class="count">{{ operator }}</span>
         </div>
 
         <div class="company-info">
-          <p>Тип телефона: <strong>Мобильный</strong></p>
+          <p>Тип телефона: <strong>{{ typePhone }}</strong></p>
           <p>
-            Адрес: <strong>Саратов, улица Зарубина, 167.</strong>
-            <button class="show-on-map">
-              <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg">
-                <path
-                    d="M22.428 4.17282L15.45 2.22095L8.45156 4.19232L1.94339 2.3461C1.80393 2.30654 1.6572 2.29985 1.51472 2.32656C1.37224 2.35328 1.23789 2.41268 1.12224 2.50008C1.00659 2.58748 0.91279 2.70052 0.8482 2.83029C0.783611 2.96007 0.749997 3.10306 0.75 3.24803V19.2136C0.750709 19.4583 0.830844 19.6961 0.97835 19.8913C1.12586 20.0865 1.33276 20.2285 1.56792 20.2959L8.44997 22.2483L15.4515 20.2761L22.06 22.1246C22.1994 22.1636 22.3458 22.1698 22.488 22.1427C22.6301 22.1156 22.764 22.056 22.8793 21.9686C22.9945 21.8811 23.0879 21.7681 23.1523 21.6385C23.2166 21.5089 23.25 21.3662 23.25 21.2215V5.25624C23.2494 5.01085 23.1688 4.77235 23.0205 4.57685C22.8722 4.38136 22.6642 4.23952 22.428 4.17282ZM7.64062 20.4593L2.25 18.93V3.99226L7.64062 5.52151V20.4593ZM14.7007 18.9289L9.14062 20.4951V5.55657L14.7007 3.99038V18.9289ZM21.75 20.4801L16.2007 18.928V3.98846L21.75 5.54054V20.4801Z"
-                    fill="#5375FD" />
+            Адрес: <strong>{{address}}</strong>
+            <a class="show-on-map" :href="link_map">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22.428 4.17282L15.45 2.22095L8.45156 4.19232L1.94339 2.3461C1.80393 2.30654 1.6572 2.29985 1.51472 2.32656C1.37224 2.35328 1.23789 2.41268 1.12224 2.50008C1.00659 2.58748 0.91279 2.70052 0.8482 2.83029C0.783611 2.96007 0.749997 3.10306 0.75 3.24803V19.2136C0.750709 19.4583 0.830844 19.6961 0.97835 19.8913C1.12586 20.0865 1.33276 20.2285 1.56792 20.2959L8.44997 22.2483L15.4515 20.2761L22.06 22.1246C22.1994 22.1636 22.3458 22.1698 22.488 22.1427C22.6301 22.1156 22.764 22.056 22.8793 21.9686C22.9945 21.8811 23.0879 21.7681 23.1523 21.6385C23.2166 21.5089 23.25 21.3662 23.25 21.2215V5.25624C23.2494 5.01085 23.1688 4.77235 23.0205 4.57685C22.8722 4.38136 22.6642 4.23952 22.428 4.17282ZM7.64062 20.4593L2.25 18.93V3.99226L7.64062 5.52151V20.4593ZM14.7007 18.9289L9.14062 20.4951V5.55657L14.7007 3.99038V18.9289ZM21.75 20.4801L16.2007 18.928V3.98846L21.75 5.54054V20.4801Z" fill="#5375FD"></path>
               </svg>
               Показать на карте
-            </button>
+            </a>
           </p>
         </div>
       </div>
 
       <div class="subscribe-min-box">
         <p>Подписаться на изменения по данному номеру</p>
-        <button class="group-action btn button-md">
-          Подписаться
+        <button class="group-action btn button-md" @click="toggleFavorite(isFavoured)">
+          {{ isFavoured ? "Отписаться" : 'Подписаться'  }}
         </button>
       </div>
     </div>
@@ -84,7 +140,7 @@ const frequencies = computed(() => {
       <div class="favorites-card-body__text" v-if="comments.length > 0">
         <p>
           С телефона были
-          <span class="w-badge red" v-for="item in frequencies">
+          <span :class="{'w-badge': true, 'red': frequencyValue < 0, 'gray': frequencyValue === 0, 'green' : frequencyValue > 0}" >
             <svg
               width="17"
               height="16"
@@ -112,13 +168,13 @@ const frequencies = computed(() => {
                             stroke-linecap="round"
                             stroke-linejoin="round" />
                       </svg>
-            {{item}}
+            {{frequencyTitle}}
           </span>
         </p>
 
         <p>
           Оценки номера
-          <span class="w-badge red">
+          <span :class="{'w-badge': true, 'red': ratingValue < 0, 'gray': ratingValue === 0, 'green' : ratingValue > 0}">
                       <svg
                           width="18"
                           height="18"
@@ -132,8 +188,8 @@ const frequencies = computed(() => {
                             stroke-linecap="round"
                             stroke-linejoin="round" />
                       </svg>
-
-                      только негативные</span
+            {{ratingTitle}}
+          </span
           >
           Рекомендуем не брать трубку и не перезванивать.
         </p>
@@ -148,7 +204,7 @@ const frequencies = computed(() => {
           </p>
 
           <ul class="favorites-card-body__text-list">
-            <li>
+            <li v-for="comment in comments">
               <svg
                   width="24"
                   height="24"
@@ -182,215 +238,62 @@ const frequencies = computed(() => {
                     stroke-linecap="round"
                     stroke-linejoin="round" />
               </svg>
-              <span>Противоположная точка.</span>
-            </li>
-            <li>
-              <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg">
-                <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M19.0714 19.0699C16.0152 22.1263 11.4898 22.7867 7.78642 21.074C7.23971 20.8539 6.79148 20.676 6.36537 20.676C5.17849 20.683 3.70117 21.8339 2.93336 21.067C2.16555 20.2991 3.31726 18.8206 3.31726 17.6266C3.31726 17.2004 3.14642 16.7602 2.92632 16.2124C1.21283 12.5096 1.87411 7.98269 4.93026 4.92721C8.8316 1.02443 15.17 1.02443 19.0714 4.9262C22.9797 8.83501 22.9727 15.1681 19.0714 19.0699Z"
-                    stroke="#FD595E"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <path
-                    d="M15.9408 12.4131H15.9498"
-                    stroke="#FD595E"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <path
-                    d="M11.9291 12.4131H11.9381"
-                    stroke="#FD595E"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <path
-                    d="M7.92128 12.4131H7.93028"
-                    stroke="#FD595E"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round" />
-              </svg>
-              <span>Таким образом.</span>
-            </li>
-            <li>
-              <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg">
-                <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M19.0714 19.0699C16.0152 22.1263 11.4898 22.7867 7.78642 21.074C7.23971 20.8539 6.79148 20.676 6.36537 20.676C5.17849 20.683 3.70117 21.8339 2.93336 21.067C2.16555 20.2991 3.31726 18.8206 3.31726 17.6266C3.31726 17.2004 3.14642 16.7602 2.92632 16.2124C1.21283 12.5096 1.87411 7.98269 4.93026 4.92721C8.8316 1.02443 15.17 1.02443 19.0714 4.9262C22.9797 8.83501 22.9727 15.1681 19.0714 19.0699Z"
-                    stroke="#FD595E"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <path
-                    d="M15.9408 12.4131H15.9498"
-                    stroke="#FD595E"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <path
-                    d="M11.9291 12.4131H11.9381"
-                    stroke="#FD595E"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <path
-                    d="M7.92128 12.4131H7.93028"
-                    stroke="#FD595E"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round" />
-              </svg>
-              <span>Современные технологии.</span>
-            </li>
-            <li>
-              <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg">
-                <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M19.0714 19.0699C16.0152 22.1263 11.4898 22.7867 7.78642 21.074C7.23971 20.8539 6.79148 20.676 6.36537 20.676C5.17849 20.683 3.70117 21.8339 2.93336 21.067C2.16555 20.2991 3.31726 18.8206 3.31726 17.6266C3.31726 17.2004 3.14642 16.7602 2.92632 16.2124C1.21283 12.5096 1.87411 7.98269 4.93026 4.92721C8.8316 1.02443 15.17 1.02443 19.0714 4.9262C22.9797 8.83501 22.9727 15.1681 19.0714 19.0699Z"
-                    stroke="#FD595E"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <path
-                    d="M15.9408 12.4131H15.9498"
-                    stroke="#FD595E"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <path
-                    d="M11.9291 12.4131H11.9381"
-                    stroke="#FD595E"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <path
-                    d="M7.92128 12.4131H7.93028"
-                    stroke="#FD595E"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round" />
-              </svg>
-              <span>В рамках спецификации.</span>
+              <span>{{comment}}</span>
             </li>
           </ul>
         </div>
       </div>
 
-      <div v-else class="favorites-card-body__text">
-        <div class="favorites-card-body__text-list-container">
-          <strong
-          >О телефонном номере найдено 0 отзывов в сети.</strong
-          >
-        </div>
-      </div>
-    </div>
-    <div class="favorites-card-footer">
-      <div class="favorites-card-footer-row">
-        <div class="group">
-          <button class="group-action btn button-md">
-            Добавить комментарий
-          </button>
-          <button class="group-action btn button-md">
-            Похожие номера
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-<!--  <div class="favorites-card">-->
-<!--    <div class="favorites-card-head align-start">-->
-<!--      <div class="company">-->
-<!--        <div class="company-logo">-->
-<!--          <img-->
-<!--              src="~/assets/img/logos/megafon.svg"-->
-<!--              alt="#" />-->
-<!--        </div>-->
-<!--        <div class="company-name">-->
-<!--          <a href="#"> +7 992 932 32 12</a-->
-<!--          ><span class="count">Мегафон</span>-->
-<!--        </div>-->
-
-<!--        <div class="company-info">-->
-<!--          <p>Тип телефона: <strong>Мобильный</strong></p>-->
-<!--          <p>-->
-<!--            Адрес: <strong>Саратов, улица Зарубина, 167.</strong>-->
-<!--            <button class="show-on-map">-->
-<!--              <svg-->
-<!--                  width="24"-->
-<!--                  height="24"-->
-<!--                  viewBox="0 0 24 24"-->
-<!--                  fill="none"-->
-<!--                  xmlns="http://www.w3.org/2000/svg">-->
-<!--                <path-->
-<!--                    d="M22.428 4.17282L15.45 2.22095L8.45156 4.19232L1.94339 2.3461C1.80393 2.30654 1.6572 2.29985 1.51472 2.32656C1.37224 2.35328 1.23789 2.41268 1.12224 2.50008C1.00659 2.58748 0.91279 2.70052 0.8482 2.83029C0.783611 2.96007 0.749997 3.10306 0.75 3.24803V19.2136C0.750709 19.4583 0.830844 19.6961 0.97835 19.8913C1.12586 20.0865 1.33276 20.2285 1.56792 20.2959L8.44997 22.2483L15.4515 20.2761L22.06 22.1246C22.1994 22.1636 22.3458 22.1698 22.488 22.1427C22.6301 22.1156 22.764 22.056 22.8793 21.9686C22.9945 21.8811 23.0879 21.7681 23.1523 21.6385C23.2166 21.5089 23.25 21.3662 23.25 21.2215V5.25624C23.2494 5.01085 23.1688 4.77235 23.0205 4.57685C22.8722 4.38136 22.6642 4.23952 22.428 4.17282ZM7.64062 20.4593L2.25 18.93V3.99226L7.64062 5.52151V20.4593ZM14.7007 18.9289L9.14062 20.4951V5.55657L14.7007 3.99038V18.9289ZM21.75 20.4801L16.2007 18.928V3.98846L21.75 5.54054V20.4801Z"-->
-<!--                    fill="#5375FD" />-->
-<!--              </svg>-->
-<!--              Показать на карте-->
-<!--            </button>-->
-<!--          </p>-->
-<!--        </div>-->
-<!--      </div>-->
-
-<!--      <div class="subscribe-min-box">-->
-<!--        <p>Подписаться на изменения по данному номеру</p>-->
-<!--        <button class="group-action btn button-md">-->
-<!--          Подписаться-->
-<!--        </button>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--    <div class="favorites-card-body favorites-card-body&#45;&#45;brd">-->
-<!--      <div class="call-cats-row">-->
-<!--        <span>Категория звонка:</span>-->
-
-<!--        <strong>Нет информации</strong>-->
-<!--      </div>-->
-
-<!--      <div class="favorites-card-body__text">-->
+<!--      <div v-else class="favorites-card-body__text">-->
 <!--        <div class="favorites-card-body__text-list-container">-->
 <!--          <strong-->
 <!--          >О телефонном номере найдено 0 отзывов в сети.</strong-->
 <!--          >-->
 <!--        </div>-->
 <!--      </div>-->
-<!--    </div>-->
-<!--    <div class="favorites-card-footer">-->
-<!--      <div class="favorites-card-footer-row">-->
-<!--        <div class="group">-->
-<!--          <button class="group-action btn button-md">-->
-<!--            Добавить информацию-->
-<!--          </button>-->
-<!--          <button class="group-action btn button-md">-->
-<!--            Добавить комментарий-->
-<!--          </button>-->
-<!--          <button class="group-action btn button-md">-->
-<!--            Похожие номера-->
-<!--          </button>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
+    </div>
+    <div class="favorites-card-footer">
+      <strong>Добавить информацию и отзыв</strong>
+
+      <form class="favorites-card-footer__add" @submit.prevent="onSubmit">
+        <div class="input-row">
+          <label for="industry">Категория звонка</label>
+          <div class="input-wrapper">
+            <MultiSelectWithSearch v-model="form.category_ids" :options="categoryOptions"/>
+          </div>
+        </div>
+        <div class="input-row">
+          <label for="industry">Частота звонков</label>
+          <div class="input-wrapper">
+            <CustomSelect v-model.number="form.frequency_call" :options="frequencyOptions"/>
+          </div>
+        </div>
+        <div class="input-row">
+          <label for="industry">Ваша оценка номера</label>
+          <div class="input-wrapper">
+            <CustomSelect v-model.number="form.rating" :options="rateOptions"/>
+          </div>
+        </div>
+        <br>
+        <br>
+        <strong>Добавить комментарий</strong>
+        <p>Поделитесь своим опытом взаимодействия с этим номером</p>
+
+        <div class="input-wrap">
+          <textarea class="form-control" v-model="form.comment" name="comment"> </textarea>
+        </div>
+
+        <div class="favorites-card-footer__add-actions justify-content-end">
+          <button class="button-accent" type="submit">
+            Сохранить
+          </button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+
+
 </template>
 
 <style scoped>
