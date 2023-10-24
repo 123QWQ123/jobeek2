@@ -238,8 +238,6 @@ const iframe = ref();
 .sync-button{
   justify-content: flex-end;
   align-items: baseline;
-  //width: 120px;
-  //height: 100%;
 }
 @keyframes rotation {
   from {
