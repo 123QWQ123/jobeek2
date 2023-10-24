@@ -22,25 +22,23 @@
       </div>
     </div>
 
-    {{profRoleOptions.length}}
-    {{props.modelValue}}
-    {{selectedOptions}}
-<!--    <div class="selection selected-options" v-if="selectedOptions.length">-->
-<!--      <ul class="selected-options" id="select2&#45;&#45;container">-->
-<!--        <li v-for="item in selectedOptions" class="multi-select_selected-item" @click="onUnselect(item)">-->
-<!--          <button type="button" class="select2-selection__choice__remove" >-->
-<!--            <span aria-hidden="true">×</span>-->
-<!--          </button>-->
-<!--          <span class="select2-selection__choice__display">{{ getSelectedOptionName(item) }}</span>-->
-<!--        </li>-->
-<!--      </ul>-->
-<!--    </div>-->
+    <div class="selection selected-options" v-if="professional_roles.length">
+      <ul class="selected-options" id="select2--container">
+        <li v-for="item in professional_roles" class="multi-select_selected-item" @click="onUnselect(item)">
+          <button type="button" class="select2-selection__choice__remove" >
+            <span aria-hidden="true">×</span>
+          </button>
+          <span class="select2-selection__choice__display">{{ getSelectedOptionName(item) }}</span>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script setup>
 import {useVacancyStore} from "~/store/vacancy";
 
+const emit = defineEmits(['update:modelValue']);
 const props = defineProps({
   modelValue: {
     required: true,
@@ -65,16 +63,23 @@ const {updateVacancy, getMyVacancy} = vacancyStore;
 const {employer} = profileStore;
 const my_vacancy = computed(() => vacancyStore.my_vacancy);
 
-const professional_roles = ref( props.modelValue ?? []);
-watch(() => props.modelValue, (newValues) => {
-  professional_roles.value = newValues;
-})
 
 const {searchProfessionalRoles} = profileStore;
 const selectedOptions = ref([]);
 const profRoleOptions = ref([]);
 const hhProfRoleOptions = ref([]);
 const superjobProfRoleOptions = ref([]);
+
+const professional_roles = ref( props.modelValue ?? []);
+
+watch(() => props.modelValue, (newValues) => {
+  professional_roles.value = newValues;
+  selectedOptions.value = newValues;
+})
+
+watch(() => professional_roles.value, (newValues) => {
+  emit('update:modelValue', newValues);
+})
 
 function getSelectedOptionName(value){
   const selectedOptionItem = profRoleOptions.value.find(item => String(item.value) === String(value));
@@ -96,6 +101,14 @@ const onSuperjobUpdateInput = async (newValue = '') => {
     const items = await searchProfessionalRoles({providers: ['hh'], search: newValue}) ?? [];
     let newOptions = items.map(item => ({value: item.id, name: `${item.name}` }));
     superjobProfRoleOptions.value = newOptions.concat(selectedOptions.value);
+  }
+}
+function onUnselect(deleteId){
+  if (selectedOptions.value.includes(deleteId)){
+    const indexItem = selectedOptions.value.indexOf(deleteId);
+    if (indexItem !== -1){
+      selectedOptions.value.splice(indexItem, 1);
+    }
   }
 }
 
