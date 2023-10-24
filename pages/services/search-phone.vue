@@ -5,90 +5,72 @@ definePageMeta({
   layout: 'cabinet'
 });
 
-import {useProfileStore} from "~/store/profile";
+import {toast} from "vue3-toastify";
+import {useScamStore} from "~/store/scam";
 
 
-const profileStore = useProfileStore();
+const scamStore = useScamStore();
 
-const {searchPhone} = profileStore;
+const {searchPhone, getScamOptions} = scamStore;
 
+const route = useRoute();
 const phoneInputElement = ref();
 const phoneMask = ref(null);
-onMounted(( ) => {
+const isLoading = ref(false);
+
+onMounted(async( ) => {
+
+  const optionsRequest = await getScamOptions();
+
+  isLoading.value = true;
   phoneMask.value = new IMask(phoneInputElement.value, {
     mask: "+{7}(000)000-00-00",
   });
-  phoneInputElement.value.addEventListener("input", () => {});
+
+  if (route.query.hasOwnProperty('phone')){
+    const resData = await searchPhone({phone:route.query.phone});
+    if (resData.status === 'success'){
+      phones.value = resData.data;
+    }
+    phoneMask.value.value = route.query.phone;
+    setTimeout(() => {
+      isLoading.value = false;
+    }, 1000)
+  }else{
+    isLoading.value = false;
+  }
+  // phoneInputElement.value.addEventListener("input", () => {});
 })
 
 const phones = ref([]);
-
-
-const onPhoneSearch = async() => {
-
-  const resData = await searchPhone({phone: phoneMask.value.unformattedValue ?? "77777777777"});
-
-  console.log(resData);
-
-  phones.value = resData;
+const getPhones = async () => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(phones.value)
+    }, 1000)
+  })
 }
-
+const onPhoneSearch = async() => {
+  navigateTo({name: 'services-search-phone', query: {phone: phoneMask.value.unmaskedValue}})
+}
+watch(() => route.query.phone, async(newPhone) => {
+  isLoading.value = true;
+  phoneMask.value.value = newPhone;
+  const resData = await searchPhone({phone:newPhone});
+  if (resData.status === 'success'){
+    phones.value = resData.data;
+  }
+  setTimeout(() => {
+    isLoading.value = false;
+  }, 1000)
+})
 </script>
 <template>
   <main class="main bg-wrapper scam-phone-page" role="main">
 
-
     <div class="head-w-section">
       <div class="wrapper wrapper-1290">
         <h1 class="head-w-section__title">Поиск по номеру телефона</h1>
-
-        <div class="radio-buttons-row">
-          <div class="check-block">
-            <div class="checkbox">
-              <input
-                  id="by-phone"
-                  name="search-type"
-                  type="radio"
-                  checked="checked" />
-              <div class="radio-mask">
-                <img
-                    src="~/assets/img/svg/check.svg"
-                    alt="#" />
-              </div>
-            </div>
-            <label for="by-phone">По номеру телефона</label>
-          </div>
-
-          <div class="check-block">
-            <div class="checkbox">
-              <input
-                  id="by-adress"
-                  name="search-type"
-                  type="radio" />
-              <div class="radio-mask">
-                <img
-                    src="~/assets/img/svg/check.svg"
-                    alt="#" />
-              </div>
-            </div>
-            <label for="by-adress">По адресу</label>
-          </div>
-
-          <div class="check-block">
-            <div class="checkbox">
-              <input
-                  id="by-name"
-                  name="search-type"
-                  type="radio" />
-              <div class="radio-mask">
-                <img
-                    src="~/assets/img/svg/check.svg"
-                    alt="#" />
-              </div>
-            </div>
-            <label for="by-name">По названию</label>
-          </div>
-        </div>
 
         <form class="search-row" @submit.prevent="onPhoneSearch">
           <button class="search-button">
@@ -115,12 +97,11 @@ const onPhoneSearch = async() => {
             </svg>
           </button>
           <input
-              type="text"
               ref="phoneInputElement"
+              type="text"
               placeholder="+7 992 932 32 12" />
           <button
-              class="button-accent"
-          >
+              class="button-accent">
             Сохранить
           </button>
         </form>
@@ -128,545 +109,20 @@ const onPhoneSearch = async() => {
     </div>
 
     <div class="wrapper wrapper-1290">
-      <div class="course-grid">
-        <div class="search-result-content">
-          <h2 class="search-result-content__title">Найдено номеров: {{ phones.length }}</h2>
+      <client-only>
+        <div class="course-grid">
 
+          <ServicesScamLoadingList v-if="isLoading"/>
+          <ServicesScamAsyncList :phones="phones" :get-phones="getPhones" v-else/>
 
-          <ServicesScamPhoneCard v-for="item in phones" :phone="item" />
-
-
-        </div>
-
-        <div class="search-history-sidebar">
-          <h2 class="search-history-sidebar__title">История поиска</h2>
-
-          <div class="favorites-card favorites-card--min">
-            <div class="favorites-card-head">
-              <div class="company">
-                <div class="company-logo">
-                  <img
-                      src="~/assets/img/logos/megafon.svg"
-                      alt="#" />
-                </div>
-                <div class="company-name">
-                  <a href="#"> +7 932 932 22 12</a
-                  ><span class="count">Мегафон</span>
-                </div>
-              </div>
-
-              <button class="card-action">
-                <svg
-                    width="28"
-                    height="28"
-                    viewBox="0 0 28 28"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                  <path
-                      d="M4.02539 23.9749H23.9754"
-                      stroke="#5375FD"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"></path>
-                  <path
-                      d="M14.2462 7.15927L19.7324 12.6455M14.2462 7.15927L17.3806 4.0249L22.8668 9.51115L19.7324 12.6455L14.2462 7.15927ZM14.2462 7.15927L8.03177 13.3737C7.82391 13.5815 7.70709 13.8634 7.70703 14.1573V19.1847H12.7344C13.0284 19.1846 13.3102 19.0678 13.518 18.8599L19.7324 12.6455L14.2462 7.15927Z"
-                      stroke="#5375FD"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"></path>
-                </svg>
-              </button>
-            </div>
-            <div class="favorites-card-body">
-              <p>
-                <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                  <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M19.0714 19.0699C16.0152 22.1263 11.4898 22.7867 7.78642 21.074C7.23971 20.8539 6.79148 20.676 6.36537 20.676C5.17849 20.683 3.70117 21.8339 2.93336 21.067C2.16555 20.2991 3.31726 18.8206 3.31726 17.6266C3.31726 17.2004 3.14642 16.7602 2.92632 16.2124C1.21283 12.5096 1.87411 7.98269 4.93026 4.92721C8.8316 1.02443 15.17 1.02443 19.0714 4.9262C22.9797 8.83501 22.9727 15.1681 19.0714 19.0699Z"
-                      stroke="#FD595E"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round" />
-                  <path
-                      d="M15.9408 12.4131H15.9498"
-                      stroke="#FD595E"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round" />
-                  <path
-                      d="M11.9291 12.4131H11.9381"
-                      stroke="#FD595E"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round" />
-                  <path
-                      d="M7.92128 12.4131H7.93028"
-                      stroke="#FD595E"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round" />
-                </svg>
-                Это спам. не брать трубку
-              </p>
-
-              <button class="group-action btn button-md btn--green">
-                <svg
-                    width="19"
-                    height="19"
-                    viewBox="0 0 19 19"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                  <g clip-path="url(#clip0_727_6122)">
-                    <circle
-                        cx="9.4987"
-                        cy="9.49992"
-                        r="7.91667"
-                        stroke="white"
-                        stroke-width="1.5" />
-                    <path
-                        d="M6.73047 9.89575L8.3138 11.4791L12.2721 7.52075"
-                        stroke="white"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round" />
-                  </g>
-                  <defs>
-                    <clipPath id="clip0_727_6122">
-                      <rect
-                          width="19"
-                          height="19"
-                          fill="white" />
-                    </clipPath>
-                  </defs>
-                </svg>
-                Вы подписаны
-              </button>
-            </div>
-          </div>
-
-          <div class="favorites-card favorites-card--min">
-            <div class="favorites-card-head">
-              <div class="company">
-                <div class="company-logo">
-                  <img
-                      src="~/assets/img/logos/tele2.svg"
-                      alt="#" />
-                </div>
-                <div class="company-name">
-                  <a href="#"> +7 932 932 22 12</a
-                  ><span class="count">Теле2</span>
-                </div>
-              </div>
-
-              <button class="card-action">
-                <svg
-                    width="28"
-                    height="28"
-                    viewBox="0 0 28 28"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                  <path
-                      d="M4.02539 23.9749H23.9754"
-                      stroke="#5375FD"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"></path>
-                  <path
-                      d="M14.2462 7.15927L19.7324 12.6455M14.2462 7.15927L17.3806 4.0249L22.8668 9.51115L19.7324 12.6455L14.2462 7.15927ZM14.2462 7.15927L8.03177 13.3737C7.82391 13.5815 7.70709 13.8634 7.70703 14.1573V19.1847H12.7344C13.0284 19.1846 13.3102 19.0678 13.518 18.8599L19.7324 12.6455L14.2462 7.15927Z"
-                      stroke="#5375FD"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"></path>
-                </svg>
-              </button>
-            </div>
-            <div class="favorites-card-body">
-              <p>
-                <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                  <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M19.0714 19.0699C16.0152 22.1263 11.4898 22.7867 7.78642 21.074C7.23971 20.8539 6.79148 20.676 6.36537 20.676C5.17849 20.683 3.70117 21.8339 2.93336 21.067C2.16555 20.2991 3.31726 18.8206 3.31726 17.6266C3.31726 17.2004 3.14642 16.7602 2.92632 16.2124C1.21283 12.5096 1.87411 7.98269 4.93026 4.92721C8.8316 1.02443 15.17 1.02443 19.0714 4.9262C22.9797 8.83501 22.9727 15.1681 19.0714 19.0699Z"
-                      stroke="#FD595E"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round" />
-                  <path
-                      d="M15.9408 12.4131H15.9498"
-                      stroke="#FD595E"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round" />
-                  <path
-                      d="M11.9291 12.4131H11.9381"
-                      stroke="#FD595E"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round" />
-                  <path
-                      d="M7.92128 12.4131H7.93028"
-                      stroke="#FD595E"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round" />
-                </svg>
-                Ужас какой
-              </p>
-
-              <button
-                  class="group-action btn button-md"
-                  disabled>
-                Отписаться
-              </button>
-            </div>
-          </div>
-
-          <div class="favorites-card favorites-card--min">
-            <div class="favorites-card-head">
-              <div class="company">
-                <div class="company-logo">
-                  <img
-                      src="~/assets/img/logos/megafon.svg"
-                      alt="#" />
-                </div>
-                <div class="company-name">
-                  <a href="#"> +7 932 932 22 12</a
-                  ><span class="count">Мегафон</span>
-                </div>
-              </div>
-
-              <button class="card-action">
-                <svg
-                    width="28"
-                    height="28"
-                    viewBox="0 0 28 28"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                  <path
-                      d="M4.02539 23.9749H23.9754"
-                      stroke="#5375FD"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"></path>
-                  <path
-                      d="M14.2462 7.15927L19.7324 12.6455M14.2462 7.15927L17.3806 4.0249L22.8668 9.51115L19.7324 12.6455L14.2462 7.15927ZM14.2462 7.15927L8.03177 13.3737C7.82391 13.5815 7.70709 13.8634 7.70703 14.1573V19.1847H12.7344C13.0284 19.1846 13.3102 19.0678 13.518 18.8599L19.7324 12.6455L14.2462 7.15927Z"
-                      stroke="#5375FD"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"></path>
-                </svg>
-              </button>
-            </div>
-            <div class="favorites-card-body">
-              <button class="group-action btn button-md">Подписаться</button>
-            </div>
+          <div class="search-history-sidebar">
+            <ServicesScamSubscriptionList />
           </div>
         </div>
-      </div>
+        <ServicesScamHistoryList />
 
-      <div class="subscribes-grid-container">
-        <h3 class="subscribes-grid-container__title">Ваши подписки</h3>
-        <div class="subscribes-grid">
-          <div class="favorites-card favorites-card--min">
-            <div class="favorites-card-head">
-              <div class="company">
-                <div class="company-logo">
-                  <img
-                      src="~/assets/img/logos/megafon.svg"
-                      alt="#" />
-                </div>
-                <div class="company-name">
-                  <a href="#"> +7 932 932 22 12</a
-                  ><span class="count">Мегафон</span>
-                </div>
-              </div>
+      </client-only>
 
-              <button class="card-action">
-                <svg
-                    width="28"
-                    height="28"
-                    viewBox="0 0 28 28"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                  <path
-                      d="M4.02539 23.9749H23.9754"
-                      stroke="#5375FD"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"></path>
-                  <path
-                      d="M14.2462 7.15927L19.7324 12.6455M14.2462 7.15927L17.3806 4.0249L22.8668 9.51115L19.7324 12.6455L14.2462 7.15927ZM14.2462 7.15927L8.03177 13.3737C7.82391 13.5815 7.70709 13.8634 7.70703 14.1573V19.1847H12.7344C13.0284 19.1846 13.3102 19.0678 13.518 18.8599L19.7324 12.6455L14.2462 7.15927Z"
-                      stroke="#5375FD"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"></path>
-                </svg>
-              </button>
-            </div>
-            <div class="favorites-card-body">
-              <p>
-                <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                  <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M19.0714 19.0699C16.0152 22.1263 11.4898 22.7867 7.78642 21.074C7.23971 20.8539 6.79148 20.676 6.36537 20.676C5.17849 20.683 3.70117 21.8339 2.93336 21.067C2.16555 20.2991 3.31726 18.8206 3.31726 17.6266C3.31726 17.2004 3.14642 16.7602 2.92632 16.2124C1.21283 12.5096 1.87411 7.98269 4.93026 4.92721C8.8316 1.02443 15.17 1.02443 19.0714 4.9262C22.9797 8.83501 22.9727 15.1681 19.0714 19.0699Z"
-                      stroke="#FD595E"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round" />
-                  <path
-                      d="M15.9408 12.4131H15.9498"
-                      stroke="#FD595E"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round" />
-                  <path
-                      d="M11.9291 12.4131H11.9381"
-                      stroke="#FD595E"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round" />
-                  <path
-                      d="M7.92128 12.4131H7.93028"
-                      stroke="#FD595E"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round" />
-                </svg>
-                Это спам. не брать трубку
-              </p>
-
-              <button class="group-action btn button-md btn--green">
-                <svg
-                    width="19"
-                    height="19"
-                    viewBox="0 0 19 19"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                  <g clip-path="url(#clip0_727_6122)">
-                    <circle
-                        cx="9.4987"
-                        cy="9.49992"
-                        r="7.91667"
-                        stroke="white"
-                        stroke-width="1.5" />
-                    <path
-                        d="M6.73047 9.89575L8.3138 11.4791L12.2721 7.52075"
-                        stroke="white"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round" />
-                  </g>
-                  <defs>
-                    <clipPath id="clip0_727_6122">
-                      <rect
-                          width="19"
-                          height="19"
-                          fill="white" />
-                    </clipPath>
-                  </defs>
-                </svg>
-                Вы подписаны
-              </button>
-            </div>
-          </div>
-          <div class="favorites-card favorites-card--min">
-            <div class="favorites-card-head">
-              <div class="company">
-                <div class="company-logo">
-                  <img
-                      src="~/assets/img/logos/megafon.svg"
-                      alt="#" />
-                </div>
-                <div class="company-name">
-                  <a href="#"> +7 932 932 22 12</a
-                  ><span class="count">Мегафон</span>
-                </div>
-              </div>
-
-              <button class="card-action">
-                <svg
-                    width="28"
-                    height="28"
-                    viewBox="0 0 28 28"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                  <path
-                      d="M4.02539 23.9749H23.9754"
-                      stroke="#5375FD"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"></path>
-                  <path
-                      d="M14.2462 7.15927L19.7324 12.6455M14.2462 7.15927L17.3806 4.0249L22.8668 9.51115L19.7324 12.6455L14.2462 7.15927ZM14.2462 7.15927L8.03177 13.3737C7.82391 13.5815 7.70709 13.8634 7.70703 14.1573V19.1847H12.7344C13.0284 19.1846 13.3102 19.0678 13.518 18.8599L19.7324 12.6455L14.2462 7.15927Z"
-                      stroke="#5375FD"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"></path>
-                </svg>
-              </button>
-            </div>
-            <div class="favorites-card-body">
-              <button class="group-action btn button-md btn--green">
-                <svg
-                    width="19"
-                    height="19"
-                    viewBox="0 0 19 19"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                  <g clip-path="url(#clip0_727_6122)">
-                    <circle
-                        cx="9.4987"
-                        cy="9.49992"
-                        r="7.91667"
-                        stroke="white"
-                        stroke-width="1.5" />
-                    <path
-                        d="M6.73047 9.89575L8.3138 11.4791L12.2721 7.52075"
-                        stroke="white"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round" />
-                  </g>
-                  <defs>
-                    <clipPath id="clip0_727_6122">
-                      <rect
-                          width="19"
-                          height="19"
-                          fill="white" />
-                    </clipPath>
-                  </defs>
-                </svg>
-                Вы подписаны
-              </button>
-            </div>
-          </div>
-          <div class="favorites-card favorites-card--min">
-            <div class="favorites-card-head">
-              <div class="company">
-                <div class="company-logo">
-                  <img
-                      src="~/assets/img/logos/megafon.svg"
-                      alt="#" />
-                </div>
-                <div class="company-name">
-                  <a href="#"> +7 932 932 22 12</a
-                  ><span class="count">Мегафон</span>
-                </div>
-              </div>
-
-              <button class="card-action">
-                <svg
-                    width="28"
-                    height="28"
-                    viewBox="0 0 28 28"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                  <path
-                      d="M4.02539 23.9749H23.9754"
-                      stroke="#5375FD"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"></path>
-                  <path
-                      d="M14.2462 7.15927L19.7324 12.6455M14.2462 7.15927L17.3806 4.0249L22.8668 9.51115L19.7324 12.6455L14.2462 7.15927ZM14.2462 7.15927L8.03177 13.3737C7.82391 13.5815 7.70709 13.8634 7.70703 14.1573V19.1847H12.7344C13.0284 19.1846 13.3102 19.0678 13.518 18.8599L19.7324 12.6455L14.2462 7.15927Z"
-                      stroke="#5375FD"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"></path>
-                </svg>
-              </button>
-            </div>
-            <div class="favorites-card-body">
-              <p>
-                <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                  <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
-                      d="M19.0714 19.0699C16.0152 22.1263 11.4898 22.7867 7.78642 21.074C7.23971 20.8539 6.79148 20.676 6.36537 20.676C5.17849 20.683 3.70117 21.8339 2.93336 21.067C2.16555 20.2991 3.31726 18.8206 3.31726 17.6266C3.31726 17.2004 3.14642 16.7602 2.92632 16.2124C1.21283 12.5096 1.87411 7.98269 4.93026 4.92721C8.8316 1.02443 15.17 1.02443 19.0714 4.9262C22.9797 8.83501 22.9727 15.1681 19.0714 19.0699Z"
-                      stroke="#FD595E"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round" />
-                  <path
-                      d="M15.9408 12.4131H15.9498"
-                      stroke="#FD595E"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round" />
-                  <path
-                      d="M11.9291 12.4131H11.9381"
-                      stroke="#FD595E"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round" />
-                  <path
-                      d="M7.92128 12.4131H7.93028"
-                      stroke="#FD595E"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round" />
-                </svg>
-                Это спам. не брать трубку
-              </p>
-
-              <button class="group-action btn button-md btn--green">
-                <svg
-                    width="19"
-                    height="19"
-                    viewBox="0 0 19 19"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                  <g clip-path="url(#clip0_727_6122)">
-                    <circle
-                        cx="9.4987"
-                        cy="9.49992"
-                        r="7.91667"
-                        stroke="white"
-                        stroke-width="1.5" />
-                    <path
-                        d="M6.73047 9.89575L8.3138 11.4791L12.2721 7.52075"
-                        stroke="white"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round" />
-                  </g>
-                  <defs>
-                    <clipPath id="clip0_727_6122">
-                      <rect
-                          width="19"
-                          height="19"
-                          fill="white" />
-                    </clipPath>
-                  </defs>
-                </svg>
-                Вы подписаны
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </main>
 </template>

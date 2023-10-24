@@ -6,25 +6,18 @@
 
 <script setup>
 
+import {useProfileStore} from "~/store/profile";
 import {useAuthStore} from "~/store/auth";
-import {useVacancyStore} from "~/store/vacancy";
-import {useResumeStore} from "~/store/resume";
-import {storeToRefs} from "pinia";
 
-const { getConnectedEmployerProviders } = useVacancyStore();
-const { getConnectedSeekerProviders } = useResumeStore();
-const vacancyStore = useVacancyStore();
-
+const { getConnectedSeekerProviders, getConnectedEmployerProviders } = useProfileStore();
 
 const authStore =  useAuthStore();
 const isEmployer = computed(() => authStore.isEmployer);
-onMounted(async() => {
-
+if (isEmployer.value){
   await getConnectedEmployerProviders();
+}else{
   await getConnectedSeekerProviders();
-
-})
-
+}
 </script>
 
 <style>

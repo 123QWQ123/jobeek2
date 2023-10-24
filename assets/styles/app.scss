@@ -8,9 +8,9 @@
   width: max-content;
 }
 
-//.check-block label{
-//  white-space: nowrap;
-//}
+.check-block label{
+  white-space: nowrap;
+}
 
 .cursor-pointer{
   cursor: pointer;
@@ -95,15 +95,7 @@
   }
 }
 
-//.search-row .button-accent {
-//  border-top-left-radius: 0;
-//  border-bottom-left-radius: 0;
-//}
-@media (max-width: 960px) {
-  .submit-search-form {
-    border-radius: 0 0px 10px 10px;
-  }
- }
+
 //@media (min-width: 1048px) {
 //  .main-navigation{
 //    display: block;
@@ -142,18 +134,3 @@
 //    height: 58px;
 //  }
 //}
-
-
-
-.b-action a{
-  font-size: 16px;
-  line-height: 22px;
-  color: #0A2540;
-}
-
-
-@media (max-width: 960px) {
-  .search-form > .search-row{
-    border-bottom: 0;
-  }
-}
