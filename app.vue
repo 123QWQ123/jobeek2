@@ -6,18 +6,24 @@
 
 <script setup>
 
-import {useProfileStore} from "~/store/profile";
 import {useAuthStore} from "~/store/auth";
+import {useVacancyStore} from "~/store/vacancy";
+import {useResumeStore} from "~/store/resume";
 
-const { getConnectedSeekerProviders, getConnectedEmployerProviders } = useProfileStore();
+const { getConnectedEmployerProviders } = useVacancyStore();
+const { getConnectedSeekerProviders } = useResumeStore();
+const vacancyStore = useVacancyStore();
+
 
 const authStore =  useAuthStore();
 const isEmployer = computed(() => authStore.isEmployer);
-if (isEmployer.value){
+onMounted(async() => {
+
   await getConnectedEmployerProviders();
-}else{
   await getConnectedSeekerProviders();
-}
+
+})
+
 </script>
 
 <style>
