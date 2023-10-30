@@ -7,6 +7,10 @@ export function useFormData(state, type = 'json') {
             const keys = Object.keys(state).filter(item => state[item] instanceof Object);
             const newData = {};
             keys.map((item) => {
+                // if (item === 'covid_vaccination_requirement_id'){
+                //     console.log(item);
+                //     console.log(state[item]);
+                // }
                 if (state[item]){
                     let value = state[item].val;
                     if (state[item].is_hidden && state[item].is_hidden === true){

@@ -40,12 +40,6 @@ export default {
   // });
   const selectedValue = computed(() => props.modelValue);
   const selectedOption = ref(null);
-  const selectedItem = props.options.find(
-      (item) => String(selectedValue.value) === String(item.value)
-  );
-  if (selectedItem){
-    selectedOption.value = selectedItem;
-  }
 
 
   const reApply = (newValue) => {
@@ -58,7 +52,11 @@ export default {
   };
 
   watch(() => props.modelValue,reApply)
-  watch(() => props.options,reApply)
+  watch(() => props.options,reApply);
+
+  onMounted(() => {
+    reApply();
+  })
 
   function onClick(e){
     if (e.target.classList.contains('current') || e.target.classList.contains('nice-select')){
@@ -66,8 +64,8 @@ export default {
     }
     if (e.target.classList.contains('option')){
       isOpen.value = false;
-      emit("change", e.target.dataset.value);
-      emit("update:modelValue", e.target.dataset.value);
+      emit("change", e.target.dataset.value ?? null);
+      emit("update:modelValue", e.target.dataset.value ?? null);
     }
   }
   function close(){

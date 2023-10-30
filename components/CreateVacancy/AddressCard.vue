@@ -143,7 +143,6 @@ const {walkThroughFields} = useProviderFields(state, fields);
 watch(() => props.providers, walkThroughFields);
 
 onMounted(() => {
-  console.log(props.providers);
   walkThroughFields(props.providers);
 });
 

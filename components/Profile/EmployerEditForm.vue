@@ -249,9 +249,10 @@ watch(employer, (new_value) => {
           });
         }, 0);
       }
-      if (key === "email_to_verify") {
-          console.log(key, value)
-      }
+      // TODO
+      // if (key === "email_to_verify") {
+      //     console.log(key, value)
+      // }
       state[key].val = value;
     }
   }

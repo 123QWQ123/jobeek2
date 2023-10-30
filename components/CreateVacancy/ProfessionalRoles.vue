@@ -70,16 +70,18 @@ const profRoleOptions = ref([]);
 const hhProfRoleOptions = ref([]);
 const superjobProfRoleOptions = ref([]);
 
-const professional_roles = ref( props.modelValue ?? []);
+const professional_roles = ref([]);
+watchEffect(() => (professional_roles.value = props.modelValue));
 
 watch(() => props.modelValue, (newValues) => {
   professional_roles.value = newValues;
-  selectedOptions.value = newValues;
+  const items = profRoleOptions.value.filter((item) => newValues.includes(item.id));
 })
 
 watch(() => professional_roles.value, (newValues) => {
   emit('update:modelValue', newValues);
 })
+
 
 function getSelectedOptionName(value){
   const selectedOptionItem = profRoleOptions.value.find(item => String(item.value) === String(value));
@@ -88,54 +90,72 @@ function getSelectedOptionName(value){
 }
 const onHHUpdateInput = async (newValue = '') => {
   console.log(newValue);
-  if (newValue.length > 1){
+  if (newValue.length > 2){
     const items = await searchProfessionalRoles({providers: ['hh'], search: newValue}) ?? [];
     let newOptions = items.map(item => ({value: item.id, name: `${item.name}` }));
-    hhProfRoleOptions.value = newOptions.concat(selectedOptions.value);
+    hhProfRoleOptions.value = newOptions;
   }
 }
 
 const onSuperjobUpdateInput = async (newValue = '') => {
-  console.log(newValue);
   if (newValue.length > 2){
     const items = await searchProfessionalRoles({providers: ['hh'], search: newValue}) ?? [];
     let newOptions = items.map(item => ({value: item.id, name: `${item.name}` }));
-    superjobProfRoleOptions.value = newOptions.concat(selectedOptions.value);
+    superjobProfRoleOptions.value = newOptions;
   }
 }
 function onUnselect(deleteId){
-  if (selectedOptions.value.includes(deleteId)){
-    const indexItem = selectedOptions.value.indexOf(deleteId);
-    if (indexItem !== -1){
-      selectedOptions.value.splice(indexItem, 1);
-    }
+  if (professional_roles.value.includes(deleteId)){
+    const selectedItems = professional_roles.value.filter(item => item.toString() !== deleteId.toString());
+    professional_roles.value = selectedItems;
   }
 }
 
 onMounted(() => {
-  setTimeout(async() => {
-    const items = await searchProfessionalRoles({providers: ['hh']}) ?? [];
-    let newOptions = items.map(item => ({value: item.id, name: `${item.name}` }));
-    hhProfRoleOptions.value = newOptions.concat(selectedOptions.value);
-  }, 500)
+
   setTimeout(async() => {
     const items = await searchProfessionalRoles({providers: ['superjob']}) ?? [];
     let newOptions = items.map(item => ({value: item.id, name: `${item.name}` }));
-    superjobProfRoleOptions.value = newOptions.concat(selectedOptions.value);
+    superjobProfRoleOptions.value = newOptions;
+
+    const items2 = await searchProfessionalRoles({providers: ['hh']}) ?? [];
+    let newOptions2 = items2.map(item => ({value: item.id, name: `${item.name}` }));
+    hhProfRoleOptions.value = newOptions2;
+
+    profRoleOptions.value = [...newOptions, ...newOptions2];
+
   }, 500)
 
-  setTimeout(() => {
-    profRoleOptions.value = [...hhProfRoleOptions.value, ...superjobProfRoleOptions.value];
-  }, 600)
 
 })
 
 </script>
 
-<style>
+<style scoped>
 
-.from-to-block{
 
+.selection{
+  /*border: 1px solid;*/
+  border-radius: 4px;
+  /*padding: 0 16px;*/
+  left: 0;
+}
+.selected-options{
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+  display: flex;
+  padding: 0 0.1rem 0.2rem;
+  gap: 0.5rem;
+}
+
+.multi-select_selected-item{
+  border: 1px solid #5375FD;
+  border-radius: 4px;
+  padding: 2px;
+  color: #5375FD;
+}
+.multi-select_selected-item span{
+  color: #5375FD;
 }
 
 </style>

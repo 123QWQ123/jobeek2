@@ -78,7 +78,8 @@
         </div>
 
         <br/>
-        <CreateVacancyContactsPhones v-if="my_vacancy" :providers="props.providers"  v-model="state.phones.val" :errors="phonesErrors"/>
+
+        <CreateVacancyContactsPhones v-if="my_vacancy && !state.phones.is_hidden" :providers="props.providers"  v-model="state.phones.val" :errors="phonesErrors"/>
 
       </div>
     </transition>
@@ -161,7 +162,8 @@ const state = reactive({
           additional_phone: null,
           additional_phone_comment: null,
         },
-        isValid: true
+        isValid: true,
+        is_hidden: true,
     },
     isFormValid: true,
     isNew: true,
@@ -177,8 +179,8 @@ const fields = ref({
     email: false,
     company_name: true,
     company_description: true,
-    company_url: true,
-    company_logo: true,
+    company_url: false,
+    company_logo: false,
   }
 });
 

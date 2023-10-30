@@ -266,6 +266,7 @@ export const useAuthStore = defineStore('auth', {
       this.setUser(null);
       this.isAuthed = false;
       return false;
+      // TODO
       // if (expiresIn < 0) {
       //   this.autoLogout();
       //   return;
@@ -278,8 +279,6 @@ export const useAuthStore = defineStore('auth', {
 
     clearAuth() {
       localStorage.removeItem('token');
-      // localStorage.removeItem('userId');
-      // localStorage.removeItem('tokenExpirationDate');
     },
 
     async signIn(payload) {
@@ -300,6 +299,7 @@ export const useAuthStore = defineStore('auth', {
             data: this.user
           };
         }
+        // TODO
         // const expiresIn = resData.expiresIn * 1000;
         // const expirationDate = new Date().getTime() + expiresIn;
         //

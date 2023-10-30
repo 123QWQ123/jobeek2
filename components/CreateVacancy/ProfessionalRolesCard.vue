@@ -13,7 +13,7 @@
     <transition>
       <div class="w-box-body" :class="{collapse: isCollapsed}">
 
-        <CreateVacancyProfessionalRoles v-model="state.professional_roles.val" />
+        <CreateVacancyProfessionalRoles v-if="my_vacancy" v-model="state.professional_roles.val" />
         
         <div class="text-danger d-block" v-if="errors.professional_roles">
           Вам нужно выбрать деятелность для публикации!
@@ -53,7 +53,7 @@ const my_vacancy = computed(() => vacancyStore.my_vacancy);
 const isSaved = ref(false);
 const isChanged = ref(false);
 const isFirst = ref(true);
-const isCollapsed = ref(false);
+const isCollapsed = ref(true);
 const isUpdated = ref(false);
 
 
@@ -69,13 +69,16 @@ const state = reactive({
     success: null,
 });
 
-watch(() => useWatchStateValues(state, true, true),   (newState, oldState) => {
-    if (!isFirst.value){
-        isChanged.value = true;
-    }else{
-        isFirst.value = false;
-    }
-});
+watch(() => state.professional_roles.val, () => {
+  isChanged.value = true;
+})
+// watch(() => useWatchStateValues(state, true, true),   (newState, oldState) => {
+//     if (!isFirst.value){
+//         isChanged.value = true;
+//     }else{
+//         isFirst.value = false;
+//     }
+// });
 
 const sectionData = ref({});
 watch(() => sectionData.value, (newData, oldData) => {
@@ -113,10 +116,8 @@ function getSelectedOptionName(value){
   else return "Not found";
 }
 const onHHUpdateInput = async (newValue = '') => {
-  console.log(newValue);
   if (newValue.length > 2){
     const items = await searchProfessionalRoles({providers: ['hh']}) ?? [];
-    console.log(items);
     let newOptions = items.map(item => ({value: item.id, name: `${item.name}` }));
     hhProfRoleOptions.value = newOptions.concat(selectedOptions.value);
     profRoleOptions.value = [...hhProfRoleOptions.value, ...superjobProfRoleOptions.value];
@@ -124,10 +125,8 @@ const onHHUpdateInput = async (newValue = '') => {
 }
 
 const onSuperjobUpdateInput = async (newValue = '') => {
-  console.log(newValue);
   if (newValue.length > 2){
     const items = await searchProfessionalRoles({providers: ['hh']}) ?? [];
-    console.log(items);
     let newOptions = items.map(item => ({value: item.id, name: `${item.name}` }));
     superjobProfRoleOptions.value = newOptions.concat(selectedOptions.value);
     profRoleOptions.value = [...hhProfRoleOptions.value, ...superjobProfRoleOptions.value];

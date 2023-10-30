@@ -270,7 +270,6 @@
 
         <CreateVacancyAge v-model="age" :errors="errors" :providers="props.providers"/>
 
-        {{props.providers}}
       </div>
     </transition>
 
@@ -687,7 +686,6 @@ const covidVacReqOptions = computed(() => {
   return dictionaryStore.covid_vaccination_requirement.map((item) => ({name: item.name, value: item.id}));
 });
 
-const {searchAddresses} = dictionaryStore;
 onMounted(() => {
   setTimeout(async() => {
     await getWorkTypes();
@@ -703,7 +701,6 @@ onMounted(() => {
     await getChildren();
     await getGenders();
     await getCovidVacRequirements();
-    await searchAddresses();
   }, 500)
 })
 const onAddressSearch  = async(newString) => {
@@ -722,6 +719,7 @@ const save = async (is_from_parent = false) => {
 
     jsonData.action = 'UpdateAdvancedField';
     resData = await updateVacancy(draftID.value, jsonData);
+
 
     isUpdated.value = true;
     if (resData.status !== 'success'){

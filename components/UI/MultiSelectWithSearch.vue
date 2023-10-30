@@ -157,7 +157,7 @@ function close(){
 }
 
 </style>
-<style>
+<style scoped>
 .multi-select_wrapper{
 
 }

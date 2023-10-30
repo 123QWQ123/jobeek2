@@ -138,17 +138,16 @@ const reset = () => {
 }
 
 onMounted(() => {
-  console.log(vacancyProviders.value);
+  // console.log(vacancyProviders.value);
 })
 const {updateVacancy} = vacancyStore;
 // const providers = ref(resetObject);
 const toggle = async (provider) => {
   if (!selectedProviders.value[provider]){
-    console.log(provider);
     if (enabledProviders.value[provider] === false){
         const providerParams = new URLSearchParams();
         providerParams.set('providers[]', provider);
-        const resData = await getEmployerProvidersAuthEndpoints(providerParams, route.fullPath);
+        const resData = await getEmployerProvidersAuthEndpoints(providerParams, route.fullPath.replace(route.fullPath.substring(0, 1), ""));
         if (resData.hasOwnProperty(provider)){
           openProviderAuthUrl(resData[provider]);
         }else{
@@ -156,7 +155,6 @@ const toggle = async (provider) => {
         }
         return;
     }
-
   }
 
   selectedProviders.value[provider] = !selectedProviders.value[provider];
