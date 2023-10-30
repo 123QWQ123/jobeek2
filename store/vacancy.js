@@ -91,7 +91,7 @@ export const useVacancyStore = defineStore('vacancy', {
 
       const {data} = await useApi('employer/vacancies/import', {
         method: 'post',
-        payload
+        payload: {providers: payload}
       });
 
       // console.log(data.message);
