@@ -112,11 +112,19 @@ const {searchCities} = profileStore;
 const selectedOptions = ref([]);
 const cityOptions = ref([]);
 
-
+const getCityName = (item) => {
+  if (item.city_name && item.region_name && item.country_name){
+    return item.city_name + ', ' + item.region_name + ", " + item.country_name
+  }else if(item.region_name && item.country_name){
+    return item.region_name + ", " + item.country_name
+  }else{
+    return item.country_name;
+  }
+}
 const updateCityInput = async (newValue = '') => {
   if (newValue.length > 2){
     const items = await searchCities({search: newValue}) ?? [];
-    let newOptions = items.filter(item => item.cityId).map(item => ({value: item.cityId, name: `${item.city_name}, ${item.region_name}, ${item.country_name}` }));
+    let newOptions = items.filter(item => item.cityId).map(item => ({value: item.cityId, name: getCityName(item) }));
     cityOptions.value = newOptions.concat(selectedOptions.value);
   }
 }
@@ -148,7 +156,6 @@ const save = async (is_from_parent = false) => {
       });
     }
   }
-
   else{
     return true;
   }

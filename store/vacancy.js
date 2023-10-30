@@ -185,9 +185,9 @@ export const useVacancyStore = defineStore('vacancy', {
         content_type,
         payload
       });
-      // if ('data' in response && response.data.status === 'success'){
-      //   this.resume = response.data;
-      // }
+      if ('data' in response && response.data.hasOwnProperty('data')){
+        this.my_vacancy = response.data.data;
+      }
       return response;
     },
 

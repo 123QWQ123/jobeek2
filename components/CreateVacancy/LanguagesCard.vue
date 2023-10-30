@@ -1,6 +1,6 @@
 <template>
 
-  <div v-if="isHidden" class="w-box" v-click-outside="save">
+  <div v-if="!isHidden" class="w-box" v-click-outside="save">
     <div class="w-box-head">
       <h3 class="title">Языки({{ isChanged }})</h3>
       <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
@@ -12,9 +12,7 @@
     </div>
     <transition>
       <div class="w-box-body" :class="{collapse: isCollapsed}">
-
         <SharedComponentsForeignLanguagesWrapper v-if="my_vacancy" v-model="state.languages.val" :errors="errors.languages ?? []" />
-
       </div>
     </transition>
 
@@ -107,6 +105,7 @@ const save = async (is_from_parent = false) => {
         state.errorMessage = "";
         let resData = {};
         const jsonData = useFormData(state);
+        jsonData.languages = jsonData.languages?.map(item => ({language_id: item.language_id, level_id: item.level_id})) ?? [];
         jsonData.action = 'UpdateLanguages';
         resData = await updateVacancy(draftID.value, jsonData);
         isUpdated.value = true;

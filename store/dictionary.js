@@ -87,18 +87,25 @@ export const useDictionaryStore = defineStore('dictionary', {
       return data;
     },
     async searchAddresses(payload) {
-
       if (this.addresses.length > 0){
         return this.addresses;
       }
-      const {data} = await useApi('employer/addresses?providers[]=hh&page=0&per_page=100', {
+      const response = await useApi('employer/addresses?providers[]=hh&page=0&per_page=100', {
         method: 'get',
         payload
       });
-      if (data){
-        this.addresses = data ?? [];
+      console.log(response);
+      if (response && 'data' in response){
+        if (response && 'data' in response && response.data.hasOwnProperty('data')){
+          this.addresses = response.data ?? [];
+          return this.addresses;
+        }
+        this.addresses = response.data ?? [];
+        return this.addresses;
+      }else{
+
       }
-      return data;
+      return response;
     },
     async searchMetro(payload) {
 
@@ -325,6 +332,7 @@ export const useDictionaryStore = defineStore('dictionary', {
       return data.data;
     },
     async getCovidVacRequirements(payload) {
+      const nullableOption = {id: null, name: "Не выбран"};
       if (this.covid_vaccination_requirement.length > 0){
         return this.covid_vaccination_requirement;
       }
@@ -334,6 +342,8 @@ export const useDictionaryStore = defineStore('dictionary', {
       });
       if (data && 'data' in data){
         this.covid_vaccination_requirement = data.data?.covid_vaccination_requirement ?? [];
+        this.covid_vaccination_requirement.unshift(nullableOption);
+        return this.covid_vaccination_requirement;
       }
       return data.data;
     },

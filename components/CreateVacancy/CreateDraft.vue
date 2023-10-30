@@ -145,10 +145,18 @@ const cityOptions = ref([]);
 const professionalRoleOptions = ref([]);
 
 
+const getCityName = (item) => {
+  if (item.city_name){
+    return item.city_name + ', ' + item.region_name + ", " + item.country_name
+  }else if(item.region_name){
+    return item.region_name + ", " + item.country_name
+  }else{
+    return item.country_name;
+  }
+}
 const updateCityInput = async (newValue = '') => {
     const items = await searchCities({search: newValue}) ?? [];
-  console.log(items);
-    cityOptions.value = items.map(item => ({value: item.cityId, name: item.city_name}));
+    cityOptions.value = items.map(item => ({value: item.cityId, name: getCityName(item) }));
 }
 
 const updateProfessionalInput = async (newValue = '') => {

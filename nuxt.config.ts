@@ -25,7 +25,7 @@ const config = {
     '~/assets/styles/styles-new.css',
   ],
   plugins: [
-    // { src: '@/plugins/vue-mavon-editor', ssr: false }
+    // { src: '~/plugins/useNativeNotification.client.js', ssr: false }
   ],
   components: [
     '~/components',

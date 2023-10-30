@@ -2,6 +2,7 @@
 import {useVacancyStore} from "~/store/vacancy";
 import useAlert from "~/composables/useAlert";
 import Swal from "sweetalert2";
+import {toast} from "vue3-toastify";
 
 definePageMeta({
   layout: "cabinet",
@@ -81,12 +82,27 @@ const paramProviders = computed(() => {
 
 const canBePublished = computed(() => {
   if (my_vacancy.value){
-    if (my_vacancy.value.can_publish.hh || my_vacancy.value.can_publish.superjob){
-      return true;
+    if (!providers.value.hh && !providers.value.superjob){
+      return false;
     }
+    if (!providers.value.hh && providers.value.superjob){
+      if (my_vacancy.value.can_publish?.superjob) return true;
+      return false;
+    }
+    if (providers.value.hh && !providers.value.superjob){
+      if (my_vacancy.value.can_publish?.hh) return true;
+      return false;
+    }
+    if (providers.value.hh && providers.value.superjob){
+      if (my_vacancy.value.can_publish?.hh || my_vacancy.value.can_publish?.superjob){
+        return true;
+      }
+    }
+    return false;
   }
   return false;
 })
+
 
 const advanced_fields_el = ref();
 const cities_el = ref();
@@ -127,49 +143,67 @@ const saveAllSections = async () => {
 
 const errorMessage = ref(null);
 const hhErrorMessage = ref(null);
+const superjobErrorMessage = ref(null);
+const errors = ref([]);
+const isLoading = ref(false);
 const save = async(e) => {
   e.preventDefault();
 
+  isLoading.value = true;
   const resAll = await saveAllSections();
+  if (!resAll){
 
-  if (resAll){
-    const payload = {
-      providers: paramProviders.value
-    }
-    const resData = await publishDraft(draftId.value, payload);
-    console.log(resData);
-    if (resData.hasOwnProperty('status') && resData.status !== 'success'){
-      Swal.fire({
-        title: 'Ошибка!',
-        text: resData.message,
-        icon: "error",
-        confirmButtonText: 'ОК'
-      });
-
-      errorMessage.value = '';
-      if (resData.hasOwnProperty('errors')){
-        const {errors} = resData;
-        const {hh, superjob} = errors
-
-        console.log(hh);
-        console.log(hh[0]);
-
-
-      }
-    }
-    console.log(resData);
-  }else{
     Swal.fire({
       title: 'Ошибка!',
       text: "не все обязательные поля заполнены верно!",
       icon: "error",
       confirmButtonText: 'ОК'
     });
+  }else{
+
   }
 
-  // console.log('saving and publishing or redirecting to edit page');
-  // // employer/vacancy/publish/408
-  // console.log(paramProviders.value);
+  const payload = {
+    providers: paramProviders.value
+  }
+
+  const resData = await publishDraft(draftId.value, payload);
+  isLoading.value = false;
+  if (resData.hasOwnProperty('status') && resData.status !== 'success'){
+    Swal.fire({
+      title: 'Ошибка!',
+      text: resData.message,
+      icon: "error",
+      confirmButtonText: 'ОК'
+    });
+
+    errorMessage.value = '';
+    if (resData.hasOwnProperty('errors')){
+      const {errors: resErrors} = resData;
+      const {hh, superjob} = resErrors
+
+      let errorItems = [];
+      if (hh && hh.length > 0){
+        errorItems = hh.map(item => item.errors);
+      }
+
+      if (superjob && superjob.length > 0){
+        errorItems = errorItems.concat(superjob.map(item => item.errors));
+      }
+      errors.value = errorItems;
+
+      console.log(errorItems);
+
+    }
+    return;
+  }
+  console.log(resData);
+
+  toast.info(resData.data.message, {autoClose: 3000});
+
+  setTimeout(() => {
+    navigateTo({name: 'my-vacancies'});
+  })
 
 }
 // groups[]=
@@ -183,6 +217,7 @@ const save = async(e) => {
       <PersonalCabinetSearchMobile />
 
       <div class="wrapper wrapper-1290">
+
         <form class="create-vacancy" action="" name="create-vacancy " v-if="!draftId">
 
           <CreateVacancyCreateDraft :title="pageTitle"/>
@@ -192,6 +227,12 @@ const save = async(e) => {
           </div>
         </form>
         <form class="update-vacancy" v-else>
+
+          {{errors}}
+          <div class="errors" v-if="errors.length">
+            <h4>К сожалению возникли ошибки при создании Вакансии:</h4>
+            <p class="alert alert-info" v-for="item in errors">{{item}}</p>
+          </div>
           <CreateVacancyProviders v-model="providers" />
 
           <CreateVacancyAdvancedFieldsCard ref="advanced_fields_el" :providers="providers" />
@@ -209,10 +250,11 @@ const save = async(e) => {
 
           <p class="text-lg-end">При создании ваканции вы соглашаетесь с <a href="#">правилами работы сервиса</a> и даете согласие на обработку персональных данных, разрешенных для распространения</p>
           <div class="form-submit-container mt-2">
-
-
             <button class="btn btn-outline-primary" type="button" @click="saveAsDraft">Сохранить как черновик</button>
-            <button class="button-accent" :class="{'disabled' : !canBePublished}" type="submit" @click.prevent="save">Сохранить и опубликовать</button>
+            <button class="button-accent" :class="{'disabled' : !canBePublished}" type="submit" @click.prevent="save">
+              <span v-if="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Сохранить и опубликовать
+            </button>
           </div>
         </form>
       </div>
@@ -224,4 +266,15 @@ const save = async(e) => {
 .button-accent.disabled{
     filter: grayscale(180%);
 }
+
+@media (max-width: 768px){
+  .form-submit-container{
+    flex-direction: column-reverse;
+  }
+  .button-accent{
+    margin-bottom: 1rem;
+  }
+}
+
+
 </style>

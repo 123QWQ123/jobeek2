@@ -40,7 +40,6 @@ const driving_license_item_options = ref([]);
 
 const driver_licenses_ids = computed(() => {
   return selectedItems.value.map((item) => {
-    console.log(item);
     const res = dictionaryStore.driver_licenses.find(sub => sub.name === item.toString());
     if (res) return res.id;
   })

@@ -227,11 +227,13 @@ const currency = computed(() => {
 });
 
 const cityAddress = computed(() => {
-  if (item.hasOwnProperty('cities')){
-    if (item.cities.length === 1){
-      return item.cities[0].name;
+  const itemData = item.value;
+  if (itemData.hasOwnProperty('cities')){
+    console.log(1);
+    if (itemData.cities.length === 1){
+      return itemData.cities[0].name;
     }else{
-      return item.cities.reduce((acc, item) => acc + item.name + ', ', "").replace(/,*\s$/, '');
+      return itemData.cities.reduce((acc, item) => acc + item.name + ', ', "").replace(/,*\s$/, '');
     }
   }return "no city";
 })
