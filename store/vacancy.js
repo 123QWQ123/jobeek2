@@ -179,7 +179,7 @@ export const useVacancyStore = defineStore('vacancy', {
       return response;
     },
 
-    async updateVacancy(id, payload, content_type = 'application/json') {
+    async updateDraft(id, payload, content_type = 'application/json') {
       const response = await useApi('employer/vacancy/draft/' + id, {
         method: 'PUT',
         content_type,
@@ -187,6 +187,30 @@ export const useVacancyStore = defineStore('vacancy', {
       });
       if ('data' in response && response.data.hasOwnProperty('data')){
         this.my_vacancy = response.data.data;
+      }
+      return response;
+    },
+    async createDraftFromActiveVacancy(id, content_type = 'application/json') {
+      const response = await useApi('employer/vacancy/create/draft/' + id, {
+        method: 'POST',
+        content_type,
+        payload: {}
+      });
+      console.log(response);
+      // if ('data' in response && response.data.hasOwnProperty('data')){
+      //   this.my_vacancy = response.data.data;
+      // }
+      return response;
+    },
+
+    async updateVacancy(id, payload, content_type = 'application/json') {
+      const response = await useApi('employer/vacancy/' + id, {
+        method: 'PUT',
+        content_type,
+        payload
+      });
+      if ('data' in response && response.data.hasOwnProperty('data')){
+        return await this.getMyVacancy(id);
       }
       return response;
     },
@@ -219,7 +243,7 @@ export const useVacancyStore = defineStore('vacancy', {
       }
       return response;
     },
-    async getArchivedVacancies(payload) {
+    async getArchivedVacancies(payload = {status: 'archived'}) {
       const response = await this.getUserVacancies(payload);
       if (response.hasOwnProperty('data') && 'data' in response.data){
         this.my_archived_vacancies = response.data.data;
@@ -233,7 +257,6 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      console.log(response);
       if (response.hasOwnProperty('data') && 'data' in response.data){
         this.my_drafts = response.data.data;
         this.my_draft_total = response.data.found;
@@ -242,8 +265,17 @@ export const useVacancyStore = defineStore('vacancy', {
       }
       return response;
     },
-    async getMyVacancy(payload) {
+    async getMyDraft(payload) {
       const response = await useApi('employer/vacancy/draft/' + payload, {
+        method: 'get',
+      });
+      if (response && 'data' in response && response.data && 'data' in response.data){
+        this.my_vacancy = response.data.data;
+      }
+      return response;
+    },
+    async getMyVacancy(id) {
+      const response = await useApi('employer/vacancy/' + id, {
         method: 'get',
       });
       if (response && 'data' in response && response.data && 'data' in response.data){
@@ -344,21 +376,13 @@ export const useVacancyStore = defineStore('vacancy', {
     async deleteVacancy(id, payload = URLSearchParams) {
       const response = await useApi('employer/vacancy/' + id + '?' + payload.toString(), {
         method: 'delete',
-
       });
       console.log(response);
       return response;
     },
-    async deleteDraft(id, payload = URLSearchParams) {
+    async deleteDraft(id) {
       const response = await useApi('employer/vacancy/draft/' + id, {
         method: 'delete',
-      });
-      return response;
-    },
-
-    async restoreVacancy(id, payload = URLSearchParams) {
-      const response = await useApi('employer/vacancy/draft/' + id, {
-        method: 'POST',
       });
       return response;
     },

@@ -44,6 +44,7 @@ const educationElement = ref(false);
 const route = useRoute();
 const resumeStore = useResumeStore();
 const draftID = computed(() => route.query.draft_id);
+const vacancyID = computed(() => route.query.vacancy_id);
 
 const educations = ref(resumeStore.resume?.education_histories ?? []);
 

@@ -92,65 +92,6 @@
 
       <div class="resume-card-options">
         <span class="status">Обновлено в {{ moment(item.updated_at).format('HH:mm') }}</span>
-        <div class="option-group selector-group">
-          <div class="option">
-            <div class="custom-check-wrap">
-              <div class="theme-checker theme-checker--blue">
-                <input type="checkbox" id="sj" :checked="item.can_publish.hh" />
-                <div class="theme-checker-ui">
-                  <div class="circle"></div>
-                </div>
-              </div>
-              <label for="sj">
-                <img src="~/assets/img/logos/hhmini.svg" alt="#" />
-                <span>HH</span>
-              </label>
-            </div>
-          </div>
-          <div class="option">
-            <div class="custom-check-wrap">
-              <div class="theme-checker theme-checker--blue">
-                <input type="checkbox" id="sj" :checked="item.can_publish.superjob" />
-                <div class="theme-checker-ui">
-                  <div class="circle"></div>
-                </div>
-              </div>
-              <label for="sj">
-                <img src="~/assets/img/logos/sj.svg" alt="#" />
-                <span>Superjob</span>
-              </label>
-            </div>
-          </div>
-        </div>
-        <div class="d-inline-flex ms-0 ms-lg-auto">
-          <div class="d-inline-flex flex-column flex-lg-row mt-4 mt-lg-0 mt-md-0" >
-            <div class="check-block mb-2 mb-lg-0 mb-md-0">
-              <div class="checkbox">
-                <input type="checkbox" id="enable-push" />
-                <div class="checkbox-mask">
-                  <img src="~/assets/img/svg/check.svg" alt="#" />
-                </div>
-              </div>
-              <label for="enable-push"
-              >Подключить Push-уведомления
-              </label>
-            </div>
-            <div class="check-block">
-              <div class="checkbox">
-                <input
-                    type="checkbox"
-                    id="enable-email-notification"
-                />
-                <div class="checkbox-mask">
-                  <img src="~/assets/img/svg/check.svg" alt="#" />
-                </div>
-              </div>
-              <label for="enable-email-notification"
-              >Подключить E-mail уведомления</label
-              >
-            </div>
-          </div>
-        </div>
         <div class="params-button-container ms-auto"  v-click-outside.once="closeContextMenu">
           <button class="resume-action params-button" @click="toggleContextMenu">
             <svg
@@ -195,9 +136,9 @@
                   </svg>
                 </div>
                 <span>
-                  <nuxt-link :to="{name: 'create-vacancy', query: {draft_id: item.id}}" class="title">
+                  <a class="title">
                       Создать копию
-                  </nuxt-link>
+                  </a>
                 </span>
               </button>
               <button class="b-action" @click="onDelete(item.id)">
@@ -308,9 +249,10 @@ const employerLogo = computed(() => {
 
 const published_date = moment(item?.published_date).locale('ru');
 
-const {deleteDraft} = useVacancyStore();
+const {deleteVacancy, createDraftFromActiveVacancy,  getArchivedVacancies} = useVacancyStore();
 const onDelete = async(id) => {
-  const resData = await deleteDraft(id);
+  console.log(id);
+  const resData = await deleteVacancy(id);
   if(resData.status !== 'success'){
     Swal.fire({
       title: 'Ошибка!',
@@ -320,11 +262,12 @@ const onDelete = async(id) => {
     });
     return;
   }
-  window.location.reload();
+
+  await getArchivedVacancies();
 }
 
 const onRestore = async(id) => {
-  const resData = await restoreVacancy(id);
+  const resData = await createDraftFromActiveVacancy(id);
   if(resData.status !== 'success'){
     Swal.fire({
       title: 'Ошибка!',
@@ -334,7 +277,8 @@ const onRestore = async(id) => {
     });
     return;
   }
-  window.location.reload();
+
+  navigateTo({name: 'my-vacancies', query: {status: 'draft'}});
 }
 
 

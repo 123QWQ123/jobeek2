@@ -14,7 +14,8 @@ const pageTitle = computed(() => {
 })
 const route = useRoute();
 
-const draftId = computed(() => route.query.draft_id);
+const draftID = computed(() => route.query.draft_id);
+const vacancyID = computed(() => route.query.vacancy_id);
 watch(() => route.query.draft_id, (newDraftId) => {
     console.log(newDraftId)
     if (newDraftId){

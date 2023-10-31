@@ -55,7 +55,8 @@ const CONFIG = useRuntimeConfig();
 const route = useRoute();
 
 const draftID = computed(() => route.query.draft_id);
-const {updateVacancy, getMyVacancy} = vacancyStore;
+const vacancyID = computed(() => route.query.vacancy_id);
+const {updateVacancy, updateDraft, getMyVacancy, getMyDraft} = vacancyStore;
 
 const {employer} = profileStore;
 const my_vacancy = computed(() => vacancyStore.my_vacancy);
@@ -125,7 +126,11 @@ const save = async (is_from_parent = false) => {
         let resData = {};
         const jsonData = useFormData(state);
         jsonData.action = 'UpdateKeySkills';
-        resData = await updateVacancy(draftID.value, jsonData);
+        if (draftID.value){
+          resData = await updateDraft(draftID.value, jsonData);
+        }else{
+          resData = await updateVacancy(vacancyID.value, jsonData);
+        }
         isUpdated.value = true;
         if (resData.status !== 'success'){
           return handleErrorResponse(resData.data);

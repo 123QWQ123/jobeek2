@@ -266,6 +266,9 @@
               {{errors.video_url}}
             </div>
           </div>
+
+<!--          <youtube-iframe v-if="state.video_url.val" :video-id="videoUrlID" />-->
+
         </div>
 
         <CreateVacancyAge v-model="age" :errors="errors" :providers="props.providers"/>
@@ -309,11 +312,23 @@ const CONFIG = useRuntimeConfig();
 const route = useRoute();
 
 const draftID = computed(() => route.query.draft_id);
-const {updateVacancy, getMyVacancy} = vacancyStore;
+const vacancyID = computed(() => route.query.vacancy_id);
+const {updateVacancy, updateDraft, getMyVacancy} = vacancyStore;
 
 const {employer} = profileStore;
 const my_vacancy = computed(() => vacancyStore.my_vacancy);
-
+function youtube_parser(url){
+  var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+  var match = url.match(regExp);
+  return (match&&match[7].length==11)? match[7] : false;
+}
+function YouTubeGetID(url){
+  url = url.split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
+  return (url[2] !== undefined) ? url[2].split(/[^0-9a-z_\-]/i)[0] : url[0];
+}
+const videoUrlID = computed(() => {
+  return YouTubeGetID(state.video_url.val);
+})
 const isSaved = ref(false);
 const isChanged = ref(false);
 const isFirst = ref(true);
@@ -718,7 +733,12 @@ const save = async (is_from_parent = false) => {
     const jsonData = {...useFormData(state)};
 
     jsonData.action = 'UpdateAdvancedField';
-    resData = await updateVacancy(draftID.value, jsonData);
+    if (draftID.value){
+      resData = await updateDraft(draftID.value, jsonData);
+    }else{
+      resData = await updateVacancy(vacancyID.value, jsonData);
+    }
+
 
 
     isUpdated.value = true;

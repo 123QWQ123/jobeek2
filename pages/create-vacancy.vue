@@ -8,12 +8,7 @@ definePageMeta({
   layout: "cabinet",
 });
 
-const pageTitle = computed(() => {
-  if (draftId.value) {
-    return "Создание вакансии"
-  }
-  return "Создание вакансии";
-})
+
 const route = useRoute();
 
 const vacancyStore = useVacancyStore();
@@ -25,19 +20,42 @@ const providers = ref({
   hh: false,
 })
 
-const {getMyVacancy} = vacancyStore;
-const draftId = computed(() => route.query.draft_id);
+const {getMyVacancy, getMyDraft} = vacancyStore;
+const draftID = computed(() => route.query.draft_id);
+const vacancyID = computed(() => route.query.vacancy_id);
+const pageTitle = computed(() => {
+  if (draftID?.value) {
+    return "Создание вакансии"
+  }
+  return "Создание вакансии";
+})
 watch(() => route.query.draft_id, (newDraftId) => {
   console.log(newDraftId)
   if (newDraftId){
-    getMyVacancy(draftId.value);
+    getMyDraft(draftID.value);
   }
 })
 
 
 onMounted(async() => {
-  if (draftId.value){
-    const resData = await getMyVacancy(draftId.value);
+  if (draftID.value){
+    const resData = await getMyDraft(draftID.value);
+    if (resData.status === 'error'){
+      navigateTo({
+        name: 'create-vacancy',
+        query: {
+          ...route.query,
+          message: JSON.stringify({
+            type: 'error',
+            text: resData.message,
+            redirect: 'create-vacancy',
+          })
+        }
+      })
+    }
+  }
+  if (vacancyID.value){
+    const resData = await getMyVacancy(vacancyID.value);
     if (resData.status === 'error'){
       navigateTo({
         name: 'create-vacancy',
@@ -167,7 +185,7 @@ const save = async(e) => {
     providers: paramProviders.value
   }
 
-  const resData = await publishDraft(draftId.value, payload);
+  const resData = await publishDraft(draftID.value, payload);
   isLoading.value = false;
   if (resData.hasOwnProperty('status') && resData.status !== 'success'){
     Swal.fire({
@@ -218,7 +236,7 @@ const save = async(e) => {
 
       <div class="wrapper wrapper-1290">
 
-        <form class="create-vacancy" action="" name="create-vacancy " v-if="!draftId">
+        <form class="create-vacancy" action="" name="create-vacancy " v-if="!draftID && !vacancyID">
 
           <CreateVacancyCreateDraft :title="pageTitle"/>
 

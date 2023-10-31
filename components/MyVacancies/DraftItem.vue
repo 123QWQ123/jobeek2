@@ -176,6 +176,10 @@ import {toast} from "vue3-toastify";
 const props = defineProps(['item']);
 const item = computed(() => props.item);
 
+const vacancyStore = useVacancyStore();
+const {getConnectedEmployerProviders, updateVacancy, getMyDrafts} = vacancyStore;
+
+
 const hhProviderEnabled = computed(() => {
   if (item.value){
     return !!item.value.providers.find((prov) => prov.name=='hh');
@@ -229,7 +233,6 @@ const currency = computed(() => {
 const cityAddress = computed(() => {
   const itemData = item.value;
   if (itemData.hasOwnProperty('cities')){
-    console.log(1);
     if (itemData.cities.length === 1){
       return itemData.cities[0].name;
     }else{
@@ -269,11 +272,10 @@ const onDelete = async(id) => {
     });
     return;
   }
-  window.location.reload();
+  toast.info("Успешно удалено!", {autoClose: 3000});
+  await getMyDrafts({status: 'active'});
 }
 
-const vacancyStore = useVacancyStore();
-const {getConnectedEmployerProviders, getEmployerProvidersAuthEndpoints, getMyVacancy, updateVacancy, getMyDrafts} = vacancyStore;
 await getConnectedEmployerProviders();
 
 const resetObject = computed(() => {
@@ -283,7 +285,6 @@ const resetObject = computed(() => {
   }
 });
 
-console.log(resetObject.value);
 const selectedProviders = ref(resetObject.value);
 
 const toggle = async (provider) => {

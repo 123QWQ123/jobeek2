@@ -165,6 +165,7 @@ const CONFIG = useRuntimeConfig();
 const route = useRoute();
 
 const draftID = computed(() => route.query.draft_id);
+const vacancyID = computed(() => route.query.vacancy_id);
 
 const {seeker} = profileStore;
 const {resume} = storeToRefs(resumeStore);

@@ -49,7 +49,7 @@ const CONFIG = useRuntimeConfig();
 const route = useRoute();
 
 const draftID = computed(() => route.query.draft_id);
-const {updateVacancy, getMyVacancy} = vacancyStore;
+const {updateVacancy, updateDraft, getMyVacancy, getMyDraft} = vacancyStore;
 
 const {employer} = profileStore;
 const my_vacancy = computed(() => vacancyStore.my_vacancy);
@@ -130,7 +130,7 @@ const save = async (is_from_parent = false) => {
         let resData = {};
         const jsonData = useFormData(state);
         jsonData.action = 'UpdateBillingType';
-        resData = await updateVacancy(draftID.value, jsonData);
+        resData = await updateDraft(draftID.value, jsonData);
         isUpdated.value = true;
         if (resData.status !== 'success'){
           return handleErrorResponse(resData.data);

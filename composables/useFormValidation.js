@@ -43,8 +43,6 @@ export default function useFormValidation(state = null) {
                         // dot seperated errors from backend
                         const itemMatch = item.match(/^([a-z0-9_]+)\.([a-z0-9_]+).([a-z0-9_]+$)/g);
                         const keys = itemMatch[0].split(".");
-                        console.log(newErrors);
-                        console.log(keys);
                         if (!newErrors[keys[0]])
                             newErrors[keys[0]] = {};
                         if (!newErrors[keys[0]] instanceof Object)
@@ -73,7 +71,7 @@ export default function useFormValidation(state = null) {
                 }
             }
         } else {
-            console.log(response);
+            errors.value = {message: response.message};
         }
     };
 

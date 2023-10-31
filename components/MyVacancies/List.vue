@@ -22,13 +22,13 @@
 
           <ul class="nav nav-tabs vacancy_tabs w-100 ">
             <li class="nav-item " :class="{'active': form.status === 'draft'}" @click="onFilterChange('draft')">
-              <a  class="nav-link"  :class="{'active': form.status === 'draft'}" aria-current="page" href="#">Черновек({{ totalDrafts }})</a>
+              <a  class="nav-link" :to="{name: 'my-vacancies', query: {status: 'draft'}}" :class="{'active': form.status === 'draft'}" >Черновек({{ totalDrafts }})</a>
             </li>
             <li class="nav-item" :class="{'active': form.status === 'active'}" @click="onFilterChange('active')">
-              <a class="nav-link" :class="{'active': form.status === 'active'}" href="#">Активные({{ totalActiveVacancies }})</a>
+              <a class="nav-link" :to="{name: 'my-vacancies', query: {status: 'active'}}" :class="{'active': form.status === 'active'}" >Активные({{ totalActiveVacancies }})</a>
             </li>
             <li class="nav-item" :class="{'active': form.status === 'archived'}" @click="onFilterChange('archived')">
-              <a class="nav-link" :class="{'active': form.status === 'archived'}" href="#">В архиве({{ totalArchivedVacancies }})</a>
+              <a class="nav-link" :to="{name: 'my-vacancies', query: {status: 'archived'}}" :class="{'active': form.status === 'archived'}" >В архиве({{ totalArchivedVacancies }})</a>
             </li>
           </ul>
             <div class="d-inline-flex">
@@ -134,23 +134,56 @@ const my_drafts = ref([]);
 const isLoading = ref(true);
 
 const route = useRoute();
+watch(() => route.query, async(newQuery) => {
+  console.log(newQuery);
+  console.log(filterOptions.value);
+  console.log(filterOptions.value.map(item => item.value));
+  let newStatus = 'draft';
+  if (filterOptions.value.map(item => item.value).includes(route.query.status)){
+    newStatus = route.query.status;
+  }
+  form.value.status = newStatus;
+  const params = {status: newStatus};
+  console.log(params);
+  if (newStatus === 'draft'){
+    await getMyDrafts(params);
+  }else if(newStatus === 'active'){
+    await getMyVacancies(params);
+  }else{
+    await getArchivedVacancies(params);
+  }
+})
+
+const onFilterChange = (filter) => {
+  navigateTo({name: 'my-vacancies', query: {status: filter}});
+}
+console.log(route);
 onMounted(async() => {
   console.log(route.query.status);
-  if (form.value.status !== route.query.status){
-    if (filterOptions.value.includes(route.query.status)){
-      form.value.status = route.query.status;
-    }else{
-      form.value.status = 'draft';
-    }
+  let newStatus = 'draft';
+  if (filterOptions.value.map(item => item.value).includes(route.query.status)){
+    newStatus = route.query.status;
   }
-  // navigateTo({
-  //   query: {status: form.value.status}
-  // })
+  form.value.status = newStatus;
+  const params = {status: newStatus};
+  console.log(params);
+  if (newStatus === 'draft'){
+    await getMyDrafts(params);
+  }else if(newStatus === 'active'){
+    await getMyVacancies(params);
+  }else{
+    await getArchivedVacancies(params);
+  }
+  navigateTo({
+    query: {status: form.value.status}
+  })
   isLoading.value = false;
-  const params = useMyVacancyForm(form.value, 'backend');
-  await getMyDrafts({status: 'draft'});
-  await getMyVacancies({status: 'active'});
-  await getArchivedVacancies({status: 'archived'});
+  // const params = useMyVacancyForm(form.value, 'backend');
+  setTimeout(() => {
+    getMyDrafts({status: 'draft'});
+    getMyVacancies({status: 'active'});
+    getArchivedVacancies({status: 'archived'});
+  }, 0)
   isLoading.value = false;
 });
 
@@ -196,8 +229,6 @@ watch(providers.value, (newProviders) => {
   filterOptions.value = prevItems;
 })
 watch(filterOptions, (newFilterOptions) => {
-
-
   if (newFilterOptions.length > 0){
     const findItem = newFilterOptions.some(item => item.value === form.value.status);
     if (!findItem){
@@ -268,19 +299,7 @@ const onChangeSorting = async(sorting) => {
 }
 
 // const router = useRouter();
-const onFilterChange = async(filter) => {
-    form.value.status = filter;
-    const params = {
-        status: filter
-    };
-    if (filter === 'draft'){
-      await getMyDrafts(params);
-    }else if(filter === 'active'){
-      await getMyVacancies(params);
-    }else{
-      await getArchivedVacancies(params);
-    }
-}
+
 const onProviderChange = async(provider) => {
     form.value.provider = provider;
     if (provider === '*'){
