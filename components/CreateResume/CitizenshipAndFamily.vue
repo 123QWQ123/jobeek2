@@ -87,6 +87,7 @@ const maritalStatusOptions = computed(() => dictionaryStore.marital_statuses.map
 const route = useRoute();
 
 const draftID = computed(() => route.query.draft_id);
+const vacancyID = computed(() => route.query.vacancy_id);
 
 const {seeker} = profileStore;
 const resume = computed(() => resumeStore.resume);

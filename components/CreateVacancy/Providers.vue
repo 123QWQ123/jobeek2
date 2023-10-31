@@ -43,7 +43,7 @@
       </div>
     </div>
   </div>
-  {{vacancyProviders}}
+  {{enabledProviders}}
 </template>
 
 <script setup>
@@ -66,6 +66,7 @@ const dictionaryStore = useDictionaryStore();
 const route = useRoute();
 
 const draftID = computed(() => route.query.draft_id);
+const vacancyID = computed(() => route.query.vacancy_id);
 
 const vacancyStore = useVacancyStore();
 const {getConnectedEmployerProviders, getEmployerProvidersAuthEndpoints, getMyVacancy} = vacancyStore;
@@ -104,11 +105,15 @@ const vacancyProviders = computed(() => {
   if (!vacancyStore.my_vacancy){
     return resetObject;
   }
+  const providersNewValues = {...resetObject};
+
+  if (!vacancyStore.my_vacancy.hasOwnProperty('providers')){
+    return providersNewValues;
+  }
   if (vacancyStore.my_vacancy.providers.length > 0){
     selectedProvidersValue = vacancyStore.my_vacancy.providers.map(item => item.name);
   }
   // return selectedProvidersValue;
-  const providersNewValues = {...resetObject};
 
   if (selectedProvidersValue.includes('hh')){
     providersNewValues.hh = true;
@@ -122,6 +127,7 @@ const vacancyProviders = computed(() => {
   }
   return providersNewValues;
 });
+
 watch(() => vacancyProviders.value, (newValue) => {
   selectedProviders.value = newValue;
 })
@@ -140,7 +146,7 @@ const reset = () => {
 onMounted(() => {
   // console.log(vacancyProviders.value);
 })
-const {updateVacancy} = vacancyStore;
+const {updateVacancy, updateDraft} = vacancyStore;
 // const providers = ref(resetObject);
 const toggle = async (provider) => {
   if (!selectedProviders.value[provider]){
@@ -171,12 +177,24 @@ const toggle = async (provider) => {
     providers: providerParams
   };
   data.action = 'UpdateProviders';
-  const resData = await updateVacancy(draftID.value, data);
-  if (resData.status !== 'success'){
-    toast.info(resData.message, {autoClose: 3000});
-  }
+  let resData = {};
+  console.log(draftID.value, vacancyID.value);
+  if (draftID.value){
+    resData = await updateDraft(draftID.value, data);
 
-  await getMyVacancy(draftID.value);
+    if (resData.status !== 'success'){
+      toast.info(resData.message, {autoClose: 3000});
+    }
+
+    await getMyVacancy(draftID.value);
+  }else{
+    // selectedProviders.value = {...resetObject, [provider] : }
+    // resData = await updateVacancy(vacancyID.value, data);
+
+    // if (resData.status !== 'success'){
+    //   toast.info(resData.message, {autoClose: 3000});
+    // }
+  }
 }
 const openProviderAuthUrl = (url) => {
   window.open(url);

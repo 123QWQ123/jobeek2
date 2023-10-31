@@ -36,6 +36,7 @@ const route = useRoute();
 const resumeStore = useResumeStore();
 const dictionaryStore = useDictionaryStore();
 const draftID = computed(() => route.query.draft_id);
+const vacancyID = computed(() => route.query.vacancy_id);
 
 const skills = ref(resumeStore.resume?.skills ?? []);
 

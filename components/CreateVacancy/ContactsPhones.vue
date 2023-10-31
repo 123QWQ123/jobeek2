@@ -87,7 +87,8 @@ watch(() => props.errors, (newValue) => {
 })
 
 const draftID = computed(() => route.query.draft_id);
-const {updateVacancy, getMyVacancy} = vacancyStore;
+const vacancyID = computed(() => route.query.vacancy_id);
+const {updateVacancy, updateDraft, getMyVacancy, getMyDraft} = vacancyStore;
 
 const {employer} = profileStore;
 const my_vacancy = computed(() => vacancyStore.my_vacancy);

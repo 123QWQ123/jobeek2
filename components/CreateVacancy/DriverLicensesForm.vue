@@ -33,6 +33,7 @@ const educationElement = ref(false);
 const route = useRoute();
 const dictionaryStore = useDictionaryStore();
 const draftID = computed(() => route.query.draft_id);
+const vacancyID = computed(() => route.query.vacancy_id);
 
 const selectedItems = ref(props.modelValue ?? []);
 

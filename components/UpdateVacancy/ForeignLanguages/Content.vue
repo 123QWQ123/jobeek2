@@ -34,6 +34,7 @@ import {useDiff} from "~/composables/useDiff";
 const route = useRoute();
 const resumeStore = useResumeStore();
 const draftID = computed(() => route.query.draft_id);
+const vacancyID = computed(() => route.query.vacancy_id);
 
 const foreign_languages = ref(resumeStore.resume?.languages ?? []);
 

@@ -43,6 +43,7 @@ const route = useRoute();
 const resumeStore = useResumeStore();
 const dictionaryStore = useDictionaryStore();
 const draftID = computed(() => route.query.draft_id);
+const vacancyID = computed(() => route.query.vacancy_id);
 
 const driver_licenses = ref(resumeStore.resume?.driver_licenses ?? []);
 const {getDriverLicenses} = dictionaryStore;

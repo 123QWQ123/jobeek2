@@ -52,7 +52,8 @@ const CONFIG = useRuntimeConfig();
 const route = useRoute();
 
 const draftID = computed(() => route.query.draft_id);
-const {updateVacancy, getMyVacancy} = vacancyStore;
+const vacancyID = computed(() => route.query.vacancy_id);
+const {updateVacancy, updateDraft, getMyVacancy, getMyDraft} = vacancyStore;
 
 const {employer} = profileStore;
 const my_vacancy = computed(() => vacancyStore.my_vacancy);
@@ -86,6 +87,7 @@ watch(() => useWatchStateValues(state, true, true),   (newState, oldState) => {
 
 const sectionData = ref({});
 watch(() => sectionData.value, (newData, oldData) => {
+  console.log(newData);
     const diffData =  useDiff(newData, oldData);
     if (Object.keys(diffData).length){
         if (newData['cities'].length > 0){
@@ -101,6 +103,7 @@ watch(() => vacancyStore.my_vacancy, (newVacancy) => {
         isUpdated.value = false;
         return;
     }
+  console.log(newVacancy);
     if (newVacancy){
         sectionData.value = {
             cities: newVacancy.cities,
@@ -140,11 +143,11 @@ const save = async (is_from_parent = false) => {
         let resData = {};
         const jsonData = useFormData(state);
         jsonData.action = 'UpdateCities';
-        resData = await updateVacancy(draftID.value, jsonData);
+        resData = await updateDraft(draftID.value, jsonData);
         isUpdated.value = true;
         if (resData.status !== 'success'){
-      return handleErrorResponse(resData.data);
-    }
+          return handleErrorResponse(resData.data);
+        }
 
     isChanged.value = false;
     isSaved.value = false;
