@@ -221,7 +221,6 @@ export const useDictionaryStore = defineStore('dictionary', {
       return data;
     },
     async getSchedules(payload = {}) {
-
       if (this.schedules.length > 0){
         return this.schedules;
       }
@@ -229,6 +228,7 @@ export const useDictionaryStore = defineStore('dictionary', {
         method: 'get',
         payload
       });
+      console.log(data);
       if (data && 'data' in data){
         this.schedules = data.data?.schedule ?? [];
       }

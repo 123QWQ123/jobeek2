@@ -4,7 +4,7 @@
       <h2 class="section-title"> Вакансии в вашем городе</h2>
 
       <NuxtLink class="more" :to="{name: 'search-vacancies', query: {countries: [1], regions: [22]}}">
-        Все <span> вакансии </span>
+        Все <span class="ms-1"> вакансии </span>
         <svg width="24" height="25" viewBox="0 0 24 25" fill="none"
              xmlns="http://www.w3.org/2000/svg">
           <path d="M19.75 12.2256L4.75 12.2256" stroke="#5375FD" stroke-width="1.5"
@@ -15,32 +15,35 @@
       </NuxtLink>
     </div>
 
-    <swiper
-        :slides-per-view="'auto'"
-        :space-between="20"
-        :class="'cards-slider'"
-        :wrapper-class="'vacancy-list'"
-    >
-      <swiper-slide v-for="item in vacancies">
-        <div class="vacancy-card">
-          <div class="vacancy-card-body">
-            <div class="company">
-              <div class="company-logo"><img src="~/assets/img/logos/megafon.svg" alt="#"></div>
-              <div class="company-name">
-                <strong>{{ item.company }}</strong>
-                <span class="location">{{ item.city }}</span>
+    <div>
+
+      <swiper
+          :slides-per-view="'auto'"
+          :space-between="20"
+          :class="'cards-slider'"
+          :wrapper-class="'vacancy-list'"
+      >
+        <swiper-slide v-for="item in vacancies">
+          <div class="vacancy-card">
+            <div class="vacancy-card-body">
+              <div class="company">
+                <div class="company-logo"><img src="~/assets/img/logos/megafon.svg" alt="#"></div>
+                <div class="company-name">
+                  <strong>{{ item.company }}</strong>
+                  <span class="location">{{ item.city }}</span>
+                </div>
               </div>
+              <nuxt-link :to="{name: 'vacancies-slug', params: {slug: item.id}}" class="vacancy-card-title">{{ item.name }}</nuxt-link>
+              <span class="vacancy-card-dop-info" v-if="item.salary_from">От {{$format_number(item.salary_from)}} ₽</span>
+              <span class="vacancy-card-dop-info" v-else>До {{$format_number(item.salary_to)}} ₽</span>
             </div>
-            <nuxt-link :to="{name: 'vacancies-slug', params: {slug: item.id}}" class="vacancy-card-title">{{ item.name }}</nuxt-link>
-            <span class="vacancy-card-dop-info" v-if="item.salary_from">От {{$format_number(item.salary_from)}} ₽</span>
-            <span class="vacancy-card-dop-info" v-else>До {{$format_number(item.salary_to)}} ₽</span>
+            <div class="vacancy-card-footer">
+              <a class="btn button-md" href="#">Откликнуться</a>
+            </div>
           </div>
-          <div class="vacancy-card-footer">
-            <a class="btn button-md" href="#">Откликнуться</a>
-          </div>
-        </div>
-      </swiper-slide>
-    </swiper>
+        </swiper-slide>
+      </swiper>
+    </div>
   </section>
 </template>
 <script setup>

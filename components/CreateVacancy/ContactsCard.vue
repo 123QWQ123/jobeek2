@@ -164,7 +164,7 @@ const state = reactive({
           additional_phone_comment: null,
         },
         isValid: true,
-        is_hidden: true,
+        is_hidden: false,
     },
     isFormValid: true,
     isNew: true,

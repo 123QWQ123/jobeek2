@@ -8,7 +8,7 @@
         <div class="divided-box-content">
           <div class="labels-list-box" :class="{expanded: isMoreIndustries}">
             <ul class="labels-list">
-              <li v-for="item in industryOptions">
+              <li v-for="item in industries">
                 <NuxtLink :to="{name: 'search-vacancies', query: {industries: [item.id]}}" class="label" >{{ item.title }}</NuxtLink>
               </li>
             </ul>
@@ -60,14 +60,14 @@ import {useDictionaryStore} from "~/store/dictionary";
 const vacancyStore = useVacancyStore();
 const dictionaryStore = useDictionaryStore();
 const {getSchedules} = dictionaryStore;
-await getSchedules();
-const {industries, schedules} = storeToRefs(vacancyStore);
-
-const industryOptions = ref([]);
-
-watch(industries, (newValues) => {
-  industryOptions.value = newValues.filter(item => item.parent_id === null);
+const industries = computed(() => {
+  return vacancyStore.industries.filter(item => item.parent_id === null);
 });
+const schedules = computed(() => dictionaryStore.schedules);
+
+onMounted(() => {
+  getSchedules();
+})
 
 const isMoreIndustries = ref(false);
 const toggleIndustries = () => {

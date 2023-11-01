@@ -137,6 +137,7 @@ const state = ref({
   },
 })
 const emitChanges = (key, value) => {
+  console.log(key, value);
   const passData = {
     phone: '+' + state.value['phone'].val,
     phone_comment: state.value['phone_comment'].val,

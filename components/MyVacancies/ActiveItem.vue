@@ -1,41 +1,4 @@
 <template>
-<!--  <div class="resume-card">-->
-<!--    <div class="resume-card-body">-->
-<!--      <div class="resume-card-body-col">-->
-<!--        <div class="photo"><img src="img/photo.png" alt="#"></div>-->
-<!--        <div class="resume-card-name"> <strong class="title">Продавец-консультант и рабоник зала</strong><span class="location">Омск </span><span class="price">От 1 000 000 ₽</span></div>-->
-<!--      </div>-->
-<!--      <div class="resume-card-body-col">-->
-<!--        <div class="date">с 16 января по 24 марта</div>-->
-<!--        <div class="resume-counts">-->
-<!--          <div class="count"> <strong class="js-view-stat">24</strong><span>Показа</span></div>-->
-<!--          <div class="count"> <strong class="js-view-stat">12</strong><span>Просмотров</span></div>-->
-<!--          <div class="count"> <strong>0</strong><span>Отклики     </span></div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--    <div class="resume-card-stats active">-->
-<!--      <div class="resume-card-stats-head">-->
-<!--        <div class="name">Показы</div>-->
-<!--        <button class="close close-stats">Скрыть</button>-->
-<!--      </div>-->
-<!--      <div class="resume-card-stats-body">-->
-<!--        <div class="stat"> <strong>24</strong><a href="#">Все  </a></div>-->
-<!--        <div class="stat"> <strong>15</strong><a href="#"><img src="img/svg/hh.svg" alt="#">Hh.ru </a></div>-->
-<!--        <div class="stat"> <strong>9</strong><a href="#"><img src="img/svg/sb.svg" alt="#">Superjob.ru   </a></div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--    <div class="resume-card-moddle">-->
-<!--      <div class="resume-filled-progress"> <span>Заполнено 45%</span>-->
-<!--        <div class="progress-container" data-progress="45">-->
-<!--          <div class="progress" style="width: 45%;"></div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div class="mini-notification"><img src="img/svg/notification.svg" alt="#">-->
-<!--        <div class="text"><a href="#">Укажите зарплату</a>, чтобы быстрее найти высокооплачиваемую работу        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
   <li >
     <div class="resume-card">
       <div class="resume-card-body">
@@ -207,6 +170,14 @@ import {toast} from "vue3-toastify";
 const props = defineProps(['item']);
 const {item} = props;
 
+const hhIncluded = computed(() => {
+  if (props.item.providers.length){
+    return !!props.item.providers.find((item) => {
+      return item.name==='hh';
+    });
+  }
+  return false;
+});
 const hhTotalCount = computed(() => {
   let total = 0;
   if (props.item.providers.length){
@@ -276,7 +247,11 @@ const closeContextMenu = (e) => {
 const employerLogo = computed(() => {
   if (item && item.logo){
     return item.logo;
-  }else return new URL("~/assets/img/logos/hh.svg", import.meta.url);
+  }else {
+    if (hhIncluded.value){
+      return new URL("~/assets/img/logos/hh.svg", import.meta.url)
+    } return new URL("~/assets/img/logos/superjob.svg", import.meta.url)
+  }
 });
 
 
@@ -286,7 +261,6 @@ const {getMyVacancies, getMyDrafts, archiveActiveVacancy, createDraftFromActiveV
 
 const onArchive = async(id) => {
   const resData = await archiveActiveVacancy(id, {providers: ['hh', 'superjob']});
-  console.log(resData);
   if(resData.status !== 'success'){
     Swal.fire({
       title: 'Ошибка!',
@@ -297,7 +271,7 @@ const onArchive = async(id) => {
     return;
   }
 
-  toast.info(resData.message, {autoClose: 3000});
+  toast.info("Успешно архивировано!", {autoClose: 3000});
   await getMyVacancies({status: 'active'});
 
 }

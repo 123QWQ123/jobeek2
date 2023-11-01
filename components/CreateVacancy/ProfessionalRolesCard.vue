@@ -1,7 +1,7 @@
 <template>
 
   <div class="w-box" v-click-outside="save">
-    {{draftID}}
+
     <div class="w-box-head">
       <h3 class="title">Сфера деятельности?({{isChanged}})</h3>
       <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
@@ -71,13 +71,6 @@ const state = reactive({
 watch(() => state.professional_roles.val, () => {
   isChanged.value = true;
 })
-// watch(() => useWatchStateValues(state, true, true),   (newState, oldState) => {
-//     if (!isFirst.value){
-//         isChanged.value = true;
-//     }else{
-//         isFirst.value = false;
-//     }
-// });
 
 const sectionData = ref({});
 watch(() => sectionData.value, (newData, oldData) => {
@@ -158,11 +151,7 @@ const save = async (is_from_parent = false) => {
         let resData = {};
         const jsonData = useFormData(state);
         jsonData.action = 'UpdateProfessionalRoles';
-        if (draftID.value){
-          resData = await updateDraft(draftID.value, jsonData);
-        }else{
-          resData = await updateVacancy(vacancyID.value, jsonData);
-        }
+        resData = await updateVacancy(draftID.value, jsonData);
         isUpdated.value = true;
         if (resData.status !== 'success'){
           return handleErrorResponse(resData.data);

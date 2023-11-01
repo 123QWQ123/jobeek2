@@ -1,41 +1,4 @@
 <template>
-<!--  <div class="resume-card">-->
-<!--    <div class="resume-card-body">-->
-<!--      <div class="resume-card-body-col">-->
-<!--        <div class="photo"><img src="img/photo.png" alt="#"></div>-->
-<!--        <div class="resume-card-name"> <strong class="title">Продавец-консультант и рабоник зала</strong><span class="location">Омск </span><span class="price">От 1 000 000 ₽</span></div>-->
-<!--      </div>-->
-<!--      <div class="resume-card-body-col">-->
-<!--        <div class="date">с 16 января по 24 марта</div>-->
-<!--        <div class="resume-counts">-->
-<!--          <div class="count"> <strong class="js-view-stat">24</strong><span>Показа</span></div>-->
-<!--          <div class="count"> <strong class="js-view-stat">12</strong><span>Просмотров</span></div>-->
-<!--          <div class="count"> <strong>0</strong><span>Отклики     </span></div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--    <div class="resume-card-stats active">-->
-<!--      <div class="resume-card-stats-head">-->
-<!--        <div class="name">Показы</div>-->
-<!--        <button class="close close-stats">Скрыть</button>-->
-<!--      </div>-->
-<!--      <div class="resume-card-stats-body">-->
-<!--        <div class="stat"> <strong>24</strong><a href="#">Все  </a></div>-->
-<!--        <div class="stat"> <strong>15</strong><a href="#"><img src="img/svg/hh.svg" alt="#">Hh.ru </a></div>-->
-<!--        <div class="stat"> <strong>9</strong><a href="#"><img src="img/svg/sb.svg" alt="#">Superjob.ru   </a></div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--    <div class="resume-card-moddle">-->
-<!--      <div class="resume-filled-progress"> <span>Заполнено 45%</span>-->
-<!--        <div class="progress-container" data-progress="45">-->
-<!--          <div class="progress" style="width: 45%;"></div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div class="mini-notification"><img src="img/svg/notification.svg" alt="#">-->
-<!--        <div class="text"><a href="#">Укажите зарплату</a>, чтобы быстрее найти высокооплачиваемую работу        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
   <li >
     <div class="resume-card">
       <div class="resume-card-body">
@@ -64,32 +27,9 @@
         <div class="resume-card-body-col">
           <div class="date">в {{ published_date.format('D') }} {{ published_date.format('MMMM') }}</div>
           <!--          <div class="date">с {{ published_date.format('D') }} {{ published_date.format('MMMM') }} по 24 марта</div>-->
-          <div class="resume-counts">
-            <div class="count cursor-pointer" @click.prevent="toggleViews">
-              <strong class="js-view-stat">{{totalViewCount}}</strong><span>Показы</span>
-            </div>
-<!--            <div class="count">-->
-<!--              <strong>{{item.new_views}}</strong><span>Просмотров</span>-->
-<!--            </div>-->
-            <!--            <div class="count">-->
-            <!--              <strong>{{item.unread_responses}}</strong><span>Откликов</span>-->
-            <!--            </div>-->
-          </div>
         </div>
 
       </div>
-      <div class="resume-card-stats active" v-if="isViewsShown">
-        <div class="resume-card-stats-head">
-          <div class="name">Показы</div>
-          <button class="close close-stats" @click.preven="toggleViews">Скрыть</button>
-        </div>
-        <div class="resume-card-stats-body" >
-          <div class="stat"> <strong>{{ totalViewCount }}</strong><a href="#">Все  </a></div>
-          <div class="stat"> <strong>{{ hhTotalCount }}</strong><a href="#"><img src="~/assets/img/svg/hh.svg" alt="#">Hh.ru </a></div>
-          <div class="stat"> <strong>{{superjobTotalCount}}</strong><a href="#"><img src="~/assets/img/svg/sb.svg" alt="#">Superjob.ru   </a></div>
-        </div>
-      </div>
-
       <div class="resume-card-options">
         <span class="status">Обновлено в {{ moment(item.updated_at).format('HH:mm') }}</span>
         <div class="params-button-container ms-auto"  v-click-outside.once="closeContextMenu">
@@ -173,27 +113,13 @@ import {useVacancyStore} from "~/store/vacancy";
 import Swal from "sweetalert2";
 const props = defineProps(['item']);
 const {item} = props;
-
-const hhTotalCount = computed(() => {
-  let total = 0;
+const hhIncluded = computed(() => {
   if (props.item.providers.length){
-    total += props.item.providers.reduce((acc, item) => {
-      return item.name==='hh' ? acc + item.views_count : acc;
-    }, 0) ;
+    return !!props.item.providers.find((item) => {
+      return item.name==='hh';
+    });
   }
-  return total;
-});
-const superjobTotalCount = computed(() => {
-  let total = 0;
-  if (props.item.providers.length){
-    total += props.item.providers.reduce((acc, item) => {
-      return item.name==='superjob' ? acc + item.views_count : acc;
-    }, 0) ;
-  }
-  return total;
-});
-const totalViewCount = computed(() => {
-  return superjobTotalCount.value + hhTotalCount.value;
+  return false;
 });
 const salary_from = computed(() => {
   if (props.item.salary && props.item.salary.hasOwnProperty('from')){
@@ -227,10 +153,6 @@ const cityAddress = computed(() => {
 })
 
 const isContextMenuShown = ref(false);
-const isViewsShown = ref(false);
-const toggleViews = () => {
-  isViewsShown.value = !isViewsShown.value;
-}
 
 const toggleContextMenu = () => {
   isContextMenuShown.value = !isContextMenuShown.value;
@@ -243,15 +165,19 @@ const closeContextMenu = (e) => {
 const employerLogo = computed(() => {
   if (item && item.logo){
     return item.logo;
-  }else return new URL("~/assets/img/logos/hh.svg", import.meta.url);
+  }else {
+    if (hhIncluded.value){
+      return new URL("~/assets/img/logos/hh.svg", import.meta.url)
+    } return new URL("~/assets/img/logos/superjob.svg", import.meta.url)
+  }
 });
+
 
 
 const published_date = moment(item?.published_date).locale('ru');
 
 const {deleteVacancy, createDraftFromActiveVacancy,  getArchivedVacancies} = useVacancyStore();
 const onDelete = async(id) => {
-  console.log(id);
   const resData = await deleteVacancy(id);
   if(resData.status !== 'success'){
     Swal.fire({
