@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="row">
+    <div class="row" :class="{'is-disabled': vacancyID}">
       <div class="col">
 
         <div class="row">
@@ -90,7 +90,6 @@ function getSelectedOptionName(value){
   else return "Not found";
 }
 const onHHUpdateInput = async (newValue = '') => {
-  console.log(newValue);
   if (newValue.length > 2){
     const items = await searchProfessionalRoles({providers: ['hh'], search: newValue}) ?? [];
     let newOptions = items.map(item => ({value: item.id, name: `${item.name}` }));

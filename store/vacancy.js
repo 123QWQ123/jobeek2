@@ -146,7 +146,6 @@ export const useVacancyStore = defineStore('vacancy', {
         method: 'get',
         payload
       });
-      console.log(data);
       if (data && 'items' in data){
         this.vacancies_in_my_city = data.items;
         return this.vacancies_in_my_city;
@@ -331,19 +330,20 @@ export const useVacancyStore = defineStore('vacancy', {
       }
       return data;
     },
-    async getIndustries(payload = URLSearchParams) {
+    async getIndustries(payload = {}) {
       if (this.industries.length > 0){
         return this.industries;
       }
-      const {data} = await useApi('industries', {
+      const response = await useApi('industries', {
         method: 'get',
         payload
       });
-      if (data && 'data' in data){
-        this.industries = data.data ?? [];
+      console.log(response);
+      if (response && 'data' in response){
+        this.industries = response.data.data ?? [];
         return this.industries;
       }
-      return data;
+      return response;
     },
     async getMetros(payload = URLSearchParams) {
       const {data} = await useApi('metro', {
