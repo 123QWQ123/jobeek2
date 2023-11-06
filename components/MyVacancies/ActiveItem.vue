@@ -86,8 +86,8 @@
           </div>
         </div>
         <div class="d-inline-flex ms-0 ms-lg-auto">
-          <div class="d-inline-flex flex-column flex-lg-row mt-4 mt-lg-0 mt-md-0" >
-            <div class="check-block mb-2 mb-lg-0 mb-md-0">
+          <div class="d-inline-flex flex-column flex-lg-row mt-4 mt-lg-0 ms-sm-4" >
+            <div class="check-block mb-2 mb-md-1 mb-lg-0 me-lg-3" >
               <div class="checkbox">
                 <input type="checkbox" id="enable-push" />
                 <div class="checkbox-mask">

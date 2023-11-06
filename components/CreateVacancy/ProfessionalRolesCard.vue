@@ -15,7 +15,7 @@
       <div class="w-box-body" :class="{collapse: isCollapsed}">
 
         <CreateVacancyProfessionalRoles v-if="my_vacancy" v-model="state.professional_roles.val" />
-        
+
         <div class="text-danger d-block" v-if="errors.professional_roles">
           Вам нужно выбрать деятелность для публикации!
         </div>
@@ -52,7 +52,7 @@ const my_vacancy = computed(() => vacancyStore.my_vacancy);
 const isSaved = ref(false);
 const isChanged = ref(false);
 const isFirst = ref(true);
-const isCollapsed = ref(true);
+const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
 
@@ -77,9 +77,6 @@ watch(() => sectionData.value, (newData, oldData) => {
     const diffData =  useDiff(newData, oldData);
     if (Object.keys(diffData).length){
         if (newData['professional_roles'].length > 0){
-          selectedOptions.value = newData['professional_roles'].map((item) => ({value: item.id, name: `${item.name}` }));
-          const newOptions = profRoleOptions.value;
-          profRoleOptions.value = newOptions.concat(selectedOptions.value);
           state['professional_roles'].val = newData['professional_roles'].map((item) => item.id);
         }
     }
@@ -96,59 +93,17 @@ watch(() => vacancyStore.my_vacancy, (newVacancy) => {
     }
 })
 
-const {searchProfessionalRoles} = profileStore;
-const selectedOptions = ref([]);
-const profRoleOptions = ref([]);
-const hhProfRoleOptions = ref([]);
-const superjobProfRoleOptions = ref([]);
-
-function getSelectedOptionName(value){
-  const selectedOptionItem = profRoleOptions.value.find(item => String(item.value) === String(value));
-  if (selectedOptionItem) return selectedOptionItem.name;
-  else return "Not found";
-}
-const onHHUpdateInput = async (newValue = '') => {
-  if (newValue.length > 2){
-    const items = await searchProfessionalRoles({providers: ['hh']}) ?? [];
-    let newOptions = items.map(item => ({value: item.id, name: `${item.name}` }));
-    hhProfRoleOptions.value = newOptions.concat(selectedOptions.value);
-    profRoleOptions.value = [...hhProfRoleOptions.value, ...superjobProfRoleOptions.value];
-  }
-}
-
-const onSuperjobUpdateInput = async (newValue = '') => {
-  if (newValue.length > 2){
-    const items = await searchProfessionalRoles({providers: ['hh']}) ?? [];
-    let newOptions = items.map(item => ({value: item.id, name: `${item.name}` }));
-    superjobProfRoleOptions.value = newOptions.concat(selectedOptions.value);
-    profRoleOptions.value = [...hhProfRoleOptions.value, ...superjobProfRoleOptions.value];
-  }
-}
-
-onMounted(() => {
-  setTimeout(async() => {
-    const items = await searchProfessionalRoles({providers: ['hh']}) ?? [];
-    let newOptions = items.map(item => ({value: item.id, name: `${item.name}` }));
-    hhProfRoleOptions.value = newOptions.concat(selectedOptions.value);
-    profRoleOptions.value = [...hhProfRoleOptions.value, ...superjobProfRoleOptions.value];
-  }, 500)
-  setTimeout(async() => {
-    const items = await searchProfessionalRoles({providers: ['superjob']}) ?? [];
-    let newOptions = items.map(item => ({value: item.id, name: `${item.name}` }));
-    superjobProfRoleOptions.value = newOptions.concat(selectedOptions.value);
-    profRoleOptions.value = [...hhProfRoleOptions.value, ...superjobProfRoleOptions.value];
-  }, 500)
-})
-
 const {errors, handleErrorResponse} = useFormValidation();
 const save = async (is_from_parent = false) => {
 
+  if (vacancyID.value) return;
   if (isChanged.value){
         state.isLoading = true;
         // validate();
         errors.value = {};
         state.errorMessage = "";
         let resData = {};
+
         const jsonData = useFormData(state);
         jsonData.action = 'UpdateProfessionalRoles';
         resData = await updateVacancy(draftID.value, jsonData);

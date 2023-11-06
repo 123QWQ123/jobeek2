@@ -6,7 +6,7 @@
         <div class="row">
           <label>HH:<b>*</b></label>
           <div class="input-wrapper mt-2">
-            <MultiSelectWithSearch :hide_selection="true" :options="hhProfRoleOptions" v-model="professional_roles" :label="'Выберите сферу'" @input="onHHUpdateInput" @focusin="() => errors.professional_roles = ''"></MultiSelectWithSearch>
+            <MultiSelectWithSearch :disabled="vacancyID" :hide_selection="true" :options="hhProfRoleOptions" v-model="professional_roles" :label="'Выберите сферу'" @input="onHHUpdateInput" @focusin="() => errors.professional_roles = ''"></MultiSelectWithSearch>
           </div>
         </div>
       </div>
@@ -15,7 +15,7 @@
         <div class="row">
           <label>Superjob:<b>*</b></label>
           <div class="input-wrapper mt-2">
-            <MultiSelectWithSearch :hide_selection="true" :options="superjobProfRoleOptions" v-model="professional_roles" :label="'Выберите сферу'" @input="onSuperjobUpdateInput" @focusin="() => errors.professional_roles = ''"></MultiSelectWithSearch>
+            <MultiSelectWithSearch :disabled="vacancyID" :hide_selection="true" :options="superjobProfRoleOptions" v-model="professional_roles" :label="'Выберите сферу'" @input="onSuperjobUpdateInput" @focusin="() => errors.professional_roles = ''"></MultiSelectWithSearch>
           </div>
 
         </div>
@@ -105,6 +105,7 @@ const onSuperjobUpdateInput = async (newValue = '') => {
   }
 }
 function onUnselect(deleteId){
+
   if (professional_roles.value.includes(deleteId)){
     const selectedItems = professional_roles.value.filter(item => item.toString() !== deleteId.toString());
     professional_roles.value = selectedItems;
@@ -135,9 +136,7 @@ onMounted(() => {
 
 
 .selection{
-  /*border: 1px solid;*/
   border-radius: 4px;
-  /*padding: 0 16px;*/
   left: 0;
 }
 .selected-options{

@@ -12,7 +12,7 @@
           </div>
         </div>
         <div class="filter-tree-selector-popup">
-          <div class="filter-tree-selector-popup-content">
+          <div class="filter-tree-selector-popup-content" v-if="groupedSpecs.length > 0">
             <VacanciesFiltersIndustryItem v-if="isSearching" v-for="item in groupedSpecs" :item="item" :items="item.items" :key="item.id"
                                                 @set="updateSelectedSpecs"
                                                 :is-open="true"
@@ -20,6 +20,11 @@
             <VacanciesFiltersIndustryItem v-else v-for="item in groupedSpecs" :item="item" :items="item.items" :key="item.id"
                                                 @set="updateSelectedSpecs"
             />
+          </div>
+          <div class="filter-tree-selector-popup-content" v-else>
+            <div class="ms-2 spinner-grow spinner-grow-sm" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
           </div>
         </div>
         <div class="filter-modal-error filter-modal-error_hidden"></div>
@@ -136,7 +141,9 @@ const prepare = (newValues, is_first = false) => {
 }
 
 onMounted(() => {
-  prepare(specializations);
+  setTimeout(() => {
+    prepare(specializations);
+  }, 100)
 })
 
 
@@ -150,7 +157,7 @@ const close = () => emit('toggle');
 
 </script>
 
-<style>
+<style scoped>
 .check-block label{
   white-space: pre-wrap;
 }

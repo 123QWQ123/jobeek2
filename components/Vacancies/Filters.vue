@@ -6,7 +6,7 @@
       </div>
 
       <VacanciesFiltersMetro @onFormChange="onFormChange" :selected-ids="form.metros"/>
-      <VacanciesFiltersIndustry @onFormChange="onFormChange" :selected-ids="form.industries"/>
+      <LazyVacanciesFiltersIndustry @onFormChange="onFormChange" :selected-ids="form.industries"/>
       <VacanciesFiltersSpecialization @onFormChange="onFormChange" :selected-ids="form.professional_roles"/>
 
       <VacanciesFiltersRegion :is-city-mode="isCityMode" :selected-country="form.country" @onFormChange="onFormChange"/>
@@ -85,7 +85,7 @@ const onFormChange = (filter_name, filter_value) => {
 
 </script>
 
-<style>
+<style scoped>
 .check-block label{
   white-space: pre-wrap;
 }

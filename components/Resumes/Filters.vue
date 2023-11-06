@@ -85,7 +85,7 @@ const onFormChange = (filter_name, filter_value) => {
 
 </script>
 
-<style>
+<style scoped>
 .check-block label{
   white-space: pre-wrap;
 }
