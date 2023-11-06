@@ -151,7 +151,6 @@ const route = useRoute();
 onMounted(async () => {
     if (!isAnyProviderConnected.value){
         const authData = await getEmployerProvidersAuthEndpoints({}, route.fullPath.replace(route.fullPath.substring(0, 1), ""));
-        console.log(authData);
         providers.value.hh.url = authData.hh;
         providers.value.superjob.url = authData.superjob;
     }

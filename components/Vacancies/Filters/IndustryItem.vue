@@ -127,7 +127,7 @@ const selectSubToggle = (sub_id) => {
 
 </script>
 
-<style>
+<style scoped>
 
 .check-block .expanded{
   transform: rotateZ(90deg);

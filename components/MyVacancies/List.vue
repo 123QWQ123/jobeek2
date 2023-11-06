@@ -135,16 +135,12 @@ const isLoading = ref(true);
 
 const route = useRoute();
 watch(() => route.query, async(newQuery) => {
-  console.log(newQuery);
-  console.log(filterOptions.value);
-  console.log(filterOptions.value.map(item => item.value));
   let newStatus = 'draft';
   if (filterOptions.value.map(item => item.value).includes(route.query.status)){
     newStatus = route.query.status;
   }
   form.value.status = newStatus;
   const params = {status: newStatus};
-  console.log(params);
   if (newStatus === 'draft'){
     await getMyDrafts(params);
   }else if(newStatus === 'active'){
@@ -157,16 +153,13 @@ watch(() => route.query, async(newQuery) => {
 const onFilterChange = (filter) => {
   navigateTo({name: 'my-vacancies', query: {status: filter}});
 }
-console.log(route);
 onMounted(async() => {
-  console.log(route.query.status);
   let newStatus = 'draft';
   if (filterOptions.value.map(item => item.value).includes(route.query.status)){
     newStatus = route.query.status;
   }
   form.value.status = newStatus;
   const params = {status: newStatus};
-  console.log(params);
   if (newStatus === 'draft'){
     await getMyDrafts(params);
   }else if(newStatus === 'active'){

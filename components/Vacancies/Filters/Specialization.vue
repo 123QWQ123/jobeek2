@@ -106,7 +106,7 @@ onMounted(() => {
 
 </script>
 
-<style>
+<style scoped>
 .check-block label{
   white-space: pre-wrap;
 }

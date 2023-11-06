@@ -95,7 +95,7 @@ const submitSearch = () => {
 
 </script>
 
-<style setup>
+<style scoped>
 .check-block label{
   white-space: pre-wrap;
 }

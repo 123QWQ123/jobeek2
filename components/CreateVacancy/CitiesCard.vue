@@ -16,7 +16,7 @@
         <div class="input-row">
           <label>Список городов:<b>*</b></label>
           <div class="input-wrapper mt-2">
-            <MultiSelectWithSearch :options="cityOptions" v-model="state.cities.val" :label="'Выберите город'" @input="updateCityInput" @focusin="() => errors.cities = ''"></MultiSelectWithSearch>
+            <MultiSelectWithSearch :disabled="vacancyID" :options="cityOptions" v-model="state.cities.val" :label="'Выберите город'" @input="updateCityInput" @focusin="() => errors.cities = ''"></MultiSelectWithSearch>
 
             <div class="text-danger d-block" v-if="errors.cities">
               Вам нужно выбрать город для публикации!
@@ -87,7 +87,6 @@ watch(() => useWatchStateValues(state, true, true),   (newState, oldState) => {
 
 const sectionData = ref({});
 watch(() => sectionData.value, (newData, oldData) => {
-  console.log(newData);
     const diffData =  useDiff(newData, oldData);
     if (Object.keys(diffData).length){
         if (newData['cities'].length > 0){

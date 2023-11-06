@@ -208,7 +208,7 @@ onMounted(async () => {
 
 </script>
 
-<style setup>
+<style scoped>
 .check-block{
   display: flex;
   align-items: center;

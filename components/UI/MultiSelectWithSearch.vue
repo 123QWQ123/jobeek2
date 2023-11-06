@@ -1,6 +1,10 @@
 <template>
     <div class="multi-select_wrapper">
-        <div v-click-outside="close" onfocusout="close" class="select2-container select2-container--default select2-container--below select2-container--focus nice-select n-select d-select" :class="{'open' : isOpen}" tabindex="0" @click.prevent="onClick">
+        <div v-click-outside="close"
+             onfocusout="close"
+             class="select2-container select2-container--default select2-container--below select2-container--focus nice-select n-select d-select"
+             :class="{'open' : isOpen, 'disabled': disabled}" tabindex="0"
+             @click.prevent="onClick">
             <span ref="inputElement"  class="current" contenteditable="true" @keyup="onChangeHandler">{{ labelOrSearchInput }}</span>
 
             <ul class="list" :style="listStyles">
@@ -51,6 +55,10 @@ const props = defineProps({
     required: false,
       default: 'asc'
   },
+  disabled: {
+    required: false,
+      default: false
+  },
   hide_selection: {
     required: false,
     default: false
@@ -73,10 +81,12 @@ watch(props, (newProps) => {
 
 
 const inputElement = ref();
-const selectedOption = ref(null);
 const selectedOptions = ref(props.modelValue ?? []);
+const disabled = ref(props.disabled ?? false);
 
 function onSelect(e){
+  if (disabled.value) return true;
+
   if (e.target.classList.contains('option')){
     const tempSelectedOptions = selectedOptions.value;
     isOpen.value = false;
@@ -96,17 +106,21 @@ function onSelect(e){
 }
 
 function onUnselect(deleteId){
-    let tempOptions = props.options;
-    let tempSelectedOptions = selectedOptions.value;
-    const selectedOptionItemIndex = props.options.findIndex(item => String(item.value) === String(deleteId));
-    if (selectedOptionItemIndex !== -1){
-        selectedOptions.value = tempSelectedOptions.filter(item => String(item) !== String(deleteId));
-        options.value = tempOptions.filter(item => !selectedOptions.value.includes(String(item.value)));
-        emit('unselect', deleteId)
-    }
-    emit('update:modelValue', selectedOptions.value);
+  if (disabled.value) return true;
+
+  let tempOptions = props.options;
+  let tempSelectedOptions = selectedOptions.value;
+  const selectedOptionItemIndex = props.options.findIndex(item => String(item.value) === String(deleteId));
+  if (selectedOptionItemIndex !== -1){
+    selectedOptions.value = tempSelectedOptions.filter(item => String(item) !== String(deleteId));
+    options.value = tempOptions.filter(item => !selectedOptions.value.includes(String(item.value)));
+    emit('unselect', deleteId)
+  }
+  emit('update:modelValue', selectedOptions.value);
 }
 function onClick(e){
+  if (disabled.value) return true;
+
   if (e.target.classList.contains('current') || e.target.classList.contains('nice-select')){
     isOpen.value = !isOpen.value;
   }
@@ -158,6 +172,11 @@ function close(){
 
 </style>
 <style scoped>
+
+.disabled{
+  background-color: #eee;
+  cursor: default;
+}
 .multi-select_wrapper{
 
 }
@@ -185,7 +204,6 @@ function close(){
     padding: 0 0.1rem 0.2rem;
     gap: 0.5rem;
 }
-
 .multi-select_selected-item{
     border: 1px solid #5375FD;
     border-radius: 4px;

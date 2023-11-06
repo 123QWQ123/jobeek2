@@ -150,7 +150,7 @@ const close = () => emit('toggle');
 
 </script>
 
-<style>
+<style scoped>
 .check-block label{
   white-space: pre-wrap;
 }

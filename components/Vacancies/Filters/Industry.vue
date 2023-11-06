@@ -20,7 +20,7 @@
 
       </div>
 
-      <VacanciesFiltersIndustryModal :title="'Отрасль компании'" v-if="isModalOpen" :is-open="isModalOpen" @toggle="toggleModal" v-model="selectedIndustries" :items="industryItems" />
+      <LazyVacanciesFiltersIndustryModal :title="'Отрасль компании'" v-if="isModalOpen" :is-open="isModalOpen" @toggle="toggleModal" v-model="selectedIndustries" :items="industryItems" />
 
       <button class="more-filters" @click="toggleModal" >
         Выбрать
@@ -99,16 +99,18 @@ const filterClass = ref(true);
 
 
 onMounted(() => {
-  if (industries.value.length === 0)
-    getIndustries();
-  else prepare(industries.value);
+  setTimeout(() => {
+    if (industries.value.length === 0)
+      getIndustries();
+    else prepare(industries.value);
+  }, 100)
 
 });
 
 
 </script>
 
-<style>
+<style scoped>
 .check-block label{
   white-space: pre-wrap;
 }
