@@ -5,6 +5,7 @@ let timer;
 import { defineStore, acceptHMRUpdate } from "pinia";
 import axios from "axios";
 import useApi from "~/hooks/useApi";
+import {useFcm} from "#imports";
 
 
 
@@ -294,6 +295,16 @@ export const useAuthStore = defineStore('auth', {
           localStorage.setItem('token', resData.token);
           this.user = resData.user;
           this.isAuthed = true;
+
+          //todo  вынести в подходящее место
+            const token = await useFcm().getToken();
+            const {data} = await useApi('fcm/setToken', {
+                method: 'post',
+                payload: {
+                    fcm_token: token,
+                }
+            });
+
           return {
             status: 'success',
             data: this.user
