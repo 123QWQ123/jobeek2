@@ -34,7 +34,8 @@ const config = {
   modules: [
     '@pinia/nuxt',
     '@nuxt/devtools',
-    'nuxt-swiper'
+    'nuxt-swiper',
+    '@bg-dev/nuxt-fcm',
   ],
   swiper: {
     // Swiper options
@@ -59,8 +60,16 @@ const config = {
       link: [
         {
           rel: 'stylesheet', href: 'https://sem-dev.co.ua/jobeek.css'
+        },
+      ],
+      script: [
+        {
+          src: 'https://www.gstatic.com/firebasejs/8.3.2/firebase-app.js'
+        },
+        {
+          src: 'https://www.gstatic.com/firebasejs/8.3.2/firebase-messaging.js'
         }
-      ]
+      ],
     }
   },
   routeRules: {
@@ -79,7 +88,20 @@ const config = {
     // Add redirect headers
     // '/old-page': { redirect: '/new-page' },
     // '/old-page2': { redirect: { to: '/new-page', statusCode: 302 } }
-  }
+  },
+    fcm: {
+        firebaseConfig: {
+            apiKey: "AIzaSyDaqZCxvD1wNu8bKxFB1fjUeaZo4k2Gyyg",
+            authDomain: "espays.firebaseapp.com",
+            databaseURL: "https://espays.firebaseio.com",
+            projectId: "espays",
+            storageBucket: "espays.appspot.com",
+            messagingSenderId: "889800109407",
+            appId: "1:889800109407:web:e6a37cf3f262f5ae4d1aea",
+            measurementId: "G-ZS2ZHFHJ56"
+        },
+        vapidKey: 'BNhzs3ta5UD12WZIz6pP4ONTohrOsoMP3lyomaLsw2fRjsg4u0OzGKoOAFW7i0DK4GscckYJ5v0D99YJlFNhv3I',
+    },
 }
 
 
