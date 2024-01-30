@@ -1,6 +1,6 @@
 <template>
 
-  <div class="w-box" v-click-outside="save">
+  <div class="w-box" v-click-outside="save" @click="isFocused = true">
     <div class="w-box-head">
       <h3 class="title">Детали вакансии({{ isChanged }})</h3>
       <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
@@ -722,7 +722,14 @@ const onAddressSearch  = async(newString) => {
   console.log(newString);
 }
 const {errors, handleErrorResponse} = useFormValidation();
+const isFocused = ref(false);
 const save = async (is_from_parent = false) => {
+  if (is_from_parent === true){
+    isFocused.value = true;
+  }
+  if (!isFocused.value){
+    return true;
+  }
 
   if (isChanged.value){
     state.isLoading = true;

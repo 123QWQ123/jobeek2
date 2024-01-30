@@ -4,23 +4,40 @@
     <div class="row-container">
       <div class="row">
         <div class="col-8">
-            <div class="input-wrapper w-100">
-                <input id="salary_from" type="number" v-model="salary.amount.val" placeholder="Укажите сумму" @focusin="$emit('clearError', 'salary_amount')">
-                <div class="text-danger d-block" v-if="errors.salary_from">
-                    {{ errors.salary_from }}
-                </div>
+          <div class="input-wrapper w-100">
+            <div class="input-group mb-3">
+              <input
+                class="form-control"
+                id="salary_from"
+                type="number"
+                v-model="salary.amount.val"
+                placeholder="Укажите сумму"
+                @focusin="$emit('clearError', 'salary_amount')"
+              />
+              <span
+                v-if="props.fields_visibility.currency"
+                class="input-group-text"
+                >₽</span
+              >
             </div>
+            <div class="text-danger d-block" v-if="errors.amount">
+              {{ errors.amount }}
+            </div>
+          </div>
         </div>
-        <div class="col-4">
-            <CustomSelect class="skyBlueBG" :label="'Валюта'"
-                          :options="currencyOptions"
-                          :style="skyBlueBG" v-model="salary.currency.val"
-                          @focusin="clear('salary_currency')"
-                          ></CustomSelect>
+        <div class="col-4" v-if="!salary.currency.is_hidden">
+          <CustomSelect
+            class="skyBlueBG"
+            :label="'Валюта'"
+            :options="currencyOptions"
+            :style="skyBlueBG"
+            v-model="salary.currency.val"
+            @focusin="clear('currency')"
+          ></CustomSelect>
 
-            <div class="text-danger d-block" v-if="errors.salary_currency">
-                {{ errors.salary_currency }}
-            </div>
+          <div class="text-danger d-block" v-if="errors.currency">
+            {{ errors.currency }}
+          </div>
         </div>
       </div>
     </div>
@@ -28,71 +45,85 @@
 </template>
 
 <script setup>
-const emit = defineEmits(['update:modelValue', 'clearError']);
+const emit = defineEmits(["update:modelValue", "clearError"]);
 const props = defineProps({
-    modelValue: {
-        required: true,
-    },
-    errors: {
-        required: true,
-        default: {}
-    }
-})
-import {useCurrencyOptions} from "~/composables/useCurrencyOptions";
-const currencyOptions = ref(useCurrencyOptions());
+  modelValue: {
+    required: true,
+  },
+  errors: {
+    required: true,
+    default: {},
+  },
+  fields_visibility: {
+    required: false,
+    default: {},
+  },
+});
+import { useCurrencyOptions } from "~/composables/useCurrencyOptions";
+const currencyOptions = ref(useCurrencyOptions(false));
 
 const salary = reactive({
-    amount: {
-        val: null,
-        isChecked: false,
-        isValid: false,
-    },
-    currency: {
-        val: null,
-        isChecked: false,
-        isValid: false,
-    },
+  amount: {
+    val: null,
+    isChecked: false,
+    isValid: false,
+  },
+  currency: {
+    val: null,
+    isChecked: false,
+    isValid: false,
+    is_hidden: false,
+  },
 });
 
-watch(() => props.modelValue, (newValue) => {
+watch(
+  () => props.modelValue,
+  (newValue) => {
     salary.amount.val = newValue.amount;
     salary.currency.val = newValue.currency;
-})
+  }
+);
+watch(
+  () => props.fields_visibility,
+  (newValue) => {
+    salary.currency.is_hidden = newValue.currency;
+  }
+);
 onMounted(() => {
-    salary.amount.val = props.modelValue.amount;
-    salary.currency.val = props.modelValue.currency;
-})
+  salary.amount.val = props.modelValue.amount;
+  salary.currency.val = props.modelValue.currency;
+  salary.currency.is_hidden = props.fields_visibility.currency;
+});
 const validate = () => {
-    salary.amount.isChecked = true;
-    if (parseInt(salary.amount.val) > 0){
-        salary.amount.isValid = true;
-    }else{
-        salary.amount.isValid = false;
-    }
-    salary.currency.isChecked = true;
-    if (currencyOptions.value.includes(salary.currency.val)){
-        salary.currency.isValid = true;
-    }else{
-        salary.currency.isValid = false;
-    }
-    emit('update:modelValue', {amount: salary.amount.val, currency: salary.currency.val});
-}
+  salary.amount.isChecked = true;
+  if (parseInt(salary.amount.val) > 0) {
+    salary.amount.isValid = true;
+  } else {
+    salary.amount.isValid = false;
+  }
+  salary.currency.isChecked = true;
+  if (currencyOptions.value.includes(salary.currency.val)) {
+    salary.currency.isValid = true;
+  } else {
+    salary.currency.isValid = false;
+  }
+  emit("update:modelValue", {
+    amount: salary.amount.val,
+    currency: salary.currency.val,
+  });
+};
 watch(salary, validate);
 const skyBlueBG = {
-    background: "#F5F8FA"
-}
+  background: "#F5F8FA",
+};
 const errors = ref({});
-watch(() => props.errors, (newErrors) => {
-    console.log(errors.value, newErrors);
+watch(
+  () => props.errors,
+  (newErrors) => {
     errors.value = newErrors;
-})
+  }
+);
 
-const clear = (input) => emit('clearError', input);
-defineExpose({validate});
-
+const clear = (input) => emit("clearError", input);
+defineExpose({ validate });
 </script>
-
-
-<style scoped>
-
-</style>

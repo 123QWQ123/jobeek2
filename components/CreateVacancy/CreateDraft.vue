@@ -1,5 +1,5 @@
 <template>
-    <div class="w-box w-box--main w-box-resume pb-4" v-click-outside="save">
+    <div class="w-box w-box--main w-box-resume pb-4" v-click-outside="save" @click="isFocused = true">
         <div class="w-box-head">
             <h1 class="title">{{ formTitle }}</h1>
             <div class="descr">Получайте уведомления о новых  по созданному запросу</div>
@@ -77,6 +77,7 @@ import {useRuntimeConfig} from "#app";
 import useFormValidation from "~/composables/useFormValidation";
 import {storeToRefs} from "pinia";
 import {useWatchStateValues} from "~/composables/useWatchStateValues";
+import useResumeHooks from "~/hooks/useResumeHooks";
 const resumeStore = useResumeStore();
 const profileStore = useProfileStore();
 const vacancyStore = useVacancyStore();
@@ -146,18 +147,10 @@ const cityOptions = ref([]);
 const professionalRoleOptions = ref([]);
 
 
-const getCityName = (item) => {
-  if (item.city_name){
-    return item.city_name + ', ' + item.region_name + ", " + item.country_name
-  }else if(item.region_name){
-    return item.region_name + ", " + item.country_name
-  }else{
-    return item.country_name;
-  }
-}
+const {getCityName} = useResumeHooks();
 const updateCityInput = async (newValue = '') => {
     const items = await searchCities({search: newValue}) ?? [];
-    cityOptions.value = items.map(item => ({value: item.cityId, name: getCityName(item) }));
+    cityOptions.value = items.map(item => ({value: item.city_id, name: getCityName(item) }));
 }
 
 const updateProfessionalInput = async (newValue = '') => {
@@ -175,7 +168,14 @@ const getCities = async (newValue = '') => {
 
 
 const {errors, handleErrorResponse} = useFormValidation();
+const isFocused = ref(false);
 const save = async (is_from_parent = false) => {
+  if (is_from_parent === true){
+    isFocused.value = true;
+  }
+  if (!isFocused.value){
+    return true;
+  }
 
   if (isChanged.value){
         state.isLoading = true;

@@ -628,7 +628,7 @@ img {
     margin-top: 48px; }
 
 .input-wrapper {
-    max-width: 818px;
+    /*max-width: 818px;*/
     width: 100%; }
 .input-wrapper input {
     background: #F5F8FA;

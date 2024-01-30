@@ -1,6 +1,6 @@
 <template>
 
-  <div class="w-box" v-click-outside="save">
+  <div class="w-box" v-click-outside="save" @click="isFocused = true">
     <div class="w-box-head">
       <h3 class="title">Гражданство и Семья</h3>
       <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
@@ -188,7 +188,14 @@ const add  = () => {
     isShown.value = !isShown.value;
     // hasChanged.value = true;
 }
+const isFocused = ref(false);
 const save = async (is_from_parent = false) => {
+  if (is_from_parent === true){
+    isFocused.value = true;
+  }
+  if (!isFocused.value){
+    return true;
+  }
 
   if (isChanged.value){
         state.isLoading = true;

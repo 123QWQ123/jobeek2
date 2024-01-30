@@ -1,6 +1,6 @@
 <template>
 
-  <div class="w-box" v-click-outside="save">
+  <div class="w-box" v-click-outside="save" @click="isFocused = true">
     <div class="w-box-head">
       <h3 class="title">Где публиковать?({{isChanged}})</h3>
       <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
@@ -46,6 +46,7 @@ import {useWatchStateValues} from "~/composables/useWatchStateValues";
 import {useDiff} from "~/composables/useDiff";
 import {v4 as uuidv4} from "uuid";
 import {useCreateFormData} from "~/composables/useCreateFormData";
+import useResumeHooks from "~/hooks/useResumeHooks";
 const vacancyStore = useVacancyStore();
 const profileStore = useProfileStore();
 const CONFIG = useRuntimeConfig();
@@ -114,15 +115,7 @@ const {searchCities} = profileStore;
 const selectedOptions = ref([]);
 const cityOptions = ref([]);
 
-const getCityName = (item) => {
-  if (item.city_name && item.region_name && item.country_name){
-    return item.city_name + ', ' + item.region_name + ", " + item.country_name
-  }else if(item.region_name && item.country_name){
-    return item.region_name + ", " + item.country_name
-  }else{
-    return item.country_name;
-  }
-}
+const {getCityName} = useResumeHooks();
 const updateCityInput = async (newValue = '') => {
   if (newValue.length > 2){
     const items = await searchCities({search: newValue}) ?? [];
@@ -133,7 +126,14 @@ const updateCityInput = async (newValue = '') => {
 
 
 const {errors, handleErrorResponse} = useFormValidation();
+const isFocused = ref(false);
 const save = async (is_from_parent = false) => {
+  if (is_from_parent === true){
+    isFocused.value = true;
+  }
+  if (!isFocused.value){
+    return true;
+  }
 
   if (isChanged.value){
         state.isLoading = true;

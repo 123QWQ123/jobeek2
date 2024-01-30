@@ -97,7 +97,14 @@ watch(() => vacancyStore.my_vacancy, (newVacancy) => {
 const dictionaryStore = useDictionaryStore();
 
 const {errors, handleErrorResponse} = useFormValidation();
+const isFocused = ref(false);
 const save = async (is_from_parent = false) => {
+  if (is_from_parent === true){
+    isFocused.value = true;
+  }
+  if (!isFocused.value){
+    return true;
+  }
 
   if (isChanged.value){
         state.isLoading = true;

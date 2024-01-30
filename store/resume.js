@@ -1,16 +1,17 @@
-import {useRuntimeConfig} from "nuxt/app";
+import { useRuntimeConfig } from "nuxt/app";
 
 // no need to import defineStore and acceptHMRUpdate
 import { defineStore, acceptHMRUpdate } from "pinia";
 import axios from "axios";
-import {useAuthStore} from "~/store/auth";
+import { useAuthStore } from "~/store/auth";
 import useApi from "~/hooks/useApi";
 
-export const useResumeStore = defineStore('resume', {
+export const useResumeStore = defineStore("resume", {
   state: () => {
     return {
       resumes: [],
       resume: null,
+      my_resume: null,
       total: 0,
       my_total: 0,
       data: null,
@@ -30,9 +31,9 @@ export const useResumeStore = defineStore('resume', {
       metros: [],
       providers: {
         hh: null,
-        superjob: null
+        superjob: null,
       },
-    }
+    };
   },
   getters: {
     top_10: (state) => {
@@ -48,48 +49,62 @@ export const useResumeStore = defineStore('resume', {
   actions: {
     async getAreas(payload) {
       console.log(payload);
-      const {data} = await useApi('area', {
-        method: 'get',
-        payload
+      const { data } = await useApi("area", {
+        method: "get",
+        payload,
       });
-      if (data){
+      if (data) {
         this.areas = data;
       }
       return data;
     },
 
     async getConnectedSeekerProviders(payload) {
-      const {data} = await useApi('seeker/used_providers', {
-        method: 'get',
-        payload
+      const { data } = await useApi("seeker/used_providers", {
+        method: "get",
+        payload,
       });
-      if (data && 'data' in data){
+      if (data && "data" in data) {
         this.providers = data.data;
         return this.providers;
       }
       return data;
     },
 
-    async getSeekerProvidersAuthEndpoints(payload, redirect_to = '/profile/service-verify') {
-      const {data} = await useApi('services/auth/redirect-url?profile=seeker&redirect_to=' + redirect_to, {
-        method: 'get',
-        payload
+    async importResumes() {
+      const { data } = await useApi("seeker/resumes/import", {
+        method: "get",
       });
-      if ('data' in data){
+
+      return data;
+    },
+
+    async getSeekerProvidersAuthEndpoints(
+      payload,
+      redirect_to = "/profile/service-verify"
+    ) {
+      const { data } = await useApi(
+        "services/auth/redirect-url?profile=seeker&redirect_to=" + redirect_to,
+        {
+          method: "get",
+          payload,
+        }
+      );
+      if ("data" in data) {
         return data.data;
       }
       return data;
     },
     async getResumes(payload, add = false) {
-      const {data} = await useApi('resumes/search', {
-        method: 'get',
-        payload
+      const { data } = await useApi("resumes/search", {
+        method: "get",
+        payload,
       });
-      if (data && 'items' in data){
-        if (add){
+      if (data && "items" in data) {
+        if (add) {
           this.resumes = this.resumes.concat(data.items);
           this.current_page++;
-        }else{
+        } else {
           this.resumes = data.items;
           this.current_page = 1;
         }
@@ -97,22 +112,80 @@ export const useResumeStore = defineStore('resume', {
       }
       return data;
     },
-    async createResume( payload, content_type = 'application/json') {
-      const response = await useApi('seeker/resumes/create', {
-        method: 'post',
+    async getUserResumes(payload) {
+      return useApi("seeker/resumes", {
+        method: "get",
+        payload,
+      });
+    },
+    async getMyResumes(payload) {
+      const response = await this.getUserResumes(payload);
+      if (response.hasOwnProperty("data") && "data" in response.data) {
+        console.log(response.data.data);
+        this.my_resumes = response.data.data;
+        this.my_total = response.data.found;
+        this.current_page = response.data.current_page;
+      }
+      return response;
+    },
+    async getMyResume(id) {
+      const response = await useApi("seeker/resumes/" + id, {
+        method: "GET",
+      });
+      if (response.hasOwnProperty("data") && "data" in response.data) {
+        this.my_resume = response.data.data;
+      }
+      return response;
+    },
+
+    async deleteResume(id) {
+      console.log(id);
+      const response = await useApi("seeker/resumes/" + id, {
+        method: "delete",
+        payload: {},
+      });
+      console.log(response);
+      return response;
+    },
+    // async getMyDrafts(payload, add = false) {
+    //   const {data} = await useApi('resumes/search', {
+    //     method: 'get',
+    //     payload
+    //   });
+    //   if (data && 'items' in data){
+    //       this.my_drafts = data.items;
+    //       this.my_current_page = data.current_page;
+    //       this.my_total = data.total;
+    //   }
+    //   return data;
+    // },
+    async createResume(payload, content_type = "application/json") {
+      const response = await useApi("seeker/resumes/create", {
+        method: "post",
         content_type,
-        payload
+        payload,
       });
       // if ('data' in response){
       //   this.resume = response.data;
       // }
       return response;
     },
-    async updateResume(id, payload, content_type = 'application/json') {
-      const response = await useApi('seeker/resumes/' + id, {
-        method: 'PUT',
+    async updateResume(id, payload, content_type = "application/json") {
+      const response = await useApi("seeker/resumes/" + id, {
+        method: "PUT",
         content_type,
-        payload
+        payload,
+      });
+      // if ('data' in response && response.data.status === 'success'){
+      //   this.resume = response.data;
+      // }
+      return response;
+    },
+    async publishResume(id, payload, content_type = "application/json") {
+      const response = await useApi("seeker/resumes/publish/" + id, {
+        method: "PUT",
+        content_type,
+        payload,
       });
       // if ('data' in response && response.data.status === 'success'){
       //   this.resume = response.data;
@@ -120,11 +193,11 @@ export const useResumeStore = defineStore('resume', {
       return response;
     },
     async getResume(id, payload) {
-      const {data} = await useApi('seeker/resumes/' + id, {
-        method: 'get',
-        payload
+      const { data } = await useApi("seeker/resumes/" + id, {
+        method: "get",
+        payload,
       });
-      if (data){
+      if (data) {
         this.resume = data.data;
       }
       return data;
@@ -132,25 +205,14 @@ export const useResumeStore = defineStore('resume', {
     async clearResumes() {
       this.resumes = [];
     },
-    async getMyResumes(payload) {
-      const response = await useApi('seeker/resumes', {
-        method: 'get',
-        payload
+    async getMyFavoriteResumes(payload) {
+      const { data } = await useApi("favorite/vacancies", {
+        method: "get",
+        payload,
       });
-      if (response && 'data' in response && 'items' in response.data){
-        this.my_resumes = response.data.items;
-        this.my_total = response.data.found;
-        this.current_page = response.data.current_page;
-      }
-      return response;
-    },
-    async getMyFavoriteVacancies(payload) {
-      const {data} = await useApi('resumes/search', {
-        method: 'get',
-        payload
-      });
-      if ('items' in data){
-        this.my_favorite_vacancies = data.items;
+      console.log(data);
+      if ("items" in data) {
+        this.my_favorite_resumes = data.items;
         if (payload.page) {
           this.current_page = payload.page;
         }
@@ -158,116 +220,139 @@ export const useResumeStore = defineStore('resume', {
       return data;
     },
     async getRegions(payload = {}) {
-      const {data} = await useApi('area/regions', {
-        method: 'get',
-        payload
+      const { data } = await useApi("area/regions", {
+        method: "get",
+        payload,
       });
-      if (data){
+      if (data) {
         this.regions = data.data.regions;
       }
       return data;
     },
     async getCities(payload = {}) {
-      console.log(payload)
-      const {data} = await useApi('area/cities', {
-        method: 'get',
-        payload
+      console.log(payload);
+      const { data } = await useApi("area/cities", {
+        method: "get",
+        payload,
       });
-      if (data){
-        console.log(data)
+      if (data) {
+        console.log(data);
         this.cities = data.data.cities;
       }
       return data;
     },
     async getSpecializations(payload) {
-      const {data} = await useApi('specializations', {
-        method: 'get',
-        payload
+      const { data } = await useApi("specializations", {
+        method: "get",
+        payload,
       });
-      if (data){
+      if (data) {
         this.specializations = data.data;
       }
       return data;
     },
     async getWorkTypes(payload) {
-      const {data} = await useApi('dictionaries?group=work_type', {
-        method: 'get',
-        payload
+      const { data } = await useApi("dictionaries?group=work_type", {
+        method: "get",
+        payload,
       });
-      if (data){
+      if (data) {
         this.work_types = data.data.work_type;
       }
       return data;
     },
     async getSchedules(payload = {}) {
-      const {data} = await useApi('dictionaries?group=schedule', {
-        method: 'get',
-        payload
+      const { data } = await useApi("dictionaries?group=schedule", {
+        method: "get",
+        payload,
       });
-      if (data){
+      if (data) {
         this.schedules = data.data.schedule;
       }
       return data;
     },
     async getExperiences(payload = {}) {
-      const {data} = await useApi('dictionaries?group=experience', {
-        method: 'get',
-        payload
+      const { data } = await useApi("dictionaries?group=experience", {
+        method: "get",
+        payload,
       });
-      if (data){
+      if (data) {
         this.experiences = data.data.experience;
       }
       return data;
     },
     async getPartTimes(payload = {}) {
-      const {data} = await useApi('dictionaries?group=part_time', {
-        method: 'get',
-        payload
+      const { data } = await useApi("dictionaries?group=part_time", {
+        method: "get",
+        payload,
       });
-      if (data){
+      if (data) {
         this.part_times = data.data.part_time;
       }
       return data;
     },
     async getIndustries(payload) {
-      const {data} = await useApi('industries', {
-        method: 'get',
-        payload
+      const { data } = await useApi("industries", {
+        method: "get",
+        payload,
       });
-      if (data){
+      if (data) {
         this.industries = data.data;
       }
       return data.data;
     },
     async getMetros(payload) {
-      const {data} = await useApi('metro', {
-        method: 'get',
-        payload
+      const { data } = await useApi("metro", {
+        method: "get",
+        payload,
       });
-      if (data){
+      if (data) {
         this.metros = data.data;
       }
       return data.data;
     },
 
     async addToFavorite(payload) {
-      const response = await useApi('resume/favorite', {
-        method: 'post',
-        payload
+      const response = await useApi("resume/favorite", {
+        method: "post",
+        payload,
+      });
+      return response;
+    },
+
+    async getPhoneInfo(payload) {
+      const response = await useApi("seeker/phone/info", {
+        method: "get",
+        payload,
+      });
+      return response;
+    },
+
+    async getPhoneConfirmationCode(payload) {
+      const response = await useApi("seeker/phone/send_code_to_verify", {
+        method: "post",
+        payload,
+      });
+      return response;
+    },
+
+    async confirmPhoneConfirmationCode(payload) {
+      const response = await useApi("seeker/phone/confirm", {
+        method: "post",
+        payload,
       });
       return response;
     },
 
     async removeFromFavorite(payload) {
-      const response = await useApi('resume/favorite', {
-        method: 'delete',
-        payload
+      const response = await useApi("resume/favorite", {
+        method: "delete",
+        payload,
       });
       return response;
     },
-
   },
-})
+});
 
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(useResumeStore, import.meta.hot));

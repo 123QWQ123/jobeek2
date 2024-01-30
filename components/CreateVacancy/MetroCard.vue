@@ -21,9 +21,7 @@
             <div class="text-danger d-block" v-if="errors.metro">
               Вам нужно выбрать metro для публикации!
             </div>
-
           </div>
-
         </div>
       </div>
     </transition>
@@ -140,7 +138,14 @@ const updateInput = async (newValue = '') => {
 
 
 const {errors, handleErrorResponse} = useFormValidation();
+const isFocused = ref(false);
 const save = async (is_from_parent = false) => {
+  if (is_from_parent === true){
+    isFocused.value = true;
+  }
+  if (!isFocused.value){
+    return true;
+  }
 
   if (isChanged.value){
         state.isLoading = true;

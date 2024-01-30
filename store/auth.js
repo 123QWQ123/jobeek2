@@ -296,14 +296,15 @@ export const useAuthStore = defineStore('auth', {
           this.user = resData.user;
           this.isAuthed = true;
 
-          //todo  вынести в подходящее место
+          setTimeout(async() => {
             const token = await useFcm().getToken();
             const {data} = await useApi('fcm/setToken', {
-                method: 'post',
-                payload: {
-                    fcm_token: token,
-                }
+              method: 'post',
+              payload: {
+                fcm_token: token,
+              }
             });
+          })
 
           return {
             status: 'success',

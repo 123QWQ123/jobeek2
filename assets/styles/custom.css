@@ -37,3 +37,48 @@
 .vacancy-list{
     display: grid !important;
 }
+
+
+.vacancy-section {
+    overflow-x: hidden;
+}
+
+@media (max-width: 1025px) {
+    .cards-slider,
+    .cards-slider {
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+        margin-left: -15px !important;
+        margin-right: -15px !important;
+    }
+
+    body .cards-slider-row {
+        max-width: 100%;
+        overflow: visible;
+        width: 100%;
+    }
+}
+
+.main-header .logo {
+    margin-right: auto;
+}
+
+.header-actions {
+    gap: 5px;
+}
+
+.sort {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+@media (max-width: 768px) {
+    .subs-page .col {
+        flex-direction: column !important;
+    }
+}
+
+.input-wrapper .select2-container {
+    width: 100% !important;
+}

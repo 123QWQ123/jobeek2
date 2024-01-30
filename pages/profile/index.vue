@@ -1,12 +1,9 @@
-
 <script setup>
-
-import {useAuthStore} from "../../store/auth";
+import { useAuthStore } from "../../store/auth";
 import useAlert from "~/composables/useAlert";
 
-
 definePageMeta({
-  layout: "cabinet"
+  layout: "cabinet",
 });
 useHead({
   title: "Ваш аккаунт",
@@ -17,16 +14,16 @@ const isEmployer = computed(() => authStore.isEmployer);
 const route = useRoute();
 
 const error = computed(() => {
-    return route.query.message;
+  return route.query.message;
 });
 
-const {handleAlert} = useAlert();
+const { handleAlert } = useAlert();
 
 watch(() => route.query.message, handleAlert);
 
 onMounted(() => {
   handleAlert();
-})
+});
 </script>
 
 <template>
@@ -35,23 +32,23 @@ onMounted(() => {
 
     <div class="has-sidebar has-sidebar--v2 wrapper wrapper-1290">
       <div class="content">
-<!--        <div class="w-box w-box&#45;&#45;main" v-if="error">-->
-<!--          <div class="w-box-head " :class="errorClass">-->
-<!--            <p class="descr text-light">{{errorMessage}}</p>-->
-<!--          </div>-->
-<!--        </div>-->
+        <!--        <div class="w-box w-box&#45;&#45;main" v-if="error">-->
+        <!--          <div class="w-box-head " :class="errorClass">-->
+        <!--            <p class="descr text-light">{{errorMessage}}</p>-->
+        <!--          </div>-->
+        <!--        </div>-->
         <div class="w-box w-box--main">
           <div class="w-box-head">
             <h1 class="title">Профиль</h1>
           </div>
-            <transition name="content">
-              <div v-if="isEmployer">
-                  <ProfileEmployerEditForm/>
-              </div>
-              <div v-else>
-                  <ProfileSeekerEditForm/>
-              </div>
-            </transition>
+          <transition name="content">
+            <div v-if="isEmployer">
+              <ProfileEmployerEditForm />
+            </div>
+            <div v-else>
+              <ProfileSeekerEditForm />
+            </div>
+          </transition>
         </div>
       </div>
       <aside class="sidebar">
@@ -70,7 +67,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-
 .content-enter-active,
 .content-leave-active {
   transition: opacity 0.5s ease;
@@ -80,5 +76,4 @@ onMounted(() => {
 .content-leave-to {
   opacity: 0;
 }
-
 </style>

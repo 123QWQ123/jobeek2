@@ -11,11 +11,14 @@ useHead({
 
 import { useAuthStore } from "~~/store/auth";
 import IMask from "imask";
-import {useCheckJSON} from "~/composables/useCheckJSON";
-import {toast} from "vue3-toastify";
 import useAlert from "~/composables/useAlert";
+import {useVacancyStore} from "~/store/vacancy.js";
+import {useResumeStore} from "~/store/resume.js";
 
 const auth = useAuthStore();
+const vacancyStore = useVacancyStore();
+const resumeStore = useResumeStore();
+
 const isAuthed = computed(() => auth.isAuthed);
 const { signIn } = auth;
 const router = useRouter();
@@ -67,6 +70,9 @@ function validateForm() {
 
 const route = useRoute();
 
+const {getConnectedEmployerProviders} = vacancyStore;
+const {getConnectedSeekerProviders} = resumeStore;
+
 async function onSubmit() {
   validateForm();
   if (state.isFormValid) {
@@ -90,6 +96,8 @@ async function onSubmit() {
       return;
     }
     const route_name = route.query.redirect;
+    await getConnectedEmployerProviders();
+    await getConnectedSeekerProviders();
     setTimeout(() => {
       if (route_name) {
         router.replace({ name: route_name });
