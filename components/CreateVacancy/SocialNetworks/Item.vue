@@ -37,7 +37,6 @@
                         </div>
                       </div>
                     </div>
-
                   </div>
                   <div class="text-danger d-block" v-if="errors.phone">
                     {{ errors.phone }}

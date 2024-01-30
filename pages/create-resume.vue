@@ -1,97 +1,107 @@
 <script setup>
-import {storeToRefs} from "pinia";
-import {useResumeStore} from "~/store/resume";
+import { useVacancyStore } from "~/store/vacancy";
+import useAlert from "~/composables/useAlert";
+import { useResumeStore } from "~/store/resume";
 
 definePageMeta({
-    layout: "cabinet",
+  layout: "cabinet",
 });
 
-const pageTitle = computed(() => {
-  if (draftId.value) {
-      return "Создание резюме - Jobeek"
-  }
-  return "Создание резюме - Jobeek";
-})
 const route = useRoute();
 
-const draftID = computed(() => route.query.draft_id);
-const vacancyID = computed(() => route.query.vacancy_id);
-watch(() => route.query.draft_id, (newDraftId) => {
-    console.log(newDraftId)
-    if (newDraftId){
-        getResume(draftId.value);
-    }
-})
+const vacancyStore = useVacancyStore();
+
+const providers = ref({
+  superjob: false,
+  hh: false,
+});
 
 const resumeStore = useResumeStore();
-const {resume} = storeToRefs(resumeStore);
-
-const isEditable = computed(() => {
-    if (resume.value){
-        return true;
-    }
-    return false;
+const { getMyResume } = resumeStore;
+const pageTitle = computed(() => {
+  return "Создание резюме";
 });
 
-const {getResume} = resumeStore;
-
-onMounted(() => {
-  if (draftId.value){
-    getResume(draftId.value);
-  }
+const error = computed(() => {
+  return route.query.message;
 });
+const { handleAlert } = useAlert();
+watch(() => route.query.message, handleAlert);
 
 const saveAsDraft = (e) => {
-    e.preventDefault();
-    console.log('saved as draft');
-}
-const save = (e) => {
-    e.preventDefault();
-    console.log('saving and publishing or redirecting to edit page');
-}
+  e.preventDefault();
+  isLoading.value = true;
+
+  isLoading.value = false;
+  console.log("saved as draft");
+};
+
+const paramProviders = computed(() => {
+  if (providers.value.hh && providers.value.superjob) {
+    return ["hh", "superjob"];
+  }
+  if (providers.value.hh) {
+    return ["hh"];
+  }
+  if (providers.value.superjob) {
+    return ["superjob"];
+  }
+  return [];
+});
+
+const draft_el = ref();
+
+const errorMessage = ref(null);
+const hhErrorMessage = ref(null);
+const superjobErrorMessage = ref(null);
+const errors = ref([]);
+const isLoading = ref(false);
 // groups[]=
 </script>
 <template>
   <main class="main cabinet create-subscribe-page bg-wrapper" role="main">
     <Head>
-        <Title>{{pageTitle}}</Title>
+      <Title>{{ pageTitle }} - Jobeek</Title>
     </Head>
     <div class="bg-wrapper pt">
       <PersonalCabinetSearchMobile />
-
-<!--        {{state}}-->
       <div class="wrapper wrapper-1290">
-        <form class="create-resume" action="" name="create-resume ">
+        <form class="create-vacancy" action="" name="create-vacancy">
+          <LazyCreateResumeDraftCard ref="draft_el" :title="pageTitle" />
 
-          <CreateResumePersonalData ></CreateResumePersonalData>
-
-          <CreateResumePositionAndIncome v-if="isEditable"></CreateResumePositionAndIncome>
-
-          <CreateResumeEducationContent v-if="isEditable"></CreateResumeEducationContent>
-
-          <CreateResumeEducationDocumentsContent v-if="isEditable"></CreateResumeEducationDocumentsContent>
-
-          <CreateResumeWorkExperienceContent v-if="isEditable"></CreateResumeWorkExperienceContent>
-
-          <CreateResumeDriverLicenses v-if="isEditable"></CreateResumeDriverLicenses>
-
-          <CreateResumeKnowledgeAndSkills v-if="isEditable"></CreateResumeKnowledgeAndSkills>
-
-          <CreateResumeForeignLanguagesContent v-if="isEditable"></CreateResumeForeignLanguagesContent>
-
-          <CreateResumeCitizenshipAndFamily v-if="isEditable"></CreateResumeCitizenshipAndFamily>
-
-<!--          <CreateResumePortfolio></CreateResumePortfolio>-->
-
-          <p class="text-lg-end">При создании резюме вы соглашаетесь с <a href="#">правилами работы сервиса</a> и даете согласие на обработку персональных данных, разрешенных для распространения</p>
           <div class="form-submit-container mt-2">
-
-
-            <button class="btn btn-outline-primary" type="button" @click="saveAsDraft">Сохранить как черновик</button>
-            <button class="button-accent" type="submit" @click="save">Сохранить и опубликовать</button>
+            <button
+              class="btn btn-outline-primary"
+              type="button"
+              @click="saveAsDraft"
+            >
+              Далее
+              <div
+                v-if="isLoading"
+                class="ms-2 bg-primary spinner-grow spinner-grow-sm"
+                role="status"
+              >
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </button>
           </div>
         </form>
       </div>
     </div>
   </main>
 </template>
+
+<style scoped>
+.button-accent.disabled {
+  filter: grayscale(180%);
+}
+
+@media (max-width: 768px) {
+  .form-submit-container {
+    flex-direction: column-reverse;
+  }
+  .button-accent {
+    margin-bottom: 1rem;
+  }
+}
+</style>

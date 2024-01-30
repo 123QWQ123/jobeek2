@@ -1,29 +1,34 @@
 <template>
   <div>
-      <NuxtLayout> </NuxtLayout>
+    <NuxtLayout> </NuxtLayout>
   </div>
 </template>
 
 <script setup>
+import { useAuthStore } from "~/store/auth";
+import { useVacancyStore } from "~/store/vacancy";
+import { useResumeStore } from "~/store/resume";
 
-import {useAuthStore} from "~/store/auth";
-import {useVacancyStore} from "~/store/vacancy";
-import {useResumeStore} from "~/store/resume";
+// import { defineRule } from "vee-validate";
+
+// defineRule("required", (value) => {
+//   if (!value || !value.length) {
+//     return "This field is required";
+//   }
+//
+//   return true;
+// });
 
 const { getConnectedEmployerProviders } = useVacancyStore();
 const { getConnectedSeekerProviders } = useResumeStore();
 const vacancyStore = useVacancyStore();
 
-
-const authStore =  useAuthStore();
+const authStore = useAuthStore();
 const isEmployer = computed(() => authStore.isEmployer);
-onMounted(async() => {
-
+onMounted(async () => {
   await getConnectedEmployerProviders();
   await getConnectedSeekerProviders();
-
-})
-
+});
 </script>
 
 <style>
@@ -59,5 +64,3 @@ onMounted(async() => {
   transform: translateY(0);
 }
 </style>
-<script setup lang="ts">
-</script>

@@ -1,12 +1,12 @@
-import {useRuntimeConfig} from "nuxt/app";
+import { useRuntimeConfig } from "nuxt/app";
 
 // no need to import defineStore and acceptHMRUpdate
 import { defineStore, acceptHMRUpdate } from "pinia";
 import axios from "axios";
-import {useAuthStore} from "~/store/auth";
+import { useAuthStore } from "~/store/auth";
 import useApi from "~/hooks/useApi";
 
-export const useProfileStore = defineStore('profile', {
+export const useProfileStore = defineStore("profile", {
   state: () => {
     return {
       user: null,
@@ -17,31 +17,32 @@ export const useProfileStore = defineStore('profile', {
       regions: [],
       cities: [],
       professional_roles: [],
-    }
+      artifacts: [],
+      my_resume_photo_artifact: [],
+    };
   },
   getters: {
-    countryOptions(state){
-        return state.countries.map((item) => {
-          return {name: item.name, value: item.id}
-        });
+    countryOptions(state) {
+      return state.countries.map((item) => {
+        return { name: item.name, value: item.id };
+      });
     },
     cityOptions: (state) => {
-        return state.cities.map((item) => {
-          return {name: item.name, value: item.id}
-        });
+      return state.cities.map((item) => {
+        return { name: item.name, value: item.id };
+      });
     },
   },
   actions: {
-
     async getCountries(payload = {}) {
-      const {data} = await useApi('area/countries', {
-        method: 'get',
-        payload
+      const { data } = await useApi("area/countries", {
+        method: "get",
+        payload,
       });
-      if (data && 'data' in data){
-        if (data.data.hasOwnProperty('countries')){
+      if (data && "data" in data) {
+        if (data.data.hasOwnProperty("countries")) {
           this.countries = data.data.countries;
-        }else{
+        } else {
           this.countries = data.data;
         }
       }
@@ -51,11 +52,11 @@ export const useProfileStore = defineStore('profile', {
     async searchPhone(payload = {}) {
       // domain/api/
       console.log(payload);
-      const {data} = await useApi('scam/getPhoneInfo', {
-        method: 'get',
-        payload
+      const { data } = await useApi("scam/getPhoneInfo", {
+        method: "get",
+        payload,
       });
-      if (data && 'data' in data){
+      if (data && "data" in data) {
         this.searched_phones = data.data;
         return data.data;
       }
@@ -63,53 +64,64 @@ export const useProfileStore = defineStore('profile', {
     },
 
     async getRegions(payload = {}) {
-      const {data} = await useApi('area/regions', {
-        method: 'get',
-        payload
+      const { data } = await useApi("area/regions", {
+        method: "get",
+        payload,
       });
-      if ('data' in data){
+      if ("data" in data) {
         this.regions = data.data.regions;
       }
       return data;
     },
     async getCities(payload = {}) {
-      const {data} = await useApi('area/cities', {
-        method: 'get',
-        payload
+      const { data } = await useApi("area/cities", {
+        method: "get",
+        payload,
       });
-      if (data && 'data' in data){
-        if (data.data.hasOwnProperty('cities')){
+      if (data && "data" in data) {
+        if (data.data.hasOwnProperty("cities")) {
           this.cities = data.data.cities;
-        }else{
+        } else {
           this.cities = data.data;
         }
       }
       return data;
     },
-    async searchCities(payload = {}) {
-      const {data} = await useApi('area', {
-        method: 'get',
-        payload
+    async searchAreas(payload = {}) {
+      const response = await useApi("area", {
+        method: "get",
+        payload,
       });
-      if (data.status === 'failed'){
+      if (response.status === "failed") {
         return [];
       }
-      return data.data ?? [];
+      return response.data.data ?? [];
     },
-    async searchProfessionalRoles(payload = {})
-    {
+    async searchCities(payload = {}) {
+      const response = await useApi("area/cities", {
+        method: "get",
+        payload,
+      });
+      if (response.status === "failed") {
+        return [];
+      }
+      return response.data.data ?? [];
+    },
+    async searchProfessionalRoles(payload = {}) {
       if (this.professional_roles.length > 0) {
-        if (payload.search){
-          return this.professional_roles.filter((item) => item.name.toLowerCase().includes(payload.search))
+        if (payload.search) {
+          return this.professional_roles.filter((item) =>
+            item.name.toLowerCase().includes(payload.search)
+          );
         }
         return this.professional_roles;
       }
 
-      const response = await useApi('professional_roles', {
-        method: 'get',
-        payload
+      const response = await useApi("professional_roles", {
+        method: "get",
+        payload,
       });
-      if (response.status === 'failed'){
+      if (response.status === "failed") {
         return [];
       }
 
@@ -117,127 +129,164 @@ export const useProfileStore = defineStore('profile', {
       return response.data.data ?? [];
     },
     async getCountryCities(payload = {}) {
-      const response = await useApi('area/cities', {
-        method: 'get',
-        payload
+      const response = await useApi("area/cities", {
+        method: "get",
+        payload,
       });
-      if (response.status === 'success'){
+      if (response.status === "success") {
         return response.data.data;
       }
       return [];
     },
     async getUser(payload = "") {
-      const {isEmployer} = useAuthStore();
-      let url = 'seeker/profile';
-      if (isEmployer){
-        url = 'employer/profile';
+      const { isEmployer } = useAuthStore();
+      let url = "seeker/profile";
+      if (isEmployer) {
+        url = "employer/profile";
         return this.getEmployer(url);
-      }else{
+      } else {
         return this.getSeeker(url);
       }
     },
     async getSeeker(url = "") {
-      const {data} = await useApi(url, {
-        method: 'get',
+      const { data } = await useApi(url, {
+        method: "get",
       });
-      if (data && 'data' in data){
+      if (data && "data" in data) {
         this.seeker = data.data;
-        this.user = {phone: this.seeker?.phone};
+        this.user = { phone: this.seeker?.phone };
       }
       return data;
     },
     async getEmployer(url = "") {
       const response = await useApi(url, {
-        method: 'get',
+        method: "get",
       });
-      if (response && response.data && 'data' in response.data){
+      if (response && response.data && "data" in response.data) {
         this.employer = response.data.data;
-        this.user = {phone: this.employer?.phone};
+        this.user = { phone: this.employer?.phone };
       }
       return response;
     },
     async updateSeeker(payload) {
-      const response = await useApi('seeker/profile', {
-        method: 'put',
-        content_type: 'multipart/form-data',
-        payload
+      const response = await useApi("seeker/profile", {
+        method: "put",
+        content_type: "multipart/form-data",
+        payload,
       });
       console.log(response);
-      if ('data' in response){
+      if ("data" in response) {
         this.user = response.data?.data;
       }
       return response;
     },
     async updateEmployer(payload) {
-      const response = await useApi('employer/profile', {
-        method: 'put',
-        content_type: 'multipart/form-data',
-        payload
+      const response = await useApi("employer/profile", {
+        method: "put",
+        content_type: "multipart/form-data",
+        payload,
       });
-      if ('data' in response){
+      if ("data" in response) {
         this.user = response.data?.data;
       }
       return response;
     },
 
     async sendMessage(payload) {
-      return await useApi('support', {
-        method: 'post',
-        payload
+      return await useApi("support", {
+        method: "post",
+        payload,
       });
     },
     async confirmEmail(payload) {
-      return await useApi('profile/email/confirmation', {
-        method: 'post',
-        payload
+      return await useApi("profile/email/confirmation", {
+        method: "post",
+        payload,
       });
     },
     async verifyEmailConfirmation(payload) {
-      return await useApi('profile/email/verify', {
-        method: 'post',
-        payload
+      return await useApi("profile/email/verify", {
+        method: "post",
+        payload,
       });
     },
 
     async upload(payload) {
       const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + 'upload';
+      let url = CONFIG.public.apiBase + "upload";
       let token;
-      if (typeof window !== 'undefined') {
-        token = localStorage.getItem('token')
+      if (typeof window !== "undefined") {
+        token = localStorage.getItem("token");
       }
 
       try {
         const response = await axios.post(url, payload, {
           headers: {
-            'Content-Type': 'multipart/form-data'
-          }
+            "Content-Type": "multipart/form-data",
+          },
         });
-        if ('data' in response){
+        if ("data" in response) {
           console.log(response.data);
           return {
-            status: 'success',
-            path: response.data.path
-          }
+            status: "success",
+            path: response.data.path,
+          };
         }
-      }catch (error){
+      } catch (error) {
         console.log(error);
-        if ("response" in  error && error.response.data?.errors){
+        if ("response" in error && error.response.data?.errors) {
           return {
-            status: 'error',
+            status: "error",
             message: error.message,
             errors: error.response.data.errors,
           };
         }
         return {
-          status: 'error',
+          status: "error",
           message: error.message,
         };
       }
     },
 
+    async getArtifacts(payload) {
+      const response = await useApi("seeker/artifacts", {
+        method: "get",
+        payload,
+      });
+      if (response.status === "success") {
+        this.artifacts = response.data.data;
+      }
+      return response.data;
+    },
+
+    async uploadArtifact(payload) {
+      const response = await useApi("seeker/artifact", {
+        method: "POST",
+        content_type: "multipart/form-data",
+        payload,
+      });
+      console.log(response);
+      return response;
+    },
+    async getArtifact(id) {
+      const response = await useApi("seeker/artifact/" + id, {
+        method: "GET",
+        payload: {},
+      });
+      if (response.status === "success") {
+        this.my_resume_photo_artifact = response.data.data;
+      }
+      return response;
+    },
+    async deleteArtifact(id) {
+      const response = await useApi("seeker/artifact/" + id, {
+        method: "DELETE",
+        payload: {},
+      });
+      return response;
+    },
   },
-})
+});
 
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(useProfileStore, import.meta.hot));

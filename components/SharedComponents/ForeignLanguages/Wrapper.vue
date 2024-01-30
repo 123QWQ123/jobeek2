@@ -41,6 +41,7 @@ const resetObject = {
 };
 
 watch(() => props.errors, (newData) => {
+  console.log(newData)
     const newItems = selectedItems.value;
     selectedItems.value.map((item, index) => {
         newData?.map((error, errorIndex) => {
@@ -62,7 +63,7 @@ watch(() => props.errors, (newData) => {
 
 const reset = () => {
     resetObject.id = uuidv4();
-    selectedItems.value = [ resetObject ];
+    selectedItems.value = [ {...resetObject} ];
 }
 const create = () => {
     const newItems = selectedItems.value;

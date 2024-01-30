@@ -1,22 +1,24 @@
 <template>
   <div class="layout">
-    <header class="header" v-if="hasHeaderSlot">
-      <slot name="header"></slot>
-    </header>
-    <HeaderTheHeader v-else></HeaderTheHeader>
+    <!--    <header class="header" v-if="hasHeaderSlot">-->
+    <!--      <slot name="header"></slot>-->
+    <!--    </header>-->
+    <client-only>
+      <HeaderTheHeader></HeaderTheHeader>
+    </client-only>
     <main class="main" role="main">
       <NuxtPage />
-      <!-- <template #error="{ error }">
-          <div>
-            <p>
-              Oh no, something broke when loading the lesson!
-              <code>{{ error }}</code>
-            </p>
-            <p>
-              <NuxtLink class="hover:cursor-pointer" to="/"> Go to / </NuxtLink>
-            </p>
-          </div>
-        </template> -->
+      <!--      <template #error="{ error }">-->
+      <!--          <div>-->
+      <!--            <p>-->
+      <!--              Oh no, something broke when loading the lesson!-->
+      <!--              <code>{{ error }}</code>-->
+      <!--            </p>-->
+      <!--            <p>-->
+      <!--              <NuxtLink class="hover:cursor-pointer" to="/"> Go to / </NuxtLink>-->
+      <!--            </p>-->
+      <!--          </div>-->
+      <!--        </template>-->
     </main>
 
     <footer class="footer" v-if="hasFooterSlot">

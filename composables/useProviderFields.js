@@ -1,62 +1,61 @@
-import { ref } from 'vue';
+import { ref } from "vue";
 
 export default function useProviderFields(state = null, fields = null) {
-
-    const walkThroughFields = (newProviders) => {
-        // console.log(newProviders);
-        if (newProviders.hh && newProviders.superjob){
-            Object.keys(fields.value.hh).map((item) => {
-                if (state[item]){
-                    state[item].is_hidden = false;
-                }
-            });
-            Object.keys(fields.value.superjob).map((item) => {
-                if (state[item]){
-                    state[item].is_hidden = false;
-                }
-            });
-            return;
+  const walkThroughFields = (newProviders) => {
+    console.log(newProviders);
+    if (newProviders.hh && newProviders.superjob) {
+      Object.keys(fields.value.hh).map((item) => {
+        if (state[item]) {
+          state[item].is_hidden = false;
         }
-        if (!newProviders.hh && !newProviders.superjob){
-            Object.keys(fields.value.hh).map((item) => {
-                if (state[item]){
-                    state[item].is_hidden = true;
-                }
-            });
-            Object.keys(fields.value.superjob).map((item) => {
-                if (state[item]){
-                    state[item].is_hidden = true;
-                }
-            });
-            return;
+      });
+      Object.keys(fields.value.superjob).map((item) => {
+        if (state[item]) {
+          state[item].is_hidden = false;
         }
-        if (newProviders.hh && !newProviders.superjob){
-            Object.keys(fields.value.hh).map((item) => {
-                if (state[item]){
-                    state[item].is_hidden = false;
-                }
-            });
-            Object.keys(fields.value.superjob).map((item) => {
-                if (state[item]){
-                    state[item].is_hidden = true;
-                }
-            });
-            return;
-        }
-        if (!newProviders.hh && newProviders.superjob){
-            Object.keys(fields.value.superjob).map((item) => {
-                if (state[item]){
-                    state[item].is_hidden = false;
-                }
-            });
-            Object.keys(fields.value.hh).map((item) => {
-                if (state[item]){
-                    state[item].is_hidden = true;
-                }
-            });
-            return;
-        }
+      });
+      return;
     }
+    if (!newProviders.hh && !newProviders.superjob) {
+      Object.keys(fields.value.hh).map((item) => {
+        if (state[item]) {
+          state[item].is_hidden = true;
+        }
+      });
+      Object.keys(fields.value.superjob).map((item) => {
+        if (state[item]) {
+          state[item].is_hidden = true;
+        }
+      });
+      return;
+    }
+    if (newProviders.hh && !newProviders.superjob) {
+      Object.keys(fields.value.hh).map((item) => {
+        if (state[item]) {
+          state[item].is_hidden = false;
+        }
+      });
+      Object.keys(fields.value.superjob).map((item) => {
+        if (state[item]) {
+          state[item].is_hidden = true;
+        }
+      });
+      return;
+    }
+    if (!newProviders.hh && newProviders.superjob) {
+      Object.keys(fields.value.superjob).map((item) => {
+        if (state[item]) {
+          state[item].is_hidden = false;
+        }
+      });
+      Object.keys(fields.value.hh).map((item) => {
+        if (state[item]) {
+          state[item].is_hidden = true;
+        }
+      });
+      return;
+    }
+  };
 
-    return { state, walkThroughFields };
+  return { state, walkThroughFields };
 }

@@ -74,7 +74,7 @@
         <input
           type="text"
           placeholder="Название"
-          id="name"
+          id="company_name"
           required
           v-model="state.company_name.val"
         />
@@ -88,7 +88,7 @@
       <div class="input-wrapper">
         <input
           type="text"
-          id="name"
+          id="company_description"
           required
           v-model="state.company_description.val"
         />
@@ -100,44 +100,57 @@
     <div class="input-row">
       <label for="phone">Телефон</label>
       <div class="input-wrapper">
-        <input
-          ref="phoneInputElement"
-          disabled
-          type="text"
-          id="phone"
-          v-model="state.phone.val"
-        />
+        <input ref="phoneInputElement" disabled type="text" id="phone" />
       </div>
     </div>
 
     <div class="input-row">
       <label for="email">Электронная почта<b>*</b></label>
       <div class="input-wrapper position-relative">
-        <input
+        <div class="input-wrapper col-12 w-100">
+          <input
             type="email"
             placeholder="Электронная почта"
             id="email"
             :value="emailInputValue"
             @input="onInputEmail"
-        />
-        <a
-            v-if="state.email_to_verify.val && state.email_to_verify.val !== state.email.val"
+          />
+          <a
+            v-if="
+              state.email_to_verify.val &&
+              state.email_to_verify.val !== state.email.val
+            "
             @click="onEmailConfirm"
             class="badge bg-primary position-absolute fs-6 end-0 top-0 p-2 px-2 mt-2 me-2"
-        >Потверждать</a
-        >
-        <span
+            >Потверждать</a
+          >
+          <span
             v-if="!state.email_to_verify.val"
             class="h-100 fs-6 position-absolute end-0 top-0 p-0 px-0 mt-0 me-0 pb-2"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" style="transform: scale(0.5)" viewBox="0 0 48 48" width="48px" height="48px"><path fill="green" d="M40.6 12.1L17 35.7 7.4 26.1 4.6 29 17 41.3 43.4 14.9z"/></svg>
-        </span>
-      </div>
-      <div class="text-success d-block" v-if="state.email.is_sent">
-        {{ "Вам выслано емейл с код подтверждением, подтвердите ваш емейл." }}
-      </div>
-      <div class="text-danger d-block" v-if="errors.email">
-        {{ errors.email }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              style="transform: scale(0.5)"
+              viewBox="0 0 48 48"
+              width="48px"
+              height="48px"
+            >
+              <path
+                fill="green"
+                d="M40.6 12.1L17 35.7 7.4 26.1 4.6 29 17 41.3 43.4 14.9z"
+              />
+            </svg>
+          </span>
+        </div>
+        <br />
+        <div class="text-success d-block" v-if="state.email.is_sent">
+          {{
+            "Вам выслано емейл с код подтверждением, подтвердите ваш э-почту."
+          }}
+        </div>
+        <div class="text-danger d-block" v-if="errors.email">
+          {{ errors.email }}
+        </div>
       </div>
     </div>
     <div class="input-row">
@@ -164,18 +177,15 @@ const CONFIG = useRuntimeConfig();
 
 import { storeToRefs } from "pinia";
 import Swal from "sweetalert2";
-import {navigateTo, useRuntimeConfig} from "nuxt/app";
+import { navigateTo, useRuntimeConfig } from "nuxt/app";
 import IMask from "imask";
-import {useCheckJSON} from "~/composables/useCheckJSON";
+import { useCheckJSON } from "~/composables/useCheckJSON";
+import { toast } from "vue3-toastify";
 const profileStore = useProfileStore();
 
 const { getUser } = profileStore;
 const { employer } = storeToRefs(profileStore);
 
-
-onMounted(async () => {
-  await getUser();
-});
 const state = reactive({
   company_name: {
     val: "",
@@ -216,11 +226,14 @@ const state = reactive({
   success: null,
 });
 
-
 const emailInputValue = computed(() => {
-  if (state.email.val && state.email_to_verify.val && state.email.val !== state.email_to_verify.val){
+  if (
+    state.email.val &&
+    state.email_to_verify.val &&
+    state.email.val !== state.email_to_verify.val
+  ) {
     return state.email_to_verify.val;
-  }else if(state.email_to_verify.val){
+  } else if (state.email_to_verify.val) {
     return state.email_to_verify.val;
   }
   return state.email.val;
@@ -228,10 +241,7 @@ const emailInputValue = computed(() => {
 
 const onInputEmail = (e) => {
   state.email_to_verify.val = e.target.value;
-}
-
-// watch(() => state.email_to_verify.val, (newEmail) => {
-// })
+};
 
 const emailToVerify = ref();
 const isConfirmButton = ref(true);
@@ -239,24 +249,44 @@ const isCheckButton = ref(false);
 
 const phoneInputElement = ref();
 const phoneMask = ref(null);
-watch(employer, (new_value) => {
-  for (const [key, value] of Object.entries(new_value)) {
-    if (state.hasOwnProperty(key)) {
-      if (key === "phone") {
-        setTimeout(() => {
-          phoneMask.value = new IMask(phoneInputElement.value, {
-            mask: "+{7}(000)000-00-00",
-          });
-        }, 0);
+
+const fillState = async (new_value) => {
+  if (new_value) {
+    for (const [key, value] of Object.entries(new_value)) {
+      if (state.hasOwnProperty(key)) {
+        state[key].val = value;
       }
-      // TODO
-      // if (key === "email_to_verify") {
-      //     console.log(key, value)
-      // }
-      state[key].val = value;
     }
   }
+};
+
+watch(() => employer.value, fillState);
+
+onMounted(() => {
+  if (!profileStore.employer) {
+    getUser();
+  }
+  fillState(employer.value);
 });
+
+watch(
+  () => employer.value,
+  (newEmployer) => {
+    fillState(newEmployer);
+  }
+);
+watch(
+  () => state.phone.val,
+  (newPhone) => {
+    phoneMask.value = new IMask(phoneInputElement.value, {
+      mask: "+{7}(000)000-00-00",
+    });
+    phoneInputElement.value.addEventListener("input", (e) => {
+      state.phone.val = phoneMask.value.unmaskedValue;
+    });
+    phoneMask.value.unmaskedValue = newPhone;
+  }
+);
 
 // /assets/images/avatar.png
 const photoUrl = computed(() => {
@@ -320,27 +350,25 @@ const onEmailConfirm = async () => {
     ? state.email_to_verify.val
     : state.email.val;
   const resData = await confirmEmail({ email });
-  if (resData.status === "success") {
-    Swal.fire({
-      title: "Успешно!",
-      text: resData.message,
-      icon: "success",
-      confirmButtonText: "ОК",
-    });
-    isConfirmButton.value = false;
-    isCheckButton.value = true;
+  if (resData.status !== "success") {
+    toast.info(resData.message, { autoClose: 3000 });
     state.isLoading = false;
+    return;
   }
+  state.email.is_sent = true;
+  isConfirmButton.value = false;
+  isCheckButton.value = true;
+  state.isLoading = false;
 };
 
 const errors = ref({});
 
 const route = useRoute();
 const routeErrorMessage = computed(() => {
-  if (useCheckJSON(route.query.message)){
+  if (useCheckJSON(route.query.message)) {
     return JSON.parse(route.query.message).text;
   }
-  return route.query.message
+  return route.query.message;
 });
 const { updateEmployer } = profileStore;
 const handleSubmit = async (e) => {
@@ -348,7 +376,9 @@ const handleSubmit = async (e) => {
   validate();
   errors.value = {};
 
-  const email = state.email_to_verify.val ? state.email_to_verify.val : state.email.val;
+  const email = state.email_to_verify.val
+    ? state.email_to_verify.val
+    : state.email.val;
 
   const formData = new FormData();
   formData.append("logo", state.logo.val);
@@ -369,8 +399,8 @@ const handleSubmit = async (e) => {
       confirmButtonText: "ОК",
     });
     state.isLoading = false;
-    if (routeErrorMessage.value){
-      navigateTo({name: 'profile', query: {}})
+    if (routeErrorMessage.value) {
+      navigateTo({ name: "profile", query: {} });
     }
   } else {
     if (resData?.errors) {
@@ -387,10 +417,15 @@ input[type="text"]:disabled {
 }
 </style>
 <style scoped>
+@media (max-width: 768px) {
+  .position-relative {
+    position: static !important;
+  }
+  .position-absolute {
+    position: static !important;
+  }
+}
 #photo {
   cursor: pointer;
-}
-.bg-checkbox{
-    background-color: #1fb141;
 }
 </style>

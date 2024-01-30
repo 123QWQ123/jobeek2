@@ -1,5 +1,8 @@
 <template>
-  <div class="loading bg-dark bg-opacity-50 w-100 h-100 position-fixed pt-5 pt-4 justify-content-between align-content-center" style="z-index: 11;display: block;top:4rem;left: 0;right: 0;" >
+  <div
+    class="loading bg-dark bg-opacity-50 w-100 h-100 position-fixed pt-5 pt-4 justify-content-between align-content-center"
+    style="z-index: 11; display: block; top: 0rem; left: 0; right: 0"
+  >
     <div class="d-flex justify-content-center">
       <div class="spinner-border" role="status">
         <span class="visually-hidden">Loading...</span>
@@ -10,10 +13,8 @@
 
 <script>
 export default {
-  name: "PageLoader"
-}
+  name: "PageLoader",
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

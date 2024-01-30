@@ -1,5 +1,5 @@
 <template>
-  <div class="w-box" v-click-outside="save">
+  <div class="w-box" v-click-outside="save" @click="isFocused = true">
     <div class="w-box-head">
       <h3 class="title">Водительские права</h3>
       <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
@@ -119,7 +119,14 @@ watch(() => isCollapsed.value, (newData) => {
 const {getResume, updateResume} = resumeStore;
 
 const {errors, handleErrorResponse} = useFormValidation();
+const isFocused = ref(false);
 const save = async (is_from_parent = false) => {
+  if (is_from_parent === true){
+    isFocused.value = true;
+  }
+  if (!isFocused.value){
+    return true;
+  }
 
   if (isChanged.value){
         const resData = await updateResume(draftID.value, {

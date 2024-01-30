@@ -94,7 +94,14 @@ watch(() => foreign_languages.value, (newData) => {
 const {getResume, updateResume} = resumeStore;
 
 const {errors, handleErrorResponse} = useFormValidation();
+const isFocused = ref(false);
 const save = async (is_from_parent = false) => {
+  if (is_from_parent === true){
+    isFocused.value = true;
+  }
+  if (!isFocused.value){
+    return true;
+  }
 
   if (isChanged.value){
         const resData = await updateResume(draftID.value, {
