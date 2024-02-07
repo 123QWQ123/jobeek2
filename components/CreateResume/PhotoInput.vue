@@ -6,14 +6,13 @@
       @change="handleUploadFile"
       type="file"
       name="photo"
-      id="photo"
     />
     <img :src="photoUrl" alt="#" />
     <div class="photo-actions">
       <button
         class="photo-action redact"
         type="button"
-        @click="openFileBrowser"
+        @click.prevent="openFileBrowser"
       >
         <svg
           width="28"
@@ -62,6 +61,7 @@ import { toast } from "vue3-toastify";
 import { useResumeStore } from "~/store/resume";
 import { useRuntimeConfig } from "#app";
 import { useProfileStore } from "~/store/profile";
+
 const emit = defineEmits(["update:modelValue"]);
 const props = defineProps({
   modelValue: {
@@ -89,10 +89,14 @@ const resetObject = {
   hh: false,
 };
 
-const my_artifact = computed(
-  () =>
-    profileStore.artifacts.find((item) => item.id === props.modelValue) ?? null
+const my_artifact = ref(null);
+watch(
+  () => profileStore.my_resume_photo_artifact,
+  () => {
+    my_artifact.value = profileStore.my_resume_photo_artifact ?? null;
+  },
 );
+
 const { getArtifact } = profileStore;
 onMounted(() => {
   if (props.modelValue) {
@@ -107,6 +111,12 @@ const state = reactive({
     base64: "",
   },
 });
+
+const clearPhotoUrl = () => {
+  state.photo.val = "";
+  state.photo.base64 = null;
+  my_artifact.value = null;
+};
 const CONFIG = useRuntimeConfig();
 const photoUrl = computed(() => {
   if (state.photo.base64) {
@@ -157,37 +167,9 @@ const save = async () => {
 
   emit("update:modelValue", resData.data.data.id);
 };
-const clearPhotoUrl = () => {
-  state.photo.val = "";
-  state.photo.base64 = null;
-};
 const openFileBrowser = () => {
   photoFileElement.value.click();
 };
 </script>
 
-<style scoped>
-.import-box {
-  cursor: pointer;
-}
-.is-connected .import-box-dvnld .logo .check {
-  display: block;
-}
-.import-box.disabled {
-  background: #ffffff;
-  box-shadow: 0px 0px 20px rgb(0 0 0 / 4%);
-  border-radius: 12px;
-}
-.import-box.disabled .import-box-dvnld {
-  border: 1px dashed #8c8c8c;
-  color: #8c8c8c;
-}
-
-.import-box.disabled .import-box-dvnld .logo {
-  -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
-  filter: grayscale(100%);
-}
-.import-box.disabled .import-box-dvnld span {
-  color: #8c8c8c;
-}
-</style>
+<style scoped></style>

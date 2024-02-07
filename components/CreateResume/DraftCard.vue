@@ -1,5 +1,5 @@
 <template>
-  <div class="w-box w-box--main w-box-resume pb-4" v-click-outside="save">
+  <div class="w-box w-box--main w-box-resume pb-4">
     <div class="w-box-head">
       <h1 class="title">{{ formTitle }}</h1>
       <div class="descr">
@@ -8,281 +8,147 @@
       <span class="arrow"></span>
     </div>
 
-    <div class="text-danger d-block p-4" v-if="errors.message">
-      {{ errors.message }}
-    </div>
     <div class="w-box-body" :class="{ disabled: isLoading }">
-      <CreateResumeProvidersInput
-        v-model="state.providers.val"
-        :errors="errors"
-      />
-      <div class="input-row">
-        <label for="name">Название вакансии<b>*</b></label>
-        <div class="input-wrapper">
-          {{ title }}
-          <div class="c1 mt-1">
-            {{ state.title.val }}
-            {{ values }}
-
-            <input
-              type="text"
-              placeholder="Название"
-              v-model="state.title.val"
-              @focusin="
-                () => {
-                  errors.title = '';
-                }
-              "
-            />
-
-            <div class="text-danger d-block" v-if="errors.title">
-              {{ errors.title }}
-            </div>
-            <!--            <div class="text-danger d-block" v-if="veeErrors.title">-->
-            <!--              {{ veeErrors.title }}-->
-            <!--            </div>-->
-          </div>
+      <div ref="errorMessageElement">
+        <div class="alert alert-danger d-block p-4" v-if="errors.message">
+          {{ errors.message }}
         </div>
       </div>
+      <form @submit.prevent="onSubmit" :validation-schema="schema">
+        <CreateResumeProvidersInput v-model="providers" :errors="errors" />
+        <div class="input-row">
+          <label for="name">Название вакансии<b>*</b></label>
+          <div class="input-wrapper">
+            <div class="c1 mt-1">
+              <ResumeTextInput name="title" placeholder="Название" />
+            </div>
+          </div>
+        </div>
 
-      <div class="input-row">
-        <label for="name">Имя и фамилия <b>*</b></label>
-        <div class="input-wrapper">
-          <div class="c2">
-            <div class="input-wrapper">
-              <input
-                type="text"
-                placeholder="Имя"
-                v-model="state.first_name.val"
-                @focusin="
-                  () => {
-                    errors.first_name = '';
-                  }
-                "
-              />
-
-              <!--              <div class="text-danger d-block" v-if="veeErrors.first_name">-->
-              <!--                {{ veeErrors.first_name }}-->
-              <!--              </div>-->
-              <div class="text-danger d-block" v-if="errors.first_name">
-                {{ errors.first_name }}
+        <div class="input-row">
+          <label for="name">Имя и фамилия <b>*</b></label>
+          <div class="input-wrapper">
+            <div class="c2">
+              <div class="input-wrapper">
+                <ResumeTextInput name="first_name" placeholder="Имя" />
+              </div>
+              <div class="input-wrapper">
+                <ResumeTextInput name="last_name" placeholder="Фамилия" />
               </div>
             </div>
-            <div class="input-wrapper">
-              <input
-                type="text"
-                placeholder="Фамилия"
-                v-model="state.last_name.val"
-                @focusin="() => (errors.last_name = '')"
-              />
-
-              <!--              <div class="text-danger d-block" v-if="veeErrors.last_name">-->
-              <!--                {{ veeErrors.last_name }}-->
-              <!--              </div>-->
-              <div class="text-danger d-block" v-if="errors.last_name">
-                {{ errors.last_name }}
-              </div>
+            <div class="c1 mt-1">
+              <ResumeTextInput name="middle_name" placeholder="Отчество" />
             </div>
           </div>
-          <div class="c1 mt-1">
-            <input
-              type="text"
-              placeholder="Отчество"
-              v-model="state.middle_name.val"
-              @focusin="() => (errors.middle_name = '')"
+        </div>
+
+        <div class="input-row">
+          <label for="resume_email">Электронная почта</label>
+          <div class="input-wrapper">
+            <ResumeTextInput name="email" placeholder="Электронная почта" />
+            <ResumeCheckboxInput
+              v-if="!state.is_preferred_email.is_hidden"
+              name="is_preferred_email"
+              label="Email является ли предпочтительным способом связи"
             />
+          </div>
+        </div>
 
-            <!--            <div class="text-danger d-block" v-if="veeErrors.middle_name">-->
-            <!--              {{ veeErrors.middle_name }}-->
-            <!--            </div>-->
-            <div class="text-danger d-block" v-if="errors.middle_name">
-              {{ errors.middle_name }}
+        <div class="input-row">
+          <label>Дата рождения <b>*</b></label>
+          <div class="input-wrapper">
+            <div class="mb-1">
+              <VeeBirthDatePicker name="birth_date" />
             </div>
           </div>
         </div>
-      </div>
-
-      <div class="input-row">
-        <label>Дата рождения <b>*</b></label>
-        <div class="input-wrapper">
-          <div class="mb-1">
-            <VeeBirthDatePicker
-              v-model.lazy="state.birth_date.val"
-              @focusin="() => (errors.birth_date = '')"
-            ></VeeBirthDatePicker>
-
-            <!--            {{ veeErrors }}-->
-            <!--            <div class="text-danger d-block" v-if="veeErrors.birth_date">-->
-            <!--              {{ veeErrors.birth_date }}-->
-            <!--            </div>-->
-            <div class="text-danger d-block" v-if="errors.birth_date">
-              {{ errors.birth_date }}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="input-row">
-        <label>Город проживания:<b>*</b></label>
-        <div class="input-wrapper mt-2">
-          <SelectWithSearch
-            :options="cityOptions"
-            v-model="state.city_id.val"
-            :placeholder="'Выберите город'"
-            @input="updateCityInput"
-            @focusin="() => (errors.city_id = '')"
-          ></SelectWithSearch>
-          <div class="text-danger d-block" v-if="errors.city_id">
-            {{ errors.city_id }}
-          </div>
-        </div>
-      </div>
-
-      <!--          <div class="input-row" v-if="isMovableCitiesEnabled">-->
-      <!--            <label>Переехать могу:<b>*</b></label>-->
-      <!--            <div class="input-wrapper mt-2">-->
-      <!--              <MultiSelectWithSearch :options="moveableCityOptions" v-model="state.move_able_cities.val" :label="'Выберите город'" @input="updateMoveableCityInput" @focusin="() => errors.move_able_cities = ''"></MultiSelectWithSearch>-->
-      <!--              <div class="text-danger d-block" v-if="errors.move_able_cities">-->
-      <!--                {{errors.move_able_cities}}-->
-      <!--              </div>-->
-      <!--            </div>-->
-      <!--          </div>-->
-
-      <!--          <div class="input-row">-->
-      <!--            <label>Переехать могу:<b>*</b></label>-->
-      <!--            <div class="input-wrapper mt-2">-->
-      <!--              {{state.move_able_cities.val}}-->
-      <!--              <MultiSelectWithSearch :options="workTypeOptions" v-model="state.work_types.val" :label="'Выберите город'" @input="updateMoveableCityInput" @focusin="() => errors.move_able_cities = ''"></MultiSelectWithSearch>-->
-      <!--              <div class="text-danger d-block" v-if="errors.work_types">-->
-      <!--                {{errors.move_able_cities}}-->
-      <!--              </div>-->
-      <!--            </div>-->
-      <!--          </div>-->
-
-      <div class="input-row">
-        <label for="email">Email<b>*</b></label>
-        <div class="input-wrapper">
-          <div class="c1 mt-1">
-            <input
-              type="text"
-              id="email"
-              placeholder="Э-почта"
-              v-model="state.email.val"
-              @focusin="() => (errors.email = '')"
+        <div class="input-row">
+          <label>Город проживания:<b>*</b></label>
+          <div class="input-wrapper mt-2">
+            <VeeSelectWithSearch
+              :options="cityOptions"
+              name="city_id"
+              placeholder="Выберите город"
+              @input="updateCityInput"
             />
-
-            <div class="text-danger d-block" v-if="errors.email">
-              {{ errors.email }}
-            </div>
-          </div>
-
-          <div class="check-block mt-2">
-            <div class="checkbox">
-              <input
-                type="checkbox"
-                id="is_preferred_email"
-                v-model.number="state.is_preferred_email.val"
-                @focusin="() => (errors.is_preferred_email = '')"
-              />
-              <div class="checkbox-mask">
-                <img src="~/assets/img/svg/check.svg" alt="#" />
-              </div>
-            </div>
-            <label for="is_preferred_email" class="fs-14"
-              >Является ли предпочтительным способом связи</label
-            >
-          </div>
-          <div class="text-danger d-block" v-if="errors.is_preferred_email">
-            {{ errors.is_preferred_email }}
           </div>
         </div>
-      </div>
 
-      <div class="input-row">
-        <label>Поль:<b>*</b></label>
-        <div class="input-wrapper mt-2">
-          <CustomSelect
-            :options="genderOptions"
-            v-model="state.gender_id.val"
-            :label="'Выберите'"
-          ></CustomSelect>
-          <div class="text-danger d-block" v-if="errors.gender_id">
-            {{ errors.gender_id }}
+        <div class="input-row">
+          <label>Поль:<b>*</b></label>
+          <div class="input-wrapper mt-2">
+            <LazyVeeCustomSelect
+              :options="genderOptions"
+              name="gender_id"
+              :label="'Выберите'"
+            />
           </div>
         </div>
-      </div>
 
-      <div class="input-row">
-        <label>Готовность к командировкам:<b>*</b></label>
-        <div class="input-wrapper mt-2">
-          <CustomSelect
-            :options="businessTripOptions"
-            v-model="state.business_trip_id.val"
-            :label="'Выберите'"
-          ></CustomSelect>
-          <div class="text-danger d-block" v-if="errors.business_trip_id">
-            {{ errors.business_trip_id }}
+        <div class="input-row">
+          <label>Готовность к командировкам:<b>*</b></label>
+          <div class="input-wrapper mt-2">
+            <LazyVeeCustomSelect
+              :options="businessTripOptions"
+              name="business_trip_id"
+              :label="'Выберите'"
+            />
           </div>
         </div>
-      </div>
 
-      <div class="input-row">
-        <label>Тип работы:<b>*</b></label>
-        <div class="input-wrapper mt-2">
-          <MultiSelectWithSearch
-            :options="workTypeOptions"
-            v-model="state.work_types.val"
-            :label="'Выберите'"
-          ></MultiSelectWithSearch>
-          <div class="text-danger d-block" v-if="errors.work_types">
-            {{ errors.work_types }}
+        <div class="input-row">
+          <label>Готовность к релокацию:<b>*</b></label>
+          <div class="input-wrapper mt-2">
+            <LazyVeeCustomSelect
+              :options="relocationTypeOptions"
+              name="relocation_type_id"
+              :label="'Выберите'"
+            />
           </div>
         </div>
-      </div>
 
-      <!--      {{ values }}-->
-      <!--          <CreateResumeDraftCardMetrosInput v-model="state.metros.val" :errors="{metros: errors.metros}"/>-->
-      <!--            <div class="input-row">-->
-      <!--                <label>Специализация:<b>*</b></label>-->
-      <!--                <div class="input-wrapper mt-2">-->
-      <!--                    <MultiSelectWithSearch :options="professionalRoleOptions" v-model="state.professional_roles.val" :label="'Выберите специализацию'" @input="updateProfessionalInput" @focusin="() => errors.professional_roles = ''"></MultiSelectWithSearch>-->
+        <div class="input-row" v-if="isMovableCitiesEnabled">
+          <label>Городов в которым готов переехать:</label>
+          <div class="input-wrapper mt-2">
+            <VeeMultiSelectWithSearch
+              name="move_able_cities"
+              :options="moveableCityOptions"
+              placeholder="Выберите"
+              @input="updateMoveableCityInput"
+            />
+          </div>
+        </div>
 
-      <!--                    <div class="text-danger d-block" v-if="errors.professional_roles">-->
-      <!--                        {{errors.professional_roles}}-->
-      <!--                    </div>-->
-
-      <!--                </div>-->
-
-      <!--            </div>-->
-
-      <!--            <div class="input-row">-->
-      <!--                <label for="description">Описание:</label>-->
-      <!--                <div class="input-wrapper">-->
-      <!--                  <RichEditor v-model="state.description.val"/>-->
-      <!--                    <div class="text-danger d-block" v-if="errors.description">-->
-      <!--                        {{errors.description}}-->
-      <!--                    </div>-->
-      <!--                </div>-->
-      <!--            </div>-->
-
-      <!--            <CreateVacancySalary v-model="state.salary.val" :errors="errors.salary"/>-->
-      <br />
+        <div class="input-row">
+          <label>Тип работы:<b>*</b></label>
+          <div class="input-wrapper mt-2">
+            <VeeMultiSelectWithSearch
+              name="work_types"
+              :options="workTypeOptions"
+              placeholder="Выберите"
+            />
+          </div>
+        </div>
+      </form>
     </div>
   </div>
 </template>
 
 <script setup>
 import { useDictionaryStore } from "~/store/dictionary";
-
-const props = defineProps(["title"]);
 import { useResumeStore } from "~/store/resume";
 
 import { useProfileStore } from "~/store/profile";
-import { useFormData } from "~/composables/useFormData";
 import { useRuntimeConfig } from "#app";
 import useFormValidation from "~/composables/useFormValidation";
 import { storeToRefs } from "pinia";
 import { useWatchStateValues } from "~/composables/useWatchStateValues";
 import useResumeHooks from "~/hooks/useResumeHooks";
+import ResumeCheckboxInput from "~/components/CreateResume/ResumeCheckboxInput.vue";
+import ResumeTextInput from "~/components/CreateResume/ResumeTextInput.vue";
+
+const props = defineProps(["title"]);
+
 const resumeStore = useResumeStore();
 const profileStore = useProfileStore();
 const CONFIG = useRuntimeConfig();
@@ -298,126 +164,136 @@ const isFirst = ref(true);
 const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
-const { values, errors: veeErrors, defineField } = useForm({});
+const schema = computed(() => {
+  return {
+    providers: "required",
+    title: "required|min:1|max:100",
+    first_name: "required|min:1|max:100",
+    last_name: "required|min:1|max:100",
+    middle_name: "required|min:1|max:100",
+    email: { required: true, email: true },
+    is_preferred_email: { boolean: true },
+    birth_date: "required|date",
+    city_id: "required|numeric",
+    gender_id: "required|numeric",
+    business_trip_id: "required|numeric",
+    relocation_type_id: "numeric",
+    work_types: "required|min:1",
+  };
+});
+const {
+  values,
+  errors,
+  defineField,
+  meta,
+  setTouched,
+  setErrors,
+  handleSubmit,
+} = useForm({
+  initialValues: {
+    providers: [],
+    title: null,
+    first_name: null,
+    last_name: null,
+    middle_name: null,
+    email: null,
+    is_preferred_email: false,
+    birth_date: null,
+    city_id: null,
+    gender_id: null,
+    business_trip_id: null,
+    relocation_type_id: null,
+    move_able_cities: [],
+    work_types: [],
+  },
+  initialTouched: true,
+  validationSchema: schema,
+});
 //
-// const [title, titleProps] = defineField("title");
-// const [first_name, first_nameProps] = defineField("first_name");
-// const [last_name, last_nameProps] = defineField("last_name");
-// const [middle_name, middle_nameProps] = defineField("middle_name");
-// const [birthdate, birthdateProps] = defineField("birthdate");
+const [title, titleProps] = defineField("title");
+const [first_name, first_nameProps] = defineField("first_name");
+const [last_name, last_nameProps] = defineField("last_name");
+const [middle_name, middle_nameProps] = defineField("middle_name");
+const [birth_date, birthdateProps] = defineField("birth_date");
+const [email, emailProps] = defineField("email");
+const [is_preferred_email, is_preferred_emailProps] =
+  defineField("is_preferred_email");
+const [city_id, city_idProps] = defineField("city_id");
+const [gender_id, gender_idProps] = defineField("gender_id");
+const [business_trip_id, business_trip_idProps] =
+  defineField("business_trip_id");
+const [relocation_type_id, relocation_type_idProps] =
+  defineField("relocation_type_id");
+const [move_able_cities, move_able_citiesProps] =
+  defineField("move_able_cities");
+const [work_types, work_typesProps] = defineField("work_types");
+const [providers, providersProps] = defineField("providers");
+const [salary, salaryProps] = defineField("salary");
 
 const { createResume } = resumeStore;
 
-const providers = ref({
-  hh: false,
-  superjob: false,
-});
+// const providers = ref([]);
 
-watch(
-  () => providers.value,
-  () => {
-    state.providers.val = {
-      hh: providers.value.hh,
-      superjob: providers.value.superjob,
-    };
-  }
-);
 const state = reactive({
-  providers: {
-    val: [],
-    isValid: true,
-    is_hidden: false,
-  },
   title: {
-    val: "",
-    isValid: true,
     is_hidden: false,
   },
   first_name: {
-    val: "",
-    isValid: true,
     is_hidden: false,
   },
   last_name: {
-    val: "",
-    isValid: true,
     is_hidden: false,
   },
   middle_name: {
-    val: "",
-    isValid: true,
     is_hidden: false,
   },
   email: {
-    val: "",
-    isValid: true,
     is_hidden: false,
   },
   is_preferred_email: {
-    val: false,
-    isValid: true,
     is_hidden: false,
   },
   city_id: {
-    val: "",
-    isValid: true,
     is_hidden: false,
   },
   move_able_cities: {
-    val: [],
-    isValid: true,
     is_hidden: true,
   },
   metros: {
-    val: [],
-    isValid: true,
+    is_hidden: true,
+  },
+  professional_roles: {
     is_hidden: true,
   },
   birth_date: {
-    val: null,
-    isValid: true,
-  },
-  gender_id: {
-    val: null,
-    isValid: true,
-  },
-  business_trip_id: {
-    val: null,
-    isValid: true,
-  },
-  work_types: {
-    val: null,
-    isValid: true,
-  },
-  relocation_type_id: {
-    val: null,
-    isValid: true,
     is_hidden: true,
   },
-  social_networks: {
-    val: [],
-    isValid: true,
+  salary: {
+    is_hidden: true,
+  },
+  gender_id: {
+    is_hidden: true,
+  },
+  business_trip_id: {
+    is_hidden: true,
+  },
+  work_types: {
+    is_hidden: true,
+  },
+  relocation_type_id: {
     is_hidden: true,
   },
 });
 const isMovableCitiesEnabled = computed(() => {
-  const relocation_id = parseInt(state.relocation_type_id.val);
+  const relocation_id = parseInt(values.relocation_type_id);
   return relocation_id === 148 || relocation_id === 149;
 });
 watch(
   () => useWatchStateValues(state, true, true),
   (newState, oldState) => {
     isChanged.value = true;
-  }
+  },
 );
-// watch(
-//   () => ({
-//     ...values,
-//   }),
-//   (newState, oldState) => {
-//     isChanged.value = true;
-//   }
-// );
 
 const { searchCities, searchProfessionalRoles } = profileStore;
 
@@ -426,6 +302,9 @@ const cityOptions = ref([]);
 const moveableCityOptions = ref([]);
 const professionalRoleOptions = ref([]);
 
+const cityOptionIds = computed(() => {
+  return cityOptions.value.map((item) => item.value);
+});
 const genderOptions = computed(() => {
   return dictionaryStore.resume_genders.map((item) => ({
     name: item.name,
@@ -444,34 +323,27 @@ const businessTripOptions = computed(() => {
     value: item.id,
   }));
 });
-const metroOptions = ref([]);
-const { getGenders, getBusinessTrips, getWorkTypes } = dictionaryStore;
-const { getMetros } = resumeStore;
-const { searchMetro } = useDictionaryStore();
+const relocationTypeOptions = computed(() => {
+  return dictionaryStore.relocation_types.map((item) => ({
+    name: item.name,
+    value: item.id,
+  }));
+});
+const { getGenders, getBusinessTrips, getWorkTypes, getRelocationTypes } =
+  dictionaryStore;
 onMounted(() => {
   getGenders({}, true);
   getBusinessTrips();
   getWorkTypes();
+  getRelocationTypes();
 });
-
-const updateInput = async (newValue = "") => {
-  if (newValue.length > 2) {
-    const items = (await searchMetro({ search: newValue })) ?? [];
-    let newOptions = items
-      .filter((item) => item.cityId)
-      .map((item) => ({
-        value: item.cityId,
-        name: `${item.city_name}, ${item.region_name}, ${item.country_name}`,
-      }));
-    // newOptions = [...new Map(newOptions.map(item =>  [item[key], item])).values()];
-    metroOptions.value = newOptions.concat(selectedOptions.value);
-  }
-};
 
 const { getCityName, getCityNameFromArea2 } = useResumeHooks();
 const updateCityInput = async (newValue = "") => {
+  if (newValue.length < 2) {
+    return;
+  }
   const items = (await searchCities({ search: newValue })) ?? [];
-  console.log(items);
   cityOptions.value = items.map((item) => ({
     value: item.id,
     name: getCityNameFromArea2(item),
@@ -481,62 +353,78 @@ const updateCityInput = async (newValue = "") => {
 const updateMoveableCityInput = async (newValue = "") => {
   const items = (await searchCities({ search: newValue })) ?? [];
   moveableCityOptions.value = items.map((item) => ({
-    value: item.city_id,
-    name: getCityName(item),
-  }));
-};
-
-const updateProfessionalInput = async (newValue = "") => {
-  let items = await searchProfessionalRoles();
-  items = items.filter((item) => item.name.includes(newValue));
-  professionalRoleOptions.value = items.map((item) => ({
     value: item.id,
     name: item.name,
   }));
 };
 
-const { errors, handleErrorResponse } = useFormValidation(state);
-const isLoading = ref(false);
-const save = async (is_from_parent = false) => {
-  if (isChanged.value) {
-    state.isLoading = true;
-    // validate();
-    errors.value = {};
-    state.errorMessage = "";
-    let resData = {};
-    const formData = useFormData(state);
-    isLoading.value = true;
-    resData = await createResume(formData);
-    if (resData.status === "success") {
-      isLoading.value = false;
+const { errors: serverErrors, handleErrorResponse } = useFormValidation(state);
 
-      const resume_id = resData.data.data.id;
-      state.isNew = false;
-      setTimeout(() => {
-        console.log("redirecting...");
-        navigateTo({ name: "my-resume-id", params: { id: resume_id } });
-      }, 100);
+watch(
+  () => serverErrors.value,
+  (newErrors) => {
+    if (Object.keys(newErrors).length > 0) {
+      const backendErrors = {};
+      Object.keys(newErrors).map(
+        (item) => (backendErrors[item] = newErrors[item]),
+      );
+      setErrors(backendErrors);
     }
-    isLoading.value = false;
-    if (resData.status !== "success") {
-      return handleErrorResponse(resData.data);
-    }
-    if (is_from_parent) {
-      return new Promise((resolve, reject) => {
-        resolve(true);
-      });
-    }
-    isChanged.value = false;
-    isSaved.value = false;
-    isUpdated.value = false;
+  },
+);
+const isLoading = ref(false);
+
+const errorMessageElement = ref();
+
+const onSubmit = handleSubmit((submittedValues) => {
+  save();
+});
+const save = async (is_from_parent = false) => {
+  if (!meta.value.valid) {
+    setTouched(true);
+    errors.value.message = "Вам необходимо заполнить";
+    errorMessageElement.value.scrollIntoView({ behavior: "smooth" });
+    return;
   }
+  state.isLoading = true;
+  errors.value = {};
+  state.errorMessage = "";
+  let resData = {};
+  isLoading.value = true;
+
+  resData = await createResume(values);
+  if (resData.status === "success") {
+    isLoading.value = false;
+    const resume_id = resData.data.data.id;
+    state.isNew = false;
+    setTimeout(() => {
+      console.log("redirecting...");
+      navigateTo({ name: "my-resume-id", params: { id: resume_id } });
+    }, 100);
+  }
+  isLoading.value = false;
+  if (resData.status !== "success") {
+    return handleErrorResponse(resData.data);
+  }
+  if (is_from_parent) {
+    return new Promise((resolve, reject) => {
+      resolve(true);
+    });
+  }
+  isChanged.value = false;
+  isSaved.value = false;
+  isUpdated.value = false;
 };
+defineExpose({
+  onSubmit,
+});
 </script>
 
 <style>
 .w-box-body.disabled {
   position: relative;
 }
+
 .w-box-body.disabled:before {
   left: 0;
   top: 0;

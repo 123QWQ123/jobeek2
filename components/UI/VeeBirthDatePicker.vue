@@ -16,11 +16,15 @@
       v-model="date.day"
     ></CustomSelect>
   </div>
+  <div class="text-danger d-block" v-if="errorMessage">
+    {{ errorMessage }}
+  </div>
 </template>
 <style scoped>
 #date-picker {
   display: flex;
 }
+
 #date-picker div {
   margin-right: 10px;
 }
@@ -30,18 +34,19 @@
 import moment from "moment";
 import { useMonthOptions } from "~/composables/useMonthOptions";
 
+import { useField } from "vee-validate";
+
 const props = defineProps({
-  modelValue: {
-    type: String,
-  },
-  errors: {
-    type: Object,
-    default: {},
-  },
+  name: String,
+  label: String,
   max: {
     default: 2009,
   },
 });
+
+// The `name` is returned in a function because we want to make sure it stays reactive
+// If the name changes you want `useField` to be able to pick it up
+const { value, errorMessage } = useField(() => props.name);
 
 const emit = defineEmits({
   "update:modelValue": {
@@ -50,9 +55,6 @@ const emit = defineEmits({
 });
 
 const years = ref([]);
-// const year = ref();
-// const month = ref(null);
-// const day = ref(null);
 
 const date = reactive({
   year: null,
@@ -69,8 +71,8 @@ onMounted(() => {
   }
 });
 
-const emitDate = () => {
-  emit("update:modelValue", getModelValue());
+const update = (newDate) => {
+  value.value = getModelValue(newDate);
 };
 
 const getModelValue = (newDate = null) => {
@@ -79,14 +81,14 @@ const getModelValue = (newDate = null) => {
     date.year = newDate.year;
     date.day = newDate.day;
   }
-  const monthString = String(parseInt(date.month) + 1);
+  const monthString = String(parseInt(date.month));
   const dayString = String(parseInt(date.day));
   return moment(
     `${date.year}-${monthString.padStart(2, "0")}-${dayString.padStart(
       2,
-      "0"
+      "0",
     )}`,
-    "YYYY-MM-DD"
+    "YYYY-MM-DD",
   ).format("YYYY-MM-DD");
 };
 const maxDate = computed(() => {
@@ -98,10 +100,11 @@ const maxDate = computed(() => {
   return 28;
 });
 const yearItems = computed(() => {
-  let items = years.value.map((value, index) => {
-    return { name: value, value };
-  });
-  items = items.reverse();
+  return useYearOptions(1950, new Date().getUTCFullYear() - 16);
+  // let items = years.value.map((value, index) => {
+  //   return { name: value, value };
+  // });
+  // items = items.reverse();
   return items;
 });
 const monthItems = useMonthOptions();
@@ -113,7 +116,7 @@ const dayItems = computed(() => {
 });
 
 watch(
-  () => props.modelValue,
+  () => value.value,
   (newDate) => {
     if (isFirst.value && newDate) {
       const d = moment(newDate, "YYYY-MM-DD");
@@ -127,14 +130,13 @@ watch(
       }
       isFirst.value = false;
     }
-  }
+  },
 );
 watch(
   () => ({ ...date }),
   (newDate) => {
-    console.log(newDate);
-    emitDate(newDate);
-  }
+    update(newDate);
+  },
 );
 </script>
 

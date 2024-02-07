@@ -62,7 +62,7 @@ const config = {
   routeRules: {
     // Static page generated on-demand, revalidates in background
     // Render these routes with SPA
-    "/" : {prerender: true},
+    "/": { prerender: true },
     "/**": { swr: 5 }, // 👈🏻 TTL in seconds
     "/sign-in": { ssr: false },
     "/sign-up": { ssr: false },

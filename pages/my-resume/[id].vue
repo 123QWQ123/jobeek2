@@ -1,5 +1,4 @@
 <script setup>
-import { useVacancyStore } from "~/store/vacancy";
 import useAlert from "~/composables/useAlert";
 import Swal from "sweetalert2";
 import { toast } from "vue3-toastify";
@@ -28,7 +27,7 @@ watch(
     if (newDraftId) {
       getMyResume(resumeID.value);
     }
-  }
+  },
 );
 const pageTitle = computed(() => {
   if (resumeID?.value) {
@@ -142,7 +141,7 @@ const saveAllSections = async () => {
 
   console.log(promisesResult);
   return new Promise((resolve, reject) =>
-    promisesResult ? resolve(true) : reject(false)
+    promisesResult ? resolve(true) : reject(false),
   );
 };
 
@@ -227,21 +226,21 @@ const phone = ref("");
           </div>
           <CreateResumeProviders v-model="providers" />
 
-          <!--          <CreateResumePhotoCard-->
-          <!--            v-if="resumeID"-->
-          <!--            ref="photo_el"-->
-          <!--            :providers="providers"-->
-          <!--          />-->
-          <!--          <CreateResumePersonalFieldsCard-->
-          <!--            v-if="resumeID"-->
-          <!--            ref="personal_fields_el"-->
-          <!--            :providers="providers"-->
-          <!--          />-->
-          <CreateResumeProfessionDetailsCard
+          <CreateResumePhotoCard
             v-if="resumeID"
-            ref="profession_fields_el"
+            ref="photo_el"
             :providers="providers"
           />
+          <CreateResumeVeePersonalFieldsCard
+            v-if="resumeID"
+            ref="personal_fields_el"
+            :providers="providers"
+          />
+          <!--          <CreateResumeVeeProfessionDetailsCard-->
+          <!--            v-if="resumeID"-->
+          <!--            ref="profession_fields_el"-->
+          <!--            :providers="providers"-->
+          <!--          />-->
           <!--          <CreateResumeForeignLanguagesCard-->
           <!--            v-if="resumeID"-->
           <!--            ref="foreign_language_el"-->
@@ -258,11 +257,11 @@ const phone = ref("");
           <!--            :providers="providers"-->
           <!--          />-->
 
-          <CreateResumeEducationCard
-            v-if="resumeID"
-            ref="education_el"
-            :providers="providers"
-          />
+          <!--          <CreateResumeEducationCard-->
+          <!--            v-if="resumeID"-->
+          <!--            ref="education_el"-->
+          <!--            :providers="providers"-->
+          <!--          />-->
           <!--          <CreateResumeWorkExperienceCard-->
           <!--            v-if="resumeID"-->
           <!--            ref="work_experience_el"-->
@@ -328,6 +327,7 @@ const phone = ref("");
   .form-submit-container {
     flex-direction: column-reverse;
   }
+
   .button-accent {
     margin-bottom: 1rem;
   }

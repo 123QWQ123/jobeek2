@@ -47,7 +47,7 @@
                     <div class="photo-actions">
                       <button
                         class="photo-action delete"
-                        @click="onDeleteArtifact(item.id)"
+                        @click.prevent="onDeleteArtifact(item.id)"
                         type="button"
                       >
                         <svg
@@ -89,6 +89,7 @@ import { useWatchStateValues } from "~/composables/useWatchStateValues";
 import { useDiff } from "~/composables/useDiff";
 import { useDictionaryStore } from "~/store/dictionary";
 import { useResumeStore } from "~/store/resume";
+
 const resumeStore = useResumeStore();
 const profileStore = useProfileStore();
 const CONFIG = useRuntimeConfig();
@@ -124,7 +125,7 @@ watch(
   () => props.providers,
   (newProviders) => {
     isHidden.value = newProviders.hh;
-  }
+  },
 );
 
 const state = reactive({
@@ -147,7 +148,7 @@ watch(
     } else {
       isFirst.value = false;
     }
-  }
+  },
 );
 
 const sectionData = ref({});
@@ -158,7 +159,7 @@ watch(
     if (Object.keys(diffData).length) {
       state.photo_id.val = newData.photo_id;
     }
-  }
+  },
 );
 watch(
   () => resumeStore.my_resume,
@@ -172,7 +173,7 @@ watch(
         photo_id: newData.photo?.id,
       };
     }
-  }
+  },
 );
 
 const dictionaryStore = useDictionaryStore();
@@ -185,7 +186,6 @@ const onDeleteArtifact = async (id) => {
   console.log(id);
   const resData = await deleteArtifact(id);
   if (resData.status === "success") {
-    console.log("deleted");
     await getArtifacts({ type: 1 });
     getMyResume(resumeID.value);
   }
