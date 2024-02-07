@@ -144,9 +144,7 @@
         </div>
         <br />
         <div class="text-success d-block" v-if="state.email.is_sent">
-          {{
-            "Вам выслано емейл с код подтверждением, подтвердите ваш э-почту."
-          }}
+          Вам выслано емейл с код подтверждением, подтвердите ваш э-почту.
         </div>
         <div class="text-danger d-block" v-if="errors.email">
           {{ errors.email }}

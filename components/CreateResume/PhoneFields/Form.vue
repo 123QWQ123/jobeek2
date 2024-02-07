@@ -4,6 +4,14 @@
 
     <div class="input-wrapper mt-2">
       <div class="phone_network_form">
+        <div v-for="(field, idx) in fields" :key="field.key">
+          <input v-model="field.value" type="url" />
+
+          <button type="button" @click="remove(idx)">Remove</button>
+        </div>
+
+        <button type="button" @click="push('')">Add</button>
+
         <CreateResumePhoneFieldsItem
           class="mb-2"
           v-for="(item, index) in selectedPhones"
@@ -42,6 +50,7 @@
 <script setup>
 import { useDictionaryStore } from "~/store/dictionary";
 import { v4 as uuidv4 } from "uuid";
+
 const emit = defineEmits(["update:modelValue"]);
 const props = defineProps({
   modelValue: {
@@ -71,14 +80,14 @@ watch(
   () => selectedPhones.value,
   (newSelectedItems) => {
     emit("update:modelValue", newSelectedItems);
-  }
+  },
 );
 
 watch(
   () => props.modelValue,
   (newSelectedItems) => {
     selectedPhones.value = newSelectedItems;
-  }
+  },
 );
 
 const errors = ref(props.errors ?? {});
@@ -93,7 +102,7 @@ watch(
   () => props.errors,
   (newErrors) => {
     errors.value = newErrors;
-  }
+  },
 );
 watch(
   () => errors.value,
@@ -118,7 +127,7 @@ watch(
       selectedPhones.value = newItems;
       // errors.value = newItems;
     }
-  }
+  },
 );
 const reset = () => {
   resetObject.key = uuidv4();
@@ -147,7 +156,7 @@ const updateItem = (key, newItem) => {
 };
 const deleteItem = (deleteItem) => {
   const newItems = selectedPhones.value.filter(
-    (item) => item.key !== deleteItem
+    (item) => item.key !== deleteItem,
   );
   selectedPhones.value = newItems;
 };

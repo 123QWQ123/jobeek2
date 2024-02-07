@@ -66,14 +66,17 @@ const isLoading = ref(false);
     <div class="bg-wrapper pt">
       <PersonalCabinetSearchMobile />
       <div class="wrapper wrapper-1290">
-        <form class="create-vacancy" action="" name="create-vacancy">
+        <form
+          class="create-vacancy"
+          @submit.prevent="omSubmit"
+          name="create-vacancy"
+        >
           <LazyCreateResumeDraftCard ref="draft_el" :title="pageTitle" />
 
-          <div class="form-submit-container mt-2">
+          <div class="form-submit-container">
             <button
               class="btn btn-outline-primary"
-              type="button"
-              @click="saveAsDraft"
+              @click="draft_el.onSubmit()"
             >
               Далее
               <div
@@ -100,6 +103,7 @@ const isLoading = ref(false);
   .form-submit-container {
     flex-direction: column-reverse;
   }
+
   .button-accent {
     margin-bottom: 1rem;
   }

@@ -27,6 +27,10 @@
       </li>
     </ul>
   </div>
+
+  <div class="text-danger d-block" v-if="errorMessage">
+    {{ errorMessage }}
+  </div>
 </template>
 <script>
 export default {
@@ -35,12 +39,17 @@ export default {
 </script>
 
 <script setup>
+import { useFieldArray } from "vee-validate";
+
 const emit = defineEmits(["change", "update:modelValue", "input"]);
 const props = defineProps({
   options: {
     required: true,
   },
   label: {
+    required: false,
+  },
+  name: {
     required: false,
   },
   placeholder: {
@@ -52,14 +61,13 @@ const props = defineProps({
   listItemStyles: {
     required: false,
   },
-  modelValue: {
-    required: true,
-    default: null,
-  },
   selected: {
     required: false,
   },
 });
+// The `name` is returned in a function because we want to make sure it stays reactive
+// If the name changes you want `useField` to be able to pick it up
+const { value, errorMessage } = useField(() => props.name);
 
 const isFirst = ref(false);
 const isOpen = ref(false);
@@ -69,60 +77,53 @@ const searchInput = ref(props.placeholder ?? "");
 
 watch(
   () => props.placeholder,
-  () => (searchInput.value = props.placeholder),
+  () => (placeholder.value = props.placeholder),
 );
 
 watch(
   () => props.options,
   (newOptions) => {
     options.value = newOptions;
-    if (props.modelValue) {
-      selectedOption.value = options.value.find(
-        (item) => String(item.value) === String(props.modelValue),
+    if (selectedOption.value && value.value !== selectedOption.value.value) {
+      const found = options.value.find(
+        (item) => String(item.value) === String(value.value),
       );
+      if (!found) return;
+      searchInput.value = found.name;
+      selectedOption.value = found;
     }
   },
 );
 watch(
-  () => props.modelValue,
+  () => value.value,
   (newValue) => {
-    selectedOption.value = options.value.find(
+    const found = options.value.find(
       (item) => String(item.value) === String(newValue),
     );
+    if (!found) return;
+    selectedOption.value = found;
+    searchInput.value = found.name;
   },
 );
 
 const selectedOption = ref({});
 
 onMounted(() => {
-  if (props.modelValue) {
-    selectedOption.value = options.value.find(
-      (item) => String(item.value) === String(props.modelValue),
+  if (value.value) {
+    const found = options.value.find(
+      (item) => String(item.value) === String(value.value),
     );
+    if (!found) return;
+    selectedOption.value = found;
+    searchInput.value = found.name;
   }
 });
 
-const labelText = computed(() => {
-  if (!isOpen.value) {
-    if (selectedOption.value) {
-      return selectedOption.value.name;
-    } else {
-      if (isFirst.value || !selectedOption.value) {
-        return placeholder.value;
-      }
-      return searchInput.value;
-    }
-  } else {
-    return searchInput.value;
-  }
-});
 const input = ref("");
 
 const placeholderClass = computed(() => {
   return isFirst.value || !selectedOption.value;
 });
-
-const searchInputElement = ref();
 
 function toggle() {
   isOpen.value = !isOpen.value;
@@ -146,8 +147,7 @@ function onSelect(id) {
   if (selectedOptionItem) {
     selectedOption.value = selectedOptionItem;
     searchInput.value = selectedOptionItem.name;
-    emit("change", selectedOptionItem);
-    emit("update:modelValue", id);
+    value.value = id;
     isOpen.value = false;
   }
 }
@@ -195,7 +195,8 @@ input.current::-webkit-inner-spin-button {
 }
 
 .current {
-  color: #0a2540;
+  //color: #0a2540;
+  font-weight: normal;
   width: 100%;
   height: unset !important;
   cursor: pointer;
