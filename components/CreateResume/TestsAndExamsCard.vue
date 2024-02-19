@@ -26,10 +26,9 @@
         <div class="" v-if="isShown">
           <div class="row">
             <div class="mt-3">
-              <CreateResumeTestsAndExamsList
+              <CreateResumeVeeTestsAndExamsForm
                 ref="educationElement"
-                v-model="completed_test_or_exams"
-                :errors="errors"
+                name="completed_test_or_exams"
               />
             </div>
           </div>
@@ -69,6 +68,13 @@
 
 <script setup>
 import useResumeHooks from "~/hooks/useResumeHooks";
+import useFormValidation from "~/composables/useFormValidation";
+import { useResumeStore } from "~/store/resume";
+import { useDiff } from "~/composables/useDiff";
+import { useDictionaryStore } from "~/store/dictionary";
+import { z } from "~/hooks/ru-zod.js";
+import { toTypedSchema } from "@vee-validate/zod";
+import { useForm } from "vee-validate";
 
 const props = defineProps({
   title: {
@@ -83,24 +89,54 @@ const props = defineProps({
     required: true,
   },
 });
-import useFormValidation from "~/composables/useFormValidation";
-import { useResumeStore } from "~/store/resume";
-import { useDiff } from "~/composables/useDiff";
-import { useDictionaryStore } from "~/store/dictionary";
+
 const educationElement = ref(false);
 const route = useRoute();
 const resumeStore = useResumeStore();
 const resumeID = computed(() => route.params.id);
 const dictionaryStore = useDictionaryStore();
 const completed_test_or_exams = ref(
-  resumeStore.resume?.educations.completed_test_or_exams ?? []
+  resumeStore.resume?.educations.completed_test_or_exams ?? [],
 );
 
 const isShown = ref(false);
 const isChanged = ref(false);
 const isSaved = ref(false);
-const isCollapsed = ref(true);
+const isCollapsed = ref(false);
 const isUpdated = ref(false);
+
+const testScheme = z.object({
+  name: z.string(),
+  profession: z.string(),
+  organization: z.string(),
+  year: z.number(),
+});
+const schema = computed(() => {
+  const s = toTypedSchema(
+    z.object({
+      completed_test_or_exams: z.array(testScheme).optional(),
+    }),
+  );
+  return s;
+});
+
+const initialValues = ref({
+  completed_test_or_exams: [],
+});
+const {
+  values,
+  errors,
+  meta,
+  resetForm,
+  setValues,
+  setErrors,
+  handleSubmit,
+  validate,
+} = useForm({
+  initialValues: initialValues,
+  initialTouched: true,
+  validationSchema: schema,
+});
 
 const sectionData = ref({
   educations: [],
@@ -114,20 +150,12 @@ watch(
       "updated_at",
     ]);
     if (Object.keys(diffData).length) {
-      completed_test_or_exams.value = newData.completed_test_or_exams;
-      if (
-        completed_test_or_exams.value &&
-        completed_test_or_exams.value.length
-      ) {
+      if (newData.completed_test_or_exams?.length > 0) {
         isShown.value = true;
       }
-
-      if (isUpdated.value) {
-        isUpdated.value = false;
-        return;
-      }
+      resetForm({ values: newData });
     }
-  }
+  },
 );
 watch(
   () => resumeStore.my_resume,
@@ -136,36 +164,36 @@ watch(
       sectionData.value = {
         completed_test_or_exams:
           newResume?.educations?.completed_test_or_exams.map((item) => ({
-            id: item.id,
             name: item.name,
             organization: item.organization,
             profession: item.profession,
             year: item.year,
           })),
       };
-      nextTick(() => {
-        isChanged.value = false;
-      });
     }
-  }
+  },
 );
 
 watch(
   () => completed_test_or_exams.value,
   (newData) => {
     isChanged.value = true;
-  }
+  },
 );
 
 onMounted(() => {
   if (resumeStore.my_resume) {
     sectionData.value = {
       completed_test_or_exams:
-        resumeStore.resume?.educations?.completed_test_or_exams,
+        resumeStore.my_resume?.educations?.completed_test_or_exams.map(
+          (item) => ({
+            name: item.name,
+            organization: item.organization,
+            profession: item.profession,
+            year: item.year,
+          }),
+        ),
     };
-    nextTick(() => {
-      isChanged.value = false;
-    });
   }
 });
 
@@ -175,41 +203,53 @@ watch(
     if (!newData) {
       isShown.value = true;
     }
-  }
+  },
 );
 
 const { getSelectedProviders } = useResumeHooks();
 const { getResume, updateResume } = resumeStore;
 
-const { errors, handleErrorResponse } = useFormValidation();
+const { errors: serverErrors, handleErrorResponse } = useFormValidation();
+watch(
+  () => serverErrors.value,
+  (newErrors) => {
+    if (Object.keys(newErrors).length > 0) {
+      const backendErrors = {};
+      Object.keys(newErrors).map(
+        (item) => (backendErrors[item] = newErrors[item]),
+      );
+      console.log(backendErrors);
+      setErrors(backendErrors);
+    }
+  },
+);
 const isFocused = ref(false);
 const save = async (is_from_parent = false) => {
-  if (is_from_parent === true) {
-    isFocused.value = true;
-  }
-  if (!isFocused.value) {
+  validate();
+
+  if (!meta.value.dirty) {
     return true;
   }
-  if (isChanged.value) {
-    const resData = await updateResume(resumeID.value, {
-      form_data: "EDUCATION_DATA",
-      educations: {
-        completed_test_or_exams: completed_test_or_exams.value,
-        education_level_id:
-          resumeStore.my_resume.educations?.education_level?.id,
-      },
-      providers: getSelectedProviders(props.providers),
-    });
-
-    if (resData.status !== "success") {
-      return handleErrorResponse(resData.data);
-    }
-    isChanged.value = false;
-    isSaved.value = false;
-    isUpdated.value = true;
-
-    await getResume(resumeID.value);
+  if (!meta.value.valid) {
+    return false;
   }
+  const resData = await updateResume(resumeID.value, {
+    form_data: "EDUCATION_DATA",
+    educations: {
+      completed_test_or_exams: values.completed_test_or_exams,
+      education_level_id: resumeStore.my_resume.educations?.education_level?.id,
+    },
+    providers: getSelectedProviders(props.providers),
+  });
+
+  if (resData.status !== "success") {
+    return handleErrorResponse(resData.data);
+  }
+  isChanged.value = false;
+  isSaved.value = false;
+  isUpdated.value = true;
+
+  resetForm({ values });
 };
 
 const isCompleted = computed(() => {

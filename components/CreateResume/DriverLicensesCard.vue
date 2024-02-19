@@ -20,31 +20,13 @@
         :class="{ collapse: isCollapsed }"
         @click="isFocused = true"
       >
-        <CreateResumeDriverLicensesForm
-          v-model="state.driver_license_types.val"
-          :errors="errors.driver_license_types"
-        />
+        <CreateResumeDriverLicensesForm name="driver_license_types" />
 
         <div class="mt-4">
-          <div
-            class="form-check form-check-inline d-inline-flex align-items-center justify-content-center"
-          >
-            <input
-              type="checkbox"
-              id="has_vehicle"
-              class="form-check-input"
-              :style="{ height: '2rem', width: '2rem' }"
-              v-model="state.has_vehicle.val"
-              :checked="state.has_vehicle.val"
-            />
-            <label for="has_vehicle" class="form-check-label fs-5 ms-3">
-              у Вас есть личный автомобиль?
-            </label>
-          </div>
-
-          <div class="text-danger d-block" v-if="errors.has_vehicle">
-            {{ errors.has_vehicle }}
-          </div>
+          <ResumeCheckboxInput
+            name="has_vehicle"
+            label="у Вас есть личный автомобиль"
+          />
         </div>
       </div>
     </transition>
@@ -52,6 +34,18 @@
 </template>
 
 <script setup>
+import { z } from "~/hooks/ru-zod.js";
+import { useProfileStore } from "~/store/profile";
+import { useRuntimeConfig } from "#app";
+import useFormValidation from "~/composables/useFormValidation";
+import { useWatchStateValues } from "~/composables/useWatchStateValues";
+import { useDiff } from "~/composables/useDiff";
+import { useDictionaryStore } from "~/store/dictionary";
+import { useResumeStore } from "~/store/resume";
+import { toTypedSchema } from "@vee-validate/zod";
+import { useForm } from "vee-validate";
+import ResumeCheckboxInput from "~/components/CreateResume/ResumeCheckboxInput.vue";
+
 const props = defineProps({
   title: {
     default: "-",
@@ -66,14 +60,6 @@ const props = defineProps({
   },
 });
 
-import { useProfileStore } from "~/store/profile";
-import { useFormData } from "~/composables/useFormData";
-import { useRuntimeConfig } from "#app";
-import useFormValidation from "~/composables/useFormValidation";
-import { useWatchStateValues } from "~/composables/useWatchStateValues";
-import { useDiff } from "~/composables/useDiff";
-import { useDictionaryStore } from "~/store/dictionary";
-import { useResumeStore } from "~/store/resume";
 const resumeStore = useResumeStore();
 const profileStore = useProfileStore();
 const CONFIG = useRuntimeConfig();
@@ -88,8 +74,37 @@ const my_resume = computed(() => resumeStore.my_resume);
 const isSaved = ref(false);
 const isChanged = ref(false);
 const isFirst = ref(true);
-const isCollapsed = ref(true);
+const isCollapsed = ref(false);
 const isUpdated = ref(false);
+
+const schema = computed(() => {
+  const s = toTypedSchema(
+    z.object({
+      has_vehicle: z.boolean().nullable(),
+      driver_license_types: z.number().array().optional(),
+    }),
+  );
+  return s;
+});
+
+const initialValues = ref({
+  has_vehicle: false,
+  driver_license_types: [],
+});
+const {
+  values,
+  errors,
+  meta,
+  resetForm,
+  setValues,
+  setErrors,
+  handleSubmit,
+  validate,
+} = useForm({
+  initialValues: initialValues,
+  initialTouched: true,
+  validationSchema: schema,
+});
 
 const state = reactive({
   driver_license_types: {
@@ -116,7 +131,7 @@ watch(
     } else {
       isFirst.value = false;
     }
-  }
+  },
 );
 
 const sectionData = ref({});
@@ -125,10 +140,14 @@ watch(
   (newData, oldData) => {
     const diffData = useDiff(newData, oldData);
     if (Object.keys(diffData).length) {
-      state.driver_license_types.val = newData.driver_license_types;
-      state.has_vehicle.val = newData.has_vehicle;
+      resetForm({
+        values: {
+          driver_license_types: newData.driver_license_types,
+          has_vehicle: newData.has_vehicle,
+        },
+      });
     }
-  }
+  },
 );
 watch(
   () => resumeStore.my_resume,
@@ -144,7 +163,7 @@ watch(
         has_vehicle: newData.has_vehicle ?? false,
       };
     }
-  }
+  },
 );
 
 const dictionaryStore = useDictionaryStore();
@@ -154,42 +173,55 @@ onMounted(() => {
     await getDriverLicenses();
   }, 500);
 });
-const { errors, handleErrorResponse } = useFormValidation();
+const { errors: serverErrors, handleErrorResponse } = useFormValidation();
+watch(
+  () => serverErrors.value,
+  (newErrors) => {
+    if (Object.keys(newErrors).length > 0) {
+      const backendErrors = {};
+      Object.keys(newErrors).map(
+        (item) => (backendErrors[item] = newErrors[item]),
+      );
+      setErrors(backendErrors);
+    }
+  },
+);
 const isFocused = ref(false);
+const isLoading = ref(false);
+const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  if (is_from_parent === true) {
-    isFocused.value = true;
-  }
-  if (!isFocused.value) {
+  validate();
+  if (!meta.value.dirty) {
     return true;
   }
+  if (!meta.value.valid) {
+    return false;
+  }
+  state.isLoading = true;
+  errors.value = {};
+  errorMessage.value = "";
+  let resData = {};
 
-  if (isChanged.value) {
-    state.isLoading = true;
-    // validate();
-    errors.value = {};
-    state.errorMessage = "";
-    let resData = {};
-    const jsonData = useFormData(state);
-    jsonData.form_data = "DRIVER_LICENSES_DATA";
+  resData = await updateResume(resumeID.value, {
+    form_data: "DRIVER_LICENSES_DATA",
+    ...values,
+  });
 
-    resData = await updateResume(resumeID.value, jsonData);
+  isUpdated.value = true;
+  if (resData.status !== "success") {
+    errorMessage.value = resData.message;
+    return handleErrorResponse(resData.data);
+  }
 
-    isUpdated.value = true;
-    if (resData.status !== "success") {
-      return handleErrorResponse(resData.data);
-    }
+  isChanged.value = false;
+  isSaved.value = false;
+  isUpdated.value = false;
 
-    isChanged.value = false;
-    isSaved.value = false;
-    isUpdated.value = false;
-    if (is_from_parent) {
-      return new Promise((resolve, reject) => {
-        resolve(true);
-      });
-    }
-  } else {
-    return true;
+  resetForm({ values });
+  if (is_from_parent) {
+    return new Promise((resolve, reject) => {
+      resolve(true);
+    });
   }
 };
 

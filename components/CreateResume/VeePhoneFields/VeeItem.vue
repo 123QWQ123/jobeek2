@@ -1,21 +1,23 @@
 <template>
   <div class="row position-relative">
-    <span class="position-absolute absoluted_icon" @click="remove(idx)">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        fill="currentColor"
-        class="bi bi-x"
-        viewBox="0 0 16 16"
-      >
-        <path
-          d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"
-        />
-      </svg>
-    </span>
+    <div>
+      <span class="position-absolute absoluted_icon" @click="remove(idx)">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="currentColor"
+          class="bi bi-x"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"
+          />
+        </svg>
+      </span>
+    </div>
 
-    <div class="input-wrapper">
+    <div class="input-wrapper mt-2" v-show="!state.type_id.is_hidden">
       <VeeCustomSelect
         :options="preferredContactTypeOptions"
         :name="`${name}[${idx}].type_id`"
@@ -23,30 +25,39 @@
       />
     </div>
 
-    <ResumePhoneInputWithConfirmationAndCaptcha
+    <PhoneInputWithCaptchaAndConfirmation
+      v-show="!state.phone.is_hidden"
       :name="`${props.name}[${idx}].phone`"
     />
 
-    <div class="row">
+    <div class="row" v-show="!state.is_preferred.is_hidden">
       <ResumeCheckboxInput
-        name="is_preferred"
         :name="`${props.name}[${idx}].is_preferred`"
         label="предпочтительным является"
       />
     </div>
 
-    <div class="input-row mt-2">
+    <div
+      class="input-row mt-2"
+      v-if="
+        !state.end_available_time_phone.is_hidden &&
+        !state.start_available_time_phone.is_hidden
+      "
+    >
       <label>Отвечу на звонки</label>
 
       <div class="start-to-end">
-        <div class="hour_c2">
+        <div
+          class="hour_c2"
+          v-show="!state.start_available_time_phone.is_hidden"
+        >
           <VeeCustomSelect
             :options="useHourOptions()"
             :name="`${props.name}[${idx}].start_available_time_phone`"
             :label="'От'"
           />
         </div>
-        <div class="hour_c2">
+        <div class="hour_c2" v-show="!state.end_available_time_phone.is_hidden">
           <VeeCustomSelect
             :options="useHourOptions()"
             :name="`${props.name}[${idx}].end_available_time_phone`"
@@ -56,7 +67,7 @@
       </div>
     </div>
 
-    <div class="input-wrapper mt-2">
+    <div class="input-wrapper mt-2" v-show="!state.comment.is_hidden">
       <ResumeTextarea :name="`${props.name}[${idx}].comment`"></ResumeTextarea>
     </div>
   </div>
@@ -64,10 +75,11 @@
 <script setup>
 import { useField } from "vee-validate";
 import { useDictionaryStore } from "~/store/dictionary.js";
-import ResumeTextarea from "~/components/CreateResume/ResumeTextarea.vue";
+import useProviderFields from "~/composables/useProviderFields.js";
+import useProviders from "~/composables/useProviders.js";
+import PhoneInputWithCaptchaAndConfirmation from "./PhoneInputWithConfirmationAndCaptcha.vue";
 import ResumeCheckboxInput from "~/components/CreateResume/ResumeCheckboxInput.vue";
-import { useHourOptions } from "~/composables/useHourOptions.js";
-import ResumePhoneInputWithConfirmationAndCaptcha from "~/components/CreateResume/VeePhoneFields/PhoneInputWithConfirmationAndCaptcha.vue";
+import ResumeTextarea from "~/components/CreateResume/ResumeTextarea.vue";
 
 const props = defineProps(["idx", "name"]);
 const { idx, name } = toRefs(props);
@@ -84,6 +96,59 @@ const preferredContactTypeOptions = computed(() => {
   }));
 });
 
+const { providers } = useProviders();
+
+const state = reactive({
+  type_id: {
+    is_hidden: false,
+  },
+  phone: {
+    is_hidden: false,
+  },
+  is_preferred: {
+    is_hidden: false,
+  },
+  start_available_time_phone: {
+    is_hidden: false,
+  },
+  end_available_time_phone: {
+    is_hidden: false,
+  },
+  comment: {
+    is_hidden: false,
+  },
+});
+
+const fields = ref({
+  hh: {
+    type_id: true,
+    phone: true,
+    comment: false,
+    is_preferred: false,
+    start_available_time_phone: null,
+    end_available_time_phone: null,
+  },
+  superjob: {
+    type_id: null,
+    phone: true,
+    comment: null,
+    is_preferred: null,
+    start_available_time_phone: false,
+    end_available_time_phone: false,
+  },
+});
+
+const { walkThroughFields } = useProviderFields(state, fields);
+watch(
+  () => providers.value,
+  () => {
+    walkThroughFields(providers.value);
+  },
+);
+
+onMounted(() => {
+  walkThroughFields(providers.value);
+});
 const remove = (id) => {
   emit("remove", id);
 };
@@ -92,6 +157,15 @@ const remove = (id) => {
 <style></style>
 
 <style scoped>
+.absoluted_icon {
+  left: -1.5rem;
+  top: 1rem;
+  font-size: 2rem;
+  z-index: 1;
+  cursor: pointer;
+  max-width: 3rem;
+}
+
 .start-to-end {
   display: inline-flex;
   flex: 1 1;

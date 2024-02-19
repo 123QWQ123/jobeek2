@@ -9,8 +9,8 @@
       ></span>
     </div>
 
-    <div class="text-danger d-block p-4" v-if="errors.message">
-      {{ errors.message }}
+    <div class="text-danger d-block p-4">
+      {{ errorMessage }}
     </div>
     <transition>
       <div
@@ -18,15 +18,12 @@
         :class="{ collapse: isCollapsed }"
         @click="isFocused = true"
       >
-        <form @submit.prevent="onSubmit" :validation-schema="schema">
+        <form @submit.prevent="" @focusin="errorMessage = ''">
           <div class="input-row">
             <label for="name">Название вакансии<b>*</b></label>
             <div class="input-wrapper">
               <div class="c1 mt-1">
-                <Field name="title" type="text" placeholder="Название" />
-                <div class="text-danger d-block" v-if="errors.title">
-                  {{ errors.title }}
-                </div>
+                <ResumeTextInput name="title" />
               </div>
             </div>
           </div>
@@ -35,75 +32,46 @@
             <label>Специализация:<b>*</b></label>
             <div class="input-wrapper mt-2">
               <VeeMultiSelectWithSearch
+                name="professional_roles"
+                sort_by="none"
                 :options="professionalRoleOptions"
-                v-model="professional_roles"
                 @input="updateProfessionalInput"
                 :placeholder="'Выберите'"
               />
-
-              <FieldArray
-                name="move_able_cities"
-                :hidden="true"
-                v-model="professional_roles"
-              />
-              <div class="text-danger d-block" v-if="errors.professional_roles">
-                {{ errors.professional_roles }}
-              </div>
             </div>
           </div>
 
-          <div class="input-row" v-if="!state.place_of_work_id.is_hidden">
+          <div class="input-row" v-show="!state.place_of_work_id.is_hidden">
             <label>Место работы:</label>
             <div class="input-wrapper mt-2">
-              <CustomSelect
+              <VeeCustomSelect
+                name="place_of_work_id"
                 :options="placeOfWorkOptions"
-                v-model="state.place_of_work_id.val"
                 :label="'Выберите'"
-                @focusin="() => (errors.place_of_work_id = '')"
-              ></CustomSelect>
-              <div class="text-danger d-block" v-if="errors.place_of_work_id">
-                {{ errors.place_of_work_id }}
-              </div>
+              ></VeeCustomSelect>
             </div>
           </div>
 
-          <div class="input-row">
+          <div class="input-row" v-show="!state.schedules.is_hidden">
             <label>Графиков работы:<b>*</b></label>
             <div class="input-wrapper mt-2">
               <VeeMultiSelectWithSearch
                 :options="scheduleOptions"
-                v-model="schedules"
-                :placeholder="'Выберите'"
+                name="schedules"
+                placeholder="Выберите"
               />
-              <FieldArray
-                name="work_types"
-                v-model="schedules"
-                :hidden="true"
-              />
-
-              <div class="text-danger d-block" v-if="errors.schedules">
-                {{ errors.schedules }}
-              </div>
             </div>
           </div>
 
-          <div class="input-row">
+          <div class="input-row" v-show="!state.work_types.is_hidden">
             <label>Тип работы:<b>*</b></label>
             <div class="input-wrapper mt-2">
               <VeeMultiSelectWithSearch
-                :options="workTypeOptions"
-                v-model="work_types"
-                :placeholder="'Выберите'"
-              />
-              <FieldArray
                 name="work_types"
-                v-model="work_types"
-                :hidden="true"
+                sort_by="none"
+                :options="workTypeOptions"
+                placeholder="Выберите"
               />
-
-              <div class="text-danger d-block" v-if="errors.work_types">
-                {{ errors.work_types }}
-              </div>
             </div>
           </div>
 
@@ -112,34 +80,37 @@
             <div class="row-container">
               <div class="row">
                 <div class="col-8">
-                  <div class="input-wrapper w-100">
-                    <div class="input-group">
-                      <Field
-                        name="amount"
-                        v-model="salary"
-                        placeholder="Укажите сумму"
-                      />
-                      <span
-                        v-if="state.currency.is_hidden"
-                        class="input-group-text"
-                        >₽</span
-                      >
-                    </div>
-                    <div class="text-danger d-block" v-if="errors.amount">
-                      {{ errors.amount }}
-                    </div>
+                  <div
+                    class="mb-3"
+                    :class="{
+                      'input-wrapper': !state.currency.is_hidden,
+                      'input-group': state.currency.is_hidden,
+                    }"
+                  >
+                    <Field
+                      v-show="!state.salary.is_hidden"
+                      name="salary"
+                      :class="{ 'form-control': state.currency.is_hidden }"
+                      type="number"
+                      placeholder="Укажите сумму"
+                    />
+                    <span
+                      class="input-group-text"
+                      v-show="state.currency.is_hidden"
+                      >₽</span
+                    >
+                  </div>
+
+                  <div class="text-danger">
+                    <ErrorMessage name="salary" />
                   </div>
                 </div>
-                <div class="col-4" v-if="!state.currency.is_hidden">
-                  <CustomSelect
+                <div class="col-4" v-show="!state.currency.is_hidden">
+                  <VeeCustomSelect
+                    name="currency"
                     :label="'Валюта'"
                     :options="currencyOptions"
-                    v-model="currency"
-                  ></CustomSelect>
-
-                  <div class="text-danger d-block" v-if="errors.currency">
-                    {{ errors.currency }}
-                  </div>
+                  />
                 </div>
               </div>
             </div>
@@ -155,12 +126,17 @@ import { useCurrencyOptions } from "~/composables/useCurrencyOptions.js";
 import { useProfileStore } from "~/store/profile";
 import { useRuntimeConfig } from "#app";
 import useFormValidation from "~/composables/useFormValidation";
-import { useWatchStateValues } from "~/composables/useWatchStateValues";
 import { useDiff } from "~/composables/useDiff";
 import { useDictionaryStore } from "~/store/dictionary";
 import useProviderFields from "~/composables/useProviderFields";
-
+import { z } from "~/hooks/ru-zod.js";
+import { toTypedSchema } from "@vee-validate/zod";
 import { useResumeStore } from "~/store/resume";
+import ResumeTextInput from "~/components/CreateResume/ResumeTextInput.vue";
+import useProviders from "~/composables/useProviders.js";
+import useFilter from "~/composables/useFilter.js";
+
+const dictionaryStore = useDictionaryStore();
 
 const props = defineProps({
   providers: {
@@ -186,68 +162,72 @@ const my_resume = computed(() => resumeStore.my_resume);
 const isSaved = ref(false);
 const isChanged = ref(false);
 const isFirst = ref(true);
-const isCollapsed = ref(true);
+const isCollapsed = ref(false);
 const isUpdated = ref(false);
+const { providers } = useProviders();
 
 const currencyOptions = useCurrencyOptions();
+const professionalRoleOptions = ref([]);
 
 const schema = computed(() => {
-  return {
-    title: "required|min:1|max:100",
-    salary: "required|numeric",
-    currency: {
-      required: true,
-      one_of: currencyOptions.map((item) => item.value),
-    },
-    professional_roles: "required",
-    work_types: "required",
-    schedules: "required",
-  };
+  if (providers.value.hh === true && providers.value.superjob === false) {
+    return z.object({
+      title: z.string().min(2),
+      salary: z.number(),
+      currency: z.string().nullable().optional(),
+      place_of_work_id: z.number().nullable(),
+      professional_roles: z.array(z.number()).array().nonempty(),
+      work_types: z.array(z.number()).nonempty(),
+      schedules: z.array(z.number()).nonempty(),
+    });
+  }
+  if (providers.value.hh === false && providers.value.superjob === true) {
+    return z.object({
+      title: z.string().nullable().optional(),
+      salary: z.number().min(2),
+      currency: z.string().nullable(),
+      place_of_work_id: z.number().nullable(),
+      professional_roles: z.array(z.number()).nonempty(),
+      work_types: z.array(z.number()).nonempty(),
+      schedules: z.array(z.number()).nonempty(),
+    });
+  }
+  return z.object({
+    title: z.string().min(2),
+    professional_roles: z.number().array().nonempty(),
+    work_types: z.array(z.number()).nonempty(),
+    schedules: z.array(z.number()).nonempty(),
+    salary: z.number().nullable(),
+    currency: z.string(),
+    place_of_work_id: z.number().nullable(),
+  });
 });
 
-const initialValues = ref({
-  title: null,
-  professional_roles: [],
-  work_types: [],
-  schedules: [],
-  salary: null,
-  currency: null,
+const initialValues = computed(() => {
+  return {
+    title: null,
+    professional_roles: [],
+    work_types: [],
+    schedules: [],
+    place_of_work_id: null,
+    salary: null,
+    currency: "RUB",
+  };
 });
 const {
   values,
-  errors: veeErrors,
-  defineField,
+  errors,
   meta,
   resetForm,
   setValues,
-  setFieldTouched,
+  setErrors,
   handleSubmit,
+  validate,
 } = useForm({
   initialValues: initialValues,
   initialTouched: true,
-  validationSchema: schema,
+  validationSchema: toTypedSchema(schema.value),
 });
-
-const [title, titleProps] = defineField("title");
-const [currency, currencyProps] = defineField("currency");
-const [salary, salaryProps] = defineField("salary");
-const [professional_roles, professional_rolesProps] =
-  defineField("professional_roles");
-const [work_types, work_typesProps] = defineField("work_types");
-const [schedules, schedulesProps] = defineField("schedules");
-
-watch(
-  () => veeErrors.value,
-  (newErrors) => {
-    if (Object.keys(newErrors).length > 0) {
-      const frontErrors = {};
-      Object.keys(newErrors).map(
-        (item) => (frontErrors[item] = newErrors[item]),
-      );
-      errors.value = frontErrors;
-    }
-  },
-);
 
 const state = reactive({
   title: {
@@ -275,93 +255,242 @@ const state = reactive({
 
 const fields = ref({
   hh: {
+    professional_roles: true,
+    title: true,
     schedules: true,
+    work_types: true,
+    place_of_work_id: null,
+    salary: false,
     currency: false,
   },
   superjob: {
+    professional_roles: true,
+    title: true,
+    schedules: null,
+    work_types: false,
     place_of_work_id: false,
+    salary: false,
+    currency: null,
   },
 });
 
 const { walkThroughFields } = useProviderFields(state, fields);
-const providers = ref(props.providers ?? []);
+
 watch(
-  () => props.providers,
+  () => providers.value,
   () => {
-    walkThroughFields(props.providers);
+    walkThroughFields(providers.value);
   },
 );
 
 onMounted(() => {
-  if (providers.value.length > 0) {
-    walkThroughFields(props.providers);
-  }
+  walkThroughFields(providers.value);
 });
 
-const professionalRoleOptions = ref([]);
-
-const set = (key, val) => {
-  state[key].val = val;
-};
-
-watch(
-  () => useWatchStateValues(state, true, true, ["providers"]),
-  (newState, oldState) => {
-    if (!isFirst.value) {
-      isChanged.value = true;
-    } else {
-      isFirst.value = false;
-    }
-  },
-);
-
 const sectionData = ref({});
+const getFields = (newObject) => {
+  return {
+    title: newObject.title,
+    salary: newObject.salary,
+    currency: newObject.currency,
+    place_of_work_id: newObject.place_of_work?.id ?? null,
+    work_types: Object.keys(newObject.work_types).map((item) => parseInt(item)),
+    schedules: Object.keys(newObject.schedules).map((item) => parseInt(item)),
+    professional_roles: newObject.professional_roles.map((item) => item.id),
+  };
+};
 watch(
   () => resumeStore.my_resume,
   (newData) => {
-    if (isUpdated.value) {
-      isUpdated.value = false;
-      return;
-    }
     if (newData) {
-      sectionData.value = {
-        title: newData.title,
-        salary: newData.salary,
-        currency: newData.currency,
-        place_of_work_id: newData.place_of_work?.id,
-        work_types: Object.keys(newData.work_types),
-        schedules: Object.keys(newData.schedules),
-        professional_roles: newData.professional_roles.map((item) => item.id),
-      };
+      sectionData.value = getFields(newData);
     }
   },
 );
+onMounted(() => {
+  const newData = resumeStore.my_resume;
+  if (newData) {
+    sectionData.value = getFields(newData);
+  }
+});
 
 watch(
   () => sectionData.value,
   (newData, oldData) => {
     const diffData = useDiff(newData, oldData);
     if (Object.keys(diffData).length) {
-      setValues({
-        ...newData,
-      });
-      initialValues.value = newData;
+      resetForm({ values: newData });
     }
   },
 );
 
-const { searchCities, searchProfessionalRoles } = profileStore;
-const updateProfessionalInput = async (newValue = "") => {
+const {
+  searchCities,
+  searchProfessionalRoles,
+  searchHHProfessionalRoles,
+  searchSuperjobProfessionalRoles,
+} = profileStore;
+
+const selectedProviders = computed(() => {
+  if (providers.value.hh === true && providers.value.superjob === false)
+    return ["hh"];
+  if (providers.value.hh === false && providers.value.superjob === true)
+    return ["superjob"];
+  return ["hh", "superjob"];
+});
+
+const isHHSelected = computed(() => selectedProviders.value.includes("hh"));
+const isSuperjobSelected = computed(() =>
+  selectedProviders.value.includes("superjob"),
+);
+
+const isHHProfRolesNeeded = computed(() => {
+  if (!isHHSelected.value) return false;
+  if (prof_role_ids.value.length < 1) return true;
+  const selected_fields_values = [...prof_role_ids.value];
+  return !selected_fields_values.some((item) =>
+    profileStore.hh_professional_roles_with_parent_ids.includes(item),
+  );
+});
+const isSuperjobProfRolesNeeded = computed(() => {
+  if (!isSuperjobSelected.value) return false;
+  if (prof_role_ids.value.length < 1) return true;
+  const selected_fields_values = [...prof_role_ids.value];
+  return !selected_fields_values.some((item) =>
+    profileStore.superjob_professional_roles_with_parent_ids.includes(item),
+  );
+});
+
+const isHHWorkTypesNeeded = computed(() => {
+  if (!isHHSelected.value) return false;
+  if (work_type_ids.value.length < 1) return true;
+  const selected_fields_values = [...work_type_ids.value];
+  return !selected_fields_values.some((item) =>
+    hhWorkTypes.value.includes(item),
+  );
+});
+const isSuperjobWorkTypesNeeded = computed(() => {
+  if (!isSuperjobSelected.value) return false;
+  if (work_type_ids.value.length < 1) return true;
+  const selected_fields_values = [...work_type_ids.value];
+  return !selected_fields_values.some((item) =>
+    superjobWorkTypes.value.includes(item),
+  );
+});
+
+const hhWorkTypes = ref([]);
+const superjobWorkTypes = ref([]);
+const { uniq } = useFilter();
+const { value: prof_role_ids } = useField("professional_roles");
+watch(
+  () => prof_role_ids.value,
+  async () => {
+    let items = [];
+    if (isHHProfRolesNeeded.value) {
+      const new_h = profileStore.hh_professional_roles_with_parent;
+      items = items.concat(new_h);
+    }
+    if (isSuperjobProfRolesNeeded.value) {
+      const new_s = profileStore.superjob_professional_roles_with_parent;
+      items = items.concat(new_s);
+    }
+    if (isHHProfRolesNeeded.value || isSuperjobProfRolesNeeded.value) {
+      items = items.concat(profileStore.professional_roles_with_parent);
+      items = uniq(items, "value");
+      professionalRoleOptions.value = items;
+    } else {
+      professionalRoleOptions.value =
+        profileStore.professional_roles_with_parent;
+    }
+  },
+);
+
+const { value: work_type_ids } = useField("work_types");
+watch(
+  () => work_type_ids.value,
+  async () => {
+    let items = [];
+    if (isHHWorkTypesNeeded.value) {
+      const new_h = dictionaryStore.hh_work_types.map((item) => ({
+        value: item.id,
+        name: item.name,
+      }));
+      items = items.concat(new_h);
+    }
+    if (isSuperjobWorkTypesNeeded.value) {
+      const new_s = dictionaryStore.superjob_work_types.map((item) => ({
+        value: item.id,
+        name: item.name,
+      }));
+      items = items.concat(new_s);
+    }
+    if (isHHWorkTypesNeeded.value || isSuperjobWorkTypesNeeded.value) {
+      const all_items = dictionaryStore.work_types;
+      items = items.concat(all_items);
+      items = uniq(items, "value");
+      workTypeOptions.value = items;
+    } else {
+      const all_items = dictionaryStore.work_types;
+      workTypeOptions.value = all_items;
+    }
+  },
+);
+
+const updateProfessionalInput = async (newValue = "", providers = []) => {
+  console.log("update options");
   let items = await searchProfessionalRoles();
-  items = items.filter((item) => item.name.includes(newValue));
+  if (newValue) {
+    items = items
+      .filter((item) => item.parent_id !== 0)
+      .filter((item) => item.name.includes(newValue));
+  } else {
+    items = items.filter((item) => item.parent_id !== 0);
+  }
   professionalRoleOptions.value = items.map((item) => ({
     value: item.id,
     name: item.name,
   }));
 };
 
-const dictionaryStore = useDictionaryStore();
-const { getPlaceOfWorks, getSchedules, getWorkTypes } = dictionaryStore;
+watch(
+  () => dictionaryStore.hh_work_types,
+  () => {
+    hhWorkTypes.value = dictionaryStore.hh_work_types.map((item) => item.id);
+  },
+);
+watch(
+  () => dictionaryStore.superjob_work_types,
+  () => {
+    superjobWorkTypes.value = dictionaryStore.superjob_work_types.map(
+      (item) => item.id,
+    );
+  },
+);
+const updateHHProfessionalRoles = async (newValue = "") => {
+  await searchHHProfessionalRoles();
+};
+const updateSuperjobProfessionalRoles = async (newValue = "") => {
+  await searchSuperjobProfessionalRoles();
+};
+const updateHHWorkTypes = async (newValue = "") => {
+  let items;
+  items = await getHHWorkTypes();
+  items = items.filter((item) => item.parent_id !== 0);
+  hhWorkTypes.value = items.map((item) => item.id);
+};
+const updateSuperjobWorkTypes = async (newValue = "") => {
+  let items;
+  items = await getSuperjobWorkTypes();
+  superjobWorkTypes.value = items.map((item) => item.id);
+};
+
+const {
+  getPlaceOfWorks,
+  getSchedules,
+  getWorkTypes,
+  getHHWorkTypes,
+  getSuperjobWorkTypes,
+} = dictionaryStore;
 
 const placeOfWorkOptions = computed(() => {
   return dictionaryStore.place_of_works.map((item) => ({
@@ -370,12 +499,7 @@ const placeOfWorkOptions = computed(() => {
   }));
 });
 
-const workTypeOptions = computed(() => {
-  return dictionaryStore.work_types.map((item) => ({
-    name: item.name,
-    value: item.id,
-  }));
-});
+const workTypeOptions = ref([]);
 const scheduleOptions = computed(() => {
   return dictionaryStore.schedules.map((item) => ({
     name: item.name,
@@ -384,47 +508,69 @@ const scheduleOptions = computed(() => {
 });
 
 onMounted(() => {
-  updateProfessionalInput();
-  getSchedules();
+  updateProfessionalInput("");
+  updateHHProfessionalRoles();
+  updateSuperjobProfessionalRoles();
   getWorkTypes();
+  updateHHWorkTypes();
+  updateSuperjobWorkTypes();
+  getSchedules();
   getPlaceOfWorks();
-  setTimeout(async () => {}, 500);
 });
-const { errors, handleErrorResponse } = useFormValidation();
+const { errors: serverErrors, handleErrorResponse } = useFormValidation();
+watch(
+  () => serverErrors.value,
+  (newErrors) => {
+    if (Object.keys(newErrors).length > 0) {
+      const backendErrors = {};
+      Object.keys(newErrors).map(
+        (item) => (backendErrors[item] = newErrors[item]),
+      );
+      setErrors(backendErrors);
+    }
+  },
+);
 
 const isFocused = ref(false);
+const isLoading = ref(false);
+const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  if (is_from_parent === true) {
-    isFocused.value = true;
-  }
-  if (!isFocused.value) {
+  validate();
+  if (!meta.value.dirty) {
     return true;
   }
-  if (meta.value.dirty && meta.value.valid) {
-    state.isLoading = true;
-    errors.value = {};
-    state.errorMessage = "";
-    let resData = {};
 
-    resData = await updateResume(resumeID.value, {
-      ...values,
-      form_data: "PROFESSION_DETAILS_DATA",
+  if (!meta.value.valid) {
+    errorMessage.value = "Запольните все поля";
+    return false;
+  }
+  isLoading.value = true;
+  setErrors({});
+  errorMessage.value = "";
+  let resData = {};
+
+  resData = await updateResume(resumeID.value, {
+    ...values,
+    form_data: "PROFESSION_DETAILS_DATA",
+  });
+
+  isUpdated.value = true;
+  if (resData.status !== "success") {
+    if (resData.message) {
+      errorMessage.value = resData.message;
+    }
+    if (resData.data.hasOwnProperty("errors")) {
+      setErrors(resData.data.errors);
+    }
+    return handleErrorResponse(resData.data);
+  }
+  resetForm({ values });
+  isSaved.value = false;
+  isUpdated.value = false;
+  if (is_from_parent) {
+    return new Promise((resolve, reject) => {
+      resolve(true);
     });
-
-    isUpdated.value = true;
-    if (resData.status !== "success") {
-      return handleErrorResponse(resData.data);
-    }
-    resetForm({ values });
-    isSaved.value = false;
-    isUpdated.value = false;
-    if (is_from_parent) {
-      return new Promise((resolve, reject) => {
-        resolve(true);
-      });
-    }
-  } else {
-    return true;
   }
 };
 

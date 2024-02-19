@@ -20,77 +20,59 @@
         :class="{ collapse: isCollapsed }"
         @click="isFocused = true"
       >
-        <div class="row w-100 mt-2">
+        <div class="row w-100 mt-2" v-show="!state.citizenship.is_hidden">
           <div class="col-12">
             <label for="about_me">Гражданство</label>
-            <MultiSelectWithSearch
+            <VeeMultiSelectWithSearch
               :options="countryOptions"
-              v-model="state.citizenship.val"
-              :label="'Выберите'"
+              name="citizenship"
+              placeholder="Выберите"
             />
-          </div>
-          <div class="text-danger d-block" v-if="errors.citizenship">
-            {{ errors.citizenship }}
           </div>
         </div>
         <div class="row w-100 mt-4">
           <div class="col-12">
             <label for="about_me">Страны разрешено работать</label>
-            <MultiSelectWithSearch
+            <VeeMultiSelectWithSearch
               :options="countryOptions"
-              v-model="state.work_tickets.val"
-              :label="'Выберите'"
+              name="work_tickets"
+              placeholder="Выберите"
             />
           </div>
-          <div class="text-danger d-block" v-if="errors.work_tickets">
-            {{ errors.work_tickets }}
-          </div>
         </div>
-        <div class="row w-100 mt-4">
+        <div class="row w-100 mt-4" v-show="!state.marital_status_id.is_hidden">
           <div class="input-row">
             <label for="remote-work">Семейное положение</label>
             <div class="input-wrapper">
-              <CustomSelect
-                :label="'Выберите'"
+              <VeeCustomSelect
+                label="Выберите"
                 :options="maritalStatusOptions"
-                v-model="state.marital_status_id.val"
-              ></CustomSelect>
-
-              <div class="text-danger d-block" v-if="errors.marital_status_id">
-                {{ errors.marital_status }}
-              </div>
+                name="marital_status_id"
+              ></VeeCustomSelect>
             </div>
           </div>
         </div>
-        <div class="row w-100 mt-4">
+        <div class="row w-100 mt-4" v-show="!state.travel_time_id.is_hidden">
           <div class="input-row">
             <label for="remote-work">Желательное время в пути до работы</label>
             <div class="input-wrapper">
-              <CustomSelect
+              <VeeCustomSelect
                 :options="travelTimeOptions"
-                :label="'Выберите'"
-                v-model="state.travel_time_id.val"
-              ></CustomSelect>
-
-              <div class="text-danger d-block" v-if="errors.travel_time_id">
-                {{ errors.travel_time_id }}
-              </div>
+                label="Выберите"
+                name="travel_time_id"
+              ></VeeCustomSelect>
             </div>
           </div>
         </div>
-        <div class="row w-100 mt-4">
+        <div class="row w-100 mt-4" v-show="!state.children_id.is_hidden">
           <div class="input-row">
             <label for="remote-work">Наличие детей</label>
             <div class="input-wrapper">
-              <CustomSelect
+              <VeeCustomSelect
                 :options="childrenOptions"
-                :label="'Выберите'"
-                v-model="state.children_id.val"
-              ></CustomSelect>
-
-              <div class="text-danger d-block" v-if="errors.children_id">
-                {{ errors.children_id }}
-              </div>
+                label="Выберите"
+                name="children_id"
+              ></VeeCustomSelect>
             </div>
           </div>
         </div>
@@ -104,10 +86,14 @@ import { useResumeStore } from "~/store/resume";
 
 import { useProfileStore } from "~/store/profile";
 import useFormValidation from "~/composables/useFormValidation";
-import { useWatchStateValues } from "~/composables/useWatchStateValues";
 import { useDiff } from "~/composables/useDiff";
 import { useDictionaryStore } from "~/store/dictionary";
 import { useFormData } from "~/composables/useFormData";
+import { toTypedSchema } from "@vee-validate/zod";
+import { z } from "~/hooks/ru-zod.js";
+import useProviders from "~/composables/useProviders.js";
+import useProviderFields from "~/composables/useProviderFields.js";
+
 const resumeStore = useResumeStore();
 const profileStore = useProfileStore();
 
@@ -121,25 +107,25 @@ await getResumeChildren();
 const { getCountries } = profileStore;
 await getCountries();
 const countryOptions = computed(() =>
-  profileStore.countries.map((item) => ({ name: item.name, value: item.id }))
+  profileStore.countries.map((item) => ({ name: item.name, value: item.id })),
 );
 const maritalStatusOptions = computed(() =>
   dictionaryStore.resume_marital_statuses.map((item) => ({
     value: item.id,
     name: item.name,
-  }))
+  })),
 );
 const travelTimeOptions = computed(() =>
   dictionaryStore.travel_times.map((item) => ({
     value: item.id,
     name: item.name,
-  }))
+  })),
 );
 const childrenOptions = computed(() =>
   dictionaryStore.resume_children.map((item) => ({
     value: item.id,
     name: item.name,
-  }))
+  })),
 );
 
 const route = useRoute();
@@ -156,105 +142,138 @@ const isFirst = ref(true);
 const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
-const { getMyResume } = resumeStore;
+const { providers } = useProviders();
 
 const state = reactive({
   citizenship: {
-    val: my_resume.value?.citizenship ?? [],
-    isValid: true,
+    is_hidden: false,
   },
   work_tickets: {
-    val: my_resume.value?.work_tickets ?? [],
-    isValid: true,
-  },
-  about: {
-    val: my_resume.value?.about,
-    isValid: true,
+    is_hidden: false,
   },
   children_id: {
-    val: my_resume.value?.children?.id,
-    isValid: true,
+    is_hidden: false,
   },
   marital_status_id: {
-    val: my_resume.value?.marital_status?.id ?? 113,
-    isValid: true,
+    is_hidden: false,
   },
   travel_time_id: {
-    val: my_resume.value?.travel_time?.id ?? 18,
-    isValid: true,
+    is_hidden: false,
   },
 });
 
+const fields = ref({
+  hh: {
+    citizenship: true,
+    work_tickets: false,
+    children_id: null,
+    marital_status_id: null,
+    travel_time_id: true,
+  },
+  superjob: {
+    citizenship: false,
+    work_tickets: null,
+    travel_time_id: null,
+    children_id: false,
+    marital_status_id: false,
+  },
+});
+
+const { walkThroughFields } = useProviderFields(state, fields);
+
 watch(
-  () => useWatchStateValues(state, true, true),
+  () => providers.value,
   () => {
-    if (!isFirst.value) {
-      isChanged.value = true;
-    } else {
-      isFirst.value = false;
-    }
-  }
+    walkThroughFields(providers.value);
+  },
 );
+
+onMounted(() => {
+  walkThroughFields(providers.value);
+});
+
+const schema = computed(() => {
+  if (providers.value.hh === true && providers.value.superjob === false) {
+    return z.object({
+      citizenship: z.number().array().nonempty(),
+      work_tickets: z.number().array().nonempty(),
+      marital_status_id: z.number().optional(),
+      travel_time_id: z.number().optional(),
+      children_id: z.number().optional(),
+    });
+  }
+  if (providers.value.hh === false && providers.value.superjob === true) {
+    return z.object({
+      citizenship: z.number().array().nonempty().optional().nullable(),
+      work_tickets: z.number().array().nonempty().nullable().optional(),
+      marital_status_id: z.number().optional().nullable(),
+      travel_time_id: z.number().nullish().optional(),
+      children_id: z.number().nullable().optional(),
+    });
+  }
+  return z.object({
+    citizenship: z.number().array().nonempty(),
+    work_tickets: z.number().array().nonempty(),
+    marital_status_id: z.number().optional(),
+    travel_time_id: z.number().optional().nullable(),
+    children_id: z.number().optional().nullable(),
+  });
+});
+const initialValues = ref({
+  citizenship: [],
+  work_tickets: [],
+  marital_status_id: null,
+  travel_time_id: null,
+  children_id: null,
+});
+const {
+  values,
+  errors,
+  meta,
+  resetForm,
+  setValues,
+  setErrors,
+  handleSubmit,
+  validate,
+} = useForm({
+  initialValues: initialValues,
+  initialTouched: true,
+  validationSchema: toTypedSchema(schema.value),
+});
+
+const { getMyResume } = resumeStore;
 
 const sectionData = ref({});
 watch(
   () => sectionData.value,
   (newData, oldData) => {
-    const diffData = useDiff(newData, oldData, [
-      "id",
-      "created_at",
-      "updated_at",
-    ]);
+    const diffData = useDiff(newData, oldData);
     if (Object.keys(diffData).length) {
-      state["citizenship"].val = newData["citizenship"];
-      state["work_tickets"].val = newData["work_tickets"];
-      state["about"].val = newData["about"];
-      state["children_id"].val = newData["children_id"];
-      state["marital_status_id"].val = newData["marital_status_id"];
-      state["travel_time_id"].val = newData["travel_time_id"];
-      if (isUpdated.value) {
-        isUpdated.value = false;
-        return;
-      }
+      resetForm({ values: newData });
     }
-  }
+  },
 );
+const getFields = (newObject) => {
+  return {
+    citizenship: newObject?.citizenship.map((item) => item.id),
+    work_tickets: newObject?.work_tickets.map((item) => item.id),
+    children_id: newObject?.children?.id ?? null,
+    marital_status_id: newObject?.marital_status?.id ?? null,
+    travel_time_id: newObject?.travel_time?.id ?? null,
+  };
+};
 watch(
   () => resumeStore.my_resume,
   (newResume) => {
     if (newResume) {
-      sectionData.value = {
-        citizenship: resumeStore.my_resume?.citizenship.map((item) => item.id),
-        work_tickets: resumeStore.my_resume?.work_tickets?.map(
-          (item) => item.id
-        ),
-        children_id: resumeStore.my_resume?.children?.id,
-        marital_status_id: resumeStore.my_resume?.marital_status?.id,
-        travel_time_id: resumeStore.my_resume?.travel_time?.id,
-      };
-
-      nextTick(() => {
-        isChanged.value = false;
-      });
+      sectionData.value = getFields(newResume);
     }
-  }
+  },
 );
 
 onMounted(() => {
   if (resumeStore.my_resume) {
-    sectionData.value = {
-      citizenship: resumeStore.my_resume?.citizenship,
-      work_tickets: resumeStore.my_resume?.work_tickets,
-      children_id: resumeStore.my_resume?.children_id,
-      marital_status_id: resumeStore.my_resume?.marital_status_id,
-      travel_time_id: resumeStore.my_resume?.travel_time_id,
-    };
-
-    isShown.value = true;
-
-    nextTick(() => {
-      isChanged.value = false;
-    });
+    sectionData.value = getFields(resumeStore.my_resume);
   }
 });
 
@@ -264,47 +283,58 @@ watch(
     if (!newData) {
       isShown.value = true;
     }
-  }
+  },
 );
 
 const { updateResume } = resumeStore;
 
-const { errors, handleErrorResponse, clearInputError } = useFormValidation();
-const add = () => {
-  isShown.value = !isShown.value;
-  // hasChanged.value = true;
-};
+const { errors: serverErrors, handleErrorResponse } = useFormValidation();
+watch(
+  () => serverErrors.value,
+  (newErrors) => {
+    if (Object.keys(newErrors).length > 0) {
+      const backendErrors = {};
+      Object.keys(newErrors).map(
+        (item) => (backendErrors[item] = newErrors[item]),
+      );
+      setErrors(backendErrors);
+    }
+  },
+);
 const isFocused = ref(false);
+const isLoading = ref(false);
+const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  if (is_from_parent === true) {
-    isFocused.value = true;
-  }
-  if (!isFocused.value) {
+  validate();
+  if (!meta.value.dirty) {
     return true;
   }
-  if (isChanged.value) {
-    state.isLoading = true;
-    // validate();
-    errors.value = {};
-    state.errorMessage = "";
-    const jsonData = useFormData(state);
-    jsonData.form_data = "CITIZENSHIP_AND_FAMILY_DATA";
-    state.isLoading = true;
-    errors.value = {};
-    state.errorMessage = "";
-
-    const resData = await updateResume(resumeID.value, jsonData);
-
-    if (resData.status !== "success") {
-      return handleErrorResponse(resData.data);
-    }
-    isChanged.value = false;
-    isSaved.value = false;
-    isUpdated.value = false;
-    isFocused.value = false;
-
-    await getMyResume(resumeID.value);
+  if (!meta.value.valid) {
+    errorMessage.value = "Заполните все поля";
+    return false;
   }
+  state.isLoading = true;
+  // validate();
+  errors.value = {};
+  state.errorMessage = "";
+  const jsonData = useFormData(state);
+  jsonData.form_data = "CITIZENSHIP_AND_FAMILY_DATA";
+  state.isLoading = true;
+  errors.value = {};
+  state.errorMessage = "";
+
+  const resData = await updateResume(resumeID.value, {
+    form_data: "CITIZENSHIP_AND_FAMILY_DATA",
+    ...values,
+  });
+
+  if (resData.status !== "success") {
+    return handleErrorResponse(resData.data);
+  }
+  isChanged.value = false;
+  isSaved.value = false;
+  isUpdated.value = false;
+  isFocused.value = false;
 };
 
 const isCompleted = computed(() => {

@@ -28,7 +28,6 @@
     <div class="selection selected-options" v-if="fields.length > 0">
       <ul class="selected-options" id="select2--container">
         <div v-for="(field, idx) in fields" :key="field.key">
-          <Field :name="`fields[${idx}].value`" type="text" :hidden="true" />
           <li class="multi-select_selected-item">
             <span class="select2-selection__choice__display">
               {{ getCurrentFieldName(field.value) }}
@@ -44,10 +43,9 @@
         </div>
       </ul>
     </div>
-  </div>
-
-  <div class="text-danger d-block" v-if="errorMessage">
-    {{ errorMessage }}
+    <div class="text-danger">
+      <ErrorMessage :name="props.name" />
+    </div>
   </div>
 </template>
 
@@ -59,7 +57,7 @@ export default {
 
 <script setup>
 import useSort from "~/composables/useSort";
-import { Field, useForm, useFieldArray } from "vee-validate";
+import { useFieldArray } from "vee-validate";
 
 const emit = defineEmits(["change", "update:modelValue", "input", "unselect"]);
 const props = defineProps({
@@ -94,34 +92,49 @@ const props = defineProps({
   },
 });
 
-const { errorMessage } = useField(props.name);
-const { remove, push, fields, replace } = useFieldArray(props.name);
+const { errorMessage } = useField(() => props.name);
+const { remove, push, fields, replace } = useFieldArray(() => props.name);
 
 const isOpen = ref(false);
 const options = ref(props.options);
+
 const modelValue = ref(props.modelValue);
 const { sort } = useSort();
+watch(
+  () => props.options,
+  (newValue) => {
+    if (props.sort_by === "none") {
+      options.value = newValue;
+    } else {
+      options.value = sort(newValue, { by: "alpha" });
+    }
+  },
+);
 
 const selectedOptions = ref([]);
+onMounted(() => {
+  const selected_ids = [...fields.value.map((item) => item.value)];
+  selectedOptions.value = [
+    ...options.value.filter((item) => selected_ids.includes(item.value)),
+  ];
+});
+
 watch(
-  () => ({ ...props }),
-  (newProps) => {
-    options.value = sort(props.options, { by: "alpha" });
-    if (props.modelValue instanceof Array) {
-      let items = props.options.map((item) => {
-        if (
-          props.modelValue.includes(item.value) ||
-          props.modelValue.includes(item.value.toString())
-        ) {
-          return { name: item.name, value: item.value };
-        }
-      });
-      selectedOptions.value = items;
-      items = Array.from(new Set(items.filter((item) => item))).map(
-        (item) => item.value,
-      );
-      replace(items);
-    }
+  () => [...fields.value],
+  () => {
+    const selected_ids = [...fields.value.map((item) => item.value)];
+    selectedOptions.value = [
+      ...options.value.filter((item) => selected_ids.includes(item.value)),
+    ];
+  },
+);
+watch(
+  () => options.value,
+  () => {
+    const selected_ids = [...fields.value.map((item) => item.value)];
+    selectedOptions.value = [
+      ...options.value.filter((item) => selected_ids.includes(item.value)),
+    ];
   },
 );
 
@@ -141,7 +154,6 @@ function onSelect(e) {
     const fieldValues = fields.value.map((item) => item.value);
     if (!fieldValues.includes(selectedOptionItem.value)) {
       push(selectedOptionItem.value);
-      selectedOptions.value.push(selectedOptionItem);
     }
   }
 }
@@ -155,7 +167,7 @@ const getCurrentFieldName = (newValue) => {
 };
 
 function onUnselect(deleteId, oldValue) {
-  const selectedOptionValue = oldValue;
+  const selectedOptionValue = String(oldValue);
   const selectedOptionItem = options.value.find(
     (item) => String(item.value) === String(selectedOptionValue),
   );
@@ -163,11 +175,8 @@ function onUnselect(deleteId, oldValue) {
     return;
   }
   const fieldValues = fields.value.map((item) => item.value);
-  if (fieldValues.includes(selectedOptionItem.value)) {
+  if (fieldValues.includes(oldValue)) {
     remove(deleteId);
-    selectedOptions.value = [...selectedOptions.value].filter(
-      (item) => item.value !== oldValue,
-    );
   }
 }
 
@@ -178,6 +187,7 @@ watch(
   () => (searchInput.value = props.placeholder),
 );
 const onChangeHandler = (e) => {
+  console.log("input");
   isOpen.value = true;
   const typedName = e.target.textContent.toLowerCase();
   emit("input", searchInput.value);
@@ -194,7 +204,6 @@ const onFocus = (e) => {
     searchInput.value = "";
   }
   isOpen.value = true;
-  emit("input", searchInput.value);
 };
 watch(
   () => isOpen.value,
@@ -244,6 +253,8 @@ input.current::-webkit-inner-spin-button {
   cursor: pointer;
   margin: 0;
   padding-left: 0;
+  border: 0;
+  background: none;
 }
 
 .selection {

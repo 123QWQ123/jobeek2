@@ -9,8 +9,8 @@
       ></span>
     </div>
 
-    <div class="text-danger d-block p-4" v-if="errors.message">
-      {{ errors.message }}
+    <div class="text-danger d-block p-4">
+      {{ errorMessage }}
     </div>
     <transition>
       <div
@@ -19,22 +19,17 @@
         @click="isFocused = true"
       >
         <div class="row">
-          <!--          <div class="col-12">-->
-          <!--            <CreateResumeKnowledgeAndSkillsForm-->
-          <!--              v-if="resumeStore.my_resume"-->
-          <!--              v-model="state.skills.val"-->
-          <!--              :errors="errors.skills"-->
-          <!--            />-->
-          <!--          </div>-->
           <div class="col-12">
             <div class="input-row">
               <label for="description">Ключевые навыки:<b>*</b></label>
               <div class="input-wrapper">
-                <CreateResumeKnowledgeAndSkillsForm
+                <CreateResumeKnowledgeAndSkillsVeeForm
                   v-if="resumeStore.my_resume"
-                  v-model="state.skills.val"
-                  :errors="errors.skills"
+                  name="skills"
                 />
+                <div class="text-danger">
+                  <ErrorMessage name="skills" />
+                </div>
               </div>
             </div>
           </div>
@@ -42,20 +37,16 @@
             <div class="input-row">
               <label for="description">Дополнительная информация:</label>
               <div class="input-wrapper">
-                <textarea
-                  class="form-control"
-                  v-model="state.other_skills.val"
-                  v-if="!state.other_skills.is_hidden"
-                />
-                <div class="text-danger d-block" v-if="errors.other_skills">
-                  {{ errors.other_skills }}
-                </div>
+                <ResumeTextarea name="other_skills" />
               </div>
             </div>
           </div>
         </div>
       </div>
     </transition>
+    {{ values }}
+    <hr />
+    {{ errors }}
   </div>
 </template>
 
@@ -64,29 +55,55 @@ import useFormValidation from "~/composables/useFormValidation";
 import { useResumeStore } from "~/store/resume";
 import { useDiff } from "~/composables/useDiff";
 import { useDictionaryStore } from "~/store/dictionary";
-import { useWatchStateValues } from "~/composables/useWatchStateValues";
+import { z } from "~/hooks/ru-zod.js";
+import { toTypedSchema } from "@vee-validate/zod";
+import ResumeTextarea from "~/components/CreateResume/ResumeTextarea.vue";
+import useProviders from "~/composables/useProviders.js";
+
 const route = useRoute();
 const resumeStore = useResumeStore();
 const dictionaryStore = useDictionaryStore();
 const resumeID = computed(() => route.params.id);
 
-const state = reactive({
-  skills: {
-    val: [],
-    is_hidden: false,
-  },
-  other_skills: {
-    val: null,
-    is_hidden: false,
-  },
-});
-
 const isShown = ref(false);
 const isChanged = ref(false);
 const isSaved = ref(false);
-const isCollapsed = ref(true);
+const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
+const { providers } = useProviders();
+
+const schema = computed(() => {
+  if (providers.value.hh === true && providers.value.superjob === false) {
+    return z.object({
+      skills: z.string().array().nullable().optional(),
+      other_skills: z.string().nullable().optional(),
+    });
+  }
+  return z.object({
+    skills: z.string().array().nonempty(),
+    other_skills: z.string(),
+  });
+});
+
+const initialValues = ref({
+  skills: [],
+  other_skills: null,
+});
+const { errors, values, setErrors, meta, setValues, resetForm, validate } =
+  useForm({
+    initialValues: initialValues,
+    validationSchema: toTypedSchema(schema.value),
+  });
+
+const state = reactive({
+  skills: {
+    is_hidden: false,
+  },
+  other_skills: {
+    is_hidden: false,
+  },
+});
 const sectionData = ref({
   skills: [],
 });
@@ -95,46 +112,28 @@ watch(
   (newData, oldData) => {
     const diffData = useDiff(newData, oldData, []);
     if (Object.keys(diffData).length) {
-      state.skills.val = newData.skills;
-      state.other_skills.val = newData.other_skills;
-      if (isUpdated.value) {
-        isUpdated.value = false;
-        return;
-      }
+      resetForm({ values: newData });
     }
-  }
+  },
 );
+const getFields = (newObject) => {
+  return {
+    skills: Object.values(newObject?.skills),
+    other_skills: newObject?.other_skills,
+  };
+};
 watch(
   () => resumeStore.my_resume,
   (newResume) => {
     if (newResume) {
-      sectionData.value = {
-        skills: Object.values(newResume?.skills),
-        other_skills: newResume?.other_skills,
-      };
-      nextTick(() => {
-        isChanged.value = false;
-      });
+      sectionData.value = getFields(resumeStore.my_resume);
     }
-  }
-);
-
-watch(
-  () => useWatchStateValues(state, true, true),
-  (newData) => {
-    isChanged.value = true;
-  }
+  },
 );
 
 onMounted(() => {
-  if (resumeStore.resume) {
-    sectionData.value = {
-      skills: resumeStore.resume?.skills,
-      other_skills: resumeStore.resume?.other_skills,
-    };
-    nextTick(() => {
-      isChanged.value = false;
-    });
+  if (resumeStore.my_resume) {
+    sectionData.value = getFields(resumeStore.my_resume);
   }
 });
 
@@ -144,36 +143,49 @@ watch(
     if (!newData) {
       isShown.value = true;
     }
-  }
+  },
 );
 
 const { getResume, updateResume } = resumeStore;
+const { errors: serverErrors, handleErrorResponse } = useFormValidation();
+watch(
+  () => serverErrors.value,
+  (newErrors) => {
+    if (Object.keys(newErrors).length > 0) {
+      const backendErrors = {};
+      Object.keys(newErrors).map(
+        (item) => (backendErrors[item] = newErrors[item]),
+      );
+      setErrors(backendErrors);
+    }
+  },
+);
 
-const { errors, handleErrorResponse } = useFormValidation();
 const isFocused = ref(false);
+const isLoading = ref(false);
+const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  if (is_from_parent === true) {
-    isFocused.value = true;
-  }
-  if (!isFocused.value) {
+  validate();
+  if (!meta.value.dirty) {
     return true;
   }
-  if (isChanged.value) {
-    const resData = await updateResume(resumeID.value, {
-      form_data: "KNOWLEDGE_AND_SKILLS_DATA",
-      skills: state.skills.val,
-      other_skills: state.other_skills.val,
-    });
-
-    if (resData.status !== "success") {
-      return handleErrorResponse(resData.data);
-    }
-    isChanged.value = false;
-    isSaved.value = false;
-    isUpdated.value = true;
-
-    await getResume(resumeID.value);
+  if (!meta.value.valid) {
+    return false;
   }
+  const resData = await updateResume(resumeID.value, {
+    ...values,
+    form_data: "KNOWLEDGE_AND_SKILLS_DATA",
+  });
+
+  if (resData.status !== "success") {
+    errorMessage.value = resData.message;
+    return handleErrorResponse(resData.data);
+  }
+  isChanged.value = false;
+  isSaved.value = false;
+  isUpdated.value = true;
+
+  resetForm({ values });
 };
 
 const isCompleted = computed(() => {

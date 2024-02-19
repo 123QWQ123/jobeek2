@@ -45,7 +45,10 @@
         </div>
 
         <div class="input-row">
-          <label for="resume_email">Электронная почта</label>
+          <label for="resume_email"
+            >Электронная почта
+            <b v-if="isHHSelected">*</b>
+          </label>
           <div class="input-wrapper">
             <ResumeTextInput name="email" placeholder="Электронная почта" />
 
@@ -147,17 +150,21 @@
           </div>
         </div>
 
-        <CreateResumeVeeSocialNetworksForm name="social_networks" />
+        <CreateResumeVeeSocialNetworksForm
+          v-show="!state.social_networks.is_hidden"
+          name="social_networks"
+        />
 
-        <CreateResumeVeePhoneFieldsForm name="phones" />
+        <CreateResumeVeePhoneFieldsForm
+          v-show="!state.phones.is_hidden"
+          name="phones"
+        />
 
         <div class="text-danger d-block">
           <ErrorMessage name="phones" />
         </div>
       </div>
     </transition>
-    <!--    {{ values }}-->
-    {{ errors }}
   </div>
 </template>
 
@@ -172,22 +179,18 @@ import useProviderFields from "~/composables/useProviderFields";
 
 import { useResumeStore } from "~/store/resume";
 import useResumeHooks from "~/hooks/useResumeHooks";
-import * as yup from "yup";
 import ResumeTextInput from "~/components/CreateResume/ResumeTextInput.vue";
 import ResumeCheckboxInput from "~/components/CreateResume/ResumeCheckboxInput.vue";
 import { useI18n } from "vue-i18n";
+import { toTypedSchema } from "@vee-validate/zod";
+import { z } from "~/hooks/ru-zod.js";
+import useProviders from "~/composables/useProviders.js";
+import { zodToJsonSchema } from "zod-to-json-schema";
 
 const props = defineProps({
   title: {
     default: "-",
     required: false,
-  },
-  providers: {
-    default: {
-      hh: false,
-      superjob: false,
-    },
-    required: true,
   },
 });
 
@@ -210,48 +213,100 @@ const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
 const { t } = useI18n();
-const schema = computed(() => {
-  return {
-    first_name: "required|min:2|max:100",
-    last_name: "required|min:1|max:100",
-    middle_name: "required|min:1|max:100",
-    email: { required: true, email: true },
-    is_preferred_email: { boolean: true },
-    birth_date: "required|date",
-    additional_information: "max:255",
-    other_contacts: "max:255",
-    gender_id: "required|numeric",
-    city_id: "required|numeric",
-    relocation_type_id: "required|numeric",
-    business_trip_id: "required|numeric",
-    move_able_cities: "",
-    address: "",
-    social_networks: "url",
-    phones: yup
-      .array()
-      .of(
-        yup.object().shape({
-          type_id: yup
-            .string()
-            .required(t("create_resume.validation.required")),
-          comment: yup
-            .string()
-            .required(t("create_resume.validation.required")),
-          start_available_time_phone: yup
-            .string()
-            .required(t("create_resume.validation.required")),
-          end_available_time_phone: yup
-            .string()
-            .required(t("create_resume.validation.required")),
-          phone: yup.string().required().label("phone"),
-          is_preferred: yup
-            .bool()
-            .required(t("create_resume.validation.required")),
-        }),
-      )
-      .strict(),
-  };
+const { providers } = useProviders();
+
+watch(
+  () => providers.value,
+  () => {
+    walkThroughFields(providers.value);
+  },
+);
+const isHHSelected = computed(() => {
+  if (providers.value.hh === true) return true;
+  else return false;
 });
+
+const schema = computed(() => {
+  if (providers.value.hh === true && providers.value.superjob === false) {
+    let phoneScheme = z.object({
+      type_id: z.number(),
+      comment: z.string().optional().nullable(),
+      phone: z.string(),
+      is_preferred: z.boolean().optional().nullable(),
+    });
+    return z.object({
+      first_name: z.string().min(2),
+      last_name: z.string().min(2),
+      middle_name: z.string().nullable().optional(),
+      email: z.string().email(),
+      is_preferred_email: z.boolean().nullable(),
+      birth_date: z.string().nullable().optional(),
+      additional_information: z.string().nullable().optional(),
+      other_contacts: z.string().nullable().optional(),
+      gender_id: z.number(),
+      city_id: z.number(),
+      address: z.string().nullable().optional(),
+      business_trip_id: z.number(),
+      relocation_type_id: z.number().nullable().optional(),
+      social_networks: z.number().array().optional(),
+      phones: z.array(phoneScheme).nonempty(),
+    });
+  }
+  if (providers.value.hh === false && providers.value.superjob === true) {
+    const phoneScheme = z.object({
+      start_available_time_phone: z.string().optional().nullable(),
+      end_available_time_phone: z.string().optional().nullable(),
+      phone: z.string(),
+    });
+    return z.object({
+      first_name: z.string().min(2),
+      last_name: z.string().nullable().optional(),
+      middle_name: z.string().nullable().optional(),
+      email: z.string().email().nullable().optional(),
+      is_preferred_email: z.boolean().nullable().optional(),
+      birth_date: z.string(),
+      additional_information: z.string().nullable().optional(),
+      other_contacts: z.string().nullable().optional(),
+      gender_id: z.number(),
+      city_id: z.number(),
+      address: z.string().nullable().optional(),
+      business_trip_id: z.number().nullable(),
+      relocation_type_id: z.number().nullable().optional(),
+      social_networks: z.number().array().optional(),
+      phones: z.array(phoneScheme).optional(),
+    });
+  }
+  let phoneScheme = z.object({
+    type_id: z.number(),
+    comment: z.string().optional().nullable(),
+    start_available_time_phone: z.string().optional().nullable(),
+    end_available_time_phone: z.string().optional().nullable(),
+    phone: z.string(),
+    is_preferred: z.boolean(),
+  });
+  return z.object({
+    first_name: z.string().min(2),
+    last_name: z.string().min(2),
+    middle_name: z.string().nullable().optional(),
+    email: z.string().email(),
+    is_preferred_email: z.boolean().nullable(),
+    birth_date: z.string(),
+    additional_information: z.string().nullable().optional(),
+    other_contacts: z.string().nullable().optional(),
+    gender_id: z.number(),
+    city_id: z.number(),
+    address: z.string().nullable().optional(),
+    business_trip_id: z.number(),
+    relocation_type_id: z.number().nullable().optional(),
+    social_networks: z.number().array().optional(),
+    phones: z.array(phoneScheme).nonempty(),
+  });
+});
+
+const jsonSchemaFixed = zodToJsonSchema(schema.value, { errorMessages: true });
+const jsonSchema = computed(() =>
+  zodToJsonSchema(schema.value, { errorMessages: true }),
+);
 
 const initialValues = ref({
   first_name: null,
@@ -277,12 +332,11 @@ const {
   handleSubmit,
   setValues,
   resetForm,
-  resetField,
+  validate,
 } = useForm({
   initialValues: initialValues,
-  validationSchema: schema,
+  validationSchema: toTypedSchema(schema.value),
 });
-
 const dictionaryStore = useDictionaryStore();
 const { getGenders, getRelocationTypes, getBusinessTrips } = dictionaryStore;
 
@@ -312,7 +366,6 @@ onMounted(() => {
     await getBusinessTrips();
   }, 500);
 });
-//
 const state = reactive({
   first_name: {
     is_hidden: false,
@@ -372,29 +425,49 @@ const state = reactive({
 
 const fields = ref({
   hh: {
+    first_name: true,
+    last_name: true,
+    middle_name: false,
+    email: true,
     is_preferred_email: false,
+    birth_date: false,
+    city_id: true,
+    additional_information: null,
+    other_contacts: null,
+    gender_id: true,
+    relocation_type_id: false,
+    move_able_cities: false,
+    metros: false,
+    business_trip_id: true,
+    address: null,
+    social_networks: false,
+    phones: true,
   },
   superjob: {
+    first_name: true,
+    last_name: false,
+    middle_name: false,
+    email: false,
+    is_preferred_email: null,
+    birth_date: true,
+    city_id: true,
     additional_information: false,
     other_contacts: false,
+    gender_id: true,
+    relocation_type_id: false,
+    move_able_cities: false,
+    metros: false,
+    business_trip_id: false,
     address: false,
+    social_networks: false,
+    phones: false,
   },
 });
 
 const { walkThroughFields } = useProviderFields(state, fields);
-const providers = ref(props.providers ?? []);
-
-watch(
-  () => props.providers,
-  () => {
-    walkThroughFields(props.providers);
-  },
-);
 
 onMounted(() => {
-  if (providers.value.length > 0) {
-    walkThroughFields(props.providers);
-  }
+  walkThroughFields(providers.value);
 });
 
 const canBeRelocated = computed(() => {
@@ -408,13 +481,20 @@ const isMetroEnabled = computed(() => {
 });
 
 const { getCityNameFromArea, getCityNameFromArea2 } = useResumeHooks();
-const { getCountryCities } = profileStore;
 const cityOptions = ref([]);
-
+const selectedProviders = computed(() => {
+  if (providers.value.hh === true && providers.value.superjob === false)
+    return ["hh"];
+  if (providers.value.hh === false && providers.value.superjob === true)
+    return ["superjob"];
+  return ["hh", "superjob"];
+});
 const updateCityInput = async (newValue = "") => {
-  console.log(newValue);
   if (newValue) {
-    const items = await searchCities({ search: newValue });
+    const items = await searchCities({
+      search: newValue,
+      providers: selectedProviders.value,
+    });
     cityOptions.value = items.map((item) => ({
       value: item.id,
       name: getCityNameFromArea2(item),
@@ -430,55 +510,43 @@ const updateMoveableCityInput = async (newValue = "") => {
   }));
 };
 
-// watch(
-//   () => useWatchStateValues(state, true, false, ["providers"]),
-//   (newState, oldState) => {
-//     // console.log(newState, oldState);
-//     if (!isFirst.value) {
-//       isChanged.value = true;
-//     } else {
-//       isFirst.value = false;
-//     }
-//   },
-// );
-
 const sectionData = ref({});
+
+const getFields = (newObject) => {
+  return {
+    first_name: newObject.first_name,
+    last_name: newObject.last_name,
+    middle_name: newObject.middle_name,
+    email: newObject.email,
+    is_preferred_email: newObject.is_preferred_email,
+    birth_date: newObject.birth_date,
+    city_id: newObject.city?.id,
+    additional_information: newObject.additional_information,
+    other_contacts: newObject.other_contacts,
+    gender_id: newObject.gender?.id,
+    relocation_type_id: newObject.relocation_type?.id,
+    move_able_cities: newObject.move_able_cities,
+    metros: newObject.metros,
+    business_trip_id: newObject.business_trip?.id,
+    address: newObject.address,
+    social_networks: newObject.social_networks,
+    phones: newObject.phones.map((item, index) => ({
+      id: index,
+      type_id: item.type?.id,
+      phone: String(item.phone),
+      comment: item.comment,
+      is_preferred: item.is_preferred,
+      start_available_time_phone: item.start_available_time_phone,
+      end_available_time_phone: item.end_available_time_phone,
+    })),
+    is_relocatable: newObject.is_relocatable,
+  };
+};
 watch(
   () => resumeStore.my_resume,
   (newResume) => {
-    if (isUpdated.value) {
-      isUpdated.value = false;
-      return;
-    }
     if (newResume) {
-      sectionData.value = {
-        first_name: newResume.first_name,
-        last_name: newResume.last_name,
-        middle_name: newResume.middle_name,
-        email: newResume.email,
-        is_preferred_email: newResume.is_preferred_email,
-        birth_date: newResume.birth_date,
-        city_id: newResume.city?.id,
-        additional_information: newResume.additional_information,
-        other_contacts: newResume.other_contacts,
-        gender_id: newResume.gender?.id,
-        relocation_type_id: newResume.relocation_type?.id,
-        move_able_cities: newResume.move_able_cities,
-        metros: newResume.metros,
-        business_trip_id: newResume.business_trip?.id,
-        address: newResume.address,
-        social_networks: newResume.social_networks,
-        phones: newResume.phones.map((item, index) => ({
-          id: index,
-          type_id: String(item.type?.id),
-          phone: String(item.phone),
-          comment: item.comment,
-          is_preferred: item.is_preferred,
-          start_available_time_phone: item.start_available_time_phone,
-          end_available_time_phone: item.end_available_time_phone,
-        })),
-        is_relocatable: newResume.is_relocatable,
-      };
+      sectionData.value = getFields(newResume);
 
       const city = newResume.city;
       if (newResume.city.hasOwnProperty("country_id")) {
@@ -488,6 +556,18 @@ watch(
     }
   },
 );
+
+onMounted(() => {
+  const newResume = resumeStore.my_resume;
+  if (newResume) {
+    sectionData.value = getFields(newResume);
+    const city = newResume.city;
+    if (newResume.city.hasOwnProperty("country_id")) {
+      const city = newResume.city;
+      onSearchCitiesByCountryId(city.country_id, city.name);
+    }
+  }
+});
 
 watch(
   () => sectionData.value,
@@ -526,31 +606,29 @@ watch(
 const isFocused = ref(false);
 
 const onSubmit = () => {
-  console.log(1);
   save();
 };
-//
-// const onSubmit = handleSubmit((submittedValues) => {
-//   console.log(submittedValues);
-//   save();
-// });
+
+const isLoading = ref(false);
+const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  state.isLoading = true;
-  state.errorMessage = "";
-  console.log(meta.value);
+  isLoading.value = true;
+  errorMessage.value = "";
+  validate();
   if (!meta.value.dirty) {
     return true;
   }
   if (!meta.value.valid) {
     return false;
   }
+  setErrors({});
   let resData = {};
   const jsonData = { ...values };
 
   jsonData.form_data = "PERSONAL_DATA";
   jsonData.phones = jsonData.phones.map((item) => ({
     ...item,
-    phone: item.phone?.substring(1),
+    phone: item.phone?.replace("+", ""),
   }));
 
   resData = await updateResume(resumeID.value, jsonData);
@@ -560,16 +638,21 @@ const save = async (is_from_parent = false) => {
     if (resData.message) {
       errorMessage.value = resData.message;
     }
-    return handleErrorResponse(resData.data);
+    if (resData.data.hasOwnProperty("errors")) {
+      setErrors(resData.data.errors);
+    }
+    return;
   }
   isChanged.value = false;
   isSaved.value = false;
   isUpdated.value = false;
+  resetForm({ values });
   if (is_from_parent) {
     return new Promise((resolve, reject) => {
       resolve(true);
     });
   }
+  return true;
 };
 
 const isCompleted = computed(() => {

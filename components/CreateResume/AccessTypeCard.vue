@@ -21,18 +21,11 @@
         <div class="input-row">
           <label>Тип вакансии:<b>*</b></label>
           <div class="input-wrapper mt-2">
-            <CustomSelect
+            <VeeCustomSelect
               :options="resumeAccessTypeOptions"
-              v-model="state.resume_access_type_id.val"
+              name="resume_access_type_id"
               :label="'Выберите'"
-              @focusin="() => (errors.resume_access_type_id = '')"
-            ></CustomSelect>
-            <div
-              class="text-danger d-block"
-              v-if="errors.resume_access_type_id"
-            >
-              Вам нужно выбрать тип!
-            </div>
+            ></VeeCustomSelect>
           </div>
         </div>
       </div>
@@ -41,16 +34,18 @@
 </template>
 
 <script setup>
-const props = defineProps(["title", "providers"]);
-
+import { toTypedSchema } from "@vee-validate/zod";
 import { useProfileStore } from "~/store/profile";
-import { useFormData } from "~/composables/useFormData";
 import { useRuntimeConfig } from "#app";
 import useFormValidation from "~/composables/useFormValidation";
-import { useWatchStateValues } from "~/composables/useWatchStateValues";
 import { useDiff } from "~/composables/useDiff";
 import { useDictionaryStore } from "~/store/dictionary";
 import { useResumeStore } from "~/store/resume";
+import { z } from "~/hooks/ru-zod.js";
+import useProviders from "~/composables/useProviders.js";
+
+const props = defineProps(["title", "providers"]);
+
 const resumeStore = useResumeStore();
 const profileStore = useProfileStore();
 const CONFIG = useRuntimeConfig();
@@ -68,14 +63,38 @@ const isFirst = ref(true);
 const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
-const providers = computed(() => props.providers);
-const isHidden = ref(props.providers.hh ?? false);
+const { providers } = useProviders();
+const isHidden = ref(providers.value.hh ?? false);
 watch(
-  () => props.providers,
+  () => providers.value,
   (newProviders) => {
     isHidden.value = newProviders.hh;
-  }
+  },
 );
+const schema = computed(() => {
+  if (providers.value.hh === true && providers.value.superjob === false) {
+    return z.object({
+      resume_access_type_id: z.number(),
+    });
+  }
+  if (providers.value.hh === false && providers.value.superjob === true) {
+    return z.object({
+      resume_access_type_id: z.number().optional(),
+    });
+  }
+  return z.object({
+    resume_access_type_id: z.number(),
+  });
+});
+
+const initialValues = ref({
+  resume_access_type_id: null,
+});
+const { errors, values, setErrors, meta, setValues, resetForm, validate } =
+  useForm({
+    initialValues: initialValues,
+    validationSchema: toTypedSchema(schema.value),
+  });
 
 const state = reactive({
   resume_access_type_id: {
@@ -89,41 +108,33 @@ const state = reactive({
   success: null,
 });
 
-watch(
-  () => useWatchStateValues(state, true, true),
-  (newState, oldState) => {
-    if (!isFirst.value) {
-      isChanged.value = true;
-    } else {
-      isFirst.value = false;
-    }
-  }
-);
-
 const sectionData = ref({});
 watch(
   () => sectionData.value,
   (newData, oldData) => {
     const diffData = useDiff(newData, oldData);
     if (Object.keys(diffData).length) {
-      state.resume_access_type_id.val = newData.resume_access_type_id;
+      resetForm({ values: newData });
     }
-  }
+  },
 );
 watch(
   () => resumeStore.my_resume,
   (newData) => {
-    if (isUpdated.value) {
-      isUpdated.value = false;
-      return;
-    }
     if (newData) {
       sectionData.value = {
         resume_access_type_id: newData.resume_access_type?.id,
       };
     }
-  }
+  },
 );
+onMounted((newData) => {
+  if (resumeStore.my_resume) {
+    sectionData.value = {
+      resume_access_type_id: resumeStore.my_resume.resume_access_type?.id,
+    };
+  }
+});
 
 const dictionaryStore = useDictionaryStore();
 const { getResumeAccessTypes } = dictionaryStore;
@@ -139,42 +150,55 @@ const resumeAccessTypeOptions = computed(() => {
   }));
 });
 
-const { errors, handleErrorResponse } = useFormValidation();
+const { errors: serverErrors, handleErrorResponse } = useFormValidation();
+watch(
+  () => serverErrors.value,
+  (newErrors) => {
+    if (Object.keys(newErrors).length > 0) {
+      const backendErrors = {};
+      Object.keys(newErrors).map(
+        (item) => (backendErrors[item] = newErrors[item]),
+      );
+      setErrors(backendErrors);
+    }
+  },
+);
 const isFocused = ref(false);
+const isLoading = ref(false);
+const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  if (is_from_parent === true) {
-    isFocused.value = true;
-  }
-  if (!isFocused.value) {
+  validate();
+  if (!meta.value.dirty) {
     return true;
   }
+  if (!meta.value.valid) {
+    errorMessage.value = "Заполните все поля";
+    return false;
+  }
+  state.isLoading = true;
+  errors.value = {};
+  state.errorMessage = "";
+  let resData = {};
+  resData = await updateResume(resumeID.value, {
+    form_data: "ACCESS_DATA",
+    ...values,
+  });
+  isUpdated.value = true;
+  if (resData.status !== "success") {
+    return handleErrorResponse(resData.data);
+  }
 
-  if (isChanged.value) {
-    state.isLoading = true;
-    // validate();
-    errors.value = {};
-    state.errorMessage = "";
-    let resData = {};
-    const jsonData = useFormData(state);
-    jsonData.form_data = "ACCESS_DATA";
-    resData = await updateResume(resumeID.value, jsonData);
-    isUpdated.value = true;
-    if (resData.status !== "success") {
-      return handleErrorResponse(resData.data);
-    }
+  isChanged.value = false;
+  isSaved.value = false;
+  isUpdated.value = false;
+  isFocused.value = false;
 
-    isChanged.value = false;
-    isSaved.value = false;
-    isUpdated.value = false;
-    isFocused.value = false;
+  resetForm({ values });
 
-    if (is_from_parent) {
-      return new Promise((resolve, reject) => {
-        resolve(true);
-      });
-    }
-  } else {
-    return true;
+  if (is_from_parent) {
+    return new Promise((resolve, reject) => {
+      resolve(true);
+    });
   }
 };
 

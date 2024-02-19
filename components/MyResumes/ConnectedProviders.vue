@@ -56,10 +56,7 @@
                   />
                 </svg>
               </span>
-              <img
-                :src="'https://tech.hh.ru/api/logos/min-hh-red.png'"
-                class="w-100"
-              />
+              <img src="~/assets/img/logos/min-hh-red.png" class="w-100" />
             </a>
             <a
               class="provider-item"
@@ -221,7 +218,7 @@ watch(
   (newProviders) => {
     providers.value.hh.is_connected = newProviders.hh;
     providers.value.superjob.is_connected = newProviders.superjob;
-  }
+  },
 );
 
 const isAnyProviderConnected = computed(() => {
@@ -291,10 +288,12 @@ const iframe = ref();
 .provider-item .remove-text {
   display: none;
 }
+
 .provider-item .remove {
   display: none;
   transition: 0.3s;
 }
+
 .provider-item.navigated:hover .remove-text {
   position: absolute;
   display: inline-flex;
@@ -308,10 +307,12 @@ const iframe = ref();
   color: #fff;
   font-weight: bold;
 }
+
 .provider-item.navigated:hover .connected {
   display: none;
   transition: 0.3s;
 }
+
 .provider-item.navigated:hover .remove {
   display: inline-block;
   transition: 0.3s;
@@ -321,6 +322,7 @@ const iframe = ref();
   justify-content: flex-end;
   align-items: baseline;
 }
+
 @keyframes rotation {
   from {
     transform: rotate(0deg);
@@ -329,6 +331,7 @@ const iframe = ref();
     transform: rotate(359deg);
   }
 }
+
 .rotating {
   animation: rotation 2s infinite linear;
 }

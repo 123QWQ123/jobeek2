@@ -1,7 +1,5 @@
-import { useRuntimeConfig } from "nuxt/app";
-
 // no need to import defineStore and acceptHMRUpdate
-import { defineStore, acceptHMRUpdate } from "pinia";
+import { acceptHMRUpdate, defineStore } from "pinia";
 import useApi from "~/hooks/useApi";
 
 export const useVacancyStore = defineStore("vacancy", {
@@ -59,6 +57,9 @@ export const useVacancyStore = defineStore("vacancy", {
     top_30: (state) => {
       return state.vacancies.slice(0, 30);
     },
+    top_20_industries: (state) => {
+      return state.industries.slice(0, 20);
+    },
     my_city_vacancies: (state) => {
       return state.vacancies_in_my_city.slice(0, 3);
     },
@@ -101,7 +102,7 @@ export const useVacancyStore = defineStore("vacancy", {
 
     async getEmployerProvidersAuthEndpoints(
       payload,
-      redirect_to = "/profile/service-verify"
+      redirect_to = "/profile/service-verify",
     ) {
       const { data } = await useApi(
         "services/auth/redirect-url?profile=employer&redirect_to=" +
@@ -109,7 +110,7 @@ export const useVacancyStore = defineStore("vacancy", {
         {
           method: "get",
           payload,
-        }
+        },
       );
       if ("data" in data) {
         return data.data;
@@ -351,7 +352,12 @@ export const useVacancyStore = defineStore("vacancy", {
         payload,
       });
       if (response && "data" in response) {
-        this.industries = response.data.data ?? [];
+        let industries = response.data.data ?? [];
+        let new_items = [];
+        industries.map(
+          (item) => (new_items = new_items.concat(item.industries)),
+        );
+        this.industries = new_items;
         return this.industries;
       }
       return response;
@@ -389,7 +395,7 @@ export const useVacancyStore = defineStore("vacancy", {
         "employer/vacancy/" + id + "?" + payload.toString(),
         {
           method: "delete",
-        }
+        },
       );
       console.log(response);
       return response;

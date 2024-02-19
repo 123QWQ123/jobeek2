@@ -1,9 +1,5 @@
-import { useRuntimeConfig } from "nuxt/app";
-
 // no need to import defineStore and acceptHMRUpdate
-import { defineStore, acceptHMRUpdate } from "pinia";
-import axios from "axios";
-import { useAuthStore } from "~/store/auth";
+import { acceptHMRUpdate, defineStore } from "pinia";
 import useApi from "~/hooks/useApi";
 import vueNumberFormat from "~/plugins/vueNumberFormat";
 
@@ -11,6 +7,8 @@ export const useDictionaryStore = defineStore("dictionary", {
   state: () => {
     return {
       work_types: [],
+      hh_work_types: [],
+      superjob_work_types: [],
       schedules: [],
       experiences: [],
       part_times: [],
@@ -62,9 +60,45 @@ export const useDictionaryStore = defineStore("dictionary", {
         payload,
       });
       if (data && "data" in data) {
-        this.work_types = data.data?.work_type ?? [];
+        this.work_types =
+          data.data?.work_type.map((item) => ({
+            value: item.id,
+            name: item.name,
+          })) ?? [];
       }
       return data;
+    },
+    async getHHWorkTypes(payload) {
+      if (this.hh_work_types.length > 0) {
+        return this.hh_work_types;
+      }
+      const { data } = await useApi(
+        "dictionaries?groups[]=work_type&providers[]=hh",
+        {
+          method: "get",
+          payload,
+        },
+      );
+      if (data && "data" in data) {
+        this.hh_work_types = data.data?.work_type ?? [];
+      }
+      return [];
+    },
+    async getSuperjobWorkTypes(payload) {
+      if (this.superjob_work_types.length > 0) {
+        return this.superjob_work_types;
+      }
+      const { data } = await useApi(
+        "dictionaries?groups[]=work_type&providers[]=superjob",
+        {
+          method: "get",
+          payload,
+        },
+      );
+      if (data && "data" in data) {
+        this.superjob_work_types = data.data?.work_type ?? [];
+      }
+      return [];
     },
     async getVacancyBillingTypes(payload) {
       if (this.vacancy_billing_types.length > 0) {
@@ -75,7 +109,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         {
           method: "get",
           payload,
-        }
+        },
       );
       if (data && "data" in data) {
         this.vacancy_billing_types = data.data?.vacancy_billing_type ?? [];
@@ -91,7 +125,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         {
           method: "get",
           payload,
-        }
+        },
       );
       if (data && "data" in data) {
         this.resume_access_types = data.data?.resume_access_type_merge ?? [];
@@ -120,7 +154,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         {
           method: "get",
           payload,
-        }
+        },
       );
       console.log(response);
       if (response && "data" in response) {
@@ -227,7 +261,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         {
           method: "get",
           payload,
-        }
+        },
       );
       if (data && "data" in data) {
         this.resume_marital_statuses = data.data?.marital_status_resume ?? [];
@@ -308,7 +342,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         {
           method: "get",
           payload,
-        }
+        },
       );
       if (data && "data" in data) {
         this.driver_licenses = data.data?.driver_license_types ?? [];
@@ -390,7 +424,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         {
           method: "get",
           payload,
-        }
+        },
       );
       if (data && "data" in data) {
         this.working_time_intervals = data.data?.working_time_intervals ?? [];
@@ -406,7 +440,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         {
           method: "get",
           payload,
-        }
+        },
       );
       if (data && "data" in data) {
         this.working_time_modes = data.data?.working_time_modes ?? [];
@@ -436,7 +470,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         {
           method: "get",
           payload,
-        }
+        },
       );
       if (data && "data" in data) {
         this.covid_vaccination_requirement =
@@ -469,7 +503,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         {
           method: "get",
           payload,
-        }
+        },
       );
       if (data && "data" in data) {
         this.resume_educations = data.data?.education_type_resume ?? [];
@@ -485,7 +519,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         {
           method: "get",
           payload,
-        }
+        },
       );
       if (data && "data" in data) {
         this.resume_education_forms = data.data?.education_form_resume ?? [];
@@ -501,7 +535,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         {
           method: "get",
           payload,
-        }
+        },
       );
       if (data && "data" in data) {
         this.subscription_keywords_srws =
@@ -518,7 +552,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         {
           method: "get",
           payload,
-        }
+        },
       );
       if (data && "data" in data) {
         this.subscription_keywords_skwc =
@@ -561,7 +595,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         {
           method: "get",
           payload,
-        }
+        },
       );
       if (data && "data" in data) {
         this.preferred_contact_types = data.data?.preferred_contact_type ?? [];

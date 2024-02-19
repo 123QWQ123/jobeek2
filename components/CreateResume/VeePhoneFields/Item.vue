@@ -15,7 +15,6 @@
       </svg>
     </span>
 
-    {{ values }}
     <div class="input-wrapper">
       <VeeCustomSelect
         :options="preferredContactTypeOptions"

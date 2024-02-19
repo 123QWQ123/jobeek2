@@ -1,9 +1,5 @@
-import { useRuntimeConfig } from "nuxt/app";
-
 // no need to import defineStore and acceptHMRUpdate
-import { defineStore, acceptHMRUpdate } from "pinia";
-import axios from "axios";
-import { useAuthStore } from "~/store/auth";
+import {acceptHMRUpdate, defineStore} from "pinia";
 import useApi from "~/hooks/useApi";
 
 export const useResumeStore = defineStore("resume", {
@@ -81,14 +77,14 @@ export const useResumeStore = defineStore("resume", {
 
     async getSeekerProvidersAuthEndpoints(
       payload,
-      redirect_to = "/profile/service-verify"
+      redirect_to = "/profile/service-verify",
     ) {
       const { data } = await useApi(
         "services/auth/redirect-url?profile=seeker&redirect_to=" + redirect_to,
         {
           method: "get",
           payload,
-        }
+        },
       );
       if ("data" in data) {
         return data.data;
@@ -182,6 +178,7 @@ export const useResumeStore = defineStore("resume", {
       return response;
     },
     async publishResume(id, payload, content_type = "application/json") {
+      console.log(payload);
       const response = await useApi("seeker/resumes/publish/" + id, {
         method: "PUT",
         content_type,

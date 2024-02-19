@@ -1,7 +1,7 @@
 import { useRuntimeConfig } from "nuxt/app";
 
 // no need to import defineStore and acceptHMRUpdate
-import { defineStore, acceptHMRUpdate } from "pinia";
+import { acceptHMRUpdate, defineStore } from "pinia";
 import axios from "axios";
 import { useAuthStore } from "~/store/auth";
 import useApi from "~/hooks/useApi";
@@ -17,6 +17,8 @@ export const useProfileStore = defineStore("profile", {
       regions: [],
       cities: [],
       professional_roles: [],
+      hh_professional_roles: [],
+      superjob_professional_roles: [],
       artifacts: [],
       my_resume_photo_artifact: [],
     };
@@ -31,6 +33,40 @@ export const useProfileStore = defineStore("profile", {
       return state.cities.map((item) => {
         return { name: item.name, value: item.id };
       });
+    },
+    professional_roles_with_parent: (state) => {
+      return state.professional_roles
+        .filter((item) => item.parent_id !== 0)
+        .map((item) => ({
+          name: item.name,
+          value: item.id,
+        }));
+    },
+    hh_professional_roles_with_parent: (state) => {
+      return state.hh_professional_roles
+        .filter((item) => item.parent_id !== 0)
+        .map((item) => ({
+          name: item.name,
+          value: item.id,
+        }));
+    },
+    superjob_professional_roles_with_parent: (state) => {
+      return state.superjob_professional_roles
+        .filter((item) => item.parent_id !== 0)
+        .map((item) => ({
+          name: item.name,
+          value: item.id,
+        }));
+    },
+    hh_professional_roles_with_parent_ids: (state) => {
+      return state.hh_professional_roles
+        .filter((item) => item.parent_id !== 0)
+        .map((item) => item.id);
+    },
+    superjob_professional_roles_with_parent_ids: (state) => {
+      return state.superjob_professional_roles
+        .filter((item) => item.parent_id !== 0)
+        .map((item) => item.id);
     },
   },
   actions: {
@@ -111,11 +147,12 @@ export const useProfileStore = defineStore("profile", {
       if (this.professional_roles.length > 0) {
         if (payload.search) {
           return this.professional_roles.filter((item) =>
-            item.name.toLowerCase().includes(payload.search)
+            item.name.toLowerCase().includes(payload.search),
           );
         }
         return this.professional_roles;
       }
+      console.log(payload);
 
       const response = await useApi("professional_roles", {
         method: "get",
@@ -126,6 +163,44 @@ export const useProfileStore = defineStore("profile", {
       }
 
       this.professional_roles = response.data.data ?? [];
+      return response.data.data ?? [];
+    },
+    async searchHHProfessionalRoles(payload = {}) {
+      if (this.professional_roles.length > 0) {
+        if (payload.search) {
+          return this.professional_roles.filter((item) =>
+            item.name.toLowerCase().includes(payload.search),
+          );
+        }
+        return this.hh_professional_roles;
+      }
+      const response = await useApi("professional_roles", {
+        method: "get",
+        payload: { providers: ["hh"] },
+      });
+      if (response.status === "failed") {
+        return [];
+      }
+      this.hh_professional_roles = response.data.data ?? [];
+      return response.data.data ?? [];
+    },
+    async searchSuperjobProfessionalRoles(payload = {}) {
+      if (this.superjob_professional_roles.length > 0) {
+        if (payload.search) {
+          return this.superjob_professional_roles.filter((item) =>
+            item.name.toLowerCase().includes(payload.search),
+          );
+        }
+        return this.superjob_professional_roles;
+      }
+      const response = await useApi("professional_roles", {
+        method: "get",
+        payload: { providers: ["superjob"] },
+      });
+      if (response.status === "failed") {
+        return [];
+      }
+      this.superjob_professional_roles = response.data.data ?? [];
       return response.data.data ?? [];
     },
     async getCountryCities(payload = {}) {
