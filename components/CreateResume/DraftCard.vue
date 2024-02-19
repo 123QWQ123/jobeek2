@@ -15,7 +15,7 @@
         </div>
       </div>
       <form @submit.prevent="onSubmit" :validation-schema="schema">
-        <CreateResumeProvidersInput v-model="providers" :errors="errors" />
+        <CreateResumeProvidersInput name="providers" />
         <div class="input-row">
           <label for="name">Название вакансии<b>*</b></label>
           <div class="input-wrapper">
@@ -43,10 +43,11 @@
         </div>
 
         <div class="input-row">
-          <label for="resume_email">Электронная почта</label>
+          <label for="resume_email">Электронная почта<b>*</b></label>
           <div class="input-wrapper">
             <ResumeTextInput name="email" placeholder="Электронная почта" />
             <ResumeCheckboxInput
+              class="mt-2"
               v-if="!state.is_preferred_email.is_hidden"
               name="is_preferred_email"
               label="Email является ли предпочтительным способом связи"
@@ -97,7 +98,7 @@
         </div>
 
         <div class="input-row">
-          <label>Готовность к релокацию:<b>*</b></label>
+          <label>Готовность к релокацию:</label>
           <div class="input-wrapper mt-2">
             <LazyVeeCustomSelect
               :options="relocationTypeOptions"
@@ -209,30 +210,8 @@ const {
   initialTouched: true,
   validationSchema: schema,
 });
-//
-const [title, titleProps] = defineField("title");
-const [first_name, first_nameProps] = defineField("first_name");
-const [last_name, last_nameProps] = defineField("last_name");
-const [middle_name, middle_nameProps] = defineField("middle_name");
-const [birth_date, birthdateProps] = defineField("birth_date");
-const [email, emailProps] = defineField("email");
-const [is_preferred_email, is_preferred_emailProps] =
-  defineField("is_preferred_email");
-const [city_id, city_idProps] = defineField("city_id");
-const [gender_id, gender_idProps] = defineField("gender_id");
-const [business_trip_id, business_trip_idProps] =
-  defineField("business_trip_id");
-const [relocation_type_id, relocation_type_idProps] =
-  defineField("relocation_type_id");
-const [move_able_cities, move_able_citiesProps] =
-  defineField("move_able_cities");
-const [work_types, work_typesProps] = defineField("work_types");
-const [providers, providersProps] = defineField("providers");
-const [salary, salaryProps] = defineField("salary");
 
 const { createResume } = resumeStore;
-
-// const providers = ref([]);
 
 const state = reactive({
   title: {
@@ -300,11 +279,7 @@ const { searchCities, searchProfessionalRoles } = profileStore;
 const dictionaryStore = useDictionaryStore();
 const cityOptions = ref([]);
 const moveableCityOptions = ref([]);
-const professionalRoleOptions = ref([]);
 
-const cityOptionIds = computed(() => {
-  return cityOptions.value.map((item) => item.value);
-});
 const genderOptions = computed(() => {
   return dictionaryStore.resume_genders.map((item) => ({
     name: item.name,
@@ -375,6 +350,7 @@ watch(
 const isLoading = ref(false);
 
 const errorMessageElement = ref();
+const errorMessage = ref(null);
 
 const onSubmit = handleSubmit((submittedValues) => {
   save();
@@ -382,34 +358,34 @@ const onSubmit = handleSubmit((submittedValues) => {
 const save = async (is_from_parent = false) => {
   if (!meta.value.valid) {
     setTouched(true);
-    errors.value.message = "Вам необходимо заполнить";
+    errorMessage.value = "Вам необходимо заполнить";
     errorMessageElement.value.scrollIntoView({ behavior: "smooth" });
     return;
   }
-  state.isLoading = true;
-  errors.value = {};
-  state.errorMessage = "";
-  let resData = {};
+  setErrors({});
+  errorMessage.value = "";
   isLoading.value = true;
 
-  resData = await createResume(values);
-  if (resData.status === "success") {
-    isLoading.value = false;
-    const resume_id = resData.data.data.id;
-    state.isNew = false;
-    setTimeout(() => {
-      console.log("redirecting...");
-      navigateTo({ name: "my-resume-id", params: { id: resume_id } });
-    }, 100);
+  let resData = await createResume(values);
+  if (resData.status !== "success") {
+    errorMessage.value = resData.message;
+    return;
   }
   isLoading.value = false;
-  if (resData.status !== "success") {
-    return handleErrorResponse(resData.data);
-  }
   if (is_from_parent) {
     return new Promise((resolve, reject) => {
       resolve(true);
     });
+  }
+  const resume_id = resData.data.data.id;
+  setTimeout(() => {
+    console.log("redirecting...");
+    navigateTo({ name: "my-resume-id", params: { id: resume_id } });
+  }, 100);
+  isLoading.value = false;
+  if (resData.data.hasOwnProperty("errors")) {
+    setErrors(resData.data.errors);
+    return;
   }
   isChanged.value = false;
   isSaved.value = false;

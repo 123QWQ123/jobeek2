@@ -93,19 +93,3 @@ const isLoading = ref(false);
     </div>
   </main>
 </template>
-
-<style scoped>
-.button-accent.disabled {
-  filter: grayscale(180%);
-}
-
-@media (max-width: 768px) {
-  .form-submit-container {
-    flex-direction: column-reverse;
-  }
-
-  .button-accent {
-    margin-bottom: 1rem;
-  }
-}
-</style>

@@ -9,12 +9,8 @@
       ></span>
     </div>
 
-    <div
-      class="text-danger d-block p-4"
-      v-if="errors.message"
-      v-click-outside="() => (errors.message = '')"
-    >
-      {{ errors.message }}
+    <div class="text-danger d-block p-4">
+      {{ errorMessage }}
     </div>
     <transition>
       <div
@@ -27,29 +23,20 @@
             <div class="input-row">
               <label for="position">Уровен образование 1<b>*</b></label>
               <div class="input-wrapper">
-                <CustomSelect
+                <VeeCustomSelect
                   :options="educationLevelOptions"
                   :label="'Выберите'"
-                  v-model="state.education_level_id.val"
-                  @focusin="() => (errors.education_level_id = '')"
+                  name="education_level_id"
                 />
-
-                <div
-                  class="text-danger d-block"
-                  v-if="errors.education_level_id"
-                >
-                  {{ errors.education_level_id }}
-                </div>
               </div>
             </div>
 
             <div class="mt-3">
-              <CreateResumeEducationHistory
+              <LazyCreateResumeVeeEducationForm
                 ref="educationElement"
-                v-model="state.educations.val"
+                name="educations"
                 :parent_type_id="state.education_level_id.val"
                 :providers="props.providers"
-                :errors="errors.primary"
               />
             </div>
           </div>
@@ -89,6 +76,13 @@
 
 <script setup>
 import useProviderFields from "~/composables/useProviderFields";
+import useFormValidation from "~/composables/useFormValidation";
+import { useResumeStore } from "~/store/resume";
+import { useDiff } from "~/composables/useDiff";
+import { useDictionaryStore } from "~/store/dictionary";
+import { toTypedSchema } from "@vee-validate/zod";
+import { z } from "~/hooks/ru-zod.js";
+import { useForm } from "vee-validate";
 
 const props = defineProps({
   providers: {
@@ -100,18 +94,48 @@ const props = defineProps({
   },
 });
 
-import useFormValidation from "~/composables/useFormValidation";
-import { useResumeStore } from "~/store/resume";
-import { useDiff } from "~/composables/useDiff";
-import { useDictionaryStore } from "~/store/dictionary";
 const educationElement = ref(false);
 const route = useRoute();
 const resumeStore = useResumeStore();
 const resumeID = computed(() => route.params.id);
 const dictionaryStore = useDictionaryStore();
 
-// const educations = ref(resumeStore.resume?.educations.primary ?? []);
-// const education_level_id = ref(resumeStore.resume?.education_level?.id ?? null);
+const educationScheme = z.object({
+  type_id: z.number(),
+  profession: z.string(),
+  institute: z.string(),
+  faculty: z.string(),
+  form_id: z.number(),
+  end_year: z.number(),
+});
+const schema = computed(() => {
+  const s = toTypedSchema(
+    z.object({
+      education_level_id: z.number().nullable(),
+      educations: z.array(educationScheme).optional(),
+    }),
+  );
+  return s;
+});
+
+const initialValues = ref({
+  education_level_id: null,
+  educations: [],
+});
+const {
+  values,
+  errors,
+  meta,
+  resetForm,
+  setValues,
+  setErrors,
+  handleSubmit,
+  validate,
+} = useForm({
+  initialValues: initialValues,
+  initialTouched: true,
+  validationSchema: schema,
+});
 
 const fields = ref({
   hh: {},
@@ -120,14 +144,13 @@ const fields = ref({
     type_id: true,
   },
 });
+
 const state = reactive({
   education_level_id: {
-    val: resumeStore.resume?.education_level?.id,
-    isValid: null,
+    is_hidden: false,
   },
   educations: {
-    val: resumeStore.resume?.educations.primary ?? [],
-    isValid: null,
+    is_hidden: false,
   },
 });
 
@@ -137,9 +160,9 @@ watch(
   () => props.providers,
   () => {
     walkThroughFields(props.providers);
-  }
+  },
 );
-const isShown = ref(false);
+const isShown = ref(true);
 const isChanged = ref(false);
 const isSaved = ref(false);
 const isCollapsed = ref(false);
@@ -152,26 +175,24 @@ const educationLevelOptions = computed(() => {
   }));
 });
 
+const { getResumeEducations } = dictionaryStore;
+onMounted(() => {
+  getResumeEducations();
+});
 const sectionData = ref({
   educations: [],
 });
 watch(
   () => sectionData.value,
   (newData, oldData) => {
-    const diffData = useDiff(newData, oldData, ["id"]);
+    const diffData = useDiff(newData, oldData);
     if (Object.keys(diffData).length) {
-      state.educations.val = newData.educations;
-      state.education_level_id.value = newData.education_level_id;
-      if (newData.education_level_id) {
+      if (newData.educations?.length > 0) {
         isShown.value = true;
       }
-
-      if (isUpdated.value) {
-        isUpdated.value = false;
-        return;
-      }
+      resetForm({ values: newData });
     }
-  }
+  },
 );
 
 watch(
@@ -180,20 +201,17 @@ watch(
     if (newResume) {
       sectionData.value = {
         educations: newResume?.educations?.primary.map((item) => ({
-          id: item.id,
           faculty: item.faculty,
           institute: item.institute,
           profession: item.profession,
           end_year: item.end_year,
           type_id: item.type.id,
+          form_id: item.form.id,
         })),
         education_level_id: newResume?.educations.education_level?.id,
       };
-      nextTick(() => {
-        isChanged.value = false;
-      });
     }
-  }
+  },
 );
 
 watch(
@@ -201,18 +219,22 @@ watch(
   (newData) => {
     isChanged.value = true;
     errors.message = "";
-  }
+  },
 );
 
 onMounted(() => {
   if (resumeStore.my_resume) {
     sectionData.value = {
-      educations: resumeStore.resume?.educations?.primary,
-      education_level_id: resumeStore.resume?.educations.education_level?.id,
+      educations: resumeStore.my_resume?.educations?.primary.map((item) => ({
+        faculty: item.faculty,
+        institute: item.institute,
+        profession: item.profession,
+        end_year: item.end_year,
+        type_id: item.type.id,
+        form_id: item.form.id,
+      })),
+      education_level_id: newResume?.educations.education_level?.id,
     };
-    nextTick(() => {
-      isChanged.value = false;
-    });
   }
 });
 
@@ -222,38 +244,52 @@ watch(
     if (!newData) {
       isShown.value = true;
     }
-  }
+  },
 );
 
 const { getResume, updateResume } = resumeStore;
 
-const { errors, handleErrorResponse } = useFormValidation();
+const { errors: serverErrors, handleErrorResponse } = useFormValidation();
+watch(
+  () => serverErrors.value,
+  (newErrors) => {
+    if (Object.keys(newErrors).length > 0) {
+      const backendErrors = {};
+      Object.keys(newErrors).map(
+        (item) => (backendErrors[item] = newErrors[item]),
+      );
+      setErrors(backendErrors);
+    }
+  },
+);
 const isFocused = ref(false);
+const isLoading = ref(false);
+const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  if (is_from_parent === true) {
-    isFocused.value = true;
-  }
-  if (!isFocused.value) {
+  validate();
+  if (!meta.value.dirty) {
     return true;
   }
-  if (isChanged.value) {
-    const resData = await updateResume(resumeID.value, {
-      form_data: "EDUCATION_DATA",
-      educations: {
-        primary: state.educations.val,
-        education_level_id: state.education_level_id.val,
-      },
-    });
-
-    if (resData.status !== "success") {
-      return handleErrorResponse(resData.data);
-    }
-    isChanged.value = false;
-    isSaved.value = false;
-    isUpdated.value = true;
-
-    await getResume(resumeID.value);
+  if (!meta.value.valid) {
+    return false;
   }
+  const resData = await updateResume(resumeID.value, {
+    form_data: "EDUCATION_DATA",
+    educations: {
+      primary: values.educations,
+      education_level_id: values.education_level_id,
+    },
+  });
+
+  if (resData.status !== "success") {
+    errorMessage.value = resData.message;
+    return handleErrorResponse(resData.data, true);
+  }
+  isChanged.value = false;
+  isSaved.value = false;
+  isUpdated.value = true;
+
+  resetForm({ values });
 };
 
 const isCompleted = computed(() => {

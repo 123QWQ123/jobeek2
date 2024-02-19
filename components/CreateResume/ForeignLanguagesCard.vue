@@ -9,8 +9,8 @@
       ></span>
     </div>
 
-    <div class="text-danger d-block p-4" v-if="errors.message">
-      {{ errors.message }}
+    <div class="text-danger d-block">
+      {{ errorMessage }}
     </div>
     <transition>
       <div
@@ -18,11 +18,9 @@
         :class="{ collapse: isCollapsed }"
         @click="isFocused = true"
       >
-        <CreateResumeForeignLanguagesWrapper
-          ref="componentElement"
+        <CreateResumeForeignLanguagesVeeForm
           v-if="my_resume"
-          v-model="state.languages.val"
-          :errors="errors.languages ?? []"
+          name="languages"
         />
       </div>
     </transition>
@@ -30,6 +28,16 @@
 </template>
 
 <script setup>
+import { useProfileStore } from "~/store/profile";
+import { useRuntimeConfig } from "#app";
+import useFormValidation from "~/composables/useFormValidation";
+import { useDiff } from "~/composables/useDiff";
+
+import { useResumeStore } from "~/store/resume";
+
+import { toTypedSchema } from "@vee-validate/zod";
+import { z } from "~/hooks/ru-zod.js";
+
 const props = defineProps({
   title: {
     default: "-",
@@ -44,16 +52,6 @@ const props = defineProps({
   },
 });
 
-import { useProfileStore } from "~/store/profile";
-import { useFormData } from "~/composables/useFormData";
-import { useRuntimeConfig } from "#app";
-import useFormValidation from "~/composables/useFormValidation";
-import { useWatchStateValues } from "~/composables/useWatchStateValues";
-import { useDiff } from "~/composables/useDiff";
-import { useDictionaryStore } from "~/store/dictionary";
-import useProviderFields from "~/composables/useProviderFields";
-
-import { useResumeStore } from "~/store/resume";
 const profileStore = useProfileStore();
 const CONFIG = useRuntimeConfig();
 const route = useRoute();
@@ -67,44 +65,43 @@ const my_resume = computed(() => resumeStore.my_resume);
 const isSaved = ref(false);
 const isChanged = ref(false);
 const isFirst = ref(true);
-const isCollapsed = ref(true);
+const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
-const state = reactive({
-  languages: {
-    val: [],
-    isValid: true,
-    is_hidden: false,
-  },
+const schema = computed(() => {
+  return toTypedSchema(
+    z.object({
+      languages: z.array(
+        z.object({
+          language_id: z.number(),
+          level_id: z.number(),
+        }),
+      ),
+    }),
+  );
+});
+
+const initialValues = ref({
+  languages: [],
+});
+const {
+  errors,
+  values,
+  setErrors,
+  meta,
+  validate,
+  setValues,
+  resetForm,
+  resetField,
+} = useForm({
+  initialValues: initialValues,
+  validationSchema: schema.value,
 });
 
 const fields = ref({
   hh: {},
   superjob: {},
 });
-
-const { walkThroughFields } = useProviderFields(state, fields);
-watch(() => props.providers, walkThroughFields);
-
-onMounted(() => {
-  walkThroughFields(props.providers);
-});
-
-const set = (key, val) => {
-  state[key].val = val;
-};
-
-watch(
-  () => useWatchStateValues(state, true, true),
-  (newState, oldState) => {
-    const diffData = useDiff(newState, oldState);
-    if (!isFirst.value) {
-      isChanged.value = true;
-    } else {
-      isFirst.value = false;
-    }
-  }
-);
 
 const sectionData = ref({});
 watch(
@@ -122,7 +119,7 @@ watch(
         })),
       };
     }
-  }
+  },
 );
 
 watch(
@@ -130,48 +127,61 @@ watch(
   (newData, oldData) => {
     const diffData = useDiff(newData, oldData);
     if (Object.keys(diffData).length) {
-      state.languages.val = newData.languages;
+      console.log(diffData);
+      resetForm({ values: newData });
     }
-  }
+  },
 );
 
-const { errors, handleErrorResponse } = useFormValidation();
-
+const { errors: serverErrors, handleErrorResponse } = useFormValidation();
+watch(
+  () => serverErrors.value,
+  (newErrors) => {
+    if (Object.keys(newErrors).length > 0) {
+      const backendErrors = {};
+      Object.keys(newErrors).map(
+        (item) => (backendErrors[item] = newErrors[item]),
+      );
+      setErrors(backendErrors);
+    }
+  },
+);
 const isFocused = ref(false);
+const errorMessage = ref(null);
+const isLoading = ref(false);
 const save = async (is_from_parent = false) => {
-  if (is_from_parent === true) {
-    isFocused.value = true;
-  }
-  if (!isFocused.value) {
+  validate();
+
+  if (!meta.value.dirty) {
     return true;
   }
-  if (isChanged.value) {
-    state.isLoading = true;
-    // validate();
-    errors.value = {};
-    state.errorMessage = "";
-    let resData = {};
-    const jsonData = { ...useFormData(state) };
-
-    jsonData.form_data = "LANGUAGES_DATA";
-
-    resData = await updateResume(resumeID.value, jsonData);
-
-    isUpdated.value = true;
-    if (resData.status !== "success") {
-      return handleErrorResponse(resData.data);
-    }
-    isChanged.value = false;
-    isSaved.value = false;
-    isUpdated.value = false;
-    if (is_from_parent) {
-      return new Promise((resolve, reject) => {
-        resolve(true);
-      });
-    }
-  } else {
-    return true;
+  if (!meta.value.valid) {
+    return false;
   }
+  isLoading.value = true;
+  errors.value = {};
+  errorMessage.value = "";
+  let resData = {};
+  const jsonData = { ...values };
+
+  jsonData.form_data = "LANGUAGES_DATA";
+
+  resData = await updateResume(resumeID.value, jsonData);
+
+  isUpdated.value = true;
+  if (resData.status !== "success") {
+    return handleErrorResponse(resData.data);
+  }
+  isChanged.value = false;
+  isSaved.value = false;
+  isUpdated.value = false;
+  resetForm({ values });
+  if (is_from_parent) {
+    return new Promise((resolve, reject) => {
+      resolve(true);
+    });
+  }
+  return true;
 };
 
 const isCompleted = computed(() => {

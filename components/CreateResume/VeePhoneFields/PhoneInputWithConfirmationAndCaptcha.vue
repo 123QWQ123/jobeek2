@@ -45,7 +45,6 @@
           @change-country-code="onChangeCountryCode"
           :disabled="phone.disabled"
         />
-        <LazyErrorMessage :name="props.name" />
       </div>
 
       <div class="captcha_url mt-2" v-if="isCaptchaUrlShown">
@@ -57,34 +56,34 @@
         </button>
       </div>
 
-      <div class="mt-2 c2 align-items-baseline">
+      <div class="mt-2 c2 align-items-start">
         <div class="input-wrapper" v-if="isConfirmationCodeInputShown">
           <input
             type="text"
             placeholder="Код потверждения"
             v-model="confirmation_code.val"
-            @focusin="() => (errors.confirmation_code = '')"
+            @focusin="() => (phoneMessage = '')"
           />
 
-          <!--          <div class="text-danger d-block" v-if="errors.confirmation_code">-->
-          <!--            {{ errors.confirmation_code }}-->
-          <!--          </div>-->
+          <div class="text-danger d-block" v-if="confirmationCodeMessage">
+            {{ confirmationCodeMessage }}
+          </div>
         </div>
 
-        <div class="input-wrapper" v-if="isConfirmationButtonShown">
+        <div class="input-wrapper p-0">
           <button
+            v-if="isConfirmationButtonShown"
             type="button"
-            class="btn btn-outline-primary"
+            class="btn btn-outline-primary mt-1"
             @click.prevent="onSendConfirmationCode"
           >
             Получить код
           </button>
-        </div>
-        <div class="input-wrapper" v-else-if="isConfirmationCodeButtonShown">
           <button
             type="button"
             class="btn btn-outline-primary"
             @click.prevent="onConfirmPhone"
+            v-else-if="isConfirmationCodeButtonShown"
           >
             Потвердить телефон
           </button>
@@ -97,10 +96,10 @@
       >
         <span class="visually-hidden">Loading...</span>
       </div>
-      <div class="text-danger d-block" v-if="phoneMessage">
+      <div class="text-danger d-block">
         {{ phoneMessage }}
       </div>
-      <div class="text-danger d-block" v-if="errorMessage">
+      <div class="text-danger d-block">
         {{ errorMessage }}
       </div>
 
@@ -116,31 +115,20 @@
 
 <script>
 export default {
-  name: "ResumePhoneInputWithConfirmationAndCaptcha",
+  name: "PhoneInputWithCaptchaAndConfirmation",
 };
 </script>
+
 <script setup>
 import { useField } from "vee-validate";
-import { useDictionaryStore } from "~/store/dictionary.js";
 import { useResumeStore } from "~/store/resume.js";
 import useResumeHooks from "~/hooks/useResumeHooks.js";
 
 const props = defineProps(["name"]);
-const { idx, name } = toRefs(props);
+const { name } = toRefs(props);
 const emit = defineEmits(["remove"]);
 
 const { value, errorMessage } = useField(() => props.name);
-
-const confirmEmail = () => {
-  value.value = "@mail.uz";
-};
-const dictionaryStore = useDictionaryStore();
-const preferredContactTypeOptions = computed(() => {
-  return dictionaryStore.preferred_contact_types.map((item) => ({
-    name: item.name,
-    value: item.id,
-  }));
-});
 
 const resumeStore = useResumeStore();
 const { getPhoneConfirmationCode, confirmPhoneConfirmationCode, getPhoneInfo } =
@@ -168,19 +156,20 @@ const captchaUrl = ref(null);
 const timer = ref();
 const seconds = ref(0);
 const phoneMessage = ref(null);
+const confirmationCodeMessage = ref(null);
 const phoneElement = ref();
 const phone = reactive({
   val: value.value ?? "",
   disabled: false,
   country_code: "RU",
 });
-const confirmation_code = ref({
+const confirmation_code = reactive({
   val: null,
 });
 const onChangeCountryCode = async (newCountryCode) => {
   console.log(newCountryCode);
   if (typeof newCountryCode === "string") {
-    phone.value.country_code = newCountryCode;
+    phone.val.country_code = newCountryCode;
   }
 };
 const onStartEditing = () => {
@@ -191,7 +180,14 @@ const onStartEditing = () => {
   phoneMessage.value = null;
   phoneElement.value.focus();
 };
-
+const onCancelConfirmation = () => {
+  isConfirmationButtonClicked.value = false;
+  phone.disabled = false;
+  isCaptchaUrlShown.value = false;
+  isConfirmationButtonShown.value = false;
+  phoneMessage.value = null;
+  phoneElement.value.focus();
+};
 const onClickSolveCaptcha = () => {
   isCaptchaUrlShown.value = false;
   isConfirmationCodeButtonShown.value = false;
@@ -215,7 +211,6 @@ const onPhoneChange = async (e) => {
     return;
   }
 
-  console.log(phoneObject);
   if (!phoneObject.need_verification) {
     isPhoneChecking.value = false;
     phoneMessage.value = null;
@@ -234,7 +229,6 @@ const onPhoneChange = async (e) => {
     return;
   }
   value.value = phoneInput;
-  // setFieldValue("phone", phoneInput);
   isPhoneChecking.value = false;
 };
 const onSendConfirmationCode = async () => {
@@ -244,8 +238,6 @@ const onSendConfirmationCode = async () => {
   const resData = await getPhoneConfirmationCode({
     phone: phoneInput,
   });
-
-  console.log(resData);
 
   if (resData.status !== "success") {
     const { data } = resData;
@@ -270,8 +262,7 @@ const onSendConfirmationCode = async () => {
   if (resData.data.hh.can_request_code_again_in) {
     isConfirmationCodeInputShown.value = true;
     isConfirmationCodeButtonShown.value = true;
-
-    console.log(resData.data.hh.can_request_code_again_in);
+    isConfirmationButtonShown.value = false;
     seconds.value = resData.data.hh.can_request_code_again_in;
     timer.value = setInterval(() => {
       seconds.value--;
@@ -286,18 +277,21 @@ const onSendConfirmationCode = async () => {
 
 const onConfirmPhone = async () => {
   isConfirmationButtonClicked.value = true;
-  const phoneInput = phone.value.replace("+", "");
+  const phoneInput = phone.val.replace("+", "");
   const resData = await confirmPhoneConfirmationCode({
     phone: phoneInput,
-    confirmation_code: state.confirmation_code.val,
+    confirmation_code: confirmation_code.val,
   });
   console.log(resData);
   if (resData.status !== "success") {
+    confirmationCodeMessage.value = resData.message;
     return;
   }
   isConfirmationButtonClicked.value = false;
-  state.phone.disabled = false;
-  phone.value = phoneInput;
+  isConfirmationCodeButtonShown.value = false;
+  isConfirmationCodeInputShown.value = false;
+  phone.disabled = true;
+  phone.val = phoneInput;
   isCaptchaUrlShown.value = false;
 };
 const { convertSecondsToHoursAndMinutes } = useResumeHooks();

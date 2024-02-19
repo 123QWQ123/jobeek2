@@ -5,8 +5,8 @@
     class="nice-select n-select d-select"
     :style="props.style"
     :class="{ open: isOpen }"
+    @click="onClick"
     tabindex="0"
-    @click.prevent="onClick"
   >
     <span class="current">{{ label }}</span>
     <transition>
@@ -14,8 +14,8 @@
         <li
           v-for="item in options"
           :key="item.value"
-          :data-value="item.value"
           class="option"
+          @click="onSelect(item.value)"
         >
           {{ item.name }}
         </li>
@@ -23,7 +23,7 @@
     </transition>
   </div>
 
-  <div class="text-danger d-block" v-if="errorMessage">
+  <div class="text-danger d-block">
     {{ errorMessage }}
   </div>
 </template>
@@ -77,6 +77,18 @@ onMounted(() => {
   reApply();
 });
 
+function onSelect(id) {
+  console.log(id);
+  const selectedOptionItem = options.value.find(
+    (item) => String(item.value) === String(id),
+  );
+  if (selectedOptionItem) {
+    selectedOption.value = selectedOptionItem;
+    value.value = id;
+    isOpen.value = false;
+  }
+}
+
 function onClick(e) {
   if (
     e.target.classList.contains("current") ||
@@ -84,10 +96,10 @@ function onClick(e) {
   ) {
     isOpen.value = !isOpen.value;
   }
-  if (e.target.classList.contains("option")) {
-    isOpen.value = false;
-    value.value = e.target.dataset.value ?? null;
-  }
+  // if (e.target.classList.contains("option")) {
+  //   isOpen.value = false;
+  //   value.value = e.target.dataset.value ?? null;
+  // }
 }
 
 function close() {

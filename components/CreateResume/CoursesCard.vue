@@ -9,11 +9,7 @@
       ></span>
     </div>
 
-    <div
-      class="text-danger d-block p-4"
-      v-if="errors.message"
-      v-click-outside="(e) => (errors.message = '')"
-    >
+    <div class="text-danger d-block p-4" v-if="errors.message">
       {{ errors.message }}
     </div>
     <transition>
@@ -25,10 +21,9 @@
         <div class="" v-if="isShown">
           <div class="row">
             <div class="mt-3">
-              <CreateResumeCoursesList
+              <CreateResumeVeeCoursesForm
                 ref="educationElement"
-                v-model="courses"
-                :errors="errors"
+                name="courses"
               />
             </div>
           </div>
@@ -68,6 +63,13 @@
 
 <script setup>
 import useResumeHooks from "~/hooks/useResumeHooks";
+import useFormValidation from "~/composables/useFormValidation";
+import { useResumeStore } from "~/store/resume";
+import { useDiff } from "~/composables/useDiff";
+import { useDictionaryStore } from "~/store/dictionary";
+import { z } from "~/hooks/ru-zod.js";
+import { toTypedSchema } from "@vee-validate/zod";
+import { useForm } from "vee-validate";
 
 const props = defineProps({
   title: {
@@ -82,10 +84,7 @@ const props = defineProps({
     required: true,
   },
 });
-import useFormValidation from "~/composables/useFormValidation";
-import { useResumeStore } from "~/store/resume";
-import { useDiff } from "~/composables/useDiff";
-import { useDictionaryStore } from "~/store/dictionary";
+
 const educationElement = ref(false);
 const route = useRoute();
 const resumeStore = useResumeStore();
@@ -96,8 +95,42 @@ const courses = ref(resumeStore.resume?.educations.courses ?? []);
 const isShown = ref(false);
 const isChanged = ref(false);
 const isSaved = ref(false);
-const isCollapsed = ref(true);
+const isCollapsed = ref(false);
 const isUpdated = ref(false);
+
+const coursesScheme = z.object({
+  title: z.string(),
+  profession: z.string(),
+  organization: z.string(),
+  certificate_url: z.string(),
+  end_year: z.number(),
+});
+const schema = computed(() => {
+  const s = toTypedSchema(
+    z.object({
+      courses: z.array(coursesScheme).optional(),
+    }),
+  );
+  return s;
+});
+
+const initialValues = ref({
+  courses: [],
+});
+const {
+  values,
+  errors,
+  meta,
+  resetForm,
+  setValues,
+  setErrors,
+  handleSubmit,
+  validate,
+} = useForm({
+  initialValues: initialValues,
+  initialTouched: true,
+  validationSchema: schema,
+});
 
 const sectionData = ref({
   courses: [],
@@ -105,59 +138,45 @@ const sectionData = ref({
 watch(
   () => sectionData.value,
   (newData, oldData) => {
-    const diffData = useDiff(newData, oldData, [
-      "id",
-      "created_at",
-      "updated_at",
-    ]);
+    const diffData = useDiff(newData, oldData);
     if (Object.keys(diffData).length) {
-      courses.value = newData.courses;
-      if (courses.value.length) {
+      if (newData.courses?.length > 0) {
         isShown.value = true;
       }
-      if (isUpdated.value) {
-        isUpdated.value = false;
-        return;
-      }
+      resetForm({ values: newData });
     }
-  }
+  },
 );
+const getFields = (newObject) => {
+  return {
+    courses: newObject?.educations?.courses.map((item) => ({
+      title: item.title,
+      organization: item.organization,
+      profession: item.profession,
+      end_year: item.end_year,
+      certificate_url: item.certificate_url,
+    })),
+  };
+};
 watch(
   () => resumeStore.my_resume,
   (newResume) => {
     if (newResume) {
-      sectionData.value = {
-        courses: newResume?.educations?.courses.map((item) => ({
-          id: item.id,
-          title: item.title,
-          organization: item.organization,
-          profession: item.profession,
-          end_year: item.end_year,
-          certificate_url: item.certificate_url,
-        })),
-      };
-      nextTick(() => {
-        isChanged.value = false;
-      });
+      sectionData.value = getFields(newResume);
     }
-  }
+  },
 );
 
 watch(
   () => courses.value,
   (newData) => {
     isChanged.value = true;
-  }
+  },
 );
 
 onMounted(() => {
   if (resumeStore.my_resume) {
-    sectionData.value = {
-      courses: resumeStore.resume?.educations?.courses,
-    };
-    nextTick(() => {
-      isChanged.value = false;
-    });
+    sectionData.value = getFields(resumeStore.my_resume);
   }
 });
 
@@ -167,41 +186,54 @@ watch(
     if (!newData) {
       isShown.value = true;
     }
-  }
+  },
 );
 
 const { getSelectedProviders } = useResumeHooks();
 const { getResume, updateResume } = resumeStore;
 
-const { errors, handleErrorResponse } = useFormValidation();
+const { errors: serverErrors, handleErrorResponse } = useFormValidation();
+watch(
+  () => serverErrors.value,
+  (newErrors) => {
+    if (Object.keys(newErrors).length > 0) {
+      const backendErrors = {};
+      Object.keys(newErrors).map(
+        (item) => (backendErrors[item] = newErrors[item]),
+      );
+      console.log(backendErrors);
+      setErrors(backendErrors);
+    }
+  },
+);
 const isFocused = ref(false);
 const save = async (is_from_parent = false) => {
-  if (is_from_parent === true) {
-    isFocused.value = true;
-  }
-  if (!isFocused.value) {
+  validate();
+
+  if (!meta.value.dirty) {
     return true;
   }
-  if (isChanged.value) {
-    const resData = await updateResume(resumeID.value, {
-      form_data: "EDUCATION_DATA",
-      educations: {
-        courses: courses.value,
-      },
-      providers: getSelectedProviders(props.providers),
-    });
-
-    console.log(resData);
-
-    if (resData.status !== "success") {
-      return handleErrorResponse(resData.data);
-    }
-    isChanged.value = false;
-    isSaved.value = false;
-    isUpdated.value = true;
-
-    await getResume(resumeID.value);
+  if (!meta.value.valid) {
+    return false;
   }
+  const resData = await updateResume(resumeID.value, {
+    form_data: "EDUCATION_DATA",
+    educations: {
+      courses: values.courses,
+    },
+    providers: getSelectedProviders(props.providers),
+  });
+
+  console.log(resData);
+
+  if (resData.status !== "success") {
+    return handleErrorResponse(resData.data, true);
+  }
+  isChanged.value = false;
+  isSaved.value = false;
+  isUpdated.value = true;
+
+  resetForm({ values });
 };
 
 const isCompleted = computed(() => {

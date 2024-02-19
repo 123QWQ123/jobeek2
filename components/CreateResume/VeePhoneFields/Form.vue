@@ -8,6 +8,7 @@
           <CreateResumeVeePhoneFieldsVeeItem
             @remove="remove"
             :name="props.name"
+            :providers="props.providers"
             :idx="idx"
           />
         </div>
@@ -36,7 +37,7 @@
 import { useDictionaryStore } from "~/store/dictionary.js";
 import { useFieldArray } from "vee-validate";
 
-const props = defineProps(["name"]);
+const props = defineProps(["name", "providers"]);
 
 const addNew = () => {
   push({

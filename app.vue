@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NuxtLayout> </NuxtLayout>
+    <NuxtLayout></NuxtLayout>
   </div>
 </template>
 
@@ -35,6 +35,7 @@ onMounted(async () => {
 .layout {
   /*overflow-y: hidden;*/
 }
+
 .modal {
   display: flex;
   background: rgba(0, 0, 0, 0.15);

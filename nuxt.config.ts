@@ -17,6 +17,10 @@ const config = {
     public: {
       apiBase: "https://api.jobeek.online/api/",
       base: "https://api.jobeek.online/",
+      sentry: {
+        dsn: "",
+        environment: "development",
+      },
     },
   },
   ssr: true,

@@ -28,7 +28,7 @@
     </ul>
   </div>
 
-  <div class="text-danger d-block" v-if="errorMessage">
+  <div class="text-danger d-block">
     {{ errorMessage }}
   </div>
 </template>

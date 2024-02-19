@@ -108,31 +108,30 @@
         </div>
       </div>
     </div>
-    <div
-      class="text-danger d-block"
-      v-if="typeof errors.providers === 'string'"
-    >
-      {{ errors.providers }}
+    <div class="text-danger d-block">
+      {{ errorMessage }}
     </div>
   </div>
 </template>
 
 <script setup>
 // To DO default by connected_providers
-
 import { useDictionaryStore } from "~/store/dictionary";
-import { useVacancyStore } from "~/store/vacancy";
-import { useFormData } from "~/composables/useFormData";
 import { toast } from "vue3-toastify";
 import { useResumeStore } from "~/store/resume";
+
 const emit = defineEmits(["update:modelValue"]);
 const props = defineProps({
   modelValue: {
     required: false,
     default: {},
   },
-  errors: {
+  name: {
     required: true,
+    type: String,
+  },
+  errors: {
+    required: false,
     default: {},
   },
 });
@@ -148,6 +147,8 @@ const resumeStore = useResumeStore();
 const { getConnectedSeekerProviders, getSeekerProvidersAuthEndpoints } =
   resumeStore;
 await getConnectedSeekerProviders();
+
+const { value, errorMessage } = useField(() => props.name);
 
 // watch(vacancyProviders.value, (newValues) => {
 //   console.log(newValues);
@@ -199,14 +200,14 @@ watch(
   () => resumeProviders.value,
   (newValue) => {
     selectedProviders.value = newValue;
-  }
+  },
 );
 const selectedProviders = ref(props.modelValue ?? resetObject);
 watch(
   () => selectedProviders.value,
   (newSelectedItems) => {
     emit("update:modelValue", newSelectedItems);
-  }
+  },
 );
 
 const isHHSelected = computed(() => selectedProviders.value.hh);
@@ -241,6 +242,7 @@ const toggle = async (provider) => {
   if (selectedProviders.value.superjob) {
     selectedProvidersValue.push("superjob");
   }
+  value.value = selectedProvidersValue;
   emit("update:modelValue", selectedProvidersValue);
 };
 const openProviderAuthUrl = (url) => {
@@ -252,14 +254,17 @@ const openProviderAuthUrl = (url) => {
 .import-box {
   cursor: pointer;
 }
+
 .is-connected .import-box-dvnld .logo .check {
   display: block;
 }
+
 .import-box.disabled {
   background: #ffffff;
   box-shadow: 0px 0px 20px rgb(0 0 0 / 4%);
   border-radius: 12px;
 }
+
 .import-box.disabled .import-box-dvnld {
   border: 1px dashed #8c8c8c;
   color: #8c8c8c;
@@ -269,6 +274,7 @@ const openProviderAuthUrl = (url) => {
   -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
   filter: grayscale(100%);
 }
+
 .import-box.disabled .import-box-dvnld span {
   color: #8c8c8c;
 }

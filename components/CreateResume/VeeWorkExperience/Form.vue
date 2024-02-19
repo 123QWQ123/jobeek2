@@ -1,0 +1,60 @@
+<template>
+  <div>
+    <div :key="field.key" v-for="(field, idx) in fields">
+      <CreateResumeVeeWorkExperienceItem
+        @remove="remove"
+        :name="props.name"
+        :providers="props.providers"
+        :idx="idx"
+      />
+    </div>
+    <button
+      type="button"
+      class="btn btn-primary btn-sm mt-1"
+      v-if="fields.length === 0"
+      @click="addNew"
+    >
+      Добавить
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary mt-1 btn-sm"
+      v-if="fields.length > 0"
+      @click="addNew"
+    >
+      Добавить еще
+    </button>
+  </div>
+</template>
+
+<script setup>
+import { useDictionaryStore } from "~/store/dictionary.js";
+import { useFieldArray } from "vee-validate";
+
+const props = defineProps(["name", "parent_type_id", "providers"]);
+
+const addNew = () => {
+  push({
+    profession: null,
+    company: null,
+    company_url: null,
+    city_id: 2119,
+    industries: null,
+    start_year: null,
+    end_year: null,
+    start_month: null,
+    end_month: null,
+    until_today: false,
+    responsibilities: null,
+    achievements: null,
+    company_scope: null,
+  });
+};
+
+const { push, fields, remove } = useFieldArray(() => props.name);
+const { getPreferredContactTypes, getResumeEducationForms } =
+  useDictionaryStore();
+onMounted(() => {});
+</script>
+
+<style scoped></style>

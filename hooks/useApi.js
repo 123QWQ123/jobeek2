@@ -85,17 +85,16 @@ const useApi = async (method, options = {}) => {
       if (options.method.toUpperCase() === "PUT") {
         if (!options.payload) throw new Error("No payload provided");
         const body = options.payload;
-        if (options.content_type !== "application/json") {
-          body.append("_method", "PUT");
-        } else {
+        if (options.content_type === "application/json") {
           body._method = "PUT";
+        } else {
+          body.append("_method", "PUT");
         }
         response = await axios.post(url, body, {
           headers: headers,
         });
       }
       if (options.method.toUpperCase() === "DELETE") {
-        // if (!options.payload) throw new Error("No payload provided");
         const body = options.payload;
         response = await axios.delete(url, {
           headers: headers,
