@@ -14,7 +14,11 @@
     "prettier": "3.2.4",
     "sass": "^1.70.0",
     "vue": "^3.4.14",
-    "vue-router": "^4.2.5"
+    "vue-router": "^4.2.5",
+    "deploy-stage": "nuxt generate && scp -r ./.output/public/* jobeek:~/web/nuxt",
+    "deploy-stage-ssr": "nuxt build && scp -rp g+rwx ./.output/* jobeek:~/web/nuxt",
+    "upload-stage-ssr": "scp -rp g+rwx ./.output/* jobeek:~/web/nuxt",
+    "upload-stage-using-rsync": "rsync -rt --chmod=u+rwx,g+rwx,o+rx ./.output/* jobeek:~/web/nuxt"
   },
   "dependencies": {
     "@bg-dev/nuxt-fcm": "^0.2.8",
