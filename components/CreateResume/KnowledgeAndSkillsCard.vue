@@ -68,7 +68,7 @@ const resumeID = computed(() => route.params.id);
 const isShown = ref(false);
 const isChanged = ref(false);
 const isSaved = ref(false);
-const isCollapsed = ref(false);
+const isCollapsed = ref(true);
 const isUpdated = ref(false);
 
 const { providers } = useProviders();

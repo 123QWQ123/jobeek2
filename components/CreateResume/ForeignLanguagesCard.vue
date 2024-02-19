@@ -65,7 +65,7 @@ const my_resume = computed(() => resumeStore.my_resume);
 const isSaved = ref(false);
 const isChanged = ref(false);
 const isFirst = ref(true);
-const isCollapsed = ref(false);
+const isCollapsed = ref(true);
 const isUpdated = ref(false);
 
 const schema = computed(() => {

@@ -288,11 +288,11 @@ const phone = ref("");
           </div>
           <CreateResumeProviders v-model="providers" />
 
-          <CreateResumePhotoCard
-            v-if="resumeID"
-            ref="photo_el"
-            :providers="providers"
-          />
+          <!--          <CreateResumePhotoCard-->
+          <!--            v-if="resumeID"-->
+          <!--            ref="photo_el"-->
+          <!--            :providers="providers"-->
+          <!--          />-->
           <CreateResumeVeePersonalFieldsCard
             v-if="resumeID"
             :key="`personal_fields_el_key_${providers.hh + providers.superjob}`"

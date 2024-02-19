@@ -38,8 +38,6 @@
         </div>
       </div>
     </transition>
-    {{ values }}
-    <hr />
     {{ errors }}
   </div>
 </template>
