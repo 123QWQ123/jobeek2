@@ -3,13 +3,8 @@ import path from "path";
 import fs from "fs";
 
 const config = {
-  devServer: {
-    port: 8282,
-  },
-  server: {
-    port: 8181,
-  },
-  devtools: { enabled: true, vscode: {} },
+  server: {},
+  devtools: { enabled: false, vscode: {} },
   runtimeConfig: {
     // The private keys which are only available within server-side
     apiSecret: "123",
@@ -18,7 +13,7 @@ const config = {
       apiBase: "https://api.jobeek.online/api/",
       base: "https://api.jobeek.online/",
       sentry: {
-        dsn: "",
+        dsn: "https://cd6d558f98e968695f6d8fa0a88c115f@o4506751504482304.ingest.sentry.io/4506757163057152",
         environment: "development",
       },
     },
@@ -66,15 +61,14 @@ const config = {
   routeRules: {
     // Static page generated on-demand, revalidates in background
     // Render these routes with SPA
-    "/": { prerender: true },
     "/**": { swr: 5 }, // 👈🏻 TTL in seconds
     "/sign-in": { ssr: false },
     "/sign-up": { ssr: false },
     // '/profile': { ssr: true },
     // '/my-resumes': { ssr: false },
     // '/my-vacancies': { ssr: false },
-    "/create-vacancy": { ssr: false },
-    "/create-resume": { ssr: false },
+    "/create-vacancy": { ssr: true },
+    "/create-resume": { ssr: true },
     "/my-resume/*": { ssr: false },
     // Add cors headers
     "/api/**": { cors: true },

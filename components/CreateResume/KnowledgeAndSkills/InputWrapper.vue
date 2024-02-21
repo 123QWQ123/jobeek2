@@ -74,7 +74,6 @@ onMounted(() => {
 
 <style scoped>
 .input-wrapper {
-  //max-width: unset;
 }
 
 .absoluted_icon svg {

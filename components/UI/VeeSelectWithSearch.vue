@@ -195,7 +195,6 @@ input.current::-webkit-inner-spin-button {
 }
 
 .current {
-  //color: #0a2540;
   font-weight: normal;
   width: 100%;
   height: unset !important;

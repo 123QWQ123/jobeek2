@@ -1,31 +1,24 @@
 <template>
-<!--      <PageLoader v-if="isLoading"/>-->
+  <!--      <PageLoader v-if="isLoading"/>-->
   <div class="content">
-
     <ClientOnly>
       <Suspense>
         <template #default>
-          <VacanciesAsyncList/>
+          <AsyncList />
         </template>
 
         <template #fallback>
-          <VacanciesLoadingList/>
+          <VacanciesLoadingList />
         </template>
       </Suspense>
     </ClientOnly>
-
   </div>
-
 </template>
 
 <script setup>
-import { defineAsyncComponent } from 'vue';
-const AsyncList = defineAsyncComponent(() =>
-    import('./List.vue')
-);
+import { defineAsyncComponent } from "vue";
 
+const AsyncList = defineAsyncComponent(() => import("./AsyncList.vue"));
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -94,6 +94,11 @@ watch(
 
 const selectedOption = ref({});
 
+watch(
+  () => selectedOption.value,
+  () => (searchInput.value = selectedOption.value?.name),
+);
+
 onMounted(() => {
   if (props.modelValue) {
     selectedOption.value = options.value.find(

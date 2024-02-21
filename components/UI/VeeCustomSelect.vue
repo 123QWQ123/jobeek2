@@ -96,10 +96,6 @@ function onClick(e) {
   ) {
     isOpen.value = !isOpen.value;
   }
-  // if (e.target.classList.contains("option")) {
-  //   isOpen.value = false;
-  //   value.value = e.target.dataset.value ?? null;
-  // }
 }
 
 function close() {
@@ -113,7 +109,6 @@ function close() {
 }
 
 .d-select {
-  /*background: none;*/
   padding-right: 3.125rem;
   width: auto;
 }

@@ -246,7 +246,6 @@ input.current::-webkit-inner-spin-button {
 }
 
 .current {
-  //color: #0a2540;
   font-weight: normal;
   width: 100%;
   height: unset !important;
@@ -258,9 +257,7 @@ input.current::-webkit-inner-spin-button {
 }
 
 .selection {
-  /*border: 1px solid;*/
   border-radius: 4px;
-  /*padding: 0 16px;*/
   left: 0;
 }
 
