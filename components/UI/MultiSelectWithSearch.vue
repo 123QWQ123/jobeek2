@@ -1,40 +1,66 @@
 <template>
-    <div class="multi-select_wrapper">
-        <div v-click-outside="close"
-             onfocusout="close"
-             class="select2-container select2-container--default select2-container--below select2-container--focus nice-select n-select d-select"
-             :class="{'open' : isOpen, 'disabled': disabled}" tabindex="0"
-             @click.prevent="onClick">
-            <span ref="inputElement"  class="current" contenteditable="true" @keyup="onChangeHandler">{{ labelOrSearchInput }}</span>
+  <div class="multi-select_wrapper">
+    <div
+      v-click-outside="close"
+      onfocusout="close"
+      class="select2-container select2-container--default select2-container--below select2-container--focus nice-select n-select d-select"
+      :class="{ open: isOpen, disabled: disabled }"
+      tabindex="0"
+      @click.prevent="onClick"
+    >
+      <span
+        ref="inputElement"
+        class="current"
+        contenteditable="true"
+        @keyup="onChangeHandler"
+        >{{ labelOrSearchInput }}</span
+      >
 
-            <ul class="list" :style="listStyles">
-                <li v-for="item in options" @click="onSelect" :key="item.value" :data-value="item.value" class="option" :style="listItemStyles">{{ item.name }}</li>
-            </ul>
-
-        </div>
-        <div class="selection selected-options" v-if="!hide_selection && selectedOptions.length">
-            <ul class="selected-options" id="select2--container">
-                <li v-for="item in selectedOptions" class="multi-select_selected-item" @click="onUnselect(item)">
-                    <button type="button" class="select2-selection__choice__remove" >
-                        <span aria-hidden="true">×</span>
-                    </button>
-                    <span class="select2-selection__choice__display">{{ getSelectedOptionName(item) }}</span>
-                </li>
-            </ul>
-        </div>
+      <ul class="list" :style="listStyles">
+        <li
+          v-for="item in options"
+          @click="onSelect"
+          :key="item.value"
+          :data-value="item.value"
+          class="option"
+          :style="listItemStyles"
+        >
+          {{ item.name }}
+        </li>
+      </ul>
     </div>
+    <div
+      class="selection selected-options"
+      v-if="!hide_selection && selectedOptions.length"
+    >
+      <ul class="selected-options" id="select2--container">
+        <li
+          v-for="item in selectedOptions"
+          class="multi-select_selected-item"
+          @click="onUnselect(item)"
+        >
+          <button type="button" class="select2-selection__choice__remove">
+            <span aria-hidden="true">×</span>
+          </button>
+          <span class="select2-selection__choice__display">{{
+            getSelectedOptionName(item)
+          }}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
 </template>
 
 <script>
 export default {
   name: "MultiSelectWithSearch",
-}
+};
 </script>
 
 <script setup>
 import useSort from "~/composables/useSort";
 
-const emit = defineEmits(['change', 'update:modelValue', 'input', 'unselect']);
+const emit = defineEmits(["change", "update:modelValue", "input", "unselect"]);
 const props = defineProps({
   options: {
     required: true,
@@ -49,96 +75,111 @@ const props = defineProps({
     required: false,
   },
   modelValue: {
-    required: true
+    required: true,
   },
   sort_by: {
     required: false,
-      default: 'asc'
+    default: "asc",
   },
   disabled: {
     required: false,
-      default: false
+    default: false,
   },
   hide_selection: {
     required: false,
-    default: false
-  }
+    default: false,
+  },
 });
 
 const hide_selection = props.hide_selection;
 const isOpen = ref(false);
 const options = ref(props.options);
-const {sort} = useSort();
+const { sort } = useSort();
 watch(props, (newProps) => {
-
-  options.value = sort(newProps.options, {by: 'alpha'});
+  options.value = sort(newProps.options, { by: "alpha" });
   // selectedOption.value = options.value.find(item => String(item.value) === String(props.modelValue));
 
-  if (newProps.modelValue){
+  if (newProps.modelValue) {
     selectedOptions.value = newProps.modelValue;
   }
 });
-
 
 const inputElement = ref();
 const selectedOptions = ref(props.modelValue ?? []);
 const disabled = ref(props.disabled ?? false);
 
-function onSelect(e){
+function onSelect(e) {
   if (disabled.value) return true;
 
-  if (e.target.classList.contains('option')){
+  if (e.target.classList.contains("option")) {
     const tempSelectedOptions = selectedOptions.value;
     isOpen.value = false;
-    const selectedOptionValue =  e.target.dataset.value;
-    const selectedOptionItem = options.value.find(item => String(item.value) === String(selectedOptionValue));
-    if (selectedOptionItem){
-        if (!tempSelectedOptions.includes(String(selectedOptionItem.value))){
-            tempSelectedOptions.push(String(selectedOptionItem.value));
-            selectedOptions.value = tempSelectedOptions;
-        }
-        // exclude from all options
-        options.value = props.options.filter(item => !tempSelectedOptions.includes(String(item.value)));
-        emit('change', selectedOptionItem)
+    const selectedOptionValue = e.target.dataset.value;
+    const selectedOptionItem = options.value.find(
+      (item) => String(item.value) === String(selectedOptionValue),
+    );
+    if (selectedOptionItem) {
+      if (!tempSelectedOptions.includes(String(selectedOptionItem.value))) {
+        tempSelectedOptions.push(String(selectedOptionItem.value));
+        selectedOptions.value = tempSelectedOptions;
+      }
+      // exclude from all options
+      options.value = props.options.filter(
+        (item) => !tempSelectedOptions.includes(String(item.value)),
+      );
+      emit("change", selectedOptionItem);
     }
-    emit('update:modelValue', Array.from(tempSelectedOptions));
+    emit("update:modelValue", Array.from(tempSelectedOptions));
   }
 }
 
-function onUnselect(deleteId){
+function onUnselect(deleteId) {
   if (disabled.value) return true;
 
   let tempOptions = props.options;
   let tempSelectedOptions = selectedOptions.value;
-  const selectedOptionItemIndex = props.options.findIndex(item => String(item.value) === String(deleteId));
-  if (selectedOptionItemIndex !== -1){
-    selectedOptions.value = tempSelectedOptions.filter(item => String(item) !== String(deleteId));
-    options.value = tempOptions.filter(item => !selectedOptions.value.includes(String(item.value)));
-    emit('unselect', deleteId)
+  const selectedOptionItemIndex = props.options.findIndex(
+    (item) => String(item.value) === String(deleteId),
+  );
+  if (selectedOptionItemIndex !== -1) {
+    selectedOptions.value = tempSelectedOptions.filter(
+      (item) => String(item) !== String(deleteId),
+    );
+    options.value = tempOptions.filter(
+      (item) => !selectedOptions.value.includes(String(item.value)),
+    );
+    emit("unselect", deleteId);
   }
-  emit('update:modelValue', selectedOptions.value);
+  emit("update:modelValue", selectedOptions.value);
 }
-function onClick(e){
+
+function onClick(e) {
   if (disabled.value) return true;
 
-  if (e.target.classList.contains('current') || e.target.classList.contains('nice-select')){
+  if (
+    e.target.classList.contains("current") ||
+    e.target.classList.contains("nice-select")
+  ) {
     isOpen.value = !isOpen.value;
   }
-  if (isOpen.value){
-    if (inputElement.value){
+  if (isOpen.value) {
+    if (inputElement.value) {
       // setting cursor position to end
       nextTick(() => {
-        if (inputElement.value.type !== "textarea" && inputElement.value.getAttribute("contenteditable") === "true") {
-          inputElement.value.focus()
-          window.getSelection().selectAllChildren(inputElement.value)
-          window.getSelection().collapseToEnd()
+        if (
+          inputElement.value.type !== "textarea" &&
+          inputElement.value.getAttribute("contenteditable") === "true"
+        ) {
+          inputElement.value.focus();
+          window.getSelection().selectAllChildren(inputElement.value);
+          window.getSelection().collapseToEnd();
         } else {
           // Place cursor at the end of text areas and input elements
-          inputElement.value.focus()
-          inputElement.value.select()
-          window.getSelection().collapseToEnd()
+          inputElement.value.focus();
+          inputElement.value.select();
+          window.getSelection().collapseToEnd();
         }
-      })
+      });
     }
   }
 }
@@ -146,72 +187,74 @@ function onClick(e){
 const searchInput = ref("");
 const labelOrSearchInput = computed(() => {
   return isOpen.value ? searchInput.value : props.label;
-})
+});
 const onChangeHandler = (e) => {
   searchInput.value = e.target.textContent;
   isOpen.value = true;
   const typedName = e.target.textContent.toLowerCase();
-  emit('input', typedName);
+  emit("input", typedName);
+};
+
+function getSelectedOptionName(value) {
+  const selectedOptionItem = props.options.find(
+    (item) => String(item.value) === String(value),
+  );
+  if (selectedOptionItem) return selectedOptionItem.name;
+  else return "Not found";
 }
 
-function getSelectedOptionName(value){
-    const selectedOptionItem = props.options.find(item => String(item.value) === String(value));
-    if (selectedOptionItem) return selectedOptionItem.name;
-    else return "Not found";
-}
-function close(){
+function close() {
   isOpen.value = false;
 }
 </script>
 <style>
-
-
-.select2-container .select2-selection--multiple .select2-selection__rendered{
+.select2-container .select2-selection--multiple .select2-selection__rendered {
   flex-wrap: wrap !important;
 }
-
 </style>
 <style scoped>
-
-.disabled{
+.disabled {
   background-color: #eee;
   cursor: default;
 }
-.multi-select_wrapper{
 
+.multi-select_wrapper {
 }
-.list{
-    max-height: 0vh;
-    margin-top: 0;
+
+.list {
+  max-height: 0vh;
+  margin-top: 0;
 }
-.current{
-    margin-top: 0.8rem;
-    color: #0A2540;
-    width: 100%;
-    height: unset !important;
-    display: block;
+
+.current {
+  margin-top: 0.8rem;
+  color: #0a2540;
+  width: 100%;
+  height: unset !important;
+  display: block;
 }
-.selection{
-    /*border: 1px solid;*/
-    border-radius: 4px;
-    /*padding: 0 16px;*/
-    left: 0;
+
+.selection {
+  border-radius: 4px;
+  left: 0;
 }
-.selected-options{
-    margin-top: 0.5rem;
-    flex-wrap: wrap;
-    display: flex;
-    padding: 0 0.1rem 0.2rem;
-    gap: 0.5rem;
+
+.selected-options {
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+  display: flex;
+  padding: 0 0.1rem 0.2rem;
+  gap: 0.5rem;
 }
-.multi-select_selected-item{
-    border: 1px solid #5375FD;
-    border-radius: 4px;
-    padding: 2px;
-    color: #5375FD;
+
+.multi-select_selected-item {
+  border: 1px solid #5375fd;
+  border-radius: 4px;
+  padding: 2px;
+  color: #5375fd;
 }
-.multi-select_selected-item span{
-    color: #5375FD;
+
+.multi-select_selected-item span {
+  color: #5375fd;
 }
 </style>
-

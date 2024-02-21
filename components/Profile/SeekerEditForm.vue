@@ -117,7 +117,7 @@
       <div class="input-wrapper">
         <SelectWithSearch
           :options="countryOptions"
-          v-model.number="state.country_id.val"
+          v-model="state.country_id.val"
           :placeholder="'Выберите страну'"
         ></SelectWithSearch>
       </div>
@@ -218,8 +218,6 @@
 
 <script setup>
 import { useProfileStore } from "../../store/profile";
-const CONFIG = useRuntimeConfig();
-
 import { storeToRefs } from "pinia";
 import moment from "moment";
 import Swal from "sweetalert2";
@@ -229,6 +227,9 @@ import PageLoader from "../UI/PageLoader";
 import { useAuthStore } from "~/store/auth";
 import { useCheckJSON } from "~/composables/useCheckJSON";
 import { navigateTo } from "#app";
+
+const CONFIG = useRuntimeConfig();
+
 const profileStore = useProfileStore();
 
 const { getUser } = profileStore;
@@ -329,7 +330,7 @@ watch(
   () => seeker.value,
   (newSeeker) => {
     fillState(newSeeker);
-  }
+  },
 );
 watch(
   () => state.phone.val,
@@ -341,7 +342,7 @@ watch(
       state.phone.val = phoneMask.value.unmaskedValue;
     });
     phoneMask.value.unmaskedValue = newPhone;
-  }
+  },
 );
 const { getCountries, getCities } = profileStore;
 await getCountries();
@@ -436,7 +437,7 @@ const handleSubmit = async (e) => {
   formData.append("city_id", state.city_id.val);
   formData.append(
     "birth_date",
-    moment(state.birth_date.val).format("YYYY-MM-DD")
+    moment(state.birth_date.val).format("YYYY-MM-DD"),
   );
   formData.append("password", state.password.val);
   formData.append("password_confirmation", state.password.val);
