@@ -1,19 +1,18 @@
 <script setup>
 import Swal from "sweetalert2";
+import { useAuthStore } from "~~/store/auth";
+import IMask from "imask";
+import useAlert from "~/composables/useAlert";
+import { useVacancyStore } from "~/store/vacancy.js";
+import { useResumeStore } from "~/store/resume.js";
 
 definePageMeta({
-  layout: 'custom',
+  layout: "custom",
 });
 
 useHead({
   title: "Авторизация",
-})
-
-import { useAuthStore } from "~~/store/auth";
-import IMask from "imask";
-import useAlert from "~/composables/useAlert";
-import {useVacancyStore} from "~/store/vacancy.js";
-import {useResumeStore} from "~/store/resume.js";
+});
 
 const auth = useAuthStore();
 const vacancyStore = useVacancyStore();
@@ -62,7 +61,7 @@ function validateForm() {
     state.password.isValid = false;
     state.isFormValid = false;
   }
-  if ( !(state.remember_me.val === false  || state.remember_me.val === true)) {
+  if (!(state.remember_me.val === false || state.remember_me.val === true)) {
     state.remember_me.isValid = false;
     state.isFormValid = false;
   }
@@ -70,28 +69,27 @@ function validateForm() {
 
 const route = useRoute();
 
-const {getConnectedEmployerProviders} = vacancyStore;
-const {getConnectedSeekerProviders} = resumeStore;
+const { getConnectedEmployerProviders } = vacancyStore;
+const { getConnectedSeekerProviders } = resumeStore;
 
 async function onSubmit() {
   validateForm();
   if (state.isFormValid) {
     let response;
     try {
-        response = await signIn({
+      response = await signIn({
         phone: phoneMask.value.unmaskedValue,
         password: state.password.val,
       });
-
-    }catch (error) {
+    } catch (error) {
       state.error = error.message;
     }
-    if (response.status === 'error' && response.message) {
+    if (response.status === "error" && response.message) {
       Swal.fire({
-        title: 'Ошибка!',
+        title: "Ошибка!",
         text: response.message,
         icon: "error",
-        confirmButtonText: 'ОК'
+        confirmButtonText: "ОК",
       });
       return;
     }
@@ -106,74 +104,124 @@ async function onSubmit() {
       }
     });
   }
-
 }
 
 const phoneInputElement = ref();
 const phoneMask = ref(null);
-onMounted(( ) => {
+onMounted(() => {
   phoneMask.value = new IMask(phoneInputElement.value, {
     mask: "+{7}(000)000-00-00",
   });
   phoneInputElement.value.addEventListener("input", () => {});
-})
-function close(){
+});
+
+function close() {
   state.error = null;
   state.success = null;
 }
 
-const {handleAlert} = useAlert();
+const { handleAlert } = useAlert();
 
 watch(() => route.query.message, handleAlert);
 
 onMounted(() => {
   handleAlert();
-})
+});
 </script>
 
 <template>
   <div>
-<!--    <base-modal :show="!!state.error" title="Error occured" :type="'error'" @close="close">-->
-<!--      <p>{{ state.error }}</p>-->
-<!--    </base-modal>-->
+    <!--    <base-modal :show="!!state.error" title="Error occured" :type="'error'" @close="close">-->
+    <!--      <p>{{ state.error }}</p>-->
+    <!--    </base-modal>-->
 
     <base-modal :show="!!state.success" title="Success" @close="close">
       <p>{{ state.success }}</p>
     </base-modal>
     <main class="main enter-page sign-in" role="main">
       <div class="enter-page-content">
-        <NuxtLink to="/" class="logo"> <img src="~/assets/img/jobeek-dark.svg" alt="#"></NuxtLink>
+        <NuxtLink to="/" class="logo"
+          ><img src="~/assets/img/jobeek-dark.svg" alt="#"
+        /></NuxtLink>
         <form class="enter-form" @submit.prevent="onSubmit">
           <h1>Вход</h1>
           <div class="i-wrap has-validation">
-            <input ref="phoneInputElement" type="tel" name="tel" placeholder="Номер телефона" v-model="state.phone.val" @focusout="clearValidity('phone')" />
-            <div :style="{display: 'none'}" class="text-danger" :class="{'d-block': !state.phone.isValid}">
+            <input
+              ref="phoneInputElement"
+              type="tel"
+              name="tel"
+              placeholder="Номер телефона"
+              v-model="state.phone.val"
+              @focusout="clearValidity('phone')"
+            />
+            <div
+              :style="{ display: 'none' }"
+              class="text-danger"
+              :class="{ 'd-block': !state.phone.isValid }"
+            >
               Введите правильный номер телефона
             </div>
           </div>
           <div class="i-wrap">
-            <input type="password" name="pass" placeholder="Пароль" v-model="state.password.val" @focusout="clearValidity('password')" />
-            <div :style="{display: 'none'}" class="text-danger" :class="{'d-block': !state.password.isValid}">
+            <input
+              type="password"
+              name="pass"
+              placeholder="Пароль"
+              v-model="state.password.val"
+              @focusout="clearValidity('password')"
+            />
+            <div
+              :style="{ display: 'none' }"
+              class="text-danger"
+              :class="{ 'd-block': !state.password.isValid }"
+            >
               Введите правильный пароль
             </div>
           </div>
-          <div class="note"> <img src="~/assets/img/svg/i.svg" alt="#">
-            <p>Если вы не устанавливали пароль, используйте SMS код который получили на телефон во время активации.</p>
+          <div class="note">
+            <img src="~/assets/img/svg/i.svg" alt="#" />
+            <p class="">
+              Если вы не устанавливали пароль, используйте SMS код который
+              получили на телефон во время активации.
+            </p>
           </div>
           <div class="help-box">
             <div class="check-block">
               <div class="checkbox">
-                <input type="checkbox" id="remember_me"  v-model="state.remember_me.val" />
-                <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
+                <input
+                  type="checkbox"
+                  id="remember_me"
+                  v-model="state.remember_me.val"
+                />
+                <div class="checkbox-mask">
+                  <img src="~/assets/img/svg/check.svg" alt="#" />
+                </div>
               </div>
-              <label for="agree">Запомнить меня</label>
+              <label for="remember_me">Запомнить меня</label>
             </div>
-            <NuxtLink :to="{name: 'forgot-password'}">Забыли пароль?</NuxtLink>
+            <NuxtLink :to="{ name: 'forgot-password' }"
+              >Забыли пароль?
+            </NuxtLink>
           </div>
           <button class="btn button-accent" type="submit">Войти</button>
         </form>
-        <div class="f-prompt">Еще нет аккаунта? <NuxtLink :to="{name: 'sign-up'}">Зарегистрируйтесь!</NuxtLink></div>
+        <div class="f-prompt">
+          Еще нет аккаунта?
+          <NuxtLink :to="{ name: 'sign-up' }">Зарегистрируйтесь!</NuxtLink>
+        </div>
       </div>
     </main>
   </div>
 </template>
+
+<style scoped>
+.note p {
+  font-size: 15px;
+}
+
+@media only screen and (max-width: 768px) {
+  .note p {
+    font-size: 14px;
+  }
+}
+</style>

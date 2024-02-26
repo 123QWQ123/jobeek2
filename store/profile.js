@@ -112,7 +112,7 @@ export const useProfileStore = defineStore("profile", {
     async getCities(payload = {}) {
       const { data } = await useApi("area/cities", {
         method: "get",
-        payload,
+        params: payload,
       });
       if (data && "data" in data) {
         if (data.data.hasOwnProperty("cities")) {
@@ -126,7 +126,7 @@ export const useProfileStore = defineStore("profile", {
     async searchAreas(payload = {}) {
       const response = await useApi("area", {
         method: "get",
-        payload,
+        params: payload,
       });
       if (response.status === "failed") {
         return [];
@@ -136,9 +136,9 @@ export const useProfileStore = defineStore("profile", {
     async searchCities(payload = {}) {
       const response = await useApi("area/cities", {
         method: "get",
-        payload,
+        params: payload,
       });
-      if (response.status === "failed") {
+      if (response.status !== "success") {
         return [];
       }
       return response.data.data ?? [];
@@ -152,11 +152,9 @@ export const useProfileStore = defineStore("profile", {
         }
         return this.professional_roles;
       }
-      console.log(payload);
-
       const response = await useApi("professional_roles", {
         method: "get",
-        payload,
+        params: payload,
       });
       if (response.status === "failed") {
         return [];
@@ -176,7 +174,7 @@ export const useProfileStore = defineStore("profile", {
       }
       const response = await useApi("professional_roles", {
         method: "get",
-        payload: { providers: ["hh"] },
+        params: { providers: ["hh"] },
       });
       if (response.status === "failed") {
         return [];
@@ -195,7 +193,7 @@ export const useProfileStore = defineStore("profile", {
       }
       const response = await useApi("professional_roles", {
         method: "get",
-        payload: { providers: ["superjob"] },
+        params: { providers: ["superjob"] },
       });
       if (response.status === "failed") {
         return [];
@@ -206,7 +204,7 @@ export const useProfileStore = defineStore("profile", {
     async getCountryCities(payload = {}) {
       const response = await useApi("area/cities", {
         method: "get",
-        payload,
+        params: payload,
       });
       if (response.status === "success") {
         return response.data.data;
@@ -224,19 +222,23 @@ export const useProfileStore = defineStore("profile", {
       }
     },
     async getSeeker(url = "") {
-      const { data } = await useApi(url, {
-        method: "get",
-      });
-      if (data && "data" in data) {
-        this.seeker = data.data;
-        this.user = { phone: this.seeker?.phone };
-      }
-      return data;
-    },
-    async getEmployer(url = "") {
       const response = await useApi(url, {
         method: "get",
       });
+      if (response.status === "success") {
+        const { data } = response;
+        if (!data) return;
+        this.seeker = data.data;
+        this.user = { phone: this.seeker?.phone };
+      }
+      return response;
+    },
+    async getEmployer(url = "") {
+      console.log(url);
+      const response = await useApi(url, {
+        method: "get",
+      });
+      console.log(response);
       if (response && response.data && "data" in response.data) {
         this.employer = response.data.data;
         this.user = { phone: this.employer?.phone };
@@ -244,8 +246,9 @@ export const useProfileStore = defineStore("profile", {
       return response;
     },
     async updateSeeker(payload) {
+      console.log(payload);
       const response = await useApi("seeker/profile", {
-        method: "put",
+        method: "post",
         content_type: "multipart/form-data",
         payload,
       });
@@ -256,8 +259,13 @@ export const useProfileStore = defineStore("profile", {
       return response;
     },
     async updateEmployer(payload) {
+      var object = {};
+      payload.forEach(function (value, key) {
+        object[key] = value;
+      });
+      console.log(object);
       const response = await useApi("employer/profile", {
-        method: "put",
+        method: "post",
         content_type: "multipart/form-data",
         payload,
       });
@@ -326,7 +334,7 @@ export const useProfileStore = defineStore("profile", {
     async getArtifacts(payload) {
       const response = await useApi("seeker/artifacts", {
         method: "get",
-        payload,
+        params: payload,
       });
       if (response.status === "success") {
         this.artifacts = response.data.data;
@@ -346,7 +354,7 @@ export const useProfileStore = defineStore("profile", {
     async getArtifact(id) {
       const response = await useApi("seeker/artifact/" + id, {
         method: "GET",
-        payload: {},
+        params: {},
       });
       if (response.status === "success") {
         this.my_resume_photo_artifact = response.data.data;

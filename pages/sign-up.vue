@@ -1,6 +1,7 @@
 <script setup>
 import Swal from "sweetalert2";
 import IMask from "imask";
+import { useAuthStore } from "~~/store/auth";
 
 definePageMeta({
   layout: "custom",
@@ -8,7 +9,6 @@ definePageMeta({
 useHead({
   title: "Регистрация",
 });
-import { useAuthStore } from "~~/store/auth";
 
 const authStore = useAuthStore();
 
@@ -63,6 +63,7 @@ const router = useRouter();
 
 const isRegisterTab = ref(true);
 const isConfirmTab = ref(false);
+const isFirstTimeCodeSent = ref(true);
 
 const onSubmit = async () => {
   state.phone.val = phoneMask.value.unmaskedValue;
@@ -99,6 +100,11 @@ const onSubmit = async () => {
       });
     }
   }
+};
+
+const onSendOneMoreTime = () => {
+  isFirstTimeCodeSent.value = false;
+  onSubmit();
 };
 
 const onSMSSubmit = async () => {
@@ -155,7 +161,6 @@ onMounted(() => {
       <p>{{ state.success }}</p>
     </base-modal>
     <main class="main enter-page sign-up" role="main">
-      {{ state.phone.val }}
       <div class="enter-page-content">
         <NuxtLink to="/" class="logo">
           <img src="~/assets/img/jobeek-dark.svg" alt="#"
@@ -210,6 +215,15 @@ onMounted(() => {
         >
           <h1>Потверждения телефона</h1>
           <div class="i-wrap">
+            <span
+              class="text-success mt-1 py-2 px-3"
+              v-if="isFirstTimeCodeSent"
+            >
+              Мы вам отправили код потверждения на телефон. Введите код.
+            </span>
+            <span class="text-success mt-1 py-2 px-3" v-else>
+              Мы вам еще раз отправили код потверждения на телефон. Введите код.
+            </span>
             <input
               type="number"
               name="code"
@@ -218,12 +232,9 @@ onMounted(() => {
               @focusout="clearValidity('code')"
               autofocus
             />
-            <span class="text-success mt-1 py-2 px-3" type="button" disabled>
-              Мы вам отправили код потверждения на телефон. Введите код!
-            </span>
             <span class="col-auto px-3" type="button" disabled>
               Не получили код?
-              <a class="link link-primary" @click="onSubmit">
+              <a class="link link-primary" @click="onSendOneMoreTime">
                 Отправить еще раз
               </a>
             </span>

@@ -74,10 +74,7 @@ const isLoading = ref(false);
           <LazyCreateResumeDraftCard ref="draft_el" :title="pageTitle" />
 
           <div class="form-submit-container">
-            <button
-              class="btn btn-outline-primary"
-              @click="draft_el.onSubmit()"
-            >
+            <button class="btn btn-outline-primary" @click="draft_el.save()">
               Далее
               <div
                 v-if="isLoading"

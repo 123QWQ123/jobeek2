@@ -5,15 +5,20 @@
     v-click-outside="() => (isOpen = false)"
     tabindex="0"
   >
-    <input
-      class="current"
-      @input="onChangeHandler"
-      @focusin="onFocus"
-      @focusout="onFocusout"
-      :placeholder="props.placeholder"
-      :class="{ placeholder: placeholderClass }"
-    />
-    <span class="select_arrow" @click="toggle"></span>
+    <div class="input-wrap has-icon">
+      <img class="icon" src="~/assets/img/svg/location.svg" alt="#" />
+      <input
+        class="current"
+        ref="searchInputElement"
+        @input="onChangeHandler"
+        @focusin="onFocus"
+        @focusout="onFocusout"
+        :placeholder="props.placeholder"
+        :class="{ placeholder: placeholderClass }"
+      />
+      <span class="select_arrow" @click="toggle"></span>
+    </div>
+
     <ul class="list" :style="listStyles" v-if="isOpen">
       <li
         v-for="item in options"
@@ -30,7 +35,7 @@
 </template>
 <script>
 export default {
-  name: "SelectWithSearch",
+  name: "SelectWithSearchWithIcon",
 };
 </script>
 
@@ -149,8 +154,10 @@ function onSelect(id) {
     (item) => String(item.value) === String(id),
   );
   if (selectedOptionItem) {
+    searchInputElement.value.value = selectedOptionItem.name;
     selectedOption.value = selectedOptionItem;
     searchInput.value = selectedOptionItem.name;
+    emit("input", selectedOptionItem.name.toLowerCase());
     emit("change", selectedOptionItem);
     emit("update:modelValue", id);
     isOpen.value = false;
@@ -160,6 +167,7 @@ function onSelect(id) {
 const onChangeHandler = (e) => {
   isOpen.value = true;
   const typedName = e.target.value.toLowerCase();
+  searchInputElement.value.value = typedName;
   emit("input", typedName);
   if (typedName === "") {
     options.value = props.options;
@@ -189,6 +197,15 @@ function close() {
 }
 </style>
 <style scoped>
+.nice-select {
+  padding-left: 0 !important;
+}
+
+.d-select {
+  padding: 0 !important;
+  padding-right: 0px !important;
+}
+
 .list {
   max-height: 0vh;
 }
@@ -199,8 +216,15 @@ input.current::-webkit-inner-spin-button {
   -moz-appearance: textfield;
 }
 
+.input-wrap {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
 input {
-  padding-left: 5px !important;
+  padding-left: 42px !important;
+  margin-top: 24px;
 }
 
 .current {

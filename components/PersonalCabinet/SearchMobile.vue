@@ -10,11 +10,11 @@
         <div class="search-row">
           <div class="input-wrap has-icon has-label">
             <img class="icon" src="~/assets/img/svg/search.svg" alt="#" />
-            <label for="name">Названии вакансии </label>
+            <label for="keyword_mobile">Названии вакансии </label>
             <input
               type="text"
               name="name"
-              id="keyword"
+              id="keyword_mobile"
               :placeholder="searchPlaceHolder"
               autocomplete="off"
               v-model="form.name"
@@ -31,7 +31,7 @@
             <SelectWithSearch
               :options="cityOptions"
               v-model.number="city"
-              :placeholder="'Город'"
+              placeholder="Город"
               @input="updateCityInput"
             ></SelectWithSearch>
           </div>
@@ -47,8 +47,8 @@
 <script setup>
 import { useAuthStore } from "~~/store/auth";
 import { navigateTo } from "nuxt/app";
-import { useVacancyStore } from "../../store/vacancy";
-import { useVacancyForm } from "../../composables/useVacancyForm";
+import { useVacancyStore } from "~/store/vacancy";
+import { useVacancyForm } from "~/composables/useVacancyForm";
 import { storeToRefs } from "pinia";
 import { useProfileStore } from "~/store/profile";
 
@@ -76,6 +76,13 @@ watch(
     form.value.cities = [newCity];
   },
 );
+const city_name = ref("");
+watch(
+  () => city_name.value,
+  (newCity) => {
+    form.value.city_name = newCity;
+  },
+);
 const form = ref(useVacancyForm());
 onMounted(() => {
   // console.log(form.value);
@@ -85,18 +92,13 @@ const { searchCities } = profileStore;
 const updateCityInput = async (newValue = "") => {
   const items = (await searchCities({ search: newValue })) ?? [];
   cityOptions.value = items.map((item) => ({
-    value: item.city_id,
-    name: item.city_name,
+    value: item.id,
+    name: item.name,
   }));
 };
 
 const { getVacancies, getRegions, getCities } = vacancyStore;
 const vacancies = computed(() => vacancyStore.vacancies);
-
-const searchSelectItemStyles = {
-  width: "auto !important",
-  whiteSpace: "pre-wrap",
-};
 
 const { cities } = storeToRefs(vacancyStore);
 const cityOptions = ref([]);
@@ -125,6 +127,8 @@ const isLoading = ref(false);
 
 const { clearVacancies } = vacancyStore;
 const onSubmit = async (e) => {
+  e.preventDefault();
+  console.log(city_name.value);
   isLoading.value = true;
   clearVacancies();
   const params = useVacancyForm(form.value, "front");

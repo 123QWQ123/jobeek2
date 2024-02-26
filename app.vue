@@ -9,16 +9,6 @@ import { useAuthStore } from "~/store/auth";
 import { useVacancyStore } from "~/store/vacancy";
 import { useResumeStore } from "~/store/resume";
 
-// import { defineRule } from "vee-validate";
-
-// defineRule("required", (value) => {
-//   if (!value || !value.length) {
-//     return "This field is required";
-//   }
-//
-//   return true;
-// });
-
 const { getConnectedEmployerProviders } = useVacancyStore();
 const { getConnectedSeekerProviders } = useResumeStore();
 const vacancyStore = useVacancyStore();
@@ -33,7 +23,7 @@ onMounted(async () => {
 
 <style>
 .layout {
-  /*overflow-y: hidden;*/
+  //overflow-y: hidden;
 }
 
 .modal {

@@ -1,240 +1,162 @@
-import { useFetch, useRuntimeConfig } from "nuxt/app";
 import axios from "axios";
 
 const useApi = async (method, options = {}) => {
   // console.log(options);
-
-  // const { data, pending, error, refresh } = await useFetch(url, {
-  //     onRequest({ request, options }) {
-  //         // Set the request headers
-  //         options.headers = options.headers || {};
+  const CONFIG = useRuntimeConfig();
+  // TO DO prefix
+  // const host = null;
+  // if (options.hasOwnProperty('host')){
+  //     host = CONFIG.public.api +
+  // }
   //
-  //         if (!process.server) {
-  //             const token = localStorage.getItem('token');
-  //             if (token){
-  //                 options.headers.authorization = `Bearer ${token}`;
-  //             }
-  //         }
-  //     },
-  //     onRequestError({ request, options, error }) {
-  //         // Handle the request errors
-  //     },
-  //     onResponse({ request, response, options }) {
-  //         // Process the response data
-  //         localStorage.setItem('token', response._data.token)
-  //     },
-  //     onResponseError({ request, response, options }) {
-  //         // Handle the response errors
-  //     }
-  // });
-  //
-  // console.log(data);
-  // return data;
 
-  // if request is made from client side
-  if (!process.server) {
-    // console.log(process.server);
-    const token = localStorage.getItem("token");
-
-    const headers = {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    };
-
-    if (options.content_type) {
-      headers["Content-Type"] = options.content_type;
+  options.headers = {
+    "Content-Type": "application/json",
+  };
+  let url = CONFIG.public.base + "api/" + method;
+  if (
+    options.method.toUpperCase() === "PUT" ||
+    options.method.toUpperCase() === "GET" ||
+    options.method.toUpperCase() === "POST"
+  ) {
+    if (options.content_type === "multipart/form-data") {
+      options.headers["Content-Type"] = "multipart/form-data";
+      options.data = options.payload;
+    } else {
+      options.data = JSON.stringify(options.payload);
     }
-
-    const CONFIG = useRuntimeConfig();
-
-    // TO DO prefix
-
-    // const host = null;
-    // if (options.hasOwnProperty('host')){
-    //     host = CONFIG.public.api +
-    // }
-    //
-    let url = CONFIG.public.base + "api/" + method;
-
+  }
+  if (!process.server) {
     try {
-      let response;
-      if (options.method.toUpperCase() === "GET") {
-        response = await axios.get(url, {
-          params: options.payload,
-          headers: headers,
-        });
-      }
-      if (options.method.toUpperCase() === "POST") {
-        if (!options.payload) throw new Error("No payload provided");
-        const body = options.payload;
-
-        if (
-          options.content_type &&
-          options.content_type !== "application/json"
-        ) {
-          body.append("_method", "POST");
-        } else {
-          options.content_type = "application/json";
-        }
-
-        response = await axios.post(url, body, {
-          headers: headers,
-        });
-      }
-      if (options.method.toUpperCase() === "PUT") {
-        if (!options.payload) throw new Error("No payload provided");
-        const body = options.payload;
-        if (options.content_type === "application/json") {
-          body._method = "PUT";
-        } else {
-          body.append("_method", "PUT");
-        }
-        response = await axios.post(url, body, {
-          headers: headers,
-        });
-      }
-      if (options.method.toUpperCase() === "DELETE") {
-        const body = options.payload;
-        response = await axios.delete(url, {
-          headers: headers,
-          data: body,
-        });
-      }
-      if ("data" in response) {
-        return {
-          status: "success",
-          data: response.data,
-        };
-      } else {
-        return {
-          status: "success",
-          data: response,
-        };
-      }
-    } catch (error) {
-      // if (error.response && error.response.status === 403){
-      //     // navigateTo({
-      //     //     path: '/profile',
-      //     //     query: {
-      //     //         message: JSON.stringify({
-      //     //             text: error.response.data.message,
-      //     //             code: 403,
-      //     //             type: 'error',
-      //     //         }),
-      //     //     }
-      //     // })
+      // if (!options.payload) throw new Error("No payload provided");
+      // const body = options.payload;
+      // if (options.content_type === "application/json") {
+      //   body._method = "PUT";
+      // } else {
+      //   body.append("_method", "PUT");
       // }
-      if (
-        error.response &&
-        "data" in error.response &&
-        "errors" in error.response.data
-      ) {
-        return {
-          status: "error",
-          data: error.response.data,
-          message: error.response.data.message,
-          errors: error.response.data.errors,
-        };
-      }
-      if (
-        error.response &&
-        "data" in error.response &&
-        "message" in error.response.data
-      ) {
-        return {
-          status: "error",
-          data: error.response.data,
-          message: error.response.data.message,
-        };
+      // response = await axios.post(url, body, {
+      //   headers: headers,
+      // });
+      const {
+        data,
+        errors,
+        statusText,
+        status: statusCode,
+      } = await axios.request({
+        url,
+        ...options,
+        responseType: "json",
+        transformRequest: [
+          function (data, headers) {
+            // Do whatever you want to transform the data
+            const token = localStorage.getItem("token");
+            if (token) {
+              headers.Authorization = `Bearer ${token}`;
+            }
+
+            return data;
+          },
+        ],
+      });
+
+      let status = "error";
+      if (statusCode >= 200 && statusCode < 300) {
+        status = "success";
       }
       return {
+        data: data ?? {},
+        message: statusText,
+        errors: errors ?? {},
+        status,
+      };
+    } catch (res) {
+      if (res instanceof Object) {
+        if (res.hasOwnProperty("response")) {
+          const { data } = res.response;
+          if (data) {
+            const { errors, message } = data;
+            if (errors) {
+              return {
+                errors,
+                message: message,
+                status: "error",
+              };
+            }
+          }
+        }
+
+        return {
+          data: {},
+          message: res.message,
+          status: "error",
+        };
+      }
+
+      return {
+        data: {},
+        message: res,
         status: "error",
-        message: error.message,
       };
     }
   } else {
-    // const httpsAgent = new https.Agent({
-    //     ca: fs.readFileSync('./certs/cert.pem'),
-    //     cert: fs.readFileSync('./certs/cert.pem'),
-    // })
-    const headers = {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    };
-
-    if (options.content_type) {
-      headers["Content-Type"] = options.content_type;
-    }
-
-    const CONFIG = useRuntimeConfig();
-    let url = CONFIG.public.apiBase + method;
     try {
-      let response;
-      if (options.method.toUpperCase() === "GET") {
-        response = await axios.get(url, {
-          params: options.payload,
-          headers: headers,
-        });
-      }
-      if (options.method.toUpperCase() === "POST") {
-        if (!options.payload) throw new Error("No payload provided");
-        response = await axios.post(url, options.payload, {
-          headers: headers,
-        });
-      }
-      if (options.method.toUpperCase() === "PUT") {
-        if (!options.payload) throw new Error("No payload provided");
-        response = await axios.post(url, options.payload, {
-          headers: headers,
-        });
-      }
-      if (options.method.toUpperCase() === "DELETE") {
-        if (!options.payload) throw new Error("No payload provided");
-        response = await useFetch(url, options.payload, {
-          headers: headers,
-        });
-      }
-      // console.log(response)
-      if ("data" in response) {
-        return {
-          status: "success",
-          data: response.data,
-        };
-      } else {
-        return {
-          status: "success",
-          data: response,
-        };
-      }
-    } catch (error) {
-      console.log(error);
-      if (
-        error.response &&
-        error.response.hasOwnProperty("data") &&
-        error.response.data.hasOwnProperty("errors")
-      ) {
-        return {
-          status: "error",
-          data: error.response.data,
-          message: error.response.data.message,
-          errors: error.response.data.errors,
-        };
-      }
-      if (
-        error.response &&
-        "data" in error.response &&
-        error.response.data.hasOwnProperty("message")
-      ) {
-        return {
-          status: "error",
-          data: error.response.data,
-          message: error.response.data.message,
-        };
+      const {
+        data,
+        statusText,
+        status: statusCode,
+      } = await axios.request({
+        url,
+        ...options,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        responseType: "json",
+        transformRequest: [
+          function (data, headers) {
+            // Do whatever you want to transform the data
+            headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
+            return data;
+          },
+        ],
+      });
+
+      let status = "error";
+      if (statusCode >= 200 && statusCode < 300) {
+        status = "success";
       }
       return {
+        data: data ?? {},
+        message: statusText,
+        status,
+      };
+    } catch (res) {
+      if (res instanceof Object) {
+        if (res.hasOwnProperty("response")) {
+          const { data } = res.response;
+          if (data) {
+            const { errors, message } = data;
+            if (errors) {
+              return {
+                errors,
+                message: message,
+                status: "error",
+              };
+            }
+          }
+        }
+
+        return {
+          data: {},
+          message: res.message,
+          status: "error",
+        };
+      }
+
+      return {
+        data: {},
+        message: res,
         status: "error",
-        message: error.message,
       };
     }
   }

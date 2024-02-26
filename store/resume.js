@@ -1,5 +1,5 @@
 // no need to import defineStore and acceptHMRUpdate
-import {acceptHMRUpdate, defineStore} from "pinia";
+import { acceptHMRUpdate, defineStore } from "pinia";
 import useApi from "~/hooks/useApi";
 
 export const useResumeStore = defineStore("resume", {
@@ -58,7 +58,6 @@ export const useResumeStore = defineStore("resume", {
     async getConnectedSeekerProviders(payload) {
       const { data } = await useApi("seeker/used_providers", {
         method: "get",
-        payload,
       });
       if (data && "data" in data) {
         this.providers = data.data;
@@ -155,23 +154,24 @@ export const useResumeStore = defineStore("resume", {
     //   }
     //   return data;
     // },
-    async createResume(payload, content_type = "application/json") {
+    async createResume(payload) {
+      console.log(payload);
       const response = await useApi("seeker/resumes/create", {
         method: "post",
-        content_type,
         payload,
       });
+      console.log(response);
       // if ('data' in response){
       //   this.resume = response.data;
       // }
       return response;
     },
-    async updateResume(id, payload, content_type = "application/json") {
+    async updateResume(id, payload) {
       const response = await useApi("seeker/resumes/" + id, {
         method: "PUT",
-        content_type,
         payload,
       });
+      console.log(response);
       // if ('data' in response && response.data.status === 'success'){
       //   this.resume = response.data;
       // }
@@ -320,7 +320,7 @@ export const useResumeStore = defineStore("resume", {
     async getPhoneInfo(payload) {
       const response = await useApi("seeker/phone/info", {
         method: "get",
-        payload,
+        params: payload,
       });
       return response;
     },

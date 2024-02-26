@@ -9,9 +9,12 @@
     </div>
 
     <div class="w-box-body" :class="{ disabled: isLoading }">
-      <div ref="errorMessageElement">
-        <div class="alert alert-danger d-block p-4" v-if="errors.message">
+      <div>
+        <div class="text-danger d-block" v-if="errors.message">
           {{ errors.message }}
+        </div>
+        <div class="text-danger d-block" ref="errorMessageElement">
+          {{ errorMessage }}
         </div>
       </div>
       <form @submit.prevent="onSubmit" :validation-schema="schema">
@@ -45,7 +48,11 @@
         <div class="input-row">
           <label for="resume_email">Электронная почта<b>*</b></label>
           <div class="input-wrapper">
-            <ResumeTextInput name="email" placeholder="Электронная почта" />
+            <ResumeTextInput
+              name="email"
+              type="email"
+              placeholder="Электронная почта"
+            />
             <ResumeCheckboxInput
               class="mt-2"
               v-if="!state.is_preferred_email.is_hidden"
@@ -98,7 +105,7 @@
         </div>
 
         <div class="input-row">
-          <label>Готовность к релокацию:</label>
+          <label>Готовность к релокацию:<b>*</b></label>
           <div class="input-wrapper mt-2">
             <LazyVeeCustomSelect
               :options="relocationTypeOptions"
@@ -132,6 +139,9 @@
         </div>
       </form>
     </div>
+    {{ values }}
+    <hr />
+    {{ meta }}
   </div>
 </template>
 
@@ -143,7 +153,6 @@ import { useProfileStore } from "~/store/profile";
 import { useRuntimeConfig } from "#app";
 import useFormValidation from "~/composables/useFormValidation";
 import { storeToRefs } from "pinia";
-import { useWatchStateValues } from "~/composables/useWatchStateValues";
 import useResumeHooks from "~/hooks/useResumeHooks";
 import ResumeCheckboxInput from "~/components/CreateResume/ResumeCheckboxInput.vue";
 import ResumeTextInput from "~/components/CreateResume/ResumeTextInput.vue";
@@ -178,38 +187,31 @@ const schema = computed(() => {
     city_id: "required|numeric",
     gender_id: "required|numeric",
     business_trip_id: "required|numeric",
-    relocation_type_id: "numeric",
+    relocation_type_id: "required|numeric",
     work_types: "required|min:1",
   };
 });
-const {
-  values,
-  errors,
-  defineField,
-  meta,
-  setTouched,
-  setErrors,
-  handleSubmit,
-} = useForm({
-  initialValues: {
-    providers: [],
-    title: null,
-    first_name: null,
-    last_name: null,
-    middle_name: null,
-    email: null,
-    is_preferred_email: false,
-    birth_date: null,
-    city_id: null,
-    gender_id: null,
-    business_trip_id: null,
-    relocation_type_id: null,
-    move_able_cities: [],
-    work_types: [],
-  },
-  initialTouched: true,
-  validationSchema: schema,
-});
+const { values, errors, validate, meta, setTouched, setErrors, handleSubmit } =
+  useForm({
+    initialValues: {
+      providers: [],
+      title: "",
+      first_name: "",
+      last_name: "",
+      middle_name: "",
+      email: "",
+      is_preferred_email: false,
+      birth_date: "",
+      city_id: null,
+      gender_id: null,
+      business_trip_id: null,
+      relocation_type_id: null,
+      move_able_cities: [],
+      work_types: [],
+    },
+    initialTouched: true,
+    validationSchema: schema,
+  });
 
 const { createResume } = resumeStore;
 
@@ -267,14 +269,8 @@ const isMovableCitiesEnabled = computed(() => {
   const relocation_id = parseInt(values.relocation_type_id);
   return relocation_id === 148 || relocation_id === 149;
 });
-watch(
-  () => useWatchStateValues(state, true, true),
-  (newState, oldState) => {
-    isChanged.value = true;
-  },
-);
 
-const { searchCities, searchProfessionalRoles } = profileStore;
+const { searchCities } = profileStore;
 
 const dictionaryStore = useDictionaryStore();
 const cityOptions = ref([]);
@@ -287,10 +283,7 @@ const genderOptions = computed(() => {
   }));
 });
 const workTypeOptions = computed(() => {
-  return dictionaryStore.work_types.map((item) => ({
-    name: item.name,
-    value: item.id,
-  }));
+  return dictionaryStore.work_types;
 });
 const businessTripOptions = computed(() => {
   return dictionaryStore.business_trips.map((item) => ({
@@ -351,14 +344,18 @@ const isLoading = ref(false);
 
 const errorMessageElement = ref();
 const errorMessage = ref(null);
-
+const scrollTop = () => {
+  window.scrollTo(0, 0);
+};
 const onSubmit = handleSubmit((submittedValues) => {
   save();
 });
 const save = async (is_from_parent = false) => {
+  validate();
   if (!meta.value.valid) {
-    setTouched(true);
+    console.log(1);
     errorMessage.value = "Вам необходимо заполнить";
+    scrollTop();
     errorMessageElement.value.scrollIntoView({ behavior: "smooth" });
     return;
   }
@@ -366,9 +363,13 @@ const save = async (is_from_parent = false) => {
   errorMessage.value = "";
   isLoading.value = true;
 
-  let resData = await createResume(values);
+  console.log(values);
+
+  let resData = await createResume(unref(values));
+
   if (resData.status !== "success") {
     errorMessage.value = resData.message;
+    isLoading.value = false;
     return;
   }
   isLoading.value = false;
@@ -393,6 +394,7 @@ const save = async (is_from_parent = false) => {
 };
 defineExpose({
   onSubmit,
+  save,
 });
 </script>
 

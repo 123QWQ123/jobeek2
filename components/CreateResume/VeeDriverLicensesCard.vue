@@ -1,9 +1,7 @@
 <template>
   <div class="w-box" v-click-outside="save">
     <div class="w-box-head">
-      <h3 class="title">
-        Водительские права({{ isChanged }}) - {{ isFocused }}
-      </h3>
+      <h3 class="title">Водительские права</h3>
       <span
         class="arrow"
         :class="{ up: isCollapsed, 'is-completed': isCompleted }"
@@ -207,13 +205,12 @@ const save = async (is_from_parent = false) => {
 
   isUpdated.value = true;
   if (resData.status !== "success") {
-    if (resData.message) {
-      errorMessage.value = resData.message;
+    errorMessage.value = resData.message;
+    if (resData.hasOwnProperty("errors")) {
+      setErrors(resData.errors);
+      return;
     }
-    if (resData.data.hasOwnProperty("errors")) {
-      setErrors(resData.data.errors);
-    }
-    return handleErrorResponse(resData.data);
+    return;
   }
 
   isChanged.value = false;

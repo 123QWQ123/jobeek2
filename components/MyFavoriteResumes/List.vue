@@ -14,16 +14,16 @@
       <button class="btn btn-primary" @click="prevPage">Prev</button>
       <button class="btn btn-primary ms-2" @click="nextPage">Next</button>
     </div>
-    <h3 v-else>К сожалению больше ничего не нашли!!!!</h3>
+    <h3 v-else>К сожалению больше ничего не нашли.</h3>
   </div>
 </template>
 
 <script setup>
-import { useVacancyStore } from "../../store/vacancy";
 import { storeToRefs } from "pinia";
-import { useVacancyForm } from "../../composables/useVacancyForm";
+import { useVacancyForm } from "~/composables/useVacancyForm";
 import Swal from "sweetalert2";
 import { useResumeStore } from "~/store/resume";
+
 const resumeStore = useResumeStore();
 const { getMyFavoriteResumes } = resumeStore;
 const { my_favorite_resumes, current_page } = storeToRefs(resumeStore);

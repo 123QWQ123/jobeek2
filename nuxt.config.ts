@@ -67,8 +67,8 @@ const config = {
     // '/profile': { ssr: true },
     // '/my-resumes': { ssr: false },
     // '/my-vacancies': { ssr: false },
-    "/create-vacancy": { ssr: true },
-    "/create-resume": { ssr: true },
+    "/create-vacancy": { ssr: false },
+    "/create-resume": { ssr: false },
     "/my-resume/*": { ssr: false },
     // Add cors headers
     "/api/**": { cors: true },

@@ -1,9 +1,7 @@
 <template>
   <div class="w-box" v-click-outside="save">
     <div class="w-box-head">
-      <h3 class="title">
-        Тестов или экзаменов({{ isChanged }}) - {{ isFocused }}
-      </h3>
+      <h3 class="title">Тестов или экзаменов</h3>
       <span
         class="arrow"
         :class="{ up: isCollapsed, 'is-completed': isCompleted }"
