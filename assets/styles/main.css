@@ -222,6 +222,8 @@ img {
     line-height: 22px;
     text-align: center;
     color: #FFFFFF; }
+.scam-phone-page .button-accent {
+    width: auto; }
 .button-accent--ts-bigger {
     font-size: 18px; }
 .button-accent:hover {
@@ -485,9 +487,11 @@ img {
     border-radius: 4px 4px 0px 0px; }
 .checker-box .v.active {
     color: #0A2540;
-    text-shadow: 0 0 .65px #0A2540, 0 0 .65px #0A2540; }
+    font-weight: 600; }
 .checker-box .v.active:after {
     background: #5375FD; }
+header.main-header .checker-box .v.active:after {
+    content: none !important; }
 
 .theme-checker input {
     padding: 0;
