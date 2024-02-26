@@ -222,6 +222,8 @@ img {
     line-height: 22px;
     text-align: center;
     color: #FFFFFF; }
+.scam-phone-page .button-accent {
+    width: auto; }
 .button-accent--ts-bigger {
     font-size: 18px; }
 .button-accent:hover {
