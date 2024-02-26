@@ -1,7 +1,7 @@
 <template>
   <div class="w-box" v-click-outside="save">
     <div class="w-box-head">
-      <h3 class="title">Личные данные({{ isChanged }}) - {{ isFocused }}</h3>
+      <h3 class="title">Личные данные</h3>
       <span
         class="arrow"
         :class="{ up: isCollapsed, 'is-completed': isCompleted }"
@@ -260,6 +260,17 @@
 
 <script setup>
 import { useVacancyStore } from "~/store/vacancy";
+import { useProfileStore } from "~/store/profile";
+import { useFormData } from "~/composables/useFormData";
+import { useRuntimeConfig } from "#app";
+import useFormValidation from "~/composables/useFormValidation";
+import { useWatchStateValues } from "~/composables/useWatchStateValues";
+import { useDiff } from "~/composables/useDiff";
+import { useDictionaryStore } from "~/store/dictionary";
+import useProviderFields from "~/composables/useProviderFields";
+
+import { useResumeStore } from "~/store/resume";
+import useResumeHooks from "~/hooks/useResumeHooks";
 
 const props = defineProps({
   title: {
@@ -275,17 +286,6 @@ const props = defineProps({
   },
 });
 
-import { useProfileStore } from "~/store/profile";
-import { useFormData } from "~/composables/useFormData";
-import { useRuntimeConfig } from "#app";
-import useFormValidation from "~/composables/useFormValidation";
-import { useWatchStateValues } from "~/composables/useWatchStateValues";
-import { useDiff } from "~/composables/useDiff";
-import { useDictionaryStore } from "~/store/dictionary";
-import useProviderFields from "~/composables/useProviderFields";
-
-import { useResumeStore } from "~/store/resume";
-import useResumeHooks from "~/hooks/useResumeHooks";
 const vacancyStore = useVacancyStore();
 const profileStore = useProfileStore();
 const CONFIG = useRuntimeConfig();
@@ -454,7 +454,7 @@ watch(
   () => props.providers,
   () => {
     walkThroughFields(props.providers);
-  }
+  },
 );
 
 onMounted(() => {
@@ -496,7 +496,7 @@ watch(
     } else {
       isFirst.value = false;
     }
-  }
+  },
 );
 
 const sectionData = ref({});
@@ -542,7 +542,7 @@ watch(
         onSearchCitiesByCountryId(city.country_id, city.name);
       }
     }
-  }
+  },
 );
 
 watch(
@@ -569,17 +569,10 @@ watch(
       state.phones.val = newData.phones;
       state.is_relocatable.val = newData.is_relocatable;
     }
-  }
+  },
 );
 
 const { searchCities } = profileStore;
-const onSearchCitiesByCountryId = async (country_id, name) => {
-  const items = await searchCities({ search: name });
-  cityOptions.value = items.map((item) => ({
-    value: item.id,
-    name: getCityNameFromArea2(item),
-  }));
-};
 
 const { errors, handleErrorResponse } = useFormValidation();
 
@@ -601,7 +594,7 @@ const save = async (is_from_parent = false) => {
 
     jsonData.form_data = "PERSONAL_DATA";
     jsonData.social_networks = jsonData.social_networks.map(
-      (item) => item.item
+      (item) => item.item,
     );
     jsonData.phones = jsonData.phones.map((item) => ({
       ...item,

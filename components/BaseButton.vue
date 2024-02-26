@@ -1,6 +1,6 @@
 <template>
   <NuxtLink
-      v-if="to"
+    v-if="to"
     class="btn btn-primary text-white"
     :class="classes"
     :to="to"
@@ -8,11 +8,7 @@
   >
     <slot></slot>
   </NuxtLink>
-  <button
-      v-else
-      class="btn btn-primary"
-      :class="classes"
-      :type="type">
+  <button v-else class="button-accent" :class="classes" :type="type">
     <slot></slot>
   </button>
 </template>

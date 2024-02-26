@@ -65,12 +65,11 @@ export const useVacancyStore = defineStore("vacancy", {
     },
   },
   actions: {
-    async getConnectedEmployerProviders(payload) {
+    async getConnectedEmployerProviders() {
       const response = await useApi("employer/used_providers", {
         method: "get",
-        payload,
+        params: {},
       });
-
       if ("data" in response) {
         this.providers = response.data.data;
         return this.providers;
@@ -104,18 +103,15 @@ export const useVacancyStore = defineStore("vacancy", {
       payload,
       redirect_to = "/profile/service-verify",
     ) {
-      const { data } = await useApi(
-        "services/auth/redirect-url?profile=employer&redirect_to=" +
-          redirect_to,
-        {
-          method: "get",
-          payload,
-        },
-      );
-      if ("data" in data) {
-        return data.data;
+      const response = await useApi("services/auth/redirect-url", {
+        method: "get",
+        params: { ...payload, redirect_to, profile: "employer" },
+      });
+      console.log(response);
+      if ("data" in response) {
+        return response.data;
       }
-      return data;
+      return response;
     },
 
     async getAreas(payload) {
@@ -131,7 +127,7 @@ export const useVacancyStore = defineStore("vacancy", {
     async getVacancies(payload, add = false) {
       const { data } = await useApi("vacancies/search", {
         method: "get",
-        payload,
+        params: payload,
       });
       if (data && "items" in data) {
         if (add) {
@@ -149,7 +145,7 @@ export const useVacancyStore = defineStore("vacancy", {
     async getCurrencyCityVacancies(payload) {
       const { data } = await useApi("vacancies/search", {
         method: "get",
-        payload,
+        params: payload,
       });
       if (data && "items" in data) {
         this.vacancies_in_my_city = data.items;
@@ -160,7 +156,7 @@ export const useVacancyStore = defineStore("vacancy", {
     async getVacancy(id, payload) {
       const { data } = await useApi("vacancy/" + id, {
         method: "get",
-        payload,
+        params: payload,
       });
       if (data) {
         this.vacancy = data;
@@ -200,7 +196,6 @@ export const useVacancyStore = defineStore("vacancy", {
         content_type,
         payload: {},
       });
-      console.log(response);
       // if ('data' in response && response.data.hasOwnProperty('data')){
       //   this.my_vacancy = response.data.data;
       // }
@@ -259,7 +254,7 @@ export const useVacancyStore = defineStore("vacancy", {
     async getMyDrafts(payload = {}) {
       const response = await useApi("employer/vacancy/drafts", {
         method: "get",
-        payload,
+        params: payload,
       });
       if (response.hasOwnProperty("data") && "data" in response.data) {
         this.my_drafts = response.data.data;
@@ -300,7 +295,7 @@ export const useVacancyStore = defineStore("vacancy", {
     async getMyFavoriteVacancies(payload) {
       const { data } = await useApi("favorite/vacancies", {
         method: "get",
-        payload,
+        params: payload,
       });
       if (data && "items" in data) {
         this.my_favorite_vacancies = data.items;
@@ -313,7 +308,7 @@ export const useVacancyStore = defineStore("vacancy", {
     async getRegions(payload = {}) {
       const { data } = await useApi("area/regions", {
         method: "get",
-        payload,
+        params: payload,
       });
       if (data && "data" in data) {
         this.regions = data.data?.regions ?? [];
@@ -323,7 +318,7 @@ export const useVacancyStore = defineStore("vacancy", {
     async getCities(payload = {}) {
       const { data } = await useApi("area/cities", {
         method: "get",
-        payload,
+        params: payload,
       });
       if (data && "data" in data) {
         this.cities = data.data?.cities ?? [];
@@ -336,7 +331,7 @@ export const useVacancyStore = defineStore("vacancy", {
       }
       const { data } = await useApi("specializations", {
         method: "get",
-        payload,
+        params: payload,
       });
       if (data && "data" in data) {
         this.specializations = data.data ?? [];

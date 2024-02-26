@@ -148,8 +148,6 @@
         Не один сервис не подключен!
       </div>
     </div>
-
-    {{ resumeStore.providers }}
   </div>
 </template>
 

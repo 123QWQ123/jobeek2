@@ -17,7 +17,8 @@
 
             <span>
               <span class="price">
-                От {{ vueNumberFormat(salaryAmount, {}) }}</span
+                От {{ vueNumberFormat(salaryAmount, {}) }}
+                {{ props.item.currency }}</span
               >
               {{ currency }}
             </span>
@@ -198,6 +199,7 @@ import "moment/locale/ru";
 import Swal from "sweetalert2";
 import { toast } from "vue3-toastify";
 import { useResumeStore } from "~/store/resume";
+
 const props = defineProps(["item", "id"]);
 const item = computed(() => props.item);
 
@@ -246,7 +248,7 @@ const canSuperjobBeEnabled = computed(() => {
 
 const salaryAmount = computed(() => {
   if (props.item.salary) {
-    return props.item.salary.amount;
+    return props.item.salary;
   }
   return 0;
 });
@@ -254,7 +256,7 @@ const currency = computed(() => {
   if (props.item.salary) {
     const options = useCurrencyOptions();
     const found = options.find(
-      (item) => item.value === props.item.salary_currency
+      (item) => item.value === props.item.salary_currency,
     );
     if (found) return found.symbol;
     return props.item.salary.currency;
@@ -287,7 +289,7 @@ const employerLogo = computed(() => {
 });
 
 const published_date = computed(() =>
-  moment(item.value?.published_date).locale("ru")
+  moment(item.value?.published_date).locale("ru"),
 );
 
 const { deleteResume } = resumeStore;
@@ -363,16 +365,19 @@ const openProviderAuthUrl = (url) => {
   justify-content: flex-end;
   align-items: center;
 }
+
 @media (max-width: 768px) {
   .option-group {
     justify-content: space-between;
     width: 100%;
     flex-direction: row;
   }
+
   .selector-group .option + .option {
     margin-top: unset;
   }
 }
+
 .theme-checker.disabled * {
   -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
   filter: grayscale(100%);

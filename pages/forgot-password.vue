@@ -1,16 +1,16 @@
 <script setup>
 import Swal from "sweetalert2";
+import { useAuthStore } from "~~/store/auth";
+import IMask from "imask";
+import { navigateTo } from "nuxt/app";
 
 definePageMeta({
-  layout: 'custom',
-})
+  layout: "custom",
+});
 const title = ref("Востановление пароля");
 useHead({
   title: title,
 });
-import { useAuthStore } from "~~/store/auth";
-import IMask from "imask";
-import {navigateTo} from "nuxt/app";
 
 const authStore = useAuthStore();
 
@@ -49,15 +49,14 @@ const state = reactive({
   success: null,
 });
 
-
 const phoneInputElement = ref();
 const phoneMask = ref(null);
-onMounted(( ) => {
+onMounted(() => {
   phoneMask.value = new IMask(phoneInputElement.value, {
     mask: "+{7}(000)000-00-00",
   });
   phoneInputElement.value.addEventListener("input", () => {});
-})
+});
 
 function clearValidity(input) {
   state[input].isValid = true;
@@ -77,7 +76,7 @@ const tabs = reactive({
   isRegisterTab: true,
   isConfirmTab: false,
   isResetTab: false,
-})
+});
 
 // watch(isConfirmTab, () => {
 //   title.value = "Потверждения телефона";
@@ -95,32 +94,32 @@ const onSubmit = async () => {
 
     console.log(response);
 
-    if (response.status === 'success'){
+    if (response.status === "success") {
       state.token = response.data.token;
       tabs.isConfirmTab = true;
       tabs.isRegisterTab = false;
       tabs.isResetTab = false;
-    }else{
-      if (response.data && 'errors' in response.data) {
+    } else {
+      if (response.data && "errors" in response.data) {
         Swal.fire({
-          title: 'Ошибка!',
+          title: "Ошибка!",
           text: response.data.errors.phone[0],
           icon: "error",
-          confirmButtonText: 'ОК'
+          confirmButtonText: "ОК",
         });
       } else {
         Swal.fire({
-          title: 'Ошибка!',
+          title: "Ошибка!",
           text: response.data.message,
           icon: "error",
-          confirmButtonText: 'ОК'
+          confirmButtonText: "ОК",
         });
       }
     }
   }
 };
 
-const {sendRecoveryCode} = authStore;
+const { sendRecoveryCode } = authStore;
 const onSMSSubmit = async () => {
   console.log(state.code.val);
   const response = await recoverPasswordCode({
@@ -130,33 +129,33 @@ const onSMSSubmit = async () => {
   });
 
   console.log(response);
-  if (response.status === 'success'){
+  if (response.status === "success") {
     state.token = response.data.token;
     console.log(response.data.token);
     tabs.isConfirmTab = false;
     tabs.isRegisterTab = false;
     tabs.isResetTab = true;
     // isRegisterTab.value = false;
-  }else{
-    if ( 'errors' in response && response.message) {
+  } else {
+    if ("errors" in response && response.message) {
       Swal.fire({
-        title: 'Ошибка!',
+        title: "Ошибка!",
         text: response.data.message,
         icon: "error",
-        confirmButtonText: 'ОК'
+        confirmButtonText: "ОК",
       });
     } else {
       Swal.fire({
-        title: 'Ошибка!',
+        title: "Ошибка!",
         text: response.data.message,
         icon: "error",
-        confirmButtonText: 'ОК'
+        confirmButtonText: "ОК",
       });
     }
   }
 };
 //
-const {resetPassword} = authStore;
+const { resetPassword } = authStore;
 const onPasswordSubmit = async () => {
   const response = await resetPassword({
     phone: state.phone.val,
@@ -167,36 +166,40 @@ const onPasswordSubmit = async () => {
   });
 
   console.log(response);
-  if (response.status === 'success'){
-    navigateTo({name: 'sign-in'})
-  }else{
-    if ( 'errors' in response && response.message) {
+  if (response.status === "success") {
+    navigateTo({ name: "sign-in" });
+  } else {
+    if ("errors" in response && response.message) {
       Swal.fire({
-        title: 'Ошибка!',
+        title: "Ошибка!",
         text: response.data.message,
         icon: "error",
-        confirmButtonText: 'ОК'
+        confirmButtonText: "ОК",
       });
     } else {
       Swal.fire({
-        title: 'Ошибка!',
+        title: "Ошибка!",
         text: response.data.message,
         icon: "error",
-        confirmButtonText: 'ОК'
+        confirmButtonText: "ОК",
       });
     }
   }
 };
 
-
-function close(){
+function close() {
   state.error = null;
 }
 </script>
 
 <template>
   <div class="row">
-    <base-modal :show="!!state.error" title="Error occured" :type="'error'" @close="close">
+    <base-modal
+      :show="!!state.error"
+      title="Error occured"
+      :type="'error'"
+      @close="close"
+    >
       <p>{{ state.error }}</p>
     </base-modal>
 
@@ -205,41 +208,84 @@ function close(){
     </base-modal>
     <main class="main enter-page sign-up" role="main">
       <div class="enter-page-content">
-        <NuxtLink to="/" class="logo"> <img src="~/assets/img/jobeek-dark.svg" alt="#"></NuxtLink>
-        <form class="enter-form" v-if="tabs.isRegisterTab">
+        <NuxtLink to="/" class="logo"
+          ><img src="~/assets/img/jobeek-dark.svg" alt="#"
+        /></NuxtLink>
+        <form
+          class="enter-form"
+          v-if="tabs.isRegisterTab"
+          @submit.prevent="onSubmit"
+        >
           <h1>{{ title }}</h1>
           <div class="i-wrap">
-            <input type="tel" ref="phoneInputElement" name="tel" v-model="state.phone.val" placeholder="Номер телефона" @focusout="clearValidity('phone')">
-
+            <input
+              type="tel"
+              ref="phoneInputElement"
+              name="tel"
+              v-model="state.phone.val"
+              placeholder="Номер телефона"
+              @focusout="clearValidity('phone')"
+            />
           </div>
-          <button class="btn button-accent" type="button" @click="onSubmit">Отправить</button>
+          <button class="btn button-accent" type="submit">Отправить</button>
         </form>
-        <form v-else-if="tabs.isConfirmTab" class="enter-form" >
+        <form
+          v-else-if="tabs.isConfirmTab"
+          class="enter-form"
+          @submit.prevent="onSMSSubmit"
+        >
           <div class="i-wrap">
-            <input type="number" name="code" v-model="state.code.val" placeholder="Код потверждения" @focusout="clearValidity('code')">
+            <input
+              type="number"
+              name="code"
+              v-model="state.code.val"
+              placeholder="Код потверждения"
+              @focusout="clearValidity('code')"
+            />
           </div>
           <div class="note">
-            <img src="~/assets/img/svg/i.svg" alt="#">
-            <p>На номер +{{state.phone.val}} отправлен код восстановления пароля.</p>
+            <img src="~/assets/img/svg/i.svg" alt="#" />
+            <p>
+              На номер +{{ state.phone.val }} отправлен код восстановления
+              пароля.
+            </p>
           </div>
-          <button class="btn button-accent" type="button" @click="onSMSSubmit">Подтвердить</button>
+          <button class="btn button-accent" type="submit">Подтвердить</button>
         </form>
-        <form v-else-if="tabs.isResetTab" class="enter-form" >
+        <form
+          v-else-if="tabs.isResetTab"
+          class="enter-form"
+          @submit.prevent="onPasswordSubmit"
+        >
           <div class="i-wrap">
-            <input type="password" name="password" v-model="state.password.val" placeholder="Пароль" @focusout="clearValidity('password')">
+            <input
+              type="password"
+              name="password"
+              v-model="state.password.val"
+              placeholder="Пароль"
+              @focusout="clearValidity('password')"
+            />
           </div>
           <div class="i-wrap">
-            <input type="password" name="password_confirmation" v-model="state.password_confirmation.val" placeholder="Повторите пароль" @focusout="clearValidity('password_confirmation')">
+            <input
+              type="password"
+              name="password_confirmation"
+              v-model="state.password_confirmation.val"
+              placeholder="Повторите пароль"
+              @focusout="clearValidity('password_confirmation')"
+            />
           </div>
           <div class="note">
-            <img src="~/assets/img/svg/i.svg" alt="#">
-            <p>Устаноните новый пароль для аккаунта +{{state.phone.val}}</p>
+            <img src="~/assets/img/svg/i.svg" alt="#" />
+            <p>Устаноните новый пароль для аккаунта +{{ state.phone.val }}</p>
           </div>
-          <button class="btn button-accent" type="button" @click="onPasswordSubmit">Подтвердить</button>
+          <button class="btn button-accent" type="submit">Подтвердить</button>
         </form>
-        <div class="f-prompt">Хотите войти? <NuxtLink :to="{name: 'sign-in'}">Войдите!</NuxtLink>  </div>
+        <div class="f-prompt">
+          Хотите войти?
+          <NuxtLink :to="{ name: 'sign-in' }">Войдите!</NuxtLink>
+        </div>
       </div>
     </main>
-
   </div>
 </template>

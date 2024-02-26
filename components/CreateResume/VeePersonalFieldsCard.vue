@@ -1,7 +1,7 @@
 <template>
   <div class="w-box" v-click-outside="onSubmit">
     <div class="w-box-head">
-      <h3 class="title">Личные данные({{ isChanged }}) - {{ isFocused }}</h3>
+      <h3 class="title">Личные данные</h3>
       <span
         class="arrow"
         :class="{ up: isCollapsed, 'is-completed': isCompleted }"
@@ -575,7 +575,6 @@ watch(
     const diffData = useDiff(newData, oldData);
     if (Object.keys(diffData).length) {
       resetForm({ values: newData });
-      // resetField("phones", newData.phones);
     }
   },
 );
@@ -635,11 +634,10 @@ const save = async (is_from_parent = false) => {
 
   isUpdated.value = true;
   if (resData.status !== "success") {
-    if (resData.message) {
-      errorMessage.value = resData.message;
-    }
-    if (resData.data.hasOwnProperty("errors")) {
-      setErrors(resData.data.errors);
+    errorMessage.value = resData.message;
+    if (resData.hasOwnProperty("errors")) {
+      setErrors(resData.errors);
+      return;
     }
     return;
   }

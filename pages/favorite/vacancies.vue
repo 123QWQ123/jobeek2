@@ -1,7 +1,5 @@
 <script setup>
 import { useAuthStore } from "../../store/auth";
-import { useVacancyStore } from "../../store/vacancy";
-import { useVacancyForm } from "~/composables/useVacancyForm";
 
 definePageMeta({
   layout: "cabinet",
@@ -22,7 +20,7 @@ watch(
     if (!new_value) {
       navigateTo({ name: "favorite-vacancies" });
     }
-  }
+  },
 );
 </script>
 <template>
@@ -30,7 +28,9 @@ watch(
     <PersonalCabinetSearchMobile />
     <div class="bg-wrapper position-relative">
       <MyResumesConnectedProviders />
-      <MyFavoriteResumesList />
+      <div class="wrapper wrapper-1290">
+        <MyFavoriteResumesList />
+      </div>
     </div>
   </main>
 </template>

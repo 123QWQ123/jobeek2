@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper wrapper-1290 pb-5">
+  <div class="">
     <div class="notification mt-0">
       <div class="ic">
         <img src="~/assets/img/svg/crown2.svg" alt="#" />
@@ -14,8 +14,8 @@
       <a class="notification-button button-accent" href="#">Подключить </a>
     </div>
     <NuxtLink class="create-button" type="link" :to="{ name: 'create-resume' }"
-      >Создать резюме</NuxtLink
-    >
+      >Создать резюме
+    </NuxtLink>
     <div class="col d-flex justify-content-between mt-4">
       <h1 ref="filterRef" class="lk-page-title mt-4">
         Ваши резюме({{ total }})
@@ -110,10 +110,6 @@
 
 <script setup>
 import Swal from "sweetalert2";
-
-useHead({
-  title: "Jobeek - Мои вакансии",
-});
 import { storeToRefs } from "pinia";
 import { useMyVacancyForm } from "~/composables/useMyVacancyForm";
 import CustomSelect from "~/components/UI/CustomSelect.vue";
@@ -122,6 +118,10 @@ import { useMyVacancyPerPageOptions } from "~/composables/useMyVacancyPerPageOpt
 import { useMyVacanciesFilterOptions } from "../../composables/useMyVacanciesFilterOptions";
 import { useMyResumeForm } from "~/composables/useMyResumeForm";
 import { useResumeStore } from "~/store/resume";
+
+useHead({
+  title: "Jobeek - Мои вакансии",
+});
 
 const router = useRouter();
 const resumeStore = useResumeStore();
@@ -288,12 +288,15 @@ const listStyles = {
   border-radius: 1rem;
   padding: 1rem 1.5rem 1rem 1.5rem;
 }
+
 .vacancy_tabs .nav-link {
   padding: 0.8rem 2rem 0.5rem 2rem;
 }
+
 .theme-checker input ~ .theme-checker-ui .circle.left {
   transform: translate(3px, -50%);
 }
+
 .theme-checker input ~ .theme-checker-ui .circle.right {
   transform: translate(30px, -50%);
 }

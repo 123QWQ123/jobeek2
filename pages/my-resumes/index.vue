@@ -1,7 +1,6 @@
 <script setup>
-import { useAuthStore } from "../../store/auth";
-import { useVacancyStore } from "../../store/vacancy";
-import { useVacancyForm } from "~/composables/useVacancyForm";
+import { useAuthStore } from "~/store/auth";
+import { useResumeStore } from "~/store/resume.js";
 
 definePageMeta({
   layout: "cabinet",
@@ -23,16 +22,34 @@ watch(
     if (new_value === true) {
       navigateTo({ name: "my-vacancies" });
     }
-  }
+  },
 );
+
+const resumeStore = useResumeStore();
+const isCompleted = computed(() => {
+  if (
+    resumeStore.providers.hh === true &&
+    resumeStore.providers.superjob === true
+  ) {
+    return true;
+  }
+  return false;
+});
 </script>
 <template>
   <main class="main cabinet my-vacancies-page" role="main">
     <PersonalCabinetSearchMobile />
     <div class="bg-wrapper position-relative pt-4">
-      <MyResumesConnectedProviders />
-
-      <MyResumesList></MyResumesList>
+      <div class="wrapper wrapper-1290 pb-5">
+        <div class="w-box w-box--main bg-white" v-if="!isCompleted">
+          <p class="text-danger p-3">
+            Перед созданием резюме требуется подключить сервисы поставщиков
+            (HeadHunter, Superjob).
+          </p>
+        </div>
+        <MyResumesConnectedProviders />
+        <MyResumesList></MyResumesList>
+      </div>
     </div>
   </main>
 </template>

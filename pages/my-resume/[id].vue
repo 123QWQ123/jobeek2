@@ -264,7 +264,6 @@ const saveAndPublishProvider = async (provider = null) => {
   // }, 500);
 };
 const canOnlyOnePublished = computed(() => {
-  console.log(providers.value);
   if (
     (hhPublishable.value === true || superjobPublishable.value === true) &&
     (superjobPublishable.value === false || hhPublishable.value === false)
@@ -280,8 +279,7 @@ const phone = ref("");
     <div class="bg-wrapper position-relative pb-5">
       <PersonalCabinetSearchMobile />
       <div class="wrapper wrapper-1290">
-        <form class="update-resume">
-          {{ providers }}
+        <div class="update-resume">
           <div class="errors" v-if="errors.length">
             <!--            <h4>К сожалению возникли ошибки при создании Вакансии:</h4>-->
             <p class="alert alert-info" v-for="item in errors">{{ item }}</p>
@@ -368,11 +366,6 @@ const phone = ref("");
             <a href="#">правилами работы сервиса</a> и даете согласие на
             обработку персональных данных, разрешенных для распространения
           </p>
-          {{ hhPublishable }}
-          <hr />
-          {{ superjobPublishable }}
-          <hr />
-          {{ canOnlyOnePublished }}
           <div class="form-submit-container mt-2">
             <button
               class="btn btn-outline-primary"
@@ -381,25 +374,6 @@ const phone = ref("");
             >
               Сохранить как черновик
             </button>
-
-            <!--            <button-->
-            <!--              class="button-accent"-->
-            <!--              type="submit"-->
-            <!--              v-if="canOnlyOnePublished"-->
-            <!--              @click.prevent="-->
-            <!--                saveAndPublishProvider(-->
-            <!--                  publishableProviderName.toLocaleLowerCase(),-->
-            <!--                )-->
-            <!--              "-->
-            <!--            >-->
-            <!--              <span-->
-            <!--                v-if="isLoading"-->
-            <!--                class="spinner-border spinner-border-sm"-->
-            <!--                role="status"-->
-            <!--                aria-hidden="true"-->
-            <!--              ></span>-->
-            <!--              Опубликовать на {{ publishableProviderName }}-->
-            <!--            </button>-->
             <button
               class="button-accent"
               :class="{ disabled: !canBePublished }"
@@ -424,7 +398,7 @@ const phone = ref("");
               publishableProviderName.toUpperCase()
             }}</span>
           </p>
-        </form>
+        </div>
       </div>
     </div>
   </main>
@@ -433,6 +407,10 @@ const phone = ref("");
 <style scoped>
 .button-accent.disabled {
   filter: grayscale(180%);
+}
+
+.button-accent.disabled:hover {
+  background: #5375fd;
 }
 
 @media (max-width: 768px) {

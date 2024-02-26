@@ -17,6 +17,21 @@ const error = computed(() => {
   return route.query.message;
 });
 
+const isCompleted = computed(() => {
+  if (!isEmployer.value) {
+    if (authStore.seeker) {
+      return authStore.seeker.is_completed;
+    }
+    return false;
+  }
+  if (isEmployer.value) {
+    if (authStore.employer) {
+      return authStore.employer.is_completed;
+    }
+    return false;
+  }
+  return false;
+});
 const { handleAlert } = useAlert();
 
 watch(() => route.query.message, handleAlert);
@@ -32,23 +47,29 @@ onMounted(() => {
 
     <div class="has-sidebar has-sidebar--v2 wrapper wrapper-1290">
       <div class="content">
-        <!--        <div class="w-box w-box&#45;&#45;main" v-if="error">-->
-        <!--          <div class="w-box-head " :class="errorClass">-->
-        <!--            <p class="descr text-light">{{errorMessage}}</p>-->
-        <!--          </div>-->
-        <!--        </div>-->
+        <div class="w-box w-box--main bg-white" v-if="!isCompleted">
+          <p class="text-danger p-3">
+            Перед использовании сервиса требуется заполнения вашего профиля.
+          </p>
+        </div>
         <div class="w-box w-box--main">
           <div class="w-box-head">
             <h1 class="title">Профиль</h1>
           </div>
-          <transition name="content">
-            <div v-if="isEmployer">
-              <ProfileEmployerEditForm />
-            </div>
-            <div v-else>
-              <ProfileSeekerEditForm />
-            </div>
-          </transition>
+          <client-only>
+            <transition name="content">
+              <div v-if="isEmployer">
+                <ProfileEmployerEditForm
+                  :key="`employer${new Date().toTimeString()}`"
+                />
+              </div>
+              <div v-else>
+                <ProfileSeekerEditForm
+                  :key="`seeker${new Date().toTimeString()}`"
+                />
+              </div>
+            </transition>
+          </client-only>
         </div>
       </div>
       <aside class="sidebar">

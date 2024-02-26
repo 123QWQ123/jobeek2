@@ -1,7 +1,7 @@
 <template>
   <div class="w-box" v-click-outside="save" @click="isFocused = true">
     <div class="w-box-head">
-      <h3 class="title">Детали резюме({{ isChanged }}) - {{ isFocused }}</h3>
+      <h3 class="title">Детали резюме</h3>
       <span
         class="arrow"
         :class="{ up: isCollapsed, 'is-completed': isCompleted }"
@@ -31,12 +31,8 @@
           <div class="input-row">
             <label>Специализация:<b>*</b></label>
             <div class="input-wrapper mt-2">
-              <VeeMultiSelectWithSearch
+              <CreateResumeVeeProfessionalDetailsProfessionalRoles
                 name="professional_roles"
-                sort_by="none"
-                :options="professionalRoleOptions"
-                @input="updateProfessionalInput"
-                :placeholder="'Выберите'"
               />
             </div>
           </div>
@@ -63,15 +59,10 @@
             </div>
           </div>
 
-          <div class="input-row" v-show="!state.work_types.is_hidden">
+          <div class="input-row">
             <label>Тип работы:<b>*</b></label>
             <div class="input-wrapper mt-2">
-              <VeeMultiSelectWithSearch
-                name="work_types"
-                sort_by="none"
-                :options="workTypeOptions"
-                placeholder="Выберите"
-              />
+              <CreateResumeVeeProfessionalDetailsWorkTypes name="work_types" />
             </div>
           </div>
 
@@ -134,7 +125,6 @@ import { toTypedSchema } from "@vee-validate/zod";
 import { useResumeStore } from "~/store/resume";
 import ResumeTextInput from "~/components/CreateResume/ResumeTextInput.vue";
 import useProviders from "~/composables/useProviders.js";
-import useFilter from "~/composables/useFilter.js";
 
 const dictionaryStore = useDictionaryStore();
 
@@ -167,7 +157,6 @@ const isUpdated = ref(false);
 const { providers } = useProviders();
 
 const currencyOptions = useCurrencyOptions();
-const professionalRoleOptions = ref([]);
 
 const schema = computed(() => {
   if (providers.value.hh === true && providers.value.superjob === false) {
@@ -324,173 +313,9 @@ watch(
   },
 );
 
-const {
-  searchCities,
-  searchProfessionalRoles,
-  searchHHProfessionalRoles,
-  searchSuperjobProfessionalRoles,
-} = profileStore;
+const { searchCities } = profileStore;
 
-const selectedProviders = computed(() => {
-  if (providers.value.hh === true && providers.value.superjob === false)
-    return ["hh"];
-  if (providers.value.hh === false && providers.value.superjob === true)
-    return ["superjob"];
-  return ["hh", "superjob"];
-});
-
-const isHHSelected = computed(() => selectedProviders.value.includes("hh"));
-const isSuperjobSelected = computed(() =>
-  selectedProviders.value.includes("superjob"),
-);
-
-const isHHProfRolesNeeded = computed(() => {
-  if (!isHHSelected.value) return false;
-  if (prof_role_ids.value.length < 1) return true;
-  const selected_fields_values = [...prof_role_ids.value];
-  return !selected_fields_values.some((item) =>
-    profileStore.hh_professional_roles_with_parent_ids.includes(item),
-  );
-});
-const isSuperjobProfRolesNeeded = computed(() => {
-  if (!isSuperjobSelected.value) return false;
-  if (prof_role_ids.value.length < 1) return true;
-  const selected_fields_values = [...prof_role_ids.value];
-  return !selected_fields_values.some((item) =>
-    profileStore.superjob_professional_roles_with_parent_ids.includes(item),
-  );
-});
-
-const isHHWorkTypesNeeded = computed(() => {
-  if (!isHHSelected.value) return false;
-  if (work_type_ids.value.length < 1) return true;
-  const selected_fields_values = [...work_type_ids.value];
-  return !selected_fields_values.some((item) =>
-    hhWorkTypes.value.includes(item),
-  );
-});
-const isSuperjobWorkTypesNeeded = computed(() => {
-  if (!isSuperjobSelected.value) return false;
-  if (work_type_ids.value.length < 1) return true;
-  const selected_fields_values = [...work_type_ids.value];
-  return !selected_fields_values.some((item) =>
-    superjobWorkTypes.value.includes(item),
-  );
-});
-
-const hhWorkTypes = ref([]);
-const superjobWorkTypes = ref([]);
-const { uniq } = useFilter();
-const { value: prof_role_ids } = useField("professional_roles");
-watch(
-  () => prof_role_ids.value,
-  async () => {
-    let items = [];
-    if (isHHProfRolesNeeded.value) {
-      const new_h = profileStore.hh_professional_roles_with_parent;
-      items = items.concat(new_h);
-    }
-    if (isSuperjobProfRolesNeeded.value) {
-      const new_s = profileStore.superjob_professional_roles_with_parent;
-      items = items.concat(new_s);
-    }
-    if (isHHProfRolesNeeded.value || isSuperjobProfRolesNeeded.value) {
-      items = items.concat(profileStore.professional_roles_with_parent);
-      items = uniq(items, "value");
-      professionalRoleOptions.value = items;
-    } else {
-      professionalRoleOptions.value =
-        profileStore.professional_roles_with_parent;
-    }
-  },
-);
-
-const { value: work_type_ids } = useField("work_types");
-watch(
-  () => work_type_ids.value,
-  async () => {
-    let items = [];
-    if (isHHWorkTypesNeeded.value) {
-      const new_h = dictionaryStore.hh_work_types.map((item) => ({
-        value: item.id,
-        name: item.name,
-      }));
-      items = items.concat(new_h);
-    }
-    if (isSuperjobWorkTypesNeeded.value) {
-      const new_s = dictionaryStore.superjob_work_types.map((item) => ({
-        value: item.id,
-        name: item.name,
-      }));
-      items = items.concat(new_s);
-    }
-    if (isHHWorkTypesNeeded.value || isSuperjobWorkTypesNeeded.value) {
-      const all_items = dictionaryStore.work_types;
-      items = items.concat(all_items);
-      items = uniq(items, "value");
-      workTypeOptions.value = items;
-    } else {
-      const all_items = dictionaryStore.work_types;
-      workTypeOptions.value = all_items;
-    }
-  },
-);
-
-const updateProfessionalInput = async (newValue = "", providers = []) => {
-  console.log("update options");
-  let items = await searchProfessionalRoles();
-  if (newValue) {
-    items = items
-      .filter((item) => item.parent_id !== 0)
-      .filter((item) => item.name.includes(newValue));
-  } else {
-    items = items.filter((item) => item.parent_id !== 0);
-  }
-  professionalRoleOptions.value = items.map((item) => ({
-    value: item.id,
-    name: item.name,
-  }));
-};
-
-watch(
-  () => dictionaryStore.hh_work_types,
-  () => {
-    hhWorkTypes.value = dictionaryStore.hh_work_types.map((item) => item.id);
-  },
-);
-watch(
-  () => dictionaryStore.superjob_work_types,
-  () => {
-    superjobWorkTypes.value = dictionaryStore.superjob_work_types.map(
-      (item) => item.id,
-    );
-  },
-);
-const updateHHProfessionalRoles = async (newValue = "") => {
-  await searchHHProfessionalRoles();
-};
-const updateSuperjobProfessionalRoles = async (newValue = "") => {
-  await searchSuperjobProfessionalRoles();
-};
-const updateHHWorkTypes = async (newValue = "") => {
-  let items;
-  items = await getHHWorkTypes();
-  items = items.filter((item) => item.parent_id !== 0);
-  hhWorkTypes.value = items.map((item) => item.id);
-};
-const updateSuperjobWorkTypes = async (newValue = "") => {
-  let items;
-  items = await getSuperjobWorkTypes();
-  superjobWorkTypes.value = items.map((item) => item.id);
-};
-
-const {
-  getPlaceOfWorks,
-  getSchedules,
-  getWorkTypes,
-  getHHWorkTypes,
-  getSuperjobWorkTypes,
-} = dictionaryStore;
+const { getPlaceOfWorks, getSchedules } = dictionaryStore;
 
 const placeOfWorkOptions = computed(() => {
   return dictionaryStore.place_of_works.map((item) => ({
@@ -499,7 +324,6 @@ const placeOfWorkOptions = computed(() => {
   }));
 });
 
-const workTypeOptions = ref([]);
 const scheduleOptions = computed(() => {
   return dictionaryStore.schedules.map((item) => ({
     name: item.name,
@@ -508,12 +332,6 @@ const scheduleOptions = computed(() => {
 });
 
 onMounted(() => {
-  updateProfessionalInput("");
-  updateHHProfessionalRoles();
-  updateSuperjobProfessionalRoles();
-  getWorkTypes();
-  updateHHWorkTypes();
-  updateSuperjobWorkTypes();
   getSchedules();
   getPlaceOfWorks();
 });
@@ -556,13 +374,12 @@ const save = async (is_from_parent = false) => {
 
   isUpdated.value = true;
   if (resData.status !== "success") {
-    if (resData.message) {
-      errorMessage.value = resData.message;
+    errorMessage.value = resData.message;
+    if (resData.hasOwnProperty("errors")) {
+      setErrors(resData.errors);
+      return;
     }
-    if (resData.data.hasOwnProperty("errors")) {
-      setErrors(resData.data.errors);
-    }
-    return handleErrorResponse(resData.data);
+    return;
   }
   resetForm({ values });
   isSaved.value = false;
