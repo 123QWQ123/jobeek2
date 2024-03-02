@@ -154,14 +154,14 @@ export const useVacancyStore = defineStore("vacancy", {
       return data;
     },
     async getVacancy(id, payload) {
-      const { data } = await useApi("vacancy/" + id, {
+      const response = await useApi("vacancy/" + id, {
         method: "get",
         params: payload,
       });
-      if (data) {
-        this.vacancy = data;
+      if (response.hasOwnProperty("data")) {
+        this.vacancy = response.data;
       }
-      return data;
+      return response.data;
     },
     async clearVacancies() {
       this.vacancies = [];

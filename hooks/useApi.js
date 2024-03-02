@@ -1,5 +1,7 @@
 import axios from "axios";
 
+const https = require("https");
+
 const useApi = async (method, options = {}) => {
   // console.log(options);
   const CONFIG = useRuntimeConfig();
@@ -114,10 +116,12 @@ const useApi = async (method, options = {}) => {
         transformRequest: [
           function (data, headers) {
             // Do whatever you want to transform the data
-            headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
             return data;
           },
         ],
+        httpsAgent: new https.Agent({
+          rejectUnauthorized: false,
+        }),
       });
 
       let status = "error";
@@ -130,6 +134,7 @@ const useApi = async (method, options = {}) => {
         status,
       };
     } catch (res) {
+      console.log(res);
       if (res instanceof Object) {
         if (res.hasOwnProperty("response")) {
           const { data } = res.response;

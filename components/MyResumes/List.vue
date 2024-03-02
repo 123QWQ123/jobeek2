@@ -1,18 +1,17 @@
 <template>
   <div class="">
-    <div class="notification mt-0">
-      <div class="ic">
-        <img src="~/assets/img/svg/crown2.svg" alt="#" />
-      </div>
-      <div class="notification-text">
-        <strong class="title">Подключите премиум</strong>
-        <p>
-          У вас стоит лимит на создание подписок: 3 шт. Чтобы создавать
-          неограниченное кол-во подписок, подключите премиум
-        </p>
-      </div>
-      <a class="notification-button button-accent" href="#">Подключить </a>
-    </div>
+    <!--    <div class="notification mt-0">-->
+    <!--      <div class="ic">-->
+    <!--        <img src="~/assets/img/svg/crown2.svg" alt="#" />-->
+    <!--      </div>-->
+    <!--      <div class="notification-text">-->
+    <!--        <strong class="title">Подключите премиум</strong>-->
+    <!--        <p>-->
+    <!--          У вас стоит лимит на создание подписок: 3 шт. Чтобы создавать-->
+    <!--          неограниченное кол-во подписок, подключите премиум-->
+    <!--        </p>-->
+    <!--      </div>-->
+    <!--    </div>-->
     <NuxtLink class="create-button" type="link" :to="{ name: 'create-resume' }"
       >Создать резюме
     </NuxtLink>

@@ -6,8 +6,7 @@
           <SearchForm></SearchForm>
         </div>
       </div>
-      <div class="wrapper wrapper-1290">
-
+      <div class="wrapper wrapper-1290" v-if="vacancyData">
         <VacanciesSingleHHContent
           v-if="provider === 'hh'"
           :item="vacancy.hh"
@@ -21,6 +20,7 @@
           <VacanciesSingleLikeList></VacanciesSingleLikeList>
         </div>
       </div>
+      <!--      <VacanciesSingleResumeListSelectModal :open="isOpen" />-->
     </div>
     <!--    <HomeWorkSection/>-->
     <!--    <HomeSearchSection/>-->
@@ -29,11 +29,12 @@
 
 <script setup>
 definePageMeta({
-    layout: 'cabinet'
-})
+  layout: "cabinet",
+});
 import { storeToRefs } from "pinia";
-import { useVacancyStore } from "../../../store/vacancy";
-import {navigateTo} from "nuxt/app";
+import { useVacancyStore } from "~/store/vacancy";
+
+const isOpen = ref(true);
 const route = useRoute();
 const vacancyStore = useVacancyStore();
 const { getVacancy } = vacancyStore;
@@ -42,15 +43,18 @@ const { vacancy } = storeToRefs(vacancyStore);
 const { slug } = route.params;
 const { provider } = route.query;
 const vacancyData = await getVacancy(slug, { provider });
+console.log(vacancyData);
 const pageTitle = computed(() => vacancyData[provider]?.name + " - Jobeek");
 
-if (!vacancyData.hasOwnProperty('hh') && !vacancyData.hasOwnProperty('superjob')){
-  navigateTo({name: '404'});
-}
+// if (
+//   !vacancyData.hasOwnProperty("hh") &&
+//   !vacancyData.hasOwnProperty("superjob")
+// ) {
+//   navigateTo({ name: "404" });
+// }
 useHead({
-  title: pageTitle.value,
+  title: pageTitle.value ?? "Loading",
 });
-
 </script>
 
 <style scoped>

@@ -26,10 +26,13 @@ watch(
 <template>
   <main class="main cabinet my-vacancies-page" role="main">
     <PersonalCabinetSearchMobile />
-    <div class="bg-wrapper position-relative">
-      <MyResumesConnectedProviders />
+
+    <div class="bg-wrapper position-relative pt-4">
       <div class="wrapper wrapper-1290">
-        <MyFavoriteResumesList />
+        <div class="content mb-4">
+          <MyVacanciesConnectedProviders />
+          <MyFavoriteVacanciesList />
+        </div>
       </div>
     </div>
   </main>

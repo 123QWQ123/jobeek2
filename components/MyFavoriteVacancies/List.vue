@@ -14,7 +14,7 @@
       <button class="btn btn-primary" @click="prevPage">Prev</button>
       <button class="btn btn-primary ms-2" @click="nextPage">Next</button>
     </div>
-    <h3 v-else>К сожалению больше ничего не нашли!!!!</h3>
+    <h3 v-else>К сожалению ничего не нашли.</h3>
   </div>
 </template>
 
@@ -23,7 +23,7 @@ import { useVacancyStore } from "../../store/vacancy";
 import { storeToRefs } from "pinia";
 import { useVacancyForm } from "../../composables/useVacancyForm";
 import Swal from "sweetalert2";
-import { useResumeStore } from "~/store/resume";
+
 const vacancyStore = useVacancyStore();
 const { getMyFavoriteVacancies } = vacancyStore;
 const { my_favorite_vacancies, current_page } = storeToRefs(vacancyStore);

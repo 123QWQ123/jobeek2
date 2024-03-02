@@ -93,7 +93,7 @@ export const useResumeStore = defineStore("resume", {
     async getResumes(payload, add = false) {
       const { data } = await useApi("resumes/search", {
         method: "get",
-        payload,
+        params: payload,
       });
       if (data && "items" in data) {
         if (add) {
@@ -106,6 +106,17 @@ export const useResumeStore = defineStore("resume", {
         this.total = data.found;
       }
       return data;
+    },
+    async getMyNegotiations(payload) {
+      const response = await useApi("seeker/negotiations", {
+        method: "get",
+        params: payload,
+      });
+      if (response.hasOwnProperty("data")) {
+        console.log(response.data);
+        this.my_negotiations = response.data.items;
+      }
+      return response;
     },
     async getUserResumes(payload) {
       return useApi("seeker/resumes", {
