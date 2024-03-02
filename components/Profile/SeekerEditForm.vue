@@ -5,7 +5,7 @@
     <div class="alert alert-danger" v-if="errorMessage">
       {{ errorMessage }}
     </div>
-    <ProfilePhotoInput name="photo" />
+    <ProfilePhotoInput name="photo" preview="photo_url" />
     <div class="input-row">
       <label for="name">Имя и фамилия <b>*</b></label>
       <div class="input-wrapper">
@@ -135,6 +135,7 @@ const getFields = (newObject) => {
     birth_date: newObject.birth_date,
     city_id: newObject.city_id,
     country_id: newObject.country_id,
+    photo_url: newObject.photo_url,
   };
 };
 watch(

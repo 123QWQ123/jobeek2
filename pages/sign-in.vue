@@ -96,6 +96,30 @@ async function onSubmit() {
     const route_name = route.query.redirect;
     await getConnectedEmployerProviders();
     await getConnectedSeekerProviders();
+    const isEmployer = auth.isEmployer;
+    const employer = auth.employer;
+
+    if (isEmployer && auth.employer.is_completed) {
+      setTimeout(() => {
+        if (route_name) {
+          router.replace({ name: route_name });
+        } else {
+          router.replace({ name: "my-vacancies" });
+        }
+      });
+      return;
+    }
+    if (!isEmployer && auth.seeker.is_completed) {
+      setTimeout(() => {
+        if (route_name) {
+          router.replace({ name: route_name });
+        } else {
+          router.replace({ name: "my-resumes" });
+        }
+      });
+      return;
+    }
+
     setTimeout(() => {
       if (route_name) {
         router.replace({ name: route_name });

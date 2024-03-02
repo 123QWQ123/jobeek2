@@ -174,18 +174,22 @@ const onEmailConfirm = async (e) => {
     </span>
     <span
       v-if="isCheckButton"
-      class="h-100 fs-6 position-absolute end-0 top-0 p-0 px-0 mt-0 me-0 pb-2"
+      class="btn btn-outline-success absolute_button pe-auto"
     >
       <svg
+        style="width: 22px; height: 22px; margin-top: 0"
+        aria-hidden="true"
         xmlns="http://www.w3.org/2000/svg"
-        style="transform: scale(0.5)"
-        viewBox="0 0 48 48"
-        width="48px"
-        height="48px"
+        fill="none"
+        class="green_icon"
+        viewBox="0 0 24 24"
       >
         <path
-          fill="green"
-          d="M40.6 12.1L17 35.7 7.4 26.1 4.6 29 17 41.3 43.4 14.9z"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
         />
       </svg>
     </span>
@@ -211,5 +215,8 @@ const onEmailConfirm = async (e) => {
   position: absolute;
   top: 0.25rem;
   right: 0;
+}
+
+.green_icon {
 }
 </style>

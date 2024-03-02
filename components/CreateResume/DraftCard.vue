@@ -139,9 +139,6 @@
         </div>
       </form>
     </div>
-    {{ values }}
-    <hr />
-    {{ meta }}
   </div>
 </template>
 

@@ -6,7 +6,7 @@
   >
     <PageLoader v-if="isLoading" />
 
-    <ProfilePhotoInput name="logo" />
+    <ProfilePhotoInput name="logo" preview="logo_url" />
 
     <div class="input-row">
       <label for="password">Название компании <b>*</b></label>
@@ -50,7 +50,6 @@
         <base-button type="submit">Сохранить</base-button>
       </div>
     </div>
-    {{ values }}
   </form>
 </template>
 
@@ -99,6 +98,7 @@ const getFields = (newObject) => {
     company_description: newObject.company_description,
     email: newObject.email,
     company_url: newObject.company_url,
+    logo_url: newObject.logo_url,
     phone: newObject.phone,
   };
 };
@@ -162,7 +162,7 @@ const handleSubmit = async (e) => {
     }
   }
   if (values.hasOwnProperty("logo")) {
-    if (values.password != null) {
+    if (values.logo != null) {
       formData.append("logo", values.logo);
     } else {
       formData.delete("logo");

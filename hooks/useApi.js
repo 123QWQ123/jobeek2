@@ -67,7 +67,6 @@ const useApi = async (method, options = {}) => {
       return {
         data: data ?? {},
         message: statusText,
-        errors: errors ?? {},
         status,
       };
     } catch (res) {
