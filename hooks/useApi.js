@@ -1,6 +1,5 @@
 import axios from "axios";
-
-const https = require("https");
+import https from "node:https";
 
 const useApi = async (method, options = {}) => {
   // console.log(options);
