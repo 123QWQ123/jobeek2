@@ -13,7 +13,7 @@
             >
               {{ item.title }}
             </nuxt-link>
-            <span class="location">{{ cityAddress }} </span>
+            <!--            <span class="location">{{ cityAddress }} </span>-->
 
             <span>
               <span class="price">
@@ -25,10 +25,7 @@
           </div>
         </div>
         <div class="resume-card-body-col">
-          <div class="date">
-            в {{ published_date.format("D") }}
-            {{ published_date.format("MMMM") }}
-          </div>
+          <div class="date">{{ createdDate }}</div>
           <!--          <div class="date">с {{ published_date.format('D') }} {{ published_date.format('MMMM') }} по 24 марта</div>-->
         </div>
       </div>
@@ -41,6 +38,8 @@
                 class="theme-checker theme-checker--blue"
                 :class="{ disabled: !canHHBeEnabled }"
               >
+                <div :class="{ animated: isHHLoading }"></div>
+
                 <input
                   type="checkbox"
                   id="hh"
@@ -58,11 +57,14 @@
             </div>
           </div>
           <div class="option">
-            <div class="custom-check-wrap">
+            <div class="custom-check-wrap position-relative">
               <div
                 class="theme-checker theme-checker--blue"
-                :class="{ disabled: !canSuperjobBeEnabled }"
+                :class="{
+                  disabled: !canSuperjobBeEnabled,
+                }"
               >
+                <div :class="{ animated: isSuperjobLoading }"></div>
                 <input
                   type="checkbox"
                   id="sj"
@@ -86,23 +88,36 @@
             <div class="check-block mb-2 mb-md-1 mb-lg-0 me-lg-3">
               <label for="enable-push">Подключить уведомления: </label>
             </div>
-            <div class="check-block mb-2 mb-md-1 mb-lg-0 me-lg-3">
+            <div
+              class="check-block mb-2 mb-md-1 mb-lg-0 me-lg-3"
+              @click="onPushToggle"
+            >
               <div class="checkbox mx-2">
-                <input type="checkbox" id="enable-push" />
+                <input
+                  type="checkbox"
+                  id="enable-push"
+                  name="enable-push"
+                  :checked="pushStatus"
+                />
                 <div class="checkbox-mask">
                   <img src="~/assets/img/svg/check.svg" alt="#" />
                 </div>
               </div>
-              <label for="enable-push">Push </label>
+              <label for="enable-push">Push</label>
             </div>
-            <div class="check-block">
+            <div class="check-block" @click="onEmailToggle">
               <div class="checkbox mx-2">
-                <input type="checkbox" id="enable-email-notification" />
+                <input
+                  type="checkbox"
+                  id="enable-email"
+                  name="enable-email"
+                  :checked="emailStatus"
+                />
                 <div class="checkbox-mask">
                   <img src="~/assets/img/svg/check.svg" alt="#" />
                 </div>
               </div>
-              <label for="enable-email-notification">E-mail</label>
+              <label for="enable-email">E-mail</label>
             </div>
           </div>
           <div
@@ -194,12 +209,11 @@
 </template>
 
 <script setup>
-import moment from "moment";
-import "moment/locale/ru";
 import Swal from "sweetalert2";
 import { toast } from "vue3-toastify";
 import { useResumeStore } from "~/store/resume";
 
+const { $moment } = useNuxtApp();
 const props = defineProps(["item", "id"]);
 const item = computed(() => props.item);
 
@@ -238,6 +252,46 @@ const canHHBeEnabled = computed(() => {
   }
   return false;
 });
+const pushStatus = ref(item.value?.push_notification ?? false);
+const emailStatus = ref(item.value?.email_notification ?? false);
+watch(
+  () => item.value?.push_notification,
+  (newValue) => {
+    pushStatus.value = newValue;
+  },
+);
+watch(
+  () => item.value?.email_notification,
+  (newValue) => {
+    emailStatus.value = newValue;
+  },
+);
+const onEmailToggle = async (e) => {
+  e.preventDefault();
+  const newValue = !emailStatus.value;
+  const resData = await updateResume(item.value.id, {
+    form_data: "NOTIFICATION_DATA",
+    email_notification: newValue,
+  });
+  if (resData.status !== "success") {
+    toast.info(resData.message);
+    return;
+  }
+  emailStatus.value = newValue;
+};
+const onPushToggle = async (e) => {
+  e.preventDefault();
+  const newValue = !pushStatus.value;
+  const resData = await updateResume(item.value.id, {
+    form_data: "NOTIFICATION_DATA",
+    push_notification: newValue,
+  });
+  if (resData.status !== "success") {
+    toast.info(resData.message);
+    return;
+  }
+  pushStatus.value = newValue;
+};
 
 const canSuperjobBeEnabled = computed(() => {
   if (item.value) {
@@ -289,8 +343,17 @@ const employerLogo = computed(() => {
 });
 
 const published_date = computed(() =>
-  moment(item.value?.published_date).locale("ru"),
+  $moment(item.value?.published_date).locale("ru"),
 );
+
+const createdDate = computed(() => {
+  if (!item.value) return "";
+  let date = $moment(item.value.published_date);
+
+  date = "в " + date.format("D") + " " + date.format("MMMM");
+
+  return date;
+});
 
 const { deleteResume } = resumeStore;
 const onDelete = async (id) => {
@@ -318,7 +381,15 @@ const resetObject = computed(() => {
 
 const selectedProviders = ref(resetObject.value);
 
+const isSuperjobLoading = ref(false);
+const isHHLoading = ref(false);
 const toggle = async (provider) => {
+  if (provider === "hh") {
+    isHHLoading.value = true;
+  }
+  if (provider === "superjob") {
+    isSuperjobLoading.value = true;
+  }
   selectedProviders.value[provider] = !selectedProviders.value[provider];
   const providerParams = [];
 
@@ -326,6 +397,9 @@ const toggle = async (provider) => {
     if (!hhProviderConnected.value) {
       toast.info("HH еще не подключен! ", { autoClose: 3000 });
       selectedProviders.value[provider] = !selectedProviders.value[provider];
+      isSuperjobLoading.value = false;
+      isHHLoading.value = false;
+
       return;
     }
     providerParams.push("hh");
@@ -335,7 +409,8 @@ const toggle = async (provider) => {
     if (!superjobProviderConnected.value) {
       toast.info("Superjob еще не подключен! ", { autoClose: 3000 });
       selectedProviders.value[provider] = !selectedProviders.value[provider];
-
+      isSuperjobLoading.value = false;
+      isHHLoading.value = false;
       return;
     }
     providerParams.push("superjob");
@@ -349,9 +424,14 @@ const toggle = async (provider) => {
   if (resData.status !== "success") {
     selectedProviders.value[provider] = !selectedProviders.value[provider];
     toast.info(resData.message, { autoClose: 3000 });
+    isSuperjobLoading.value = false;
+    isHHLoading.value = false;
     return;
   }
+
   await getMyResumes();
+  isSuperjobLoading.value = false;
+  isHHLoading.value = false;
 };
 const openProviderAuthUrl = (url) => {
   window.open(url);
@@ -381,5 +461,36 @@ const openProviderAuthUrl = (url) => {
 .theme-checker.disabled * {
   -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
   filter: grayscale(100%);
+}
+
+@keyframes placeHolderShimmer {
+  0% {
+    background-position: 0px 0;
+  }
+  100% {
+    background-position: 100em 0;
+  }
+}
+
+.animated {
+  border-radius: 43px;
+  padding: 3px;
+  z-index: 9999;
+  animation-duration: 20s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-name: placeHolderShimmer;
+  animation-timing-function: linear;
+  background: #fff;
+  background: linear-gradient(to right, #eeeeee 8%, #dddddd 18%, #eeeeee 33%);
+  height: calc(100% + 2px);
+  width: calc(100% + 2px);
+  position: absolute;
+  //padding-top: 50px;
+  -webkit-backface-visibility: hidden;
+  left: -1px;
+  right: 0;
+  top: -1px;
+  bottom: 0;
 }
 </style>

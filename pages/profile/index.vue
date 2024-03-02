@@ -34,7 +34,12 @@ const isCompleted = computed(() => {
 });
 const { handleAlert } = useAlert();
 
-watch(() => route.query.message, handleAlert);
+watch(
+  () => route.query.message,
+  (newMessage) => {
+    console.log(newMessage);
+  },
+);
 
 onMounted(() => {
   handleAlert();

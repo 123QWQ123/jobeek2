@@ -17,6 +17,7 @@ export default defineNitroPlugin((nitroApp) => {
   Sentry.init({
     dsn: sentry.dsn,
     environment: sentry.environment,
+    enabled: sentry.environment === "production",
     integrations: [new ProfilingIntegration()],
     // Performance Monitoring
     tracesSampleRate: 1.0, // Change in production!

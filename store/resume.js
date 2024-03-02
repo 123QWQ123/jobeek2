@@ -116,7 +116,6 @@ export const useResumeStore = defineStore("resume", {
     async getMyResumes(payload) {
       const response = await this.getUserResumes(payload);
       if (response.hasOwnProperty("data") && "data" in response.data) {
-        console.log(response.data.data);
         this.my_resumes = response.data.data;
         this.my_total = response.data.found;
         this.current_page = response.data.current_page;
@@ -164,6 +163,15 @@ export const useResumeStore = defineStore("resume", {
       // if ('data' in response){
       //   this.resume = response.data;
       // }
+      return response;
+    },
+    async modifyNotifications(payload) {
+      console.log(payload);
+      const response = await useApi("seeker/resumes/notifications", {
+        method: "PUT",
+        payload,
+      });
+      console.log(response);
       return response;
     },
     async updateResume(id, payload) {

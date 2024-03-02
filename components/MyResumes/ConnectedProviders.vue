@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="wrapper wrapper-1290">
+    <div class="wrapper wrapper-1290 p-0">
       <h1 class="lk-page-title">Cервисы</h1>
       <div class="card mb-4 border-0">
         <div class="row align-baseline justify-between">
@@ -122,8 +122,8 @@
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="64"
-                    height="64"
+                    width="36"
+                    height="36"
                     fill="#5375FD"
                     class="bi bi-arrow-repeat"
                     viewBox="0 0 16 16"
@@ -178,7 +178,7 @@ const providers = ref({
 
 const isSyncing = ref(false);
 const lastSyncedTime = computed(() => {
-  return moment().format("h:mm a, DD.MM.Y");
+  return moment().format("h:mm ч, DD.MM.Y");
 });
 
 const { importResumes } = resumeStore;
@@ -257,13 +257,13 @@ const iframe = ref();
 .refresh-button_col {
   display: inline-flex;
   max-height: 20rem;
-  padding: 1.5rem;
+  padding: 0.5rem;
   justify-content: flex-end;
 }
 
 .list-of-providers .provider-item {
-  max-height: 8rem;
-  max-width: 8rem;
+  max-height: 3.6rem;
+  max-width: 3.6rem;
   display: inline-flex;
   justify-content: center;
   margin-right: 1rem;
@@ -277,8 +277,8 @@ const iframe = ref();
 .list-of-providers .provider-item .provider-label {
   position: absolute;
   top: 0;
-  left: 24px;
-  transform: scale(1.5);
+  left: 42px;
+  transform: scale(1);
   background-color: rgba(229, 229, 229, 0.99);
   border-radius: 50%;
 }

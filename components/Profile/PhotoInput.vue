@@ -1,34 +1,57 @@
 <script setup>
+import { useField } from "vee-validate";
+
+const props = defineProps(["name", "preview"]);
+
 const CONFIG = useRuntimeConfig();
 
+const { value, setValue, errorMessage } = useField(() => props.name);
+const { value: previewUrl } = useField(() => props.preview);
+
 const handleUploadFile = async (e) => {
+  photo.value = photoElement.value.files[0];
   // state.photo.val = photoElement.value.files[0];
-  // const file = photoElement.value.files;
-  // if (file && file[0]) {
-  //   let reader = new FileReader();
-  //   reader.onload = (e) => {
-  //     state.photo.base64 = e.target.result;
-  //   };
-  //   reader.readAsDataURL(file[0]);
-  // }
+  const file = photoElement.value.files;
+  if (file && file[0]) {
+    let reader = new FileReader();
+    reader.onload = (e) => {
+      // state.photo.base64 = e.target.result;
+    };
+    reader.readAsDataURL(file[0]);
+  }
 };
 
 const photoElement = ref();
+const base64 = ref(null);
+const photo_url = ref(previewUrl.value ?? null);
+const photo = ref(null);
+watch(
+  () => photo.value,
+  () => {
+    setValue(photo.value);
+  },
+);
+
+watch(
+  () => previewUrl.value,
+  () => {
+    photo_url.value = previewUrl.value;
+  },
+);
 
 const openFileBrowser = () => {
   photoElement.value.click();
 };
 const clearPhotoUrl = () => {
-  // state.photo_url.val = "";
+  photo_url.value = "";
 };
 
 const photoUrl = computed(() => {
-  return CONFIG.public.base + "/assets/images/avatar.png";
-  // if (state.photo.base64) {
-  //   return state.photo.base64;
-  // } else if (state.photo_url.val) {
-  //   return CONFIG.public.base + state.photo_url.val;
-  // } else return CONFIG.public.base + "/assets/images/avatar.png";
+  if (base64.value) {
+    return base64.value;
+  } else if (photo_url.value) {
+    return CONFIG.public.backend.host + photo_url.value;
+  } else return CONFIG.public.base + "/assets/images/avatar.png";
 });
 </script>
 
