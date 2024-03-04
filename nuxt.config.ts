@@ -11,7 +11,7 @@ const config = {
     // Keys within public, will be also exposed to the client-side
     public: {
       apiBase: "https://api.jobeek.online/api/",
-      base: "https://api.jobeek.online",
+      base: "https://api.jobeek.online/",
       sentry: {
         dsn: "https://cd6d558f98e968695f6d8fa0a88c115f@o4506751504482304.ingest.sentry.io/4506757163057152",
         environment: "development",
@@ -60,8 +60,11 @@ const config = {
     "@bg-dev/nuxt-fcm",
     "@vueuse/nuxt",
     "@vee-validate/nuxt",
+    "nuxt-tiptap-editor",
   ],
-
+  tiptap: {
+    prefix: "Tiptap", //prefix for Tiptap imports, composables not included
+  },
   routeRules: {
     // Static page generated on-demand, revalidates in background
     // Render these routes with SPA

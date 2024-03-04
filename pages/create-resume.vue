@@ -2,6 +2,7 @@
 import { useVacancyStore } from "~/store/vacancy";
 import useAlert from "~/composables/useAlert";
 import { useResumeStore } from "~/store/resume";
+import { useAuthStore } from "~/store/auth.js";
 
 definePageMeta({
   layout: "cabinet",
@@ -28,6 +29,20 @@ const error = computed(() => {
 const { handleAlert } = useAlert();
 watch(() => route.query.message, handleAlert);
 
+const authStore = useAuthStore();
+
+const isEmployer = computed(() => authStore.isEmployer);
+const user = computed(() => authStore.user);
+const employer = computed(() => authStore.employer);
+watch(
+  () => isEmployer.value,
+  (new_value) => {
+    console.log(new_value);
+    if (new_value === true) {
+      navigateTo({ name: "create-vacancy" });
+    }
+  },
+);
 const saveAsDraft = (e) => {
   e.preventDefault();
   isLoading.value = true;

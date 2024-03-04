@@ -32,17 +32,17 @@
         </div>
       </div>
 
-      <!--      <div class="input-row">-->
-      <!--        <label>Специализация:<b>*</b></label>-->
-      <!--        <div class="input-wrapper mt-2">-->
-      <!--          <VeeMultiSelectWithSearch-->
-      <!--            :options="professionalRoleOptions"-->
-      <!--            name="professional_roles"-->
-      <!--            label="Выберите специализацию"-->
-      <!--            @input="updateProfessionalInput"-->
-      <!--          ></VeeMultiSelectWithSearch>-->
-      <!--        </div>-->
-      <!--      </div>-->
+      <div class="input-row">
+        <label>Специализация:<b>*</b></label>
+        <div class="input-wrapper mt-2">
+          <VeeMultiSelectWithSearch
+            :options="professionalRoleOptions"
+            name="professional_roles"
+            label="Выберите специализацию"
+            @input="updateProfessionalInput"
+          ></VeeMultiSelectWithSearch>
+        </div>
+      </div>
 
       <!--      <div class="input-row">-->
       <!--        <label for="description">Описание:</label>-->
@@ -53,18 +53,21 @@
       <!--          </div>-->
       <!--        </div>-->
       <!--      </div>-->
-      <!--      <div class="input-row">-->
-      <!--        <label for="description">Описание:</label>-->
-      <!--        <div class="input-wrapper">-->
-      <!--          <CustomQuilRichEditor />-->
-      <!--        </div>-->
-      <!--      </div>-->
+      <div class="input-row">
+        <label for="description">Описание:</label>
+        <div class="input-wrapper">
+          <!--          <VeeRichEditor name="description" />-->
+          <!--          <VeeRichEditor2 name="description" />-->
+          <!--          <VeeRichEditor2 />-->
+          <TipTapRichEditor />
+        </div>
+      </div>
 
-      <!--      <CreateVacancySalary-->
-      <!--        v-model="state.salary.val"-->
-      <!--        :errors="errors.salary"-->
-      <!--        :providers="providers"-->
-      <!--      />-->
+      <!--            <CreateVacancySalary-->
+      <!--              v-model="state.salary.val"-->
+      <!--              :errors="errors.salary"-->
+      <!--              :providers="providers"-->
+      <!--            />-->
       <br />
       {{ values }}
     </div>

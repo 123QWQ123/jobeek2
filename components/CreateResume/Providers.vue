@@ -111,10 +111,9 @@
 // To DO default by connected_providers
 
 import { useDictionaryStore } from "~/store/dictionary";
-import { useVacancyStore } from "~/store/vacancy";
-import { useFormData } from "~/composables/useFormData";
 import { toast } from "vue3-toastify";
 import { useResumeStore } from "~/store/resume";
+
 const emit = defineEmits(["update:modelValue"]);
 const props = defineProps({
   modelValue: {
@@ -174,7 +173,7 @@ const resumeProviders = computed(() => {
   }
   if (resumeStore.my_resume.providers.length > 0) {
     selectedProvidersValue = resumeStore.my_resume.providers.map(
-      (item) => item.name
+      (item) => item.name,
     );
   }
   // return selectedProvidersValue;
@@ -196,14 +195,14 @@ watch(
   () => resumeProviders.value,
   (newValue) => {
     selectedProviders.value = newValue;
-  }
+  },
 );
 const selectedProviders = ref(props.modelValue ?? resetObject);
 watch(
   () => selectedProviders.value,
   (newSelectedItems) => {
     emit("update:modelValue", newSelectedItems);
-  }
+  },
 );
 
 const errors = computed(() => props.errors);
@@ -220,6 +219,7 @@ const { updateResume } = resumeStore;
 // const providers = ref(resetObject);
 const isHHLoading = ref(false);
 const isSuperjobLoading = ref(false);
+const redirect_url = useRequestURL();
 const toggle = async (provider) => {
   if (!selectedProviders.value[provider]) {
     if (enabledProviders.value[provider] === false) {
@@ -227,7 +227,7 @@ const toggle = async (provider) => {
       providerParams.set("providers[]", provider);
       const resData = await getSeekerProvidersAuthEndpoints(
         providerParams,
-        route.fullPath.replace(route.fullPath.substring(0, 1), "")
+        redirect_url,
       );
       if (resData.hasOwnProperty(provider)) {
         openProviderAuthUrl(resData[provider]);
@@ -290,18 +290,22 @@ const openProviderAuthUrl = (url) => {
 .import-box {
   cursor: pointer;
 }
+
 .import-box.is-loading {
   align-items: center;
   justify-content: center;
 }
+
 .is-connected .import-box-dvnld .logo .check {
   display: block;
 }
+
 .import-box.disabled {
   background: #ffffff;
   box-shadow: 0px 0px 20px rgb(0 0 0 / 4%);
   border-radius: 12px;
 }
+
 .import-box.disabled .import-box-dvnld {
   border: 1px dashed #8c8c8c;
   color: #8c8c8c;
@@ -311,6 +315,7 @@ const openProviderAuthUrl = (url) => {
   -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
   filter: grayscale(100%);
 }
+
 .import-box.disabled .import-box-dvnld span {
   color: #8c8c8c;
 }
