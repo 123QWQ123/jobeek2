@@ -99,7 +99,7 @@ async function onSubmit() {
     const isEmployer = auth.isEmployer;
     const employer = auth.employer;
 
-    if (isEmployer && auth.employer.is_completed) {
+    if (isEmployer && auth.employer && auth.employer.is_completed) {
       setTimeout(() => {
         if (route_name) {
           router.replace({ name: route_name });
@@ -109,7 +109,7 @@ async function onSubmit() {
       });
       return;
     }
-    if (!isEmployer && auth.seeker.is_completed) {
+    if (!isEmployer && auth.seeker && auth.seeker.is_completed) {
       setTimeout(() => {
         if (route_name) {
           router.replace({ name: route_name });

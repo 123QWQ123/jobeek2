@@ -232,13 +232,12 @@ const isAnyProviderConnected = computed(() => {
   else return false;
 });
 const route = useRoute();
+const redirect_url = useRequestURL();
 onMounted(async () => {
   if (!isAnyProviderConnected.value) {
-    const redirect_uri = route.fullPath.substring(1);
-    console.log(redirect_uri);
-    const authData = await getEmployerProvidersAuthEndpoints({}, redirect_uri);
-    providers.value.hh.url = authData.hh;
-    providers.value.superjob.url = authData.superjob;
+    const authData = await getEmployerProvidersAuthEndpoints({}, redirect_url);
+    providers.value.hh.url = authData.data.hh;
+    providers.value.superjob.url = authData.data.superjob;
   }
 });
 

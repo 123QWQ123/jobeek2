@@ -80,6 +80,18 @@ const error = computed(() => {
 const { handleAlert } = useAlert();
 watch(() => route.query.message, handleAlert);
 
+const isEmployer = computed(() => authStore.isEmployer);
+const user = computed(() => authStore.user);
+const employer = computed(() => authStore.employer);
+watch(
+  () => isEmployer.value,
+  (new_value) => {
+    console.log(new_value);
+    if (new_value === false) {
+      navigateTo({ name: "create-resume" });
+    }
+  },
+);
 const saveAsDraft = (e) => {
   e.preventDefault();
   console.log("saved as draft");
