@@ -3,6 +3,7 @@ import { useVacancyStore } from "~/store/vacancy";
 import useAlert from "~/composables/useAlert";
 import Swal from "sweetalert2";
 import { toast } from "vue3-toastify";
+import { useAuthStore } from "~/store/auth.js";
 
 definePageMeta({
   layout: "cabinet",
@@ -79,7 +80,7 @@ const error = computed(() => {
 });
 const { handleAlert } = useAlert();
 watch(() => route.query.message, handleAlert);
-
+const authStore = useAuthStore();
 const isEmployer = computed(() => authStore.isEmployer);
 const user = computed(() => authStore.user);
 const employer = computed(() => authStore.employer);

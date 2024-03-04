@@ -23,43 +23,21 @@
       <div class="input-row">
         <label>Список городов:<b>*</b></label>
         <div class="input-wrapper mt-2">
-          <VeeMultiSelectWithSearch
-            :options="cityOptions"
-            name="cities"
-            placeholder="Выберите город"
-            @input="updateCityInput"
-          ></VeeMultiSelectWithSearch>
+          <Cities name="cities" />
         </div>
       </div>
 
       <div class="input-row">
         <label>Специализация:<b>*</b></label>
         <div class="input-wrapper mt-2">
-          <VeeMultiSelectWithSearch
-            :options="professionalRoleOptions"
-            name="professional_roles"
-            label="Выберите специализацию"
-            @input="updateProfessionalInput"
-          ></VeeMultiSelectWithSearch>
+          <ProfessionalRoles name="professional_roles" />
         </div>
       </div>
 
-      <!--      <div class="input-row">-->
-      <!--        <label for="description">Описание:</label>-->
-      <!--        <div class="input-wrapper">-->
-      <!--          <RichEditor v-model="state.description.val" />-->
-      <!--          <div class="text-danger d-block" v-if="errors.description">-->
-      <!--            {{ errors.description }}-->
-      <!--          </div>-->
-      <!--        </div>-->
-      <!--      </div>-->
       <div class="input-row">
         <label for="description">Описание:</label>
         <div class="input-wrapper">
-          <!--          <VeeRichEditor name="description" />-->
-          <!--          <VeeRichEditor2 name="description" />-->
-          <!--          <VeeRichEditor2 />-->
-          <TipTapRichEditor />
+          <VeeTipTapRichEditor name="description" />
         </div>
       </div>
 
@@ -82,10 +60,11 @@ import { useProfileStore } from "~/store/profile";
 import { useRuntimeConfig } from "#app";
 import useFormValidation from "~/composables/useFormValidation";
 import { storeToRefs } from "pinia";
-import useResumeHooks from "~/hooks/useResumeHooks";
 import { z } from "~/hooks/ru-zod.js";
 import { toTypedSchema } from "@vee-validate/zod";
 import VacancyTextInput from "~/components/CreateVacancy/VacancyTextInput.vue";
+import ProfessionalRoles from "~/components/CreateVacancy/ProfessionalRoles.vue";
+import Cities from "~/components/CreateVacancy/Cities.vue";
 
 const props = defineProps(["title", "providers"]);
 
@@ -115,6 +94,7 @@ const schema = computed(() => {
     name: z.string(),
     cities: z.array(z.number()),
     description: z.string(),
+    professional_roles: z.array(z.number()),
     salary: z.object({
       currency: z.string().nullable(),
       from: z.number().nullable(),
@@ -129,6 +109,7 @@ const initialValues = {
   providers: [],
   name: null,
   cities: [],
+  professional_roles: [],
   salary: {
     currency: "RUB",
     from: null,
@@ -177,39 +158,6 @@ const state = reactive({
     is_hidden: true,
   },
 });
-
-const { searchCities, searchProfessionalRoles } = profileStore;
-const { getCountryCities } = profileStore;
-const cityOptions = ref([]);
-const professionalRoleOptions = ref([]);
-
-const { getCityName } = useResumeHooks();
-const updateCityInput = async (newValue = "") => {
-  const items = (await searchCities({ search: newValue })) ?? [];
-  cityOptions.value = items.map((item) => ({
-    value: item.id,
-    name: item.name,
-  }));
-};
-
-const updateProfessionalInput = async (newValue = "") => {
-  let items = await searchProfessionalRoles();
-  // items = items.filter((item) => item.name.includes(newValue));
-  // professionalRoleOptions.value = items.map((item) => ({
-  //   value: item.id,
-  //   name: item.name,
-  // }));
-};
-
-const getCities = async (newValue = "") => {
-  if (newValue) {
-    // const items = (await getCountryCities({ city_id: newValue })) ?? [];
-    // cityOptions.value = items.map((item) => ({
-    //   value: item.id,
-    //   name: item.name,
-    // }));
-  }
-};
 
 const { errors: serverErrors, handleErrorResponse } = useFormValidation(state);
 
