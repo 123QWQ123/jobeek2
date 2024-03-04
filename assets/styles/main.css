@@ -7548,3 +7548,14 @@ svg.progress {
         max-width: 30%;
     }
 }
+
+.list-of-providers .provider-item .provider-label.reload {
+	position: absolute;
+    left: 42px;
+    height: 24px;
+    width: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 33px;
+}
