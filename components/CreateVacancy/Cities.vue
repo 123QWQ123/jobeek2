@@ -1,19 +1,19 @@
 <script setup>
+const props = defineProps({
+  name: {
+    required: true,
+    default: "cities",
+  },
+});
 import { useProfileStore } from "~/store/profile.js";
 import useFilter from "~/composables/useFilter.js";
 import useProviders from "~/composables/useProviders.js";
 import useResumeHooks from "~/hooks/useResumeHooks.js";
 
 const profileStore = useProfileStore();
-const { providers } = useProviders();
+const { providers, getProviderAsArray } = useProviders();
 
-const selectedProviders = computed(() => {
-  if (providers.value.hh === true && providers.value.superjob === false)
-    return ["hh"];
-  if (providers.value.hh === false && providers.value.superjob === true)
-    return ["superjob"];
-  return ["hh", "superjob"];
-});
+const selectedProviders = computed(() => getProviderAsArray());
 
 const isHHSelected = computed(() => selectedProviders.value.includes("hh"));
 const isSuperjobSelected = computed(() =>
@@ -25,10 +25,15 @@ const cities = ref([]);
 const { searchCities, searchProfessionalRoles } = profileStore;
 const { getCountryCities } = profileStore;
 const cityOptions = ref([]);
+const selectedCityOptions = ref([]);
 
 const { getCityName } = useResumeHooks();
 const updateCityInput = async (newValue = "") => {
-  const items = (await searchCities({ search: newValue })) ?? [];
+  const items =
+    (await searchCities({
+      search: newValue,
+      providers: [...selectedProviders.value],
+    })) ?? [];
   cityOptions.value = items.map((item) => ({
     value: item.id,
     name: item.name,
@@ -36,10 +41,11 @@ const updateCityInput = async (newValue = "") => {
 };
 
 const { uniq } = useFilter();
-const { value: city_ids } = useField("professional_roles");
+const { value: city_ids } = useField(() => props.name);
 watch(
   () => city_ids.value,
   async () => {
+    console.log(city_ids.value);
     // let items = [];
     // if (isHHProfRolesNeeded.value) {
     //   const new_h = profileStore.hh_professional_roles_with_parent;
@@ -60,6 +66,10 @@ watch(
   },
 );
 
+const onUpdateSelectedOptions = async (newItems) => {
+  console.log(newItems);
+  selectedCityOptions.value = newItems;
+};
 // const updateProfessionalInput = async (newValue = "", providers = []) => {
 //   let items = await searchProfessionalRoles();
 //   if (newValue) {
@@ -75,18 +85,18 @@ watch(
 //   }));
 // };
 
-const isHHProfRolesNeeded = computed(() => {
+const isHHNeeded = computed(() => {
   if (!isHHSelected.value) return false;
-  if (prof_role_ids.value.length < 1) return true;
-  const selected_fields_values = [...prof_role_ids.value];
+  if (city_ids.value.length < 1) return true;
+  const selected_fields_values = [...city_ids.value];
   return !selected_fields_values.some((item) =>
     profileStore.hh_professional_roles_with_parent_ids.includes(item),
   );
 });
-const isSuperjobProfRolesNeeded = computed(() => {
+const isSuperjobNeeded = computed(() => {
   if (!isSuperjobSelected.value) return false;
-  if (prof_role_ids.value.length < 1) return true;
-  const selected_fields_values = [...prof_role_ids.value];
+  if (city_ids.value.length < 1) return true;
+  const selected_fields_values = [...city_ids.value];
   return !selected_fields_values.some((item) =>
     profileStore.superjob_professional_roles_with_parent_ids.includes(item),
   );
@@ -100,12 +110,16 @@ onMounted(() => {
 </script>
 
 <template>
-  <VeeMultiSelectWithSearch
-    :options="cityOptions"
-    name="cities"
-    placeholder="Выберите город"
-    @input="updateCityInput"
-  ></VeeMultiSelectWithSearch>
+  <div>
+    <VeeMultiSelectWithSearchWithSelectedOptions
+      :options="cityOptions"
+      :selected_options="selectedCityOptions"
+      @updateSelectedOptions="onUpdateSelectedOptions"
+      :name="props.name"
+      placeholder="Выберите город"
+      @input="updateCityInput"
+    />
+  </div>
 </template>
 
 <style scoped></style>

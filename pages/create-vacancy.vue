@@ -1,242 +1,252 @@
 <script setup>
-import { useVacancyStore } from "~/store/vacancy";
-import useAlert from "~/composables/useAlert";
-import Swal from "sweetalert2";
-import { toast } from "vue3-toastify";
-import { useAuthStore } from "~/store/auth.js";
+import { useDictionaryStore } from "~/store/dictionary";
+import { useResumeStore } from "~/store/resume";
 
-definePageMeta({
-  layout: "cabinet",
-});
+import { useProfileStore } from "~/store/profile";
+import { useRuntimeConfig } from "#app";
+import useFormValidation from "~/composables/useFormValidation";
+import { storeToRefs } from "pinia";
+import useResumeHooks from "~/hooks/useResumeHooks";
 
+const props = defineProps(["title"]);
+
+const resumeStore = useResumeStore();
+const profileStore = useProfileStore();
+const CONFIG = useRuntimeConfig();
 const route = useRoute();
 
-const vacancyStore = useVacancyStore();
-const { publishDraft } = vacancyStore;
-const my_vacancy = computed(() => vacancyStore.my_vacancy);
+const { seeker } = profileStore;
+const { resume } = storeToRefs(resumeStore);
+const formTitle = computed(() => props.title);
 
-const providers = ref({
-  superjob: false,
-  hh: false,
-});
+const isSaved = ref(false);
+const isChanged = ref(false);
+const isFirst = ref(true);
+const isCollapsed = ref(false);
+const isUpdated = ref(false);
 
-const { getMyVacancy, getMyDraft } = vacancyStore;
-const draftID = computed(() => route.query.draft_id);
-const vacancyID = computed(() => route.query.vacancy_id);
-const pageTitle = computed(() => {
-  if (draftID?.value) {
-    return "Создание вакансии";
-  }
-  return "Создание вакансии";
-});
-watch(
-  () => route.query.draft_id,
-  (newDraftId) => {
-    console.log(newDraftId);
-    if (newDraftId) {
-      getMyDraft(draftID.value);
-    }
-  },
-);
-
-onMounted(async () => {
-  if (draftID.value) {
-    const resData = await getMyDraft(draftID.value);
-    if (resData.status === "error") {
-      navigateTo({
-        name: "create-vacancy",
-        query: {
-          ...route.query,
-          message: JSON.stringify({
-            type: "error",
-            text: resData.message,
-            redirect: "create-vacancy",
-          }),
-        },
-      });
-    }
-  }
-  if (vacancyID.value) {
-    const resData = await getMyVacancy(vacancyID.value);
-    if (resData.status === "error") {
-      navigateTo({
-        name: "create-vacancy",
-        query: {
-          ...route.query,
-          message: JSON.stringify({
-            type: "error",
-            text: resData.message,
-            redirect: "create-vacancy",
-          }),
-        },
-      });
-    }
-  }
-  handleAlert();
-});
-
-const error = computed(() => {
-  return route.query.message;
-});
-const { handleAlert } = useAlert();
-watch(() => route.query.message, handleAlert);
-const authStore = useAuthStore();
-const isEmployer = computed(() => authStore.isEmployer);
-const user = computed(() => authStore.user);
-const employer = computed(() => authStore.employer);
-watch(
-  () => isEmployer.value,
-  (new_value) => {
-    console.log(new_value);
-    if (new_value === false) {
-      navigateTo({ name: "create-resume" });
-    }
-  },
-);
-const saveAsDraft = (e) => {
-  e.preventDefault();
-  console.log("saved as draft");
-};
-
-const paramProviders = computed(() => {
-  if (providers.value.hh && providers.value.superjob) {
-    return ["hh", "superjob"];
-  }
-  if (providers.value.hh) {
-    return ["hh"];
-  }
-  if (providers.value.superjob) {
-    return ["superjob"];
-  }
-  return [];
-});
-
-const canBePublished = computed(() => {
-  if (my_vacancy.value) {
-    if (!providers.value.hh && !providers.value.superjob) {
-      return false;
-    }
-    if (!providers.value.hh && providers.value.superjob) {
-      if (my_vacancy.value.can_publish?.superjob) return true;
-      return false;
-    }
-    if (providers.value.hh && !providers.value.superjob) {
-      if (my_vacancy.value.can_publish?.hh) return true;
-      return false;
-    }
-    if (providers.value.hh && providers.value.superjob) {
-      if (
-        my_vacancy.value.can_publish?.hh ||
-        my_vacancy.value.can_publish?.superjob
-      ) {
-        return true;
-      }
-    }
-    return false;
-  }
-  return false;
-});
-
-const advanced_fields_el = ref();
-const cities_el = ref();
-const metro_el = ref();
-const prof_roles_el = ref();
-const type_el = ref();
-const salary_el = ref();
-const skills_el = ref();
-const address_el = ref();
-const driver_lic_el = ref();
-const contacts_el = ref();
-const languages_el = ref();
-const billing_el = ref();
-
-const saveAllSections = async () => {
-  const promises = await Promise.all([
-    advanced_fields_el.value.save(true),
-    cities_el.value.save(true),
-    metro_el.value.save(true),
-    prof_roles_el.value.save(true),
-    type_el.value.save(true),
-    salary_el.value.save(true),
-    skills_el.value.save(true),
-    address_el.value.save(true),
-    driver_lic_el.value.save(true),
-    contacts_el.value.save(true),
-    languages_el.value.save(true),
-    billing_el.value.save(true),
-  ]);
-
-  console.log(promises);
-  const promisesResult = promises.every((item) => item === true);
-
-  console.log(promisesResult);
-  return new Promise((resolve, reject) =>
-    promisesResult ? resolve(true) : reject(false),
-  );
-};
-
-const errorMessage = ref(null);
-const hhErrorMessage = ref(null);
-const superjobErrorMessage = ref(null);
-const errors = ref([]);
-const isLoading = ref(false);
-const save = async (e) => {
-  e.preventDefault();
-
-  isLoading.value = true;
-  const resAll = await saveAllSections();
-  if (!resAll) {
-    Swal.fire({
-      title: "Ошибка!",
-      text: "не все обязательные поля заполнены верно!",
-      icon: "error",
-      confirmButtonText: "ОК",
-    });
-  } else {
-  }
-
-  const payload = {
-    providers: paramProviders.value,
+const schema = computed(() => {
+  return {
+    providers: "required",
+    title: "required|min:1|max:100",
+    first_name: "required|min:1|max:100",
+    last_name: "required|min:1|max:100",
+    middle_name: "required|min:1|max:100",
+    email: { required: true, email: true },
+    is_preferred_email: { boolean: true },
+    birth_date: "required|date",
+    city_id: "required|numeric",
+    gender_id: "required|numeric",
+    business_trip_id: "required|numeric",
+    relocation_type_id: "required|numeric",
+    work_types: "required|min:1",
   };
+});
+const { values, errors, validate, meta, setTouched, setErrors, handleSubmit } =
+  useForm({
+    initialValues: {
+      providers: [],
+      title: "",
+      first_name: "",
+      last_name: "",
+      middle_name: "",
+      email: "",
+      is_preferred_email: false,
+      birth_date: "",
+      city_id: null,
+      gender_id: null,
+      business_trip_id: null,
+      relocation_type_id: null,
+      move_able_cities: [],
+      work_types: [],
+    },
+    initialTouched: true,
+    validationSchema: schema,
+  });
 
-  const resData = await publishDraft(draftID.value, payload);
-  isLoading.value = false;
-  if (resData.hasOwnProperty("status") && resData.status !== "success") {
-    Swal.fire({
-      title: "Ошибка!",
-      text: resData.message,
-      icon: "error",
-      confirmButtonText: "ОК",
-    });
+const { createResume } = resumeStore;
 
-    errorMessage.value = "";
-    if (resData.hasOwnProperty("errors")) {
-      const { errors: resErrors } = resData;
-      const { hh, superjob } = resErrors;
+const state = reactive({
+  title: {
+    is_hidden: false,
+  },
+  first_name: {
+    is_hidden: false,
+  },
+  last_name: {
+    is_hidden: false,
+  },
+  middle_name: {
+    is_hidden: false,
+  },
+  email: {
+    is_hidden: false,
+  },
+  is_preferred_email: {
+    is_hidden: false,
+  },
+  city_id: {
+    is_hidden: false,
+  },
+  move_able_cities: {
+    is_hidden: true,
+  },
+  metros: {
+    is_hidden: true,
+  },
+  professional_roles: {
+    is_hidden: true,
+  },
+  birth_date: {
+    is_hidden: true,
+  },
+  salary: {
+    is_hidden: true,
+  },
+  gender_id: {
+    is_hidden: true,
+  },
+  business_trip_id: {
+    is_hidden: true,
+  },
+  work_types: {
+    is_hidden: true,
+  },
+  relocation_type_id: {
+    is_hidden: true,
+  },
+});
+const isMovableCitiesEnabled = computed(() => {
+  const relocation_id = parseInt(values.relocation_type_id);
+  return relocation_id === 148 || relocation_id === 149;
+});
 
-      let errorItems = [];
-      if (hh && hh.length > 0) {
-        errorItems = hh.map((item) => item.errors);
-      }
+const { searchCities } = profileStore;
 
-      if (superjob && superjob.length > 0) {
-        errorItems = errorItems.concat(superjob.map((item) => item.errors));
-      }
-      errors.value = errorItems;
+const dictionaryStore = useDictionaryStore();
+const cityOptions = ref([]);
+const moveableCityOptions = ref([]);
 
-      console.log(errorItems);
-    }
+const genderOptions = computed(() => {
+  return dictionaryStore.resume_genders.map((item) => ({
+    name: item.name,
+    value: item.id,
+  }));
+});
+const workTypeOptions = computed(() => {
+  return dictionaryStore.work_types;
+});
+const businessTripOptions = computed(() => {
+  return dictionaryStore.business_trips.map((item) => ({
+    name: item.name,
+    value: item.id,
+  }));
+});
+const relocationTypeOptions = computed(() => {
+  return dictionaryStore.relocation_types.map((item) => ({
+    name: item.name,
+    value: item.id,
+  }));
+});
+const { getGenders, getBusinessTrips, getWorkTypes, getRelocationTypes } =
+  dictionaryStore;
+onMounted(() => {
+  getGenders({}, true);
+  getBusinessTrips();
+  getWorkTypes();
+  getRelocationTypes();
+});
+
+const { getCityName, getCityNameFromArea2 } = useResumeHooks();
+const updateCityInput = async (newValue = "") => {
+  if (newValue.length < 2) {
     return;
   }
-  console.log(resData);
-
-  toast.info(resData.data.message, { autoClose: 3000 });
-
-  setTimeout(() => {
-    navigateTo({ name: "my-vacancies" });
-  });
+  const items = (await searchCities({ search: newValue })) ?? [];
+  cityOptions.value = items.map((item) => ({
+    value: item.id,
+    name: getCityNameFromArea2(item),
+  }));
 };
-// groups[]=
+
+const updateMoveableCityInput = async (newValue = "") => {
+  const items = (await searchCities({ search: newValue })) ?? [];
+  moveableCityOptions.value = items.map((item) => ({
+    value: item.id,
+    name: item.name,
+  }));
+};
+
+const { errors: serverErrors, handleErrorResponse } = useFormValidation(state);
+
+watch(
+  () => serverErrors.value,
+  (newErrors) => {
+    if (Object.keys(newErrors).length > 0) {
+      const backendErrors = {};
+      Object.keys(newErrors).map(
+        (item) => (backendErrors[item] = newErrors[item]),
+      );
+      setErrors(backendErrors);
+    }
+  },
+);
+const isLoading = ref(false);
+
+const errorMessageElement = ref();
+const errorMessage = ref(null);
+const scrollTop = () => {
+  window.scrollTo(0, 0);
+};
+const onSubmit = handleSubmit((submittedValues) => {
+  save();
+});
+const save = async (is_from_parent = false) => {
+  validate();
+  if (!meta.value.valid) {
+    console.log(1);
+    errorMessage.value = "Вам необходимо заполнить";
+    scrollTop();
+    errorMessageElement.value.scrollIntoView({ behavior: "smooth" });
+    return;
+  }
+  setErrors({});
+  errorMessage.value = "";
+  isLoading.value = true;
+
+  console.log(values);
+
+  let resData = await createResume(unref(values));
+
+  if (resData.status !== "success") {
+    errorMessage.value = resData.message;
+    isLoading.value = false;
+    return;
+  }
+  isLoading.value = false;
+  if (is_from_parent) {
+    return new Promise((resolve, reject) => {
+      resolve(true);
+    });
+  }
+  const resume_id = resData.data.data.id;
+  setTimeout(() => {
+    console.log("redirecting...");
+    navigateTo({ name: "my-resume-id", params: { id: resume_id } });
+  }, 100);
+  isLoading.value = false;
+  if (resData.data.hasOwnProperty("errors")) {
+    setErrors(resData.data.errors);
+    return;
+  }
+  isChanged.value = false;
+  isSaved.value = false;
+  isUpdated.value = false;
+};
+defineExpose({
+  onSubmit,
+  save,
+});
 </script>
 <template>
   <main class="main cabinet create-subscribe-page bg-wrapper" role="main">
@@ -245,89 +255,27 @@ const save = async (e) => {
     </Head>
     <div class="bg-wrapper pt">
       <PersonalCabinetSearchMobile />
-
       <div class="wrapper wrapper-1290">
         <form
           class="create-vacancy"
-          action=""
-          name="create-vacancy "
-          v-if="!draftID && !vacancyID"
+          @submit.prevent="omSubmit"
+          name="create-vacancy"
         >
-          <CreateVacancyProviders v-model="providers" />
-          <CreateVacancyCreateDraft :title="pageTitle" :providers="providers" />
+          <LazyCreateResumeDraftCard ref="draft_el" :title="pageTitle" />
 
-          <div class="form-submit-container mt-2">
+          <div class="form-submit-container">
             <button
               class="btn btn-outline-primary"
-              type="button"
-              @click="saveAsDraft"
+              @click.prevent="draft_el.save()"
             >
               Далее
-            </button>
-          </div>
-        </form>
-        <form class="update-vacancy" v-else>
-          {{ errors }}
-          <div class="errors" v-if="errors.length">
-            <h4>К сожалению возникли ошибки при создании Вакансии:</h4>
-            <p class="alert alert-info" v-for="item in errors">{{ item }}</p>
-          </div>
-          <CreateVacancyProviders v-model="providers" />
-
-          <CreateVacancyAdvancedFieldsCard
-            ref="advanced_fields_el"
-            :providers="providers"
-          />
-          <CreateVacancyCitiesCard ref="cities_el" :providers="providers" />
-          <CreateVacancyMetroCard ref="metro_el" :providers="providers" />
-          <CreateVacancyProfessionalRolesCard
-            ref="prof_roles_el"
-            :providers="providers"
-          />
-          <CreateVacancyTypeAndUrlCard ref="type_el" :providers="providers" />
-          <CreateVacancySalaryCard ref="salary_el" :providers="providers" />
-          <CreateVacancySkillsCard ref="skills_el" :providers="providers" />
-          <CreateVacancyAddressCard ref="address_el" :providers="providers" />
-          <CreateVacancyDriverLicensesCard
-            ref="driver_lic_el"
-            :providers="providers"
-          />
-          <CreateVacancyContactsCard ref="contacts_el" :providers="providers" />
-          <CreateVacancyLanguagesCard
-            ref="languages_el"
-            :providers="providers"
-          />
-          <CreateVacancyBillingTypeCard
-            ref="billing_el"
-            :providers="providers"
-          />
-
-          <p class="text-lg-end">
-            При создании ваканции вы соглашаетесь с
-            <a href="#">правилами работы сервиса</a> и даете согласие на
-            обработку персональных данных, разрешенных для распространения
-          </p>
-          <div class="form-submit-container mt-2">
-            <button
-              class="btn btn-outline-primary"
-              type="button"
-              @click="saveAsDraft"
-            >
-              Сохранить как черновик
-            </button>
-            <button
-              class="button-accent"
-              :class="{ disabled: !canBePublished }"
-              type="submit"
-              @click.prevent="save"
-            >
-              <span
+              <div
                 v-if="isLoading"
-                class="spinner-border spinner-border-sm"
+                class="ms-2 bg-primary spinner-grow spinner-grow-sm"
                 role="status"
-                aria-hidden="true"
-              ></span>
-              Сохранить и опубликовать
+              >
+                <span class="visually-hidden">Loading...</span>
+              </div>
             </button>
           </div>
         </form>
@@ -335,19 +283,3 @@ const save = async (e) => {
     </div>
   </main>
 </template>
-
-<style scoped>
-.button-accent.disabled {
-  filter: grayscale(180%);
-}
-
-@media (max-width: 768px) {
-  .form-submit-container {
-    flex-direction: column-reverse;
-  }
-
-  .button-accent {
-    margin-bottom: 1rem;
-  }
-}
-</style>

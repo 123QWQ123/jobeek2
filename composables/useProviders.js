@@ -5,5 +5,12 @@ export default function useProviders(
   const setProviders = (new_values) => {
     providers.value = new_values;
   };
-  return { providers, setProviders };
+  const getProviderAsArray = (new_values) => {
+    if (providers.value.hh === true && providers.value.superjob === false)
+      return ["hh"];
+    if (providers.value.hh === false && providers.value.superjob === true)
+      return ["superjob"];
+    return [];
+  };
+  return { providers, setProviders, getProviderAsArray };
 }

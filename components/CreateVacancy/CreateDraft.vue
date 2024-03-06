@@ -41,11 +41,61 @@
         </div>
       </div>
 
-      <!--            <CreateVacancySalary-->
-      <!--              v-model="state.salary.val"-->
-      <!--              :errors="errors.salary"-->
-      <!--              :providers="providers"-->
-      <!--            />-->
+      <div class="input-row">
+        <label>Зарплата:</label>
+        <div class="row-container">
+          <div class="row mb-2">
+            <div class="col-6">
+              <div class="input-wrapper w-100">
+                <CreateVacancyTextInput
+                  type="number"
+                  name="salary.from"
+                  placeholder="От"
+                />
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="input-wrapper w-100">
+                <CreateVacancyTextInput
+                  type="number"
+                  name="salary.to"
+                  placeholder="До"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-6">
+              <VeeCustomSelect
+                label="Период"
+                :options="periodOptions"
+                name="salary.period"
+              />
+            </div>
+            <div class="col-6">
+              <VeeCustomSelect
+                label="Валюта"
+                :options="currencyOptions"
+                name="salary.currency"
+              />
+            </div>
+          </div>
+
+          <div class="row mt-2">
+            <CreateVacancyCheckboxInput
+              name="salary.gross"
+              label="до вычета налогов"
+            />
+          </div>
+        </div>
+        {{ props.providers }}
+      </div>
+      <!--      <CreateVacancySalary-->
+      <!--        v-model="state.salary.val"-->
+      <!--        :errors="errors.salary"-->
+      <!--        :providers="providers"-->
+      <!--      />-->
       <br />
       {{ values }}
     </div>
@@ -65,6 +115,8 @@ import { toTypedSchema } from "@vee-validate/zod";
 import VacancyTextInput from "~/components/CreateVacancy/VacancyTextInput.vue";
 import ProfessionalRoles from "~/components/CreateVacancy/ProfessionalRoles.vue";
 import Cities from "~/components/CreateVacancy/Cities.vue";
+import { useCurrencyOptions } from "~/composables/useCurrencyOptions.js";
+import { useDictionaryStore } from "~/store/dictionary.js";
 
 const props = defineProps(["title", "providers"]);
 
@@ -157,6 +209,21 @@ const state = reactive({
     },
     is_hidden: true,
   },
+});
+
+const dictionaryStore = useDictionaryStore();
+const { getPaymentPeriodOptions } = dictionaryStore;
+onMounted(() => {
+  setTimeout(async () => {
+    await getPaymentPeriodOptions();
+  });
+});
+const currencyOptions = ref(useCurrencyOptions());
+const periodOptions = computed(() => {
+  return dictionaryStore.payment_period.map((item) => ({
+    name: item.name,
+    value: item.id,
+  }));
 });
 
 const { errors: serverErrors, handleErrorResponse } = useFormValidation(state);

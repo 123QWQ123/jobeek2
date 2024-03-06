@@ -102,7 +102,7 @@
       </div>
     </div>
   </div>
-  {{ enabledProviders }}
+  {{ selectedProviders }}
 </template>
 
 <script setup>
@@ -153,6 +153,7 @@ await getConnectedEmployerProviders();
 // });
 
 const enabledProviders = ref(vacancyStore.providers);
+
 const isHHEnabled = computed(() => enabledProviders.value.hh);
 const isSuperjobEnabled = computed(() => enabledProviders.value.superjob);
 
@@ -196,10 +197,11 @@ watch(
     selectedProviders.value = newValue;
   },
 );
-const selectedProviders = ref(props.modelValue ?? resetObject);
+const selectedProviders = ref(resetObject);
 watch(
   () => selectedProviders.value,
   (newSelectedItems) => {
+    console.log(newSelectedItems);
     emit("update:modelValue", newSelectedItems);
   },
 );
@@ -235,7 +237,9 @@ const toggle = async (provider) => {
     }
   }
 
-  selectedProviders.value[provider] = !selectedProviders.value[provider];
+  const object = { ...selectedProviders.value };
+  object[provider] = !object[provider];
+  selectedProviders.value = object;
 
   const providerParams = [];
   if (selectedProviders.value.hh) {
@@ -260,7 +264,6 @@ const toggle = async (provider) => {
 
     await getMyVacancy(draftID.value);
   } else {
-    // selectedProviders.value = {...resetObject, [provider] : }
     // resData = await updateVacancy(vacancyID.value, data);
     // if (resData.status !== 'success'){
     //   toast.info(resData.message, {autoClose: 3000});
