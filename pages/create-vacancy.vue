@@ -1,252 +1,77 @@
 <script setup>
-import { useDictionaryStore } from "~/store/dictionary";
+import { useVacancyStore } from "~/store/vacancy";
+import useAlert from "~/composables/useAlert";
 import { useResumeStore } from "~/store/resume";
+import { useAuthStore } from "~/store/auth.js";
 
-import { useProfileStore } from "~/store/profile";
-import { useRuntimeConfig } from "#app";
-import useFormValidation from "~/composables/useFormValidation";
-import { storeToRefs } from "pinia";
-import useResumeHooks from "~/hooks/useResumeHooks";
+definePageMeta({
+  layout: "cabinet",
+});
 
-const props = defineProps(["title"]);
-
-const resumeStore = useResumeStore();
-const profileStore = useProfileStore();
-const CONFIG = useRuntimeConfig();
 const route = useRoute();
 
-const { seeker } = profileStore;
-const { resume } = storeToRefs(resumeStore);
-const formTitle = computed(() => props.title);
+const vacancyStore = useVacancyStore();
 
-const isSaved = ref(false);
-const isChanged = ref(false);
-const isFirst = ref(true);
-const isCollapsed = ref(false);
-const isUpdated = ref(false);
-
-const schema = computed(() => {
-  return {
-    providers: "required",
-    title: "required|min:1|max:100",
-    first_name: "required|min:1|max:100",
-    last_name: "required|min:1|max:100",
-    middle_name: "required|min:1|max:100",
-    email: { required: true, email: true },
-    is_preferred_email: { boolean: true },
-    birth_date: "required|date",
-    city_id: "required|numeric",
-    gender_id: "required|numeric",
-    business_trip_id: "required|numeric",
-    relocation_type_id: "required|numeric",
-    work_types: "required|min:1",
-  };
-});
-const { values, errors, validate, meta, setTouched, setErrors, handleSubmit } =
-  useForm({
-    initialValues: {
-      providers: [],
-      title: "",
-      first_name: "",
-      last_name: "",
-      middle_name: "",
-      email: "",
-      is_preferred_email: false,
-      birth_date: "",
-      city_id: null,
-      gender_id: null,
-      business_trip_id: null,
-      relocation_type_id: null,
-      move_able_cities: [],
-      work_types: [],
-    },
-    initialTouched: true,
-    validationSchema: schema,
-  });
-
-const { createResume } = resumeStore;
-
-const state = reactive({
-  title: {
-    is_hidden: false,
-  },
-  first_name: {
-    is_hidden: false,
-  },
-  last_name: {
-    is_hidden: false,
-  },
-  middle_name: {
-    is_hidden: false,
-  },
-  email: {
-    is_hidden: false,
-  },
-  is_preferred_email: {
-    is_hidden: false,
-  },
-  city_id: {
-    is_hidden: false,
-  },
-  move_able_cities: {
-    is_hidden: true,
-  },
-  metros: {
-    is_hidden: true,
-  },
-  professional_roles: {
-    is_hidden: true,
-  },
-  birth_date: {
-    is_hidden: true,
-  },
-  salary: {
-    is_hidden: true,
-  },
-  gender_id: {
-    is_hidden: true,
-  },
-  business_trip_id: {
-    is_hidden: true,
-  },
-  work_types: {
-    is_hidden: true,
-  },
-  relocation_type_id: {
-    is_hidden: true,
-  },
-});
-const isMovableCitiesEnabled = computed(() => {
-  const relocation_id = parseInt(values.relocation_type_id);
-  return relocation_id === 148 || relocation_id === 149;
+const providers = ref({
+  superjob: false,
+  hh: false,
 });
 
-const { searchCities } = profileStore;
-
-const dictionaryStore = useDictionaryStore();
-const cityOptions = ref([]);
-const moveableCityOptions = ref([]);
-
-const genderOptions = computed(() => {
-  return dictionaryStore.resume_genders.map((item) => ({
-    name: item.name,
-    value: item.id,
-  }));
-});
-const workTypeOptions = computed(() => {
-  return dictionaryStore.work_types;
-});
-const businessTripOptions = computed(() => {
-  return dictionaryStore.business_trips.map((item) => ({
-    name: item.name,
-    value: item.id,
-  }));
-});
-const relocationTypeOptions = computed(() => {
-  return dictionaryStore.relocation_types.map((item) => ({
-    name: item.name,
-    value: item.id,
-  }));
-});
-const { getGenders, getBusinessTrips, getWorkTypes, getRelocationTypes } =
-  dictionaryStore;
-onMounted(() => {
-  getGenders({}, true);
-  getBusinessTrips();
-  getWorkTypes();
-  getRelocationTypes();
+const resumeStore = useResumeStore();
+const { getMyResume } = resumeStore;
+const pageTitle = computed(() => {
+  return "Создание вакансии";
 });
 
-const { getCityName, getCityNameFromArea2 } = useResumeHooks();
-const updateCityInput = async (newValue = "") => {
-  if (newValue.length < 2) {
-    return;
-  }
-  const items = (await searchCities({ search: newValue })) ?? [];
-  cityOptions.value = items.map((item) => ({
-    value: item.id,
-    name: getCityNameFromArea2(item),
-  }));
-};
+const error = computed(() => {
+  return route.query.message;
+});
+const { handleAlert } = useAlert();
+watch(() => route.query.message, handleAlert);
 
-const updateMoveableCityInput = async (newValue = "") => {
-  const items = (await searchCities({ search: newValue })) ?? [];
-  moveableCityOptions.value = items.map((item) => ({
-    value: item.id,
-    name: item.name,
-  }));
-};
+const authStore = useAuthStore();
 
-const { errors: serverErrors, handleErrorResponse } = useFormValidation(state);
-
+const isEmployer = computed(() => authStore.isEmployer);
+const user = computed(() => authStore.user);
+const employer = computed(() => authStore.employer);
 watch(
-  () => serverErrors.value,
-  (newErrors) => {
-    if (Object.keys(newErrors).length > 0) {
-      const backendErrors = {};
-      Object.keys(newErrors).map(
-        (item) => (backendErrors[item] = newErrors[item]),
-      );
-      setErrors(backendErrors);
+  () => isEmployer.value,
+  (new_value) => {
+    console.log(new_value);
+    if (new_value === true) {
+      navigateTo({ name: "create-vacancy" });
     }
   },
 );
-const isLoading = ref(false);
-
-const errorMessageElement = ref();
-const errorMessage = ref(null);
-const scrollTop = () => {
-  window.scrollTo(0, 0);
-};
-const onSubmit = handleSubmit((submittedValues) => {
-  save();
-});
-const save = async (is_from_parent = false) => {
-  validate();
-  if (!meta.value.valid) {
-    console.log(1);
-    errorMessage.value = "Вам необходимо заполнить";
-    scrollTop();
-    errorMessageElement.value.scrollIntoView({ behavior: "smooth" });
-    return;
-  }
-  setErrors({});
-  errorMessage.value = "";
+const saveAsDraft = (e) => {
+  e.preventDefault();
   isLoading.value = true;
 
-  console.log(values);
-
-  let resData = await createResume(unref(values));
-
-  if (resData.status !== "success") {
-    errorMessage.value = resData.message;
-    isLoading.value = false;
-    return;
-  }
   isLoading.value = false;
-  if (is_from_parent) {
-    return new Promise((resolve, reject) => {
-      resolve(true);
-    });
-  }
-  const resume_id = resData.data.data.id;
-  setTimeout(() => {
-    console.log("redirecting...");
-    navigateTo({ name: "my-resume-id", params: { id: resume_id } });
-  }, 100);
-  isLoading.value = false;
-  if (resData.data.hasOwnProperty("errors")) {
-    setErrors(resData.data.errors);
-    return;
-  }
-  isChanged.value = false;
-  isSaved.value = false;
-  isUpdated.value = false;
+  console.log("saved as draft");
 };
-defineExpose({
-  onSubmit,
-  save,
+
+const paramProviders = computed(() => {
+  if (providers.value.hh && providers.value.superjob) {
+    return ["hh", "superjob"];
+  }
+  if (providers.value.hh) {
+    return ["hh"];
+  }
+  if (providers.value.superjob) {
+    return ["superjob"];
+  }
+  return [];
 });
+
+const draft_el = ref();
+
+const errorMessage = ref(null);
+const hhErrorMessage = ref(null);
+const superjobErrorMessage = ref(null);
+const errors = ref([]);
+const isLoading = ref(false);
+// groups[]=
 </script>
 <template>
   <main class="main cabinet create-subscribe-page bg-wrapper" role="main">
@@ -261,7 +86,7 @@ defineExpose({
           @submit.prevent="omSubmit"
           name="create-vacancy"
         >
-          <LazyCreateResumeDraftCard ref="draft_el" :title="pageTitle" />
+          <CreateVacancyCreateDraft ref="draft_el" :title="pageTitle" />
 
           <div class="form-submit-container">
             <button

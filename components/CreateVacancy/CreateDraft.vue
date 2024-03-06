@@ -1,5 +1,5 @@
 <template>
-  <div class="w-box w-box--main w-box-resume pb-4" @click="isFocused = true">
+  <div class="w-box w-box--main w-box-resume pb-4">
     <div class="w-box-head">
       <h1 class="title">{{ formTitle }}</h1>
       <div class="descr">
@@ -8,29 +8,36 @@
       <span class="arrow"></span>
     </div>
 
-    <div class="text-danger d-block p-4" v-if="errorMessage">
-      {{ errorMessage }}
-    </div>
-    <div class="w-box-body">
+    <div class="w-box-body" :class="{ disabled: isLoading }">
+      <div>
+        <div class="text-danger d-block" v-if="errors.message">
+          {{ errors.message }}
+        </div>
+        <div class="text-danger d-block" ref="errorMessageElement">
+          {{ errorMessage }}
+        </div>
+      </div>
+      <CreateResumeProvidersInput name="providers" />
+
       <div class="input-row">
         <label for="name">Название вакансии<b>*</b></label>
         <div class="input-wrapper">
           <div class="c1 mt-1">
-            <VacancyTextInput name="name" placeholder="Введите" />
+            <CreateVacancyTextInput name="name" placeholder="Введите" />
           </div>
         </div>
       </div>
       <div class="input-row">
         <label>Список городов:<b>*</b></label>
         <div class="input-wrapper mt-2">
-          <Cities name="cities" />
+          <CreateVacancyCities name="cities" />
         </div>
       </div>
 
       <div class="input-row">
         <label>Специализация:<b>*</b></label>
         <div class="input-wrapper mt-2">
-          <ProfessionalRoles name="professional_roles" />
+          <CreateVacancyProfessionalRoles name="professional_roles" />
         </div>
       </div>
 
@@ -103,36 +110,27 @@
 </template>
 
 <script setup>
-import { useVacancyStore } from "~/store/vacancy";
-import { useResumeStore } from "~/store/resume";
+import { useDictionaryStore } from "~/store/dictionary";
 
 import { useProfileStore } from "~/store/profile";
 import { useRuntimeConfig } from "#app";
 import useFormValidation from "~/composables/useFormValidation";
 import { storeToRefs } from "pinia";
 import { z } from "~/hooks/ru-zod.js";
+import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
-import VacancyTextInput from "~/components/CreateVacancy/VacancyTextInput.vue";
-import ProfessionalRoles from "~/components/CreateVacancy/ProfessionalRoles.vue";
-import Cities from "~/components/CreateVacancy/Cities.vue";
-import { useCurrencyOptions } from "~/composables/useCurrencyOptions.js";
-import { useDictionaryStore } from "~/store/dictionary.js";
+import { useVacancyStore } from "~/store/vacancy.js";
 
-const props = defineProps(["title", "providers"]);
+const props = defineProps(["title"]);
 
-const providers = ref({});
-
-const resumeStore = useResumeStore();
-const profileStore = useProfileStore();
 const vacancyStore = useVacancyStore();
+const dictionaryStore = useDictionaryStore();
+const profileStore = useProfileStore();
 const CONFIG = useRuntimeConfig();
 const route = useRoute();
 
-const draftID = computed(() => route.query.draft_id);
-const vacancyID = computed(() => route.query.vacancy_id);
-
-const { seeker } = profileStore;
-const { resume } = storeToRefs(resumeStore);
+const { employer } = profileStore;
+const { my_vacancy } = storeToRefs(vacancyStore);
 const formTitle = computed(() => props.title);
 
 const isSaved = ref(false);
@@ -140,23 +138,33 @@ const isChanged = ref(false);
 const isFirst = ref(true);
 const isCollapsed = ref(false);
 const isUpdated = ref(false);
-
-const schema = computed(() => {
-  return z.object({
-    name: z.string(),
-    cities: z.array(z.number()),
-    description: z.string(),
-    professional_roles: z.array(z.number()),
-    salary: z.object({
-      currency: z.string().nullable(),
-      from: z.number().nullable(),
-      to: z.number().nullable(),
-      gross: z.boolean().nullable(),
-      period: z.number().nullable(),
-    }),
+const { getPaymentPeriodOptions } = dictionaryStore;
+onMounted(() => {
+  setTimeout(async () => {
+    await getPaymentPeriodOptions();
   });
 });
+const currencyOptions = ref(useCurrencyOptions());
+const periodOptions = computed(() => {
+  return dictionaryStore.payment_period.map((item) => ({
+    name: item.name,
+    value: item.id,
+  }));
+});
 
+const schema = z.object({
+  name: z.string(),
+  cities: z.array(z.number()),
+  description: z.string(),
+  professional_roles: z.array(z.number()),
+  salary: z.object({
+    currency: z.string().nullable(),
+    from: z.number().nullable(),
+    to: z.number().nullable(),
+    gross: z.boolean().nullable(),
+    period: z.number().nullable(),
+  }),
+});
 const initialValues = {
   providers: [],
   name: null,
@@ -170,10 +178,10 @@ const initialValues = {
     period: null,
   },
 };
-const { values, errors, meta, setErrors, handleSubmit } = useForm({
+const { values, errors, meta, setErrors, handleSubmit, validate } = useForm({
   initialValues,
   initialTouched: true,
-  validationSchema: toTypedSchema(schema.value),
+  validationSchema: toTypedSchema(schema),
 });
 
 const { createDraft } = vacancyStore;
@@ -211,21 +219,6 @@ const state = reactive({
   },
 });
 
-const dictionaryStore = useDictionaryStore();
-const { getPaymentPeriodOptions } = dictionaryStore;
-onMounted(() => {
-  setTimeout(async () => {
-    await getPaymentPeriodOptions();
-  });
-});
-const currencyOptions = ref(useCurrencyOptions());
-const periodOptions = computed(() => {
-  return dictionaryStore.payment_period.map((item) => ({
-    name: item.name,
-    value: item.id,
-  }));
-});
-
 const { errors: serverErrors, handleErrorResponse } = useFormValidation(state);
 
 watch(
@@ -241,55 +234,77 @@ watch(
   },
 );
 const isLoading = ref(false);
+
 const errorMessageElement = ref();
 const errorMessage = ref(null);
-const isFocused = ref(false);
+const scrollTop = () => {
+  window.scrollTo(0, 0);
+};
+const onSubmit = handleSubmit((submittedValues) => {
+  save();
+});
 const save = async (is_from_parent = false) => {
-  if (is_from_parent === true) {
-    isFocused.value = true;
-  }
-  if (!isFocused.value) {
-    return true;
-  }
-  isLoading.value = true;
-  // validate();
-  errors.value = {};
-  errorMessage.value = "";
-  let resData = {};
-  const formData = { ...values };
-  formData.professional_roles = formData.professional_roles.map((item) =>
-    parseInt(item),
-  );
-  formData.cities = formData.cities.map((item) => parseInt(item));
-
-  resData = await createDraft(formData);
-
-  if (resData.status !== "success") {
-    if (resData.data.hasOwnProperty("errors")) {
-      setErrors(resData.data.errors);
-      return;
-    }
+  validate();
+  if (!meta.value.valid) {
+    console.log(1);
+    errorMessage.value = "Вам необходимо заполнить";
+    scrollTop();
+    errorMessageElement.value.scrollIntoView({ behavior: "smooth" });
     return;
   }
-  const vacancy_id = resData.data.data.id;
-  state.isNew = false;
-  setTimeout(() => {
-    console.log("redirecting...");
-    navigateTo({ name: "create-vacancy", query: { draft_id: vacancy_id } });
-  }, 100);
+  setErrors({});
+  errorMessage.value = "";
+  isLoading.value = true;
 
+  console.log(values);
+
+  let resData = await createDraft(unref(values));
+
+  console.log(resData);
+  if (resData.status !== "success") {
+    errorMessage.value = resData.message;
+    isLoading.value = false;
+    return;
+  }
+  isLoading.value = false;
   if (is_from_parent) {
     return new Promise((resolve, reject) => {
       resolve(true);
     });
   }
+  const vacancy_id = resData.data.data.id;
+  setTimeout(() => {
+    console.log("redirecting...");
+    navigateTo({ name: "my-vacancy-id", params: { id: vacancy_id } });
+  }, 100);
+  isLoading.value = false;
+  if (resData.data.hasOwnProperty("errors")) {
+    setErrors(resData.data.errors);
+    return;
+  }
   isChanged.value = false;
   isSaved.value = false;
   isUpdated.value = false;
 };
+defineExpose({
+  onSubmit,
+  save,
+});
 </script>
 
 <style>
-.from-to-block {
+.w-box-body.disabled {
+  position: relative;
+}
+
+.w-box-body.disabled:before {
+  left: 0;
+  top: 0;
+  z-index: 999;
+  position: absolute;
+  content: "";
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
 }
 </style>
