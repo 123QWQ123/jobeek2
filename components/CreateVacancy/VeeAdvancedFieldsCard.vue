@@ -131,7 +131,7 @@
         </div>
 
         <div class="input-row" v-if="!state.working_days_id.is_hidden">
-          <label>график работы:</label>
+          <label>рабочие дни:</label>
           <div class="input-wrapper mt-2">
             <VeeCustomSelect
               :options="dictionaryStore.working_days_formatted"
@@ -325,7 +325,7 @@
             </div>
           </div>
         </div>
-        {{ providers }}
+        {{ values }}
       </div>
     </transition>
   </div>
@@ -387,47 +387,47 @@ const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
 const schema = computed(() => {
-  if (providers.value.hh === true && providers.value.superjob === false) {
-    return z.object({
-      salary: z.number(),
-      currency: z.string().nullable().optional(),
-      place_of_work_id: z.number().nullable(),
-      work_types: z.array(z.number()).nonempty(),
-      schedules: z.array(z.number()).nonempty(),
-    });
-  }
-  if (providers.value.hh === false && providers.value.superjob === true) {
-    return z.object({
-      title: z.string().nullable().optional(),
-      salary: z.number().min(2),
-      currency: z.string().nullable(),
-      place_of_work_id: z.number().nullable(),
-      professional_roles: z.array(z.number()).nonempty(),
-      work_types: z.array(z.number()).nonempty(),
-      schedules: z.array(z.number()).nonempty(),
-    });
-  }
+  // if (providers.value.hh === true && providers.value.superjob === false) {
+  //   return z.object({
+  //     salary: z.number(),
+  //     currency: z.string().nullable().optional(),
+  //     place_of_work_id: z.number().nullable(),
+  //     work_types: z.array(z.number()).nonempty(),
+  //     schedules: z.array(z.number()).nonempty(),
+  //   });
+  // }
+  // if (providers.value.hh === false && providers.value.superjob === true) {
+  //   return z.object({
+  //     title: z.string().nullable().optional(),
+  //     salary: z.number().min(2),
+  //     currency: z.string().nullable(),
+  //     place_of_work_id: z.number().nullable(),
+  //     professional_roles: z.array(z.number()).nonempty(),
+  //     work_types: z.array(z.number()).nonempty(),
+  //     schedules: z.array(z.number()).nonempty(),
+  //   });
+  // }
   return z.object({
     providers: z.array(z.number()).array().nonempty(),
     name: z.string().min(2),
     description: z.string().min(2),
-    work_type_id: z.number(),
-    experience_id: z.number(),
-    accept_kids: z.boolean(),
-    accept_temporary: z.boolean(),
-    accept_incomplete_resumes: z.boolean(),
-    accept_handicapped: z.boolean(),
-    allow_messages: z.boolean(),
-    schedule_id: z.number(),
-    response_notifications: z.boolean(),
-    working_days_id: z.number(),
-    with_zp: z.boolean(),
-    response_letter_required: z.boolean(),
-    working_time_intervals_id: z.number(),
-    working_time_modes_id: z.number(),
-    refresh_vac: z.boolean(),
-    extend_vac_id: z.number(),
-    resume_subscription_status: z.boolean(),
+    work_type_id: z.number().optional(),
+    experience_id: z.number().optional(),
+    accept_kids: z.boolean().optional(),
+    accept_temporary: z.boolean().optional(),
+    accept_incomplete_resumes: z.boolean().optional(),
+    accept_handicapped: z.boolean().optional(),
+    allow_messages: z.boolean().optional(),
+    schedule_id: z.number().optional().optional(),
+    response_notifications: z.boolean().optional(),
+    working_days_id: z.number().optional(),
+    with_zp: z.boolean().optional(),
+    response_letter_required: z.boolean().optional(),
+    working_time_intervals_id: z.number().optional(),
+    working_time_modes_id: z.number().optional(),
+    refresh_vac: z.boolean().optional(),
+    extend_vac_id: z.number().optional(),
+    resume_subscription_status: z.boolean().optional(),
     subscriptionKeywords: z
       .array(
         z.object({
@@ -438,16 +438,16 @@ const schema = computed(() => {
         }),
       )
       .nullable(),
-    place_of_work_id: z.number(),
-    education_id: z.number(),
-    marital_status_id: z.number(),
-    children_id: z.number(),
-    gender_id: z.number(),
+    place_of_work_id: z.number().optional(),
+    education_id: z.number().optional(),
+    marital_status_id: z.number().optional(),
+    children_id: z.number().optional(),
+    gender_id: z.number().optional(),
     covid_vaccination_requirement_id: z.number(),
-    move_able: z.boolean(),
-    video_url: z.string(),
-    age_from: z.number(),
-    age_to: z.number(),
+    move_able: z.boolean().optional(),
+    video_url: z.string().nullable().optional(),
+    age_from: z.number().optional(),
+    age_to: z.number().optional(),
   });
 });
 
@@ -688,7 +688,6 @@ const fields = ref({
 
 const { walkThroughFields } = useProviderFields(state, fields);
 walkThroughFields(providers.value);
-// watch(() => props.providers, walkThroughFields);
 
 onMounted(() => {
   walkThroughFields(providers.value);
@@ -700,22 +699,22 @@ const getFields = (newObject) => {
     ...initialValues,
     name: newObject.name,
     description: newObject.description,
-    accept_kids: newObject.accept_kids,
-    accept_handicapped: newObject.accept_handicapped,
-    accept_incomplete_resumes: newObject.accept_incomplete_resumes,
-    response_letter_required: newObject.response_letter_required,
-    allow_messages: newObject.allow_messages,
-    response_notifications: newObject.response_notifications,
+    accept_kids: newObject.accept_kids ?? false,
+    accept_handicapped: newObject.accept_handicapped ?? false,
+    accept_incomplete_resumes: newObject.accept_incomplete_resumes ?? false,
+    response_letter_required: newObject.response_letter_required ?? false,
+    allow_messages: newObject.allow_messages ?? false,
+    response_notifications: newObject.response_notifications ?? false,
     work_type_id: newObject.work_type?.id,
     experience_id: newObject.experience?.id,
-    accept_temporary: newObject.accept_temporary,
+    accept_temporary: newObject.accept_temporary ?? false,
     schedule_id: newObject.schedule?.id,
     working_days_id: newObject.working_days?.id,
     working_time_intervals_id: newObject.working_time_intervals?.id,
     working_time_modes_id: newObject.working_time_modes?.id,
-    refresh_vac: newObject.refresh_vac,
+    refresh_vac: newObject.refresh_vac ?? false,
     extend_vac_id: newObject.extend_vac?.id,
-    resume_subscription_status: newObject.resume_subscription_status,
+    resume_subscription_status: newObject.resume_subscription_status ?? false,
     place_of_work_id: newObject.place_of_work?.id,
     education_id: newObject.education?.id,
     marital_status_id: newObject.marital_status?.id,
@@ -723,10 +722,10 @@ const getFields = (newObject) => {
     gender_id: newObject.gender?.id,
     covid_vaccination_requirement_id:
       newObject.covid_vaccination_requirement?.id,
-    move_able: newObject.move_able,
-    video_url: newObject.video_url,
-    age_from: newObject.age_from,
-    age_to: newObject.age_to,
+    move_able: newObject.move_able ?? false,
+    video_url: newObject.video_url ?? undefined,
+    age_from: newObject.age_from ?? undefined,
+    age_to: newObject.age_to ?? undefined,
   };
 };
 watch(

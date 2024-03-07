@@ -2,7 +2,6 @@
 import { useAuthStore } from "../../store/auth";
 import { storeToRefs } from "pinia";
 import { useProfileStore } from "../../store/profile";
-import { navigateTo } from "nuxt/app";
 import { useResumeStore } from "~/store/resume";
 import { useVacancyStore } from "~/store/vacancy";
 
@@ -22,7 +21,7 @@ const vacancyStore = useVacancyStore();
 const resumeStore = useResumeStore();
 const { getConnectedEmployerProviders } = vacancyStore;
 const { getConnectedSeekerProviders } = resumeStore;
-const { refreshSeeker } = useAuthStore();
+const { refreshSeeker, refreshEmployer } = useAuthStore();
 
 const timeout = ref();
 onMounted(async () => {
@@ -35,18 +34,19 @@ onMounted(async () => {
 
   // await getUser();
   //
-  // await refreshSeeker();
+  await refreshSeeker();
+  await refreshEmployer();
 
   await getConnectedEmployerProviders();
   await getConnectedSeekerProviders();
 
   timeout.value = setTimeout(() => {
-    navigateTo({
-      name: "profile",
-      query: {
-        message: "У вас подключенные сервисы!",
-      },
-    });
+    // navigateTo({
+    //   name: "profile",
+    //   query: {
+    //     message: "У вас подключенные сервисы!",
+    //   },
+    // });
   }, 5000);
 });
 

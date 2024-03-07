@@ -6,7 +6,7 @@
         <div class="col-6 list-of-providers">
           <a
             class="provider-item"
-            :href="providers.hh.url"
+            @click.prevent="onOpen(providers.hh.url)"
             target="_blank"
             :class="{ navigated: isHHConnected }"
           >
@@ -80,7 +80,7 @@
           </a>
           <a
             class="provider-item"
-            :href="providers.superjob.url"
+            @click.prevent="onOpen(providers.superjob.url)"
             target="_blank"
             :class="{ navigated: isSuperjobConnected }"
           >
@@ -236,6 +236,7 @@ providers.value.superjob.is_connected = vacancyStore.providers.superjob;
 watch(
   () => vacancyStore.providers,
   (newProviders) => {
+    console.log(newProviders);
     providers.value.hh.is_connected = newProviders.hh;
     providers.value.superjob.is_connected = newProviders.superjob;
   },
@@ -253,6 +254,7 @@ const route = useRoute();
 const redirect_url = useRequestURL();
 onMounted(async () => {
   if (!isAnyProviderConnected.value) {
+    console.log(redirect_url);
     const authData = await getEmployerProvidersAuthEndpoints({}, redirect_url);
     providers.value.hh.url = authData.data.hh;
     providers.value.superjob.url = authData.data.superjob;

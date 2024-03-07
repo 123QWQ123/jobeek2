@@ -54,6 +54,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       }));
     },
     work_types_formatted() {
+      console.log(this.work_types);
       return this.work_types.map((item) => ({
         name: item.name,
         value: item.id,
@@ -145,11 +146,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         payload,
       });
       if (data && "data" in data) {
-        this.work_types =
-          data.data?.work_type.map((item) => ({
-            value: item.id,
-            name: item.name,
-          })) ?? [];
+        this.work_types = data.data?.work_type ?? [];
       }
       return data;
     },
