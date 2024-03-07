@@ -34,15 +34,15 @@ const authStore = useAuthStore();
 const isEmployer = computed(() => authStore.isEmployer);
 const user = computed(() => authStore.user);
 const employer = computed(() => authStore.employer);
-watch(
-  () => isEmployer.value,
-  (new_value) => {
-    console.log(new_value);
-    if (new_value === true) {
-      navigateTo({ name: "create-vacancy" });
-    }
-  },
-);
+// watch(
+//   () => isEmployer.value,
+//   (new_value) => {
+//     console.log(new_value);
+//     if (new_value === true) {
+//       navigateTo({ name: "create-vacancy" });
+//     }
+//   },
+// );
 const saveAsDraft = (e) => {
   e.preventDefault();
   isLoading.value = true;

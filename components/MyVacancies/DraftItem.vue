@@ -8,7 +8,11 @@
           </div>
           <div class="resume-card-name">
             <nuxt-link
-              :to="{ name: 'create-vacancy', query: { draft_id: item.id } }"
+              :to="{
+                name: 'my-vacancy-id',
+                params: { id: item.id },
+                query: { type: 'draft' },
+              }"
               class="title"
             >
               {{ item.name }}
@@ -211,6 +215,7 @@ import "moment/locale/ru";
 import { useVacancyStore } from "~/store/vacancy";
 import Swal from "sweetalert2";
 import { toast } from "vue3-toastify";
+
 const props = defineProps(["item"]);
 const item = computed(() => props.item);
 
@@ -262,7 +267,7 @@ const currency = computed(() => {
   if (props.item.salary_currency) {
     const options = useCurrencyOptions();
     const found = options.find(
-      (item) => item.value === props.item.salary_currency
+      (item) => item.value === props.item.salary_currency,
     );
     if (found) return found.symbol;
     return props.item.salary_currency;
@@ -301,7 +306,7 @@ const employerLogo = computed(() => {
 });
 
 const published_date = computed(() =>
-  moment(item.value?.published_date).locale("ru")
+  moment(item.value?.published_date).locale("ru"),
 );
 
 const { deleteDraft } = useVacancyStore();

@@ -6,9 +6,9 @@ export default function useProviders(
     providers.value = new_values;
   };
   const getProviderAsArray = (new_values) => {
-    if (providers.value.hh === true && providers.value.superjob === false)
+    if (providers.value.hh === true && providers.value.superjob !== true)
       return ["hh"];
-    if (providers.value.hh === false && providers.value.superjob === true)
+    if (providers.value.hh !== true && providers.value.superjob === true)
       return ["superjob"];
     return [];
   };

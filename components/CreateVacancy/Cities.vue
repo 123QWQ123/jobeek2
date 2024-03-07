@@ -111,6 +111,7 @@ onMounted(() => {
 
 <template>
   <div>
+    {{ selectedProviders }}
     <VeeMultiSelectWithSearchWithSelectedOptions
       :options="cityOptions"
       :selected_options="selectedCityOptions"

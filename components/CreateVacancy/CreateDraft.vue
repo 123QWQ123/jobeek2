@@ -17,7 +17,7 @@
           {{ errorMessage }}
         </div>
       </div>
-      <CreateResumeProvidersInput name="providers" />
+      <CreateVacancyProvidersInput name="providers" v-model="providers" />
 
       <div class="input-row">
         <label for="name">Название вакансии<b>*</b></label>
@@ -76,7 +76,7 @@
             <div class="col-6">
               <VeeCustomSelect
                 label="Период"
-                :options="periodOptions"
+                :options="dictionaryStore.payment_period_formatted"
                 name="salary.period"
               />
             </div>
@@ -120,8 +120,19 @@ import { z } from "~/hooks/ru-zod.js";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useVacancyStore } from "~/store/vacancy.js";
+import useProviders from "~/composables/useProviders.js";
 
 const props = defineProps(["title"]);
+
+// const providers = ref({ hh: false, superjob: false });
+const { providers } = useProviders();
+watch(
+  () => providers.value,
+  () => {
+    console.log(1);
+    // setProviders(providers.value);
+  },
+);
 
 const vacancyStore = useVacancyStore();
 const dictionaryStore = useDictionaryStore();
@@ -145,24 +156,19 @@ onMounted(() => {
   });
 });
 const currencyOptions = ref(useCurrencyOptions());
-const periodOptions = computed(() => {
-  return dictionaryStore.payment_period.map((item) => ({
-    name: item.name,
-    value: item.id,
-  }));
-});
 
 const schema = z.object({
+  providers: z.array(z.string()).nonempty("Выберите хотя бы 1 сервис"),
   name: z.string(),
-  cities: z.array(z.number()),
+  cities: z.array(z.number()).nonempty("Выберите хотя бы 1"),
   description: z.string(),
-  professional_roles: z.array(z.number()),
+  professional_roles: z.array(z.number()).nonempty("Выберите хотя бы 1"),
   salary: z.object({
-    currency: z.string().nullable(),
-    from: z.number().nullable(),
-    to: z.number().nullable(),
-    gross: z.boolean().nullable(),
-    period: z.number().nullable(),
+    currency: z.string(),
+    from: z.number(),
+    to: z.number(),
+    gross: z.boolean(),
+    period: z.number(),
   }),
 });
 const initialValues = {
@@ -174,7 +180,7 @@ const initialValues = {
     currency: "RUB",
     from: null,
     to: null,
-    gross: null,
+    gross: false,
     period: null,
   },
 };
@@ -275,7 +281,11 @@ const save = async (is_from_parent = false) => {
   const vacancy_id = resData.data.data.id;
   setTimeout(() => {
     console.log("redirecting...");
-    navigateTo({ name: "my-vacancy-id", params: { id: vacancy_id } });
+    navigateTo({
+      name: "my-vacancy-id",
+      params: { id: vacancy_id },
+      query: { type: "draft" },
+    });
   }, 100);
   isLoading.value = false;
   if (resData.data.hasOwnProperty("errors")) {

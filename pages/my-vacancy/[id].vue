@@ -2,8 +2,8 @@
 import useAlert from "~/composables/useAlert";
 import Swal from "sweetalert2";
 import { toast } from "vue3-toastify";
-import { useResumeStore } from "~/store/resume";
 import useProviders from "~/composables/useProviders.js";
+import { useVacancyStore } from "~/store/vacancy.js";
 
 definePageMeta({
   layout: "cabinet",
@@ -11,8 +11,7 @@ definePageMeta({
 
 const route = useRoute();
 
-const resumeStore = useResumeStore();
-const my_resume = computed(() => resumeStore.my_resume);
+const vacancyStore = useVacancyStore();
 
 const providers = ref({
   superjob: false,
@@ -26,20 +25,31 @@ watch(
     setProviders(newValues);
   },
 );
+const { getMyVacancy, publishVacancy, getMyDraft } = vacancyStore;
+const my_vacancy = computed(() => vacancyStore.my_vacancy);
 
-const { getMyResume, publishResume } = resumeStore;
-const resumeID = computed(() => route.params.id);
+const vacancyID = computed(() => route.params.id);
+const type = computed(() => route.query.type);
 
 watch(
   () => route.params.id,
   (newDraftId) => {
     if (newDraftId) {
-      getMyResume(resumeID.value);
+      getMyVacancy(vacancyID.value);
+    }
+  },
+);
+watch(
+  () => vacancyStore.my_vacancy,
+  (newDraft) => {
+    if (newDraft) {
+      console.log(newDraft);
+      setProviders(newDraft.providers);
     }
   },
 );
 const pageTitle = computed(() => {
-  if (resumeID?.value) {
+  if (vacancyID?.value) {
     return "Мое резюме";
   }
   return "Мое резюме";
@@ -49,17 +59,28 @@ useHead({
 });
 
 onMounted(async () => {
-  if (resumeID.value) {
-    const resData = await getMyResume(resumeID.value);
+  if (vacancyID.value) {
+    let resData;
+    console.log(type.value);
+    if (type.value === "draft") {
+      resData = await getMyDraft(vacancyID.value);
+    }
+    if (type.value === "active") {
+      resData = await getMyVacancy(vacancyID.value);
+    }
+    if (!resData) {
+      return;
+    }
+    console.log(resData);
     if (resData.status === "error") {
       navigateTo({
-        name: "create-resume",
+        name: "create-vacancy",
         query: {
           ...route.query,
           message: JSON.stringify({
             type: "error",
             text: resData.message,
-            redirect: "create-resume",
+            redirect: "create-vacancy",
           }),
         },
       });
@@ -112,9 +133,9 @@ const hhPublishable = ref(false);
 const superjobPublishable = ref(false);
 
 watch(
-  () => resumeStore.my_resume,
-  (newResume) => {
-    const { can_published } = newResume;
+  () => vacancyStore.my_vacancy,
+  (newObject) => {
+    const { can_published } = newObject;
     if (can_published) {
       hhPublishable.value = can_published.hh ?? false;
       superjobPublishable.value = can_published.superjob ?? false;
@@ -122,32 +143,34 @@ watch(
   },
 );
 
-const photo_el = ref();
-const personal_fields_el = ref();
-const profession_fields_el = ref();
-const foreign_language_el = ref();
-const driver_licences_el = ref();
-const work_experience_el = ref();
-const education_el = ref();
-const courses_el = ref();
-const citizenship_el = ref();
-const knowledge_and_skills_el = ref();
-const access_el = ref();
+const advanced_fields_el = ref();
+
+// const photo_el = ref();
+// const personal_fields_el = ref();
+// const profession_fields_el = ref();
+// const foreign_language_el = ref();
+// const driver_licences_el = ref();
+// const work_experience_el = ref();
+// const education_el = ref();
+// const courses_el = ref();
+// const citizenship_el = ref();
+// const knowledge_and_skills_el = ref();
+// const access_el = ref();
 // citizenship_el.value.save(true),
 
 const saveAllSections = async () => {
   // console.log(family_and_citizenship_el.value.hasOwnProperty("save"));
   const promises = await Promise.all([
-    photo_el.value.save(true),
-    personal_fields_el.value.save(true),
-    profession_fields_el.value.save(true),
-    foreign_language_el.value.save(true),
-    driver_licences_el.value.save(true),
-    work_experience_el.value.save(true),
-    education_el.value.save(true),
-    courses_el.value.save(true),
-    knowledge_and_skills_el.value.save(true),
-    access_el.value.save(true),
+    // photo_el.value.save(true),
+    // personal_fields_el.value.save(true),
+    // profession_fields_el.value.save(true),
+    // foreign_language_el.value.save(true),
+    // driver_licences_el.value.save(true),
+    // work_experience_el.value.save(true),
+    // education_el.value.save(true),
+    // courses_el.value.save(true),
+    // knowledge_and_skills_el.value.save(true),
+    // access_el.value.save(true),
   ]);
 
   const promisesResult = promises.every((item) => item === true);
@@ -192,7 +215,7 @@ const saveAndPublishAll = async (e) => {
   };
 
   console.log(payload);
-  const resData = await publishResume(resumeID.value, payload);
+  const resData = await publishVacancy(vacancyID.value, payload);
   console.log(resData);
   // isLoading.value = false;
   if (resData.hasOwnProperty("status") && resData.status !== "success") {
@@ -242,7 +265,7 @@ const saveAndPublishProvider = async (provider = null) => {
   };
 
   console.log(payload);
-  const resData = await publishResume(resumeID.value, payload);
+  const resData = await publishVacancy(vacancyID.value, payload);
   console.log(resData);
   // isLoading.value = false;
   if (resData.hasOwnProperty("status") && resData.status !== "success") {
@@ -286,82 +309,89 @@ const phone = ref("");
             <!--            <h4>К сожалению возникли ошибки при создании Вакансии:</h4>-->
             <p class="alert alert-info" v-for="item in errors">{{ item }}</p>
           </div>
-          <CreateResumeProviders v-model="providers" />
+          <CreateVacancyProviders v-model="providers" />
 
-          <CreateResumePhotoCard
-            v-if="resumeID"
-            ref="photo_el"
-            :providers="providers"
-          />
-          <CreateResumeVeePersonalFieldsCard
-            v-if="resumeID"
-            :key="`personal_fields_el_key_${providers.hh + providers.superjob}`"
-            ref="personal_fields_el"
-            :providers="providers"
-          />
-          <CreateResumeVeeProfessionDetailsCard
-            :key="`prof_fields_el_key_${providers.hh + providers.superjob}`"
-            v-if="resumeID"
-            ref="profession_fields_el"
-            :providers="providers"
-          />
-          <CreateResumeVeeForeignLanguagesCard
-            v-if="resumeID"
-            :key="`languages_el_key_${providers.hh + providers.superjob}`"
-            ref="foreign_language_el"
-            :providers="providers"
-          />
-          <CreateResumeVeeDriverLicensesCard
-            v-if="resumeID"
-            :key="`driver_licenses_el_${providers.hh + providers.superjob}`"
-            ref="driver_licences_el"
-            :providers="providers"
-          />
-          <CreateResumeVeeKnowledgeAndSkillsCard
-            v-if="resumeID"
-            :key="`knowledge_and_skills_el_${providers.hh + providers.superjob}`"
-            ref="knowledge_and_skills_el"
-            :providers="providers"
-          />
+          {{ providers }}
 
-          <CreateResumeVeeEducationCard
-            v-if="resumeID"
-            :key="`education_el_${providers.hh + providers.superjob}`"
-            ref="education_el"
+          <CreateVacancyVeeAdvancedFieldsCard
+            ref="advanced_fields_el"
+            :key="`advanced_fields_el_key_${providers.hh + providers.superjob}`"
             :providers="providers"
           />
+          <!--          <CreateResumePhotoCard-->
+          <!--            v-if="vacancyID"-->
+          <!--            ref="photo_el"-->
+          <!--            :providers="providers"-->
+          <!--          />-->
+          <!--          <CreateResumeVeePersonalFieldsCard-->
+          <!--            v-if="vacancyID"-->
+          <!--            :key="`personal_fields_el_key_${providers.hh + providers.superjob}`"-->
+          <!--            ref="personal_fields_el"-->
+          <!--            :providers="providers"-->
+          <!--          />-->
+          <!--          <CreateResumeVeeProfessionDetailsCard-->
+          <!--            :key="`prof_fields_el_key_${providers.hh + providers.superjob}`"-->
+          <!--            v-if="vacancyID"-->
+          <!--            ref="profession_fields_el"-->
+          <!--            :providers="providers"-->
+          <!--          />-->
+          <!--          <CreateResumeVeeForeignLanguagesCard-->
+          <!--            v-if="vacancyID"-->
+          <!--            :key="`languages_el_key_${providers.hh + providers.superjob}`"-->
+          <!--            ref="foreign_language_el"-->
+          <!--            :providers="providers"-->
+          <!--          />-->
+          <!--          <CreateResumeVeeDriverLicensesCard-->
+          <!--            v-if="vacancyID"-->
+          <!--            :key="`driver_licenses_el_${providers.hh + providers.superjob}`"-->
+          <!--            ref="driver_licences_el"-->
+          <!--            :providers="providers"-->
+          <!--          />-->
+          <!--          <CreateResumeVeeKnowledgeAndSkillsCard-->
+          <!--            v-if="vacancyID"-->
+          <!--            :key="`knowledge_and_skills_el_${providers.hh + providers.superjob}`"-->
+          <!--            ref="knowledge_and_skills_el"-->
+          <!--            :providers="providers"-->
+          <!--          />-->
 
-          <CreateResumeVeeCoursesCard
-            v-if="resumeID"
-            :key="`courses_el_${providers.hh + providers.superjob}`"
-            ref="courses_el"
-            :providers="providers"
-          />
+          <!--          <CreateResumeVeeEducationCard-->
+          <!--            v-if="vacancyID"-->
+          <!--            :key="`education_el_${providers.hh + providers.superjob}`"-->
+          <!--            ref="education_el"-->
+          <!--            :providers="providers"-->
+          <!--          />-->
 
-          <CreateResumeVeeTestsAndExamsCard
-            v-if="resumeID"
-            :key="`tests_el_${providers.hh + providers.superjob}`"
-            ref="courses_el"
-            :providers="providers"
-          />
-          <LazyCreateResumeVeeWorkExperienceCard
-            v-if="resumeID"
-            :key="`experience_el_${providers.hh + providers.superjob}`"
-            ref="work_experience_el"
-            :providers="providers"
-          />
-          <CreateResumeVeeCitizenshipAndFamilyCard
-            v-if="resumeID"
-            :key="`citizenship_el_${providers.hh + providers.superjob}`"
-            ref="citizenship_el"
-            :providers="providers"
-          />
-          <CreateResumeVeeAccessTypeCard
-            :key="`access_el_${providers.hh + providers.superjob}`"
-            v-if="resumeID"
-            ref="access_el"
-            :providers="providers"
-          />
+          <!--          <CreateResumeVeeCoursesCard-->
+          <!--            v-if="vacancyID"-->
+          <!--            :key="`courses_el_${providers.hh + providers.superjob}`"-->
+          <!--            ref="courses_el"-->
+          <!--            :providers="providers"-->
+          <!--          />-->
+
+          <!--          <CreateResumeVeeTestsAndExamsCard-->
+          <!--            v-if="vacancyID"-->
+          <!--            :key="`tests_el_${providers.hh + providers.superjob}`"-->
+          <!--            ref="courses_el"-->
+          <!--            :providers="providers"-->
+          <!--          />-->
+          <!--          <LazyCreateResumeVeeWorkExperienceCard-->
+          <!--            v-if="vacancyID"-->
+          <!--            :key="`experience_el_${providers.hh + providers.superjob}`"-->
+          <!--            ref="work_experience_el"-->
+          <!--            :providers="providers"-->
+          <!--          />-->
+          <!--          <CreateResumeVeeCitizenshipAndFamilyCard-->
+          <!--            v-if="vacancyID"-->
+          <!--            :key="`citizenship_el_${providers.hh + providers.superjob}`"-->
+          <!--            ref="citizenship_el"-->
+          <!--            :providers="providers"-->
+          <!--          />-->
+          <!--          <CreateResumeVeeAccessTypeCard-->
+          <!--            :key="`access_el_${providers.hh + providers.superjob}`"-->
+          <!--            v-if="vacancyID"-->
+          <!--            ref="access_el"-->
+          <!--            :providers="providers"-->
+          <!--          />-->
 
           <p class="text-lg-end">
             При создании ваканции вы соглашаетесь с

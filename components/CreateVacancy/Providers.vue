@@ -132,7 +132,6 @@ const {
   getEmployerProvidersAuthEndpoints,
   getMyVacancy,
 } = vacancyStore;
-await getConnectedEmployerProviders();
 
 // watch(vacancyProviders.value, (newValues) => {
 //   console.log(newValues);
@@ -152,10 +151,15 @@ await getConnectedEmployerProviders();
 //   selectedProviders.value = providersNewValues;
 // });
 
+onMounted(async () => {
+  await getConnectedEmployerProviders();
+});
 const enabledProviders = ref(vacancyStore.providers);
 
-const isHHEnabled = computed(() => enabledProviders.value.hh);
-const isSuperjobEnabled = computed(() => enabledProviders.value.superjob);
+const isHHEnabled = computed(() => enabledProviders.value?.hh ?? false);
+const isSuperjobEnabled = computed(
+  () => enabledProviders.value?.superjob ?? false,
+);
 
 const resetObject = {
   superjob: false,
@@ -255,7 +259,7 @@ const toggle = async (provider) => {
   data.action = "UpdateProviders";
   let resData = {};
   console.log(draftID.value, vacancyID.value);
-  if (draftID.value) {
+  if (object.value) {
     resData = await updateDraft(draftID.value, data);
 
     if (resData.status !== "success") {

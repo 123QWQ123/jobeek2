@@ -108,7 +108,7 @@
         </div>
       </div>
     </div>
-    <div class="text-danger d-block">
+    <div class="text-danger d-block text-center mt-1">
       {{ errorMessage }}
     </div>
   </div>
@@ -118,7 +118,7 @@
 // To DO default by connected_providers
 import { useDictionaryStore } from "~/store/dictionary";
 import { toast } from "vue3-toastify";
-import { useResumeStore } from "~/store/resume";
+import { useVacancyStore } from "~/store/vacancy.js";
 
 const emit = defineEmits(["update:modelValue"]);
 const props = defineProps({
@@ -141,12 +141,12 @@ const dictionaryStore = useDictionaryStore();
 
 const route = useRoute();
 
-const resumeID = computed(() => route.params.id);
+const vacancyID = computed(() => route.params.id);
 
-const resumeStore = useResumeStore();
-const { getConnectedSeekerProviders, getSeekerProvidersAuthEndpoints } =
-  resumeStore;
-await getConnectedSeekerProviders();
+const vacancyStore = useVacancyStore();
+const { getConnectedEmployerProviders, getEmployerProvidersAuthEndpoints } =
+  vacancyStore;
+await getConnectedEmployerProviders();
 
 const { value, errorMessage } = useField(() => props.name);
 
@@ -168,7 +168,7 @@ const { value, errorMessage } = useField(() => props.name);
 //   selectedProviders.value = providersNewValues;
 // });
 
-const enabledProviders = ref(resumeStore.providers);
+const enabledProviders = ref(vacancyStore.providers);
 const isHHEnabled = computed(() => enabledProviders.value.hh);
 const isSuperjobEnabled = computed(() => enabledProviders.value.superjob);
 
@@ -176,9 +176,9 @@ const resetObject = {
   superjob: false,
   hh: false,
 };
-const resumeProviders = computed(() => {
+const vacancyProviders = computed(() => {
   let selectedProvidersValue = [];
-  if (!resumeStore.my_resume) {
+  if (!vacancyStore.my_resume) {
     return resetObject;
   }
   const providersNewValues = { ...resetObject };
@@ -197,15 +197,17 @@ const resumeProviders = computed(() => {
 });
 
 watch(
-  () => resumeProviders.value,
+  () => vacancyProviders.value,
   (newValue) => {
     selectedProviders.value = newValue;
   },
 );
+
 const selectedProviders = ref(props.modelValue ?? resetObject);
 watch(
   () => selectedProviders.value,
   (newSelectedItems) => {
+    console.log(newSelectedItems);
     emit("update:modelValue", newSelectedItems);
   },
 );
@@ -243,7 +245,6 @@ const toggle = async (provider) => {
     selectedProvidersValue.push("superjob");
   }
   value.value = selectedProvidersValue;
-  emit("update:modelValue", selectedProvidersValue);
 };
 const openProviderAuthUrl = (url) => {
   window.open(url);
