@@ -6,7 +6,7 @@
         <div class="col-6 list-of-providers">
           <a
             class="provider-item"
-            :href="providers.hh.url"
+            @click.prevent="onOpen(providers.hh.url)"
             target="_blank"
             :class="{ navigated: isHHConnected }"
           >
@@ -55,14 +55,32 @@
                 />
               </svg>
             </span>
-            <span class="provider-label reload">
-            	<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#5375FD" class="bi bi-arrow-repeat" viewBox="0 0 16 16" data-v-03b4701d=""><path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z" data-v-03b4701d=""></path><path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" data-v-03b4701d=""></path></svg>
-            </span>
+            <!--            <span class="provider-label reload">-->
+            <!--              <svg-->
+            <!--                xmlns="http://www.w3.org/2000/svg"-->
+            <!--                width="22"-->
+            <!--                height="22"-->
+            <!--                fill="#5375FD"-->
+            <!--                class="bi bi-arrow-repeat"-->
+            <!--                viewBox="0 0 16 16"-->
+            <!--                data-v-03b4701d=""-->
+            <!--              >-->
+            <!--                <path-->
+            <!--                  d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"-->
+            <!--                  data-v-03b4701d=""-->
+            <!--                ></path>-->
+            <!--                <path-->
+            <!--                  fill-rule="evenodd"-->
+            <!--                  d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"-->
+            <!--                  data-v-03b4701d=""-->
+            <!--                ></path>-->
+            <!--              </svg>-->
+            <!--            </span>-->
             <img src="~/assets/img/logos/min-hh-red.png" class="w-100" />
           </a>
           <a
             class="provider-item"
-            :href="providers.superjob.url"
+            @click.prevent="onOpen(providers.superjob.url)"
             target="_blank"
             :class="{ navigated: isSuperjobConnected }"
           >
@@ -98,7 +116,7 @@
 
               <svg
                 @click="onDisconnect('superjob')"
-                v-if="isHHConnected"
+                v-if="isSuperjobConnected"
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
@@ -111,9 +129,9 @@
                 />
               </svg>
             </span>
-            <span class="provider-label reload">
-            	<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#5375FD" class="bi bi-arrow-repeat" viewBox="0 0 16 16" data-v-03b4701d=""><path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z" data-v-03b4701d=""></path><path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" data-v-03b4701d=""></path></svg>
-            </span>
+            <!--            <span class="provider-label reload">-->
+            <!--            	<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#5375FD" class="bi bi-arrow-repeat" viewBox="0 0 16 16" data-v-03b4701d=""><path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z" data-v-03b4701d=""></path><path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" data-v-03b4701d=""></path></svg>-->
+            <!--            </span>-->
             <img src="~/assets/img/logos/superjob.svg" class="w-100" />
           </a>
         </div>
@@ -218,6 +236,7 @@ providers.value.superjob.is_connected = vacancyStore.providers.superjob;
 watch(
   () => vacancyStore.providers,
   (newProviders) => {
+    console.log(newProviders);
     providers.value.hh.is_connected = newProviders.hh;
     providers.value.superjob.is_connected = newProviders.superjob;
   },
@@ -235,6 +254,7 @@ const route = useRoute();
 const redirect_url = useRequestURL();
 onMounted(async () => {
   if (!isAnyProviderConnected.value) {
+    console.log(redirect_url);
     const authData = await getEmployerProvidersAuthEndpoints({}, redirect_url);
     providers.value.hh.url = authData.data.hh;
     providers.value.superjob.url = authData.data.superjob;

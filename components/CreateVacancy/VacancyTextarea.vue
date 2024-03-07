@@ -12,7 +12,7 @@
 
 <script>
 export default {
-  name: "VacancyTextarea",
+  name: "ResumeTextarea",
 };
 </script>
 

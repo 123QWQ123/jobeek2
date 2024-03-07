@@ -2,7 +2,12 @@
   <div>
     <div class="check-block">
       <div class="checkbox">
-        <input type="checkbox" :id="props.name" v-model.number="value" />
+        <input
+          type="checkbox"
+          :name="props.name"
+          :id="props.name"
+          v-model.number="value"
+        />
         <div class="checkbox-mask">
           <img src="~/assets/img/svg/check.svg" alt="#" />
         </div>
@@ -20,7 +25,7 @@
 
 <script>
 export default {
-  name: "VacancyCheckboxInput",
+  name: "ResumeCheckboxInput",
 };
 </script>
 

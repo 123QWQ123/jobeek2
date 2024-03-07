@@ -1,7 +1,7 @@
 <template>
   <div class="tiptap-toolbar border-black border-1 py-1">
     <button
-      @click="editor.chain().focus().toggleBold().run()"
+      @click.prevent="editor.chain().focus().toggleBold().run()"
       :disabled="!editor.can().chain().focus().toggleBold().run()"
       :class="{ 'is-active': editor.isActive('bold') }"
     >
@@ -24,7 +24,7 @@
       </svg>
     </button>
     <button
-      @click="editor.chain().focus().toggleItalic().run()"
+      @click.prevent="editor.chain().focus().toggleItalic().run()"
       :disabled="!editor.can().chain().focus().toggleItalic().run()"
       :class="{ 'is-active': editor.isActive('italic') }"
     >
@@ -47,7 +47,7 @@
       </svg>
     </button>
     <button
-      @click="editor.chain().focus().toggleStrike().run()"
+      @click.prevent="editor.chain().focus().toggleStrike().run()"
       :disabled="!editor.can().chain().focus().toggleStrike().run()"
       :class="{ 'is-active': editor.isActive('strike') }"
     >
@@ -70,7 +70,7 @@
       </svg>
     </button>
     <button
-      @click="editor.chain().focus().setParagraph().run()"
+      @click.prevent="editor.chain().focus().setParagraph().run()"
       :class="{ 'is-active': editor.isActive('paragraph') }"
     >
       <svg
@@ -92,43 +92,43 @@
       </svg>
     </button>
     <!--      <button-->
-    <!--        @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"-->
+    <!--        @click.prevent="editor.chain().focus().toggleHeading({ level: 1 }).run()"-->
     <!--        :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }"-->
     <!--      >-->
     <!--        h1-->
     <!--      </button>-->
     <!--      <button-->
-    <!--        @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"-->
+    <!--        @click.prevent="editor.chain().focus().toggleHeading({ level: 2 }).run()"-->
     <!--        :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }"-->
     <!--      >-->
     <!--        h2-->
     <!--      </button>-->
     <!--      <button-->
-    <!--        @click="editor.chain().focus().toggleHeading({ level: 3 }).run()"-->
+    <!--        @click.prevent="editor.chain().focus().toggleHeading({ level: 3 }).run()"-->
     <!--        :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }"-->
     <!--      >-->
     <!--        h3-->
     <!--      </button>-->
     <!--      <button-->
-    <!--        @click="editor.chain().focus().toggleHeading({ level: 4 }).run()"-->
+    <!--        @click.prevent="editor.chain().focus().toggleHeading({ level: 4 }).run()"-->
     <!--        :class="{ 'is-active': editor.isActive('heading', { level: 4 }) }"-->
     <!--      >-->
     <!--        h4-->
     <!--      </button>-->
     <!--      <button-->
-    <!--        @click="editor.chain().focus().toggleHeading({ level: 5 }).run()"-->
+    <!--        @click.prevent="editor.chain().focus().toggleHeading({ level: 5 }).run()"-->
     <!--        :class="{ 'is-active': editor.isActive('heading', { level: 5 }) }"-->
     <!--      >-->
     <!--        h5-->
     <!--      </button>-->
     <!--      <button-->
-    <!--        @click="editor.chain().focus().toggleHeading({ level: 6 }).run()"-->
+    <!--        @click.prevent="editor.chain().focus().toggleHeading({ level: 6 }).run()"-->
     <!--        :class="{ 'is-active': editor.isActive('heading', { level: 6 }) }"-->
     <!--      >-->
     <!--        h6-->
     <!--      </button>-->
     <button
-      @click="editor.chain().focus().toggleBulletList().run()"
+      @click.prevent="editor.chain().focus().toggleBulletList().run()"
       :class="{ 'is-active': editor.isActive('bulletList') }"
     >
       <svg
@@ -150,7 +150,7 @@
       </svg>
     </button>
     <button
-      @click="editor.chain().focus().toggleOrderedList().run()"
+      @click.prevent="editor.chain().focus().toggleOrderedList().run()"
       :class="{ 'is-active': editor.isActive('orderedList') }"
     >
       <svg
@@ -172,18 +172,18 @@
       </svg>
     </button>
     <!--      <button-->
-    <!--        @click="editor.chain().focus().toggleCodeBlock().run()"-->
+    <!--        @click.prevent="editor.chain().focus().toggleCodeBlock().run()"-->
     <!--        :class="{ 'is-active': editor.isActive('codeBlock') }"-->
     <!--      >-->
     <!--        code block-->
     <!--      </button>-->
     <!--      <button-->
-    <!--        @click="editor.chain().focus().toggleBlockquote().run()"-->
+    <!--        @click.prevent="editor.chain().focus().toggleBlockquote().run()"-->
     <!--        :class="{ 'is-active': editor.isActive('blockquote') }"-->
     <!--      >-->
     <!--        blockquote-->
     <!--      </button>-->
-    <button @click="editor.chain().focus().setHorizontalRule().run()">
+    <button @click.prevent="editor.chain().focus().setHorizontalRule().run()">
       <svg
         class="svg-icon"
         style="
@@ -200,7 +200,7 @@
         <path d="M63.6 489.6h896.7v44.8H63.6z" />
       </svg>
     </button>
-    <button @click="editor.chain().focus().setHardBreak().run()">
+    <button @click.prevent="editor.chain().focus().setHardBreak().run()">
       <svg
         class="svg-icon"
         style="
@@ -220,7 +220,7 @@
       </svg>
     </button>
     <button
-      @click="editor.chain().focus().undo().run()"
+      @click.prevent="editor.chain().focus().undo().run()"
       :disabled="!editor.can().chain().focus().undo().run()"
     >
       <svg
@@ -242,7 +242,7 @@
       </svg>
     </button>
     <button
-      @click="editor.chain().focus().redo().run()"
+      @click.prevent="editor.chain().focus().redo().run()"
       :disabled="!editor.can().chain().focus().redo().run()"
     >
       <svg

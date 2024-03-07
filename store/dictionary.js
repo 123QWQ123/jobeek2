@@ -46,7 +46,93 @@ export const useDictionaryStore = defineStore("dictionary", {
       resume_language_levels: [],
     };
   },
-  getters: {},
+  getters: {
+    payment_period_formatted() {
+      return this.payment_period.map((item) => ({
+        name: item.name,
+        value: item.id,
+      }));
+    },
+    work_types_formatted() {
+      console.log(this.work_types);
+      return this.work_types.map((item) => ({
+        name: item.name,
+        value: item.id,
+      }));
+    },
+    experiences_formatted() {
+      return this.experiences.map((item) => ({
+        name: item.name,
+        value: item.id,
+      }));
+    },
+    schedules_formatted() {
+      return this.schedules.map((item) => ({
+        name: item.name,
+        value: item.id,
+      }));
+    },
+    working_days_formatted() {
+      return this.working_days.map((item) => ({
+        name: item.name,
+        value: item.id,
+      }));
+    },
+    working_time_intervals_formatted() {
+      return this.working_time_intervals.map((item) => ({
+        name: item.name,
+        value: item.id,
+      }));
+    },
+    working_time_modes_formatted() {
+      return this.working_time_modes.map((item) => ({
+        name: item.name,
+        value: item.id,
+      }));
+    },
+    extend_vac_formatted() {
+      return this.extend_vac.map((item) => ({
+        name: item.name,
+        value: item.id,
+      }));
+    },
+    educations_formatted() {
+      return this.educations.map((item) => ({
+        name: item.name,
+        value: item.id,
+      }));
+    },
+    place_of_works_formatted() {
+      return this.place_of_works.map((item) => ({
+        name: item.name,
+        value: item.id,
+      }));
+    },
+    marital_statuses_formatted() {
+      return this.marital_statuses.map((item) => ({
+        name: item.name,
+        value: item.id,
+      }));
+    },
+    genders_formatted() {
+      return this.genders.map((item) => ({
+        name: item.name,
+        value: item.id,
+      }));
+    },
+    children_formatted() {
+      return this.children.map((item) => ({
+        name: item.name,
+        value: item.id,
+      }));
+    },
+    covid_vaccination_requirement_formatted() {
+      return this.covid_vaccination_requirement.map((item) => ({
+        name: item.name,
+        value: item.id,
+      }));
+    },
+  },
   actions: {
     numberFormat(value) {
       return vueNumberFormat(value, {});
@@ -60,11 +146,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         payload,
       });
       if (data && "data" in data) {
-        this.work_types =
-          data.data?.work_type.map((item) => ({
-            value: item.id,
-            name: item.name,
-          })) ?? [];
+        this.work_types = data.data?.work_type ?? [];
       }
       return data;
     },

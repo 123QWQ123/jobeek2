@@ -7,7 +7,7 @@
 
 <script>
 export default {
-  name: "VacancyTextInput",
+  name: "ResumeTextInput",
 };
 </script>
 
