@@ -9,9 +9,9 @@
       ></span>
     </div>
 
-    <div class="text-danger d-block p-4" v-if="errors.message">
-      {{ errors.message }}
-    </div>
+    <!--    <div class="text-danger d-block p-4">-->
+    <!--      {{ errors }}-->
+    <!--    </div>-->
     <transition>
       <div class="w-box-body" :class="{ collapse: isCollapsed }">
         <div class="input-row" v-if="!state.name.is_hidden">
@@ -27,7 +27,6 @@
             <VeeTipTapRichEditor name="description" />
           </div>
         </div>
-
         <div class="input-row" v-if="!state.work_type_id.is_hidden">
           <label>Тип работы:</label>
           <div class="input-wrapper mt-2">
@@ -38,7 +37,6 @@
             />
           </div>
         </div>
-
         <div class="input-row" v-if="!state.experience_id.is_hidden">
           <label>Опыт:</label>
           <div class="input-wrapper mt-2">
@@ -49,7 +47,6 @@
             />
           </div>
         </div>
-
         <div class="input-row" v-if="!state.accept_kids.is_hidden">
           <label>Соискатель старше 14 лет:</label>
           <div class="input-wrapper mt-2">
@@ -59,7 +56,6 @@
             />
           </div>
         </div>
-
         <div class="input-row" v-if="!state.accept_temporary.is_hidden">
           <label>Временное трудоустройство:</label>
           <div class="input-wrapper mt-2">
@@ -81,7 +77,6 @@
             />
           </div>
         </div>
-
         <div class="input-row" v-if="!state.accept_handicapped.is_hidden">
           <label>Соискатель с инвалидностью:</label>
           <div class="input-wrapper mt-2">
@@ -118,7 +113,6 @@
             />
           </div>
         </div>
-
         <div class="input-row" v-if="!state.schedule_id.is_hidden">
           <label>график работы:</label>
           <div class="input-wrapper mt-2">
@@ -129,7 +123,6 @@
             />
           </div>
         </div>
-
         <div class="input-row" v-if="!state.working_days_id.is_hidden">
           <label>рабочие дни:</label>
           <div class="input-wrapper mt-2">
@@ -140,7 +133,6 @@
             />
           </div>
         </div>
-
         <div class="input-row" v-if="!state.with_zp.is_hidden">
           <label>Зарплата.ру:</label>
           <div class="input-wrapper mt-2">
@@ -173,7 +165,6 @@
             />
           </div>
         </div>
-
         <div class="input-row" v-if="!state.refresh_vac.is_hidden">
           <label>Обновлять автоматически:</label>
           <div class="input-wrapper mt-2">
@@ -183,7 +174,6 @@
             />
           </div>
         </div>
-
         <div class="input-row" v-if="!state.extend_vac_id.is_hidden">
           <label>Продлевать ли вакансию:</label>
           <div class="input-wrapper mt-2">
@@ -194,7 +184,6 @@
             />
           </div>
         </div>
-
         <div
           class="input-row"
           v-if="!state.resume_subscription_status.is_hidden"
@@ -207,7 +196,6 @@
             />
           </div>
         </div>
-
         <!--        <CreateVacancySubscriptionKeywords-->
         <!--          v-if="!state.subscriptionKeywords.is_hidden"-->
         <!--          v-model="state.subscriptionKeywords.val"-->
@@ -325,7 +313,6 @@
             </div>
           </div>
         </div>
-        {{ values }}
       </div>
     </transition>
   </div>
@@ -358,8 +345,8 @@ const profileStore = useProfileStore();
 const CONFIG = useRuntimeConfig();
 const route = useRoute();
 
-const draftID = computed(() => route.query.draft_id);
-const vacancyID = computed(() => route.query.vacancy_id);
+const objectID = computed(() => route.params.id);
+const type = computed(() => route.query.type);
 const { updateVacancy, updateDraft, getMyVacancy } = vacancyStore;
 
 const { employer } = profileStore;
@@ -383,7 +370,7 @@ const videoUrlID = computed(() => {
 const isSaved = ref(false);
 const isChanged = ref(false);
 const isFirst = ref(true);
-const isCollapsed = ref(false);
+const isCollapsed = ref(true);
 const isUpdated = ref(false);
 
 const schema = computed(() => {
@@ -408,7 +395,6 @@ const schema = computed(() => {
   //   });
   // }
   return z.object({
-    providers: z.array(z.number()).array().nonempty(),
     name: z.string().min(2),
     description: z.string().min(2),
     work_type_id: z.number().optional(),
@@ -428,16 +414,17 @@ const schema = computed(() => {
     refresh_vac: z.boolean().optional(),
     extend_vac_id: z.number().optional(),
     resume_subscription_status: z.boolean().optional(),
-    subscriptionKeywords: z
-      .array(
-        z.object({
-          keyword: z.string(),
-          srws: z.string(),
-          skwc: z.string(),
-          is_hidden: z.boolean(),
-        }),
-      )
-      .nullable(),
+    // subscriptionKeywords: z
+    //   .array(
+    //     z.object({
+    //       keyword: z.string(),
+    //       srws: z.string(),
+    //       skwc: z.string(),
+    //       is_hidden: z.boolean(),
+    //     }),
+    //   )
+    //   .nullish()
+    //   .optional(),
     place_of_work_id: z.number().optional(),
     education_id: z.number().optional(),
     marital_status_id: z.number().optional(),
@@ -471,14 +458,14 @@ const initialValues = {
   refresh_vac: false,
   extend_vac_id: null,
   resume_subscription_status: false,
-  subscriptionKeywords: [
-    {
-      keyword: null,
-      srws: null,
-      skwc: null,
-      is_hidden: false,
-    },
-  ],
+  // subscriptionKeywords: [
+  //   {
+  //     keyword: null,
+  //     srws: null,
+  //     skwc: null,
+  //     is_hidden: false,
+  //   },
+  // ],
   place_of_work_id: null,
   education_id: null,
   marital_status_id: null,
@@ -786,9 +773,6 @@ onMounted(() => {
     await getCovidVacRequirements();
   }, 500);
 });
-const onAddressSearch = async (newString) => {
-  console.log(newString);
-};
 const { handleErrorResponse } = useFormValidation();
 const isFocused = ref(false);
 const isLoading = ref(false);
@@ -798,7 +782,6 @@ const save = async (is_from_parent = false) => {
   if (!meta.value.dirty) {
     return true;
   }
-
   if (!meta.value.valid) {
     errorMessage.value = "Запольните все поля";
     return false;
@@ -806,13 +789,14 @@ const save = async (is_from_parent = false) => {
   isLoading.value = true;
   setErrors({});
   errorMessage.value = "";
-  let resData = { ...values };
+  let jsonData = { ...values };
+  let resData = {};
 
   jsonData.action = "UpdateAdvancedField";
-  if (draftID.value) {
-    resData = await updateDraft(draftID.value, jsonData);
+  if (type.value === "draft") {
+    resData = await updateDraft(objectID.value, jsonData);
   } else {
-    resData = await updateVacancy(vacancyID.value, jsonData);
+    resData = await updateVacancy(objectID.value, jsonData);
   }
 
   isUpdated.value = true;
@@ -845,8 +829,3 @@ defineExpose({
   save,
 });
 </script>
-
-<style>
-.from-to-block {
-}
-</style>

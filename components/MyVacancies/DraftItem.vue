@@ -378,7 +378,12 @@ const openProviderAuthUrl = (url) => {
 </script>
 
 <style scoped>
+.theme-checker.disabled {
+  cursor: default;
+}
+
 .theme-checker.disabled * {
+  cursor: default;
   -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
   filter: grayscale(100%);
 }

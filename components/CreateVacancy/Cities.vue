@@ -1,14 +1,20 @@
 <script setup>
+import { useVacancyStore } from "~/store/vacancy.js";
+import { useProfileStore } from "~/store/profile.js";
+import useFilter from "~/composables/useFilter.js";
+import useProviders from "~/composables/useProviders.js";
+import useResumeHooks from "~/hooks/useResumeHooks.js";
+
 const props = defineProps({
   name: {
     required: true,
     default: "cities",
   },
+  selected_options: {
+    required: false,
+    default: [],
+  },
 });
-import { useProfileStore } from "~/store/profile.js";
-import useFilter from "~/composables/useFilter.js";
-import useProviders from "~/composables/useProviders.js";
-import useResumeHooks from "~/hooks/useResumeHooks.js";
 
 const profileStore = useProfileStore();
 const { providers, getProviderAsArray } = useProviders();
@@ -25,7 +31,29 @@ const cities = ref([]);
 const { searchCities, searchProfessionalRoles } = profileStore;
 const { getCountryCities } = profileStore;
 const cityOptions = ref([]);
-const selectedCityOptions = ref([]);
+const selectedCityOptions = ref(props.selected_options ?? []);
+
+const ID = computed(() => route.params.id);
+const type = computed(() => route.query.type);
+const vacancyStore = useVacancyStore();
+
+watch(
+  () => vacancyStore.my_vacancy,
+  () => {
+    console.log(vacancyStore.my_vacancy);
+    const items = [];
+  },
+);
+watch(
+  () => props.selected_options,
+  () => {
+    selectedCityOptions.value = props.selected_options;
+  },
+);
+onMounted(() => {
+  console.log(1);
+  console.log(vacancyStore.my_vacancy);
+});
 
 const { getCityName } = useResumeHooks();
 const updateCityInput = async (newValue = "") => {
@@ -45,24 +73,18 @@ const { value: city_ids } = useField(() => props.name);
 watch(
   () => city_ids.value,
   async () => {
-    console.log(city_ids.value);
-    // let items = [];
-    // if (isHHProfRolesNeeded.value) {
-    //   const new_h = profileStore.hh_professional_roles_with_parent;
-    //   items = items.concat(new_h);
-    // }
-    // if (isSuperjobProfRolesNeeded.value) {
-    //   const new_s = profileStore.superjob_professional_roles_with_parent;
-    //   items = items.concat(new_s);
-    // }
-    // if (isHHProfRolesNeeded.value || isSuperjobProfRolesNeeded.value) {
-    //   items = items.concat(profileStore.professional_roles_with_parent);
-    //   items = uniq(items, "value");
-    //   professionalRoleOptions.value = items;
-    // } else {
-    //   professionalRoleOptions.value =
-    //     profileStore.professional_roles_with_parent;
-    // }
+    let items = vacancyStore.my_vacancy.cities.map((item) => ({
+      name: item.name,
+      value: item.id,
+    }));
+    items = items.concat(
+      [...cityOptions.value].filter((item) =>
+        city_ids.value.includes(item.value),
+      ),
+    );
+    items = uniq(items, "value");
+
+    onUpdateSelectedOptions(items);
   },
 );
 
@@ -70,37 +92,6 @@ const onUpdateSelectedOptions = async (newItems) => {
   console.log(newItems);
   selectedCityOptions.value = newItems;
 };
-// const updateProfessionalInput = async (newValue = "", providers = []) => {
-//   let items = await searchProfessionalRoles();
-//   if (newValue) {
-//     items = items
-//       .filter((item) => item.parent_id !== 0)
-//       .filter((item) => item.name.includes(newValue));
-//   } else {
-//     items = items.filter((item) => item.parent_id !== 0);
-//   }
-//   professionalRoleOptions.value = items.map((item) => ({
-//     value: item.id,
-//     name: item.name,
-//   }));
-// };
-
-const isHHNeeded = computed(() => {
-  if (!isHHSelected.value) return false;
-  if (city_ids.value.length < 1) return true;
-  const selected_fields_values = [...city_ids.value];
-  return !selected_fields_values.some((item) =>
-    profileStore.hh_professional_roles_with_parent_ids.includes(item),
-  );
-});
-const isSuperjobNeeded = computed(() => {
-  if (!isSuperjobSelected.value) return false;
-  if (city_ids.value.length < 1) return true;
-  const selected_fields_values = [...city_ids.value];
-  return !selected_fields_values.some((item) =>
-    profileStore.superjob_professional_roles_with_parent_ids.includes(item),
-  );
-});
 
 onMounted(() => {
   // updateProfessionalInput("");
@@ -111,7 +102,7 @@ onMounted(() => {
 
 <template>
   <div>
-    {{ selectedProviders }}
+    {{ selectedCityOptions }}
     <VeeMultiSelectWithSearchWithSelectedOptions
       :options="cityOptions"
       :selected_options="selectedCityOptions"

@@ -1,6 +1,5 @@
 <template>
   <div class="carryover-box">
-    {{ selectedProviders }}
     <div class="carryover-box-label">
       Есть вакансии на hh или SuperJob? Просто перенесите его!
     </div>
@@ -103,6 +102,7 @@
     </div>
   </div>
   {{ selectedProviders }}
+  <!--  {{ enabledProviders }}-->
 </template>
 
 <script setup>
@@ -154,7 +154,14 @@ const {
 onMounted(async () => {
   await getConnectedEmployerProviders();
 });
+
 const enabledProviders = ref(vacancyStore.providers);
+watch(
+  () => vacancyStore.providers,
+  () => {
+    enabledProviders.value = vacancyStore.providers;
+  },
+);
 
 const isHHEnabled = computed(() => enabledProviders.value?.hh ?? false);
 const isSuperjobEnabled = computed(
@@ -205,7 +212,6 @@ const selectedProviders = ref(resetObject);
 watch(
   () => selectedProviders.value,
   (newSelectedItems) => {
-    console.log(newSelectedItems);
     emit("update:modelValue", newSelectedItems);
   },
 );
@@ -218,7 +224,8 @@ const reset = () => {
 };
 
 onMounted(() => {
-  // console.log(vacancyProviders.value);
+  console.log(vacancyStore.providers);
+  console.log(vacancyProviders.value);
 });
 const { updateVacancy, updateDraft } = vacancyStore;
 // const providers = ref(resetObject);
