@@ -107,7 +107,6 @@ export const useVacancyStore = defineStore("vacancy", {
         method: "get",
         params: { ...payload, redirect_to, profile: "employer" },
       });
-      console.log(response);
       if ("data" in response) {
         return response.data;
       }

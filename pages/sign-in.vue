@@ -17,7 +17,7 @@ useHead({
 const auth = useAuthStore();
 const vacancyStore = useVacancyStore();
 const resumeStore = useResumeStore();
-
+const { refreshSeeker, refreshEmployer } = auth;
 const isAuthed = computed(() => auth.isAuthed);
 const { signIn } = auth;
 const router = useRouter();
@@ -81,6 +81,11 @@ async function onSubmit() {
         phone: phoneMask.value.unmaskedValue,
         password: state.password.val,
       });
+      if (isEmployer) {
+        await refreshEmployer();
+      } else {
+        await refreshSeeker();
+      }
     } catch (error) {
       state.error = error.message;
     }

@@ -43,7 +43,6 @@ watch(
   () => vacancyStore.my_vacancy,
   (newDraft) => {
     if (newDraft) {
-      console.log(newDraft);
       setProviders(newDraft.providers);
     }
   },
@@ -61,17 +60,22 @@ useHead({
 onMounted(async () => {
   if (vacancyID.value) {
     let resData;
-    console.log(type.value);
     if (type.value === "draft") {
       resData = await getMyDraft(vacancyID.value);
     }
     if (type.value === "active") {
       resData = await getMyVacancy(vacancyID.value);
     }
+
+    // const {
+    //   data: { data: vacData },
+    // } = resData;
+    // console.log(vacData);
+    // setProviders(vacData.providers);
+
     if (!resData) {
       return;
     }
-    console.log(resData);
     if (resData.status === "error") {
       navigateTo({
         name: "create-vacancy",
@@ -144,6 +148,7 @@ watch(
 );
 
 const advanced_fields_el = ref();
+const cities_el = ref();
 
 // const photo_el = ref();
 // const personal_fields_el = ref();
@@ -197,7 +202,6 @@ const saveAndPublishAll = async (e) => {
 
   isLoading.value = true;
   const resAll = await saveAllSections();
-  console.log(resAll);
   if (!resAll) {
     Swal.fire({
       title: "Ошибка!",
@@ -206,7 +210,6 @@ const saveAndPublishAll = async (e) => {
       confirmButtonText: "ОК",
     });
     isLoading.value = false;
-
     return;
   }
 
@@ -287,7 +290,6 @@ const saveAndPublishProvider = async (provider = null) => {
   // }, 500);
 };
 const canOnlyOnePublished = computed(() => {
-  console.log(providers.value);
   if (
     (hhPublishable.value === true || superjobPublishable.value === true) &&
     (superjobPublishable.value === false || hhPublishable.value === false)
@@ -300,24 +302,24 @@ const phone = ref("");
 </script>
 <template>
   <main class="main cabinet my-resumes-page" role="main">
-    <div class="bg-wrapper position-relative pb-5">
+    <div class="bg-wrapper position-relative">
       <PersonalCabinetSearchMobile />
       <div class="wrapper wrapper-1290">
-        <form class="update-resume">
-          {{ providers }}
-          <div class="errors" v-if="errors.length">
-            <!--            <h4>К сожалению возникли ошибки при создании Вакансии:</h4>-->
-            <p class="alert alert-info" v-for="item in errors">{{ item }}</p>
-          </div>
+        <form class="update-resume pt-4 pb-5">
           <CreateVacancyProviders v-model="providers" />
-
-          {{ providers }}
 
           <CreateVacancyVeeAdvancedFieldsCard
             ref="advanced_fields_el"
             :key="`advanced_fields_el_key_${providers.hh + providers.superjob}`"
             :providers="providers"
           />
+
+          <CreateVacancyVeeCitiesCard
+            ref="cities_el"
+            :key="`cities_el_key_${providers.hh + providers.superjob}`"
+            :providers="providers"
+          />
+
           <!--          <CreateResumePhotoCard-->
           <!--            v-if="vacancyID"-->
           <!--            ref="photo_el"-->
@@ -398,11 +400,7 @@ const phone = ref("");
             <a href="#">правилами работы сервиса</a> и даете согласие на
             обработку персональных данных, разрешенных для распространения
           </p>
-          {{ hhPublishable }}
-          <hr />
-          {{ superjobPublishable }}
-          <hr />
-          {{ canOnlyOnePublished }}
+
           <div class="form-submit-container mt-2">
             <button
               class="btn btn-outline-primary"

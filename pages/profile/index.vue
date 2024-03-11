@@ -18,13 +18,13 @@ const error = computed(() => {
 });
 
 const isCompleted = computed(() => {
-  if (!isEmployer.value) {
+  if (!authStore.isEmployer) {
     if (authStore.seeker) {
       return authStore.seeker.is_completed;
     }
     return false;
   }
-  if (isEmployer.value) {
+  if (authStore.isEmployer) {
     if (authStore.employer) {
       return authStore.employer.is_completed;
     }
