@@ -38,23 +38,11 @@ const type = computed(() => route.query.type);
 const vacancyStore = useVacancyStore();
 
 watch(
-  () => vacancyStore.my_vacancy,
-  () => {
-    console.log(vacancyStore.my_vacancy);
-    const items = [];
-  },
-);
-watch(
   () => props.selected_options,
   () => {
     selectedCityOptions.value = props.selected_options;
   },
 );
-onMounted(() => {
-  console.log(1);
-  console.log(vacancyStore.my_vacancy);
-});
-
 const { getCityName } = useResumeHooks();
 const updateCityInput = async (newValue = "") => {
   const items =
@@ -89,20 +77,14 @@ watch(
 );
 
 const onUpdateSelectedOptions = async (newItems) => {
-  console.log(newItems);
   selectedCityOptions.value = newItems;
 };
 
-onMounted(() => {
-  // updateProfessionalInput("");
-  // updateHHProfessionalRoles();
-  // updateSuperjobProfessionalRoles();
-});
+onMounted(() => {});
 </script>
 
 <template>
   <div>
-    {{ selectedCityOptions }}
     <VeeMultiSelectWithSearchWithSelectedOptions
       :options="cityOptions"
       :selected_options="selectedCityOptions"

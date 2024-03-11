@@ -63,26 +63,6 @@ const isUpdated = ref(false);
 const selectedCityOptions = ref([]);
 
 const schema = computed(() => {
-  // if (providers.value.hh === true && providers.value.superjob === false) {
-  //   return z.object({
-  //     salary: z.number(),
-  //     currency: z.string().nullable().optional(),
-  //     place_of_work_id: z.number().nullable(),
-  //     work_types: z.array(z.number()).nonempty(),
-  //     schedules: z.array(z.number()).nonempty(),
-  //   });
-  // }
-  // if (providers.value.hh === false && providers.value.superjob === true) {
-  //   return z.object({
-  //     title: z.string().nullable().optional(),
-  //     salary: z.number().min(2),
-  //     currency: z.string().nullable(),
-  //     place_of_work_id: z.number().nullable(),
-  //     professional_roles: z.array(z.number()).nonempty(),
-  //     work_types: z.array(z.number()).nonempty(),
-  //     schedules: z.array(z.number()).nonempty(),
-  //   });
-  // }
   return z.object({
     cities: z.array(z.number()).optional(),
   });
@@ -180,9 +160,9 @@ const save = async (is_from_parent = false) => {
 
   jsonData.action = "UpdateCities";
   if (type.value === "draft") {
-    resData = await updateDraft(objectID.value, jsonData);
+    resData = await updateDraft(ID.value, jsonData);
   } else {
-    resData = await updateVacancy(objectID.value, jsonData);
+    resData = await updateVacancy(ID.value, jsonData);
   }
 
   isUpdated.value = true;
@@ -203,54 +183,11 @@ const save = async (is_from_parent = false) => {
     });
   }
 };
-// const save = async (is_from_parent = false) => {
-//   if (is_from_parent === true) {
-//     isFocused.value = true;
-//   }
-//   if (!isFocused.value) {
-//     return true;
-//   }
-//
-//   if (isChanged.value) {
-//     state.isLoading = true;
-//     errors.value = {};
-//     state.errorMessage = "";
-//     let resData = {};
-//     const jsonData = useFormData(state);
-//     jsonData.action = "UpdateCities";
-//     resData = await updateDraft(draftID.value, jsonData);
-//     isUpdated.value = true;
-//     if (resData.status !== "success") {
-//       return handleErrorResponse(resData.data);
-//     }
-//
-//     isChanged.value = false;
-//     isSaved.value = false;
-//     isUpdated.value = false;
-//     if (is_from_parent) {
-//       return new Promise((resolve, reject) => {
-//         resolve(true);
-//       });
-//     }
-//   } else {
-//     return true;
-//   }
-// };
 
 const isCompleted = computed(() => {
   const myVacancy = my_vacancy.value;
   if (myVacancy && !isCollapsed.value) {
-    return (
-      myVacancy.first_name &&
-      myVacancy.last_name &&
-      myVacancy.id &&
-      myVacancy.birth_date &&
-      myVacancy.city_id &&
-      myVacancy.phone &&
-      myVacancy.phone_time_start &&
-      myVacancy.phone_time_end &&
-      myVacancy.email
-    );
+    return myVacancy.cities.length > 0;
   }
   return false;
 });

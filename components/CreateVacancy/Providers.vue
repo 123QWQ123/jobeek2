@@ -223,10 +223,6 @@ const reset = () => {
   selectedProviders.value = resetObject;
 };
 
-onMounted(() => {
-  console.log(vacancyStore.providers);
-  console.log(vacancyProviders.value);
-});
 const { updateVacancy, updateDraft } = vacancyStore;
 // const providers = ref(resetObject);
 const redirect_url = useRequestURL();
