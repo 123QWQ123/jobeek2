@@ -149,6 +149,7 @@ watch(
 
 const advanced_fields_el = ref();
 const cities_el = ref();
+const prof_roles_el = ref();
 
 // const photo_el = ref();
 // const personal_fields_el = ref();
@@ -320,80 +321,10 @@ const phone = ref("");
             :providers="providers"
           />
 
-          <!--          <CreateResumePhotoCard-->
-          <!--            v-if="vacancyID"-->
-          <!--            ref="photo_el"-->
-          <!--            :providers="providers"-->
-          <!--          />-->
-          <!--          <CreateResumeVeePersonalFieldsCard-->
-          <!--            v-if="vacancyID"-->
-          <!--            :key="`personal_fields_el_key_${providers.hh + providers.superjob}`"-->
-          <!--            ref="personal_fields_el"-->
-          <!--            :providers="providers"-->
-          <!--          />-->
-          <!--          <CreateResumeVeeProfessionDetailsCard-->
-          <!--            :key="`prof_fields_el_key_${providers.hh + providers.superjob}`"-->
-          <!--            v-if="vacancyID"-->
-          <!--            ref="profession_fields_el"-->
-          <!--            :providers="providers"-->
-          <!--          />-->
-          <!--          <CreateResumeVeeForeignLanguagesCard-->
-          <!--            v-if="vacancyID"-->
-          <!--            :key="`languages_el_key_${providers.hh + providers.superjob}`"-->
-          <!--            ref="foreign_language_el"-->
-          <!--            :providers="providers"-->
-          <!--          />-->
-          <!--          <CreateResumeVeeDriverLicensesCard-->
-          <!--            v-if="vacancyID"-->
-          <!--            :key="`driver_licenses_el_${providers.hh + providers.superjob}`"-->
-          <!--            ref="driver_licences_el"-->
-          <!--            :providers="providers"-->
-          <!--          />-->
-          <!--          <CreateResumeVeeKnowledgeAndSkillsCard-->
-          <!--            v-if="vacancyID"-->
-          <!--            :key="`knowledge_and_skills_el_${providers.hh + providers.superjob}`"-->
-          <!--            ref="knowledge_and_skills_el"-->
-          <!--            :providers="providers"-->
-          <!--          />-->
-
-          <!--          <CreateResumeVeeEducationCard-->
-          <!--            v-if="vacancyID"-->
-          <!--            :key="`education_el_${providers.hh + providers.superjob}`"-->
-          <!--            ref="education_el"-->
-          <!--            :providers="providers"-->
-          <!--          />-->
-
-          <!--          <CreateResumeVeeCoursesCard-->
-          <!--            v-if="vacancyID"-->
-          <!--            :key="`courses_el_${providers.hh + providers.superjob}`"-->
-          <!--            ref="courses_el"-->
-          <!--            :providers="providers"-->
-          <!--          />-->
-
-          <!--          <CreateResumeVeeTestsAndExamsCard-->
-          <!--            v-if="vacancyID"-->
-          <!--            :key="`tests_el_${providers.hh + providers.superjob}`"-->
-          <!--            ref="courses_el"-->
-          <!--            :providers="providers"-->
-          <!--          />-->
-          <!--          <LazyCreateResumeVeeWorkExperienceCard-->
-          <!--            v-if="vacancyID"-->
-          <!--            :key="`experience_el_${providers.hh + providers.superjob}`"-->
-          <!--            ref="work_experience_el"-->
-          <!--            :providers="providers"-->
-          <!--          />-->
-          <!--          <CreateResumeVeeCitizenshipAndFamilyCard-->
-          <!--            v-if="vacancyID"-->
-          <!--            :key="`citizenship_el_${providers.hh + providers.superjob}`"-->
-          <!--            ref="citizenship_el"-->
-          <!--            :providers="providers"-->
-          <!--          />-->
-          <!--          <CreateResumeVeeAccessTypeCard-->
-          <!--            :key="`access_el_${providers.hh + providers.superjob}`"-->
-          <!--            v-if="vacancyID"-->
-          <!--            ref="access_el"-->
-          <!--            :providers="providers"-->
-          <!--          />-->
+          <CreateVacancyVeeProfessionalRolesCard
+            ref="prof_roles_el"
+            :providers="providers"
+          />
 
           <p class="text-lg-end">
             При создании ваканции вы соглашаетесь с

@@ -283,13 +283,13 @@ const save = async (e) => {
             <h4>К сожалению возникли ошибки при создании Вакансии:</h4>
             <p class="alert alert-info" v-for="item in errors">{{ item }}</p>
           </div>
-          <CreateVacancyProviders v-model="providers" />
+          <!--          <CreateVacancyProviders v-model="providers" />-->
 
-          <CreateVacancyAdvancedFieldsCard
-            ref="advanced_fields_el"
-            :providers="providers"
-          />
-          <CreateVacancyCitiesCard ref="cities_el" :providers="providers" />
+          <!--          <CreateVacancyAdvancedFieldsCard-->
+          <!--            ref="advanced_fields_el"-->
+          <!--            :providers="providers"-->
+          <!--          />-->
+          <!--          <CreateVacancyCitiesCard ref="cities_el" :providers="providers" />-->
           <CreateVacancyMetroCard ref="metro_el" :providers="providers" />
           <CreateVacancyProfessionalRolesCard
             ref="prof_roles_el"
