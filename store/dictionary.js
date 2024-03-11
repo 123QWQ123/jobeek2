@@ -47,6 +47,12 @@ export const useDictionaryStore = defineStore("dictionary", {
     };
   },
   getters: {
+    vacancy_types_formatted() {
+      return this.vacancy_types.map((item) => ({
+        name: item.name,
+        value: item.id,
+      }));
+    },
     payment_period_formatted() {
       return this.payment_period.map((item) => ({
         name: item.name,

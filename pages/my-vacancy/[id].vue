@@ -325,6 +325,10 @@ const phone = ref("");
             ref="prof_roles_el"
             :providers="providers"
           />
+          <CreateVacancyVeeTypeAndUrlCard
+            ref="type_el"
+            :providers="providers"
+          />
 
           <p class="text-lg-end">
             При создании ваканции вы соглашаетесь с

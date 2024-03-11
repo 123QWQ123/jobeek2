@@ -78,7 +78,6 @@ onMounted(() => {
 });
 
 function onSelect(id) {
-  console.log(id);
   const selectedOptionItem = options.value.find(
     (item) => String(item.value) === String(id),
   );
