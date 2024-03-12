@@ -14,78 +14,7 @@
     </div>
     <transition>
       <div class="w-box-body" :class="{ collapse: isCollapsed }">
-        <div class="input-row">
-          <label>Имя:</label>
-          <div class="input-wrapper mt-2">
-            <CreateVacancyTextInput
-              name="contacts.name"
-              placeholder="Введите"
-            />
-          </div>
-        </div>
-
-        <div class="input-row" v-if="!state.contacts.email.is_hidden">
-          <label>Email:</label>
-          <div class="input-wrapper mt-2">
-            <CreateVacancyTextInput
-              name="contacts.email"
-              placeholder="Введите"
-            />
-          </div>
-        </div>
-
-        <div class="input-row" v-if="!state.contacts.company_name.is_hidden">
-          <label>Название компании:</label>
-          <div class="input-wrapper mt-2">
-            <CreateVacancyTextInput
-              name="contacts.company_name"
-              placeholder="Введите"
-            />
-          </div>
-        </div>
-
-        <div class="input-row" v-if="!state.contacts.company_url.is_hidden">
-          <label>Адрес сайта:</label>
-          <div class="input-wrapper mt-2">
-            <CreateVacancyTextInput
-              name="contacts.company_url"
-              placeholder="Введите"
-            />
-          </div>
-        </div>
-        <div class="input-row" v-if="!state.contacts.company_logo.is_hidden">
-          <label>Лого URL:</label>
-          <div class="input-wrapper mt-2">
-            <CreateVacancyTextInput
-              name="contacts.company_logo"
-              placeholder="Введите"
-            />
-          </div>
-        </div>
-
-        <div
-          class="input-row"
-          v-if="!state.contacts.company_description.is_hidden"
-        >
-          <label>О компании(мин 10 символов):</label>
-          <div class="input-wrapper mt-2">
-            <VeeTipTapRichEditor
-              name="contacts.company_description"
-              placeholder="Введите"
-            />
-          </div>
-        </div>
-
-        <CreateVacancyVeeContactsPhones />
-
-        <!--        {{ errors }}-->
-        <!--        <br />-->
-        <!--        <br />-->
-        <!--        {{ meta }}-->
-        <!--        <br />-->
-        <!--        <br />-->
-
-        <!--        {{ values }}-->
+        <CreateResumeForeignLanguagesVeeForm name="languages" />
       </div>
     </transition>
   </div>
@@ -127,33 +56,24 @@ const dictionaryStore = useDictionaryStore();
 
 const schema = computed(() => {
   return z.object({
-    contacts: z.object({
-      name: z.string(),
-      email: z.string(),
-      company_name: z.string(),
-      company_description: z.string(),
-      company_url: z.string(),
-      company_logo: z.string(),
-      phones: z.object({
-        phone: z.string(),
-        phone_comment: z.string().optional().nullish(),
-        additional_phone: z.string().optional().nullish(),
-        additional_phone_comment: z.string().optional().nullish(),
-      }),
-    }),
+    languages: z
+      .array(
+        z.object({
+          language_id: z.number(),
+          level_id: z.number(),
+        }),
+      )
+      .nonempty(),
   });
 });
 
 const initialValues = {
-  contacts: {
-    name: null,
-    phones: [],
-    email: null,
-    company_name: null,
-    company_url: null,
-    company_logo: null,
-    company_description: null,
-  },
+  languages: [
+    {
+      language_id: null,
+      level_id: null,
+    },
+  ],
 };
 const {
   values,
@@ -171,26 +91,11 @@ const {
 });
 
 const state = reactive({
-  contacts: {
-    phones: {
+  languages: {
+    language_id: {
       is_hidden: false,
     },
-    name: {
-      is_hidden: false,
-    },
-    email: {
-      is_hidden: false,
-    },
-    company_name: {
-      is_hidden: false,
-    },
-    company_url: {
-      is_hidden: false,
-    },
-    company_logo: {
-      is_hidden: false,
-    },
-    company_description: {
+    level_id: {
       is_hidden: false,
     },
   },
@@ -198,10 +103,10 @@ const state = reactive({
 
 const fields = ref({
   hh: {
-    contacts: true,
+    languages: true,
   },
   superjob: {
-    contacts: true,
+    languages: true,
   },
 });
 
@@ -215,7 +120,10 @@ onMounted(() => {
 const sectionData = ref({});
 const getFields = (newObject) => {
   return {
-    contacts: newObject.contacts,
+    languages: newObject.languages.map((item) => ({
+      language_id: item.language.id,
+      level_id: item.level.id,
+    })),
   };
 };
 watch(
@@ -262,7 +170,7 @@ const save = async (is_from_parent = false) => {
   let jsonData = { ...values };
   let resData = {};
 
-  jsonData.action = "UpdateContacts";
+  jsonData.action = "UpdateLanguages";
   if (type.value === "draft") {
     resData = await updateDraft(ID.value, jsonData);
   } else {

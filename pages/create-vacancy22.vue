@@ -290,7 +290,7 @@ const save = async (e) => {
           <!--            :providers="providers"-->
           <!--          />-->
           <!--          <CreateVacancyCitiesCard ref="cities_el" :providers="providers" />-->
-          <CreateVacancyMetroCard ref="metro_el" :providers="providers" />
+          <!--          <CreateVacancyMetroCard ref="metro_el" :providers="providers" />-->
           <!--          <CreateVacancyProfessionalRolesCard-->
           <!--            ref="prof_roles_el"-->
           <!--            :providers="providers"-->
@@ -304,14 +304,14 @@ const save = async (e) => {
           <!--            :providers="providers"-->
           <!--          />-->
           <!--          <CreateVacancyContactsCard ref="contacts_el" :providers="providers" />-->
-          <CreateVacancyLanguagesCard
-            ref="languages_el"
-            :providers="providers"
-          />
-          <CreateVacancyBillingTypeCard
-            ref="billing_el"
-            :providers="providers"
-          />
+          <!--          <CreateVacancyLanguagesCard-->
+          <!--            ref="languages_el"-->
+          <!--            :providers="providers"-->
+          <!--          />-->
+          <!--          <CreateVacancyBillingTypeCard-->
+          <!--            ref="billing_el"-->
+          <!--            :providers="providers"-->
+          <!--          />-->
 
           <p class="text-lg-end">
             При создании ваканции вы соглашаетесь с

@@ -1,12 +1,8 @@
-import {useRuntimeConfig} from "nuxt/app";
-
 // no need to import defineStore and acceptHMRUpdate
-import { defineStore, acceptHMRUpdate } from "pinia";
-import axios from "axios";
-import {useAuthStore} from "~/store/auth";
+import { acceptHMRUpdate, defineStore } from "pinia";
 import useApi from "~/hooks/useApi";
 
-export const useScamStore = defineStore('scam', {
+export const useScamStore = defineStore("scam", {
   state: () => {
     return {
       frequency_options: [],
@@ -14,29 +10,23 @@ export const useScamStore = defineStore('scam', {
       categories: [],
       history_items: [],
       subscribed_items: [],
-    }
+    };
   },
   actions: {
-
     async searchPhone(payload = {}) {
-      const {data} = await useApi('scam/getPhoneInfo', {
-        method: 'get',
-        payload
+      const response = await useApi("scam/getPhoneInfo", {
+        method: "get",
+        params: payload,
       });
-      console.log(data);
-      // if (data && 'data' in data){
-      //   this.searched_phones = data.data;
-      //   return this.searched_phones;
-      // }
-      return data;
+      return response;
     },
 
     async getHistory(payload = {}) {
-      const {data} = await useApi('scam/getHistory', {
-        method: 'get',
-        payload
+      const { data } = await useApi("scam/getHistory", {
+        method: "get",
+        params: payload,
       });
-      if (data && data.hasOwnProperty('data')){
+      if (data && data.hasOwnProperty("data")) {
         this.history_items = data.data;
         return this.history_items;
       }
@@ -44,11 +34,11 @@ export const useScamStore = defineStore('scam', {
     },
 
     async getSubscribedPhones(payload = {}) {
-      const {data} = await useApi('scam/getFavorite', {
-        method: 'get',
-        payload
+      const { data } = await useApi("scam/getFavorite", {
+        method: "get",
+        params: payload,
       });
-      if (data && data.hasOwnProperty('data')){
+      if (data && data.hasOwnProperty("data")) {
         this.subscribed_items = data.data;
         return this.subscribed_items;
       }
@@ -56,9 +46,9 @@ export const useScamStore = defineStore('scam', {
     },
 
     async addFavorite(payload = {}) {
-      const response = await useApi('scam/addFavorite', {
-        method: 'post',
-        payload
+      const response = await useApi("scam/addFavorite", {
+        method: "post",
+        payload,
       });
       this.getHistory();
       this.getSubscribedPhones();
@@ -66,17 +56,17 @@ export const useScamStore = defineStore('scam', {
     },
 
     async saveComment(payload = {}) {
-      const response = await useApi('scam/saveComment', {
-        method: 'post',
-        payload
+      const response = await useApi("scam/saveComment", {
+        method: "post",
+        payload,
       });
       return response;
     },
 
     async removeFavorite(payload = {}) {
-      const response = await useApi('scam/addFavorite', {
-        method: 'delete',
-        payload
+      const response = await useApi("scam/addFavorite", {
+        method: "delete",
+        params: payload,
       });
       this.getHistory();
       this.getSubscribedPhones();
@@ -84,13 +74,13 @@ export const useScamStore = defineStore('scam', {
     },
 
     async getScamOptions(payload = {}) {
-      const {data} = await useApi('scam/getOptions', {
-        method: 'get',
-        payload
+      const { data } = await useApi("scam/getOptions", {
+        method: "get",
+        params: payload,
       });
       console.log(data);
 
-      if (data){
+      if (data) {
         this.frequency_options = data.frequency;
         this.rate_options = data.rate;
         this.categories = data.categories;
@@ -98,10 +88,8 @@ export const useScamStore = defineStore('scam', {
       }
       return data;
     },
-
-
   },
-})
+});
 
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(useScamStore, import.meta.hot));
