@@ -38,6 +38,24 @@ const reAssignEmails = (newObject) => {
     email_to_verify.value = newObject.email_to_verify;
     email.value = newObject.email;
     currentValue.value = email.value ?? email_to_verify.value;
+
+    if (newObject.email !== null) {
+      isCheckButton.value = true;
+      isConfirmButton.value = false;
+    }
+    // if (
+    //   newObject.email !== null &&
+    //   newObject.email !== newObject.email_to_verify
+    // ) {
+    //   currentValue.value = newObject.email_to_verify;
+    //   email_to_verify.value = newObject.email_to_verify;
+    //   isCheckButton.value = false;
+    //   isConfirmButton.value = true;
+    // } else {
+    //   currentValue.value = email.value;
+    //   isCheckButton.value = true;
+    //   isConfirmButton.value = false;
+    // }
   } else {
     email.value = newObject.email;
 
@@ -94,17 +112,21 @@ onMounted(() => {
 watch(
   () => email_to_verify.value,
   (newEmailToVerify) => {
-    if (newEmailToVerify) {
-      if (newEmailToVerify === email.value) {
-        isConfirmButton.value = false;
-        isCheckButton.value = true;
+    const newObject =
+      props.type === "employer" ? profileStore.employer : profileStore.seeker;
+    if (newObject.is_completed) {
+      if (newEmailToVerify) {
+        if (newEmailToVerify === email.value) {
+          isConfirmButton.value = false;
+          isCheckButton.value = true;
+        } else {
+          isConfirmButton.value = true;
+          isCheckButton.value = false;
+        }
       } else {
         isConfirmButton.value = true;
         isCheckButton.value = false;
       }
-    } else {
-      isConfirmButton.value = true;
-      isCheckButton.value = false;
     }
   },
 );
