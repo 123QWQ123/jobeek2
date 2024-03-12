@@ -1,7 +1,7 @@
 <template>
   <div class="w-box" v-click-outside="save" @click="isFocused = true">
     <div class="w-box-head">
-      <h3 class="title">Контакты({{ isChanged }})</h3>
+      <h3 class="title">Метро({{ isChanged }})</h3>
       <span
         class="arrow"
         :class="{ up: isCollapsed, 'is-completed': isCompleted }"
@@ -15,77 +15,24 @@
     <transition>
       <div class="w-box-body" :class="{ collapse: isCollapsed }">
         <div class="input-row">
-          <label>Имя:</label>
+          <label>Список городов:<b>*</b></label>
           <div class="input-wrapper mt-2">
-            <CreateVacancyTextInput
-              name="contacts.name"
-              placeholder="Введите"
+            <!--            <CreateVacancyMetro-->
+            <!--              name="cities"-->
+            <!--              :selected_options="selectedCityOptions"-->
+            <!--            />-->
+            <VeeMultiSelectWithSearch
+              :options="metroOptions"
+              name="metro"
+              placeholder="Выберите"
+              @input="updateInput"
             />
+
+            <div class="text text-danger" v-if="cityHasNoMetro">
+              метро не найдено.
+            </div>
           </div>
         </div>
-
-        <div class="input-row" v-if="!state.contacts.email.is_hidden">
-          <label>Email:</label>
-          <div class="input-wrapper mt-2">
-            <CreateVacancyTextInput
-              name="contacts.email"
-              placeholder="Введите"
-            />
-          </div>
-        </div>
-
-        <div class="input-row" v-if="!state.contacts.company_name.is_hidden">
-          <label>Название компании:</label>
-          <div class="input-wrapper mt-2">
-            <CreateVacancyTextInput
-              name="contacts.company_name"
-              placeholder="Введите"
-            />
-          </div>
-        </div>
-
-        <div class="input-row" v-if="!state.contacts.company_url.is_hidden">
-          <label>Адрес сайта:</label>
-          <div class="input-wrapper mt-2">
-            <CreateVacancyTextInput
-              name="contacts.company_url"
-              placeholder="Введите"
-            />
-          </div>
-        </div>
-        <div class="input-row" v-if="!state.contacts.company_logo.is_hidden">
-          <label>Лого URL:</label>
-          <div class="input-wrapper mt-2">
-            <CreateVacancyTextInput
-              name="contacts.company_logo"
-              placeholder="Введите"
-            />
-          </div>
-        </div>
-
-        <div
-          class="input-row"
-          v-if="!state.contacts.company_description.is_hidden"
-        >
-          <label>О компании(мин 10 символов):</label>
-          <div class="input-wrapper mt-2">
-            <VeeTipTapRichEditor
-              name="contacts.company_description"
-              placeholder="Введите"
-            />
-          </div>
-        </div>
-
-        <CreateVacancyVeeContactsPhones />
-
-        <!--        {{ errors }}-->
-        <!--        <br />-->
-        <!--        <br />-->
-        <!--        {{ meta }}-->
-        <!--        <br />-->
-        <!--        <br />-->
-
-        <!--        {{ values }}-->
       </div>
     </transition>
   </div>
@@ -123,37 +70,42 @@ const isChanged = ref(false);
 const isFirst = ref(true);
 const isCollapsed = ref(false);
 const isUpdated = ref(false);
-const dictionaryStore = useDictionaryStore();
+const cityHasNoMetro = ref(false);
+
+const cities = computed(() => {
+  if (vacancyStore.my_vacancy && vacancyStore.my_vacancy.cities) {
+    return vacancyStore.my_vacancy.cities.map((item) => item.id);
+  }
+  return [];
+});
+const { searchMetro } = useDictionaryStore();
+const selectedOptions = ref([]);
+const metroOptions = ref([]);
+
+const updateInput = async (newValue = "") => {
+  cityHasNoMetro.value = false;
+  const items = (await searchMetro({ city_ids: cities.value })) ?? [];
+  console.log(items);
+  let newOptions = items.map((item) => ({
+    value: item.id,
+    name: `${item.name}`,
+  }));
+  newOptions = newOptions.filter((item) => item.name.includes(newValue));
+  if (items.length < 1) {
+    cityHasNoMetro.value = true;
+    return;
+  }
+  metroOptions.value = newOptions.concat(selectedOptions.value);
+};
 
 const schema = computed(() => {
   return z.object({
-    contacts: z.object({
-      name: z.string(),
-      email: z.string(),
-      company_name: z.string(),
-      company_description: z.string(),
-      company_url: z.string(),
-      company_logo: z.string(),
-      phones: z.object({
-        phone: z.string(),
-        phone_comment: z.string().optional().nullish(),
-        additional_phone: z.string().optional().nullish(),
-        additional_phone_comment: z.string().optional().nullish(),
-      }),
-    }),
+    metro: z.array(z.number()).optional(),
   });
 });
 
 const initialValues = {
-  contacts: {
-    name: null,
-    phones: [],
-    email: null,
-    company_name: null,
-    company_url: null,
-    company_logo: null,
-    company_description: null,
-  },
+  metro: [],
 };
 const {
   values,
@@ -171,37 +123,17 @@ const {
 });
 
 const state = reactive({
-  contacts: {
-    phones: {
-      is_hidden: false,
-    },
-    name: {
-      is_hidden: false,
-    },
-    email: {
-      is_hidden: false,
-    },
-    company_name: {
-      is_hidden: false,
-    },
-    company_url: {
-      is_hidden: false,
-    },
-    company_logo: {
-      is_hidden: false,
-    },
-    company_description: {
-      is_hidden: false,
-    },
+  metro: {
+    is_hidden: false,
   },
 });
 
 const fields = ref({
   hh: {
-    contacts: true,
+    metro: null,
   },
   superjob: {
-    contacts: true,
+    metro: true,
   },
 });
 
@@ -215,7 +147,7 @@ onMounted(() => {
 const sectionData = ref({});
 const getFields = (newObject) => {
   return {
-    contacts: newObject.contacts,
+    metro: newObject.metro.map((item) => item.id),
   };
 };
 watch(
@@ -226,7 +158,6 @@ watch(
     }
   },
 );
-
 onMounted(() => {
   const newData = vacancyStore.my_vacancy;
   if (newData) {
@@ -239,10 +170,11 @@ watch(
   (newData, oldData) => {
     const diffData = useDiff(newData, oldData);
     if (Object.keys(diffData).length) {
-      resetForm({ values: { ...newData } });
+      resetForm({ values: newData });
     }
   },
 );
+const dictionaryStore = useDictionaryStore();
 
 const isFocused = ref(false);
 const isLoading = ref(false);
@@ -262,7 +194,7 @@ const save = async (is_from_parent = false) => {
   let jsonData = { ...values };
   let resData = {};
 
-  jsonData.action = "UpdateContacts";
+  jsonData.action = "UpdateMetro";
   if (type.value === "draft") {
     resData = await updateDraft(ID.value, jsonData);
   } else {
@@ -291,7 +223,7 @@ const save = async (is_from_parent = false) => {
 const isCompleted = computed(() => {
   const myVacancy = my_vacancy.value;
   if (myVacancy && !isCollapsed.value) {
-    return myVacancy.type_id !== null;
+    return myVacancy.cities.length > 0;
   }
   return false;
 });

@@ -271,7 +271,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       }
       const { data } = await useApi("metro", {
         method: "get",
-        payload,
+        params: payload,
       });
       if (data) {
         this.metro = data.data ?? [];

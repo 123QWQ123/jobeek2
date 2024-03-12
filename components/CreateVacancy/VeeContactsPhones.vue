@@ -57,7 +57,7 @@ const emit = defineEmits(["update:modelValue"]);
 const props = defineProps({
   name: {
     default: "phones",
-    required: true,
+    required: false,
   },
 });
 

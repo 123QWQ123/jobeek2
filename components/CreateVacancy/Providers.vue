@@ -227,6 +227,7 @@ const { updateVacancy, updateDraft } = vacancyStore;
 // const providers = ref(resetObject);
 const redirect_url = useRequestURL();
 const toggle = async (provider) => {
+  console.log(provider);
   if (!selectedProviders.value[provider]) {
     if (enabledProviders.value[provider] === false) {
       const providerParams = new URLSearchParams();

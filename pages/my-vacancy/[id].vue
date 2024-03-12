@@ -322,6 +322,12 @@ const phone = ref("");
             :providers="providers"
           />
 
+          <CreateVacancyVeeMetroCard
+            :key="`metro_el_key_${providers.hh + providers.superjob}`"
+            ref="metro_el"
+            :providers="providers"
+          />
+
           <CreateVacancyVeeProfessionalRolesCard
             ref="prof_roles_el"
             :key="`prof_roles_el_key_${providers.hh + providers.superjob}`"
@@ -359,6 +365,16 @@ const phone = ref("");
           <CreateVacancyVeeContactsCard
             :key="`contacts_el_${providers.hh + providers.superjob}`"
             ref="contacts_el"
+            :providers="providers"
+          />
+          <CreateVacancyVeeLanguagesCard
+            :key="`languages_el_${providers.hh + providers.superjob}`"
+            ref="languages_el"
+            :providers="providers"
+          />
+          <CreateVacancyBillingTypeCard
+            :key="`billing_el_${providers.hh + providers.superjob}`"
+            ref="billing_el"
             :providers="providers"
           />
 
