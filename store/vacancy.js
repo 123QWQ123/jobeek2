@@ -229,7 +229,7 @@ export const useVacancyStore = defineStore("vacancy", {
     async getUserVacancies(payload) {
       return useApi("employer/vacancies", {
         method: "get",
-        payload,
+        params: payload,
       });
     },
     async getMyVacancies(payload) {

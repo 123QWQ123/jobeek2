@@ -29,11 +29,33 @@ const inputEmail = ref();
 
 const profileStore = useProfileStore();
 const seeker = storeToRefs(profileStore);
-
+const disabled = computed(() => {
+  if (!value.value) return false;
+  return true;
+});
 const reAssignEmails = (newObject) => {
   if (!newObject.is_completed) {
     email_to_verify.value = newObject.email_to_verify;
-    currentValue.value = email_to_verify.value;
+    email.value = newObject.email;
+    currentValue.value = email.value ?? email_to_verify.value;
+
+    if (newObject.email !== null) {
+      isCheckButton.value = true;
+      isConfirmButton.value = false;
+    }
+    // if (
+    //   newObject.email !== null &&
+    //   newObject.email !== newObject.email_to_verify
+    // ) {
+    //   currentValue.value = newObject.email_to_verify;
+    //   email_to_verify.value = newObject.email_to_verify;
+    //   isCheckButton.value = false;
+    //   isConfirmButton.value = true;
+    // } else {
+    //   currentValue.value = email.value;
+    //   isCheckButton.value = true;
+    //   isConfirmButton.value = false;
+    // }
   } else {
     email.value = newObject.email;
 
@@ -68,6 +90,7 @@ watch(
   (newObject) => {
     if (props.type === "employer") {
       if (profileStore.employer) {
+        console.log(profileStore.employer);
         reAssignEmails(profileStore.employer);
       }
     }
@@ -89,17 +112,21 @@ onMounted(() => {
 watch(
   () => email_to_verify.value,
   (newEmailToVerify) => {
-    if (newEmailToVerify) {
-      if (newEmailToVerify === email.value) {
-        isConfirmButton.value = false;
-        isCheckButton.value = true;
+    const newObject =
+      props.type === "employer" ? profileStore.employer : profileStore.seeker;
+    if (newObject.is_completed) {
+      if (newEmailToVerify) {
+        if (newEmailToVerify === email.value) {
+          isConfirmButton.value = false;
+          isCheckButton.value = true;
+        } else {
+          isConfirmButton.value = true;
+          isCheckButton.value = false;
+        }
       } else {
         isConfirmButton.value = true;
         isCheckButton.value = false;
       }
-    } else {
-      isConfirmButton.value = true;
-      isCheckButton.value = false;
     }
   },
 );
@@ -131,19 +158,11 @@ const onEmailConfirm = async (e) => {
     <input
       ref="inputEmail"
       type="email"
+      :disabled="disabled"
       :value="currentValue"
       placeholder="Электронная почта"
       @input="onInputEmail"
     />
-    <!--    <base-button-->
-    <!--      v-if="isConfirmButton"-->
-    <!--      @click="onEmailConfirm"-->
-    <!--      type="button"-->
-    <!--      class="position-absolute top-0 end-0"-->
-    <!--      style="margin-top: 2px"-->
-    <!--    >-->
-    <!--      -->
-    <!--    </base-button>-->
     <span
       @click="onEmailConfirm"
       v-if="isConfirmButton"
@@ -211,6 +230,10 @@ const onEmailConfirm = async (e) => {
 </template>
 
 <style scoped>
+input[type="email"]:disabled {
+  background: #ccc;
+}
+
 .absolute_button {
   position: absolute;
   top: 0.25rem;

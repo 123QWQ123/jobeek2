@@ -34,7 +34,7 @@
     <div class="input-row">
       <label for="email">Электронная почта<b>*</b></label>
       <div class="input-wrapper">
-        <ProfileEmailInput name="email" type="employer" />
+        <ProfileEmailInput name="email" type="employer" key="employer_email" />
       </div>
     </div>
 
@@ -57,7 +57,7 @@
 import { useProfileStore } from "~/store/profile";
 import { storeToRefs } from "pinia";
 import Swal from "sweetalert2";
-import { navigateTo, useRuntimeConfig } from "nuxt/app";
+import { useRuntimeConfig } from "nuxt/app";
 import { useCheckJSON } from "~/composables/useCheckJSON";
 import { useDiff } from "~/composables/useDiff.js";
 import { useForm } from "vee-validate";
@@ -179,7 +179,7 @@ const handleSubmit = async (e) => {
       icon: "success",
       confirmButtonText: "ОК",
       preConfirm: () => {
-        navigateTo({ path: "/", query: {} });
+        // navigateTo({ path: "/", query: {} });
       },
     });
     isLoading.value = false;
