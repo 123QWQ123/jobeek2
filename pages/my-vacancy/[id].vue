@@ -150,6 +150,7 @@ watch(
 const advanced_fields_el = ref();
 const cities_el = ref();
 const prof_roles_el = ref();
+const driver_licences_el = ref();
 
 // const photo_el = ref();
 // const personal_fields_el = ref();
@@ -323,10 +324,41 @@ const phone = ref("");
 
           <CreateVacancyVeeProfessionalRolesCard
             ref="prof_roles_el"
+            :key="`prof_roles_el_key_${providers.hh + providers.superjob}`"
             :providers="providers"
           />
           <CreateVacancyVeeTypeAndUrlCard
             ref="type_el"
+            :key="`type_el_key_${providers.hh + providers.superjob}`"
+            :providers="providers"
+          />
+          <CreateVacancyVeeSalaryCard
+            ref="salary_el"
+            :providers="providers"
+            :key="`salary_el_key_${providers.hh + providers.superjob}`"
+          />
+
+          <CreateVacancyVeeSkillsCard
+            ref="skills_el"
+            :providers="providers"
+            :key="`skills_el_key_${providers.hh + providers.superjob}`"
+          />
+
+          <CreateVacancyAddressCard
+            ref="address_el"
+            :providers="providers"
+            :key="`skills_el_key_${providers.hh + providers.superjob}`"
+          />
+
+          <CreateVacancyVeeDriverLicensesCard
+            :key="`driver_licenses_el_${providers.hh + providers.superjob}`"
+            ref="driver_licences_el"
+            :providers="providers"
+          />
+
+          <CreateVacancyVeeContactsCard
+            :key="`contacts_el_${providers.hh + providers.superjob}`"
+            ref="contacts_el"
             :providers="providers"
           />
 

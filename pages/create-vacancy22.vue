@@ -295,15 +295,15 @@ const save = async (e) => {
           <!--            ref="prof_roles_el"-->
           <!--            :providers="providers"-->
           <!--          />-->
-          <CreateVacancyTypeAndUrlCard ref="type_el" :providers="providers" />
-          <CreateVacancySalaryCard ref="salary_el" :providers="providers" />
-          <CreateVacancySkillsCard ref="skills_el" :providers="providers" />
-          <CreateVacancyAddressCard ref="address_el" :providers="providers" />
-          <CreateVacancyDriverLicensesCard
-            ref="driver_lic_el"
-            :providers="providers"
-          />
-          <CreateVacancyContactsCard ref="contacts_el" :providers="providers" />
+          <!--          <CreateVacancyTypeAndUrlCard ref="type_el" :providers="providers" />-->
+          <!--          <CreateVacancySalaryCard ref="salary_el" :providers="providers" />-->
+          <!--          <CreateVacancySkillsCard ref="skills_el" :providers="providers" />-->
+          <!--          <CreateVacancyAddressCard ref="address_el" :providers="providers" />-->
+          <!--          <CreateVacancyDriverLicensesCard-->
+          <!--            ref="driver_lic_el"-->
+          <!--            :providers="providers"-->
+          <!--          />-->
+          <!--          <CreateVacancyContactsCard ref="contacts_el" :providers="providers" />-->
           <CreateVacancyLanguagesCard
             ref="languages_el"
             :providers="providers"

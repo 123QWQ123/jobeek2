@@ -47,6 +47,12 @@ export const useDictionaryStore = defineStore("dictionary", {
     };
   },
   getters: {
+    addresses_formatted() {
+      return this.addresses.map((item) => ({
+        name: item.raw,
+        value: item.id,
+      }));
+    },
     vacancy_types_formatted() {
       return this.vacancy_types.map((item) => ({
         name: item.name,

@@ -96,15 +96,7 @@
             />
           </div>
         </div>
-        {{ props.providers }}
       </div>
-      <!--      <CreateVacancySalary-->
-      <!--        v-model="state.salary.val"-->
-      <!--        :errors="errors.salary"-->
-      <!--        :providers="providers"-->
-      <!--      />-->
-      <br />
-      {{ values }}
     </div>
   </div>
 </template>
