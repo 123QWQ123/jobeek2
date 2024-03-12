@@ -51,7 +51,7 @@
     <div class="input-row">
       <label for="email">Электронная почта<b>*</b></label>
       <div class="input-wrapper">
-        <ProfileEmailInput name="email" type="seeker" />
+        <ProfileEmailInput name="email" type="seeker" key="employer_email" />
       </div>
     </div>
 

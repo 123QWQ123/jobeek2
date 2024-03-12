@@ -15,8 +15,8 @@
       <a class="notification-button button-accent" href="#">Подключить </a>
     </div>
     <NuxtLink class="create-button" type="link" :to="{ name: 'create-vacancy' }"
-      >Создать вакансию</NuxtLink
-    >
+      >Создать вакансию
+    </NuxtLink>
     <div class="col d-flex justify-content-between mt-4">
       <h1 ref="filterRef" class="lk-page-title mt-4">Ваши вакансии</h1>
     </div>
@@ -184,6 +184,7 @@ watch(
     }
     form.value.status = newStatus;
     const params = { status: newStatus };
+    console.log(params);
     if (newStatus === "draft") {
       await getMyDrafts(params);
     } else if (newStatus === "active") {

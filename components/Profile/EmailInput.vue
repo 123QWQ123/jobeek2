@@ -29,11 +29,15 @@ const inputEmail = ref();
 
 const profileStore = useProfileStore();
 const seeker = storeToRefs(profileStore);
-
+const disabled = computed(() => {
+  if (!value.value) return false;
+  return true;
+});
 const reAssignEmails = (newObject) => {
   if (!newObject.is_completed) {
     email_to_verify.value = newObject.email_to_verify;
-    currentValue.value = email_to_verify.value;
+    email.value = newObject.email;
+    currentValue.value = email.value ?? email_to_verify.value;
   } else {
     email.value = newObject.email;
 
@@ -68,6 +72,7 @@ watch(
   (newObject) => {
     if (props.type === "employer") {
       if (profileStore.employer) {
+        console.log(profileStore.employer);
         reAssignEmails(profileStore.employer);
       }
     }
@@ -131,19 +136,11 @@ const onEmailConfirm = async (e) => {
     <input
       ref="inputEmail"
       type="email"
+      :disabled="disabled"
       :value="currentValue"
       placeholder="Электронная почта"
       @input="onInputEmail"
     />
-    <!--    <base-button-->
-    <!--      v-if="isConfirmButton"-->
-    <!--      @click="onEmailConfirm"-->
-    <!--      type="button"-->
-    <!--      class="position-absolute top-0 end-0"-->
-    <!--      style="margin-top: 2px"-->
-    <!--    >-->
-    <!--      -->
-    <!--    </base-button>-->
     <span
       @click="onEmailConfirm"
       v-if="isConfirmButton"
@@ -211,6 +208,10 @@ const onEmailConfirm = async (e) => {
 </template>
 
 <style scoped>
+input[type="email"]:disabled {
+  background: #ccc;
+}
+
 .absolute_button {
   position: absolute;
   top: 0.25rem;
