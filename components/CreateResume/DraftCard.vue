@@ -1,5 +1,5 @@
 <template>
-  <div class="w-box w-box--main w-box-resume pb-4">
+  <div class="w-box w-box--main w-box-resume">
     <div class="w-box-head">
       <h1 class="title">{{ formTitle }}</h1>
       <div class="descr">
@@ -9,6 +9,7 @@
     </div>
 
     <div class="w-box-body" :class="{ disabled: isLoading }">
+      <BlockLoader ref="block_loader" v-if="isLoading" />
       <div>
         <div class="text-danger d-block" v-if="errors.message">
           {{ errors.message }}
@@ -127,12 +128,12 @@
           </div>
         </div>
 
-        <div class="input-row">
+        <div class="input-row pb-4">
           <label>Тип работы:<b>*</b></label>
           <div class="input-wrapper mt-2">
             <VeeMultiSelectWithSearch
               name="work_types"
-              :options="workTypeOptions"
+              :options="dictionaryStore.work_types_formatted"
               placeholder="Выберите"
             />
           </div>
@@ -153,6 +154,8 @@ import { storeToRefs } from "pinia";
 import useResumeHooks from "~/hooks/useResumeHooks";
 import ResumeCheckboxInput from "~/components/CreateResume/ResumeCheckboxInput.vue";
 import ResumeTextInput from "~/components/CreateResume/ResumeTextInput.vue";
+import { z } from "~/hooks/ru-zod.js";
+import { toTypedSchema } from "@vee-validate/zod";
 
 const props = defineProps(["title"]);
 
@@ -171,34 +174,33 @@ const isFirst = ref(true);
 const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
-const schema = computed(() => {
-  return {
-    providers: "required",
-    title: "required|min:1|max:100",
-    first_name: "required|min:1|max:100",
-    last_name: "required|min:1|max:100",
-    middle_name: "required|min:1|max:100",
-    email: { required: true, email: true },
-    is_preferred_email: { boolean: true },
-    birth_date: "required|date",
-    city_id: "required|numeric",
-    gender_id: "required|numeric",
-    business_trip_id: "required|numeric",
-    relocation_type_id: "required|numeric",
-    work_types: "required|min:1",
-  };
+const schema = z.object({
+  providers: z.array(z.string()).nonempty("Выберите хотя бы 1 сервис"),
+  title: z.string(),
+  first_name: z.string(),
+  last_name: z.string(),
+  middle_name: z.string().optional().nullable(),
+  email: z.string(),
+  is_preferred_email: z.boolean(),
+  birth_date: z.string(),
+  city_id: z.number(),
+  gender_id: z.number(),
+  business_trip_id: z.number(),
+  relocation_type_id: z.number(),
+  work_types: z.array(z.number()).nonempty("Выберите хотя бы 1"),
 });
+
 const { values, errors, validate, meta, setTouched, setErrors, handleSubmit } =
   useForm({
     initialValues: {
       providers: [],
-      title: "",
-      first_name: "",
-      last_name: "",
-      middle_name: "",
-      email: "",
+      title: null,
+      first_name: null,
+      last_name: null,
+      middle_name: null,
+      email: null,
       is_preferred_email: false,
-      birth_date: "",
+      birth_date: null,
       city_id: null,
       gender_id: null,
       business_trip_id: null,
@@ -207,7 +209,7 @@ const { values, errors, validate, meta, setTouched, setErrors, handleSubmit } =
       work_types: [],
     },
     initialTouched: true,
-    validationSchema: schema,
+    validationSchema: toTypedSchema(schema),
   });
 
 const { createResume } = resumeStore;
@@ -279,9 +281,6 @@ const genderOptions = computed(() => {
     value: item.id,
   }));
 });
-const workTypeOptions = computed(() => {
-  return dictionaryStore.work_types;
-});
 const businessTripOptions = computed(() => {
   return dictionaryStore.business_trips.map((item) => ({
     name: item.name,
@@ -338,6 +337,7 @@ watch(
   },
 );
 const isLoading = ref(false);
+const block_loader = ref();
 
 const errorMessageElement = ref();
 const errorMessage = ref(null);
@@ -360,7 +360,8 @@ const save = async (is_from_parent = false) => {
   errorMessage.value = "";
   isLoading.value = true;
 
-  console.log(values);
+  scrollTop();
+  errorMessageElement.value.scrollIntoView({ behavior: "smooth" });
 
   let resData = await createResume(unref(values));
 
@@ -389,6 +390,10 @@ const save = async (is_from_parent = false) => {
   isSaved.value = false;
   isUpdated.value = false;
 };
+
+const blockLoaderStyles = {
+  "border-radius": "0 0 12px 12px",
+};
 defineExpose({
   onSubmit,
   save,
@@ -398,16 +403,5 @@ defineExpose({
 <style>
 .w-box-body.disabled {
   position: relative;
-}
-
-.w-box-body.disabled:before {
-  left: 0;
-  top: 0;
-  z-index: 999;
-  position: absolute;
-  content: "";
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
 }
 </style>

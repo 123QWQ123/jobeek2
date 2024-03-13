@@ -143,7 +143,6 @@ import moment from "moment";
 import { useVacancyStore } from "~/store/vacancy";
 import Swal from "sweetalert2";
 import { useResumeStore } from "~/store/resume.js";
-import { useSSRContext } from "vue";
 import { toast } from "vue3-toastify";
 
 const { item } = defineProps({
@@ -151,13 +150,8 @@ const { item } = defineProps({
     required: true,
   },
 });
-// Computed property to determine rendering environment
-const isServer = computed(() => {
-  // useSSRContext returns the SSR context on the server or undefined on the client
-  return !!useSSRContext();
-});
+
 const { $format_number } = useNuxtApp();
-console.log(item);
 const isFavorite = ref(item.is_favorite ?? false);
 const salary_from = computed(() => {
   return $format_number(item.salary_from);

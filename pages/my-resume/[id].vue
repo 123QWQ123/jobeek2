@@ -23,7 +23,6 @@ const { setProviders } = useProviders();
 watch(
   () => providers.value,
   (newValues) => {
-    console.log(newValues);
     setProviders(newValues);
   },
 );
