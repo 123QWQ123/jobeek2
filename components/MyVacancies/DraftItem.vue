@@ -419,7 +419,7 @@ const toggle = async (provider) => {
   const data = {
     providers: providerParams,
   };
-  data.form_data = "PROVIDERS_DATA";
+  data.action = "UpdateProviders";
   const resData = await updateDraft(item.value.id, data);
   if (resData.status !== "success") {
     selectedProviders.value[provider] = !selectedProviders.value[provider];

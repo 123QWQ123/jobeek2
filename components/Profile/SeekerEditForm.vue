@@ -58,7 +58,11 @@
     <div class="input-row">
       <label for="password">Пароль<b>*</b></label>
       <div class="input-wrapper position-relative">
-        <CustomTextInput type="password" name="password" />
+        <CustomTextInput
+          type="password"
+          name="password"
+          placeholder="********"
+        />
       </div>
     </div>
     <div class="input-row">
