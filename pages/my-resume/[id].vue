@@ -91,6 +91,16 @@ const paramProviders = computed(() => {
   }
   return [];
 });
+const publishableProviders = computed(() => {
+  const items = [];
+  if (hhPublishable.value) {
+    items.push("hh");
+  }
+  if (superjobPublishable.value) {
+    items.push("superjob");
+  }
+  return items;
+});
 
 const canBePublished = computed(() => {
   if (hhPublishable.value && superjobPublishable.value) return true;
@@ -165,7 +175,7 @@ const errors = ref([]);
 const isLoading = ref(false);
 const saveAndPublishAll = async (e) => {
   e.preventDefault();
-  if (!canBePublished.value) {
+  if (!canOnlyOnePublished.value) {
     toast.info("Пока вы не можете опубликовать если не заполняйте все поля!", {
       autoClose: 3000,
     });
@@ -188,10 +198,9 @@ const saveAndPublishAll = async (e) => {
   }
 
   const payload = {
-    providers: paramProviders.value,
+    providers: publishableProviders.value,
   };
 
-  console.log(payload);
   const resData = await publishResume(resumeID.value, payload);
   console.log(resData);
   // isLoading.value = false;
@@ -209,9 +218,9 @@ const saveAndPublishAll = async (e) => {
 
   toast.info(resData.data.message, { autoClose: 3000 });
 
-  // setTimeout(() => {
-  //   navigateTo({ name: "my-resumes" });
-  // }, 500);
+  setTimeout(() => {
+    navigateTo({ name: "my-resumes" });
+  }, 500);
 };
 const saveAndPublishProvider = async (provider = null) => {
   // e.preventDefault();
@@ -241,10 +250,7 @@ const saveAndPublishProvider = async (provider = null) => {
     providers: [provider],
   };
 
-  console.log(payload);
   const resData = await publishResume(resumeID.value, payload);
-  console.log(resData);
-  // isLoading.value = false;
   if (resData.hasOwnProperty("status") && resData.status !== "success") {
     Swal.fire({
       title: "Ошибка!",
@@ -259,9 +265,9 @@ const saveAndPublishProvider = async (provider = null) => {
 
   toast.info(resData.data.message, { autoClose: 3000 });
 
-  // setTimeout(() => {
-  //   navigateTo({ name: "my-resumes" });
-  // }, 500);
+  setTimeout(() => {
+    navigateTo({ name: "my-resumes" });
+  }, 500);
 };
 const canOnlyOnePublished = computed(() => {
   if (
@@ -286,11 +292,11 @@ const phone = ref("");
           </div>
           <CreateResumeProviders v-model="providers" />
 
-          <!--          <CreateResumePhotoCard-->
-          <!--            v-if="resumeID"-->
-          <!--            ref="photo_el"-->
-          <!--            :providers="providers"-->
-          <!--          />-->
+          <CreateResumePhotoCard
+            v-if="resumeID"
+            ref="photo_el"
+            :providers="providers"
+          />
           <CreateResumeVeePersonalFieldsCard
             v-if="resumeID"
             :key="`personal_fields_el_key_${providers.hh + providers.superjob}`"
@@ -376,7 +382,7 @@ const phone = ref("");
             </button>
             <button
               class="button-accent"
-              :class="{ disabled: !canBePublished }"
+              :class="{ disabled: !canOnlyOnePublished }"
               type="submit"
               @click.prevent="saveAndPublishAll"
             >
