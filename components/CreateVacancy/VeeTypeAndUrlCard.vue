@@ -44,6 +44,7 @@
             />
           </div>
         </div>
+        {{ values }}
       </div>
     </transition>
   </div>
@@ -97,33 +98,23 @@ const isUpdated = ref(false);
 
 const schema = computed(() => {
   if (providers.value.hh === true && providers.value.superjob === false) {
-    return z
-      .object({
-        type_id: z.number(),
-        custom_employer_name: z.string().nullable(),
-        response_url: z.string().nullable(),
-      })
-      .refine((data) => data.type_id === 48, {
-        message: "custom_employer_name field is required",
-        path: ["custom_employer_name"], // Pointing out which field is invalid
-      });
+    return z.object({
+      type_id: z.number(),
+      custom_employer_name: z.string().nullable().optional(),
+      response_url: z.string().nullable().optional(),
+    });
   }
   if (providers.value.hh === false && providers.value.superjob === true) {
-    return z
-      .object({
-        type_id: z.number(),
-        custom_employer_name: z.string().optional(),
-        response_url: z.string().optional(),
-      })
-      .refine((data) => data.type_id === 48, {
-        message: "custom_employer_name field is required",
-        path: ["custom_employer_name"], // Pointing out which field is invalid
-      });
+    return z.object({
+      type_id: z.number(),
+      custom_employer_name: z.string().optional().nullable(),
+      response_url: z.string().optional().nullable(),
+    });
   }
   return z.object({
     type_id: z.number(),
-    custom_employer_name: z.string().nullable(),
-    response_url: z.string().nullable(),
+    custom_employer_name: z.string().nullable().optional(),
+    response_url: z.string().nullable().optional(),
   });
 });
 
@@ -223,6 +214,8 @@ const isFocused = ref(false);
 const isLoading = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
+  console.log(values);
+  console.log(meta.value);
   validate();
   if (!meta.value.dirty) {
     return true;
@@ -234,7 +227,7 @@ const save = async (is_from_parent = false) => {
   isLoading.value = true;
   setErrors({});
   errorMessage.value = "";
-  let jsonData = { ...values };
+  let jsonData = { ...JSON.parse(JSON.stringify(values)) };
   let resData = {};
 
   jsonData.action = "UpdateType";

@@ -25,7 +25,7 @@ watch(
     setProviders(newValues);
   },
 );
-const { getMyVacancy, publishVacancy, getMyDraft } = vacancyStore;
+const { getMyVacancy, publishDraft, getMyDraft } = vacancyStore;
 const my_vacancy = computed(() => vacancyStore.my_vacancy);
 
 const vacancyID = computed(() => route.params.id);
@@ -139,10 +139,10 @@ const superjobPublishable = ref(false);
 watch(
   () => vacancyStore.my_vacancy,
   (newObject) => {
-    const { can_published } = newObject;
-    if (can_published) {
-      hhPublishable.value = can_published.hh ?? false;
-      superjobPublishable.value = can_published.superjob ?? false;
+    const { can_publish } = newObject;
+    if (can_publish) {
+      hhPublishable.value = can_publish.hh ?? false;
+      superjobPublishable.value = can_publish.superjob ?? false;
     }
   },
 );
@@ -195,7 +195,7 @@ const errors = ref([]);
 const isLoading = ref(false);
 const saveAndPublishAll = async (e) => {
   e.preventDefault();
-  if (!canBePublished.value) {
+  if (!canOnlyOnePublished.value) {
     toast.info("Пока вы не можете опубликовать если не заполняйте все поля!", {
       autoClose: 3000,
     });
@@ -220,7 +220,7 @@ const saveAndPublishAll = async (e) => {
   };
 
   console.log(payload);
-  const resData = await publishVacancy(vacancyID.value, payload);
+  const resData = await publishDraft(vacancyID.value, payload);
   console.log(resData);
   // isLoading.value = false;
   if (resData.hasOwnProperty("status") && resData.status !== "success") {
@@ -237,9 +237,9 @@ const saveAndPublishAll = async (e) => {
 
   toast.info(resData.data.message, { autoClose: 3000 });
 
-  // setTimeout(() => {
-  //   navigateTo({ name: "my-resumes" });
-  // }, 500);
+  setTimeout(() => {
+    navigateTo({ name: "my-vacancies" });
+  }, 500);
 };
 const saveAndPublishProvider = async (provider = null) => {
   // e.preventDefault();
@@ -384,6 +384,7 @@ const phone = ref("");
             обработку персональных данных, разрешенных для распространения
           </p>
 
+          {{ canOnlyOnePublished }}
           <div class="form-submit-container mt-2">
             <button
               class="btn btn-outline-primary"
@@ -392,28 +393,9 @@ const phone = ref("");
             >
               Сохранить как черновик
             </button>
-
-            <!--            <button-->
-            <!--              class="button-accent"-->
-            <!--              type="submit"-->
-            <!--              v-if="canOnlyOnePublished"-->
-            <!--              @click.prevent="-->
-            <!--                saveAndPublishProvider(-->
-            <!--                  publishableProviderName.toLocaleLowerCase(),-->
-            <!--                )-->
-            <!--              "-->
-            <!--            >-->
-            <!--              <span-->
-            <!--                v-if="isLoading"-->
-            <!--                class="spinner-border spinner-border-sm"-->
-            <!--                role="status"-->
-            <!--                aria-hidden="true"-->
-            <!--              ></span>-->
-            <!--              Опубликовать на {{ publishableProviderName }}-->
-            <!--            </button>-->
             <button
               class="button-accent"
-              :class="{ disabled: !canBePublished }"
+              :class="{ disabled: !canOnlyOnePublished }"
               type="submit"
               @click.prevent="saveAndPublishAll"
             >
@@ -435,6 +417,57 @@ const phone = ref("");
               publishableProviderName.toUpperCase()
             }}</span>
           </p>
+          <!--          <div class="form-submit-container mt-2">-->
+          <!--            <button-->
+          <!--              class="btn btn-outline-primary"-->
+          <!--              type="button"-->
+          <!--              @click="saveAsDraft"-->
+          <!--            >-->
+          <!--              Сохранить как черновик-->
+          <!--            </button>-->
+
+          <!--            <button-->
+          <!--              class="button-accent"-->
+          <!--              type="submit"-->
+          <!--              v-if="canOnlyOnePublished"-->
+          <!--              @click.prevent="-->
+          <!--                saveAndPublishProvider(-->
+          <!--                  publishableProviderName.toLocaleLowerCase(),-->
+          <!--                )-->
+          <!--              "-->
+          <!--            >-->
+          <!--              <span-->
+          <!--                v-if="isLoading"-->
+          <!--                class="spinner-border spinner-border-sm"-->
+          <!--                role="status"-->
+          <!--                aria-hidden="true"-->
+          <!--              ></span>-->
+          <!--              Опубликовать на {{ publishableProviderName }}-->
+          <!--            </button>-->
+          <!--            <button-->
+          <!--              class="button-accent"-->
+          <!--              :class="{ disabled: !canBePublished }"-->
+          <!--              type="submit"-->
+          <!--              @click.prevent="saveAndPublishAll"-->
+          <!--            >-->
+          <!--              <span-->
+          <!--                v-if="isLoading"-->
+          <!--                class="spinner-border spinner-border-sm"-->
+          <!--                role="status"-->
+          <!--                aria-hidden="true"-->
+          <!--              ></span>-->
+          <!--              Сохранить и опубликовать-->
+          <!--            </button>-->
+          <!--          </div>-->
+          <!--          <p-->
+          <!--            class="float-end text-primary-secondary mt-2"-->
+          <!--            v-if="canOnlyOnePublished"-->
+          <!--          >-->
+          <!--            Будет опубликовано только на-->
+          <!--            <span class="text-primary">{{-->
+          <!--              publishableProviderName.toUpperCase()-->
+          <!--            }}</span>-->
+          <!--          </p>-->
         </form>
       </div>
     </div>

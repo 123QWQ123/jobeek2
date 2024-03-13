@@ -165,7 +165,7 @@ const schema = computed(() => {
       salary: z.number(),
       currency: z.string().nullable().optional(),
       place_of_work_id: z.number().nullable(),
-      professional_roles: z.array(z.number()).array().nonempty(),
+      professional_roles: z.array(z.number()).nonempty(),
       work_types: z.array(z.number()).nonempty(),
       schedules: z.array(z.number()).nonempty(),
     });
