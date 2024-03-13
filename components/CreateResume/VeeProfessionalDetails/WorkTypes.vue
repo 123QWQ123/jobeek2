@@ -3,6 +3,7 @@ import { useProfileStore } from "~/store/profile.js";
 import useFilter from "~/composables/useFilter.js";
 import useProviders from "~/composables/useProviders.js";
 import { useDictionaryStore } from "~/store/dictionary.js";
+import { useResumeStore } from "~/store/resume.js";
 
 const profileStore = useProfileStore();
 const dictionaryStore = useDictionaryStore();
@@ -67,36 +68,61 @@ const isSuperjobWorkTypesNeeded = computed(() => {
 //   },
 // );
 
+const selectedWorkTypeOptions = ref([]);
+
 const { value: work_type_ids } = useField("work_types");
 watch(
   () => work_type_ids.value,
   async () => {
-    let items = [];
-    if (isHHWorkTypesNeeded.value) {
-      const new_h = dictionaryStore.hh_work_types.map((item) => ({
-        value: item.id,
-        name: item.name,
-      }));
-      items = items.concat(new_h);
-    }
-    if (isSuperjobWorkTypesNeeded.value) {
-      const new_s = dictionaryStore.superjob_work_types.map((item) => ({
-        value: item.id,
-        name: item.name,
-      }));
-      items = items.concat(new_s);
-    }
-    if (isHHWorkTypesNeeded.value || isSuperjobWorkTypesNeeded.value) {
-      const all_items = dictionaryStore.work_types;
-      items = items.concat(all_items);
-      items = uniq(items, "value");
-      workTypeOptions.value = items;
-    } else {
-      const all_items = dictionaryStore.work_types;
-      workTypeOptions.value = all_items;
-    }
+    // let items = [];
+    // if (isHHWorkTypesNeeded.value) {
+    //   const new_h = dictionaryStore.hh_work_types.map((item) => ({
+    //     value: item.id,
+    //     name: item.name,
+    //   }));
+    //   items = items.concat(new_h);
+    // }
+    // if (isSuperjobWorkTypesNeeded.value) {
+    //   const new_s = dictionaryStore.superjob_work_types.map((item) => ({
+    //     value: item.id,
+    //     name: item.name,
+    //   }));
+    //   items = items.concat(new_s);
+    // }
+    // if (isHHWorkTypesNeeded.value || isSuperjobWorkTypesNeeded.value) {
+    //   const all_items = dictionaryStore.work_types;
+    //   items = items.concat(all_items);
+    //   items = uniq(items, "value");
+    //   workTypeOptions.value = items;
+    // } else {
+    //   const all_items = dictionaryStore.work_types;
+    //   workTypeOptions.value = all_items;
+    // }
   },
 );
+const resumeStore = useResumeStore();
+// watch(
+//   () => work_type_ids.value,
+//   async () => {
+//     console.log(resumeStore.my_resume);
+//     let items = Object.keys(resumeStore.my_resume.work_types).map((key) => ({
+//       name: resumeStore.my_resume.work_types[key],
+//       value: key,
+//     }));
+//     items = items.concat(
+//       [...workTypeOptions.value].filter((item) =>
+//         work_type_ids.value.includes(item.value),
+//       ),
+//     );
+//     items = uniq(items, "value");
+//
+//     onUpdateSelectedOptions(items);
+//   },
+// );
+
+const onUpdateSelectedOptions = async (newItems) => {
+  selectedWorkTypeOptions.value = newItems;
+};
 
 const hhWorkTypes = ref([]);
 const superjobWorkTypes = ref([]);
@@ -138,7 +164,7 @@ onMounted(() => {
   <VeeMultiSelectWithSearch
     name="work_types"
     sort_by="none"
-    :options="workTypeOptions"
+    :options="dictionaryStore.work_types_formatted"
     :placeholder="'Выберите'"
   />
 </template>

@@ -8,7 +8,11 @@
           </div>
           <div class="resume-card-name">
             <nuxt-link
-              :to="{ name: 'my-resume-id', params: { id: item.id } }"
+              :to="{
+                name: 'my-vacancy-id',
+                params: { id: item.id },
+                query: { type: 'draft' },
+              }"
               class="title"
             >
               {{ item.name }}

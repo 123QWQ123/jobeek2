@@ -10,6 +10,7 @@
       ></VacanciesItem>
     </ul>
 
+    {{ my_favorite_vacancies }}
     <div class="footer mt-3" v-if="items.length">
       <button class="btn btn-primary" @click="prevPage">Prev</button>
       <button class="btn btn-primary ms-2" @click="nextPage">Next</button>
@@ -19,9 +20,9 @@
 </template>
 
 <script setup>
-import { useVacancyStore } from "../../store/vacancy";
+import { useVacancyStore } from "~/store/vacancy";
 import { storeToRefs } from "pinia";
-import { useVacancyForm } from "../../composables/useVacancyForm";
+import { useVacancyForm } from "~/composables/useVacancyForm";
 import Swal from "sweetalert2";
 
 const vacancyStore = useVacancyStore();

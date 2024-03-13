@@ -43,7 +43,6 @@ const { vacancy } = storeToRefs(vacancyStore);
 const { slug } = route.params;
 const { provider } = route.query;
 const vacancyData = await getVacancy(slug, { provider });
-console.log(vacancyData);
 const pageTitle = computed(() => vacancyData[provider]?.name + " - Jobeek");
 
 // if (

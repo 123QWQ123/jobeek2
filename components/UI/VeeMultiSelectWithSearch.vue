@@ -15,9 +15,8 @@
       <ul class="list" :style="listStyles">
         <li
           v-for="item in options"
-          @click="onSelect"
+          @click.prevent="onSelect(item.value)"
           :key="item.value"
-          :data-value="item.value"
           class="option"
           :style="listItemStyles"
         >
@@ -140,21 +139,18 @@ watch(
 
 const disabled = ref(props.disabled ?? false);
 
-function onSelect(e) {
+function onSelect(selectedOptionValue) {
   if (disabled.value) return true;
-  if (e.target.classList.contains("option")) {
-    isOpen.value = false;
-    const selectedOptionValue = e.target.dataset.value;
-    const selectedOptionItem = options.value.find(
-      (item) => String(item.value) === String(selectedOptionValue),
-    );
-    if (!selectedOptionItem) {
-      return;
-    }
-    const fieldValues = fields.value.map((item) => item.value);
-    if (!fieldValues.includes(selectedOptionItem.value)) {
-      push(selectedOptionItem.value);
-    }
+  isOpen.value = false;
+  const selectedOptionItem = options.value.find(
+    (item) => String(item.value) === String(selectedOptionValue),
+  );
+  if (!selectedOptionItem) {
+    return;
+  }
+  const fieldValues = fields.value.map((item) => item.value);
+  if (!fieldValues.includes(selectedOptionItem.value)) {
+    push(selectedOptionItem.value);
   }
 }
 

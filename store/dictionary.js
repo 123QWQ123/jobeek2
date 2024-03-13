@@ -1,7 +1,7 @@
 // no need to import defineStore and acceptHMRUpdate
 import { acceptHMRUpdate, defineStore } from "pinia";
 import useApi from "~/hooks/useApi";
-import vueNumberFormat from "~/plugins/vueNumberFormat";
+import vueNumberFormat from "~/plugins/vueNumberFormat.js";
 
 export const useDictionaryStore = defineStore("dictionary", {
   state: () => {

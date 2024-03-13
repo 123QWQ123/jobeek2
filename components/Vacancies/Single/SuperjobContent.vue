@@ -113,14 +113,14 @@ const { item } = defineProps({
   },
 });
 
+const { $format_number } = useNuxtApp();
 const isFavorite = ref(item.is_favorite ?? false);
 const salary_from = computed(() => {
-  return vueNumberFormat(item.salary_from, {});
+  return $format_number(item.salary_from);
 });
 const salary_to = computed(() => {
-  return vueNumberFormat(item.salary_to, {});
+  return $format_number(item.salary_to);
 });
-
 const vacancyStore = useVacancyStore();
 const { addToFavorite, removeFromFavorite } = vacancyStore;
 const toggleFavorite = async () => {

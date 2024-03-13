@@ -292,7 +292,7 @@ export const useVacancyStore = defineStore("vacancy", {
       return response;
     },
     async getMyFavoriteVacancies(payload) {
-      const { data } = await useApi("favorite/vacancies", {
+      const { data } = await useApi("seeker/favorites", {
         method: "get",
         params: payload,
       });
@@ -376,10 +376,10 @@ export const useVacancyStore = defineStore("vacancy", {
       return response;
     },
 
-    async removeFromFavorite(payload = URLSearchParams) {
-      const response = await useApi("vacancy/favorite", {
+    async removeFromFavorite(id, payload) {
+      const response = await useApi("seeker/favorite/" + id, {
         method: "delete",
-        payload,
+        data: JSON.stringify(payload),
       });
       return response;
     },

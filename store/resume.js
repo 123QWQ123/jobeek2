@@ -74,6 +74,15 @@ export const useResumeStore = defineStore("resume", {
       return data;
     },
 
+    async disconnectProviders(payload) {
+      const { data } = await useApi("seeker/disconnect_providers", {
+        method: "DELETE",
+        params: payload,
+      });
+
+      return data;
+    },
+
     async getSeekerProvidersAuthEndpoints(
       payload,
       redirect_to = "/profile/service-verify",

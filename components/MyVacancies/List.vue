@@ -113,13 +113,13 @@
 
 <script setup>
 import Swal from "sweetalert2";
-import { useVacancyStore } from "../../store/vacancy";
+import { useVacancyStore } from "~/store/vacancy";
 import { storeToRefs } from "pinia";
 import PageLoader from "~/components/UI/PageLoader.vue";
 import { useMyVacancyForm } from "~/composables/useMyVacancyForm";
 import { useMyVacancySortingOptions } from "~/composables/useMyVacancySortingOptions";
 import { useMyVacancyPerPageOptions } from "~/composables/useMyVacancyPerPageOptions";
-import { useMyVacanciesFilterOptions } from "../../composables/useMyVacanciesFilterOptions";
+import { useMyVacanciesFilterOptions } from "~/composables/useMyVacanciesFilterOptions";
 
 useHead({
   title: "Jobeek - Мои вакансии",

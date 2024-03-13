@@ -165,7 +165,7 @@ const schema = computed(() => {
       salary: z.number(),
       currency: z.string().nullable().optional(),
       place_of_work_id: z.number().nullable(),
-      professional_roles: z.array(z.number()).array().nonempty(),
+      professional_roles: z.array(z.number()).nonempty(),
       work_types: z.array(z.number()).nonempty(),
       schedules: z.array(z.number()).nonempty(),
     });
@@ -183,7 +183,7 @@ const schema = computed(() => {
   }
   return z.object({
     title: z.string().min(2),
-    professional_roles: z.number().array().nonempty(),
+    professional_roles: z.array(z.number()).nonempty(),
     work_types: z.array(z.number()).nonempty(),
     schedules: z.array(z.number()).nonempty(),
     salary: z.number().nullable(),
@@ -192,17 +192,15 @@ const schema = computed(() => {
   });
 });
 
-const initialValues = computed(() => {
-  return {
-    title: null,
-    professional_roles: [],
-    work_types: [],
-    schedules: [],
-    place_of_work_id: null,
-    salary: null,
-    currency: "RUB",
-  };
-});
+const initialValues = {
+  title: null,
+  professional_roles: [],
+  work_types: [],
+  schedules: [],
+  place_of_work_id: null,
+  salary: null,
+  currency: "RUB",
+};
 const {
   values,
   errors,

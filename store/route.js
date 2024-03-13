@@ -1,23 +1,17 @@
-import {useRuntimeConfig} from "nuxt/app";
-
 // no need to import defineStore and acceptHMRUpdate
-import { defineStore, acceptHMRUpdate } from "pinia";
-import axios from "axios";
-import {useAuthStore} from "~/store/auth";
-import useApi from "~/hooks/useApi";
-import vueNumberFormat from "~/plugins/vueNumberFormat";
+import { acceptHMRUpdate, defineStore } from "pinia";
+import vueNumberFormat from "~/plugins/vueNumberFormat.js";
 
-export const useRoute = defineStore('route', {
+export const useRoute = defineStore("route", {
   state: () => {
     return {
       page: "index",
       params: {},
-    }
+    };
   },
   actions: {
-
-    numberFormat (value) {
-      return vueNumberFormat(value,  {});
+    numberFormat(value) {
+      return vueNumberFormat(value, {});
     },
 
     async getPageQuery() {
@@ -27,7 +21,7 @@ export const useRoute = defineStore('route', {
       return this.page;
     },
   },
-})
+});
 
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(useRoute, import.meta.hot));
