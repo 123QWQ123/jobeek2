@@ -17,8 +17,20 @@ const email_to_verify = ref();
 const email = ref(value.value);
 const is_email_to_verify_sent = ref(false);
 const onInputEmail = (e) => {
-  email_to_verify.value = e.target.value;
   currentValue.value = e.target.value;
+  email_to_verify.value = e.target.value;
+  if (currentValue.value) {
+    if (currentValue.value === email.value) {
+      isConfirmButton.value = false;
+      isCheckButton.value = true;
+    } else {
+      isConfirmButton.value = true;
+      isCheckButton.value = false;
+    }
+  } else {
+    isConfirmButton.value = true;
+    isCheckButton.value = false;
+  }
 };
 const currentValue = ref(null);
 
@@ -34,37 +46,23 @@ const disabled = computed(() => {
   return true;
 });
 const reAssignEmails = (newObject) => {
+  email_to_verify.value = newObject.email_to_verify;
+  email.value = newObject.email;
+  currentValue.value = newObject.email ?? newObject.email_to_verify;
   if (!newObject.is_completed) {
-    email_to_verify.value = newObject.email_to_verify;
-    email.value = newObject.email;
-    currentValue.value = email.value ?? email_to_verify.value;
-
     if (newObject.email !== null) {
       isCheckButton.value = true;
       isConfirmButton.value = false;
+      console.log(1);
+    } else {
+      isCheckButton.value = true;
+      isConfirmButton.value = false;
     }
-    // if (
-    //   newObject.email !== null &&
-    //   newObject.email !== newObject.email_to_verify
-    // ) {
-    //   currentValue.value = newObject.email_to_verify;
-    //   email_to_verify.value = newObject.email_to_verify;
-    //   isCheckButton.value = false;
-    //   isConfirmButton.value = true;
-    // } else {
-    //   currentValue.value = email.value;
-    //   isCheckButton.value = true;
-    //   isConfirmButton.value = false;
-    // }
   } else {
-    email.value = newObject.email;
-
     if (
       newObject.email_to_verify !== null &&
       newObject.email !== newObject.email_to_verify
     ) {
-      currentValue.value = newObject.email_to_verify;
-      email_to_verify.value = newObject.email_to_verify;
       isCheckButton.value = false;
       isConfirmButton.value = true;
     } else {
@@ -90,7 +88,6 @@ watch(
   (newObject) => {
     if (props.type === "employer") {
       if (profileStore.employer) {
-        console.log(profileStore.employer);
         reAssignEmails(profileStore.employer);
       }
     }
@@ -109,33 +106,13 @@ onMounted(() => {
     }
   }
 });
-watch(
-  () => email_to_verify.value,
-  (newEmailToVerify) => {
-    const newObject =
-      props.type === "employer" ? profileStore.employer : profileStore.seeker;
-    if (newObject.is_completed) {
-      if (newEmailToVerify) {
-        if (newEmailToVerify === email.value) {
-          isConfirmButton.value = false;
-          isCheckButton.value = true;
-        } else {
-          isConfirmButton.value = true;
-          isCheckButton.value = false;
-        }
-      } else {
-        isConfirmButton.value = true;
-        isCheckButton.value = false;
-      }
-    }
-  },
-);
-watch(
-  () => value.value,
-  (newEmail) => {
-    setValue(newEmail);
-  },
-);
+
+// watch(
+//   () => value.value,
+//   (newEmail) => {
+//     setValue(newEmail);
+//   },
+// );
 const { confirmEmail, checkEmailConfirmation } = profileStore;
 const onEmailConfirm = async (e) => {
   e.preventDefault();
@@ -219,13 +196,6 @@ const onEmailConfirm = async (e) => {
   </div>
   <div class="text-danger">
     {{ errorMessage }}
-    <!--    {{ isConfirmButton }}-->
-    <!--    <hr />-->
-    <!--    {{ isCheckButton }}-->
-    <!--    <hr />-->
-    <!--    {{ email }}-->
-    <!--    <hr />-->
-    <!--    {{ email_to_verify }}-->
   </div>
 </template>
 
