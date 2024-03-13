@@ -315,7 +315,7 @@ const save = async (is_from_parent = false) => {
 
   resData = await updateResume(resumeID.value, {
     form_data: "CITIZENSHIP_AND_FAMILY_DATA",
-    ...values,
+    ...JSON.parse(JSON.stringify(values)),
   });
 
   if (resData.status !== "success") {

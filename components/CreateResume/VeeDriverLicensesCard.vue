@@ -200,7 +200,7 @@ const save = async (is_from_parent = false) => {
 
   resData = await updateResume(resumeID.value, {
     form_data: "DRIVER_LICENSES_DATA",
-    ...values,
+    ...JSON.parse(JSON.stringify(values)),
   });
 
   isUpdated.value = true;

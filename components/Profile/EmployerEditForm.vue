@@ -26,6 +26,17 @@
     </div>
 
     <div class="input-row">
+      <label for="password">Сайт компании<b>*</b></label>
+      <div class="input-wrapper position-relative">
+        <CustomTextInput
+          type="text"
+          name="company_url"
+          placeholder="https://"
+        />
+      </div>
+    </div>
+
+    <div class="input-row">
       <label for="phone">Телефон</label>
       <div class="input-wrapper">
         <ProfilePhoneDisabledInput name="phone" />
@@ -191,7 +202,7 @@ const handleSubmit = async (e) => {
     errorMessage.value = resData.message;
 
     if (resData?.errors) {
-      errors.value = { ...resData.errors };
+      setErrors(resData.errors);
     }
     isLoading.value = false;
   }
