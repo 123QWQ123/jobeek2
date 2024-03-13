@@ -174,7 +174,7 @@ const schema = computed(() => {
     return z.object({
       title: z.string().nullable().optional(),
       salary: z.number().min(2),
-      currency: z.string().nullable(),
+      currency: z.string().nullable().optional(),
       place_of_work_id: z.number().nullable(),
       professional_roles: z.array(z.number()).nonempty(),
       work_types: z.array(z.number()).nonempty(),
@@ -366,7 +366,7 @@ const save = async (is_from_parent = false) => {
   let resData = {};
 
   resData = await updateResume(resumeID.value, {
-    ...values,
+    ...JSON.parse(JSON.stringify(values)),
     form_data: "PROFESSION_DETAILS_DATA",
   });
 

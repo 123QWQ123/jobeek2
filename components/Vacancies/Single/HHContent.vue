@@ -120,9 +120,42 @@
         </div>
         <div class="vacancy-single-body" v-html="item.description"></div>
         <div class="vacancy-single-footer">
-          <button class="btn button-accent button-accent--ts-bigger">
+          <button
+            class="btn button-accent button-accent--ts-bigger"
+            @click.prevent="onSubmit"
+          >
             Откликнуться
           </button>
+        </div>
+
+        <div
+          class="favorites-card-footer-row telephones-row mt-2"
+          :style="{ display: isSubmitShown }"
+        >
+          <div v-if="my_resumes.length > 0">
+            <ul class="list-group" v-for="resume in my_resumes">
+              <li class="mt-1">
+                <button
+                  class="btn btn-sm btn-outline-primary"
+                  @click.prevent="
+                    submitResume(resume.id, item.id, item.provider)
+                  "
+                >
+                  Откликатся
+                </button>
+                <span class="ms-2 h-3">
+                  с
+                  <NuxtLink
+                    class="ps-1"
+                    :to="{ name: 'my-resume-id', params: { id: resume.id } }"
+                  >
+                    {{ resume.title }}
+                  </NuxtLink>
+                </span>
+              </li>
+            </ul>
+          </div>
+          <p v-else>Нет резюме</p>
         </div>
       </div>
     </div>

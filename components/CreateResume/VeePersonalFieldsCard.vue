@@ -622,7 +622,7 @@ const save = async (is_from_parent = false) => {
   }
   setErrors({});
   let resData = {};
-  const jsonData = { ...values };
+  const jsonData = { ...JSON.parse(JSON.stringify(values)) };
 
   jsonData.form_data = "PERSONAL_DATA";
   jsonData.phones = jsonData.phones.map((item) => ({

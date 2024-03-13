@@ -180,7 +180,7 @@ const save = async (is_from_parent = false) => {
 
   setErrors({});
   const resData = await updateResume(resumeID.value, {
-    ...values,
+    ...JSON.parse(JSON.stringify(values)),
     form_data: "KNOWLEDGE_AND_SKILLS_DATA",
   });
 
