@@ -99,6 +99,17 @@ export const useVacancyStore = defineStore("vacancy", {
       return data;
     },
 
+    async synVacancies() {
+      const { data } = await useApi("employer/vacancies/import", {
+        method: "POST",
+        payload: {
+          providers: ["hh", "superjob"],
+        },
+      });
+
+      return data;
+    },
+
     async getEmployerProvidersAuthEndpoints(
       payload,
       redirect_to = "/profile/service-verify",

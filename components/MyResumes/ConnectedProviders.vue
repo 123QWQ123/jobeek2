@@ -221,17 +221,17 @@ const lastSyncedTime = computed(() => {
   return moment().format("h:mm ч, DD.MM.Y");
 });
 
-const { importResumes } = resumeStore;
+const { syncResumes } = resumeStore;
 const onSync = async () => {
   isSyncing.value = true;
-  const resData = await importResumes();
-  console.log(resData);
+  const resData = await syncResumes();
   if (resData.hasOwnProperty("message")) {
     toast.info(resData.message, { autoClose: 3000 });
   }
   isSyncing.value = false;
-  console.log(resData);
-  // window.location.reload();
+  setTimeout(() => {
+    window.location.reload();
+  }, 1000);
 };
 
 const { disconnectProviders } = resumeStore;

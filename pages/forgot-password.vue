@@ -55,7 +55,9 @@ onMounted(() => {
   phoneMask.value = new IMask(phoneInputElement.value, {
     mask: "+{7}(000)000-00-00",
   });
-  phoneInputElement.value.addEventListener("input", () => {});
+  phoneInputElement.value.addEventListener("input", () => {
+    state.phone.val = phoneMask.value.unmaskedValue;
+  });
 });
 
 function clearValidity(input) {
@@ -222,7 +224,6 @@ function close() {
               type="tel"
               ref="phoneInputElement"
               name="tel"
-              v-model="state.phone.val"
               placeholder="Номер телефона"
               @focusout="clearValidity('phone')"
             />

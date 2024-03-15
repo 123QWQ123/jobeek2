@@ -203,10 +203,10 @@ const lastSyncedTime = computed(() => {
   return moment().format("h:mm a, DD.MM.Y");
 });
 
-const { importVacancies } = vacancyStore;
+const { synVacancies } = vacancyStore;
 const onSync = async () => {
   isSyncing.value = true;
-  const resData = await importVacancies();
+  const resData = await synVacancies();
   console.log(resData);
   if (resData.hasOwnProperty("message")) {
     toast.info(resData.message, { autoClose: 3000 });

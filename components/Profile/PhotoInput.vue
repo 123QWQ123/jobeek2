@@ -50,7 +50,7 @@ const photoUrl = computed(() => {
   if (base64.value) {
     return base64.value;
   } else if (photo_url.value) {
-    return CONFIG.public.backend.host + photo_url.value;
+    return photo_url.value;
   } else return CONFIG.public.base + "/assets/images/avatar.png";
 });
 </script>
@@ -117,6 +117,10 @@ const photoUrl = computed(() => {
           </button>
         </div>
       </div>
+    </div>
+
+    <div class="text text-danger">
+      {{ errorMessage }}
     </div>
   </div>
 </template>
