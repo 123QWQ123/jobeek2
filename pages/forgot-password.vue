@@ -80,10 +80,6 @@ const tabs = reactive({
   isResetTab: false,
 });
 
-// watch(isConfirmTab, () => {
-//   title.value = "Потверждения телефона";
-// })
-
 const onSubmit = async () => {
   // console.log(isFormValid.value, state.i_agree);
   validateForm();
@@ -123,14 +119,12 @@ const onSubmit = async () => {
 
 const { sendRecoveryCode } = authStore;
 const onSMSSubmit = async () => {
-  console.log(state.code.val);
   const response = await recoverPasswordCode({
     phone: state.phone.val,
     code: state.code.val,
     token: state.token,
   });
 
-  console.log(response);
   if (response.status === "success") {
     state.token = response.data.token;
     console.log(response.data.token);
@@ -167,7 +161,6 @@ const onPasswordSubmit = async () => {
     password_confirmation: state.password_confirmation.val,
   });
 
-  console.log(response);
   if (response.status === "success") {
     navigateTo({ name: "sign-in" });
   } else {
