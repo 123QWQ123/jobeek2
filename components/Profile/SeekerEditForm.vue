@@ -238,12 +238,13 @@ const handleSubmit = async (e) => {
   errorMessage.value = "";
   const formData = getFormData(values);
   if (values.hasOwnProperty("password")) {
-    if (values.password instanceof String) {
+    if (values.password !== "") {
       formData.append("password_confirmation", values.password);
     } else {
       formData.delete("password");
     }
   }
+
   formData.append("_method", "put");
   const resData = await updateSeeker(formData);
 
@@ -266,8 +267,9 @@ const handleSubmit = async (e) => {
     }
   } else {
     errorMessage.value = resData.message;
-    if (resData.data.hasOwnProperty("errors")) {
-      setErrors(resData.data.errors);
+    if (resData.hasOwnProperty("errors")) {
+      setErrors(resData.errors);
+      isLoading.value = false;
       return;
     }
     isLoading.value = false;

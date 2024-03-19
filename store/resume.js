@@ -73,6 +73,16 @@ export const useResumeStore = defineStore("resume", {
 
       return data;
     },
+    async syncResumes() {
+      const { data } = await useApi("seeker/resumes/sync", {
+        method: "get",
+        params: {
+          providers: ["hh", "superjob"],
+        },
+      });
+
+      return data;
+    },
 
     async disconnectProviders(payload) {
       const { data } = await useApi("seeker/disconnect_providers", {

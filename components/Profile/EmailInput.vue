@@ -51,12 +51,11 @@ const reAssignEmails = (newObject) => {
   currentValue.value = newObject.email ?? newObject.email_to_verify;
   if (!newObject.is_completed) {
     if (newObject.email !== null) {
-      isCheckButton.value = true;
+      isCheckButton.value = false;
       isConfirmButton.value = false;
-      console.log(1);
     } else {
-      isCheckButton.value = true;
-      isConfirmButton.value = false;
+      isCheckButton.value = false;
+      isConfirmButton.value = true;
     }
   } else {
     if (

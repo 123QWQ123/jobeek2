@@ -55,7 +55,9 @@ onMounted(() => {
   phoneMask.value = new IMask(phoneInputElement.value, {
     mask: "+{7}(000)000-00-00",
   });
-  phoneInputElement.value.addEventListener("input", () => {});
+  phoneInputElement.value.addEventListener("input", () => {
+    state.phone.val = phoneMask.value.unmaskedValue;
+  });
 });
 
 function clearValidity(input) {
@@ -77,10 +79,6 @@ const tabs = reactive({
   isConfirmTab: false,
   isResetTab: false,
 });
-
-// watch(isConfirmTab, () => {
-//   title.value = "Потверждения телефона";
-// })
 
 const onSubmit = async () => {
   // console.log(isFormValid.value, state.i_agree);
@@ -121,14 +119,12 @@ const onSubmit = async () => {
 
 const { sendRecoveryCode } = authStore;
 const onSMSSubmit = async () => {
-  console.log(state.code.val);
   const response = await recoverPasswordCode({
     phone: state.phone.val,
     code: state.code.val,
     token: state.token,
   });
 
-  console.log(response);
   if (response.status === "success") {
     state.token = response.data.token;
     console.log(response.data.token);
@@ -165,7 +161,6 @@ const onPasswordSubmit = async () => {
     password_confirmation: state.password_confirmation.val,
   });
 
-  console.log(response);
   if (response.status === "success") {
     navigateTo({ name: "sign-in" });
   } else {
@@ -222,7 +217,6 @@ function close() {
               type="tel"
               ref="phoneInputElement"
               name="tel"
-              v-model="state.phone.val"
               placeholder="Номер телефона"
               @focusout="clearValidity('phone')"
             />
