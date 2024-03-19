@@ -40,6 +40,7 @@ const categoryOptions = computed(() =>
     return { name: item.name, value: item.id };
   }),
 );
+const format_phone = computed(() => $format_phone(phone.value));
 const rateOptions = computed(() =>
   scamStore.rate_options.map((item) => {
     return { name: item.title, value: item.key };
@@ -106,7 +107,7 @@ const onSubmit = async () => {
           <img src="~/assets/img/logos/megafon.svg" alt="#" />
         </div>
         <div class="company-name">
-          <a href="#">{{ $format_phone(phone) }}</a
+          <a href="#">{{ $phone_number }}</a
           ><span class="count">{{ operator }}</span>
         </div>
 
