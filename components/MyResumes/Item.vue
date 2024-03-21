@@ -3,9 +3,9 @@
     <div class="resume-card">
       <div class="resume-card-body">
         <div class="resume-card-body-col">
-          <div class="photo">
-            <img class="w-100" :src="employerLogo" alt="#" />
-          </div>
+          <!--          <div class="photo">-->
+          <!--            <img class="w-100" :src="employerLogo" alt="#" />-->
+          <!--          </div>-->
           <div class="resume-card-name">
             <nuxt-link
               :to="{ name: 'my-resume-id', params: { id: item.id } }"

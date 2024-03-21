@@ -36,6 +36,7 @@
         <div class="text-danger">
           <ErrorMessage name="experience" />
         </div>
+        {{ errors }}
       </div>
     </transition>
   </div>
@@ -227,8 +228,6 @@ const errorMessage = ref(null);
 const isLoading = ref(false);
 const save = async (is_from_parent = false) => {
   validate();
-  console.log(meta.value);
-
   if (!meta.value.dirty) {
     return true;
   }
@@ -256,7 +255,7 @@ const save = async (is_from_parent = false) => {
   isChanged.value = false;
   isSaved.value = false;
   isUpdated.value = true;
-
+  setErrors({});
   resetForm({ values });
   if (is_from_parent) {
     return new Promise((resolve, reject) => {

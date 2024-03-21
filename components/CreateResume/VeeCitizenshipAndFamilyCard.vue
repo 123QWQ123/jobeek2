@@ -195,7 +195,7 @@ const schema = computed(() => {
       citizenship: z.array(z.number()).nonempty(),
       work_tickets: z.number().array().nonempty(),
       marital_status_id: z.number().optional(),
-      travel_time_id: z.number().optional(),
+      travel_time_id: z.number(),
       children_id: z.number().optional(),
     });
   }
@@ -212,7 +212,7 @@ const schema = computed(() => {
     citizenship: z.array(z.number()).nonempty(),
     work_tickets: z.number().array().nonempty(),
     marital_status_id: z.number().optional(),
-    travel_time_id: z.number().nullable(),
+    travel_time_id: z.number(),
     children_id: z.number().nullable(),
   });
 });
@@ -253,7 +253,7 @@ const getFields = (newObject) => {
     work_tickets: newObject?.work_tickets.map((item) => item.id),
     children_id: newObject?.children?.id ?? null,
     marital_status_id: newObject?.marital_status?.id ?? null,
-    travel_time_id: newObject?.travel_time?.id ?? null,
+    travel_time_id: newObject?.travel_time?.id,
   };
 };
 watch(
@@ -330,7 +330,7 @@ const save = async (is_from_parent = false) => {
   isChanged.value = false;
   isSaved.value = false;
   isUpdated.value = false;
-
+  setErrors({});
   resetForm({ values });
   if (is_from_parent) {
     return new Promise((resolve, reject) => {

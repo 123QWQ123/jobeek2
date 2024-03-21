@@ -221,8 +221,8 @@ const getFields = (newObject) => {
       institute: item.institute,
       profession: item.profession,
       end_year: item.end_year,
-      type_id: item.type.id,
-      form_id: item.form.id,
+      type_id: item.type?.id,
+      form_id: item.form?.id,
     })),
     education_level_id: newObject?.educations.education_level?.id,
   };
@@ -298,7 +298,7 @@ const save = async (is_from_parent = false) => {
   isChanged.value = false;
   isSaved.value = false;
   isUpdated.value = true;
-
+  setErrors({});
   resetForm({ values });
 };
 
