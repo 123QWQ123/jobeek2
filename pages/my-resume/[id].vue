@@ -40,7 +40,7 @@ watch(
 );
 const pageTitle = computed(() => {
   if (resumeID?.value) {
-    return "Мое резюме";
+    return "Jobeek - " + resumeStore.my_resume?.title;
   }
   return "Мое резюме";
 });
@@ -103,7 +103,7 @@ const publishableProviders = computed(() => {
 });
 
 const canBePublished = computed(() => {
-  if (hhPublishable.value && superjobPublishable.value) return true;
+  if (hhPublishable.value || superjobPublishable.value) return true;
   return false;
 });
 
@@ -368,9 +368,12 @@ const phone = ref("");
           />
 
           <p class="text-lg-end">
-            При создании ваканции вы соглашаетесь с
-            <a href="#">правилами работы сервиса</a> и даете согласие на
-            обработку персональных данных, разрешенных для распространения
+            При создании резюме вы соглашаетесь с
+            <a target="_blank" href="https://reg.jobeek.me/rules.pdf"
+              >правилами работы сервиса</a
+            >
+            и даете согласие на обработку персональных данных, разрешенных для
+            распространения
           </p>
           <div class="form-submit-container mt-2">
             <button
@@ -382,7 +385,7 @@ const phone = ref("");
             </button>
             <button
               class="button-accent"
-              :class="{ disabled: !canOnlyOnePublished }"
+              :class="{ disabled: !canBePublished }"
               type="submit"
               @click.prevent="saveAndPublishAll"
             >

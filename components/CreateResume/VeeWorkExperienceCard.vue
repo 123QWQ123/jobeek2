@@ -36,7 +36,6 @@
         <div class="text-danger">
           <ErrorMessage name="experience" />
         </div>
-        {{ errors }}
       </div>
     </transition>
   </div>
