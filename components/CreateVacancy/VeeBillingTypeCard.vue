@@ -1,7 +1,7 @@
 <template>
-  <div class="w-box" v-click-outside="save" @click="isFocused = true">
+  <div v-if="isHidden" class="w-box" v-click-outside="save">
     <div class="w-box-head">
-      <h3 class="title">Тип вакансии({{ isChanged }})</h3>
+      <h3 class="title">Биллинг({{ isChanged }})</h3>
       <span
         class="arrow"
         :class="{ up: isCollapsed, 'is-completed': isCompleted }"
@@ -18,29 +18,9 @@
           <label>Тип вакансии:<b>*</b></label>
           <div class="input-wrapper mt-2">
             <VeeCustomSelect
-              name="type_id"
-              :options="dictionaryStore.vacancy_types_formatted"
+              :options="vacancyBillingTypeOptions"
+              name="billing_type_id"
               label="Выберите"
-            />
-          </div>
-        </div>
-
-        <div class="input-row" v-if="isAnonymous">
-          <label>название компании для анонимных вакансий:</label>
-          <div class="input-wrapper mt-2">
-            <CreateVacancyTextInput
-              name="custom_employer_name"
-              placeholder="ООО"
-            />
-          </div>
-        </div>
-
-        <div class="input-row" v-if="isDirect">
-          <label>URL отклика для прямых вакансий:</label>
-          <div class="input-wrapper mt-2">
-            <CreateVacancyTextInput
-              name="response_url"
-              placeholder="https://"
             />
           </div>
         </div>
@@ -50,10 +30,10 @@
 </template>
 
 <script setup>
-import { useVacancyStore } from "~/store/vacancy";
-import { useProfileStore } from "~/store/profile";
+import { useVacancyStore } from "~/store/vacancy.js";
+import { useProfileStore } from "~/store/profile.js";
 import { useRuntimeConfig } from "#app";
-import { useDiff } from "~/composables/useDiff";
+import { useDiff } from "~/composables/useDiff.js";
 import { z } from "~/hooks/ru-zod.js";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
@@ -69,25 +49,26 @@ const CONFIG = useRuntimeConfig();
 const route = useRoute();
 
 const { providers } = useProviders();
+const isHidden = ref(providers.value.hh ?? false);
+watch(
+  () => providers.value,
+  (newProviders) => {
+    isHidden.value = newProviders?.hh;
+  },
+);
+const vacancyBillingTypeOptions = computed(() => {
+  return dictionaryStore.vacancy_billing_types.map((item) => ({
+    name: item.name,
+    value: item.id,
+  }));
+});
+
 const ID = computed(() => route.params.id);
 const type = computed(() => route.query.type);
 const { updateVacancy, updateDraft, getMyVacancy, getMyDraft } = vacancyStore;
 
 const { employer } = profileStore;
 const my_vacancy = computed(() => vacancyStore.my_vacancy);
-
-const isAnonymous = computed(() => {
-  if (values) {
-    return values.type_id?.toString() === "48";
-  }
-  return false;
-});
-const isDirect = computed(() => {
-  if (values) {
-    return values.type_id?.toString() === "49";
-  }
-  return false;
-});
 
 const isSaved = ref(false);
 const isChanged = ref(false);
@@ -96,29 +77,23 @@ const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
 const schema = computed(() => {
-  if (providers.value.hh === true && providers.value.superjob === false) {
-    return z.object({
-      type_id: z.number(),
-      custom_employer_name: z.string().nullable().optional(),
-      response_url: z.string().nullable().optional(),
-    });
-  }
-  if (providers.value.hh === false && providers.value.superjob === true) {
-    return z.object({
-      type_id: z.number(),
-      custom_employer_name: z.string().optional().nullable(),
-      response_url: z.string().optional().nullable(),
-    });
-  }
+  // if (providers.value.hh === true && providers.value.superjob === false) {
+  //   return z.object({
+  //     billing_type_id: z.number(),
+  //   });
+  // }
+  // if (providers.value.hh === false && providers.value.superjob === true) {
+  //   return z.object({
+  //     billing_type_id: z.number(),
+  //   });
+  // }
   return z.object({
-    type_id: z.number(),
-    custom_employer_name: z.string().nullable().optional(),
-    response_url: z.string().nullable().optional(),
+    billing_type_id: z.number(),
   });
 });
 
 const initialValues = {
-  type_id: null,
+  billing_type_id: null,
 };
 const {
   values,
@@ -136,43 +111,37 @@ const {
 });
 
 const state = reactive({
-  type_id: {
-    is_hidden: false,
-  },
-  custom_employer_name: {
-    is_hidden: false,
-  },
-  response_url: {
+  billing_type_id: {
     is_hidden: false,
   },
 });
 
 const fields = ref({
   hh: {
-    type_id: true,
-    custom_employer_name: true,
-    response_url: true,
+    billing_type_id: true,
   },
   superjob: {
-    type_id: true,
-    custom_employer_name: true,
-    response_url: true,
+    billing_type_id: null,
   },
 });
 
 const { walkThroughFields } = useProviderFields(state, fields);
 walkThroughFields(providers.value);
+const dictionaryStore = useDictionaryStore();
+
+const { getVacancyBillingTypes } = dictionaryStore;
 
 onMounted(() => {
   walkThroughFields(providers.value);
+  setTimeout(async () => {
+    await getVacancyBillingTypes();
+  }, 500);
 });
 
 const sectionData = ref({});
 const getFields = (newObject) => {
   return {
-    type_id: newObject.type?.id,
-    custom_employer_name: newObject.custom_employer_name,
-    response_url: newObject.response_url,
+    billing_type_id: newObject.billing_type?.id,
   };
 };
 watch(
@@ -184,14 +153,6 @@ watch(
   },
 );
 
-const dictionaryStore = useDictionaryStore();
-
-const { getVacancyTypes } = dictionaryStore;
-onMounted(() => {
-  setTimeout(async () => {
-    await getVacancyTypes();
-  }, 500);
-});
 onMounted(() => {
   const newData = vacancyStore.my_vacancy;
   if (newData) {
@@ -226,7 +187,7 @@ const save = async (is_from_parent = false) => {
   errorMessage.value = "";
   let jsonData = { ...JSON.parse(JSON.stringify(values)) };
   let resData = {};
-  jsonData.action = "UpdateType";
+  jsonData.action = "UpdateBillingType";
   if (type.value === "draft") {
     resData = await updateDraft(ID.value, jsonData);
   } else {

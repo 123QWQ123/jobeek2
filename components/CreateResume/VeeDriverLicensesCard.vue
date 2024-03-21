@@ -216,7 +216,7 @@ const save = async (is_from_parent = false) => {
   isChanged.value = false;
   isSaved.value = false;
   isUpdated.value = false;
-
+  setErrors({});
   resetForm({ values });
   if (is_from_parent) {
     return new Promise((resolve, reject) => {

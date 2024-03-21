@@ -28,6 +28,7 @@
     <PhoneInputWithCaptchaAndConfirmation
       v-show="!state.phone.is_hidden"
       :name="`${props.name}[${idx}].phone`"
+      :required="providers.hh"
     />
 
     <div class="row" v-show="!state.is_preferred.is_hidden">

@@ -1,7 +1,7 @@
 <template>
   <div class="w-box" v-click-outside="save" @click="isFocused = true">
     <div class="w-box-head">
-      <h3 class="title">Контакты({{ isChanged }})</h3>
+      <h3 class="title">Языки({{ isChanged }})</h3>
       <span
         class="arrow"
         :class="{ up: isCollapsed, 'is-completed': isCompleted }"
@@ -186,6 +186,7 @@ const save = async (is_from_parent = false) => {
     }
     return;
   }
+  setErrors({});
   resetForm({ values });
   isSaved.value = false;
   isUpdated.value = false;

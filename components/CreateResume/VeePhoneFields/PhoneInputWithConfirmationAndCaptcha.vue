@@ -124,11 +124,20 @@ import { useField } from "vee-validate";
 import { useResumeStore } from "~/store/resume.js";
 import useResumeHooks from "~/hooks/useResumeHooks.js";
 
-const props = defineProps(["name"]);
+const props = defineProps({
+  name: {
+    required: true,
+    default: "phone",
+  },
+  required: {
+    required: false,
+    default: true,
+  },
+});
 const { name } = toRefs(props);
 const emit = defineEmits(["remove"]);
 
-const { value, errorMessage } = useField(() => props.name);
+const { value, setValue, errorMessage } = useField(() => props.name);
 
 const resumeStore = useResumeStore();
 const { getPhoneConfirmationCode, confirmPhoneConfirmationCode, getPhoneInfo } =
@@ -167,7 +176,6 @@ const confirmation_code = reactive({
   val: null,
 });
 const onChangeCountryCode = async (newCountryCode) => {
-  console.log(newCountryCode);
   if (typeof newCountryCode === "string") {
     phone.val.country_code = newCountryCode;
   }
@@ -183,6 +191,7 @@ const onStartEditing = () => {
 const onCancelConfirmation = () => {
   isConfirmationButtonClicked.value = false;
   phone.disabled = false;
+  phone.val = "";
   isCaptchaUrlShown.value = false;
   isConfirmationButtonShown.value = false;
   phoneMessage.value = null;
@@ -197,38 +206,40 @@ const onClickSolveCaptcha = () => {
 const onPhoneChange = async (e) => {
   isPhoneChecking.value = true;
   const phoneInput = phone.val.replace("+", "");
-  const phoneInfo = await getPhoneInfo({ phone: phoneInput });
-  if (phoneInfo.status !== "success") {
-    phoneMessage.value = phoneInfo.message;
-    phone.disabled = true;
-    isPhoneChecking.value = false;
-    return;
-  }
-  const { phone: phoneObject } = phoneInfo.data.hh;
-  if (!phoneObject) {
-    isPhoneChecking.value = false;
-    value.value = phoneInput;
-    return;
-  }
+  if (props.required) {
+    const phoneInfo = await getPhoneInfo({ phone: phoneInput });
+    if (phoneInfo.status !== "success") {
+      phoneMessage.value = phoneInfo.message;
+      phone.disabled = true;
+      isPhoneChecking.value = false;
+      return;
+    }
+    const { phone: phoneObject } = phoneInfo.data.hh;
+    if (!phoneObject) {
+      isPhoneChecking.value = false;
+      value.value = phoneInput;
+      return;
+    }
 
-  if (!phoneObject.need_verification) {
-    isPhoneChecking.value = false;
-    phoneMessage.value = null;
-    value.value = phoneInput;
-    return;
-  }
-  const country_code = phone.country_code;
+    if (!phoneObject.need_verification) {
+      isPhoneChecking.value = false;
+      phoneMessage.value = null;
+      value.value = phoneInput;
+      return;
+    }
+    const country_code = phone.country_code;
 
-  if (["UZ", "RU", "KZ", "BY"].includes(country_code)) {
-    phone.disabled = true;
-    isPhoneChanged.value = true;
+    if (["UZ", "RU", "KZ", "BY"].includes(country_code)) {
+      phone.disabled = true;
+      isPhoneChanged.value = true;
 
-    isConfirmationButtonShown.value = true;
-    isPhoneConfirmed.value = false;
-    isPhoneChecking.value = false;
-    return;
+      isConfirmationButtonShown.value = true;
+      isPhoneConfirmed.value = false;
+      isPhoneChecking.value = false;
+      return;
+    }
   }
-  value.value = phoneInput;
+  setValue(phoneInput);
   isPhoneChecking.value = false;
 };
 const onSendConfirmationCode = async () => {

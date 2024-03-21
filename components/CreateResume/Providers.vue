@@ -1,7 +1,7 @@
 <template>
   <div class="carryover-box">
     <div class="carryover-box-label">
-      Есть вакансии на hh или SuperJob? Просто перенесите его!
+      Есть резюме на HH или SuperJob? Просто перенесите его.
     </div>
 
     <div class="import-grid">

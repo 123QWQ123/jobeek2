@@ -42,7 +42,7 @@
             <button
               class="group-action ic-btn fav-btn"
               :class="{ active: isFavorite }"
-              @click="toggleFavorite"
+              @click="removeFavorite"
             >
               <svg
                 width="23"
@@ -66,32 +66,32 @@
 
 <script setup>
 import moment from "moment";
-import { useVacancyStore } from "../../store/vacancy";
+import { useVacancyStore } from "~/store/vacancy";
 import Swal from "sweetalert2";
+import { toast } from "vue3-toastify";
+
 const props = defineProps(["item"]);
 const { item } = props;
 
 const isFavorite = ref(item.is_favorite ?? false);
 
 const vacancyStore = useVacancyStore();
-const { addToFavorite, removeFromFavorite } = vacancyStore;
-const toggleFavorite = async () => {
+const { getMyFavoriteVacancies, removeFromFavorite } = vacancyStore;
+const removeFavorite = async () => {
   let response = {};
-  if (!isFavorite.value === true) {
-    response = await addToFavorite({ resume_id: item.id, provider: "hh" });
-  } else {
-    response = await removeFromFavorite({ id: item.id, provider: "hh" });
-  }
-  if (response.status === "success") {
-    isFavorite.value = !isFavorite.value;
-  } else {
+  response = await removeFromFavorite(props.item.id, { provider: "hh" });
+  console.log(response);
+  if (response.status !== "success") {
     Swal.fire({
       title: "Ошибка!",
       text: response.message,
       icon: "error",
       confirmButtonText: "ОК",
     });
+    return;
   }
+  toast.info("Вы успешно удалили из избранных.", { autoClose: 3000 });
+  await getMyFavoriteVacancies({});
 };
 const employerLogo = computed(() => {
   if (item && item.logo) {

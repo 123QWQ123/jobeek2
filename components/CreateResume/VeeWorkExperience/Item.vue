@@ -237,11 +237,14 @@ const resumeStore = useResumeStore();
 onMounted(() => {
   const newResume = resumeStore.my_resume;
   if (newResume) {
-    const city = newResume.experience[props.idx].city;
-    console.log(city);
+    console.log(newResume.experience);
+    if (newResume.experience.length > 0) {
+      const city = newResume.experience[props.idx].city;
+      console.log(city);
 
-    if (city.hasOwnProperty("country_id")) {
-      onSearchCitiesByCountryId(city.country_id, city.name);
+      if (city && city.hasOwnProperty("country_id")) {
+        onSearchCitiesByCountryId(city.country_id, city.name);
+      }
     }
   }
 });

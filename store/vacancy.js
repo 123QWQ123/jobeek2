@@ -100,7 +100,7 @@ export const useVacancyStore = defineStore("vacancy", {
     },
 
     async synVacancies() {
-      const { data } = await useApi("employer/vacancies/import", {
+      const { data } = await useApi("employer/vacancies/sync", {
         method: "POST",
         payload: {
           providers: ["hh", "superjob"],
@@ -307,8 +307,9 @@ export const useVacancyStore = defineStore("vacancy", {
         method: "get",
         params: payload,
       });
-      if (data && "items" in data) {
-        this.my_favorite_vacancies = data.items;
+      console.log(data);
+      if (data && data.data && "items" in data.data) {
+        this.my_favorite_vacancies = data.data.items;
         if (payload.page) {
           this.current_page = payload.page;
         }

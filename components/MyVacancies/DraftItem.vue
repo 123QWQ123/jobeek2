@@ -3,9 +3,9 @@
     <div class="resume-card">
       <div class="resume-card-body">
         <div class="resume-card-body-col">
-          <div class="photo">
-            <img class="w-100" :src="employerLogo" alt="#" />
-          </div>
+          <!--          <div class="photo">-->
+          <!--            <img class="w-100" :src="employerLogo" alt="#" />-->
+          <!--          </div>-->
           <div class="resume-card-name">
             <nuxt-link
               :to="{
@@ -19,11 +19,8 @@
             </nuxt-link>
             <!--            <span class="location">{{ cityAddress }} </span>-->
 
-            <span>
-              <span class="price">
-                От {{ vueNumberFormat(salaryAmount, {}) }}
-                {{ props.item.currency }}</span
-              >
+            <span class="price">
+              От {{ vueNumberFormat(salaryAmount, {}) }}
               {{ currency }}
             </span>
           </div>
@@ -311,13 +308,14 @@ const salaryAmount = computed(() => {
   return 0;
 });
 const currency = computed(() => {
+  console.log(props.item.salary);
   if (props.item.salary) {
     const options = useCurrencyOptions();
     const found = options.find(
-      (item) => item.value === props.item.salary_currency,
+      (item) => item.value === props.item.salary.currency,
     );
-    if (found) return found.symbol;
-    return props.item.salary.currency.to;
+    if (found) return found.value;
+    return props.item.salary.currency;
   }
   return "RUB";
 });
@@ -433,7 +431,7 @@ const toggle = async (provider) => {
     return;
   }
 
-  await getMyResumes();
+  await getMyDrafts();
   isSuperjobLoading.value = false;
   isHHLoading.value = false;
 };

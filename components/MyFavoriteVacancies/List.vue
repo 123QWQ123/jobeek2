@@ -10,12 +10,23 @@
       ></VacanciesItem>
     </ul>
 
-    {{ my_favorite_vacancies }}
+    <!--    {{ my_favorite_vacancies }}-->
     <div class="footer mt-3" v-if="items.length">
       <button class="btn btn-primary" @click="prevPage">Prev</button>
       <button class="btn btn-primary ms-2" @click="nextPage">Next</button>
     </div>
-    <h3 v-else>К сожалению ничего не нашли.</h3>
+    <div class="notification no-ic-bg" v-else>
+      <div class="notification-text">
+        <strong class="title">У вас пока нет вакансий в избранном</strong>
+        <p>Сохраняйте вакансии, нажимая на звёздочку</p>
+      </div>
+      <nuxt-link
+        class="notification-button button-accent"
+        :to="{ name: 'search-vacancies' }"
+        >Найти вакансию
+      </nuxt-link>
+    </div>
+    <!--    <h3 >К сожалению ничего не нашли.</h3>-->
   </div>
 </template>
 

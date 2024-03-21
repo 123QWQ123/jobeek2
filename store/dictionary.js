@@ -249,7 +249,6 @@ export const useDictionaryStore = defineStore("dictionary", {
           payload,
         },
       );
-      console.log(response);
       if (response && "data" in response) {
         if (
           response &&

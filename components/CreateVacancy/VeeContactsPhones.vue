@@ -87,18 +87,6 @@ const isChanged = ref(false);
 const isFirst = ref(true);
 const isUpdated = ref(false);
 
-// const isHidden = computed(() => {
-//   if (!!props.providers.hh) {
-//     return false;
-//   }
-//   return true;
-// });
-// watch(props.providers, (newProviders) => {
-//   if (!isHidden.value) {
-//     reconfigurePhoneFields();
-//   }
-// });
-
 const isAdditionalPhoneShown = ref(false);
 
 const state = ref({
@@ -123,92 +111,6 @@ const state = ref({
     is_hidden: true,
   },
 });
-// const emitChanges = (key, value) => {
-//   console.log(key, value);
-//   const passData = {
-//     phone: state.value["phone"].val,
-//     phone_comment: state.value["phone_comment"].val,
-//     additional_phone: state.value["additional_phone"].val,
-//     additional_phone_comment: state.value["additional_phone_comment"].val,
-//   };
-//   if (!isAdditionalPhoneShown.value) {
-//     delete passData["additional_phone"];
-//     delete passData["additional_phone_comment"];
-//   }
-//
-//   emit("update:modelValue", passData);
-// };
-
-// watch(() => useWatchStateValues(state.value, true), emitChanges);
-
-const additional_phone_element = ref();
-const additional_phone_mask = ref();
-
-// const reconfigurePhoneFields = () => {
-//   nextTick(() => {
-//     phone_mask.value = new IMask(phone_element.value, {
-//       mask: "+{7}(000)000-00-00",
-//     });
-//     phone_element.value.addEventListener("input", (e) => {
-//       state.value.phone.val = phone_mask.value.unmaskedValue;
-//     });
-//
-//     const newValue = props.modelValue;
-//     phone_mask.value.value = (newValue.phone ?? "").replace("+", "");
-//     state.value.phone.val = (newValue.phone ?? "").replace("+", "");
-//     state.value.phone_comment.val = newValue.phone_comment;
-//     if (newValue.additional_phone) {
-//       isAdditionalPhoneShown.value = true;
-//       if (additional_phone_mask.value) {
-//         additional_phone_mask.value.value = (
-//           newValue.additional_phone ?? ""
-//         ).replace("+", "");
-//       }
-//       state.value.additional_phone.val = (
-//         newValue.additional_phone ?? ""
-//       ).replace("+", "");
-//       state.value.additional_phone_comment.val =
-//         newValue.additional_phone_comment;
-//     }
-//   });
-// };
-// onMounted(() => {
-//   if (!isHidden.value) {
-//     reconfigurePhoneFields();
-//   }
-// });
-
-// watch(
-//   () => isAdditionalPhoneShown.value,
-//   (newIsAdditionalPhoneShown) => {
-//     if (newIsAdditionalPhoneShown) {
-//       nextTick(() => {
-//         additional_phone_mask.value = new IMask(
-//           additional_phone_element.value,
-//           {
-//             mask: "+{7}(000)000-00-00",
-//           },
-//         );
-//         if (state.value.additional_phone.val) {
-//           additional_phone_element.value.addEventListener("input", (e) => {
-//             state.value.additional_phone.val =
-//               additional_phone_mask.value.unmaskedValue;
-//           });
-//           additional_phone_mask.value.value =
-//             state.value.additional_phone.val.toString();
-//         } else {
-//           additional_phone_element.value.addEventListener("input", (e) => {
-//             state.value.additional_phone.val =
-//               additional_phone_mask.value.unmaskedValue;
-//           });
-//         }
-//       });
-//     } else {
-//       state.value.additional_phone.val =
-//         additional_phone_mask.value.unmaskedValue;
-//     }
-//   },
-// );
 const dictionaryStore = useDictionaryStore();
 const onFocusInput = (key) => {
   if (errors.value instanceof Object) {

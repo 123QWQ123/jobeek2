@@ -174,6 +174,7 @@ const save = async (is_from_parent = false) => {
     }
     return;
   }
+  setErrors({});
   resetForm({ values });
   isSaved.value = false;
   isUpdated.value = false;

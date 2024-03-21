@@ -85,7 +85,7 @@
         <!--        <br />-->
         <!--        <br />-->
 
-        <!--        {{ values }}-->
+        {{ values }}
       </div>
     </transition>
   </div>
@@ -147,7 +147,7 @@ const schema = computed(() => {
 const initialValues = {
   contacts: {
     name: null,
-    phones: [],
+    phones: {},
     email: null,
     company_name: null,
     company_url: null,
@@ -215,7 +215,18 @@ onMounted(() => {
 const sectionData = ref({});
 const getFields = (newObject) => {
   return {
-    contacts: newObject.contacts,
+    contacts: {
+      ...newObject.contacts,
+      phones: {
+        ...{
+          ...newObject.contacts.phones,
+          additional_phone:
+            newObject.contacts.phones.additional_phone ?? undefined,
+          additional_phone_comment:
+            newObject.contacts.phones.additional_phone_comment ?? undefined,
+        },
+      },
+    },
   };
 };
 watch(
@@ -259,7 +270,7 @@ const save = async (is_from_parent = false) => {
   isLoading.value = true;
   setErrors({});
   errorMessage.value = "";
-  let jsonData = { ...values };
+  let jsonData = { ...JSON.parse(JSON.stringify(values)) };
   let resData = {};
 
   jsonData.action = "UpdateContacts";
@@ -278,6 +289,7 @@ const save = async (is_from_parent = false) => {
     }
     return;
   }
+  setErrors({});
   resetForm({ values });
   isSaved.value = false;
   isUpdated.value = false;

@@ -48,10 +48,10 @@ watch(
   },
 );
 const pageTitle = computed(() => {
-  if (vacancyID?.value) {
-    return "Мое резюме";
+  if (my_vacancy.value) {
+    return "Jobeek - " + my_vacancy.value.name;
   }
-  return "Мое резюме";
+  return "Jobeek - ";
 });
 useHead({
   title: pageTitle,
@@ -372,7 +372,7 @@ const phone = ref("");
             ref="languages_el"
             :providers="providers"
           />
-          <CreateVacancyBillingTypeCard
+          <CreateVacancyVeeBillingTypeCard
             :key="`billing_el_${providers.hh + providers.superjob}`"
             ref="billing_el"
             :providers="providers"

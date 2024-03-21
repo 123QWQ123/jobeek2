@@ -248,31 +248,29 @@ const handleSubmit = async (e) => {
   formData.append("_method", "put");
   const resData = await updateSeeker(formData);
 
-  if (resData.status === "success") {
-    await getUser();
-    await refreshSeeker();
-    Swal.fire({
-      title: "Успешно!",
-      text: resData.message,
-      icon: "success",
-      confirmButtonText: "ОК",
-      preConfirm: () => {
-        navigateTo({ path: "/", query: {} });
-      },
-    });
-    isLoading.value = false;
-
-    if (routeErrorMessage.value) {
-      navigateTo({ name: "profile", query: {} });
-    }
-  } else {
+  if (resData.status !== "success") {
     errorMessage.value = resData.message;
     if (resData.hasOwnProperty("errors")) {
       setErrors(resData.errors);
-      isLoading.value = false;
-      return;
     }
     isLoading.value = false;
+    return;
+  }
+  await getUser();
+  await refreshSeeker();
+  Swal.fire({
+    title: "Успешно!",
+    text: resData.message,
+    icon: "success",
+    confirmButtonText: "ОК",
+    preConfirm: () => {
+      // navigateTo({ path: "/", query: {} });
+    },
+  });
+  isLoading.value = false;
+
+  if (routeErrorMessage.value) {
+    navigateTo({ name: "profile", query: {} });
   }
 };
 </script>

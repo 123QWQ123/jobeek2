@@ -196,7 +196,7 @@ const save = async (is_from_parent = false) => {
   isSaved.value = false;
   isUpdated.value = false;
   isFocused.value = false;
-
+  setErrors({});
   resetForm({ values });
 
   if (is_from_parent) {

@@ -251,7 +251,7 @@ const save = async (is_from_parent = false) => {
   isChanged.value = false;
   isSaved.value = false;
   isUpdated.value = true;
-
+  setErrors({});
   resetForm({ values });
 };
 

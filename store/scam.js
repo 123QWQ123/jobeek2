@@ -78,8 +78,6 @@ export const useScamStore = defineStore("scam", {
         method: "get",
         params: payload,
       });
-      console.log(data);
-
       if (data) {
         this.frequency_options = data.frequency;
         this.rate_options = data.rate;
