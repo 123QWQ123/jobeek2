@@ -15,6 +15,7 @@ const handleUploadFile = async (e) => {
   if (file && file[0]) {
     let reader = new FileReader();
     reader.onload = (e) => {
+      base64.value = e.target.result;
       // state.photo.base64 = e.target.result;
     };
     reader.readAsDataURL(file[0]);
