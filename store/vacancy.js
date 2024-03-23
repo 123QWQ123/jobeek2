@@ -60,6 +60,25 @@ export const useVacancyStore = defineStore("vacancy", {
     top_20_industries: (state) => {
       return state.industries.slice(0, 20);
     },
+    industries_formatted_for_filter: (state) => {
+      let new_items = JSON.parse(JSON.stringify(state.industries));
+      new_items = new_items.map((item) => {
+        item.parent_id = null;
+        item.items = item.industries.map((sub_item) => {
+          sub_item.parent_id = item.id;
+          return sub_item;
+        });
+        delete item.industries;
+        return item;
+      });
+      let items = [];
+      new_items.map((item) => {
+        items.push(item);
+        items.concat(item.items);
+      });
+      console.log(items);
+      return items;
+    },
     my_city_vacancies: (state) => {
       return state.vacancies_in_my_city.slice(0, 3);
     },
@@ -355,15 +374,10 @@ export const useVacancyStore = defineStore("vacancy", {
       }
       const response = await useApi("industries", {
         method: "get",
-        payload,
+        params: payload,
       });
       if (response && "data" in response) {
-        let industries = response.data.data ?? [];
-        let new_items = [];
-        industries.map(
-          (item) => (new_items = new_items.concat(item.industries)),
-        );
-        this.industries = new_items;
+        this.industries = response.data.data ?? [];
         return this.industries;
       }
       return response;
@@ -371,7 +385,7 @@ export const useVacancyStore = defineStore("vacancy", {
     async getMetros(payload = URLSearchParams) {
       const { data } = await useApi("metro", {
         method: "get",
-        payload,
+        params: payload,
       });
       if (data && "data" in data) {
         this.metros = data.data ?? [];

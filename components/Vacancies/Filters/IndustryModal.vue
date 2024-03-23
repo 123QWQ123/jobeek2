@@ -1,24 +1,40 @@
 <template>
-  <div class="filter-modal-overlay filter-modal-overlay_visible"  >
+  <div class="filter-modal-overlay filter-modal-overlay_visible">
     <div class="filter-modal-container filter-modal-container_visible">
       <div class="filter-modal">
         <div class="filter-modal-header">
           <span class="filter-modal-title">{{ title }} </span>
-          <br/>
+          <br />
           <div class="filter-tree-selector-popup-search">
             <fieldset class="input-wrapper">
-              <input placeholder="Быстрый поиск" type="search" class="filter-input-text" v-model="searchInput" @input="onSearch">
+              <input
+                placeholder="Быстрый поиск"
+                type="search"
+                class="filter-input-text"
+                v-model="searchInput"
+                @input="onSearch"
+              />
             </fieldset>
           </div>
         </div>
         <div class="filter-tree-selector-popup">
-          <div class="filter-tree-selector-popup-content" v-if="groupedSpecs.length > 0">
-            <VacanciesFiltersIndustryItem v-if="isSearching" v-for="item in groupedSpecs" :item="item" :items="item.items" :key="item.id"
-                                                @set="updateSelectedSpecs"
-                                                :is-open="true"
+          <div class="filter-tree-selector-popup-content" v-if="!isLoading">
+            <VacanciesFiltersIndustryItem
+              v-if="isSearching"
+              v-for="item in groupedSpecs"
+              :item="item"
+              :items="item.items"
+              :key="item.id"
+              @set="updateSelectedSpecs"
+              :is-open="true"
             />
-            <VacanciesFiltersIndustryItem v-else v-for="item in groupedSpecs" :item="item" :items="item.items" :key="item.id"
-                                                @set="updateSelectedSpecs"
+            <VacanciesFiltersIndustryItem
+              v-else
+              v-for="item in groupedSpecs"
+              :item="item"
+              :items="item.items"
+              :key="item.id"
+              @set="updateSelectedSpecs"
             />
           </div>
           <div class="filter-tree-selector-popup-content" v-else>
@@ -31,7 +47,11 @@
         <div class="filter-modal-footer mt-3">
           <div class="filter-tree-selector-popup-footer">
             <div class="filter-form-spacer">
-              <button @click="close" class="btn button-xs sign-in-btn" type="button">
+              <button
+                @click="close"
+                class="btn button-xs sign-in-btn"
+                type="button"
+              >
                 <span>Отменить</span>
               </button>
             </div>
@@ -51,7 +71,9 @@
 </template>
 
 <script setup>
-const {isOpen, items: specializations, modelValue: selected_ids, title} = defineProps({
+import { useField } from "vee-validate";
+
+const props = defineProps({
   items: {
     required: true,
   },
@@ -62,44 +84,63 @@ const {isOpen, items: specializations, modelValue: selected_ids, title} = define
     required: false,
   },
   modelValue: {
-    required: true,
-  }
-});
-const emit = defineEmits({
-  toggle: {
-    required: true
+    required: false,
   },
-  'update:modelValue': {
-    required: true
-  }
+  name: {
+    required: true,
+  },
 });
 
+const { isOpen, items: specializations, modelValue, title } = props;
+
+const emit = defineEmits({
+  toggle: {
+    required: true,
+  },
+  "update:modelValue": {
+    required: true,
+  },
+});
+
+const {
+  value: industry_ids,
+  setValue,
+  errorMessage,
+} = useField(() => props.name);
+
+// const selected_ids = ref(industry_ids.value ?? []);
+const options = ref(props.items ?? []);
 const selectedSpecs = ref({});
+const isLoading = ref(false);
 
 const apply = () => {
   let ids = [];
-  Object.keys(selectedSpecs.value).map((item_id) => ids = ids.concat(selectedSpecs.value[item_id]));
-  emit('update:modelValue', ids);
-}
+  Object.keys(selectedSpecs.value).map(
+    (item_id) => (ids = ids.concat(selectedSpecs.value[item_id])),
+  );
+  ids = ids.filter((item) => item);
+  setValue(ids);
+};
 const searchInput = ref("");
 
 const isSearching = computed(() => {
-  if (searchInput.value === ""){
+  if (searchInput.value === "") {
     return false;
-  } return true;
+  }
+  return true;
 });
 const groupedSpecs = ref([]);
 
 const onSearch = () => {
-  prepare(specializations);
-}
+  prepare(props.items);
+};
 const prepare = (newValues, is_first = false) => {
-
-  let groupItems = newValues.filter(newItem => newItem.parent_id === null);
-  groupItems = groupItems.map(newItem => {
-    newItem.items = [];
+  console.log(newValues);
+  const selected_ids = [...industry_ids.value];
+  let groupItems = newValues.filter((newItem) => newItem.parent_id === null);
+  groupItems = groupItems.map((newItem) => {
     let is_checked = false;
-    if (Array.from(selected_ids).includes(newItem.id)){
+    if (Array.from(selected_ids).includes(newItem.id)) {
       is_checked = true;
     }
     newItem.is_checked = is_checked;
@@ -107,58 +148,64 @@ const prepare = (newValues, is_first = false) => {
     return newItem;
   });
 
-  for (let i = 0; i < groupItems.length; i++){
+  for (let i = 0; i < groupItems.length; i++) {
     const item = groupItems[i];
-    for (let j = 0; j < newValues.length; j++){
-      const sub_item = newValues[j];
-      if (!sub_item.parent_id) continue;
+    for (let j = 0; j < item.items.length; j++) {
+      const sub_item = item.items[j];
+      if (!sub_item.hasOwnProperty("parent_id")) continue;
 
-      if (isSearching.value){
-        if (!sub_item.title.toLowerCase().includes(searchInput.value.toLowerCase())) continue;
+      if (isSearching.value) {
+        if (
+          !sub_item.title
+            .toLowerCase()
+            .includes(searchInput.value.toLowerCase())
+        ) {
+          continue;
+        }
       }
 
       let is_checked = false;
-      if (sub_item && sub_item.parent_id){
-        if (sub_item.parent_id === item.id){
-          if (Array.from(selected_ids).includes(sub_item.id)){
-            is_checked = true;
-          }
-          groupItems[i].items.push({
-            id: sub_item.id,
-            name: sub_item.title,
-            is_checked,
-          })
+      if (!sub_item) {
+        continue;
+      }
+      if (sub_item.parent_id === null) {
+        sub_item.parent_id = item.id;
+        sub_item.is_checked = false;
+      }
+      if (sub_item.parent_id === item.id) {
+        if (Array.from(selected_ids).includes(sub_item.id)) {
+          is_checked = true;
         }
       }
+      sub_item.is_checked = is_checked;
     }
   }
-  if (isSearching.value){
-    groupedSpecs.value = groupItems.filter(spec => spec.items.length);
-  }else{
+  if (isSearching.value) {
+    groupedSpecs.value = groupItems.filter((spec) => spec.items.length);
+  } else {
     groupedSpecs.value = groupItems;
   }
-
-}
+  console.log(groupItems);
+};
 
 onMounted(() => {
   setTimeout(() => {
-    prepare(specializations);
-  }, 100)
-})
-
+    prepare(props.items);
+  }, 100);
+});
 
 const updateSelectedSpecs = (id, newSelections) => {
-  const newItems = {...selectedSpecs.value};
+  console.log(newSelections);
+  const newItems = { ...selectedSpecs.value };
   newItems[id] = newSelections;
   selectedSpecs.value = newItems;
 };
 
-const close = () => emit('toggle');
-
+const close = () => emit("toggle");
 </script>
 
 <style scoped>
-.check-block label{
+.check-block label {
   white-space: pre-wrap;
 }
 
@@ -172,19 +219,21 @@ const close = () => emit('toggle');
   background-color: initial;
   visibility: hidden;
   opacity: 0;
-  transition-property: background-color,visibility,opacity;
-  transition-duration: .15s;
+  transition-property: background-color, visibility, opacity;
+  transition-duration: 0.15s;
   transition-timing-function: linear;
 }
 
 .filter-modal-overlay_visible {
-  background-color: rgba(48,50,51,.9);
+  background-color: rgba(48, 50, 51, 0.9);
   visibility: visible;
   opacity: 1;
 }
+
 .filter-modal-container_visible {
   opacity: 1;
 }
+
 .filter-modal-container {
   padding: 20px;
 }
@@ -200,7 +249,7 @@ const close = () => emit('toggle');
   z-index: 1041;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
-  transition: opacity .15s linear;
+  transition: opacity 0.15s linear;
   opacity: 1;
   display: flex;
   flex-direction: column;
@@ -217,7 +266,7 @@ const close = () => emit('toggle');
   user-select: text;
   background-color: #fff;
   box-sizing: border-box;
-  box-shadow: 0 10px 15px 0 rgba(48,50,51,.4);
+  box-shadow: 0 10px 15px 0 rgba(48, 50, 51, 0.4);
   margin: auto;
   padding: 30px;
   overflow: auto;
@@ -235,6 +284,7 @@ const close = () => emit('toggle');
   overflow-wrap: break-word;
   word-wrap: break-word;
 }
+
 .filter-modal-title {
   margin: 0;
   padding: 0;
@@ -242,12 +292,15 @@ const close = () => emit('toggle');
   line-height: 1.16;
   font-weight: 700;
 }
+
 .filter-tree-selector-popup-search {
   margin-top: 10px;
 }
-.filter-form-spacer{
+
+.filter-form-spacer {
   margin: 0.2rem 0.5rem;
 }
+
 .filter-input-text {
   line-height: 1.43;
   font-size: 14px;
@@ -266,7 +319,6 @@ const close = () => emit('toggle');
   border: 1px solid #babdbf;
 }
 
-
 .filter-tree-selector-popup {
   width: 620px;
   height: 423px;
@@ -277,16 +329,19 @@ const close = () => emit('toggle');
   padding-left: 10px;
   margin-left: -10px;
 }
+
 .filter-tree-selector-popup-content {
   box-sizing: border-box;
   padding-right: 15px;
   padding-top: 10px;
 }
-.check-block{
-}
-@media (min-width: 1020px){
 
+.check-block {
 }
+
+@media (min-width: 1020px) {
+}
+
 .filter-modal-error {
   height: auto;
   overflow: hidden;
@@ -294,7 +349,7 @@ const close = () => emit('toggle');
   background: #eb6b6b;
   padding: 7px 30px;
   margin: 25px -30px 0;
-  transition: padding .25s ease;
+  transition: padding 0.25s ease;
   flex-shrink: 0;
 }
 

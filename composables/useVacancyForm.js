@@ -51,6 +51,7 @@ export function useVacancyForm(data = null, to_ = "front") {
       order_by: null,
     };
   }
+  console.log(data);
   if (!data) {
     if (params.metros) {
       if (params.metros instanceof Array) {
@@ -102,10 +103,12 @@ export function useVacancyForm(data = null, to_ = "front") {
       }
     }
     if (params.experiences) {
-      if (params.experiences instanceof Array) {
-        experiences = params.experiences.map((item) => parseInt(item));
+      let item = JSON.parse(params.experiences);
+      if (item instanceof Array) {
+        console.log(item);
+        experiences = item.map((item) => parseInt(item));
       } else {
-        experiences = [parseInt(params.experiences)];
+        experiences = [item];
       }
     }
     if (params.part_times) {
@@ -125,10 +128,12 @@ export function useVacancyForm(data = null, to_ = "front") {
       }
     }
     if (params.industries) {
-      if (params.industries instanceof Array) {
-        industries = params.industries.map((item) => parseInt(item));
+      let item = JSON.parse(params.industries);
+      if (item instanceof Array) {
+        console.log(item);
+        industries = item.map((item) => parseInt(item));
       } else {
-        industries = [parseInt(params.industries)];
+        industries = [item];
       }
     }
   }
@@ -232,8 +237,8 @@ export function useVacancyForm(data = null, to_ = "front") {
     if (data.schedules instanceof Array) {
       front_params.schedules = Array.from(data.schedules);
     }
-    if (data.experiences instanceof Array) {
-      front_params.experiences = Array.from(data.experiences);
+    if (data.experiences instanceof Array && data.experiences.length > 0) {
+      front_params.experiences = JSON.stringify(Array.from(data.experiences));
     }
     if (data.part_times instanceof Array) {
       front_params.part_times = Array.from(data.part_times);
@@ -241,8 +246,8 @@ export function useVacancyForm(data = null, to_ = "front") {
     if (data.professional_roles instanceof Array) {
       front_params.professional_roles = Array.from(data.professional_roles);
     }
-    if (data.industries instanceof Array) {
-      front_params.industries = Array.from(data.industries);
+    if (data.industries instanceof Array && data.industries.length > 0) {
+      front_params.industries = JSON.stringify(Array.from(data.industries));
     }
 
     if (data.city !== "") front_params.city = data.city;
