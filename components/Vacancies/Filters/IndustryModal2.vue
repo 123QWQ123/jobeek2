@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="filter-modal-overlay filter-modal-overlay_visible"
-    :class="{ hidden: !props.isOpen }"
-  >
+  <div class="filter-modal-overlay filter-modal-overlay_visible">
     <div class="filter-modal-container filter-modal-container_visible">
       <div class="filter-modal">
         <div class="filter-modal-header">
@@ -20,27 +17,24 @@
             </fieldset>
           </div>
         </div>
-        {{ selectedSpecs }}
         <div class="filter-tree-selector-popup">
           <div class="filter-tree-selector-popup-content" v-if="!isLoading">
-            <VacanciesFiltersIndustryItem
+            <VacanciesFiltersIndustryItem2
               v-if="isSearching"
-              v-for="item in items"
+              v-for="item in groupedSpecs"
               :item="item"
+              :items="item.items"
               :key="item.id"
-              @toggleItem="selectToggle"
-              :checked="item.checked"
+              @set="updateSelectedSpecs"
               :is-open="true"
             />
-            <VacanciesFiltersIndustryItem
+            <VacanciesFiltersIndustryItem2
               v-else
-              v-for="item in items"
+              v-for="item in groupedSpecs"
               :item="item"
-              @toggleItem="selectToggle"
-              @toggleSubItem="toggleSubItem"
+              :items="item.items"
               :key="item.id"
-              :checked="item.checked"
-              v-model="selectedSpecs"
+              @set="updateSelectedSpecs"
             />
           </div>
           <div class="filter-tree-selector-popup-content" v-else>
@@ -62,11 +56,7 @@
               </button>
             </div>
             <div class="filter-form-spacer">
-              <button
-                class="btn button-accent"
-                type="button"
-                @click.prevent="apply"
-              >
+              <button class="btn button-accent" type="button" @click="apply">
                 <span>Выбрать</span>
               </button>
             </div>
@@ -82,7 +72,6 @@
 
 <script setup>
 import { useField } from "vee-validate";
-import useFilter from "~/composables/useFilter.js";
 
 const props = defineProps({
   items: {
@@ -102,14 +91,14 @@ const props = defineProps({
   },
 });
 
-const { isOpen, items: industries, modelValue, title } = props;
+const { isOpen, items: specializations, modelValue, title } = props;
 
 const emit = defineEmits({
-  close: {
+  toggle: {
     required: true,
   },
   "update:modelValue": {
-    required: false,
+    required: true,
   },
 });
 
@@ -119,45 +108,18 @@ const {
   errorMessage,
 } = useField(() => props.name);
 
-console.log(industry_ids);
-
 // const selected_ids = ref(industry_ids.value ?? []);
 const options = ref(props.items ?? []);
-const selectedSpecs = ref(industry_ids.value ?? []);
-const items = ref([]);
-
+const selectedSpecs = ref({});
 const isLoading = ref(false);
-const { uniq } = useFilter();
+
 const apply = () => {
-  // selectedSpecs.value.map(
-  //   (item_id) => (ids = ids.concat(selectedSpecs.value[item_id])),
-  // );
-  const ids = [...selectedSpecs.value].filter((item) => item);
-  console.log(Array.from(new Set(ids)));
-  // setValue(ids);
-};
-const selectToggle = (id) => {
-  console.log(id);
-  let ids = [...selectedSpecs.value];
-  if (ids.includes(id)) {
-    ids = ids.filter((item) => item !== id);
-  } else {
-    ids.push(id);
-  }
-  selectedSpecs.value = ids;
-  prepare(props.items);
-};
-const toggleSubItem = (id) => {
-  console.log(id);
-  let ids = [...selectedSpecs.value];
-  if (ids.includes(id)) {
-    ids = ids.filter((item) => item !== id);
-  } else {
-    ids.push(id);
-  }
-  console.log(ids);
-  selectedSpecs.value = ids;
-  prepare(props.items);
+  let ids = [];
+  Object.keys(selectedSpecs.value).map(
+    (item_id) => (ids = ids.concat(selectedSpecs.value[item_id])),
+  );
+  ids = ids.filter((item) => item);
+  setValue(ids);
 };
 const searchInput = ref("");
 
@@ -173,74 +135,73 @@ const onSearch = () => {
   prepare(props.items);
 };
 const prepare = (newValues, is_first = false) => {
-  let dynamicItems = [];
-  if (isSearching.value) {
-    dynamicItems = [
-      ...newValues.map((item) => {
-        item.items = [...item.items].filter((sub_item) =>
-          sub_item.title
-            .toLowerCase()
-            .includes(searchInput.value.toLowerCase()),
-        );
-        return item;
-      }),
-    ];
-  } else {
-    dynamicItems = [...newValues];
-  }
-
-  console.log(dynamicItems);
-  dynamicItems = dynamicItems.map((item) => {
-    const is_parent_checked = selectedSpecs.value.includes(item.id);
-    item.checked = is_parent_checked;
-    const d_items = item.items.map((sub_item) => {
-      if (!is_parent_checked) {
-        sub_item.checked = selectedSpecs.value.includes(sub_item.id);
-      } else {
-        sub_item.checked = true;
-        // if (is_first) {
-        // } else {
-        //   sub_item.checked = false;
-        // }
-      }
-      return sub_item;
-    });
-    // checking if an item has only checked children, if yes add all children ids to selected list
-    if (!d_items.some((item) => item.checked === false)) {
-      item.checked = true;
-      const ids = d_items.map((item) => item.id);
-      ids.push(item.id);
-      const new_ids = Array.from(new Set([...selectedSpecs.value].concat(ids)));
-      console.log(new_ids);
-      selectedSpecs.value = new_ids;
+  console.log(newValues);
+  const selected_ids = [...industry_ids.value];
+  let groupItems = newValues.filter((newItem) => newItem.parent_id === null);
+  groupItems = groupItems.map((newItem) => {
+    let is_checked = false;
+    if (Array.from(selected_ids).includes(newItem.id)) {
+      is_checked = true;
     }
-    item.items = d_items;
-    return item;
+    newItem.is_checked = is_checked;
+    newItem.name = newItem.title;
+    return newItem;
   });
-  console.log(dynamicItems);
-  items.value = dynamicItems;
-  console.log(1);
+
+  for (let i = 0; i < groupItems.length; i++) {
+    const item = groupItems[i];
+    for (let j = 0; j < item.items.length; j++) {
+      const sub_item = item.items[j];
+      if (!sub_item.hasOwnProperty("parent_id")) continue;
+
+      if (isSearching.value) {
+        if (
+          !sub_item.title
+            .toLowerCase()
+            .includes(searchInput.value.toLowerCase())
+        ) {
+          continue;
+        }
+      }
+
+      let is_checked = false;
+      if (!sub_item) {
+        continue;
+      }
+      if (sub_item.parent_id === null) {
+        sub_item.parent_id = item.id;
+        sub_item.is_checked = false;
+      }
+      if (sub_item.parent_id === item.id) {
+        if (Array.from(selected_ids).includes(sub_item.id)) {
+          is_checked = true;
+        }
+      }
+      sub_item.is_checked = is_checked;
+    }
+  }
+  if (isSearching.value) {
+    groupedSpecs.value = groupItems.filter((spec) => spec.items.length);
+  } else {
+    groupedSpecs.value = groupItems;
+  }
+  console.log(groupItems);
 };
 
-watch(
-  () => industry_ids.value,
-  () => {
-    prepare(props.items);
-  },
-);
-
 onMounted(() => {
-  console.log(0);
   setTimeout(() => {
-    prepare(props.items, true);
+    prepare(props.items);
   }, 100);
 });
 
 const updateSelectedSpecs = (id, newSelections) => {
-  selectedSpecs.value = newSelections;
+  console.log(newSelections);
+  const newItems = { ...selectedSpecs.value };
+  newItems[id] = newSelections;
+  selectedSpecs.value = newItems;
 };
 
-const close = () => emit("close");
+const close = () => emit("toggle");
 </script>
 
 <style scoped>
@@ -267,10 +228,6 @@ const close = () => emit("close");
   background-color: rgba(48, 50, 51, 0.9);
   visibility: visible;
   opacity: 1;
-}
-
-.filter-modal-overlay_visible.hidden {
-  display: none;
 }
 
 .filter-modal-container_visible {

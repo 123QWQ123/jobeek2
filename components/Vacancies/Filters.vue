@@ -8,10 +8,8 @@
 
       {{ values }}
 
-      <!--      <VacanciesFiltersMetro-->
-      <!--        @onFormChange="onFormChange"-->
-      <!--        :selected-ids="form.metros"-->
-      <!--      />-->
+      <!--      <VacanciesFiltersMetro name="metros" />-->
+      <!--      <LazyVacanciesFiltersIndustry name="industries" />-->
       <LazyVacanciesFiltersIndustry name="industries" />
       <!--      <VacanciesFiltersSpecialization-->
       <!--        @onFormChange="onFormChange"-->
@@ -85,7 +83,7 @@ const router = useRouter();
 
 const { toBackend, toFrond, parseParams, values } = useVacancySearchParams({
   countries: [1],
-  // metros: [],
+  metros: [],
   // regions: [],
   // cities: [],
   // work_types: [],
@@ -99,28 +97,27 @@ const { toBackend, toFrond, parseParams, values } = useVacancySearchParams({
   // city_name: null,
   // order_by: null,
 });
+console.log(route);
 parseParams(route);
 // const form = ref(useVacancyForm());
 
-const selectedRegion = computed(() => {
-  if (form.value.regions.length === 1) {
-    return form.value.regions[0];
-  }
-});
-const isCityMode = computed(() => {
-  if (form.value.regions.length === 1) {
-    return true;
-  }
-  return false;
-});
+// const selectedRegion = computed(() => {
+//   if (form.value.regions.length === 1) {
+//     return form.value.regions[0];
+//   }
+// });
+// const isCityMode = computed(() => {
+//   if (form.value.regions.length === 1) {
+//     return true;
+//   }
+//   return false;
+// });
 
 const { clearVacancies, getVacancies } = vacancyStore;
 
 const resetFilters = () => {
-  const params = useVacancyForm(null, "reset");
-  form.value = params;
-  const resetParams = useVacancyForm(form.value, "front");
-  router.push({ query: resetParams });
+  resetForm();
+  router.push({ query: toFrond(values) });
 };
 const onFormChange = (filter_name, filter_value) => {
   form.value[filter_name] = filter_value;
@@ -130,7 +127,7 @@ const onFormChange = (filter_name, filter_value) => {
 watch(
   () => ({ ...values }),
   (newParams) => {
-    console.log(newParams);
+    console.log(values, toFrond(newParams));
     router.push({ query: toFrond(newParams) });
   },
 );

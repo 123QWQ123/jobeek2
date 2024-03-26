@@ -76,7 +76,6 @@ export const useVacancyStore = defineStore("vacancy", {
         items.push(item);
         items.concat(item.items);
       });
-      console.log(items);
       return items;
     },
     my_city_vacancies: (state) => {

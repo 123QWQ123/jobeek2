@@ -17,15 +17,24 @@ export default function useFilter(defaultOptions = null) {
     }
   };
 
-  function uniq(array, field) {
+  function uniq(array, field = null) {
     const unique_field_list = [];
 
-    const items = array.filter((item) => {
-      if (!unique_field_list.includes(item[field])) {
-        unique_field_list.push(item[field]);
-        return true;
-      }
-    });
+    if (array.length === 0) return array;
+
+    const first_item = array[0];
+    if (first_item instanceof Object && field) {
+      const items = array.filter((item) => {
+        if (!unique_field_list.includes(item[field])) {
+          unique_field_list.push(item[field]);
+          return true;
+        }
+      });
+    }
+    if (!(first_item instanceof Object)) {
+      const items = Array.from(new Set(array));
+    }
+
     return items;
   }
 

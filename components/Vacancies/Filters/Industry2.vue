@@ -24,12 +24,13 @@
         </div>
       </div>
 
-      <LazyVacanciesFiltersIndustryModal
+      <LazyVacanciesFiltersIndustryModal2
         :title="'Отрасль компании'"
+        v-if="isModalOpen"
         :is-open="isModalOpen"
-        @close="toggleModal"
+        @toggle="toggleModal"
         name="industries"
-        :items="vacancyStore.industries_formatted_for_filter"
+        :items="industryItems"
       />
 
       <button class="more-filters" @click="toggleModal">Выбрать</button>

@@ -11,11 +11,34 @@ export default function useVacancySearchParams(initialValues = {}) {
   const parseParams = (route) => {
     console.log(route.query);
     const params = { ...route.query };
-    if (route.query.hasOwnProperty("industries")) {
-      params.industries = JSON.parse(params.industries);
+    if (params.hasOwnProperty("countries")) {
+      if (typeof params.countries === "string") {
+        params.countries = JSON.parse(params.countries);
+      }
     }
-    if (route.query.hasOwnProperty("experiences")) {
-      params.experiences = JSON.parse(params.experiences);
+    if (params.hasOwnProperty("metros")) {
+      if (typeof params.metros === "string") {
+        params.metros = JSON.parse(params.metros);
+      }
+    }
+    if (params.hasOwnProperty("industries")) {
+      if (typeof params.industries === "string") {
+        params.industries = JSON.parse(params.industries);
+      }
+    }
+    if (params.hasOwnProperty("experiences")) {
+      if (typeof params.experiences === "string") {
+        params.experiences = JSON.parse(params.experiences);
+      }
+    }
+    for (let prop in params) {
+      if (typeof params[prop] === "object") {
+        if (params[prop].length === 0) {
+          delete params[prop];
+        } else {
+          params[prop] = params[prop];
+        }
+      }
     }
 
     setValues(params);
@@ -23,13 +46,15 @@ export default function useVacancySearchParams(initialValues = {}) {
   const toFrond = (newParams) => {
     console.log(newParams);
     const params = { ...newParams };
-    if (values.hasOwnProperty("industries")) {
-      params.industries = JSON.stringify(params.industries);
+    for (let prop in params) {
+      if (typeof params[prop] === "object") {
+        if (params[prop].length === 0) {
+          delete params[prop];
+        } else {
+          params[prop] = JSON.stringify(params[prop]);
+        }
+      }
     }
-    if (values.hasOwnProperty("experiences")) {
-      params.experiences = JSON.stringify(params.experiences);
-    }
-
     console.log(params);
     return params;
   };
