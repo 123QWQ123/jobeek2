@@ -214,8 +214,8 @@
         </button>
         <div class="aside-container">
           <VacanciesFilters></VacanciesFilters>
-          {{ vacancyStore.industries_formatted_for_filter }}
-          <!--          <VacanciesList :key="$route.fullPath"></VacanciesList>-->
+          <!--          {{ vacancyStore.industries_formatted_for_filter }}-->
+          <VacanciesList :key="$route.fullPath"></VacanciesList>
         </div>
       </div>
     </div>

@@ -32,6 +32,7 @@ const config = {
     "~/assets/styles/app.scss",
     "~/assets/styles/main.css",
     "~/assets/styles/styles-new.css",
+    "~/assets/styles/vacancy.css",
   ],
   components: ["~/components", "~/components/UI"],
 
