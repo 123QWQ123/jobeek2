@@ -4,7 +4,7 @@
     :class="{ hidden: !props.isOpen }"
   >
     <div class="filter-modal-container filter-modal-container_visible">
-      <div class="filter-modal">
+      <div class="filter-modal" v-click-outside="onClickOutside">
         <div class="filter-modal-header">
           <span class="filter-modal-title">{{ title }} </span>
           <br />
@@ -20,15 +20,16 @@
             </fieldset>
           </div>
         </div>
-        {{ selectedSpecs }}
         <div class="filter-tree-selector-popup">
           <div class="filter-tree-selector-popup-content" v-if="!isLoading">
             <VacanciesFiltersIndustryItem
               v-if="isSearching"
               v-for="item in items"
               :item="item"
+              :items="item.items"
               :key="item.id"
-              @toggleItem="selectToggle"
+              @add="addIds"
+              @remove="removeIds"
               :checked="item.checked"
               :is-open="true"
             />
@@ -36,8 +37,9 @@
               v-else
               v-for="item in items"
               :item="item"
-              @toggleItem="selectToggle"
-              @toggleSubItem="toggleSubItem"
+              :items="item.items"
+              @add="addIds"
+              @remove="removeIds"
               :key="item.id"
               :checked="item.checked"
               v-model="selectedSpecs"
@@ -119,9 +121,6 @@ const {
   errorMessage,
 } = useField(() => props.name);
 
-console.log(industry_ids);
-
-// const selected_ids = ref(industry_ids.value ?? []);
 const options = ref(props.items ?? []);
 const selectedSpecs = ref(industry_ids.value ?? []);
 const items = ref([]);
@@ -129,35 +128,20 @@ const items = ref([]);
 const isLoading = ref(false);
 const { uniq } = useFilter();
 const apply = () => {
-  // selectedSpecs.value.map(
-  //   (item_id) => (ids = ids.concat(selectedSpecs.value[item_id])),
-  // );
   const ids = [...selectedSpecs.value].filter((item) => item);
-  console.log(Array.from(new Set(ids)));
-  // setValue(ids);
+  setValue(Array.from(new Set(ids)));
 };
-const selectToggle = (id) => {
-  console.log(id);
+const addIds = (new_ids) => {
   let ids = [...selectedSpecs.value];
-  if (ids.includes(id)) {
-    ids = ids.filter((item) => item !== id);
-  } else {
-    ids.push(id);
-  }
+  ids = new_ids.concat(ids);
   selectedSpecs.value = ids;
-  prepare(props.items);
+  prepare(props.items, false);
 };
-const toggleSubItem = (id) => {
-  console.log(id);
+const removeIds = (old_ids) => {
   let ids = [...selectedSpecs.value];
-  if (ids.includes(id)) {
-    ids = ids.filter((item) => item !== id);
-  } else {
-    ids.push(id);
-  }
-  console.log(ids);
+  ids = ids.filter((id) => !old_ids.includes(id));
   selectedSpecs.value = ids;
-  prepare(props.items);
+  prepare(props.items, false);
 };
 const searchInput = ref("");
 
@@ -167,10 +151,9 @@ const isSearching = computed(() => {
   }
   return true;
 });
-const groupedSpecs = ref([]);
 
 const onSearch = () => {
-  prepare(props.items);
+  prepare(props.items, false);
 };
 const prepare = (newValues, is_first = false) => {
   let dynamicItems = [];
@@ -188,8 +171,6 @@ const prepare = (newValues, is_first = false) => {
   } else {
     dynamicItems = [...newValues];
   }
-
-  console.log(dynamicItems);
   dynamicItems = dynamicItems.map((item) => {
     const is_parent_checked = selectedSpecs.value.includes(item.id);
     item.checked = is_parent_checked;
@@ -197,11 +178,12 @@ const prepare = (newValues, is_first = false) => {
       if (!is_parent_checked) {
         sub_item.checked = selectedSpecs.value.includes(sub_item.id);
       } else {
-        sub_item.checked = true;
-        // if (is_first) {
-        // } else {
-        //   sub_item.checked = false;
-        // }
+        if (is_first) {
+          sub_item.checked = true;
+        } else {
+          sub_item.checked = selectedSpecs.value.includes(sub_item.id);
+          // sub_item.checked = false;
+        }
       }
       return sub_item;
     });
@@ -211,15 +193,12 @@ const prepare = (newValues, is_first = false) => {
       const ids = d_items.map((item) => item.id);
       ids.push(item.id);
       const new_ids = Array.from(new Set([...selectedSpecs.value].concat(ids)));
-      console.log(new_ids);
       selectedSpecs.value = new_ids;
     }
     item.items = d_items;
     return item;
   });
-  console.log(dynamicItems);
   items.value = dynamicItems;
-  console.log(1);
 };
 
 watch(
@@ -230,16 +209,16 @@ watch(
 );
 
 onMounted(() => {
-  console.log(0);
   setTimeout(() => {
     prepare(props.items, true);
   }, 100);
 });
 
-const updateSelectedSpecs = (id, newSelections) => {
-  selectedSpecs.value = newSelections;
+const onClickOutside = (e) => {
+  if (e.target.classList.contains("filter-modal-container")) {
+    close();
+  }
 };
-
 const close = () => emit("close");
 </script>
 

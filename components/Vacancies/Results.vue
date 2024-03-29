@@ -214,8 +214,13 @@
         </button>
         <div class="aside-container">
           <VacanciesFilters></VacanciesFilters>
-          <!--          {{ vacancyStore.industries_formatted_for_filter }}-->
-          <VacanciesList :key="$route.fullPath"></VacanciesList>
+          {{
+            vacancyStore.industries_formatted_for_filter.map((item) => ({
+              id: item.id,
+              title: item.title,
+            }))
+          }}
+          <!--          <VacanciesList :key="$route.fullPath"></VacanciesList>-->
         </div>
       </div>
     </div>
@@ -243,7 +248,6 @@ const isSidebarOpen = computed(() => uiStore.isSidebarOpen);
 const { toggleSidebar } = uiStore;
 
 const toggle = () => {
-  console.log(isSidebarOpen.value);
   toggleSidebar();
 };
 
@@ -260,7 +264,6 @@ const router = useRouter();
 const { clearVacancies } = vacancyStore;
 const onChangeSorting = (sorting) => {
   form.value.order_by = sorting;
-  console.log(sorting);
   const params = useVacancyForm(form.value, "front");
   navigateTo({ query: params });
 };

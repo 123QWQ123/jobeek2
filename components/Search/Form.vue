@@ -130,12 +130,12 @@ const country = computed(() => {
 });
 
 onMounted(async () => {
-  await getRegions({ country_id: country.value });
+  // await getRegions({ country_id: country.value });
   // const region_ids = regions.value.map((item) => item.id);
   // console.log(region_ids);
   console.log(form.value.countries);
 
-  await getCities({ country_ids: form.value.countries });
+  // await getCities({ country_ids: form.value.countries });
   //
   // console.log(regions.value);
   // console.log(cities.value);

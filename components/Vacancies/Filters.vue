@@ -6,21 +6,21 @@
         <button class="clear-all" @click="resetFilters">Очистить все</button>
       </div>
 
-      {{ values }}
+      <VacanciesFiltersIndustry name="industries" />
 
+      {{ countryId }}
+      <VacanciesFiltersRegion
+        name="regions"
+        :is-city-mode="isCityMode"
+        :selected-country="countryId"
+        @onFormChange="onFormChange"
+      />
       <!--      <VacanciesFiltersMetro name="metros" />-->
-      <!--      <LazyVacanciesFiltersIndustry name="industries" />-->
-      <LazyVacanciesFiltersIndustry name="industries" />
       <!--      <VacanciesFiltersSpecialization-->
       <!--        @onFormChange="onFormChange"-->
       <!--        :selected-ids="form.professional_roles"-->
       <!--      />-->
 
-      <!--      <VacanciesFiltersRegion-->
-      <!--        :is-city-mode="isCityMode"-->
-      <!--        :selected-country="form.country"-->
-      <!--        @onFormChange="onFormChange"-->
-      <!--      />-->
       <!--      <VacanciesFiltersCity-->
       <!--        v-if="isCityMode"-->
       <!--        :selected-region="selectedRegion"-->
@@ -83,6 +83,7 @@ const router = useRouter();
 
 const { toBackend, toFrond, parseParams, values } = useVacancySearchParams({
   countries: [1],
+  regions: [],
   metros: [],
   // regions: [],
   // cities: [],
@@ -97,8 +98,21 @@ const { toBackend, toFrond, parseParams, values } = useVacancySearchParams({
   // city_name: null,
   // order_by: null,
 });
-console.log(route);
 parseParams(route);
+
+const countryId = computed(() => {
+  if (values.countries.length === 1) {
+    return values.countries[0];
+  }
+  return values.countries[0];
+});
+const isCityMode = computed(() => {
+  if (values.regions.length === 1) {
+    return true;
+  }
+  return false;
+});
+
 // const form = ref(useVacancyForm());
 
 // const selectedRegion = computed(() => {
@@ -127,7 +141,6 @@ const onFormChange = (filter_name, filter_value) => {
 watch(
   () => ({ ...values }),
   (newParams) => {
-    console.log(values, toFrond(newParams));
     router.push({ query: toFrond(newParams) });
   },
 );

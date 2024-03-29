@@ -8,7 +8,7 @@
           :id="props.name"
           :checked="props.checked"
         />
-        <div class="checkbox-mask" :class="{ checked }">
+        <div class="checkbox-mask" :class="{ checked: props.checked }">
           <img src="~/assets/img/svg/check.svg" alt="#" />
         </div>
       </div>

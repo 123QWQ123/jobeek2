@@ -208,12 +208,10 @@ export const useResumeStore = defineStore("resume", {
       return response;
     },
     async modifyNotifications(payload) {
-      console.log(payload);
       const response = await useApi("seeker/resumes/notifications", {
         method: "PUT",
         payload,
       });
-      console.log(response);
       return response;
     },
     async updateResume(id, payload) {
@@ -221,7 +219,6 @@ export const useResumeStore = defineStore("resume", {
         method: "PUT",
         payload,
       });
-      console.log(response);
       // if ('data' in response && response.data.status === 'success'){
       //   this.resume = response.data;
       // }

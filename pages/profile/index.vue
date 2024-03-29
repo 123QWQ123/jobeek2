@@ -52,6 +52,9 @@ onMounted(() => {
 
     <div class="has-sidebar has-sidebar--v2 wrapper wrapper-1290">
       <div class="content">
+        {{ authStore.seeker }}
+        <hr />
+        {{ authStore.employer }}
         <div class="w-box w-box--main bg-white" v-if="!isCompleted">
           <p class="text-danger p-3">
             Перед использовании сервиса требуется заполнения вашего профиля.

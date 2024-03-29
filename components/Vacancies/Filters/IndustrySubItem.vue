@@ -27,8 +27,8 @@ const props = defineProps({
   },
 });
 
-const toggle = () => {
-  emit("toggle", props.id);
+const toggle = (newValue) => {
+  emit("toggle", props.id, newValue);
 };
 </script>
 

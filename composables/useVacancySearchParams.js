@@ -9,7 +9,6 @@ export default function useVacancySearchParams(initialValues = {}) {
     setValues(new_values);
   };
   const parseParams = (route) => {
-    console.log(route.query);
     const params = { ...route.query };
     if (params.hasOwnProperty("countries")) {
       if (typeof params.countries === "string") {
@@ -44,7 +43,6 @@ export default function useVacancySearchParams(initialValues = {}) {
     setValues(params);
   };
   const toFrond = (newParams) => {
-    console.log(newParams);
     const params = { ...newParams };
     for (let prop in params) {
       if (typeof params[prop] === "object") {
@@ -55,7 +53,6 @@ export default function useVacancySearchParams(initialValues = {}) {
         }
       }
     }
-    console.log(params);
     return params;
   };
   return { values, setParams, toFrond, parseParams };

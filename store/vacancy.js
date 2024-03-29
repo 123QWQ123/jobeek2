@@ -340,7 +340,7 @@ export const useVacancyStore = defineStore("vacancy", {
         params: payload,
       });
       if (data && "data" in data) {
-        this.regions = data.data?.regions ?? [];
+        this.regions = data.data ?? [];
       }
       return data;
     },

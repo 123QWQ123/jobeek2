@@ -270,23 +270,22 @@ const onSubmit = async (e) => {
   }
   console.log(resumeStore.my_resumes);
 
-  console.log(1);
   const response = await submitResume({
     vacancy_id: item.id,
     resume_id: selectedResume.value,
     providers: ["hh"],
   });
   console.log(response);
-  // if (response.status === "success") {
-  //   isFavorite.value = !isFavorite.value;
-  // } else {
-  //   Swal.fire({
-  //     title: "Ошибка!",
-  //     text: response.message,
-  //     icon: "error",
-  //     confirmButtonText: "ОК",
-  //   });
-  // }
+  if (response.status === "success") {
+    isFavorite.value = !isFavorite.value;
+  } else {
+    Swal.fire({
+      title: "Ошибка!",
+      text: response.message,
+      icon: "error",
+      confirmButtonText: "ОК",
+    });
+  }
 };
 
 const myResumeOptions = computed(() => {

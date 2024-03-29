@@ -4,9 +4,6 @@
   >
     <div class="filter-form-item">
       <div class="filter-tree-selector-content">
-        {{ checked }} - {{ props.item.id }}
-        <hr />
-        {{ isHalfChecked }} - {{ anyChecked }}
         <div class="check-block">
           <svg
             @click="toggle"
@@ -24,25 +21,24 @@
           </svg>
           <div
             class="checkbox ms-1"
-            @click="selectToggle"
             :title="item.checked + '-' + isHalfChecked"
+            @click="selectToggle(item.id, checked)"
           >
             <input
               type="checkbox"
-              :id="item.id"
               :checked="checked"
               :class="{ is_half_checked: isHalfChecked }"
             />
             <div class="checkbox-mask">
-              <img
-                src="~/assets/img/svg/dash.svg"
-                alt="#"
-                v-if="isHalfChecked"
-              />
-              <img src="~/assets/img/svg/check.svg" alt="#" v-else />
+              <img v-if="allChecked" src="~/assets/img/svg/check.svg" alt="#" />
+              <img src="~/assets/img/svg/dash.svg" alt="#" v-else />
             </div>
           </div>
-          <label :for="item.id">{{ item.title }}</label>
+          <label
+            @click="selectToggle(item.id, checked)"
+            :for="`industry_${item.id}`"
+            >{{ item.title }}</label
+          >
         </div>
       </div>
     </div>
@@ -65,9 +61,13 @@
 </template>
 
 <script setup>
-const emit = defineEmits(["toggleItem", "toggleSubItem"]);
+const emit = defineEmits(["remove", "add", "toggleSubItem"]);
 const props = defineProps({
   item: {
+    required: true,
+    default: {},
+  },
+  items: {
     required: true,
     default: {},
   },
@@ -84,115 +84,46 @@ const props = defineProps({
 const item = ref(props.item ?? {});
 const items = ref(props.item.items ?? []);
 watch(
-  () => props.item.items,
+  () => props.items,
   () => {
-    items.value = props.item.items;
+    items.value = props.items;
   },
 );
 const isOpen = ref(props.isOpen);
 const { checked } = toRefs(props);
 
-// const selected_ids = props.items.value
-//   .filter((item) => item.is_checked)
-//   .map((item) => item.id);
-// const isHalfChecked = ref(
-//   selected_ids.length > 0 && selected_ids.length !== props.items.value.length,
-// );
-// if (
-//   selected_ids.length !== 0 &&
-//   selected_ids.length === props.items.value.length
-// ) {
-//   item.value.is_checked = true;
-// }
-// const selectedSubItems = ref(selected_ids);
-//
-// watchEffect(() => (item.value = props.item));
-// watchEffect(() => (items.value = props.items));
-//
-// watch(
-//   () => selectedSubItems.value,
-//   (newValue, oldValue) => {
-//     emit("update", props.item.id, newValue);
-//   },
-// );
-
-const selectToggle = () => {
-  emit("toggleItem", item.value.id);
+const selectToggle = (id, oldValue) => {
+  const selected_ids = items.value.map((item) => item.id);
+  selected_ids.push(id);
+  if (oldValue) {
+    emit("remove", selected_ids);
+  } else {
+    emit("add", selected_ids);
+  }
 };
 
-const toggleSubItem = (id) => {
-  console.log(id);
-  emit("toggleSubItem", id);
+const toggleSubItem = (id, checked) => {
+  if (checked) {
+    emit("add", [id]);
+  } else {
+    emit("remove", [id, item.value.id]);
+  }
 };
 
 const toggle = () => (isOpen.value = !isOpen.value);
 
 const anyChecked = computed(() => {
-  return props.item.items.some((item) => item.checked === true);
+  return props.items.some((item) => item.checked === true);
+});
+const anyUnchecked = computed(() => {
+  return props.items.some((item) => item.checked === false);
 });
 const isHalfChecked = computed(() => {
-  return items.value.some((item) => item.checked === false) && anyChecked.value;
+  return anyChecked.value && anyUnchecked.value;
 });
-// const selectToggle = () => {
-//   let is_checked = !item.value.is_checked;
-//   console.log(is_checked);
-//   if (is_checked) {
-//     selectedSubItems.value = props.items.value.map((spec) => spec.id);
-//   } else {
-//     selectedSubItems.value = [];
-//     isHalfChecked.value = false;
-//   }
-//   const sub_items = props.items.value.map((sub_item) => {
-//     sub_item.is_checked = is_checked;
-//     return sub_item;
-//   });
-//
-//   let is_any_not_checked = sub_items.some(
-//     (sub_item) => sub_item.is_checked === false,
-//   );
-//   console.log(is_any_not_checked);
-//   props.items.value = sub_items;
-//   item.value = { ...item.value, is_checked: is_checked };
-// };
-//
-// const selectSubToggle = (sub_id) => {
-//   const dynSelectedItems = [...selectedSubItems.value];
-//   const sub_items = props.items.value.map((sub_item) => {
-//     const dyn_sub_item = { ...sub_item };
-//     if (dyn_sub_item.id === sub_id) {
-//       dyn_sub_item.is_checked = !dyn_sub_item.is_checked;
-//       if (dyn_sub_item.is_checked) {
-//         dynSelectedItems.push(dyn_sub_item.id);
-//       } else {
-//         const findIndex = dynSelectedItems.findIndex(
-//           (id) => id === dyn_sub_item.id,
-//         );
-//         if (findIndex !== -1) dynSelectedItems.splice(findIndex, 1);
-//       }
-//     }
-//     return dyn_sub_item;
-//   });
-//   selectedSubItems.value = sub_items.map((item) => {
-//     if (item.is_checked) return item.id;
-//   });
-//   let is_any_checked = sub_items.some(
-//     (sub_item) => sub_item.is_checked === true,
-//   );
-//   let is_all_checked = !sub_items.some(
-//     (sub_item) => sub_item.is_checked === false,
-//   );
-//
-//   if (!is_all_checked && is_any_checked) {
-//     isHalfChecked.value = true;
-//   } else {
-//     isHalfChecked.value = false;
-//   }
-//   if (is_all_checked) {
-//     isHalfChecked.value = false;
-//   }
-//   item.value = { ...item.value, is_checked: is_all_checked };
-//   items.value = sub_items;
-// };
+const allChecked = computed(() => {
+  return !anyUnchecked.value;
+});
 </script>
 
 <style scoped>
