@@ -15,6 +15,11 @@ export default function useVacancySearchParams(initialValues = {}) {
         params.countries = JSON.parse(params.countries);
       }
     }
+    if (params.hasOwnProperty("regions")) {
+      if (typeof params.regions === "string") {
+        params.regions = JSON.parse(params.regions);
+      }
+    }
     if (params.hasOwnProperty("metros")) {
       if (typeof params.metros === "string") {
         params.metros = JSON.parse(params.metros);

@@ -83,7 +83,6 @@ const { toBackend, toFrond, parseParams, values } = useVacancySearchParams({
   countries: [1],
   regions: [],
   metros: [],
-  // regions: [],
   // cities: [],
   // work_types: [],
   // schedules: [],

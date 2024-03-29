@@ -7,7 +7,6 @@
       <strong>Регионы({{ total }})</strong>
       <img src="~/assets/img/svg/Arrow-Down.svg" alt="#" />
     </div>
-    {{ isMore }}
     <div v-if="isMore" class="filter-box-body">
       <div class="search_area">
         <input
@@ -21,24 +20,26 @@
         class="check-block-list with_scroll"
         :class="{ 'all-visible': isMore }"
       >
+        <span class="fw-bold is_header mb-2">Выбранные регионы</span>
         <div class="check-block" v-for="item in selectedRegionItems">
           <div class="checkbox">
             <input
               type="checkbox"
               :checked="true"
-              @change="toggleRegion(item.id)"
+              :name="`region_${item.value}`"
+              @change="toggleRegion(item.value)"
             />
             <div class="checkbox-mask">
               <img src="~/assets/img/svg/check.svg" alt="#" />
             </div>
           </div>
           <div class="l-wrap">
-            <label>{{ item.name }}</label>
+            <label :for="`region_${item.id}`">{{ item.name }}</label>
           </div>
         </div>
       </div>
       <div
-        class="check-block-list with_scroll"
+        class="check-block-list with_scroll mt-3"
         :class="{ 'all-visible': isMore }"
       >
         <div
@@ -50,7 +51,7 @@
             <input
               type="checkbox"
               :checked="item.is_checked"
-              @change="toggleRegion(item.id)"
+              @change="toggleRegion(item.value)"
             />
             <div class="checkbox-mask">
               <img src="~/assets/img/svg/check.svg" alt="#" />
@@ -71,14 +72,14 @@
       </button>
     </div>
     <div v-else class="filter-box-body">
-      <div class="check-block-list">
-        <div class="check-block" v-for="item in groupedFilterItems">
+      <div class="check-block-list" v-if="selectedRegionItems.length">
+        <div
+          class="check-block"
+          v-for="item in selectedRegionItems"
+          @click.prevent="toggleRegion(item.value)"
+        >
           <div class="checkbox" v-if="!item.is_header">
-            <input
-              type="checkbox"
-              :checked="item.is_checked"
-              @change="toggleRegion(item.id)"
-            />
+            <input type="checkbox" :checked="true" />
             <div class="checkbox-mask">
               <img src="~/assets/img/svg/check.svg" alt="#" />
             </div>
@@ -90,7 +91,7 @@
       </div>
       <button
         class="more-filters"
-        data-default-text="Еще 25"
+        :data-default-text="`Еще ${total}`"
         data-hide-text="Показат"
         @click="toggleMore"
         v-if="total > 0"
@@ -123,55 +124,55 @@ const total = computed(() => {
   }
 });
 const regionFilterClass = ref(true);
-const isMore = ref(true);
+const isMore = ref(false);
 const groupedFilterItems = ref([]);
 const selectedRegionItems = ref([]);
 
 const selectedItems = ref(regions.value ?? []);
 
+watch(
+  () => selectedItems.value,
+  (new_ids) => {},
+);
+
 const toggleMore = () => (isMore.value = !isMore.value);
 const onSearch = (e) => {
-  // const search = e.target.value;
-  // let items = [];
-  // if (search !== "") {
-  //   items = vacancyStore.regions_formatted.filter((item, key) => {
-  //     return item.name.toLowerCase().includes(search.toLowerCase());
-  //   });
-  // } else {
-  //   items = vacancyStore.regions_formatted.filter((item, key) => {
-  //     return item.name.toLowerCase().includes(search.toLowerCase());
-  //   });
-  // }
-  // selectedItems.value = items;
-  // prepare(items);
+  const search = e.target.value;
+  let items = [...groupedFilterItems.value];
+  if (search !== "") {
+    items = items.filter((item, key) => {
+      return item.name.toLowerCase().includes(search.toLowerCase());
+    });
+  } else {
+    items = items.filter((item, key) => {
+      return item.name.toLowerCase().includes(search.toLowerCase());
+    });
+  }
+  groupedFilterItems.value = items;
+  prepare(items);
 };
 
 const toggleRegion = (id) => {
-  // const items = groupedFilterItems.value.map((item, key) => {
-  //   if (item.id === id) {
-  //     item.is_checked = !item.is_checked;
-  //
-  //     if (!selectedItems.value.includes(item.id) && item.is_checked) {
-  //       selectedItems.value.push(item.id);
-  //     } else {
-  //       if (
-  //         selectedItems.value.includes(item.id) &&
-  //         item.is_checked === false
-  //       ) {
-  //         selectedItems.value = selectedItems.value.filter(
-  //           (sub) => sub !== item.id,
-  //         );
-  //       }
-  //     }
-  //
-  //     return item;
-  //   }
-  //   return item;
-  // });
-  //
-  // groupedFilterItems.value = items;
-  // regions.cities = selectedItems.value;
-  // submitSearch();
+  let selected_ids = [...regions.value];
+  const old_items = [...groupedFilterItems.value];
+  const items = old_items.map((item, key) => {
+    if (item.value === id) {
+      item.is_checked = !item.is_checked;
+
+      if (!selected_ids.includes(item.value) && item.is_checked) {
+        selected_ids.push(item.value);
+      } else {
+        if (selected_ids.includes(item.value) && item.is_checked === false) {
+          selected_ids = selected_ids.filter((sub) => sub !== item.value);
+        }
+      }
+
+      return item;
+    }
+    return item;
+  });
+  groupedFilterItems.value = items;
+  setValue(selected_ids);
 };
 
 const isLoading = ref(false);
@@ -180,14 +181,22 @@ const router = useRouter();
 
 const { sort } = useSort();
 const prepare = (items) => {
-  console.log(items);
   let filterItems = items;
+  let selected_ids = [...regions.value];
+  console.log(selected_ids);
 
   if (filterItems.length < 1) {
     groupedFilterItems.value = [];
     return;
   }
 
+  selectedRegionItems.value = [...filterItems].filter((item) => {
+    return selected_ids.includes(item.value);
+  });
+
+  filterItems = filterItems.filter(
+    (item) => !selected_ids.includes(item.value),
+  );
   filterItems = sort(filterItems, { by: "alpha" });
 
   groupedFilterItems.value = [];
@@ -195,19 +204,18 @@ const prepare = (items) => {
     const firstLetter = item.name.charAt(0);
     if (key === 0) {
       groupedFilterItems.value.push({
-        id: firstLetter,
+        value: firstLetter,
         name: firstLetter,
         is_header: true,
       });
     } else {
       let prevFirstLetter;
-      console.log(key);
       if (filterItems[key - 1] !== undefined) {
         prevFirstLetter = filterItems[key - 1].name.charAt(0);
       }
       if (firstLetter !== prevFirstLetter) {
         groupedFilterItems.value.push({
-          id: firstLetter,
+          value: firstLetter,
           name: firstLetter,
           is_header: true,
         });
@@ -215,10 +223,9 @@ const prepare = (items) => {
     }
 
     groupedFilterItems.value.push({
-      id: item.id,
+      value: item.value,
       name: item.name,
       is_header: false,
-      is_checked: selectedItems.value.includes(item.id),
     });
   });
 };
