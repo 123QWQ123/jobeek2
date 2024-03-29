@@ -16,7 +16,6 @@
     </span>
     <div class="col-12">
       <div class="row">
-        {{ props.providers }}
         <div class="input-row">
           <label for="position">Уровен образование 2<b>*</b></label>
           <div class="input-wrapper">
@@ -188,7 +187,7 @@ watch(
   () => props.errors,
   (newErrors) => {
     errors.value = newErrors;
-  }
+  },
 );
 watch(
   () => props.parent_type_id,
@@ -197,7 +196,7 @@ watch(
     state.type_id.val = state.type_id.val
       ? state.type_id.val
       : props.parent_type_id;
-  }
+  },
 );
 
 const deleteItem = (id = null) => {
@@ -277,7 +276,7 @@ watch(
   () => props.providers,
   () => {
     walkThroughFields(props.providers);
-  }
+  },
 );
 
 const isMoreFields = computed(() => state.type_id.val != 115);
@@ -296,7 +295,7 @@ const educationFormatOptions = computed(() => {
   }));
 });
 const yearOptions = computed(() =>
-  useYearOptions(1950, new Date().getUTCFullYear() + 5)
+  useYearOptions(1950, new Date().getUTCFullYear() + 5),
 );
 
 onMounted(() => {
@@ -321,6 +320,7 @@ watch(() => useWatchStateValues(state, true, true), save);
   cursor: pointer;
   max-width: 3rem;
 }
+
 .absoluted_icon svg {
   width: 24px;
   height: 24px;

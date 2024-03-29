@@ -8,12 +8,10 @@
 
       <VacanciesFiltersIndustry name="industries" />
 
-      {{ countryId }}
       <VacanciesFiltersRegion
         name="regions"
         :is-city-mode="isCityMode"
         :selected-country="countryId"
-        @onFormChange="onFormChange"
       />
       <!--      <VacanciesFiltersMetro name="metros" />-->
       <!--      <VacanciesFiltersSpecialization-->

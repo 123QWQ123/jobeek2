@@ -7,6 +7,7 @@
       <strong>Регионы({{ total }})</strong>
       <img src="~/assets/img/svg/Arrow-Down.svg" alt="#" />
     </div>
+    {{ isMore }}
     <div v-if="isMore" class="filter-box-body">
       <div class="search_area">
         <input
@@ -110,10 +111,8 @@ const props = defineProps(["name", "isOpen", "selectedCountry"]);
 const { selectedCountry } = props;
 
 const { value: regions, setValue, errorMessage } = useField(() => props.name);
-console.log(regions.value);
 const vacancyStore = useVacancyStore();
 
-const appliedCountry = ref(1);
 const search = ref("");
 
 const total = computed(() => {
@@ -124,7 +123,7 @@ const total = computed(() => {
   }
 });
 const regionFilterClass = ref(true);
-const isMore = ref(false);
+const isMore = ref(true);
 const groupedFilterItems = ref([]);
 const selectedRegionItems = ref([]);
 
@@ -132,64 +131,57 @@ const selectedItems = ref(regions.value ?? []);
 
 const toggleMore = () => (isMore.value = !isMore.value);
 const onSearch = (e) => {
-  const search = e.target.value;
-  let items = [];
-  if (search !== "") {
-    items = vacancyStore.regions.filter((item, key) => {
-      return item.name.toLowerCase().includes(search.toLowerCase());
-    });
-  } else {
-    items = vacancyStore.regions.filter((item, key) => {
-      return item.name.toLowerCase().includes(search.toLowerCase());
-    });
-  }
-  selectedItems.value = items;
-  prepare(items);
+  // const search = e.target.value;
+  // let items = [];
+  // if (search !== "") {
+  //   items = vacancyStore.regions_formatted.filter((item, key) => {
+  //     return item.name.toLowerCase().includes(search.toLowerCase());
+  //   });
+  // } else {
+  //   items = vacancyStore.regions_formatted.filter((item, key) => {
+  //     return item.name.toLowerCase().includes(search.toLowerCase());
+  //   });
+  // }
+  // selectedItems.value = items;
+  // prepare(items);
 };
 
 const toggleRegion = (id) => {
-  const items = groupedFilterItems.value.map((item, key) => {
-    if (item.id === id) {
-      item.is_checked = !item.is_checked;
-
-      if (!selectedItems.value.includes(item.id) && item.is_checked) {
-        selectedItems.value.push(item.id);
-      } else {
-        if (
-          selectedItems.value.includes(item.id) &&
-          item.is_checked === false
-        ) {
-          selectedItems.value = selectedItems.value.filter(
-            (sub) => sub !== item.id,
-          );
-        }
-      }
-
-      return item;
-    }
-    return item;
-  });
-
-  groupedFilterItems.value = items;
-
+  // const items = groupedFilterItems.value.map((item, key) => {
+  //   if (item.id === id) {
+  //     item.is_checked = !item.is_checked;
+  //
+  //     if (!selectedItems.value.includes(item.id) && item.is_checked) {
+  //       selectedItems.value.push(item.id);
+  //     } else {
+  //       if (
+  //         selectedItems.value.includes(item.id) &&
+  //         item.is_checked === false
+  //       ) {
+  //         selectedItems.value = selectedItems.value.filter(
+  //           (sub) => sub !== item.id,
+  //         );
+  //       }
+  //     }
+  //
+  //     return item;
+  //   }
+  //   return item;
+  // });
+  //
+  // groupedFilterItems.value = items;
   // regions.cities = selectedItems.value;
-
   // submitSearch();
 };
 
 const isLoading = ref(false);
 const { clearVacancies } = vacancyStore;
 const router = useRouter();
-const submitSearch = () => {
-  emit("onFormChange", "regions", selectedItems.value);
-};
 
 const { sort } = useSort();
-const prepare = (items, custom_items) => {
+const prepare = (items) => {
+  console.log(items);
   let filterItems = items;
-  if (!items) {
-    filterItems = custom_items;
-  }
 
   if (filterItems.length < 1) {
     groupedFilterItems.value = [];
@@ -198,9 +190,8 @@ const prepare = (items, custom_items) => {
 
   filterItems = sort(filterItems, { by: "alpha" });
 
-  regions.value = filterItems;
   groupedFilterItems.value = [];
-  regions.value.map((item, key) => {
+  filterItems.map((item, key) => {
     const firstLetter = item.name.charAt(0);
     if (key === 0) {
       groupedFilterItems.value.push({
@@ -210,8 +201,9 @@ const prepare = (items, custom_items) => {
       });
     } else {
       let prevFirstLetter;
-      if (regions.value[key - 1] !== undefined) {
-        prevFirstLetter = regions.value[key - 1].name.charAt(0);
+      console.log(key);
+      if (filterItems[key - 1] !== undefined) {
+        prevFirstLetter = filterItems[key - 1].name.charAt(0);
       }
       if (firstLetter !== prevFirstLetter) {
         groupedFilterItems.value.push({
@@ -232,20 +224,19 @@ const prepare = (items, custom_items) => {
 };
 
 const { getRegions } = vacancyStore;
-watch(() => vacancyStore.regions, prepare);
+watch(() => vacancyStore.regions_formatted, prepare);
 onMounted(async () => {
   // || parseInt(selectedCountry) !== parseInt(appliedCountry.value)
-
-  if (vacancyStore.regions.length === 0) {
-    console.log(selectedCountry);
-    await getRegions({ country_id: selectedCountry });
-    appliedCountry.value = selectedCountry;
-  } else {
-    prepare(null, vacancyStore.regions);
-  }
-  if (selectedItems.value.length > 0) {
-    isMore.value = true;
-  }
+  // if (vacancyStore.regions.length === 0) {
+  //   console.log(selectedCountry);
+  await getRegions({ country_id: selectedCountry });
+  //   appliedCountry.value = selectedCountry;
+  // } else {
+  //   prepare(null, vacancyStore.regions);
+  // }
+  // if (selectedItems.value.length > 0) {
+  //   isMore.value = true;
+  // }
 });
 </script>
 

@@ -81,6 +81,9 @@ export const useVacancyStore = defineStore("vacancy", {
     my_city_vacancies: (state) => {
       return state.vacancies_in_my_city.slice(0, 3);
     },
+    regions_formatted: (state) => {
+      return state.regions.map((item) => ({ name: item.name, value: item.id }));
+    },
   },
   actions: {
     async getConnectedEmployerProviders() {
