@@ -84,6 +84,9 @@ export const useVacancyStore = defineStore("vacancy", {
     regions_formatted: (state) => {
       return state.regions.map((item) => ({ name: item.name, value: item.id }));
     },
+    cities_formatted: (state) => {
+      return state.cities.map((item) => ({ name: item.name, value: item.id }));
+    },
   },
   actions: {
     async getConnectedEmployerProviders() {
@@ -353,7 +356,7 @@ export const useVacancyStore = defineStore("vacancy", {
         params: payload,
       });
       if (data && "data" in data) {
-        this.cities = data.data?.cities ?? [];
+        this.cities = data.data ?? [];
       }
       return data;
     },

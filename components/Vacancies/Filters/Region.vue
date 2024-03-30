@@ -19,6 +19,7 @@
       <div
         class="check-block-list with_scroll"
         :class="{ 'all-visible': isMore }"
+        v-if="selectedRegionItems.length > 0"
       >
         <span class="fw-bold is_header mb-2">Выбранные регионы</span>
         <div class="check-block" v-for="item in selectedRegionItems">
@@ -89,6 +90,27 @@
           </div>
         </div>
       </div>
+      <div
+        v-else
+        class="check-block-list with_scroll"
+        :class="{ 'all-visible': isMore }"
+      >
+        <div class="check-block" v-for="item in firstXSelectedItems">
+          <div class="checkbox">
+            <input
+              type="checkbox"
+              :name="`region_${item.value}`"
+              @change="toggleRegion(item.value)"
+            />
+            <div class="checkbox-mask">
+              <img src="~/assets/img/svg/check.svg" alt="#" />
+            </div>
+          </div>
+          <div class="l-wrap">
+            <label :for="`region_${item.id}`">{{ item.name }}</label>
+          </div>
+        </div>
+      </div>
       <button
         class="more-filters"
         :data-default-text="`Еще ${total}`"
@@ -128,12 +150,9 @@ const isMore = ref(false);
 const groupedFilterItems = ref([]);
 const selectedRegionItems = ref([]);
 
-const selectedItems = ref(regions.value ?? []);
-
-watch(
-  () => selectedItems.value,
-  (new_ids) => {},
-);
+const firstXSelectedItems = computed(() => {
+  return vacancyStore.regions_formatted.slice(0, 5);
+});
 
 const toggleMore = () => (isMore.value = !isMore.value);
 const onSearch = (e) => {

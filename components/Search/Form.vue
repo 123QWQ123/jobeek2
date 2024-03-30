@@ -149,7 +149,14 @@ const onSubmit = (e) => {
   console.log(e);
   const params = useVacancyForm(form.value, "front");
   console.log(params);
-  navigateTo({ name: "search-vacancies", query: params });
+  navigateTo({
+    name: "search-vacancies",
+    query: {
+      countries: JSON.stringify([1]),
+      cities: JSON.stringify(form.value.cities),
+      salary: JSON.stringify(form.value.salary),
+    },
+  });
 };
 
 const searchPlaceHolder = computed(() =>

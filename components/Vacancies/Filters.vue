@@ -13,17 +13,15 @@
         :is-city-mode="isCityMode"
         :selected-country="countryId"
       />
+
+      {{ regionId }}
+      <VacanciesFiltersCity name="cities" :selected-region="regionId" />
       <!--      <VacanciesFiltersMetro name="metros" />-->
       <!--      <VacanciesFiltersSpecialization-->
       <!--        @onFormChange="onFormChange"-->
       <!--        :selected-ids="form.professional_roles"-->
       <!--      />-->
 
-      <!--      <VacanciesFiltersCity-->
-      <!--        v-if="isCityMode"-->
-      <!--        :selected-region="selectedRegion"-->
-      <!--        @onFormChange="onFormChange"-->
-      <!--      />-->
       <!--      <VacanciesFiltersPartTime @onFormChange="onFormChange" />-->
       <!--      <VacanciesFiltersExperience @onFormChange="onFormChange" />-->
       <!--      <VacanciesFiltersSalary @onFormChange="onFormChange" />-->
@@ -83,7 +81,7 @@ const { toBackend, toFrond, parseParams, values } = useVacancySearchParams({
   countries: [1],
   regions: [],
   metros: [],
-  // cities: [],
+  cities: [],
   // work_types: [],
   // schedules: [],
   // experiences: [],
@@ -102,6 +100,12 @@ const countryId = computed(() => {
     return values.countries[0];
   }
   return values.countries[0];
+});
+const regionId = computed(() => {
+  if (values.countries.length === 1) {
+    return values.regions[0];
+  }
+  return values.regions[0];
 });
 const isCityMode = computed(() => {
   if (values.regions.length === 1) {

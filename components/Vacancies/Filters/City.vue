@@ -1,42 +1,123 @@
 <template>
-  <div class="filter-box" :class="{'open': regionFilterClass}">
-    <div class="filter-box-handle" @click="regionFilterClass = !regionFilterClass">
-      <strong>Города</strong>
-      <img src="~/assets/img/svg/Arrow-Down.svg" alt="#">
+  <div class="filter-box" :class="{ open: regionFilterClass }">
+    <div
+      class="filter-box-handle"
+      @click="regionFilterClass = !regionFilterClass"
+    >
+      <strong>Города({{ total }})</strong>
+      <img src="~/assets/img/svg/Arrow-Down.svg" alt="#" />
     </div>
-
-    <div v-if="isMore" class="filter-box-body " >
+    <div v-if="isMore" class="filter-box-body">
       <div class="search_area">
-        <input type="search" v-model="search" @keyup.prevent="onSearch" @input="onSearch">
+        <input
+          type="search"
+          v-model="search"
+          @keyup.prevent="onSearch"
+          @input="onSearch"
+        />
       </div>
-      <div class="check-block-list with_scroll" :class="{'all-visible': isMore}">
-        <div class="check-block" v-for="item in groupedFilterItems" :class="{'is_header': item.is_header}">
-          <div class="checkbox" v-if="!item.is_header">
-            <input type="checkbox" :checked="item.is_checked" @change="toggleRegion(item.id)">
-            <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
+      <div
+        class="check-block-list with_scroll"
+        :class="{ 'all-visible': isMore }"
+      >
+        <span class="fw-bold is_header mb-2">Выбранные регионы</span>
+        <div class="check-block" v-for="item in selectedRegionItems">
+          <div class="checkbox">
+            <input
+              type="checkbox"
+              :checked="true"
+              :name="`region_${item.value}`"
+              @change="toggleRegion(item.value)"
+            />
+            <div class="checkbox-mask">
+              <img src="~/assets/img/svg/check.svg" alt="#" />
+            </div>
           </div>
           <div class="l-wrap">
-            <label>{{item.name}}</label>
+            <label :for="`region_${item.id}`">{{ item.name }}</label>
           </div>
         </div>
       </div>
-      <button class="more-filters" data-default-text="Еще 25" data-hide-text="Скрыть" @click="toggleMore">
+      <div
+        class="check-block-list with_scroll mt-3"
+        :class="{ 'all-visible': isMore }"
+      >
+        <div
+          class="check-block"
+          v-for="item in groupedFilterItems"
+          :class="{ is_header: item.is_header }"
+        >
+          <div class="checkbox" v-if="!item.is_header">
+            <input
+              type="checkbox"
+              :checked="item.is_checked"
+              @change="toggleRegion(item.value)"
+            />
+            <div class="checkbox-mask">
+              <img src="~/assets/img/svg/check.svg" alt="#" />
+            </div>
+          </div>
+          <div class="l-wrap">
+            <label>{{ item.name }}</label>
+          </div>
+        </div>
+      </div>
+      <button
+        class="more-filters"
+        data-default-text="Еще 25"
+        data-hide-text="Скрыть"
+        @click="toggleMore"
+      >
         Скрыть
       </button>
     </div>
     <div v-else class="filter-box-body">
-      <div class="check-block-list" >
-        <div class="check-block" v-for="item in groupedFilterItems">
+      <div class="check-block-list" v-if="selectedRegionItems.length">
+        <div
+          class="check-block"
+          v-for="item in selectedRegionItems"
+          @click.prevent="toggleRegion(item.value)"
+        >
           <div class="checkbox" v-if="!item.is_header">
-            <input type="checkbox" :checked="item.is_checked" @change="toggleRegion(item.id)" >
-            <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
+            <input type="checkbox" :checked="true" />
+            <div class="checkbox-mask">
+              <img src="~/assets/img/svg/check.svg" alt="#" />
+            </div>
           </div>
           <div class="l-wrap" v-if="!item.is_header">
-            <label>{{item.name}}</label>
+            <label>{{ item.name }}</label>
           </div>
         </div>
       </div>
-      <button class="more-filters" @click="toggleMore" v-if="total > 0">
+
+      <div
+        v-else
+        class="check-block-list with_scroll"
+        :class="{ 'all-visible': isMore }"
+      >
+        <div class="check-block" v-for="item in firstXSelectedItems">
+          <div class="checkbox">
+            <input
+              type="checkbox"
+              :name="`region_${item.value}`"
+              @change="toggleRegion(item.value)"
+            />
+            <div class="checkbox-mask">
+              <img src="~/assets/img/svg/check.svg" alt="#" />
+            </div>
+          </div>
+          <div class="l-wrap">
+            <label :for="`region_${item.id}`">{{ item.name }}</label>
+          </div>
+        </div>
+      </div>
+      <button
+        class="more-filters"
+        :data-default-text="`Еще ${total}`"
+        data-hide-text="Показат"
+        @click="toggleMore"
+        v-if="total > 0"
+      >
         Еще {{ total }}
       </button>
     </div>
@@ -44,167 +125,171 @@
 </template>
 
 <script setup>
-const emit = defineEmits(['onFormChange']);
-const {selectedRegion} = defineProps(['selectedRegion']);
-import {useVacancyStore} from "../../../store/vacancy";
-import {useVacancyForm} from "../../../composables/useVacancyForm";
+import useSort from "~/composables/useSort";
+import { useVacancyStore } from "~/store/vacancy";
+import { useField } from "vee-validate";
 
+const emit = defineEmits(["onFormChange"]);
+const props = defineProps(["name", "isOpen", "selectedRegion"]);
+const { selectedRegion } = props;
+
+const { value: cities, setValue, errorMessage } = useField(() => props.name);
 const vacancyStore = useVacancyStore();
 
-const appliedRegion = ref(null);
 const search = ref("");
-const cities = ref([]);
 
 const total = computed(() => {
-  if (cities.value.length > 5){
-    return cities.value.length - 5;
-  }else{
+  if (vacancyStore.cities_formatted.length > 5) {
+    return vacancyStore.cities_formatted.length - 5;
+  } else {
     return 0;
   }
 });
 const regionFilterClass = ref(true);
 const isMore = ref(false);
 const groupedFilterItems = ref([]);
+const selectedRegionItems = ref([]);
 
-const toggleMore = () => isMore.value = !isMore.value;
+const firstXSelectedItems = computed(() => {
+  return vacancyStore.cities_formatted.slice(0, 5);
+});
+
+const toggleMore = () => (isMore.value = !isMore.value);
 const onSearch = (e) => {
   const search = e.target.value;
-  let items = [];
-  if (search != ''){
-    items = vacancyStore.cities.filter((item, key) => {
+  let items = [...groupedFilterItems.value];
+  if (search !== "") {
+    items = items.filter((item, key) => {
       return item.name.toLowerCase().includes(search.toLowerCase());
     });
-
-  }else{
-    items = vacancyStore.cities.filter((item, key) => {
+  } else {
+    items = items.filter((item, key) => {
       return item.name.toLowerCase().includes(search.toLowerCase());
     });
   }
-  selectedItems.value = items;
+  groupedFilterItems.value = items;
   prepare(items);
 };
 
-const form = ref(useVacancyForm());
-console.log(form.value.cities)
-const selectedItems = ref(form.value.cities);
-
 const toggleRegion = (id) => {
-  const items = groupedFilterItems.value.map((item, key) => {
-    if(item.id === id){
+  let selected_ids = [...cities.value];
+  const old_items = [...groupedFilterItems.value];
+  const items = old_items.map((item, key) => {
+    if (item.value === id) {
       item.is_checked = !item.is_checked;
-      if (!selectedItems.value.includes(item.id) && item.is_checked){
-        selectedItems.value.push(item.id);
-      }else{
-        if (selectedItems.value.includes(item.id) && item.is_checked === false){
-          selectedItems.value = selectedItems.value.filter(sub => sub !== item.id);
+
+      if (!selected_ids.includes(item.value) && item.is_checked) {
+        selected_ids.push(item.value);
+      } else {
+        if (selected_ids.includes(item.value) && item.is_checked === false) {
+          selected_ids = selected_ids.filter((sub) => sub !== item.value);
         }
       }
+
       return item;
     }
     return item;
   });
-
   groupedFilterItems.value = items;
-
-  form.value.cities = selectedItems.value;
-
-  submitSearch();
+  setValue(selected_ids);
 };
 
+const isLoading = ref(false);
+const { clearVacancies } = vacancyStore;
+const router = useRouter();
 
-const  isLoading = ref(false);
-const {clearVacancies} = vacancyStore;
-const router  = useRouter();
-const submitSearch = () => {
-  emit('onFormChange', 'regions', selectedItems.value);
-}
-
-const prepare = (items, custom_items) => {
+const { sort } = useSort();
+const prepare = (items) => {
   let filterItems = items;
-  if (!items){
-    filterItems = custom_items;
-  }
+  let selected_ids = [...cities.value];
+  console.log(selected_ids);
 
-  if (filterItems.length < 1){
+  if (filterItems.length < 1) {
     groupedFilterItems.value = [];
     return;
   }
 
-  filterItems = sort(filterItems, {by: 'alpha'});
+  selectedRegionItems.value = [...filterItems].filter((item) => {
+    return selected_ids.includes(item.value);
+  });
 
-  cities.value = filterItems;
+  filterItems = filterItems.filter(
+    (item) => !selected_ids.includes(item.value),
+  );
+  filterItems = sort(filterItems, { by: "alpha" });
+
   groupedFilterItems.value = [];
-
-  cities.value.map((item, key) => {
+  filterItems.map((item, key) => {
     const firstLetter = item.name.charAt(0);
-    if (key === 0){
+    if (key === 0) {
       groupedFilterItems.value.push({
-        id: firstLetter,
+        value: firstLetter,
         name: firstLetter,
-        is_header: true
+        is_header: true,
       });
-    }else{
+    } else {
       let prevFirstLetter;
-      if (cities.value[key-1] !== undefined){
-        prevFirstLetter = cities.value[key-1].name.charAt(0);
+      if (filterItems[key - 1] !== undefined) {
+        prevFirstLetter = filterItems[key - 1].name.charAt(0);
       }
-      if (firstLetter !== prevFirstLetter){
+      if (firstLetter !== prevFirstLetter) {
         groupedFilterItems.value.push({
-          id: firstLetter,
+          value: firstLetter,
           name: firstLetter,
-          is_header: true
+          is_header: true,
         });
       }
     }
 
     groupedFilterItems.value.push({
-      id: item.id,
+      value: item.value,
       name: item.name,
       is_header: false,
-      is_checked: selectedItems.value.includes(item.id)
     });
   });
-
 };
 
-const {getCities} = vacancyStore;
-watch(() => vacancyStore.cities, prepare);
+const { getCities } = vacancyStore;
+watch(() => vacancyStore.cities_formatted, prepare);
 onMounted(async () => {
-  if (vacancyStore.cities.length === 0 || parseInt(selectedRegion) !== parseInt(appliedRegion.value)){
-    await getCities({region_ids: [selectedRegion]});
-    appliedRegion.value = selectedRegion;
-  }else{
-    prepare(null, vacancyStore.cities);
-  }
-  if (selectedItems.value.length > 0){
-    isMore.value = true;
-  }
+  console.log(selectedRegion);
+  // || parseInt(selectedCountry) !== parseInt(appliedCountry.value)
+  // if (vacancyStore.regions.length === 0) {
+  //   console.log(selectedCountry);
+  await getCities({ region_id: selectedRegion });
+  //   appliedCountry.value = selectedCountry;
+  // } else {
+  //   prepare(null, vacancyStore.regions);
+  // }
+  // if (selectedItems.value.length > 0) {
+  //   isMore.value = true;
+  // }
 });
-
-
 </script>
 
 <style scoped>
-.check-block label{
+.check-block label {
   white-space: pre-wrap;
 }
-.with_scroll{
+
+.with_scroll {
   max-height: 300px;
   overflow: auto;
 }
-.is_header .l-wrap label{
+
+.is_header .l-wrap label {
   font-weight: bold;
 }
+
 .is_header input,
-.is_header .radio-mask
-{
+.is_header .radio-mask {
   display: none;
 }
 
-input[type="search"]{
+input[type="search"] {
   width: 100%;
   margin-bottom: 1rem;
-  border: 1px solid #CBCBCB;
+  border: 1px solid #cbcbcb;
   padding: 0.1rem 0.3rem;
 }
 </style>
