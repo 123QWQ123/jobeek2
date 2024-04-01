@@ -2,6 +2,7 @@
 import Swal from "sweetalert2";
 import IMask from "imask";
 import { useAuthStore } from "~~/store/auth";
+import { ref } from "vue";
 
 definePageMeta({
   layout: "custom",
@@ -68,16 +69,13 @@ const isFirstTimeCodeSent = ref(true);
 const onSubmit = async () => {
   state.phone.val = phoneMask.value.unmaskedValue;
   validateForm();
+  isLoading.value = true;
   if (state.isFormValid) {
     const response = await signUp({
       phone: state.phone.val,
     });
 
-    if (response && "data" in response && "session" in response.data) {
-      isConfirmTab.value = true;
-      isRegisterTab.value = false;
-      state.session = response.data.session;
-    } else {
+    if (response.status !== "success") {
       let responseMessage = "Unknown error";
       if (response) {
         if (
@@ -98,7 +96,14 @@ const onSubmit = async () => {
         icon: "error",
         confirmButtonText: "ОК",
       });
+      isLoading.value = false;
+
+      return;
     }
+    isConfirmTab.value = true;
+    isRegisterTab.value = false;
+    state.session = response.data.session;
+    isLoading.value = false;
   }
 };
 

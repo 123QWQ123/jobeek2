@@ -65,11 +65,6 @@
               <span>Избранные</span>
             </NuxtLink>
           </li>
-          <li v-else>
-            <NuxtLink :to="{ name: 'favorite-resumes' }">
-              <span>Избранные</span>
-            </NuxtLink>
-          </li>
           <li>
             <NuxtLink :to="{ name: 'your-subscriptions' }">
               <span>Подписки</span></NuxtLink
