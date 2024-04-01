@@ -40,22 +40,24 @@
 <script setup>
 import { useVacancyStore } from "~/store/vacancy";
 import { storeToRefs } from "pinia";
-import { useField } from "vee-validate";
+import useQueryParams from "~/composables/useQueryParams.js";
 
 const emit = defineEmits(["onFormChange"]);
 const props = defineProps(["name", "isOpen"]);
 
-const {
-  value: industry_ids,
-  setValue,
-  errorMessage,
-} = useField(() => props.name);
+// const {
+//   value: industry_ids,
+//   setValue,
+//   errorMessage,
+// } = useField(() => props.name);
 
 const vacancyStore = useVacancyStore();
+const { updateQueryParam, getQueryParam } = useQueryParams();
 
 const { getIndustries } = vacancyStore;
 const { industries } = storeToRefs(vacancyStore);
 
+const industry_ids = ref(getQueryParam("industries") ?? []);
 const isModalOpen = ref(false);
 const selectedIndustries = ref(industry_ids.value);
 const firstItems = ref([]);
@@ -63,7 +65,7 @@ const firstItems = ref([]);
 watch(
   () => selectedIndustries.value,
   (newValues) => {
-    setValue(newValues);
+    // setValue(newValues);
   },
 );
 
@@ -85,7 +87,11 @@ const toggleSelect = (id) => {
     return item;
   });
 
-  setValue(selectedItemIds);
+  updateQueryParam(
+    "industries",
+    JSON.stringify(Array.from(new Set(selectedItemIds))),
+  );
+  // setValue(selectedItemIds);
   firstItems.value = dynItems;
 };
 
@@ -93,7 +99,6 @@ const industryItems = ref([]);
 const prepare = (newItems, oldItems) => {
   industryItems.value = newItems;
   if (!newItems || newItems.length < 1) return;
-
   for (let i = 0; i < 5; i++) {
     let item = newItems[i];
     let is_checked = false;

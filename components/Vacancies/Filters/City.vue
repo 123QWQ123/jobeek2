@@ -16,24 +16,27 @@
           @input="onSearch"
         />
       </div>
+      <span class="fw-bold is_header mb-2">Выбранные города</span>
       <div
-        class="check-block-list with_scroll"
+        class="check-block-list with_scroll mt-2"
         :class="{ 'all-visible': isMore }"
       >
-        <span class="fw-bold is_header mb-2">Выбранные регионы</span>
-        <div class="check-block" v-for="item in selectedRegionItems">
-          <div class="checkbox">
+        <div
+          class="check-block"
+          v-for="item in selectedItems"
+          :key="`selected_city_${item.value}`"
+        >
+          <div class="checkbox" @click="toggleRegion(item.value)">
             <input
               type="checkbox"
               :checked="true"
               :name="`region_${item.value}`"
-              @change="toggleRegion(item.value)"
             />
             <div class="checkbox-mask">
               <img src="~/assets/img/svg/check.svg" alt="#" />
             </div>
           </div>
-          <div class="l-wrap">
+          <div class="l-wrap" @click="toggleRegion(item.value)">
             <label :for="`region_${item.id}`">{{ item.name }}</label>
           </div>
         </div>
@@ -46,18 +49,19 @@
           class="check-block"
           v-for="item in groupedFilterItems"
           :class="{ is_header: item.is_header }"
+          :key="`city_${item.value}`"
         >
-          <div class="checkbox" v-if="!item.is_header">
-            <input
-              type="checkbox"
-              :checked="item.is_checked"
-              @change="toggleRegion(item.value)"
-            />
+          <div
+            class="checkbox"
+            v-if="!item.is_header"
+            @click="toggleRegion(item.value)"
+          >
+            <input type="checkbox" :checked="item.is_checked" />
             <div class="checkbox-mask">
               <img src="~/assets/img/svg/check.svg" alt="#" />
             </div>
           </div>
-          <div class="l-wrap">
+          <div class="l-wrap" @click="toggleRegion(item.value)">
             <label>{{ item.name }}</label>
           </div>
         </div>
@@ -72,11 +76,12 @@
       </button>
     </div>
     <div v-else class="filter-box-body">
-      <div class="check-block-list" v-if="selectedRegionItems.length">
+      <div class="check-block-list" v-if="selectedItems.length">
         <div
           class="check-block"
-          v-for="item in selectedRegionItems"
+          v-for="item in selectedItems"
           @click.prevent="toggleRegion(item.value)"
+          :key="`selected_city_${item.value}`"
         >
           <div class="checkbox" v-if="!item.is_header">
             <input type="checkbox" :checked="true" />
@@ -95,18 +100,18 @@
         class="check-block-list with_scroll"
         :class="{ 'all-visible': isMore }"
       >
-        <div class="check-block" v-for="item in firstXSelectedItems">
-          <div class="checkbox">
-            <input
-              type="checkbox"
-              :name="`region_${item.value}`"
-              @change="toggleRegion(item.value)"
-            />
+        <div
+          class="check-block"
+          v-for="item in firstXSelectedItems"
+          :key="`first_city_${item.value}`"
+        >
+          <div class="checkbox" @change="toggleRegion(item.value)">
+            <input type="checkbox" :name="`region_${item.value}`" />
             <div class="checkbox-mask">
               <img src="~/assets/img/svg/check.svg" alt="#" />
             </div>
           </div>
-          <div class="l-wrap">
+          <div class="l-wrap" @change="toggleRegion(item.value)">
             <label :for="`region_${item.id}`">{{ item.name }}</label>
           </div>
         </div>
@@ -127,13 +132,30 @@
 <script setup>
 import useSort from "~/composables/useSort";
 import { useVacancyStore } from "~/store/vacancy";
-import { useField } from "vee-validate";
+import useQueryParams from "~/composables/useQueryParams.js";
 
 const emit = defineEmits(["onFormChange"]);
-const props = defineProps(["name", "isOpen", "selectedRegion"]);
-const { selectedRegion } = props;
+const props = defineProps(["name", "isOpen"]);
 
-const { value: cities, setValue, errorMessage } = useField(() => props.name);
+const { updateQueryParam, getQueryParam } = useQueryParams();
+const cities = ref(getQueryParam("cities") ?? []);
+const regions = ref(getQueryParam("regions") ?? []);
+
+watch(
+  () => getQueryParam("regions") ?? [],
+  async (newValues) => {
+    regions.value = newValues;
+    await getCities({ region_ids: regions.value });
+    prepare(vacancyStore.cities_formatted);
+  },
+);
+watch(
+  () => getQueryParam("cities") ?? [],
+  (newValues) => {
+    cities.value = newValues;
+    prepare(vacancyStore.cities_formatted);
+  },
+);
 const vacancyStore = useVacancyStore();
 
 const search = ref("");
@@ -148,7 +170,7 @@ const total = computed(() => {
 const regionFilterClass = ref(true);
 const isMore = ref(false);
 const groupedFilterItems = ref([]);
-const selectedRegionItems = ref([]);
+const selectedItems = ref([]);
 
 const firstXSelectedItems = computed(() => {
   return vacancyStore.cities_formatted.slice(0, 5);
@@ -171,27 +193,17 @@ const onSearch = (e) => {
   prepare(items);
 };
 
+const { values, toFront } = useVacancySearchParams();
 const toggleRegion = (id) => {
   let selected_ids = [...cities.value];
-  const old_items = [...groupedFilterItems.value];
-  const items = old_items.map((item, key) => {
-    if (item.value === id) {
-      item.is_checked = !item.is_checked;
 
-      if (!selected_ids.includes(item.value) && item.is_checked) {
-        selected_ids.push(item.value);
-      } else {
-        if (selected_ids.includes(item.value) && item.is_checked === false) {
-          selected_ids = selected_ids.filter((sub) => sub !== item.value);
-        }
-      }
-
-      return item;
-    }
-    return item;
-  });
-  groupedFilterItems.value = items;
-  setValue(selected_ids);
+  if (!selected_ids.includes(id)) {
+    selected_ids.push(id);
+  } else {
+    selected_ids = selected_ids.filter((item) => item !== id);
+  }
+  selected_ids = selected_ids.length === 0 ? undefined : selected_ids;
+  updateQueryParam("cities", selected_ids);
 };
 
 const isLoading = ref(false);
@@ -209,7 +221,7 @@ const prepare = (items) => {
     return;
   }
 
-  selectedRegionItems.value = [...filterItems].filter((item) => {
+  selectedItems.value = [...filterItems].filter((item) => {
     return selected_ids.includes(item.value);
   });
 
@@ -252,18 +264,7 @@ const prepare = (items) => {
 const { getCities } = vacancyStore;
 watch(() => vacancyStore.cities_formatted, prepare);
 onMounted(async () => {
-  console.log(selectedRegion);
-  // || parseInt(selectedCountry) !== parseInt(appliedCountry.value)
-  // if (vacancyStore.regions.length === 0) {
-  //   console.log(selectedCountry);
-  await getCities({ region_id: selectedRegion });
-  //   appliedCountry.value = selectedCountry;
-  // } else {
-  //   prepare(null, vacancyStore.regions);
-  // }
-  // if (selectedItems.value.length > 0) {
-  //   isMore.value = true;
-  // }
+  await getCities({ region_ids: regions.value });
 });
 </script>
 

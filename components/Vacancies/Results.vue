@@ -1,5 +1,7 @@
 <template>
   <main class="main results-page" role="main">
+    {{ currentParams }}
+
     <div class="results-page-content">
       <div class="wrapper">
         <div class="search-head">
@@ -238,6 +240,7 @@ import { useDictionaryStore } from "~/store/dictionary";
 import { useUIStore } from "~/store/ui";
 
 import { useNuxtApp } from "#app";
+import useQueryParams from "~/composables/useQueryParams.js";
 
 const { $format_number } = useNuxtApp();
 const vacancyStore = useVacancyStore();
@@ -274,6 +277,16 @@ const onChangeCurrency = (currency) => {
   navigateTo({ query: params });
 };
 
+const { getVacancies } = vacancyStore;
+const { getCurrentQueryParams } = useQueryParams();
+const currentParams = ref(getCurrentQueryParams());
+watch(
+  () => ({ ...getCurrentQueryParams() }),
+  async (newValues) => {
+    currentParams.value = newValues;
+    await getVacancies(newValues);
+  },
+);
 // const toggleSidebar = () => {
 //
 // }

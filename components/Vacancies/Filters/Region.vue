@@ -7,6 +7,7 @@
       <strong>Регионы({{ total }})</strong>
       <img src="~/assets/img/svg/Arrow-Down.svg" alt="#" />
     </div>
+    {{}}
     <div v-if="isMore" class="filter-box-body">
       <div class="search_area">
         <input
@@ -16,13 +17,17 @@
           @input="onSearch"
         />
       </div>
+      <span class="fw-bold is_header mb-2">Выбранные регионы</span>
       <div
-        class="check-block-list with_scroll"
+        class="check-block-list with_scroll mt-2"
         :class="{ 'all-visible': isMore }"
         v-if="selectedRegionItems.length > 0"
       >
-        <span class="fw-bold is_header mb-2">Выбранные регионы</span>
-        <div class="check-block" v-for="item in selectedRegionItems">
+        <div
+          class="check-block"
+          v-for="item in selectedRegionItems"
+          :key="`selected_region_${item.value}`"
+        >
           <div class="checkbox">
             <input
               type="checkbox"
@@ -46,6 +51,7 @@
         <div
           class="check-block"
           v-for="item in groupedFilterItems"
+          :key="`region_${item.value}`"
           :class="{ is_header: item.is_header }"
         >
           <div class="checkbox" v-if="!item.is_header">
@@ -77,6 +83,7 @@
         <div
           class="check-block"
           v-for="item in selectedRegionItems"
+          :key="`selected_region_${item.value}`"
           @click.prevent="toggleRegion(item.value)"
         >
           <div class="checkbox" v-if="!item.is_header">
@@ -95,7 +102,11 @@
         class="check-block-list with_scroll"
         :class="{ 'all-visible': isMore }"
       >
-        <div class="check-block" v-for="item in firstXSelectedItems">
+        <div
+          class="check-block"
+          v-for="item in firstXSelectedItems"
+          :key="`region_${item.value}`"
+        >
           <div class="checkbox">
             <input
               type="checkbox"
@@ -127,13 +138,21 @@
 <script setup>
 import useSort from "~/composables/useSort";
 import { useVacancyStore } from "~/store/vacancy";
-import { useField } from "vee-validate";
+import useQueryParams from "~/composables/useQueryParams.js";
 
 const emit = defineEmits(["onFormChange"]);
 const props = defineProps(["name", "isOpen", "selectedCountry"]);
 const { selectedCountry } = props;
+const { updateQueryParam, getQueryParam } = useQueryParams();
+const regions = ref(getQueryParam("regions") ?? []);
 
-const { value: regions, setValue, errorMessage } = useField(() => props.name);
+watch(
+  () => getQueryParam("regions") ?? [],
+  (newValues) => {
+    regions.value = newValues;
+    prepare(vacancyStore.regions_formatted);
+  },
+);
 const vacancyStore = useVacancyStore();
 
 const search = ref("");
@@ -173,25 +192,14 @@ const onSearch = (e) => {
 
 const toggleRegion = (id) => {
   let selected_ids = [...regions.value];
-  const old_items = [...groupedFilterItems.value];
-  const items = old_items.map((item, key) => {
-    if (item.value === id) {
-      item.is_checked = !item.is_checked;
 
-      if (!selected_ids.includes(item.value) && item.is_checked) {
-        selected_ids.push(item.value);
-      } else {
-        if (selected_ids.includes(item.value) && item.is_checked === false) {
-          selected_ids = selected_ids.filter((sub) => sub !== item.value);
-        }
-      }
-
-      return item;
-    }
-    return item;
-  });
-  groupedFilterItems.value = items;
-  setValue(selected_ids);
+  if (!selected_ids.includes(id)) {
+    selected_ids.push(id);
+  } else {
+    selected_ids = selected_ids.filter((item) => item !== id);
+  }
+  selected_ids = selected_ids.length === 0 ? undefined : selected_ids;
+  updateQueryParam("regions", selected_ids);
 };
 
 const isLoading = ref(false);

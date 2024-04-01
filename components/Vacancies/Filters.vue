@@ -15,7 +15,7 @@
       />
 
       {{ regionId }}
-      <VacanciesFiltersCity name="cities" :selected-region="regionId" />
+      <VacanciesFiltersCity name="cities" />
       <!--      <VacanciesFiltersMetro name="metros" />-->
       <!--      <VacanciesFiltersSpecialization-->
       <!--        @onFormChange="onFormChange"-->
@@ -49,15 +49,16 @@
         </g>
       </svg>
     </button>
+    {{ currentParams }}
   </aside>
 </template>
 
 <script setup>
 import { useVacancyStore } from "~/store/vacancy";
-import { useRoute, useRouter } from "nuxt/app";
 import { useVacancyForm } from "~/composables/useVacancyForm";
 import { useUIStore } from "~/store/ui";
 import { useNuxtApp } from "#app";
+import { useForm } from "vee-validate";
 
 const vacancyStore = useVacancyStore();
 
@@ -74,26 +75,39 @@ if (isMobile) {
   turnOffMobileMode();
 }
 
-const route = useRoute();
-const router = useRouter();
-
-const { toBackend, toFrond, parseParams, values } = useVacancySearchParams({
+const initialValues = {
+  industries: [],
   countries: [1],
   regions: [],
-  metros: [],
   cities: [],
-  // work_types: [],
-  // schedules: [],
-  // experiences: [],
-  // part_times: [],
-  // professional_roles: [],
-  industries: [],
-  currency: "RUB",
-  // salary: { id: 0, from: null, to: null },
-  // city_name: null,
-  // order_by: null,
+};
+const { getCurrentQueryParams } = useQueryParams();
+const currentParams = ref(getCurrentQueryParams(initialValues) ?? {});
+
+const { values, setValues } = useForm({
+  initialValues,
 });
-parseParams(route);
+setValues(currentParams.value);
+// const { toBackend, toFrond, parseParams, values } = useVacancySearchParams(
+//   "vacancy_search_params",
+//   {
+//     countries: [1],
+//     regions: [],
+//     metros: [],
+//     cities: [],
+//     // work_types: [],
+//     // schedules: [],
+//     // experiences: [],
+//     // part_times: [],
+//     // professional_roles: [],
+//     industries: [],
+//     currency: "RUB",
+//     // salary: { id: 0, from: null, to: null },
+//     // city_name: null,
+//     // order_by: null,
+//   },
+// );
+// parseParams(route);
 
 const countryId = computed(() => {
   if (values.countries.length === 1) {
@@ -102,15 +116,15 @@ const countryId = computed(() => {
   return values.countries[0];
 });
 const regionId = computed(() => {
-  if (values.countries.length === 1) {
+  if (values.regions.length === 1) {
     return values.regions[0];
   }
   return values.regions[0];
 });
 const isCityMode = computed(() => {
-  if (values.regions.length === 1) {
-    return true;
-  }
+  // if (values.regions.length === 1) {
+  //   return true;
+  // }
   return false;
 });
 
@@ -139,12 +153,6 @@ const onFormChange = (filter_name, filter_value) => {
   const params = useVacancyForm(form.value, "front");
   router.push({ query: params });
 };
-watch(
-  () => ({ ...values }),
-  (newParams) => {
-    router.push({ query: toFrond(newParams) });
-  },
-);
 </script>
 
 <style scoped>

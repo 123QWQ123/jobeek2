@@ -83,8 +83,8 @@
 </template>
 
 <script setup>
-import { useField } from "vee-validate";
 import useFilter from "~/composables/useFilter.js";
+import useQueryParams from "~/composables/useQueryParams.js";
 
 const props = defineProps({
   items: {
@@ -115,11 +115,22 @@ const emit = defineEmits({
   },
 });
 
-const {
-  value: industry_ids,
-  setValue,
-  errorMessage,
-} = useField(() => props.name);
+const { updateQueryParam, getQueryParam } = useQueryParams();
+
+const industry_ids = ref(getQueryParam("industries") ?? []);
+
+watch(
+  () => industry_ids.value,
+  (newValues) => {
+    console.log(newValues);
+  },
+);
+
+// const {
+//   value: industry_ids,
+//   setValue,
+//   errorMessage,
+// } = useField(() => props.name);
 
 const options = ref(props.items ?? []);
 const selectedSpecs = ref(industry_ids.value ?? []);
@@ -129,7 +140,7 @@ const isLoading = ref(false);
 const { uniq } = useFilter();
 const apply = () => {
   const ids = [...selectedSpecs.value].filter((item) => item);
-  setValue(Array.from(new Set(ids)));
+  updateQueryParam("industries", JSON.stringify(Array.from(new Set(ids))));
 };
 const addIds = (new_ids) => {
   let ids = [...selectedSpecs.value];
