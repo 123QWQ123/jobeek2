@@ -126,7 +126,16 @@ const onSMSSubmit = async () => {
     });
     return;
   }
-  await tryLogin(response.data.token);
+  if (!(await tryLogin(response.data.token))) {
+    let message = "Неизвестная ошибка!";
+    Swal.fire({
+      title: "Ошибка!",
+      text: message,
+      icon: "error",
+      confirmButtonText: "ОК",
+    });
+    return;
+  }
   navigateTo({ name: "profile" });
 };
 
