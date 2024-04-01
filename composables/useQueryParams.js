@@ -3,6 +3,8 @@ import { useRouter } from "vue-router";
 export default function useQueryParams(initialValues) {
   const router = useRouter();
 
+  const values = useState("search_vacancy_params", () => ({ countries: [1] }));
+
   function updateQueryParam(key, value) {
     const currentQuery = { ...router.currentRoute.value.query };
     if (Array.isArray(value) || typeof value === "object") {
@@ -34,6 +36,7 @@ export default function useQueryParams(initialValues) {
       try {
         query[key] = JSON.parse(query[key]);
       } catch (error) {
+        console.log(error);
         // Ignore error, it means it's not a JSON string
       }
     }

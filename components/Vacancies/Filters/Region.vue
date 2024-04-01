@@ -144,6 +144,17 @@ const emit = defineEmits(["onFormChange"]);
 const props = defineProps(["name", "isOpen", "selectedCountry"]);
 const { selectedCountry } = props;
 const { updateQueryParam, getQueryParam } = useQueryParams();
+const countries = ref(getQueryParam("countries") ?? [1]);
+
+watch(
+  () => getQueryParam("countries") ?? [1], // default country is 1
+  async (newValues) => {
+    countries.value = newValues;
+    await getRegions({ country_ids: countries.value });
+    prepare(vacancyStore.regions_formatted);
+  },
+);
+
 const regions = ref(getQueryParam("regions") ?? []);
 
 watch(
@@ -260,10 +271,7 @@ const prepare = (items) => {
 const { getRegions } = vacancyStore;
 watch(() => vacancyStore.regions_formatted, prepare);
 onMounted(async () => {
-  // || parseInt(selectedCountry) !== parseInt(appliedCountry.value)
-  // if (vacancyStore.regions.length === 0) {
-  //   console.log(selectedCountry);
-  await getRegions({ country_id: selectedCountry });
+  await getRegions({ country_ids: countries.value });
   //   appliedCountry.value = selectedCountry;
   // } else {
   //   prepare(null, vacancyStore.regions);

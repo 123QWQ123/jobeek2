@@ -8,13 +8,8 @@
 
       <VacanciesFiltersIndustry name="industries" />
 
-      <VacanciesFiltersRegion
-        name="regions"
-        :is-city-mode="isCityMode"
-        :selected-country="countryId"
-      />
+      <VacanciesFiltersRegion name="regions" :is-city-mode="isCityMode" />
 
-      {{ regionId }}
       <VacanciesFiltersCity name="cities" />
       <!--      <VacanciesFiltersMetro name="metros" />-->
       <!--      <VacanciesFiltersSpecialization-->
@@ -55,7 +50,6 @@
 
 <script setup>
 import { useVacancyStore } from "~/store/vacancy";
-import { useVacancyForm } from "~/composables/useVacancyForm";
 import { useUIStore } from "~/store/ui";
 import { useNuxtApp } from "#app";
 import { useForm } from "vee-validate";
@@ -109,18 +103,6 @@ setValues(currentParams.value);
 // );
 // parseParams(route);
 
-const countryId = computed(() => {
-  if (values.countries.length === 1) {
-    return values.countries[0];
-  }
-  return values.countries[0];
-});
-const regionId = computed(() => {
-  if (values.regions.length === 1) {
-    return values.regions[0];
-  }
-  return values.regions[0];
-});
 const isCityMode = computed(() => {
   // if (values.regions.length === 1) {
   //   return true;
@@ -146,12 +128,7 @@ const { clearVacancies, getVacancies } = vacancyStore;
 
 const resetFilters = () => {
   resetForm();
-  router.push({ query: toFrond(values) });
-};
-const onFormChange = (filter_name, filter_value) => {
-  form.value[filter_name] = filter_value;
-  const params = useVacancyForm(form.value, "front");
-  router.push({ query: params });
+  // router.push({ query: toFrond(values) });
 };
 </script>
 
