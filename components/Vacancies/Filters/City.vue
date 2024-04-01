@@ -100,21 +100,14 @@
         class="check-block-list with_scroll"
         :class="{ 'all-visible': isMore }"
       >
-        <div
+        <VacanciesCheckbox
           class="check-block"
           v-for="item in firstXSelectedItems"
-          :key="`first_city_${item.value}`"
-        >
-          <div class="checkbox" @change="toggleRegion(item.value)">
-            <input type="checkbox" :name="`region_${item.value}`" />
-            <div class="checkbox-mask">
-              <img src="~/assets/img/svg/check.svg" alt="#" />
-            </div>
-          </div>
-          <div class="l-wrap" @change="toggleRegion(item.value)">
-            <label :for="`region_${item.id}`">{{ item.name }}</label>
-          </div>
-        </div>
+          :checked="false"
+          @change="toggleRegion(item.value)"
+          :name="`city_${item.id}`"
+          :label="item.name"
+        />
       </div>
       <button
         class="more-filters"

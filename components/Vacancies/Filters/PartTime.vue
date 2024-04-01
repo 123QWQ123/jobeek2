@@ -7,21 +7,14 @@
 
     <div class="filter-box-body">
       <div class="check-block-list" :class="{ 'all-visible': isMore }">
-        <div class="check-block" v-for="item in filterItems">
-          <div class="checkbox">
-            <input
-              type="checkbox"
-              :checked="item.is_checked"
-              @change="toggle(item.id)"
-            />
-            <div class="checkbox-mask">
-              <img src="~/assets/img/svg/check.svg" alt="#" />
-            </div>
-          </div>
-          <div class="l-wrap">
-            <label>{{ item.name }}</label>
-          </div>
-        </div>
+        <VacanciesCheckbox
+          class="check-block"
+          v-for="item in filterItems"
+          :checked="item.is_checked"
+          @change="toggle(item.id)"
+          :name="`work_type_${item.id}`"
+          :label="item.name"
+        />
       </div>
     </div>
   </div>
@@ -68,14 +61,15 @@ const toggle = (id) => {
 const { sort } = useSort();
 
 const prepare = (items) => {
-  let unsortedItems = items;
+  let selected_ids = [...part_times.value];
 
-  const sortedItems = sort(unsortedItems, { by: "alpha" });
+  const sortedItems = sort(items, { by: "alpha" });
 
-  filterItems.value = sortedItems.map((item) => {
-    item.is_checked = selectedFilterItems.value.includes(item.id);
-    return item;
-  });
+  items = sortedItems.map((item) => ({
+    ...item,
+    is_checked: selected_ids.includes(item.id),
+  }));
+  filterItems.value = items;
 };
 
 watch(() => dictionaryStore.part_times, prepare);
@@ -87,13 +81,6 @@ onMounted(async () => {
     prepare(null, dictionaryStore.part_times);
   }
 });
-
-const isLoading = ref(false);
-const { clearVacancies } = vacancyStore;
-const router = useRouter();
-const submitSearch = () => {
-  emit("onFormChange", "part_times", selectedFilterItems.value);
-};
 </script>
 
 <style scoped>

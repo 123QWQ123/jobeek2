@@ -18,10 +18,10 @@
       <!--      />-->
 
       <VacanciesFiltersPartTime />
-      <!--      <VacanciesFiltersExperience @onFormChange="onFormChange" />-->
-      <!--      <VacanciesFiltersSalary @onFormChange="onFormChange" />-->
-      <!--      <VacanciesFiltersWorkType @onFormChange="onFormChange" />-->
-      <!--      <VacanciesFiltersSchedule @onFormChange="onFormChange" />-->
+      <VacanciesFiltersExperience />
+      <VacanciesFiltersWorkType />
+      <VacanciesFiltersSchedule />
+      <!--      <VacanciesFiltersSalary />-->
     </div>
     <button class="close-aside" @click="toggleSidebar">
       <svg
@@ -82,26 +82,6 @@ const { values, setValues } = useForm({
   initialValues,
 });
 setValues(currentParams.value);
-// const { toBackend, toFrond, parseParams, values } = useVacancySearchParams(
-//   "vacancy_search_params",
-//   {
-//     countries: [1],
-//     regions: [],
-//     metros: [],
-//     cities: [],
-//     // work_types: [],
-//     // schedules: [],
-//     // experiences: [],
-//     // part_times: [],
-//     // professional_roles: [],
-//     industries: [],
-//     currency: "RUB",
-//     // salary: { id: 0, from: null, to: null },
-//     // city_name: null,
-//     // order_by: null,
-//   },
-// );
-// parseParams(route);
 
 const isCityMode = computed(() => {
   // if (values.regions.length === 1) {
@@ -109,20 +89,6 @@ const isCityMode = computed(() => {
   // }
   return false;
 });
-
-// const form = ref(useVacancyForm());
-
-// const selectedRegion = computed(() => {
-//   if (form.value.regions.length === 1) {
-//     return form.value.regions[0];
-//   }
-// });
-// const isCityMode = computed(() => {
-//   if (form.value.regions.length === 1) {
-//     return true;
-//   }
-//   return false;
-// });
 
 const { clearVacancies, getVacancies } = vacancyStore;
 

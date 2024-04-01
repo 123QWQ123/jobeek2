@@ -1,7 +1,5 @@
 <template>
   <main class="main results-page" role="main">
-    {{ currentParams }}
-
     <div class="results-page-content">
       <div class="wrapper">
         <div class="search-head">

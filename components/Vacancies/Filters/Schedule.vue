@@ -1,33 +1,31 @@
 <template>
-  <div class="filter-box" :class="{'open': filterClass}">
+  <div class="filter-box" :class="{ open: filterClass }">
     <div class="filter-box-handle" @click="filterClass = !filterClass">
       <strong>График работы</strong>
-      <img src="~/assets/img/svg/Arrow-Down.svg" alt="#">
+      <img src="~/assets/img/svg/Arrow-Down.svg" alt="#" />
     </div>
 
     <div class="filter-box-body">
-      <div class="check-block-list" :class="{'all-visible': isMore}">
-        <div class="check-block" v-for="item in filterItems">
-          <div class="checkbox">
-            <input type="checkbox" :checked="item.is_checked" @change="toggle(item.id)">
-            <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
-          </div>
-          <div class="l-wrap">
-            <label>{{item.name}}</label>
-          </div>
-        </div>
+      <div class="check-block-list" :class="{ 'all-visible': isMore }">
+        <VacanciesCheckbox
+          class="check-block"
+          v-for="item in filterItems"
+          :checked="item.is_checked"
+          @change="toggle(item.id)"
+          :name="`schedule_${item.id}`"
+          :label="item.name"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import {useDictionaryStore} from "~/store/dictionary";
+import { useDictionaryStore } from "~/store/dictionary";
+import { useVacancyStore } from "~/store/vacancy";
+import useQueryParams from "~/composables/useQueryParams.js";
 
-const emit = defineEmits(['onFormChange'])
-import {useVacancyStore} from "../../../store/vacancy";
-import {useVacancyForm} from "../../../composables/useVacancyForm";
-import useSort from "~/composables/useSort";
+const emit = defineEmits(["onFormChange"]);
 
 const vacancyStore = useVacancyStore();
 const dictionaryStore = useDictionaryStore();
@@ -37,87 +35,77 @@ const isMore = ref(true);
 const search = ref("");
 const filterItems = ref([]);
 
-const toggleMore = () => isMore.value = !isMore.value;
+const { getQueryParam, updateQueryParam } = useQueryParams();
+const schedules = ref(getQueryParam("schedules") ?? []);
+watch(
+  () => getQueryParam("schedules") ?? [],
+  (newValues) => {
+    schedules.value = newValues;
+  },
+);
 
-const form = ref(useVacancyForm());
-const selectedFilterItems = ref(form.value.schedules);
+const selectedFilterItems = ref([]);
 
 const toggle = (id) => {
-  filterItems.value.map((item, key) => {
-    if(item.id === id){
-      item.is_checked = !item.is_checked;
-      if (!selectedFilterItems.value.includes(parseInt(item.id)) && item.is_checked){
-        selectedFilterItems.value.push(item.id);
-      }else{
-        if (selectedFilterItems.value.includes(item.id) && item.is_checked === false){
-          selectedFilterItems.value = selectedFilterItems.value.filter(sub => sub !== item.id);
-        }
-      }
-      return item;
-    }
-    return item;
-  });
-  form.value.schedules = selectedFilterItems.value;
-  submitSearch();
+  let selected_ids = [...schedules.value];
+
+  if (!selected_ids.includes(id)) {
+    selected_ids.push(id);
+  } else {
+    selected_ids = selected_ids.filter((item) => item !== id);
+  }
+  selected_ids = selected_ids.length === 0 ? undefined : selected_ids;
+  updateQueryParam("schedules", selected_ids);
 };
 
-const {sort} = useSort();
+const { sort } = useSort();
 
-const prepare = (items, custom_items) => {
+const prepare = (items) => {
+  let selected_ids = [...schedules.value];
 
-  let unsortedItems = items;
-  if (!items){
-    unsortedItems = custom_items;
-  }
+  const sortedItems = sort(items, { by: "alpha" });
 
-  const sortedItems = sort(unsortedItems, {by: 'alpha'});
-
-  filterItems.value = sortedItems.map(item => {
-    item.is_checked = selectedFilterItems.value.includes(item.id);
-    return item;
-  });
+  items = sortedItems.map((item) => ({
+    ...item,
+    is_checked: selected_ids.includes(item.id),
+  }));
+  filterItems.value = items;
 };
 
 watch(() => dictionaryStore.schedules, prepare);
-const {getSchedules} = dictionaryStore;
+const { getSchedules } = dictionaryStore;
 onMounted(async () => {
-  if (dictionaryStore.schedules.length === 0){
+  if (dictionaryStore.schedules.length === 0) {
     await getSchedules();
-  }else{
+  } else {
     prepare(null, dictionaryStore.schedules);
   }
 });
-
-const  isLoading = ref(false);
-const {clearVacancies} = vacancyStore;
-const router  = useRouter();
-const submitSearch = () => {
-  emit('onFormChange', 'schedules', selectedFilterItems.value);
-}
-
 </script>
 
 <style scoped>
-.check-block label{
+.check-block label {
   white-space: pre-wrap;
 }
-.with_scroll{
+
+.with_scroll {
   max-height: 300px;
   overflow: auto;
 }
-.is_header .l-wrap label{
+
+.is_header .l-wrap label {
   font-weight: bold;
 }
+
 .is_header input,
-.is_header .radio-mask
-{
+.is_header .radio-mask {
   display: none;
 }
 
-input[type="search"]{
+input[type="search"] {
   width: 100%;
   margin-bottom: 1rem;
-  border: 1px solid #CBCBCB;
+  border: 1px solid #cbcbcb;
   padding: 0.1rem 0.3rem;
 }
 </style>
