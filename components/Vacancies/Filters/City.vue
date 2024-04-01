@@ -143,17 +143,21 @@ const regions = ref(getQueryParam("regions") ?? []);
 
 watch(
   () => getQueryParam("regions") ?? [],
-  async (newValues) => {
-    regions.value = newValues;
-    await getCities({ region_ids: regions.value });
-    prepare(vacancyStore.cities_formatted);
+  (newValues, oldValues) => {
+    if (JSON.stringify(newValues) !== JSON.stringify(oldValues)) {
+      regions.value = newValues;
+      getCities({ region_ids: regions.value });
+      prepare(vacancyStore.cities_formatted);
+    }
   },
 );
 watch(
   () => getQueryParam("cities") ?? [],
-  (newValues) => {
-    cities.value = newValues;
-    prepare(vacancyStore.cities_formatted);
+  (newValues, oldValues) => {
+    if (JSON.stringify(newValues) !== JSON.stringify(oldValues)) {
+      cities.value = newValues;
+      prepare(vacancyStore.cities_formatted);
+    }
   },
 );
 const vacancyStore = useVacancyStore();
@@ -214,8 +218,6 @@ const { sort } = useSort();
 const prepare = (items) => {
   let filterItems = items;
   let selected_ids = [...cities.value];
-  console.log(selected_ids);
-
   if (filterItems.length < 1) {
     groupedFilterItems.value = [];
     return;

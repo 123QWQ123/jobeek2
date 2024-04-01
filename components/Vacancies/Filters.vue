@@ -6,18 +6,18 @@
         <button class="clear-all" @click="resetFilters">Очистить все</button>
       </div>
 
-      <VacanciesFiltersIndustry name="industries" />
+      <VacanciesFiltersIndustry />
 
-      <VacanciesFiltersRegion name="regions" :is-city-mode="isCityMode" />
+      <VacanciesFiltersRegion :is-city-mode="isCityMode" />
 
-      <VacanciesFiltersCity name="cities" />
+      <VacanciesFiltersCity />
       <!--      <VacanciesFiltersMetro name="metros" />-->
       <!--      <VacanciesFiltersSpecialization-->
       <!--        @onFormChange="onFormChange"-->
       <!--        :selected-ids="form.professional_roles"-->
       <!--      />-->
 
-      <!--      <VacanciesFiltersPartTime @onFormChange="onFormChange" />-->
+      <VacanciesFiltersPartTime />
       <!--      <VacanciesFiltersExperience @onFormChange="onFormChange" />-->
       <!--      <VacanciesFiltersSalary @onFormChange="onFormChange" />-->
       <!--      <VacanciesFiltersWorkType @onFormChange="onFormChange" />-->

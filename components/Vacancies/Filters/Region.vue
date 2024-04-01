@@ -21,11 +21,11 @@
       <div
         class="check-block-list with_scroll mt-2"
         :class="{ 'all-visible': isMore }"
-        v-if="selectedRegionItems.length > 0"
+        v-if="selectedItems.length > 0"
       >
         <div
           class="check-block"
-          v-for="item in selectedRegionItems"
+          v-for="item in selectedItems"
           :key="`selected_region_${item.value}`"
         >
           <div class="checkbox">
@@ -79,10 +79,10 @@
       </button>
     </div>
     <div v-else class="filter-box-body">
-      <div class="check-block-list" v-if="selectedRegionItems.length">
+      <div class="check-block-list" v-if="selectedItems.length">
         <div
           class="check-block"
-          v-for="item in selectedRegionItems"
+          v-for="item in selectedItems"
           :key="`selected_region_${item.value}`"
           @click.prevent="toggleRegion(item.value)"
         >
@@ -148,10 +148,12 @@ const countries = ref(getQueryParam("countries") ?? [1]);
 
 watch(
   () => getQueryParam("countries") ?? [1], // default country is 1
-  async (newValues) => {
-    countries.value = newValues;
-    await getRegions({ country_ids: countries.value });
-    prepare(vacancyStore.regions_formatted);
+  async (newValues, oldValues) => {
+    if (JSON.stringify(newValues) !== JSON.stringify(oldValues)) {
+      countries.value = newValues;
+      await getRegions({ country_ids: countries.value });
+      prepare(vacancyStore.regions_formatted);
+    }
   },
 );
 
@@ -159,9 +161,11 @@ const regions = ref(getQueryParam("regions") ?? []);
 
 watch(
   () => getQueryParam("regions") ?? [],
-  (newValues) => {
-    regions.value = newValues;
-    prepare(vacancyStore.regions_formatted);
+  (newValues, oldValues) => {
+    if (JSON.stringify(newValues) !== JSON.stringify(oldValues)) {
+      regions.value = newValues;
+      prepare(vacancyStore.regions_formatted);
+    }
   },
 );
 const vacancyStore = useVacancyStore();
@@ -178,7 +182,7 @@ const total = computed(() => {
 const regionFilterClass = ref(true);
 const isMore = ref(false);
 const groupedFilterItems = ref([]);
-const selectedRegionItems = ref([]);
+const selectedItems = ref([]);
 
 const firstXSelectedItems = computed(() => {
   return vacancyStore.regions_formatted.slice(0, 5);
@@ -221,17 +225,13 @@ const { sort } = useSort();
 const prepare = (items) => {
   let filterItems = items;
   let selected_ids = [...regions.value];
-  console.log(selected_ids);
-
   if (filterItems.length < 1) {
     groupedFilterItems.value = [];
     return;
   }
-
-  selectedRegionItems.value = [...filterItems].filter((item) => {
+  selectedItems.value = [...filterItems].filter((item) => {
     return selected_ids.includes(item.value);
   });
-
   filterItems = filterItems.filter(
     (item) => !selected_ids.includes(item.value),
   );
@@ -272,13 +272,6 @@ const { getRegions } = vacancyStore;
 watch(() => vacancyStore.regions_formatted, prepare);
 onMounted(async () => {
   await getRegions({ country_ids: countries.value });
-  //   appliedCountry.value = selectedCountry;
-  // } else {
-  //   prepare(null, vacancyStore.regions);
-  // }
-  // if (selectedItems.value.length > 0) {
-  //   isMore.value = true;
-  // }
 });
 </script>
 

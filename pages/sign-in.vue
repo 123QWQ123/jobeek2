@@ -84,11 +84,6 @@ async function onSubmit() {
         phone: phoneMask.value.unmaskedValue,
         password: state.password.val,
       });
-      if (auth.isEmployer) {
-        await refreshEmployer();
-      } else {
-        await refreshSeeker();
-      }
     } catch (error) {
       state.error = error.message;
     }
@@ -102,10 +97,13 @@ async function onSubmit() {
       isLoading.value = false;
       return;
     }
+    if (auth.isEmployer) {
+      await refreshEmployer();
+    } else {
+      await refreshSeeker();
+    }
     const route_name = route.query.redirect;
-    const isEmployer = auth.isEmployer;
 
-    console.log(route);
     // if (isEmployer && auth.employer && auth.employer.is_completed) {
     //   setTimeout(() => {
     //     if (route_name) {
@@ -128,13 +126,13 @@ async function onSubmit() {
     //   return;
     // }
 
-    // setTimeout(() => {
-    //   if (route_name) {
-    //     router.replace({ name: route_name });
-    //   } else {
-    //     router.replace({ name: "profile" });
-    //   }
-    // });
+    setTimeout(() => {
+      if (route_name) {
+        router.replace({ name: route_name });
+      } else {
+        router.replace({ name: "profile" });
+      }
+    });
   }
 }
 
@@ -236,7 +234,7 @@ onMounted(() => {
               >Забыли пароль?
             </NuxtLink>
           </div>
-          <button class="btn button-accent" type="submit">
+          <button class="btn button-accent" type="submit" :disabled="isLoading">
             <Loader class="text-light spinner-border-sm" v-if="isLoading" />
             Войти
           </button>

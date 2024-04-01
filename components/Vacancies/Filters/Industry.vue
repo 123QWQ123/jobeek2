@@ -58,38 +58,42 @@ const { getIndustries } = vacancyStore;
 const { industries } = storeToRefs(vacancyStore);
 
 const industry_ids = ref(getQueryParam("industries") ?? []);
+watch(
+  () => getQueryParam("industries") ?? [],
+  (newValues, oldValues) => {
+    if (JSON.stringify(newValues) !== JSON.stringify(oldValues)) {
+      industry_ids.value = newValues;
+      prepare(vacancyStore.regions_formatted);
+    }
+  },
+);
 const isModalOpen = ref(false);
 const selectedIndustries = ref(industry_ids.value);
 const firstItems = ref([]);
 
-watch(
-  () => selectedIndustries.value,
-  (newValues) => {
-    // setValue(newValues);
-  },
-);
-
 const toggleModal = () => (isModalOpen.value = !isModalOpen.value);
 const toggleSelect = (id) => {
-  const selectedItemIds = [...industry_ids.value];
+  let selected_ids = [...industry_ids.value];
   const dynItems = [...firstItems.value].map((item) => {
     if (item.id === id) {
       item.is_checked = !item.is_checked;
-      if (item.is_checked && !selectedItemIds.includes(id)) {
-        selectedItemIds.push(item.id);
+      if (item.is_checked && !selected_ids.includes(id)) {
+        selected_ids.push(item.id);
       } else {
-        const index = selectedItemIds.indexOf(item.id);
+        const index = selected_ids.indexOf(item.id);
         if (index !== -1) {
-          selectedItemIds.splice(index, 1);
+          selected_ids.splice(index, 1);
         }
       }
     }
     return item;
   });
 
+  selected_ids = selected_ids.length === 0 ? undefined : selected_ids;
+
   updateQueryParam(
     "industries",
-    JSON.stringify(Array.from(new Set(selectedItemIds))),
+    JSON.stringify(Array.from(new Set(selected_ids))),
   );
   // setValue(selectedItemIds);
   firstItems.value = dynItems;
