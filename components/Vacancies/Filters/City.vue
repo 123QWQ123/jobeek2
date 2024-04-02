@@ -1,9 +1,6 @@
 <template>
-  <div class="filter-box" :class="{ open: regionFilterClass }">
-    <div
-      class="filter-box-handle"
-      @click="regionFilterClass = !regionFilterClass"
-    >
+  <div class="filter-box" :class="{ open: filterClass }">
+    <div class="filter-box-handle" @click="filterClass = !filterClass">
       <strong>Города({{ total }})</strong>
       <img src="~/assets/img/svg/Arrow-Down.svg" alt="#" />
     </div>
@@ -21,50 +18,32 @@
         class="check-block-list with_scroll mt-2"
         :class="{ 'all-visible': isMore }"
       >
-        <div
+        <VacanciesCheckbox
           class="check-block"
           v-for="item in selectedItems"
+          :checked="true"
+          :class="{ is_header: item.is_header }"
+          @change="toggleRegion(item.value)"
+          :name="`selected_city_${item.value}`"
           :key="`selected_city_${item.value}`"
-        >
-          <div class="checkbox" @click="toggleRegion(item.value)">
-            <input
-              type="checkbox"
-              :checked="true"
-              :name="`region_${item.value}`"
-            />
-            <div class="checkbox-mask">
-              <img src="~/assets/img/svg/check.svg" alt="#" />
-            </div>
-          </div>
-          <div class="l-wrap" @click="toggleRegion(item.value)">
-            <label :for="`region_${item.id}`">{{ item.name }}</label>
-          </div>
-        </div>
+          :label="item.name"
+        />
       </div>
       <div
         class="check-block-list with_scroll mt-3"
         :class="{ 'all-visible': isMore }"
       >
-        <div
+        <VacanciesCheckbox
           class="check-block"
           v-for="item in groupedFilterItems"
+          :checked="item.is_checked"
           :class="{ is_header: item.is_header }"
-          :key="`city_${item.value}`"
-        >
-          <div
-            class="checkbox"
-            v-if="!item.is_header"
-            @click="toggleRegion(item.value)"
-          >
-            <input type="checkbox" :checked="item.is_checked" />
-            <div class="checkbox-mask">
-              <img src="~/assets/img/svg/check.svg" alt="#" />
-            </div>
-          </div>
-          <div class="l-wrap" @click="toggleRegion(item.value)">
-            <label>{{ item.name }}</label>
-          </div>
-        </div>
+          @change="toggleRegion(item.value)"
+          :name="`unselected_city_${item.value}`"
+          :label="item.name"
+          :is_header="item.is_header"
+          :key="`unselected_city_${item.value}`"
+        />
       </div>
       <button
         class="more-filters"
@@ -77,22 +56,15 @@
     </div>
     <div v-else class="filter-box-body">
       <div class="check-block-list" v-if="selectedItems.length">
-        <div
+        <VacanciesCheckbox
           class="check-block"
           v-for="item in selectedItems"
-          @click.prevent="toggleRegion(item.value)"
+          :checked="true"
+          @change="toggleRegion(item.value)"
+          :name="`selected_city_${item.value}`"
+          :label="item.name"
           :key="`selected_city_${item.value}`"
-        >
-          <div class="checkbox" v-if="!item.is_header">
-            <input type="checkbox" :checked="true" />
-            <div class="checkbox-mask">
-              <img src="~/assets/img/svg/check.svg" alt="#" />
-            </div>
-          </div>
-          <div class="l-wrap" v-if="!item.is_header">
-            <label>{{ item.name }}</label>
-          </div>
-        </div>
+        />
       </div>
 
       <div
@@ -105,8 +77,9 @@
           v-for="item in firstXSelectedItems"
           :checked="false"
           @change="toggleRegion(item.value)"
-          :name="`city_${item.id}`"
+          :name="`city_${item.value}`"
           :label="item.name"
+          :key="`city_${item.value}`"
         />
       </div>
       <button
@@ -164,7 +137,7 @@ const total = computed(() => {
     return 0;
   }
 });
-const regionFilterClass = ref(true);
+const filterClass = ref(true);
 const isMore = ref(false);
 const groupedFilterItems = ref([]);
 const selectedItems = ref([]);

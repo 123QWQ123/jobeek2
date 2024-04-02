@@ -1,13 +1,9 @@
 <template>
-  <div class="filter-box" :class="{ open: regionFilterClass }">
-    <div
-      class="filter-box-handle"
-      @click="regionFilterClass = !regionFilterClass"
-    >
+  <div class="filter-box" :class="{ open: filterClass }">
+    <div class="filter-box-handle" @click="filterClass = !filterClass">
       <strong>Регионы({{ total }})</strong>
       <img src="~/assets/img/svg/Arrow-Down.svg" alt="#" />
     </div>
-    {{}}
     <div v-if="isMore" class="filter-box-body">
       <div class="search_area">
         <input
@@ -21,53 +17,33 @@
       <div
         class="check-block-list with_scroll mt-2"
         :class="{ 'all-visible': isMore }"
-        v-if="selectedItems.length > 0"
       >
-        <div
+        <VacanciesCheckbox
           class="check-block"
           v-for="item in selectedItems"
+          :checked="true"
+          :class="{ is_header: item.is_header }"
+          @change="toggleRegion(item.value)"
+          :name="`selected_region_${item.value}`"
           :key="`selected_region_${item.value}`"
-        >
-          <div class="checkbox">
-            <input
-              type="checkbox"
-              :checked="true"
-              :name="`region_${item.value}`"
-              @change="toggleRegion(item.value)"
-            />
-            <div class="checkbox-mask">
-              <img src="~/assets/img/svg/check.svg" alt="#" />
-            </div>
-          </div>
-          <div class="l-wrap">
-            <label :for="`region_${item.id}`">{{ item.name }}</label>
-          </div>
-        </div>
+          :label="item.name"
+        />
       </div>
       <div
         class="check-block-list with_scroll mt-3"
         :class="{ 'all-visible': isMore }"
       >
-        <div
+        <VacanciesCheckbox
           class="check-block"
           v-for="item in groupedFilterItems"
-          :key="`region_${item.value}`"
+          :checked="item.is_checked"
           :class="{ is_header: item.is_header }"
-        >
-          <div class="checkbox" v-if="!item.is_header">
-            <input
-              type="checkbox"
-              :checked="item.is_checked"
-              @change="toggleRegion(item.value)"
-            />
-            <div class="checkbox-mask">
-              <img src="~/assets/img/svg/check.svg" alt="#" />
-            </div>
-          </div>
-          <div class="l-wrap">
-            <label>{{ item.name }}</label>
-          </div>
-        </div>
+          @change="toggleRegion(item.value)"
+          :name="`unselected_region_${item.value}`"
+          :label="item.name"
+          :is_header="item.is_header"
+          :key="`unselected_region_${item.value}`"
+        />
       </div>
       <button
         class="more-filters"
@@ -80,47 +56,31 @@
     </div>
     <div v-else class="filter-box-body">
       <div class="check-block-list" v-if="selectedItems.length">
-        <div
+        <VacanciesCheckbox
           class="check-block"
           v-for="item in selectedItems"
+          :checked="true"
+          @change="toggleRegion(item.value)"
+          :name="`selected_region_${item.value}`"
+          :label="item.name"
           :key="`selected_region_${item.value}`"
-          @click.prevent="toggleRegion(item.value)"
-        >
-          <div class="checkbox" v-if="!item.is_header">
-            <input type="checkbox" :checked="true" />
-            <div class="checkbox-mask">
-              <img src="~/assets/img/svg/check.svg" alt="#" />
-            </div>
-          </div>
-          <div class="l-wrap" v-if="!item.is_header">
-            <label>{{ item.name }}</label>
-          </div>
-        </div>
+        />
       </div>
+
       <div
         v-else
         class="check-block-list with_scroll"
         :class="{ 'all-visible': isMore }"
       >
-        <div
+        <VacanciesCheckbox
           class="check-block"
           v-for="item in firstXSelectedItems"
+          :checked="false"
+          @change="toggleRegion(item.value)"
+          :name="`region_${item.value}`"
+          :label="item.name"
           :key="`region_${item.value}`"
-        >
-          <div class="checkbox">
-            <input
-              type="checkbox"
-              :name="`region_${item.value}`"
-              @change="toggleRegion(item.value)"
-            />
-            <div class="checkbox-mask">
-              <img src="~/assets/img/svg/check.svg" alt="#" />
-            </div>
-          </div>
-          <div class="l-wrap">
-            <label :for="`region_${item.id}`">{{ item.name }}</label>
-          </div>
-        </div>
+        />
       </div>
       <button
         class="more-filters"
@@ -179,7 +139,7 @@ const total = computed(() => {
     return 0;
   }
 });
-const regionFilterClass = ref(true);
+const filterClass = ref(true);
 const isMore = ref(false);
 const groupedFilterItems = ref([]);
 const selectedItems = ref([]);
