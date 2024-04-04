@@ -12,28 +12,29 @@
             </div>
           </div>
           <div class="col d-flex justify-content-end">
-            <div class="d-inline-flex">
-              <form class="sort mx-1 mr-2" action="#">
-                <span>Валюта:</span>
-                <CustomSelect
-                  v-model="form.currency"
-                  :options="currencyOptions"
-                  class="bg-white w-auto"
-                  @change="onChangeCurrency"
-                  :listStyles="listStyles"
-                ></CustomSelect>
-              </form>
-              <form class="sort mx-1" action="#">
-                <span>Сортировать:</span>
-                <CustomSelect
-                  v-model="form.order_by"
-                  :options="sortingOptions"
-                  @change="onChangeSorting"
-                  class="bg-white w-auto"
-                  :listStyles="listStyles"
-                ></CustomSelect>
-              </form>
-            </div>
+            <div class="d-inline-flex"></div>
+            <!--            <div class="d-inline-flex">-->
+            <!--              <form class="sort mx-1 mr-2" action="#">-->
+            <!--                <span>Валюта:</span>-->
+            <!--                <CustomSelect-->
+            <!--                  v-model="form.currency"-->
+            <!--                  :options="currencyOptions"-->
+            <!--                  class="bg-white w-auto"-->
+            <!--                  @change="onChangeCurrency"-->
+            <!--                  :listStyles="listStyles"-->
+            <!--                ></CustomSelect>-->
+            <!--              </form>-->
+            <!--              <form class="sort mx-1" action="#">-->
+            <!--                <span>Сортировать:</span>-->
+            <!--                <CustomSelect-->
+            <!--                  v-model="form.order_by"-->
+            <!--                  :options="sortingOptions"-->
+            <!--                  @change="onChangeSorting"-->
+            <!--                  class="bg-white w-auto"-->
+            <!--                  :listStyles="listStyles"-->
+            <!--                ></CustomSelect>-->
+            <!--              </form>-->
+            <!--            </div>-->
           </div>
         </div>
         <button class="mob-get-aside-btn" @click="toggle">
@@ -228,7 +229,6 @@
 </template>
 
 <script setup>
-import CustomSelect from "../UI/CustomSelect";
 import { useVacancyStore } from "~/store/vacancy";
 import { useCurrencyOptions } from "~/composables/useCurrencyOptions";
 import { useSortingOptions } from "~/composables/useSortingOptions";

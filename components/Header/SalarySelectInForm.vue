@@ -12,9 +12,16 @@ import { useSalaryOptions } from "~/composables/useSalaryOptions";
 
 const props = defineProps(["modelValue", "currency"]);
 const emit = defineEmits(["update:modelValue"]);
-const { modelValue: salary } = props;
 
-const selectedSalary = ref(salary.id);
+console.log(props.modelValue);
+const selectedSalary = ref(props.modelValue?.id ?? undefined);
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    console.log(newValue);
+    selectedSalary.value = newValue?.id ?? undefined;
+  },
+);
 
 const salaryOptionsData = useSalaryOptions();
 const salaryOptions = ref(salaryOptionsData);

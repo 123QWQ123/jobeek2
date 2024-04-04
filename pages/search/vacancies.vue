@@ -1,5 +1,5 @@
 <script setup>
-import { useAuthStore } from "../../store/auth";
+import { useAuthStore } from "~/store/auth";
 import { navigateTo } from "nuxt/app";
 
 definePageMeta({
@@ -32,7 +32,12 @@ onMounted(async () => {
 </script>
 <template>
   <div>
-    <SearchForm></SearchForm>
+    <SearchForm2>
+      <div class="wrapper">
+        <slot></slot>
+      </div>
+    </SearchForm2>
+
     <VacanciesResults></VacanciesResults>
   </div>
 </template>

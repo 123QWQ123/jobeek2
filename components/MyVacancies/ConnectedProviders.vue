@@ -181,7 +181,8 @@ import { useVacancyStore } from "~/store/vacancy";
 
 const vacancyStore = useVacancyStore();
 const profileStore = useProfileStore();
-const { getEmployerProvidersAuthEndpoints } = vacancyStore;
+const { getEmployerProvidersAuthEndpoints, getConnectedEmployerProviders } =
+  vacancyStore;
 
 const providers = ref({
   hh: {
@@ -252,6 +253,7 @@ const isAnyProviderConnected = computed(() => {
 const route = useRoute();
 const redirect_url = useRequestURL();
 onMounted(async () => {
+  await getConnectedEmployerProviders();
   if (!isAnyProviderConnected.value) {
     const authData = await getEmployerProvidersAuthEndpoints({}, redirect_url);
     providers.value.hh.url = authData.data.hh;
@@ -261,9 +263,6 @@ onMounted(async () => {
 
 const openProviderAuthUrl = (url) => {
   window.open(url);
-};
-const onIframeLoaded = (data) => {
-  console.log(data, iframe);
 };
 const iframe = ref();
 </script>

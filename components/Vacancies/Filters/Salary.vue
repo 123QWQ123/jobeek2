@@ -6,7 +6,6 @@
     </div>
     <div class="filter-box-body">
       <div class="check-block-list all-visible">
-        {{ salary_id }}
         <VacanciesRadio
           class="check-block"
           v-for="item in salaryOptions"
@@ -16,27 +15,8 @@
           :id="`salary_${item.value}`"
           :label="item.name"
         />
-        <!--        <div v-for="item in salaryOptions" class="check-block">-->
-        <!--          <div class="checkbox">-->
-        <!--            <input-->
-        <!--              type="radio"-->
-        <!--              name="salary"-->
-        <!--              :checked="item.is_checked"-->
-        <!--              @change="onChange()"-->
-        <!--            />-->
-        <!--            <div class="radio-mask">-->
-        <!--              <img src="~/assets/img/svg/check.svg" alt="#" />-->
-        <!--            </div>-->
-        <!--          </div>-->
-        <!--          <div class="l-wrap">-->
-        <!--            <label :for="item.value">{{ item.name }} ₽</label>-->
-        <!--            &lt;!&ndash;                <span class="count">200</span>&ndash;&gt;-->
-        <!--          </div>-->
-        <!--        </div>-->
       </div>
     </div>
-    {{ salary_id }}
-    <!--    {{ filterItems }}-->
   </div>
 </template>
 
@@ -49,8 +29,7 @@ import { useSalaryOptions } from "~/composables/useSalaryOptions.js";
 const vacancyStore = useVacancyStore();
 const dictionaryStore = useDictionaryStore();
 
-const filterClass = ref(false);
-const isMore = ref(true);
+const filterClass = ref(true);
 const search = ref("");
 const filterItems = ref([]);
 
@@ -65,15 +44,12 @@ const getSalaryValue = () => {
   );
 };
 const salary = ref(getSalaryValue());
-console.log(salary);
 const salary_id = ref(salary.value?.id ?? undefined);
 
 watch(
   () => getSalaryValue(),
   (newValues, oldValues) => {
-    console.log(newValues, oldValues);
     salary.value = newValues;
-    // work_types.value = newValues;
   },
 );
 watch(
@@ -97,9 +73,6 @@ const prepare = (items) => {
     is_checked: item.id === salary_id.value,
   }));
   filterItems.value = items;
-};
-const onChange = (id) => {
-  console.log(id);
 };
 onMounted(async () => {
   prepare([...salaryOptions.value]);

@@ -15,82 +15,100 @@
           id="keyword"
           :placeholder="searchPlaceHolder"
           autocomplete="off"
-          v-model="form.name"
+          v-model="search"
         />
       </div>
-        <div class="input-wrap has-icon">
-          <HeaderSalarySelectInForm
-            v-model="form.salary"
-            @change="onChange"
-          ></HeaderSalarySelectInForm>
-        </div>
+      <div class="input-wrap has-icon">
+        <HeaderSalarySelectInForm v-model="salary" />
+      </div>
 
       <div class="input-wrap has-icon">
-<!--        <SelectWithSearch-->
-<!--          :options="cityOptions"-->
-<!--          v-model="city"-->
-<!--          :listStyles="searchSelectStyles"-->
-<!--          @change="onCityChange"-->
-<!--          :placeholder="'Город'"-->
-<!--          :listItemStyles="searchSelectItemStyles"-->
-<!--        />-->
-          <SelectWithSearch :options="cityOptions" v-model.number="city" :placeholder="'Город'" @input="updateCityInput" ></SelectWithSearch>
+        <!--        <SelectWithSearch-->
+        <!--          :options="cityOptions"-->
+        <!--          v-model="city"-->
+        <!--          :listStyles="searchSelectStyles"-->
+        <!--          @change="onCityChange"-->
+        <!--          :placeholder="'Город'"-->
+        <!--          :listItemStyles="searchSelectItemStyles"-->
+        <!--        />-->
+        <SelectWithSearch
+          :options="cityOptions"
+          v-model.number="city"
+          :placeholder="'Город'"
+          @input="updateCityInput"
+        ></SelectWithSearch>
       </div>
-<!--      <div class="input-wrap has-icon">-->
-<!--        <img class="icon" src="~/assets/img/svg/location.svg" alt="#" />-->
-<!--        <SelectWithSearch-->
-<!--          :options="regionOptions"-->
-<!--          v-model="region"-->
-<!--          :placeholder="'Регион'"-->
-<!--          :listStyles="searchSelectStyles"-->
-<!--          @change="onRegionChange"-->
-<!--          :listItemStyles="searchSelectItemStyles"-->
-<!--        />-->
-<!--      </div>-->
-      <button class="button-xl submit-search-form" type="submit" @click="onSubmit">Поиск</button>
+      <!--      <div class="input-wrap has-icon">-->
+      <!--        <img class="icon" src="~/assets/img/svg/location.svg" alt="#" />-->
+      <!--        <SelectWithSearch-->
+      <!--          :options="regionOptions"-->
+      <!--          v-model="region"-->
+      <!--          :placeholder="'Регион'"-->
+      <!--          :listStyles="searchSelectStyles"-->
+      <!--          @change="onRegionChange"-->
+      <!--          :listItemStyles="searchSelectItemStyles"-->
+      <!--        />-->
+      <!--      </div>-->
+      <button
+        class="button-xl submit-search-form"
+        type="submit"
+        @click="onSubmit"
+      >
+        Поиск
+      </button>
     </div>
   </form>
 </template>
 
 <script setup>
-import { useAuthStore } from "~~/store/auth";
-import { navigateTo } from "nuxt/app";
-import { useVacancyStore } from "../../store/vacancy";
-import { useVacancyForm } from "../../composables/useVacancyForm";
+import { useAuthStore } from "~/store/auth";
+import { useVacancyStore } from "~/store/vacancy";
 import { storeToRefs } from "pinia";
-import {useProfileStore} from "~/store/profile";
+import { useProfileStore } from "~/store/profile";
+import useQueryParams from "~/composables/useQueryParams.js";
 
 const auth = useAuthStore();
-const { logout } = auth;
 
 const isEmployer = computed(() => auth.isEmployer);
 const searchPlaceHolder = computed(() =>
-  auth.isEmployer ? "Какой специалист вы ищете?" : "Какую вакансию вы ищете?"
+  auth.isEmployer ? "Какой специалист вы ищете?" : "Какую вакансию вы ищете?",
 );
+const { getCurrentQueryParams } = useQueryParams();
+const params = getCurrentQueryParams();
+console.log(params);
 
-const onChange = (e) => {
-  console.log(e);
-};
 const router = useRouter();
 const route = useRoute();
 
 const vacancyStore = useVacancyStore();
 const profileStore = useProfileStore();
+const { searchCities } = profileStore;
 
-const city = ref("*");
-watch(() => city.value, (newCity) => {
-    form.value.cities = [newCity];
-})
-const form = ref(useVacancyForm());
+const search = ref();
+const salary = ref({
+  from: undefined,
+  to: undefined,
+  id: undefined,
+});
+const city = ref(null);
 
+const onCityChange = (cityItem) => {
+  if (cityItem.value === null) {
+    city.value = undefined;
+  } else {
+    city.value = cityItem.value;
+  }
+};
 
-const {searchCities} = profileStore;
-const updateCityInput = async (newValue = '') => {
-    const items = await searchCities({search: newValue}) ?? [];
-    cityOptions.value = items.map(item => ({value: item.city_id, name: item.city_name}));
-}
+const updateCityInput = async (newValue = "") => {
+  const items = (await searchCities({ search: newValue })) ?? [];
+  cityOptions.value = items.map((item) => ({
+    value: item.id,
+    name: item.name,
+  }));
+};
 
-const { getVacancies, getRegions, getCities } = vacancyStore;
+const { getVacancies, getCities } = vacancyStore;
 const vacancies = computed(() => vacancyStore.vacancies);
 
 const { cities } = storeToRefs(vacancyStore);
@@ -99,8 +117,8 @@ const cityOptions = ref([]);
 const page = useRoute();
 
 const country = computed(() => {
-  if (form.value.countries && form.value.countries.length === 0) {
-    return form.value.countries[0];
+  if (params.countries && params.countries.length === 1) {
+    return params.countries[0];
   } else return 1;
 });
 
@@ -110,28 +128,39 @@ const { clearVacancies } = vacancyStore;
 const onSubmit = async (e) => {
   isLoading.value = true;
   clearVacancies();
-  const params = useVacancyForm(form.value, "front");
+  const cities = city.value ? [city.value] : undefined;
+  const queryVacancy = {
+    cities: cities,
+    salary: JSON.stringify(salary.value),
+    search: search.value,
+  };
   if (isEmployer.value) {
-    navigateTo({ name: "search-resumes", query: params });
+    router.push({
+      name: "search-resumes",
+      query: queryVacancy,
+    });
   } else {
-    navigateTo({ name: "search-vacancies", query: params });
+    router.push({
+      name: "search-vacancies",
+      query: queryVacancy,
+    });
   }
   isLoading.value = false;
 };
 </script>
 
 <style scoped>
-
 .search-form--widget {
   display: block;
 }
 
-.search-form--widget .search-row{
-    grid-template-columns: 1fr 20% 20% 130px;
+.search-form--widget .search-row {
+  grid-template-columns: 1fr 20% 20% 130px;
 }
-@media only screen and (max-width: 1280px){
-    .search-form-desktop{
-        display: none;
-    }
+
+@media only screen and (max-width: 1280px) {
+  .search-form-desktop {
+    display: none;
+  }
 }
 </style>

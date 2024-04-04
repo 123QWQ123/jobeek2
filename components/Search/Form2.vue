@@ -51,7 +51,7 @@ const isEmployer = computed(() => auth.isEmployer);
 const searchPlaceHolder = computed(() =>
   auth.isEmployer ? "Какой специалист вы ищете?" : "Какую вакансию вы ищете?",
 );
-const { getCurrentQueryParams } = useQueryParams();
+const { getCurrentQueryParams, getQueryParam } = useQueryParams();
 const params = getCurrentQueryParams();
 console.log(params);
 
@@ -63,12 +63,22 @@ const profileStore = useProfileStore();
 const { searchCities } = profileStore;
 
 const search = ref();
+
 const salary = ref({
   from: undefined,
   to: undefined,
   id: undefined,
 });
+salary.value = getQueryParam("salary");
 const city = ref(null);
+
+watch(
+  () => getQueryParam("salary"),
+  (newValue) => {
+    console.log(newValue);
+    salary.value = newValue;
+  },
+);
 
 const onCityChange = (cityItem) => {
   if (cityItem.value === null) {
