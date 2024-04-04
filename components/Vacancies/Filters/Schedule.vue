@@ -78,7 +78,7 @@ onMounted(async () => {
   if (dictionaryStore.schedules.length === 0) {
     await getSchedules();
   } else {
-    prepare(null, dictionaryStore.schedules);
+    prepare(dictionaryStore.schedules);
   }
 });
 </script>

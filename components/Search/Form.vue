@@ -133,7 +133,7 @@ onMounted(async () => {
   // await getRegions({ country_id: country.value });
   // const region_ids = regions.value.map((item) => item.id);
   // console.log(region_ids);
-  console.log(form.value.countries);
+  // console.log(form.value.countries);
 
   // await getCities({ country_ids: form.value.countries });
   //
@@ -148,7 +148,7 @@ const { clearVacancies } = vacancyStore;
 const onSubmit = (e) => {
   console.log(e);
   const params = useVacancyForm(form.value, "front");
-  console.log(params);
+  // console.log(params);
   navigateTo({
     name: "search-vacancies",
     query: {

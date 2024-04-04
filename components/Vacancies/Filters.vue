@@ -5,23 +5,26 @@
         <strong>Фильтры</strong>
         <button class="clear-all" @click="resetFilters">Очистить все</button>
       </div>
+      {{ currentParams }}
 
-      <VacanciesFiltersIndustry />
+      <VacanciesFiltersSalary />
 
-      <VacanciesFiltersRegion :is-city-mode="isCityMode" />
+      <!--      <VacanciesFiltersIndustry />-->
 
-      <VacanciesFiltersCity />
+      <!--      <VacanciesFiltersRegion :is-city-mode="isCityMode" />-->
+
+      <!--      <VacanciesFiltersCity />-->
+
+      <!--      <VacanciesFiltersPartTime />-->
+      <!--      <VacanciesFiltersExperience />-->
+      <!--      <VacanciesFiltersWorkType />-->
+      <!--      <VacanciesFiltersSchedule />-->
+
       <!--      <VacanciesFiltersMetro name="metros" />-->
       <!--      <VacanciesFiltersSpecialization-->
       <!--        @onFormChange="onFormChange"-->
       <!--        :selected-ids="form.professional_roles"-->
       <!--      />-->
-
-      <VacanciesFiltersPartTime />
-      <VacanciesFiltersExperience />
-      <VacanciesFiltersWorkType />
-      <VacanciesFiltersSchedule />
-      <!--      <VacanciesFiltersSalary />-->
     </div>
     <button class="close-aside" @click="toggleSidebar">
       <svg
@@ -44,7 +47,6 @@
         </g>
       </svg>
     </button>
-    {{ currentParams }}
   </aside>
 </template>
 

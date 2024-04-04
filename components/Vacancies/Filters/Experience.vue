@@ -6,7 +6,7 @@
     </div>
 
     <div class="filter-box-body">
-      <div class="check-block-list" :class="{ 'all-visible': isMore }">
+      <div class="check-block-list">
         <VacanciesCheckbox
           class="check-block"
           v-for="item in filterItems"

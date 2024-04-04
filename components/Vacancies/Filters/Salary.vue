@@ -1,33 +1,42 @@
 <template>
-  <div class="filter-box" :class="{ open: salaryFilterClass }">
-    <div
-      class="filter-box-handle"
-      @click="salaryFilterClass = !salaryFilterClass"
-    >
+  <div class="filter-box" :class="{ open: filterClass }">
+    <div class="filter-box-handle" @click="filterClass = !filterClass">
       <strong>Зарплата</strong>
       <img src="~/assets/img/svg/Arrow-Down.svg" alt="#" />
     </div>
     <div class="filter-box-body">
       <div class="check-block-list all-visible">
-        <div v-for="item in salaryOptions" class="check-block">
-          <div class="checkbox">
-            <input
-              type="radio"
-              name="salary"
-              :checked="isChecked(item)"
-              @change="onChange(item.value)"
-            />
-            <div class="radio-mask">
-              <img src="~/assets/img/svg/check.svg" alt="#" />
-            </div>
-          </div>
-          <div class="l-wrap">
-            <label :for="item.value">{{ item.name }} ₽</label>
-            <!--                <span class="count">200</span>-->
-          </div>
-        </div>
+        {{ salary_id }}
+        <VacanciesRadio
+          class="check-block"
+          v-for="item in salaryOptions"
+          v-model="salary_id"
+          :value="item.value"
+          :name="'salary_id'"
+          :id="`salary_${item.value}`"
+          :label="item.name"
+        />
+        <!--        <div v-for="item in salaryOptions" class="check-block">-->
+        <!--          <div class="checkbox">-->
+        <!--            <input-->
+        <!--              type="radio"-->
+        <!--              name="salary"-->
+        <!--              :checked="item.is_checked"-->
+        <!--              @change="onChange()"-->
+        <!--            />-->
+        <!--            <div class="radio-mask">-->
+        <!--              <img src="~/assets/img/svg/check.svg" alt="#" />-->
+        <!--            </div>-->
+        <!--          </div>-->
+        <!--          <div class="l-wrap">-->
+        <!--            <label :for="item.value">{{ item.name }} ₽</label>-->
+        <!--            &lt;!&ndash;                <span class="count">200</span>&ndash;&gt;-->
+        <!--          </div>-->
+        <!--        </div>-->
       </div>
     </div>
+    {{ salary_id }}
+    <!--    {{ filterItems }}-->
   </div>
 </template>
 
@@ -37,27 +46,44 @@ import { useVacancyStore } from "~/store/vacancy";
 import useQueryParams from "~/composables/useQueryParams.js";
 import { useSalaryOptions } from "~/composables/useSalaryOptions.js";
 
-const emit = defineEmits(["onFormChange"]);
-
 const vacancyStore = useVacancyStore();
 const dictionaryStore = useDictionaryStore();
 
-const filterClass = ref(true);
+const filterClass = ref(false);
 const isMore = ref(true);
 const search = ref("");
 const filterItems = ref([]);
 
 const { getQueryParam, updateQueryParam } = useQueryParams();
-const salary = ref(getQueryParam("salary") ?? []);
-watch(
-  () =>
+const getSalaryValue = () => {
+  return (
     getQueryParam("salary") ?? {
       id: undefined,
       from: undefined,
       to: undefined,
-    },
-  (newValues) => {
-    work_types.value = newValues;
+    }
+  );
+};
+const salary = ref(getSalaryValue());
+console.log(salary);
+const salary_id = ref(salary.value?.id ?? undefined);
+
+watch(
+  () => getSalaryValue(),
+  (newValues, oldValues) => {
+    console.log(newValues, oldValues);
+    salary.value = newValues;
+    // work_types.value = newValues;
+  },
+);
+watch(
+  () => salary_id.value,
+  (newValue) => {
+    if (newValue) {
+      updateQueryParam("salary", { ...salary.value, id: newValue });
+    } else {
+      updateQueryParam("salary", undefined);
+    }
   },
 );
 
@@ -65,44 +91,19 @@ const salaryOptions = ref(useSalaryOptions());
 
 const { sort } = useSort();
 
-onMounted(async () => {});
-// const emit = defineEmits(["onFormChange"]);
-//
-// import { useSalaryOptions } from "~/composables/useSalaryOptions";
-// import { useVacancyStore } from "~/store/vacancy";
-// import { useVacancyForm } from "~/composables/useVacancyForm";
-//
-// const vacancyStore = useVacancyStore();
-// const salaryOptions = ref(useSalaryOptions());
-// const form = ref(useVacancyForm());
-//
-// const isChecked = (current) => {
-//   const selectedSalary = form.value.salary;
-//   if (current.value === selectedSalary.id) {
-//     return true;
-//   }
-//   return false;
-// };
-//
-// const isLoading = ref(false);
-// const router = useRouter();
-// const { getVacancies, clearVacancies } = vacancyStore;
-// const onChange = async (id) => {
-//   let selectedOptionID = salaryOptions.value.findIndex(
-//     (item) => item.value === id,
-//   );
-//   if (selectedOptionID === -1) {
-//     return;
-//   }
-//   const selectedOption = salaryOptions.value[selectedOptionID];
-//   emit("onFormChange", "salary", {
-//     id: selectedOptionID,
-//     from: selectedOption.min,
-//     to: selectedOption.max,
-//   });
-// };
-
-const salaryFilterClass = ref(true);
+const prepare = (items) => {
+  items = items.map((item) => ({
+    ...item,
+    is_checked: item.id === salary_id.value,
+  }));
+  filterItems.value = items;
+};
+const onChange = (id) => {
+  console.log(id);
+};
+onMounted(async () => {
+  prepare([...salaryOptions.value]);
+});
 </script>
 
 <style scoped></style>
