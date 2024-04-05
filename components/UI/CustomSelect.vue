@@ -31,14 +31,14 @@ export default {
 </script>
 
 <script setup>
-const props = defineProps([
-  "options",
-  "modelValue",
-  "label",
-  "vacancy",
-  "listStyles",
-  "class",
-]);
+const props = defineProps({
+  options: {
+    default: [],
+  },
+  modelValue: {},
+  label: {},
+  listStyles: {},
+});
 const emit = defineEmits(["change", "update:modelValue"]);
 const isOpen = ref(false);
 const options = computed(() => props.options);

@@ -32,11 +32,7 @@ onMounted(async () => {
 </script>
 <template>
   <div>
-    <SearchForm2>
-      <div class="wrapper">
-        <slot></slot>
-      </div>
-    </SearchForm2>
+    <SearchForm2 with_wrapper="true" />
 
     <VacanciesResults></VacanciesResults>
   </div>

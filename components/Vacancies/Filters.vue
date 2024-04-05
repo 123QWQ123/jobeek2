@@ -5,6 +5,8 @@
         <strong>Фильтры</strong>
         <button class="clear-all" @click="resetFilters">Очистить все</button>
       </div>
+      <VacanciesFiltersMetro />
+
       <VacanciesFiltersSalary />
 
       <VacanciesFiltersIndustry />
@@ -18,10 +20,9 @@
       <!--      <VacanciesFiltersWorkType />-->
       <!--      <VacanciesFiltersSchedule />-->
 
-      <!--      <VacanciesFiltersMetro name="metros" />-->
-      <ClientOnly>
-        <VacanciesFiltersSpecialization />
-      </ClientOnly>
+      <!--      <ClientOnly>-->
+      <!--        <VacanciesFiltersSpecialization />-->
+      <!--      </ClientOnly>-->
     </div>
     <button class="close-aside" @click="toggleSidebar">
       <svg

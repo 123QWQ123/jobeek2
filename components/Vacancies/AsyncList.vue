@@ -2,11 +2,7 @@
   <div class="content">
     <div>
       <ul class="favorites-list">
-        <VacanciesItem
-          v-for="item in vacanciesItems"
-          :key="item.id"
-          :item="item"
-        />
+        <VacanciesItem v-for="item in vacancies" :key="item.id" :item="item" />
       </ul>
 
       <button
@@ -33,22 +29,27 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useVacancyStore } from "~/store/vacancy";
-import { useVacancyForm } from "~/composables/useVacancyForm";
 import Swal from "sweetalert2";
+import useQueryParams from "~/composables/useQueryParams.js";
 
 const vacancyStore = useVacancyStore();
 const { getVacancies } = vacancyStore;
 const { vacancies, current_page } = storeToRefs(vacancyStore);
-const form = ref(useVacancyForm());
-
-const params = useVacancyForm(form.value, "backend");
-// const res = await getVacancies({...params});
-const vacanciesItems = ref(await getVacancies({ ...params }));
 
 const loadMoreButton = ref();
 const isLoading = ref(false);
 const isMore = ref(false);
 
+const { getQueryParam, getCurrentQueryParams } = useQueryParams();
+const current_params = getCurrentQueryParams() ?? {};
+const params = ref(current_params);
+watch(
+  () => getCurrentQueryParams(),
+  (newParams) => {
+    console.log(newParams);
+    params.value = newParams;
+  },
+);
 const route = useRoute();
 onMounted(() => {
   if (vacancies.value.length > 0) {
@@ -56,17 +57,15 @@ onMounted(() => {
   }
 });
 watch(vacancies, (newValues) => {
-  vacanciesItems.value = newValues;
   if (newValues.length > 0) {
     isMore.value = true;
   }
 });
 const loadMore = async () => {
   isLoading.value = true;
-  const params = useVacancyForm(form.value, "backend");
   const res = await getVacancies(
     { ...params, page: parseInt(current_page.value) + 1 },
-    true
+    true,
   );
   if (res.length < 1) {
     isMore.value = false;

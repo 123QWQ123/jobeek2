@@ -119,6 +119,9 @@ export const useVacancyStore = defineStore("vacancy", {
     cities_formatted: (state) => {
       return state.cities.map((item) => ({ name: item.name, value: item.id }));
     },
+    metros_formatted: (state) => {
+      return state.metros.map((item) => ({ name: item.name, value: item.id }));
+    },
   },
   actions: {
     async getConnectedEmployerProviders() {
@@ -313,7 +316,6 @@ export const useVacancyStore = defineStore("vacancy", {
       return response;
     },
     async getArchivedVacancies(payload = {}) {
-      console.log(payload);
       const response = await this.getUserVacancies({
         status: "archived",
         ...payload,

@@ -59,7 +59,6 @@
 <script setup>
 import { useMyVacancySortingOptions } from "~/composables/useMyVacancySortingOptions.js";
 import { useMyVacancyPerPageOptions } from "~/composables/useMyVacancyPerPageOptions.js";
-import { useMyVacancyForm } from "~/composables/useMyVacancyForm.js";
 import { useVacancyStore } from "~/store/vacancy.js";
 import useQueryParams from "~/composables/useQueryParams.js";
 import PageLoader from "~/components/UI/PageLoader.vue";
@@ -72,23 +71,20 @@ const props = defineProps({
 });
 const my_vacancies = computed(() => props.items);
 const vacancyStore = useVacancyStore();
-const current_page = ref(vacancyStore.my_draft_current_page ?? 1);
-const total_page = computed(() => vacancyStore.my_draft_last_page);
+const current_page = ref(vacancyStore.my_current_page ?? 1);
+const total_page = computed(() => vacancyStore.my_last_page);
 const isPrevDisabled = computed(() => {
   if (parseInt(current_page.value) === 1) return true;
   return false;
 });
 const isNextDisabled = computed(
-  () => vacancyStore.my_draft_last_page === vacancyStore.my_draft_current_page,
+  () => vacancyStore.my_last_page === vacancyStore.my_current_page,
 );
-const isPaginationVisible = computed(
-  () => vacancyStore.my_draft_last_page !== 1,
-);
+const isPaginationVisible = computed(() => vacancyStore.my_last_page !== 1);
 const route = useRoute();
 watch(
   () => route.query.page,
   () => {
-    console.log(route.query.page);
     current_page.value = route.query.page ?? 1;
   },
 );
@@ -96,7 +92,6 @@ watch(
 watch(
   () => current_page.value,
   async (newPage) => {
-    console.log(current_page.value);
     await getMyDrafts({
       page: newPage,
     });
@@ -111,19 +106,19 @@ const { getMyVacancies } = vacancyStore;
 
 const onChangePerPage = async (per_page) => {
   isLoading.value = true;
-  form.value.per_page = per_page;
-  const params = useMyVacancyForm(form.value, "front");
-  await getMyVacancies(params);
+  // form.value.per_page = per_page;
+  // const params = useMyVacancyForm(form.value, "front");
+  // await getMyVacancies(params);
   isLoading.value = false;
-  form.value.page = 1;
+  // form.value.page = 1;
   current_page.value = form.value.page;
 };
 
 const onChangeSorting = async (sorting) => {
   isLoading.value = true;
-  form.value.order_by = sorting;
-  const params = useMyVacancyForm(form.value, "front");
-  await getMyVacancies(params);
+  // form.value.order_by = sorting;
+  // const params = useMyVacancyForm(form.value, "front");
+  // await getMyVacancies(params);
   isLoading.value = false;
 };
 

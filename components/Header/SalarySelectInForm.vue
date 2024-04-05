@@ -1,6 +1,7 @@
 <template>
   <CustomSelect
-    :label="'Зарплата'"
+    class="no_bg"
+    label="Зарплата"
     v-model="selectedSalary"
     :options="salaryOptions"
     @change="onChange"
@@ -41,3 +42,9 @@ const onChange = (id) => {
   });
 };
 </script>
+
+<style>
+.no_bg {
+  background: none !important;
+}
+</style>

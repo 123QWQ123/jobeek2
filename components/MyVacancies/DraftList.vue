@@ -59,7 +59,6 @@
 <script setup>
 import { useMyVacancySortingOptions } from "~/composables/useMyVacancySortingOptions.js";
 import { useMyVacancyPerPageOptions } from "~/composables/useMyVacancyPerPageOptions.js";
-import { useMyVacancyForm } from "~/composables/useMyVacancyForm.js";
 import { useVacancyStore } from "~/store/vacancy.js";
 import PageLoader from "~/components/UI/PageLoader.vue";
 import useQueryParams from "~/composables/useQueryParams.js";
@@ -110,19 +109,19 @@ const { getMyDrafts } = vacancyStore;
 
 const onChangePerPage = async (per_page) => {
   isLoading.value = true;
-  form.value.per_page = per_page;
-  const params = useMyVacancyForm(form.value, "front");
-  await getMyDrafts(params);
+  // form.value.per_page = per_page;
+  // const params = useMyVacancyForm(form.value, "front");
+  // await getMyDrafts(params);
+  // form.value.page = 1;
+  // current_page.value = form.value.page;
   isLoading.value = false;
-  form.value.page = 1;
-  current_page.value = form.value.page;
 };
 
 const onChangeSorting = async (sorting) => {
   isLoading.value = true;
-  form.value.order_by = sorting;
-  const params = useMyVacancyForm(form.value, "front");
-  await getMyDrafts(params);
+  // form.value.order_by = sorting;
+  // const params = useMyVacancyForm(form.value, "front");
+  // await getMyDrafts(params);
   isLoading.value = false;
 };
 

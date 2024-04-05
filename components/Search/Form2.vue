@@ -1,5 +1,47 @@
 <template>
-  <form class="search-form" role="form" autocomplete="off">
+  <div v-if="props.with_wrapper">
+    <div class="wrapper">
+      <form class="search-form" role="form" autocomplete="off">
+        <div class="search-row">
+          <div class="input-wrap has-icon has-label">
+            <img class="icon" src="~/assets/img/svg/search.svg" alt="#" />
+            <label for="name">Поиск </label>
+            <input
+              type="text"
+              name="name"
+              id="keyword"
+              :placeholder="searchPlaceHolder"
+              autocomplete="off"
+              v-model="search"
+            />
+          </div>
+          <div class="input-wrap has-label">
+            <label for="salary">Желаемая зарплата</label>
+            <HeaderSalarySelectInForm v-model="salary" />
+          </div>
+          <div class="input-wrap has-label">
+            <label for="salary">Город</label>
+            <SelectWithSearch
+              :options="cityOptions"
+              v-model.number="city"
+              placeholder="Город"
+              @input="updateCityInput"
+              @change="onCityChange"
+            />
+          </div>
+          <button
+            class="button-accent submit-search-form"
+            type="button"
+            @click="onSubmit"
+          >
+            Поиск
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <form v-else class="search-form" role="form" autocomplete="off">
     <div class="search-row">
       <div class="input-wrap has-icon has-label">
         <img class="icon" src="~/assets/img/svg/search.svg" alt="#" />
@@ -23,6 +65,7 @@
           :options="cityOptions"
           v-model.number="city"
           placeholder="Город"
+          class="no_bg"
           @input="updateCityInput"
           @change="onCityChange"
         />
@@ -44,6 +87,12 @@ import { useVacancyStore } from "~/store/vacancy";
 import { storeToRefs } from "pinia";
 import { useProfileStore } from "~/store/profile";
 import useQueryParams from "~/composables/useQueryParams.js";
+
+const props = defineProps({
+  with_wrapper: {
+    default: false,
+  },
+});
 
 const auth = useAuthStore();
 
@@ -135,3 +184,9 @@ const onSubmit = async (e) => {
   isLoading.value = false;
 };
 </script>
+
+<style scoped>
+.search-form {
+  box-shadow: none;
+}
+</style>
