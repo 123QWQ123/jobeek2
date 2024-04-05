@@ -92,7 +92,6 @@
         Еще {{ total }}
       </button>
     </div>
-    {{ vacancyStore.metros_formatted }}
   </div>
 </template>
 
