@@ -1,14 +1,23 @@
 <template>
-  <div class="filter-box" :class="{'open': filterClass}">
+  <div class="filter-box" :class="{ open: filterClass }">
     <div class="filter-box-handle" @click="filterClass = !filterClass">
-      <strong>Специализации</strong>
-      <img src="~/assets/img/svg/Arrow-Down.svg" alt="#"></div>
+      <strong
+        >Профессиональные роли({{
+          vacancyStore.professional_roles_formatted_for_filter?.length
+        }})</strong
+      >
+      <img src="~/assets/img/svg/Arrow-Down.svg" alt="#" />
+    </div>
     <div class="filter-box-body">
       <div class="check-block-list">
-
-        <div v-for="item in firstItems" :key="item.title" class="check-block" @click="toggleSelect(item.id)">
+        <div
+          v-for="item in firstItems"
+          :key="item.title"
+          class="check-block"
+          @click="toggleSelect(item.id)"
+        >
           <div class="checkbox">
-            <input type="checkbox" :id="item.id"   :checked="item.is_checked" >
+            <input type="checkbox" :id="item.id" :checked="item.is_checked" />
             <div class="checkbox-mask">
               <img src="~/assets/img/svg/check.svg" alt="#" />
             </div>
@@ -17,100 +26,109 @@
             <label :for="item.id">{{ item.title }}</label>
           </div>
         </div>
-
       </div>
 
-      <VacanciesFiltersSpecializationModal :title="'Специализации'" v-if="isModalOpen" :is-open="isModalOpen" @toggle="toggleModal" v-model="selectedSpecs" :items="specializations" />
+      <VacanciesFiltersSpecializationModal
+        title="Специализации"
+        :selected_ids="professional_role_ids"
+        :is-open="isModalOpen"
+        @close="toggleModal"
+        name="industries"
+        :items="vacancyStore.professional_roles_formatted_for_filter"
+      />
 
-      <button class="more-filters" @click="toggleModal" >
-        Выбрать
-      </button>
+      <button class="more-filters" @click="toggleModal">Выбрать</button>
     </div>
   </div>
 </template>
 
 <script setup>
-const emit = defineEmits(['onFormChange']);
-const {selectedIds} = defineProps(['selected-ids']);
-import {useVacancyStore} from "../../../store/vacancy";
-import {storeToRefs} from "pinia";
+import { useVacancyStore } from "~/store/vacancy";
+import useQueryParams from "~/composables/useQueryParams.js";
+
+const emit = defineEmits(["onFormChange"]);
+const props = defineProps(["name", "isOpen"]);
 
 const vacancyStore = useVacancyStore();
+const { updateQueryParam, getQueryParam } = useQueryParams();
 
-const {getSpecializations} = vacancyStore;
-const {specializations} = storeToRefs(vacancyStore)
+const { getProfessionalRoles } = vacancyStore;
 
-const isModalOpen = ref(false);
-const selectedSpecs = ref(selectedIds);
+const professional_role_ids = ref(getQueryParam("professional_roles") ?? []);
+watch(
+  () => getQueryParam("professional_roles") ?? [],
+  (newValues, oldValues) => {
+    if (JSON.stringify(newValues) !== JSON.stringify(oldValues)) {
+      professional_role_ids.value = newValues;
+      prepare(vacancyStore.regions_formatted);
+    }
+  },
+);
+const isModalOpen = ref(true);
 const firstItems = ref([]);
 
-watch(selectedSpecs, (newValues) => {
-  emit('onFormChange', 'professional_roles', newValues);
-})
-
-const toggleModal = () => isModalOpen.value = !isModalOpen.value;
+const toggleModal = () => (isModalOpen.value = !isModalOpen.value);
 const toggleSelect = (id) => {
-  const selectedItemIds = [...selectedSpecs.value];
-  const dynItems = [...firstItems.value].map(item => {
-    if (item.id === id){
+  let selected_ids = [...professional_role_ids.value];
+  const dynItems = [...firstItems.value].map((item) => {
+    if (item.id === id) {
       item.is_checked = !item.is_checked;
-      if (item.is_checked && !selectedItemIds.includes(id)){
-        selectedItemIds.push(item.id);
-      }else{
-        const index = selectedItemIds.indexOf(item.id);
-        if (index !== -1){
-          selectedItemIds.splice(index, 1);
+      if (item.is_checked && !selected_ids.includes(id)) {
+        selected_ids.push(item.id);
+      } else {
+        const index = selected_ids.indexOf(item.id);
+        if (index !== -1) {
+          selected_ids.splice(index, 1);
         }
       }
     }
     return item;
   });
 
-  selectedSpecs.value = selectedItemIds;
-  firstItems.value = dynItems;
+  selected_ids = selected_ids.length === 0 ? undefined : selected_ids;
 
+  updateQueryParam(
+    "professional_roles",
+    JSON.stringify(Array.from(new Set(selected_ids))),
+  );
+  firstItems.value = dynItems;
 };
 
+const industryItems = ref([]);
 const prepare = (newItems, oldItems) => {
-  if (!newItems || newItems.length  < 1){
-    return;
-  }
-  for (let i = 0; i < 5; i++){
+  industryItems.value = newItems;
+  if (!newItems || newItems.length < 1) return;
+  for (let i = 0; i < 5; i++) {
     let item = newItems[i];
     let is_checked = false;
-    if (selectedIds.includes(item.id)){
+    if (professional_role_ids.value.includes(item.id)) {
       is_checked = true;
     }
     firstItems.value.push({
       id: item.id,
       title: item.title,
-      is_checked
+      is_checked,
     });
   }
-}
-watch(
-    () => vacancyStore.specializations,
-    prepare
-);
-
-
+};
+watch(() => vacancyStore.professional_roles_formatted_for_filter, prepare);
 
 const filterClass = ref(true);
-
+await getProfessionalRoles();
 onMounted(() => {
-  if (specializations.value.length === 0)
-    getSpecializations();
-  else prepare(specializations.value);
+  setTimeout(async () => {
+    if (vacancyStore.professional_roles_formatted_for_filter.length > 0) {
+      prepare(vacancyStore.professional_roles_formatted_for_filter);
+    }
+  }, 100);
 });
-
-
 </script>
 
 <style scoped>
-.check-block label{
+.check-block label {
   white-space: pre-wrap;
 }
 
-.check-block{
+.check-block {
 }
 </style>

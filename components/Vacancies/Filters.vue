@@ -5,11 +5,9 @@
         <strong>Фильтры</strong>
         <button class="clear-all" @click="resetFilters">Очистить все</button>
       </div>
-      {{ currentParams }}
-
       <VacanciesFiltersSalary />
 
-      <!--      <VacanciesFiltersIndustry />-->
+      <VacanciesFiltersIndustry />
 
       <!--      <VacanciesFiltersRegion :is-city-mode="isCityMode" />-->
 
@@ -21,10 +19,9 @@
       <!--      <VacanciesFiltersSchedule />-->
 
       <!--      <VacanciesFiltersMetro name="metros" />-->
-      <!--      <VacanciesFiltersSpecialization-->
-      <!--        @onFormChange="onFormChange"-->
-      <!--        :selected-ids="form.professional_roles"-->
-      <!--      />-->
+      <ClientOnly>
+        <VacanciesFiltersSpecialization />
+      </ClientOnly>
     </div>
     <button class="close-aside" @click="toggleSidebar">
       <svg

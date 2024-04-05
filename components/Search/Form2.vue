@@ -62,7 +62,7 @@ const vacancyStore = useVacancyStore();
 const profileStore = useProfileStore();
 const { searchCities } = profileStore;
 
-const search = ref();
+const search = ref(route.query?.search ?? undefined);
 
 const salary = ref({
   from: undefined,
@@ -75,7 +75,6 @@ const city = ref(null);
 watch(
   () => getQueryParam("salary"),
   (newValue) => {
-    console.log(newValue);
     salary.value = newValue;
   },
 );

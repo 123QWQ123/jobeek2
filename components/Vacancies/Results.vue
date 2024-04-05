@@ -285,9 +285,8 @@ watch(
     await getVacancies(newValues);
   },
 );
-// const toggleSidebar = () => {
-//
-// }
+
+// await getVacancies({ ...getCurrentQueryParams() });
 
 const listStyles = {
   left: "unset",

@@ -20,6 +20,7 @@ export const useVacancyStore = defineStore("vacancy", {
       my_archived_vacancies: [],
       my_favorite_vacancies: [],
       specializations: [],
+      professional_roles: [],
       industries: [],
       areas: [],
       countries: [],
@@ -77,6 +78,33 @@ export const useVacancyStore = defineStore("vacancy", {
         items.concat(item.items);
       });
       return items;
+    },
+    professional_roles_formatted_for_filter: (state) => {
+      let new_items = JSON.parse(JSON.stringify(state.professional_roles));
+      const parent_items = new_items.filter((item) => item.parent_id === 0);
+      for (let key in parent_items) {
+        parent_items[key].professional_roles = new_items.filter(
+          (item) => item.parent_id === item.id,
+        );
+      }
+      new_items = parent_items.map((item) => {
+        item.parent_id = null;
+        item.items = item.professional_roles.map((sub_item) => {
+          sub_item.parent_id = item.id;
+          return sub_item;
+        });
+        delete item.professional_roles;
+        return item;
+      });
+      let items = [];
+      new_items.map((item) => {
+        items.push(item);
+        items.concat(item.items);
+      });
+      return items.map((item) => {
+        item.title = item.name;
+        return item;
+      });
     },
     my_city_vacancies: (state) => {
       return state.vacancies_in_my_city.slice(0, 3);
@@ -384,6 +412,22 @@ export const useVacancyStore = defineStore("vacancy", {
       if (response && "data" in response) {
         this.industries = response.data.data ?? [];
         return this.industries;
+      }
+      return response;
+    },
+    async getProfessionalRoles(payload = {}) {
+      if (this.professional_roles.length > 0) {
+        return this.professional_roles;
+      }
+      const response = await useApi("professional_roles", {
+        method: "get",
+        params: payload,
+      });
+      console.log(response);
+      if (response && "data" in response) {
+        this.professional_roles = response.data.data ?? [];
+        console.log(this.professional_roles);
+        return this.professional_roles;
       }
       return response;
     },
