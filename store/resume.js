@@ -56,11 +56,12 @@ export const useResumeStore = defineStore("resume", {
     },
 
     async getConnectedSeekerProviders(payload) {
-      const { data } = await useApi("seeker/used_providers", {
+      const response = await useApi("seeker/used_providers", {
         method: "get",
       });
-      if (data && "data" in data) {
-        this.providers = data.data;
+
+      if (response.data && "data" in response.data) {
+        this.providers = response.data.data;
         return this.providers;
       }
       return data;

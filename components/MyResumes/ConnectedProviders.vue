@@ -272,8 +272,11 @@ const isAnyProviderConnected = computed(() => {
 const route = useRoute();
 const redirect_url = useRequestURL();
 onMounted(async () => {
-  await getConnectedSeekerProviders();
-
+  const response = await getConnectedSeekerProviders();
+  if (response.status !== "success") {
+    toast.info(response.message, { autoClose: 3000 });
+    return;
+  }
   if (!isAnyProviderConnected.value) {
     const authData = await getSeekerProvidersAuthEndpoints({}, redirect_url);
     providers.value.hh.url = authData.hh;

@@ -129,11 +129,12 @@ export const useVacancyStore = defineStore("vacancy", {
         method: "get",
         params: {},
       });
+
       if ("data" in response) {
         this.providers = response.data.data;
         return this.providers;
       }
-      return response.data;
+      return response;
     },
     async importVacancies() {
       const payload = [];

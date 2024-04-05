@@ -17,15 +17,39 @@ const { signUp, confirmPhoneCode, tryLogin } = authStore;
 
 const isAuthed = computed(() => authStore.isAuthed);
 
+const phoneDisabled = ref(false);
 const isFormValid = ref(true);
 const isLoading = ref(true);
 const error = ref(null);
+
+const route = useRoute();
 onBeforeMount(() => {
+  const localPhone = localStorage.getItem("preset_phone");
+  console.log(route.query.phone);
+  console.log(localPhone);
+  if (!localPhone) {
+    if (route.query.phone) {
+      localStorage.setItem("preset_phone", route.query.phone);
+      state.phone.val = route.query.phone;
+    }
+  } else {
+    state.phone.val = localPhone;
+
+    if (route.query.phone) {
+      console.log(1);
+      localStorage.setItem("preset_phone", route.query.phone);
+      state.phone.val = route.query.phone;
+    }
+  }
   if (isAuthed.value === true) {
     router.replace({ name: "profile" });
   }
 });
 const state = reactive({
+  disabled: {
+    val: "",
+    isValid: true,
+  },
   phone: {
     val: "",
     isValid: true,
@@ -75,6 +99,8 @@ const onSubmit = async () => {
       phone: state.phone.val,
     });
 
+    console.log(response);
+
     if (response.status !== "success") {
       let responseMessage = "Unknown error";
       if (response) {
@@ -102,7 +128,7 @@ const onSubmit = async () => {
     }
     isConfirmTab.value = true;
     isRegisterTab.value = false;
-    state.session = response.data.session;
+    state.session = response.data.data.session;
     isLoading.value = false;
   }
 };
@@ -131,6 +157,8 @@ const onSMSSubmit = async () => {
     });
     return;
   }
+  await localStorage.setItem("preset_phone", undefined);
+
   if (!(await tryLogin(response.data.token))) {
     let message = "Неизвестная ошибка!";
     Swal.fire({
@@ -141,6 +169,7 @@ const onSMSSubmit = async () => {
     });
     return;
   }
+
   navigateTo({ name: "profile" });
 };
 
@@ -157,6 +186,11 @@ onMounted(() => {
   phoneInputElement.value.addEventListener("input", () => {
     state.phone.val = phoneMask.value.unmaskedValue;
   });
+  if (state.phone.val) {
+    phoneDisabled.value = true;
+
+    phoneMask.value.unmaskedValue = state.phone.val;
+  }
 });
 </script>
 
@@ -187,6 +221,7 @@ onMounted(() => {
           <h1>Регистрация</h1>
           <div class="i-wrap">
             <input
+              :disabled="phoneDisabled"
               type="tel"
               name="tel"
               ref="phoneInputElement"
@@ -265,3 +300,9 @@ onMounted(() => {
     </main>
   </div>
 </template>
+
+<style scoped>
+input:disabled {
+  background-color: #e5e5e5;
+}
+</style>

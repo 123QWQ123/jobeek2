@@ -5,20 +5,20 @@
         <strong>Фильтры</strong>
         <button class="clear-all" @click="resetFilters">Очистить все</button>
       </div>
-      <VacanciesFiltersMetro />
 
       <VacanciesFiltersSalary />
 
       <VacanciesFiltersIndustry />
 
-      <!--      <VacanciesFiltersRegion :is-city-mode="isCityMode" />-->
+      <VacanciesFiltersRegion :is-city-mode="isCityMode" />
 
-      <!--      <VacanciesFiltersCity />-->
+      <VacanciesFiltersCity />
+      <VacanciesFiltersMetro />
 
-      <!--      <VacanciesFiltersPartTime />-->
-      <!--      <VacanciesFiltersExperience />-->
-      <!--      <VacanciesFiltersWorkType />-->
-      <!--      <VacanciesFiltersSchedule />-->
+      <VacanciesFiltersPartTime />
+      <VacanciesFiltersExperience />
+      <VacanciesFiltersWorkType />
+      <VacanciesFiltersSchedule />
 
       <!--      <ClientOnly>-->
       <!--        <VacanciesFiltersSpecialization />-->
