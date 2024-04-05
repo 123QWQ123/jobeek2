@@ -1,0 +1,214 @@
+.company-col .favorites-card-footer-row {
+    position: absolute;
+    top: 35px;
+    right: 20px;
+}
+
+.company-col .favorites-card-footer-row .button-md {
+    display: none;
+}
+
+
+.company-col {
+    position: relative;
+}
+
+.company-col .favorites-card-footer-row .group {
+    display: flex;
+    gap: 10px;
+}
+
+.company-col .favorites-card-footer-row .group-action {
+    height: 45px;
+    min-width: 45px;
+}
+
+.custom-select-wrapper {
+    position: relative;
+    user-select: none;
+}
+
+.custom-select {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.custom-select__trigger {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    min-width: 180px;
+    border-radius: 6px;
+    height: 43px;
+    font-family: "Open Sans", sans-serif;
+}
+
+.custom-select-wrapper > span {
+    font-family: "Open Sans", sans-serif;
+}
+
+.custom-options {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    border: 1px solid #ccc;
+    border-top: none;
+    background: #fff;
+    z-index: 2;
+}
+
+.custom-option {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.custom-option label {
+    margin-left: 8px;
+}
+
+.custom-option:hover {
+    background-color: #f2f2f2;
+}
+
+.arrow {
+    margin-left: 10px;
+    border: solid black;
+    border-width: 0 2px 2px 0;
+    display: inline-block;
+    padding: 3px;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+}
+
+
+.custom-select.open .custom-options {
+    display: block;
+}
+
+.select-resume-row {
+    display: flex;
+    gap: 10px;
+}
+
+.select-resume-row .custom-select-wrapper {
+    flex: 1;
+}
+
+.select-resume-title {
+    margin-bottom: 15px;
+    display: block;
+}
+
+.company-col + .company-col {
+    margin-top: 20px;
+}
+
+.button-accent:disabled {
+    background: gray;
+    pointer-events: none;
+    color: #fff !important;
+}
+
+
+.apply-button:disabled {
+    border-color: gray;
+    color: gray;
+    pointer-events: none;
+}
+
+.company-col .telephones-row ul {
+    flex-direction: column;
+    gap: 15px;
+}
+
+.telephones-row-handle.open {
+    display: block;
+}
+
+
+.back {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.back svg {
+    transform: rotate(180deg);
+    margin: 0;
+}
+
+.params-box {
+    left: auto !important;
+    right: 0;
+}
+
+
+.custom-select-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.custom-select-wrapper > span {
+    font-weight: bold;
+    font-size: 18px;
+    display: block;
+}
+
+
+@media (max-width: 577px) {
+    /* .favorites-card-footer-row .group+.group {
+      margin-top: 0;
+    } */
+}
+
+.company-col {
+    padding: 24px 24px 24px 24px;
+}
+
+
+@media (max-width: 768px) {
+    .select-resume-row {
+        display: flex;
+        gap: 10px;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .select-resume-row .custom-select-wrapper {
+        width: 100%;
+    }
+
+    .custom-select-wrapper {
+        width: 100%;
+    }
+
+    .custom-select-wrapper {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .custom-select-wrapper .custom-select {
+        width: 100%;
+    }
+
+    .apply-button {
+        margin-top: 0;
+    }
+
+    .custom-select-wrapper > span {
+        margin-right: auto;
+    }
+
+
+}

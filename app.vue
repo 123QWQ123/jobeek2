@@ -8,6 +8,7 @@
 import { useAuthStore } from "~/store/auth";
 import { useVacancyStore } from "~/store/vacancy";
 import { useResumeStore } from "~/store/resume";
+import { toast } from "vue3-toastify";
 
 const { getConnectedEmployerProviders } = useVacancyStore();
 const { getConnectedSeekerProviders } = useResumeStore();
@@ -15,9 +16,24 @@ const vacancyStore = useVacancyStore();
 
 const authStore = useAuthStore();
 const isEmployer = computed(() => authStore.isEmployer);
+
+const route = useRoute();
+
+watch(
+  () => route.query.message,
+  () => {
+    if (route.query.message) {
+      toast.info(route.query.message, { autoClose: 3000 });
+    }
+  },
+);
+
 onMounted(async () => {
   await getConnectedEmployerProviders();
   await getConnectedSeekerProviders();
+  if (route.query.message) {
+    toast.info(route.query.message, { autoClose: 3000 });
+  }
 });
 </script>
 

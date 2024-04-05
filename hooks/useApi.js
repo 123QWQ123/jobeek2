@@ -76,7 +76,7 @@ const useApi = async (method, options = {}) => {
           const { data } = res.response;
           if (data) {
             const { errors, message } = data;
-            if (errors) {
+            if (errors || message) {
               return {
                 errors,
                 message: message,
@@ -87,7 +87,6 @@ const useApi = async (method, options = {}) => {
         }
 
         return {
-          data: {},
           message: res.message,
           status: "error",
         };

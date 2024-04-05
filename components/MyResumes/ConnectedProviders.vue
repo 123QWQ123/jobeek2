@@ -199,7 +199,8 @@ import moment from "moment";
 
 const resumeStore = useResumeStore();
 const profileStore = useProfileStore();
-const { getSeekerProvidersAuthEndpoints } = resumeStore;
+const { getSeekerProvidersAuthEndpoints, getConnectedSeekerProviders } =
+  resumeStore;
 
 const providers = ref({
   hh: {
@@ -213,8 +214,6 @@ const providers = ref({
     is_connected: false,
   },
 });
-
-// const resData = await getConnectedEmployerProviders();
 
 const isSyncing = ref(false);
 const lastSyncedTime = computed(() => {
@@ -273,6 +272,11 @@ const isAnyProviderConnected = computed(() => {
 const route = useRoute();
 const redirect_url = useRequestURL();
 onMounted(async () => {
+  const response = await getConnectedSeekerProviders();
+  if (response.status !== "success") {
+    toast.info(response.message, { autoClose: 3000 });
+    return;
+  }
   if (!isAnyProviderConnected.value) {
     const authData = await getSeekerProvidersAuthEndpoints({}, redirect_url);
     providers.value.hh.url = authData.hh;

@@ -59,7 +59,11 @@
                 </div>
               </div>
               <nuxt-link
-                :to="{ name: 'vacancies-slug', params: { slug: item.id } }"
+                :to="{
+                  name: 'vacancies-slug',
+                  params: { slug: item.id },
+                  query: { provider: item.provider },
+                }"
                 class="vacancy-card-title"
                 >{{ item.name }}
               </nuxt-link>

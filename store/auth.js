@@ -1,15 +1,13 @@
-import {navigateTo, useRuntimeConfig} from "nuxt/app";
-
-let timer;
+import { navigateTo, useRuntimeConfig } from "nuxt/app";
 // no need to import defineStore and acceptHMRUpdate
-import { defineStore, acceptHMRUpdate } from "pinia";
+import { acceptHMRUpdate, defineStore } from "pinia";
 import axios from "axios";
 import useApi from "~/hooks/useApi";
-import {useFcm} from "#imports";
+import { useFcm } from "#imports";
 
+let timer;
 
-
-export const useAuthStore = defineStore('auth', {
+export const useAuthStore = defineStore("auth", {
   state: () => {
     return {
       user: null,
@@ -18,7 +16,7 @@ export const useAuthStore = defineStore('auth', {
       isAuthed: null,
       isEmployerMode: false,
       geo: null,
-    }
+    };
   },
   getters: {
     token(state) {
@@ -32,11 +30,11 @@ export const useAuthStore = defineStore('auth', {
     },
     isAuthenticated(state) {
       let authed = false;
-      if (state.isAuthed === true){
+      if (state.isAuthed === true) {
         authed = true;
       }
       return authed;
-    }
+    },
   },
   actions: {
     toggleUserMode() {
@@ -47,60 +45,59 @@ export const useAuthStore = defineStore('auth', {
     },
     async signUp(payload) {
       console.log(payload);
-      const {data} = await useApi('auth/register', {
-        method: 'post',
-        payload
+      const response = await useApi("auth/register", {
+        method: "post",
+        payload,
       });
 
-      console.log(data);
-
-      return data;
+      return response;
     },
     async confirmPhoneCode(payload) {
-      const {data} = await useApi('auth/register/confirm', {
-        method: 'post',
-        payload
+      const response = await useApi("auth/register/confirm", {
+        method: "post",
+        payload,
       });
-      if (data && data.data && data.data.hasOwnProperty('token')){
-        localStorage.setItem('token', data?.data.token);
+      console.log(response);
+      if (
+        response &&
+        response.data &&
+        response.data.data.hasOwnProperty("token")
+      ) {
+        localStorage.setItem("token", response.data?.data.token);
       }
-      return data;
+
+      return response;
     },
     async sendRecoveryCode(payload) {
-
       const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + 'auth/forgot-password';
+      let url = CONFIG.public.apiBase + "auth/forgot-password";
       try {
-        const response = await axios.post(
-            url,
-            payload,
-            {
-              headers: {
-                'Content-Type': 'application/json',
-              }
-            },
-        );
-        if ('data' in response){
+        const response = await axios.post(url, payload, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if ("data" in response) {
           return {
-            status: 'success',
-            data: response.data.data
+            status: "success",
+            data: response.data.data,
           };
-        }else{
+        } else {
           return {
-            status: 'error',
-            data: response.message
+            status: "error",
+            data: response.message,
           };
         }
-      }catch (error){
+      } catch (error) {
         // console.log(error);
-        if ('data' in error.response){
+        if ("data" in error.response) {
           return {
-            status: 'error',
-            data: error.response.data
+            status: "error",
+            data: error.response.data,
           };
         }
         return {
-          status: 'error',
+          status: "error",
           message: error.message,
         };
       }
@@ -126,117 +123,103 @@ export const useAuthStore = defineStore('auth', {
     },
     async recoverPasswordCode(payload) {
       const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + 'auth/check-reset-password-code';
+      let url = CONFIG.public.apiBase + "auth/check-reset-password-code";
       try {
-
-        const response = await axios.post(
-            url,
-            payload,
-            {
-              headers: {
-                'Content-Type': 'application/json',
-              }
-            },
-        );
+        const response = await axios.post(url, payload, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
         return {
-          status: 'success',
-          data: response.data.data
+          status: "success",
+          data: response.data.data,
         };
-      }catch (error){
+      } catch (error) {
         console.log(error);
-        if ('data' in error.response){
+        if ("data" in error.response) {
           return {
-            status: 'error',
-            data: error.response.data
+            status: "error",
+            data: error.response.data,
           };
         }
         return {
-          status: 'error',
+          status: "error",
           message: error.message,
         };
       }
     },
     async resetPassword(payload) {
       const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + 'auth/reset-password';
+      let url = CONFIG.public.apiBase + "auth/reset-password";
       try {
-
-        const response = await axios.post(
-            url,
-            payload,
-            {
-              headers: {
-                'Content-Type': 'application/json',
-              }
-            },
-        );
-        console.log(response)
+        const response = await axios.post(url, payload, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        console.log(response);
         return {
-          status: 'success',
-          data: response.data.data
+          status: "success",
+          data: response.data.data,
         };
-      }catch (error){
+      } catch (error) {
         console.log(error);
-        if ('data' in error.response){
+        if ("data" in error.response) {
           return {
-            status: 'error',
-            data: error.response.data
+            status: "error",
+            data: error.response.data,
           };
         }
         return {
-          status: 'error',
+          status: "error",
           message: error.message,
         };
       }
     },
 
     async refreshSeeker(url = "seeker/profile") {
-      const {data} = await useApi(url, {
-        method: 'get',
+      const { data } = await useApi(url, {
+        method: "get",
       });
-      if (data && 'data' in data){
+      if (data && "data" in data) {
         this.seeker = data.data;
-        this.user = {phone: this.seeker?.phone};
+        this.user = { phone: this.seeker?.phone };
       }
       return data;
     },
 
     async refreshEmployer(url = "employer/profile") {
       const response = await useApi(url, {
-        method: 'get',
+        method: "get",
       });
-      if (response && response.data && 'data' in response.data){
+      if (response && response.data && "data" in response.data) {
         this.employer = response.data.data;
-        this.user = {phone: this.employer?.phone};
+        this.user = { phone: this.employer?.phone };
       }
       return response;
     },
 
     async tryLogin(token = "") {
       const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + 'seeker/profile';
-      let url2 = CONFIG.public.apiBase + 'employer/profile';
-      if (!token)
-        token = localStorage.getItem('token');
+      let url = CONFIG.public.apiBase + "seeker/profile";
+      let url2 = CONFIG.public.apiBase + "employer/profile";
+      if (!token) token = localStorage.getItem("token");
       // const userId = localStorage.getItem('userId');
       // const tokenExpirationDate = localStorage.getItem('tokenExpirationDate');
       // const expiresIn = tokenExpirationDate - new Date().getTime();
 
       if (token) {
-        try{
-          const response = await axios.get(
-              url,
-              {
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Accept': 'application/json',
-                  'Authorization': `Bearer ${token}`,
-                  proxyHeaders: false,
-                  credentials: false
-                }
-              },
-          );
-          if (response.status !== 200 || response.data.status === "failed"){
+        try {
+          const response = await axios.get(url, {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${token}`,
+              proxyHeaders: false,
+              credentials: false,
+            },
+          });
+          if (response.status !== 200 || response.data.status === "failed") {
             this.isAuthed = false;
             return false;
           }
@@ -244,25 +227,21 @@ export const useAuthStore = defineStore('auth', {
           this.user = response.data.data;
           this.seeker = this.user;
           this.isAuthed = true;
-          const response2 = await axios.get(
-              url2,
-              {
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${token}`
-                }
-              },
-          );
-          this.user = {...response2.data.data};
+          const response2 = await axios.get(url2, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          this.user = { ...response2.data.data };
           this.employer = this.user;
           return true;
-        }catch (error){
+        } catch (error) {
           // console.log(error);
-          console.log('UnAuthorized');
+          console.log("UnAuthorized");
           this.logout();
           return false;
         }
-
       }
       this.setUser(null);
       this.isAuthed = false;
@@ -279,36 +258,33 @@ export const useAuthStore = defineStore('auth', {
     },
 
     clearAuth() {
-      localStorage.removeItem('token');
+      localStorage.removeItem("token");
     },
 
     async signIn(payload) {
       const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + 'auth/login';
+      let url = CONFIG.public.apiBase + "auth/login";
       try {
-        const response = await axios.post(
-            url,
-            payload
-        );
+        const response = await axios.post(url, payload);
         const resData = response.data.data;
         if (response.status === 200) {
-          localStorage.setItem('token', resData.token);
+          localStorage.setItem("token", resData.token);
           this.user = resData.user;
           this.isAuthed = true;
 
-          setTimeout(async() => {
+          setTimeout(async () => {
             const token = await useFcm().getToken();
-            const {data} = await useApi('fcm/setToken', {
-              method: 'post',
+            const { data } = await useApi("fcm/setToken", {
+              method: "post",
               payload: {
                 fcm_token: token,
-              }
+              },
             });
-          })
+          });
 
           return {
-            status: 'success',
-            data: this.user
+            status: "success",
+            data: this.user,
           };
         }
         // TODO
@@ -321,31 +297,26 @@ export const useAuthStore = defineStore('auth', {
         // timer = setTimeout(() => {
         //   this.autoLogout();
         // }, expiresIn);
-
-      }catch (error){
-        if (error.response && 'data' in error.response){
-          if ('errors' in error.response.data){
+      } catch (error) {
+        if (error.response && "data" in error.response) {
+          if ("errors" in error.response.data) {
             return {
-              status: 'error',
+              status: "error",
               message: error.response.data.message,
               errors: error.response.data.errors,
             };
-          }else{
+          } else {
             return {
-              status: 'error',
-              message: error.response.message
+              status: "error",
+              message: error.response.message,
             };
           }
-
         }
         return {
-          status: 'error',
+          status: "error",
           message: error.message,
         };
       }
-
-
-
     },
     autoLogout() {
       this.logout();
@@ -355,19 +326,18 @@ export const useAuthStore = defineStore('auth', {
       this.clearAuth();
       this.setUser(null);
       this.isAuthed = false;
-      navigateTo('/');
+      navigateTo("/");
     },
     async getLocation(payload = {}) {
-
-      const response = await useApi('area/location', {
-        method: 'get',
-        payload
-      })
+      const response = await useApi("area/location", {
+        method: "get",
+        payload,
+      });
 
       console.log(response);
-    }
+    },
   },
-})
+});
 
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(useAuthStore, import.meta.hot));

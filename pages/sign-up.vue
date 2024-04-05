@@ -2,6 +2,7 @@
 import Swal from "sweetalert2";
 import IMask from "imask";
 import { useAuthStore } from "~~/store/auth";
+import { ref } from "vue";
 
 definePageMeta({
   layout: "custom",
@@ -16,15 +17,39 @@ const { signUp, confirmPhoneCode, tryLogin } = authStore;
 
 const isAuthed = computed(() => authStore.isAuthed);
 
+const phoneDisabled = ref(false);
 const isFormValid = ref(true);
 const isLoading = ref(true);
 const error = ref(null);
+
+const route = useRoute();
 onBeforeMount(() => {
+  const localPhone = localStorage.getItem("preset_phone");
+  console.log(route.query.phone);
+  console.log(localPhone);
+  if (!localPhone) {
+    if (route.query.phone) {
+      localStorage.setItem("preset_phone", route.query.phone);
+      state.phone.val = route.query.phone;
+    }
+  } else {
+    state.phone.val = localPhone;
+
+    if (route.query.phone) {
+      console.log(1);
+      localStorage.setItem("preset_phone", route.query.phone);
+      state.phone.val = route.query.phone;
+    }
+  }
   if (isAuthed.value === true) {
     router.replace({ name: "profile" });
   }
 });
 const state = reactive({
+  disabled: {
+    val: "",
+    isValid: true,
+  },
   phone: {
     val: "",
     isValid: true,
@@ -68,16 +93,15 @@ const isFirstTimeCodeSent = ref(true);
 const onSubmit = async () => {
   state.phone.val = phoneMask.value.unmaskedValue;
   validateForm();
+  isLoading.value = true;
   if (state.isFormValid) {
     const response = await signUp({
       phone: state.phone.val,
     });
 
-    if (response && "data" in response && "session" in response.data) {
-      isConfirmTab.value = true;
-      isRegisterTab.value = false;
-      state.session = response.data.session;
-    } else {
+    console.log(response);
+
+    if (response.status !== "success") {
       let responseMessage = "Unknown error";
       if (response) {
         if (
@@ -98,7 +122,14 @@ const onSubmit = async () => {
         icon: "error",
         confirmButtonText: "ОК",
       });
+      isLoading.value = false;
+
+      return;
     }
+    isConfirmTab.value = true;
+    isRegisterTab.value = false;
+    state.session = response.data.data.session;
+    isLoading.value = false;
   }
 };
 
@@ -113,21 +144,33 @@ const onSMSSubmit = async () => {
     session: state.session,
     code: state.code.val,
   });
-  if ("data" in response && "token" in response.data) {
-    await tryLogin(response.data.token);
-    navigateTo({ name: "profile" });
-  } else {
+  if (response.status !== "success") {
     let message = "Неизвестная ошибка!";
     if (response && response.hasOwnProperty("message")) {
       message = response.message;
     }
     Swal.fire({
       title: "Ошибка!",
-      text: response.message,
+      text: message,
       icon: "error",
       confirmButtonText: "ОК",
     });
+    return;
   }
+  await localStorage.setItem("preset_phone", undefined);
+
+  if (!(await tryLogin(response.data.token))) {
+    let message = "Неизвестная ошибка!";
+    Swal.fire({
+      title: "Ошибка!",
+      text: message,
+      icon: "error",
+      confirmButtonText: "ОК",
+    });
+    return;
+  }
+
+  navigateTo({ name: "profile" });
 };
 
 function close() {
@@ -143,6 +186,11 @@ onMounted(() => {
   phoneInputElement.value.addEventListener("input", () => {
     state.phone.val = phoneMask.value.unmaskedValue;
   });
+  if (state.phone.val) {
+    phoneDisabled.value = true;
+
+    phoneMask.value.unmaskedValue = state.phone.val;
+  }
 });
 </script>
 
@@ -173,6 +221,7 @@ onMounted(() => {
           <h1>Регистрация</h1>
           <div class="i-wrap">
             <input
+              :disabled="phoneDisabled"
               type="tel"
               name="tel"
               ref="phoneInputElement"
@@ -251,3 +300,9 @@ onMounted(() => {
     </main>
   </div>
 </template>
+
+<style scoped>
+input:disabled {
+  background-color: #e5e5e5;
+}
+</style>
