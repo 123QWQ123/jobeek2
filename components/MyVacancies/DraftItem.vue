@@ -308,7 +308,6 @@ const salaryAmount = computed(() => {
   return 0;
 });
 const currency = computed(() => {
-  console.log(props.item.salary);
   if (props.item.salary) {
     const options = useCurrencyOptions();
     const found = options.find(

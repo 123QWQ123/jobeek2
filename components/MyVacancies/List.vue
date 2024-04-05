@@ -66,20 +66,16 @@
         <!--              </form>-->
       </div>
 
-      <!--          <form class="sort">-->
-      <!--            <span>Фильтр:</span>-->
-      <!--            <CustomSelect :options="filterOptions" v-model="form.status" @change="onFilterChange" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>-->
-      <!--          </form>-->
-      <!--            <div class="d-inline-flex">-->
-      <!--              <form class="sort mx-1" action="#">-->
-      <!--                <span>Показать:</span>-->
-      <!--                <CustomSelect v-model="form.per_page" :options="perPageOptions" @change="onChangePerPage" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>-->
-      <!--              </form>-->
-      <!--              <form class="sort mx-1" action="#">-->
-      <!--                <span>Сортировать:</span>-->
-      <!--                <CustomSelect v-model="form.order_by" :options="sortingOptions" @change="onChangeSorting" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>-->
-      <!--              </form>-->
-      <!--            </div>-->
+      <!--      <form class="sort">-->
+      <!--        <span>Фильтр:</span>-->
+      <!--        <CustomSelect-->
+      <!--          :options="filterOptions"-->
+      <!--          v-model="form.status"-->
+      <!--          @change="onFilterChange"-->
+      <!--          class="bg-white w-auto"-->
+      <!--          :listStyles="listStyles"-->
+      <!--        ></CustomSelect>-->
+      <!--      </form>-->
     </div>
 
     <MyVacanciesDraftList
@@ -94,20 +90,6 @@
       v-else
       :items="vacancyStore.my_archived_vacancies"
     />
-
-    <div class="d-flex mt-4 justify-content-between" v-if="my_total > 0">
-      <button
-        class="btn btn-primary btn-group-sm"
-        :class="{ disabled: isPrevDisabled }"
-        @click="prevPage"
-      >
-        Prev
-      </button>
-      <p>{{ current_page }}</p>
-      <button class="btn btn-primary btn-group-sm" @click="nextPage">
-        Next
-      </button>
-    </div>
   </div>
 </template>
 
@@ -199,26 +181,26 @@ const onFilterChange = (filter) => {
   navigateTo({ name: "my-vacancies", query: { status: filter } });
 };
 onMounted(async () => {
-  let newStatus = "draft";
-  if (
-    filterOptions.value.map((item) => item.value).includes(route.query.status)
-  ) {
-    newStatus = route.query.status;
-  }
-  form.value.status = newStatus;
-  const params = { status: newStatus };
-  if (newStatus === "draft") {
-    await getMyDrafts(params);
-  } else if (newStatus === "active") {
-    await getMyVacancies(params);
-  } else {
-    await getArchivedVacancies(params);
-  }
-  navigateTo({
-    query: { status: form.value.status },
-  });
-  isLoading.value = false;
-  // const params = useMyVacancyForm(form.value, 'backend');
+  // let newStatus = "draft";
+  // if (
+  //   filterOptions.value.map((item) => item.value).includes(route.query.status)
+  // ) {
+  //   newStatus = route.query.status;
+  // }
+  // form.value.status = newStatus;
+  // const params = { status: newStatus };
+  // if (newStatus === "draft") {
+  //   await getMyDrafts(params);
+  // } else if (newStatus === "active") {
+  //   await getMyVacancies(params);
+  // } else {
+  //   await getArchivedVacancies(params);
+  // }
+  // navigateTo({
+  //   query: { status: form.value.status },
+  // });
+  // isLoading.value = false;
+  // // const params = useMyVacancyForm(form.value, 'backend');
   setTimeout(() => {
     getMyDrafts({ status: "draft" });
     getMyVacancies({ status: "active" });
@@ -377,12 +359,6 @@ const onProviderChange = async (provider) => {
   // const params = useMyVacancyForm(form.value, 'front');
   // await getMyVacancies(params);
   // isLoading.value = false;
-};
-
-const listStyles = {
-  left: 0,
-  right: "unset",
-  width: "auto !important",
 };
 </script>
 

@@ -15,9 +15,13 @@ export const useVacancyStore = defineStore("vacancy", {
       data: null,
       current_page: 1,
       my_draft_current_page: 1,
+      my_draft_last_page: 0,
       my_vacancies: [],
       my_drafts: [],
       my_archived_vacancies: [],
+      my_archived_vacancies_current_page: 1,
+      my_archived_vacancies_last_page: 0,
+      my_archived_vacancies_total: 0,
       my_favorite_vacancies: [],
       specializations: [],
       professional_roles: [],
@@ -296,32 +300,46 @@ export const useVacancyStore = defineStore("vacancy", {
       });
     },
     async getMyVacancies(payload) {
-      const response = await this.getUserVacancies(payload);
+      const response = await this.getUserVacancies({
+        status: "active",
+        ...payload,
+      });
       if (response.hasOwnProperty("data") && "data" in response.data) {
         this.my_vacancies = response.data.data;
-        this.my_total = response.data.found;
-        this.current_page = response.data.current_page;
+        this.my_total = response.data.meta.total;
+        this.my_current_page = response.data.meta.current_page;
+        this.my_last_page = response.data.meta.last_page;
       }
       return response;
     },
-    async getArchivedVacancies(payload = { status: "archived" }) {
-      const response = await this.getUserVacancies(payload);
+    async getArchivedVacancies(payload = {}) {
+      console.log(payload);
+      const response = await this.getUserVacancies({
+        status: "archived",
+        ...payload,
+      });
       if (response.hasOwnProperty("data") && "data" in response.data) {
         this.my_archived_vacancies = response.data.data;
-        this.my_total = response.data.found;
-        this.current_page = response.data.current_page;
+        this.my_archived_vacancies_total = response.data.meta.total;
+        this.my_archived_vacancies_current_page =
+          response.data.meta.current_page;
+        this.my_archived_vacancies_last_page = response.data.meta.last_page;
       }
       return response;
     },
     async getMyDrafts(payload = {}) {
       const response = await useApi("employer/vacancy/drafts", {
         method: "get",
-        params: payload,
+        params: {
+          status: "draft",
+          ...payload,
+        },
       });
       if (response.hasOwnProperty("data") && "data" in response.data) {
         this.my_drafts = response.data.data;
-        this.my_draft_total = response.data.found;
-        this.my_draft_current_page = response.data.current_page;
+        this.my_draft_total = response.data.meta.total;
+        this.my_draft_current_page = response.data.meta.current_page;
+        this.my_draft_last_page = response.data.meta.last_page;
         return this.my_drafts;
       }
       return response;
