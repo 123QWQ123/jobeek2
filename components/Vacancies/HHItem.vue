@@ -35,8 +35,27 @@
       </div>
       <div class="favorites-card-footer">
         <div class="favorites-card-footer-row">
-          <div class="group">
-            <button class="group-action btn button-md">Откликнуться</button>
+          <div class="group me-auto">
+            <div class="select-resume-row">
+              <div class="custom-select-wrapper">
+                <CustomSelectWithRadio
+                  label="Выберите резюме"
+                  v-model="selectedResume"
+                  :options="myResumeOptions"
+                />
+                <button
+                  id="apply-button"
+                  class="btn apply-button button-accent"
+                  :disabled="!selectedResume"
+                  @click.prevent="onSubmit"
+                >
+                  Откликнуться
+                </button>
+              </div>
+              <span class="text text-danger">
+                {{ selectedResumeError }}
+              </span>
+            </div>
           </div>
           <div class="group">
             <button
@@ -69,11 +88,59 @@ import moment from "moment";
 import { useVacancyStore } from "~/store/vacancy";
 import Swal from "sweetalert2";
 import { toast } from "vue3-toastify";
+import { ref } from "vue";
+import { useResumeStore } from "~/store/resume.js";
 
 const props = defineProps(["item"]);
 const { item } = props;
 
 const isFavorite = ref(item.is_favorite ?? false);
+
+const selectedResume = ref(null);
+
+const resumeStore = useResumeStore();
+const myResumeOptions = computed(() => {
+  return resumeStore.my_resumes.map((item) => ({
+    name: item.title,
+    value: item.id,
+  }));
+});
+const onSubmit = async (e) => {
+  if (!selectedResume.value) {
+    selectedResumeError.value = "Выберите резюме чтобы откликатся";
+    return;
+  }
+  e.preventDefault();
+  if (resumeStore.my_resumes.length < 1) {
+    await getMyResumes();
+  }
+  if (resumeStore.my_resumes.length < 1) {
+    toast.info("Нет резюму чтобы откликатся.");
+    return;
+  }
+  if (data.value.response_letter_required) {
+    toast.info("Введите в полье письмо");
+    return;
+  }
+  console.log(resumeStore.my_resumes);
+
+  const response = await submitResume({
+    vacancy_id: data.value.id,
+    resume_id: selectedResume.value,
+    providers: ["hh"],
+  });
+  console.log(response);
+  if (response.status === "success") {
+    isFavorite.value = !isFavorite.value;
+  } else {
+    Swal.fire({
+      title: "Ошибка!",
+      text: response.message,
+      icon: "error",
+      confirmButtonText: "ОК",
+    });
+  }
+};
 
 const vacancyStore = useVacancyStore();
 const { getMyFavoriteVacancies, removeFromFavorite } = vacancyStore;

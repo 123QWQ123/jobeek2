@@ -215,13 +215,13 @@
         </button>
         <div class="aside-container">
           <VacanciesFilters></VacanciesFilters>
-          {{
-            vacancyStore.industries_formatted_for_filter.map((item) => ({
-              id: item.id,
-              title: item.title,
-            }))
-          }}
-          <!--          <VacanciesList :key="$route.fullPath"></VacanciesList>-->
+          <!--          {{-->
+          <!--            vacancyStore.industries_formatted_for_filter.map((item) => ({-->
+          <!--              id: item.id,-->
+          <!--              title: item.title,-->
+          <!--            }))-->
+          <!--          }}-->
+          <VacanciesList :key="$route.fullPath"></VacanciesList>
         </div>
       </div>
     </div>
@@ -239,6 +239,7 @@ import { useUIStore } from "~/store/ui";
 
 import { useNuxtApp } from "#app";
 import useQueryParams from "~/composables/useQueryParams.js";
+import { useResumeStore } from "~/store/resume.js";
 
 const { $format_number } = useNuxtApp();
 const vacancyStore = useVacancyStore();
@@ -275,19 +276,23 @@ const onChangeCurrency = (currency) => {
   navigateTo({ query: params });
 };
 
+const { getMyResumes } = useResumeStore();
 const { getVacancies } = vacancyStore;
 const { getCurrentQueryParams } = useQueryParams();
 const currentParams = ref(getCurrentQueryParams());
 watch(
   () => ({ ...getCurrentQueryParams() }),
   async (newValues) => {
+    console.log(newValues);
     currentParams.value = newValues;
     await getVacancies(newValues);
   },
 );
 
-// await getVacancies({ ...getCurrentQueryParams() });
-
+onMounted(() => {
+  getVacancies({ ...getCurrentQueryParams() });
+  getMyResumes();
+});
 const listStyles = {
   left: "unset",
   right: 0,
