@@ -5,8 +5,10 @@
     v-click-outside="() => (isOpen = false)"
     tabindex="0"
   >
-    <div class="input-wrap has-icon">
-      <img class="icon" src="~/assets/img/svg/location.svg" alt="#" />
+    <div class="custom_input-wrap has-icon">
+      <span class="d-inline-flex ps-2">
+        <img class="icon" src="~/assets/img/svg/location.svg" alt="#" />
+      </span>
       <input
         class="current"
         ref="searchInputElement"
@@ -112,6 +114,10 @@ onMounted(() => {
   }
 });
 
+const onFocusout = (e) => {
+  e.preventDefault();
+  console.log(1);
+};
 const labelText = computed(() => {
   if (!isOpen.value) {
     if (selectedOption.value) {
@@ -216,20 +222,14 @@ input.current::-webkit-inner-spin-button {
   -moz-appearance: textfield;
 }
 
-.input-wrap {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-}
-
 input {
-  padding-left: 42px !important;
-  margin-top: 24px;
+  //padding-left: 42px !important;
+  //margin-top: 24px;
 }
 
-.current {
-  color: #0a2540;
+.search-row .n-select .current {
   width: 100%;
+  color: #0a2540;
   height: unset !important;
   cursor: pointer;
   margin: 0;
@@ -271,5 +271,15 @@ input {
   transform: rotate(45deg);
   transition: all 0.15s ease-in-out;
   width: 8px;
+}
+
+.nice-select .custom_input-wrap {
+  width: 100%;
+  height: 100%;
+  display: inline-flex;
+  //justify-content: center;
+  //align-items: center;
+  //border: none;
+  //padding-right: 10px;
 }
 </style>

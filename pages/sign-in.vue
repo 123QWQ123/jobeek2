@@ -5,6 +5,7 @@ import IMask from "imask";
 import useAlert from "~/composables/useAlert";
 import { useVacancyStore } from "~/store/vacancy.js";
 import { useResumeStore } from "~/store/resume.js";
+import { ref } from "vue";
 
 definePageMeta({
   layout: "custom",
@@ -71,59 +72,59 @@ const route = useRoute();
 
 const { getConnectedEmployerProviders } = vacancyStore;
 const { getConnectedSeekerProviders } = resumeStore;
+const isLoading = ref(false);
 
 async function onSubmit() {
   validateForm();
   if (state.isFormValid) {
+    isLoading.value = true;
     let response;
     try {
       response = await signIn({
         phone: phoneMask.value.unmaskedValue,
         password: state.password.val,
       });
-      if (isEmployer) {
-        await refreshEmployer();
-      } else {
-        await refreshSeeker();
-      }
     } catch (error) {
       state.error = error.message;
     }
-    if (response.status === "error" && response.message) {
+    if (response.status !== "success") {
       Swal.fire({
         title: "Ошибка!",
         text: response.message,
         icon: "error",
         confirmButtonText: "ОК",
       });
+      isLoading.value = false;
       return;
+    }
+    if (auth.isEmployer) {
+      await refreshEmployer();
+    } else {
+      await refreshSeeker();
     }
     const route_name = route.query.redirect;
-    await getConnectedEmployerProviders();
-    await getConnectedSeekerProviders();
-    const isEmployer = auth.isEmployer;
-    const employer = auth.employer;
 
-    if (isEmployer && auth.employer && auth.employer.is_completed) {
-      setTimeout(() => {
-        if (route_name) {
-          router.replace({ name: route_name });
-        } else {
-          router.replace({ name: "my-vacancies" });
-        }
-      });
-      return;
-    }
-    if (!isEmployer && auth.seeker && auth.seeker.is_completed) {
-      setTimeout(() => {
-        if (route_name) {
-          router.replace({ name: route_name });
-        } else {
-          router.replace({ name: "my-resumes" });
-        }
-      });
-      return;
-    }
+    // if (isEmployer && auth.employer && auth.employer.is_completed) {
+    //   setTimeout(() => {
+    //     if (route_name) {
+    //       router.replace({ name: route_name });
+    //     } else {
+    //       router.replace({ name: "my-vacancies" });
+    //     }
+    //   });
+    //
+    //   return;
+    // }
+    // if (!isEmployer && auth.seeker && auth.seeker.is_completed) {
+    //   setTimeout(() => {
+    //     if (route_name) {
+    //       router.replace({ name: route_name });
+    //     } else {
+    //       router.replace({ name: "my-resumes" });
+    //     }
+    //   });
+    //   return;
+    // }
 
     setTimeout(() => {
       if (route_name) {
@@ -233,7 +234,10 @@ onMounted(() => {
               >Забыли пароль?
             </NuxtLink>
           </div>
-          <button class="btn button-accent" type="submit">Войти</button>
+          <button class="btn button-accent" type="submit" :disabled="isLoading">
+            <Loader class="text-light spinner-border-sm" v-if="isLoading" />
+            Войти
+          </button>
         </form>
         <div class="f-prompt">
           Еще нет аккаунта?

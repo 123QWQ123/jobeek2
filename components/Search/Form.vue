@@ -6,7 +6,7 @@
           <img class="icon" src="~/assets/img/svg/search.svg" alt="#" />
           <label for="name">Название</label>
           <input
-            v-model="form.name"
+            v-model="search"
             type="text"
             name="name"
             id="name"
@@ -15,10 +15,8 @@
           />
         </div>
         <div class="input-wrap has-label">
-          <label for="salary">Зарплата</label>
-          <HeaderSalarySelectInForm
-            v-model="form.salary"
-          ></HeaderSalarySelectInForm>
+          <label for="salary placeholder">Зарплата</label>
+          <HeaderSalarySelectInForm v-model="salary"></HeaderSalarySelectInForm>
         </div>
         <div class="input-wrap has-label">
           <label for="city">Город</label>
@@ -54,16 +52,16 @@ const route = useRoute();
 const router = useRouter();
 const auth = useAuthStore();
 
+const search = ref(null);
+const salary = ref(null);
 const region = ref(null);
 const city = ref("*");
 
-const form = ref(useVacancyForm());
-
-onMounted(() => {
-  if (Array.from(form.value.cities).length === 1) {
-    city.value = form.value.cities[0];
-  }
-});
+// onMounted(() => {
+//   if (Array.from(form.value.cities).length === 1) {
+//     city.value = form.value.cities[0];
+//   }
+// });
 const profileStore = useProfileStore();
 const { searchCities } = profileStore;
 const updateCityInput = async (newValue = "") => {
@@ -74,19 +72,19 @@ const updateCityInput = async (newValue = "") => {
   }));
 };
 const city_name = ref("");
-watch(
-  () => city_name.value,
-  (newCity) => {
-    form.value.city_name = newCity;
-  },
-);
-const onCityChange = (regionItem) => {
-  if (regionItem.value === "*") {
-    form.value.cities = [];
-  } else {
-    form.value.cities = [regionItem.value];
-  }
-};
+// watch(
+//   () => city_name.value,
+//   (newCity) => {
+//     form.value.city_name = newCity;
+//   },
+// );
+// const onCityChange = (regionItem) => {
+//   if (regionItem.value === "*") {
+//     form.value.cities = [];
+//   } else {
+//     form.value.cities = [regionItem.value];
+//   }
+// };
 const { getVacancies, getRegions, getCities } = vacancyStore;
 const vacancies = computed(() => vacancyStore.vacancies);
 
@@ -123,33 +121,40 @@ const page = useRoute();
 //   prepareCities();
 // });
 
-const country = computed(() => {
-  if (form.value.countries.length === 0) {
-    return form.value.countries[0];
-  } else return 1;
-});
-
-onMounted(async () => {
-  await getRegions({ country_id: country.value });
-  // const region_ids = regions.value.map((item) => item.id);
-  // console.log(region_ids);
-  console.log(form.value.countries);
-
-  await getCities({ country_ids: form.value.countries });
-  //
-  // console.log(regions.value);
-  // console.log(cities.value);
-
-  prepareCities();
-});
+// const country = computed(() => {
+//   if (form.value.countries.length === 0) {
+//     return form.value.countries[0];
+//   } else return 1;
+// });
+//
+// onMounted(async () => {
+//   // await getRegions({ country_id: country.value });
+//   // const region_ids = regions.value.map((item) => item.id);
+//   // console.log(region_ids);
+//   // console.log(form.value.countries);
+//
+//   // await getCities({ country_ids: form.value.countries });
+//   //
+//   // console.log(regions.value);
+//   // console.log(cities.value);
+//
+//   prepareCities();
+// });
 
 const isLoading = ref(false);
 const { clearVacancies } = vacancyStore;
 const onSubmit = (e) => {
   console.log(e);
   const params = useVacancyForm(form.value, "front");
-  console.log(params);
-  navigateTo({ name: "search-vacancies", query: params });
+  // console.log(params);
+  navigateTo({
+    name: "search-vacancies",
+    query: {
+      countries: JSON.stringify([1]),
+      cities: JSON.stringify(form.value.cities),
+      salary: JSON.stringify(form.value.salary),
+    },
+  });
 };
 
 const searchPlaceHolder = computed(() =>

@@ -6,15 +6,16 @@
           <SearchForm></SearchForm>
         </div>
       </div>
-      <div class="wrapper wrapper-1290" v-if="vacancyData">
-        <VacanciesSingleHHContent
-          v-if="provider === 'hh'"
-          :item="vacancy.hh"
-        ></VacanciesSingleHHContent>
-        <VacanciesSingleSuperjobContent
-          v-if="provider === 'superjob'"
-          :item="vacancy.superjob"
-        ></VacanciesSingleSuperjobContent>
+      <div class="wrapper wrapper-1290" v-if="vacancy">
+        <VacanciesItemContent :data="vacancy[provider]" />
+        <!--        <VacanciesSingleHHContent-->
+        <!--          v-if="provider === 'hh'"-->
+        <!--          :item="vacancy.hh"-->
+        <!--        ></VacanciesSingleHHContent>-->
+        <!--        <VacanciesSingleSuperjobContent-->
+        <!--          v-if="provider === 'superjob'"-->
+        <!--          :item="vacancy.superjob"-->
+        <!--        ></VacanciesSingleSuperjobContent>-->
         <h2 class="lk-page-title">Похожие вакансии</h2>
         <div class="favorites-list-container">
           <VacanciesSingleLikeList></VacanciesSingleLikeList>

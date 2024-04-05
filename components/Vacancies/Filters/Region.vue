@@ -1,53 +1,94 @@
 <template>
-  <div class="filter-box" :class="{'open': regionFilterClass}">
-    <div class="filter-box-handle" @click="regionFilterClass = !regionFilterClass">
-      <strong>Регионы</strong>
-      <img src="~/assets/img/svg/Arrow-Down.svg" alt="#">
+  <div class="filter-box" :class="{ open: filterClass }">
+    <div class="filter-box-handle" @click="filterClass = !filterClass">
+      <strong>Регионы({{ total }})</strong>
+      <img src="~/assets/img/svg/Arrow-Down.svg" alt="#" />
     </div>
-
-    <div v-if="isMore" class="filter-box-body " >
+    <div v-if="isMore" class="filter-box-body">
       <div class="search_area">
-        <input type="search" v-model="search" @keyup.prevent="onSearch" @input="onSearch">
+        <input
+          type="search"
+          v-model="search"
+          @keyup.prevent="onSearch"
+          @input="onSearch"
+        />
       </div>
-      <div class="check-block-list with_scroll" :class="{'all-visible': isMore}">
-        <div class="check-block" v-for="item in selectedRegionItems">
-          <div class="checkbox">
-            <input type="checkbox" :checked="true" @change="toggleRegion(item.id)">
-            <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
-          </div>
-          <div class="l-wrap">
-            <label>{{item.name}}</label>
-          </div>
-        </div>
+      <span class="fw-bold is_header mb-2">Выбранные регионы</span>
+      <div
+        class="check-block-list with_scroll mt-2"
+        :class="{ 'all-visible': isMore }"
+      >
+        <VacanciesCheckbox
+          class="check-block"
+          v-for="item in selectedItems"
+          :checked="true"
+          :class="{ is_header: item.is_header }"
+          @change="toggleRegion(item.value)"
+          :name="`selected_region_${item.value}`"
+          :key="`selected_region_${item.value}`"
+          :label="item.name"
+        />
       </div>
-      <div class="check-block-list with_scroll" :class="{'all-visible': isMore}">
-        <div class="check-block" v-for="item in groupedFilterItems" :class="{'is_header': item.is_header}">
-          <div class="checkbox" v-if="!item.is_header">
-            <input type="checkbox" :checked="item.is_checked" @change="toggleRegion(item.id)">
-            <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
-          </div>
-          <div class="l-wrap">
-            <label>{{item.name}}</label>
-          </div>
-        </div>
+      <div
+        class="check-block-list with_scroll mt-3"
+        :class="{ 'all-visible': isMore }"
+      >
+        <VacanciesCheckbox
+          class="check-block"
+          v-for="item in groupedFilterItems"
+          :checked="item.is_checked"
+          :class="{ is_header: item.is_header }"
+          @change="toggleRegion(item.value)"
+          :name="`unselected_region_${item.value}`"
+          :label="item.name"
+          :is_header="item.is_header"
+          :key="`unselected_region_${item.value}`"
+        />
       </div>
-      <button class="more-filters" data-default-text="Еще 25" data-hide-text="Скрыть" @click="toggleMore">
+      <button
+        class="more-filters"
+        data-default-text="Еще 25"
+        data-hide-text="Скрыть"
+        @click="toggleMore"
+      >
         Скрыть
       </button>
     </div>
     <div v-else class="filter-box-body">
-      <div class="check-block-list" >
-        <div class="check-block" v-for="item in groupedFilterItems">
-          <div class="checkbox" v-if="!item.is_header">
-            <input type="checkbox" :checked="item.is_checked" @change="toggleRegion(item.id)" >
-            <div class="checkbox-mask"><img src="~/assets/img/svg/check.svg" alt="#"></div>
-          </div>
-          <div class="l-wrap" v-if="!item.is_header">
-            <label>{{item.name}}</label>
-          </div>
-        </div>
+      <div class="check-block-list" v-if="selectedItems.length">
+        <VacanciesCheckbox
+          class="check-block"
+          v-for="item in selectedItems"
+          :checked="true"
+          @change="toggleRegion(item.value)"
+          :name="`selected_region_${item.value}`"
+          :label="item.name"
+          :key="`selected_region_${item.value}`"
+        />
       </div>
-      <button class="more-filters" data-default-text="Еще 25" data-hide-text="Показат" @click="toggleMore" v-if="total > 0">
+
+      <div
+        v-else
+        class="check-block-list with_scroll"
+        :class="{ 'all-visible': isMore }"
+      >
+        <VacanciesCheckbox
+          class="check-block"
+          v-for="item in firstXSelectedItems"
+          :checked="false"
+          @change="toggleRegion(item.value)"
+          :name="`region_${item.value}`"
+          :label="item.name"
+          :key="`region_${item.value}`"
+        />
+      </div>
+      <button
+        class="more-filters"
+        :data-default-text="`Еще ${total}`"
+        data-hide-text="Показат"
+        @click="toggleMore"
+        v-if="total > 0"
+      >
         Еще {{ total }}
       </button>
     </div>
@@ -56,174 +97,167 @@
 
 <script setup>
 import useSort from "~/composables/useSort";
+import { useVacancyStore } from "~/store/vacancy";
+import useQueryParams from "~/composables/useQueryParams.js";
 
-const {selectedCountry} = defineProps(['selectedCountry']);
-const emit = defineEmits(['onFormChange'])
-import {useVacancyStore} from "../../../store/vacancy";
-import {useVacancyForm} from "../../../composables/useVacancyForm";
+const emit = defineEmits(["onFormChange"]);
+const props = defineProps(["name", "isOpen", "selectedCountry"]);
+const { selectedCountry } = props;
+const { updateQueryParam, getQueryParam } = useQueryParams();
+const countries = ref(getQueryParam("countries") ?? [1]);
 
+watch(
+  () => getQueryParam("countries") ?? [1], // default country is 1
+  async (newValues, oldValues) => {
+    if (JSON.stringify(newValues) !== JSON.stringify(oldValues)) {
+      countries.value = newValues;
+      await getRegions({ country_ids: countries.value });
+      prepare(vacancyStore.regions_formatted);
+    }
+  },
+);
+
+const regions = ref(getQueryParam("regions") ?? []);
+
+watch(
+  () => getQueryParam("regions") ?? [],
+  (newValues, oldValues) => {
+    if (JSON.stringify(newValues) !== JSON.stringify(oldValues)) {
+      regions.value = newValues;
+      prepare(vacancyStore.regions_formatted);
+    }
+  },
+);
 const vacancyStore = useVacancyStore();
 
-const appliedCountry = ref(1);
 const search = ref("");
-const regions = ref([]);
 
 const total = computed(() => {
-  if (regions.value.length > 5){
-    return regions.value.length - 5;
-  }else{
+  if (vacancyStore.regions.length > 5) {
+    return vacancyStore.regions.length - 5;
+  } else {
     return 0;
   }
 });
-const regionFilterClass = ref(true);
+const filterClass = ref(true);
 const isMore = ref(false);
 const groupedFilterItems = ref([]);
-const selectedRegionItems = ref([]);
+const selectedItems = ref([]);
 
-const form = ref(useVacancyForm());
-const selectedItems = ref(form.value.regions);
+const firstXSelectedItems = computed(() => {
+  return vacancyStore.regions_formatted.slice(0, 5);
+});
 
-const toggleMore = () => isMore.value = !isMore.value;
+const toggleMore = () => (isMore.value = !isMore.value);
 const onSearch = (e) => {
   const search = e.target.value;
-  let items = [];
-  if (search != ''){
-    items = vacancyStore.regions.filter((item, key) => {
+  let items = [...groupedFilterItems.value];
+  if (search !== "") {
+    items = items.filter((item, key) => {
       return item.name.toLowerCase().includes(search.toLowerCase());
     });
-
-  }else{
-    items = vacancyStore.regions.filter((item, key) => {
+  } else {
+    items = items.filter((item, key) => {
       return item.name.toLowerCase().includes(search.toLowerCase());
     });
   }
-  selectedItems.value = items;
+  groupedFilterItems.value = items;
   prepare(items);
 };
 
-
 const toggleRegion = (id) => {
-  const items = groupedFilterItems.value.map((item, key) => {
-    if(item.id === id){
-      item.is_checked = !item.is_checked;
+  let selected_ids = [...regions.value];
 
-      if (!selectedItems.value.includes(item.id) && item.is_checked){
-        selectedItems.value.push(item.id);
-      }else{
-        if (selectedItems.value.includes(item.id) && item.is_checked === false){
-          selectedItems.value = selectedItems.value.filter(sub => sub !== item.id);
-        }
-      }
-
-      return item;
-    }
-    return item;
-  });
-
-  groupedFilterItems.value = items;
-
-  form.value.cities = selectedItems.value;
-
-  submitSearch();
+  if (!selected_ids.includes(id)) {
+    selected_ids.push(id);
+  } else {
+    selected_ids = selected_ids.filter((item) => item !== id);
+  }
+  selected_ids = selected_ids.length === 0 ? undefined : selected_ids;
+  updateQueryParam("regions", selected_ids);
 };
 
+const isLoading = ref(false);
+const { clearVacancies } = vacancyStore;
+const router = useRouter();
 
-const  isLoading = ref(false);
-const {clearVacancies} = vacancyStore;
-const router  = useRouter();
-const submitSearch = () => {
-  emit('onFormChange', 'regions', selectedItems.value);
-}
-
-const {sort} = useSort();
-const prepare = (items, custom_items) => {
+const { sort } = useSort();
+const prepare = (items) => {
   let filterItems = items;
-  if (!items){
-    filterItems = custom_items;
-  }
-
-  if (filterItems.length < 1){
+  let selected_ids = [...regions.value];
+  if (filterItems.length < 1) {
     groupedFilterItems.value = [];
     return;
   }
+  selectedItems.value = [...filterItems].filter((item) => {
+    return selected_ids.includes(item.value);
+  });
+  filterItems = filterItems.filter(
+    (item) => !selected_ids.includes(item.value),
+  );
+  filterItems = sort(filterItems, { by: "alpha" });
 
-
-  filterItems = sort(filterItems, {by: 'alpha'});
-
-  regions.value = filterItems;
   groupedFilterItems.value = [];
-  regions.value.map((item, key) => {
+  filterItems.map((item, key) => {
     const firstLetter = item.name.charAt(0);
-    if (key === 0){
+    if (key === 0) {
       groupedFilterItems.value.push({
-        id: firstLetter,
+        value: firstLetter,
         name: firstLetter,
-        is_header: true
+        is_header: true,
       });
-    }else{
+    } else {
       let prevFirstLetter;
-      if (regions.value[key-1] !== undefined){
-        prevFirstLetter = regions.value[key-1].name.charAt(0);
+      if (filterItems[key - 1] !== undefined) {
+        prevFirstLetter = filterItems[key - 1].name.charAt(0);
       }
-      if (firstLetter !== prevFirstLetter){
+      if (firstLetter !== prevFirstLetter) {
         groupedFilterItems.value.push({
-          id: firstLetter,
+          value: firstLetter,
           name: firstLetter,
-          is_header: true
+          is_header: true,
         });
       }
     }
 
     groupedFilterItems.value.push({
-      id: item.id,
+      value: item.value,
       name: item.name,
       is_header: false,
-      is_checked: selectedItems.value.includes(item.id)
     });
   });
-
 };
 
-const {getRegions} = vacancyStore;
-watch(() => vacancyStore.regions, prepare);
-onMounted( async() => {
-// || parseInt(selectedCountry) !== parseInt(appliedCountry.value)
-
-  if (vacancyStore.regions.length === 0){
-      await getRegions({country_id: selectedCountry});
-      appliedCountry.value = selectedCountry;
-  }else{
-      prepare(null, vacancyStore.regions);
-  }
-  if (selectedItems.value.length > 0){
-    isMore.value = true;
-  }
+const { getRegions } = vacancyStore;
+watch(() => vacancyStore.regions_formatted, prepare);
+onMounted(async () => {
+  await getRegions({ country_ids: countries.value });
 });
-
-
 </script>
 
 <style scoped>
-.check-block label{
+.check-block label {
   white-space: pre-wrap;
 }
-.with_scroll{
+
+.with_scroll {
   max-height: 300px;
   overflow: auto;
 }
-.is_header .l-wrap label{
+
+.is_header .l-wrap label {
   font-weight: bold;
 }
+
 .is_header input,
-.is_header .radio-mask
-{
+.is_header .radio-mask {
   display: none;
 }
 
-input[type="search"]{
+input[type="search"] {
   width: 100%;
   margin-bottom: 1rem;
-  border: 1px solid #CBCBCB;
+  border: 1px solid #cbcbcb;
   padding: 0.1rem 0.3rem;
 }
 </style>

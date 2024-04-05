@@ -15,11 +15,16 @@ export const useVacancyStore = defineStore("vacancy", {
       data: null,
       current_page: 1,
       my_draft_current_page: 1,
+      my_draft_last_page: 0,
       my_vacancies: [],
       my_drafts: [],
       my_archived_vacancies: [],
+      my_archived_vacancies_current_page: 1,
+      my_archived_vacancies_last_page: 0,
+      my_archived_vacancies_total: 0,
       my_favorite_vacancies: [],
       specializations: [],
+      professional_roles: [],
       industries: [],
       areas: [],
       countries: [],
@@ -60,8 +65,62 @@ export const useVacancyStore = defineStore("vacancy", {
     top_20_industries: (state) => {
       return state.industries.slice(0, 20);
     },
+    industries_formatted_for_filter: (state) => {
+      let new_items = JSON.parse(JSON.stringify(state.industries));
+      new_items = new_items.map((item) => {
+        item.parent_id = null;
+        item.items = item.industries.map((sub_item) => {
+          sub_item.parent_id = item.id;
+          return sub_item;
+        });
+        delete item.industries;
+        return item;
+      });
+      let items = [];
+      new_items.map((item) => {
+        items.push(item);
+        items.concat(item.items);
+      });
+      return items;
+    },
+    professional_roles_formatted_for_filter: (state) => {
+      let new_items = JSON.parse(JSON.stringify(state.professional_roles));
+      const parent_items = new_items.filter((item) => item.parent_id === 0);
+      for (let key in parent_items) {
+        parent_items[key].professional_roles = new_items.filter(
+          (item) => item.parent_id === item.id,
+        );
+      }
+      new_items = parent_items.map((item) => {
+        item.parent_id = null;
+        item.items = item.professional_roles.map((sub_item) => {
+          sub_item.parent_id = item.id;
+          return sub_item;
+        });
+        delete item.professional_roles;
+        return item;
+      });
+      let items = [];
+      new_items.map((item) => {
+        items.push(item);
+        items.concat(item.items);
+      });
+      return items.map((item) => {
+        item.title = item.name;
+        return item;
+      });
+    },
     my_city_vacancies: (state) => {
       return state.vacancies_in_my_city.slice(0, 3);
+    },
+    regions_formatted: (state) => {
+      return state.regions.map((item) => ({ name: item.name, value: item.id }));
+    },
+    cities_formatted: (state) => {
+      return state.cities.map((item) => ({ name: item.name, value: item.id }));
+    },
+    metros_formatted: (state) => {
+      return state.metros.map((item) => ({ name: item.name, value: item.id }));
     },
   },
   actions: {
@@ -70,11 +129,12 @@ export const useVacancyStore = defineStore("vacancy", {
         method: "get",
         params: {},
       });
+
       if ("data" in response) {
         this.providers = response.data.data;
         return this.providers;
       }
-      return response.data;
+      return response;
     },
     async importVacancies() {
       const payload = [];
@@ -244,32 +304,45 @@ export const useVacancyStore = defineStore("vacancy", {
       });
     },
     async getMyVacancies(payload) {
-      const response = await this.getUserVacancies(payload);
+      const response = await this.getUserVacancies({
+        status: "active",
+        ...payload,
+      });
       if (response.hasOwnProperty("data") && "data" in response.data) {
         this.my_vacancies = response.data.data;
-        this.my_total = response.data.found;
-        this.current_page = response.data.current_page;
+        this.my_total = response.data.meta.total;
+        this.my_current_page = response.data.meta.current_page;
+        this.my_last_page = response.data.meta.last_page;
       }
       return response;
     },
-    async getArchivedVacancies(payload = { status: "archived" }) {
-      const response = await this.getUserVacancies(payload);
+    async getArchivedVacancies(payload = {}) {
+      const response = await this.getUserVacancies({
+        status: "archived",
+        ...payload,
+      });
       if (response.hasOwnProperty("data") && "data" in response.data) {
         this.my_archived_vacancies = response.data.data;
-        this.my_total = response.data.found;
-        this.current_page = response.data.current_page;
+        this.my_archived_vacancies_total = response.data.meta.total;
+        this.my_archived_vacancies_current_page =
+          response.data.meta.current_page;
+        this.my_archived_vacancies_last_page = response.data.meta.last_page;
       }
       return response;
     },
     async getMyDrafts(payload = {}) {
       const response = await useApi("employer/vacancy/drafts", {
         method: "get",
-        params: payload,
+        params: {
+          status: "draft",
+          ...payload,
+        },
       });
       if (response.hasOwnProperty("data") && "data" in response.data) {
         this.my_drafts = response.data.data;
-        this.my_draft_total = response.data.found;
-        this.my_draft_current_page = response.data.current_page;
+        this.my_draft_total = response.data.meta.total;
+        this.my_draft_current_page = response.data.meta.current_page;
+        this.my_draft_last_page = response.data.meta.last_page;
         return this.my_drafts;
       }
       return response;
@@ -322,7 +395,7 @@ export const useVacancyStore = defineStore("vacancy", {
         params: payload,
       });
       if (data && "data" in data) {
-        this.regions = data.data?.regions ?? [];
+        this.regions = data.data ?? [];
       }
       return data;
     },
@@ -332,7 +405,7 @@ export const useVacancyStore = defineStore("vacancy", {
         params: payload,
       });
       if (data && "data" in data) {
-        this.cities = data.data?.cities ?? [];
+        this.cities = data.data ?? [];
       }
       return data;
     },
@@ -355,23 +428,34 @@ export const useVacancyStore = defineStore("vacancy", {
       }
       const response = await useApi("industries", {
         method: "get",
-        payload,
+        params: payload,
       });
       if (response && "data" in response) {
-        let industries = response.data.data ?? [];
-        let new_items = [];
-        industries.map(
-          (item) => (new_items = new_items.concat(item.industries)),
-        );
-        this.industries = new_items;
+        this.industries = response.data.data ?? [];
         return this.industries;
+      }
+      return response;
+    },
+    async getProfessionalRoles(payload = {}) {
+      if (this.professional_roles.length > 0) {
+        return this.professional_roles;
+      }
+      const response = await useApi("professional_roles", {
+        method: "get",
+        params: payload,
+      });
+      console.log(response);
+      if (response && "data" in response) {
+        this.professional_roles = response.data.data ?? [];
+        console.log(this.professional_roles);
+        return this.professional_roles;
       }
       return response;
     },
     async getMetros(payload = URLSearchParams) {
       const { data } = await useApi("metro", {
         method: "get",
-        payload,
+        params: payload,
       });
       if (data && "data" in data) {
         this.metros = data.data ?? [];

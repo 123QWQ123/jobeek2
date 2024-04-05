@@ -2,65 +2,86 @@
   <form class="search-form" role="form" autocomplete="off">
     <div class="wrapper">
       <div class="search-row">
-        <div class="input-wrap has-icon has-label"><img class="icon" src="~/assets/img/svg/search.svg" alt="#">
+        <div class="input-wrap has-icon has-label">
+          <img class="icon" src="~/assets/img/svg/search.svg" alt="#" />
           <label for="name">Название</label>
-          <input v-model="form.name" type="text" name="name" id="name" :placeholder="'Какую вакансию вы ищете?'"
-                 autocomplete="off">
+          <input
+            v-model="search"
+            type="text"
+            name="name"
+            id="name"
+            :placeholder="'Какую вакансию вы ищете?'"
+            autocomplete="off"
+          />
         </div>
         <div class="input-wrap has-label">
           <label for="salary">Зарплата</label>
-          <HeaderSalarySelectInForm v-model="form.salary"></HeaderSalarySelectInForm>
+          <HeaderSalarySelectInForm v-model="salary"></HeaderSalarySelectInForm>
         </div>
         <div class="input-wrap has-label">
           <label for="city">Город</label>
-          <SelectWithSearch :options="cityOptions" v-model="city" :listStyles="searchSelectStyles" @change="onCityChange" :listItemStyles="searchSelectItemStyles"/>
+          <SelectWithSearch
+            :options="cityOptions"
+            v-model="city"
+            :listStyles="searchSelectStyles"
+            @change="onCityChange"
+            :listItemStyles="searchSelectItemStyles"
+          />
         </div>
-        <button class="button-accent submit-search-form" type="button" @click="onSubmit">Поиск </button>
+        <button
+          class="button-accent submit-search-form"
+          type="button"
+          @click="onSubmit"
+        >
+          Поиск
+        </button>
       </div>
     </div>
   </form>
 </template>
 
 <script setup>
-import {useAuthStore} from "~/store/auth";
+import { useAuthStore } from "~/store/auth";
 
-import {useVacancyStore} from "../../store/vacancy";
-import {useVacancyForm} from "../../composables/useVacancyForm";
-import {useResumeStore} from "~/store/resume";
-import {useResumeForm} from "~/composables/useResumeForm";
+import { useVacancyStore } from "../../store/vacancy";
+import { useVacancyForm } from "../../composables/useVacancyForm";
+import { useResumeStore } from "~/store/resume";
+import { useResumeForm } from "~/composables/useResumeForm";
+
 const vacancyStore = useVacancyStore();
 const resumeStore = useResumeStore();
 const route = useRoute();
 const router = useRouter();
 const auth = useAuthStore();
 
+const search = ref(null);
+const salary = ref(null);
 const region = ref(null);
-const city = ref('*');
+const city = ref("*");
 
 const form = ref(useResumeForm());
 
-
 onMounted(() => {
-    if (Array.from(form.value.cities).length === 1){
-      city.value = form.value.cities[0];
-    }
-})
+  if (Array.from(form.value.cities).length === 1) {
+    city.value = form.value.cities[0];
+  }
+});
 
 const onCityChange = (regionItem) => {
-  if (regionItem.value === '*'){
+  if (regionItem.value === "*") {
     form.value.cities = [];
-  }else{
+  } else {
     form.value.cities = [regionItem.value];
   }
-}
-const {getResumes, getRegions, getCities} = resumeStore;
+};
+const { getResumes, getRegions, getCities } = resumeStore;
 
 const vacancies = computed(() => vacancyStore.vacancies);
 
 const searchSelectItemStyles = {
-  width: 'auto !important',
-  whiteSpace: 'pre-wrap',
-}
+  width: "auto !important",
+  whiteSpace: "pre-wrap",
+};
 
 // const {regions, cities} = storeToRefs(vacancyStore);
 const cities = computed(() => vacancyStore.cities);
@@ -69,12 +90,16 @@ const regions = computed(() => vacancyStore.regions);
 const cityOptions = ref([]);
 
 const prepareCities = () => {
-  const c_items = cities.value.map((item) => ({value: item.id, name: item.name}));
+  const c_items = cities.value.map((item) => ({
+    value: item.id,
+    name: item.name,
+  }));
   c_items.unshift({
-    value: '*', name: 'Все'
+    value: "*",
+    name: "Все",
   });
   cityOptions.value = c_items;
-}
+};
 
 const page = useRoute();
 
@@ -86,48 +111,42 @@ const page = useRoute();
 //   prepareCities();
 // });
 
-
 const country = computed(() => {
-  if (form.value.countries.length === 0){
+  if (form.value.countries.length === 0) {
     return form.value.countries[0];
   } else return 1;
 });
 
-onMounted(async() => {
+onMounted(async () => {
+  await getRegions({ country_id: country.value });
+  // const region_ids = regions.value.map((item) => item.id);
+  // console.log(region_ids);
+  await getCities({ country_id: country.value });
+  //
+  // console.log(regions.value);
+  // console.log(cities.value);
 
-    await getRegions({country_id: country.value});
-    // const region_ids = regions.value.map((item) => item.id);
-    // console.log(region_ids);
-    await getCities({country_id: country.value});
-    //
-    // console.log(regions.value);
-    // console.log(cities.value);
-
-    prepareCities();
+  prepareCities();
 });
 
-
 const isLoading = ref(false);
-const {clearVacancies} = vacancyStore;
+const { clearVacancies } = vacancyStore;
 const onSubmit = (e) => {
-  const params = useVacancyForm(form.value, 'front');
-  navigateTo({name: 'search-vacancies', query: params});
-}
+  const params = useVacancyForm(form.value, "front");
+  navigateTo({ name: "search-vacancies", query: params });
+};
 
 const searchPlaceHolder = computed(() =>
-    auth.isEmployer ? "Какой специалист вы ищете?" : "Какую вакансию вы ищете?"
+  auth.isEmployer ? "Какой специалист вы ищете?" : "Какую вакансию вы ищете?",
 );
 
 const searchSelectStyles = {
-  left: 'unset',
-  right: '0px',
-  width: 'auto !important',
-  maxWidth: '20rem',
-  minWidth: '8rem',
-}
-
+  left: "unset",
+  right: "0px",
+  width: "auto !important",
+  maxWidth: "20rem",
+  minWidth: "8rem",
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
