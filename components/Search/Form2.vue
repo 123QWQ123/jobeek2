@@ -166,7 +166,7 @@ const onSubmit = async (e) => {
   clearVacancies();
   const cities = city.value ? [city.value] : undefined;
   const queryVacancy = {
-    cities: cities,
+    cities: JSON.stringify(cities),
     salary: JSON.stringify(salary.value),
     search: search.value,
   };

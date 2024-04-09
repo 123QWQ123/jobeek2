@@ -52,7 +52,7 @@
                   Откликнуться
                 </button>
               </div>
-              <span class="text text-danger">
+              <span class="text text-danger" v-if="selectedResumeError">
                 {{ selectedResumeError }}
               </span>
             </div>
@@ -105,6 +105,8 @@ const myResumeOptions = computed(() => {
     value: item.id,
   }));
 });
+
+const selectedResumeError = ref(null);
 const onSubmit = async (e) => {
   if (!selectedResume.value) {
     selectedResumeError.value = "Выберите резюме чтобы откликатся";

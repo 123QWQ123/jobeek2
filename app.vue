@@ -22,9 +22,10 @@ const route = useRoute();
 watch(
   () => route.query.message,
   () => {
-    if (route.query.message) {
-      toast.info(route.query.message, { autoClose: 3000 });
-    }
+    // if (route.query.message) {
+    //   console.log(321);
+    //   toast.info(route.query.message, { autoClose: 3000 });
+    // }
   },
 );
 
@@ -32,6 +33,7 @@ onMounted(async () => {
   await getConnectedEmployerProviders();
   await getConnectedSeekerProviders();
   if (route.query.message) {
+    console.log(12);
     toast.info(route.query.message, { autoClose: 3000 });
   }
 });

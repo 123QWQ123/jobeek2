@@ -256,10 +256,11 @@ const route = useRoute();
 const redirect_url = useRequestURL();
 onMounted(async () => {
   const response = await getConnectedEmployerProviders();
-  if (response.status !== "success") {
-    toast.info(response.message, { autoClose: 3000 });
-    return;
-  }
+  console.log(response);
+  // if (response.status !== "success") {
+  //   toast.info(response.message, { autoClose: 3000 });
+  //   return;
+  // }
   if (!isAnyProviderConnected.value) {
     const authData = await getEmployerProvidersAuthEndpoints({}, redirect_url);
     providers.value.hh.url = authData.data.hh;
