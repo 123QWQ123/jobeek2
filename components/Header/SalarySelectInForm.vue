@@ -14,13 +14,11 @@ import { useSalaryOptions } from "~/composables/useSalaryOptions";
 const props = defineProps(["modelValue", "currency"]);
 const emit = defineEmits(["update:modelValue"]);
 
-console.log(props.modelValue);
-const selectedSalary = ref(props.modelValue?.id ?? undefined);
+const selectedSalary = ref(props.modelValue?.value ?? undefined);
 watch(
   () => props.modelValue,
   (newValue) => {
-    console.log(newValue);
-    selectedSalary.value = newValue?.id ?? undefined;
+    selectedSalary.value = newValue?.value ?? undefined;
   },
 );
 
@@ -36,9 +34,9 @@ const onChange = (id) => {
   }
   const selectedOption = salaryOptionsData[selectedOptionID];
   emit("update:modelValue", {
-    id: selectedOptionID,
-    from: selectedOption.min,
-    to: selectedOption.max,
+    value: selectedOptionID,
+    min: selectedOption.min,
+    max: selectedOption.max,
   });
 };
 </script>

@@ -102,7 +102,6 @@ const searchPlaceHolder = computed(() =>
 );
 const { getCurrentQueryParams, getQueryParam } = useQueryParams();
 const params = getCurrentQueryParams();
-console.log(params);
 
 const router = useRouter();
 const route = useRoute();
@@ -114,9 +113,9 @@ const { searchCities } = profileStore;
 const search = ref(route.query?.search ?? undefined);
 
 const salary = ref({
-  from: undefined,
-  to: undefined,
-  id: undefined,
+  min: undefined,
+  max: undefined,
+  value: undefined,
 });
 salary.value = getQueryParam("salary");
 const city = ref(null);
@@ -124,6 +123,7 @@ const city = ref(null);
 watch(
   () => getQueryParam("salary"),
   (newValue) => {
+    console.log(newValue);
     salary.value = newValue;
   },
 );
@@ -166,7 +166,7 @@ const onSubmit = async (e) => {
   clearVacancies();
   const cities = city.value ? [city.value] : undefined;
   const queryVacancy = {
-    cities: cities,
+    cities: JSON.stringify(cities),
     salary: JSON.stringify(salary.value),
     search: search.value,
   };

@@ -47,6 +47,8 @@ watch(
   () => getCurrentQueryParams(),
   (newParams) => {
     console.log(newParams);
+    isLoading.value = true;
+
     params.value = newParams;
   },
 );

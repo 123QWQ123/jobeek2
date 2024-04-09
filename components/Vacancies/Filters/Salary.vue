@@ -8,8 +8,9 @@
       <div class="check-block-list all-visible">
         <VacanciesRadio
           class="check-block"
-          v-for="item in salaryOptions"
-          v-model="salary_id"
+          v-for="item in filterItems"
+          :modelValue="salary_id"
+          @update:modelValue="onUpdated"
           :value="item.value"
           :name="'salary_id'"
           :id="`salary_${item.value}`"
@@ -37,14 +38,13 @@ const { getQueryParam, updateQueryParam } = useQueryParams();
 const getSalaryValue = () => {
   return (
     getQueryParam("salary") ?? {
-      id: undefined,
-      from: undefined,
-      to: undefined,
+      value: undefined,
+      name: "Все",
     }
   );
 };
 const salary = ref(getSalaryValue());
-const salary_id = ref(salary.value?.id ?? undefined);
+const salary_id = ref(salary.value?.value ?? undefined);
 
 watch(
   () => getSalaryValue(),
@@ -53,15 +53,24 @@ watch(
   },
 );
 watch(
-  () => salary_id.value,
-  (newValue) => {
-    if (newValue) {
-      updateQueryParam("salary", { ...salary.value, id: newValue });
-    } else {
-      updateQueryParam("salary", undefined);
-    }
+  () => salary.value,
+  (newValues, oldValues) => {
+    salary_id.value = newValues.value;
+    prepare([...salaryOptions.value]);
   },
 );
+
+const onUpdated = (newValue) => {
+  if (newValue) {
+    const found = [...salaryOptions.value].find(
+      (item) => item.value === newValue,
+    );
+    updateQueryParam("salary", { ...found });
+    console.log("updated");
+  } else {
+    updateQueryParam("salary", undefined);
+  }
+};
 
 const salaryOptions = ref(useSalaryOptions());
 
@@ -70,7 +79,7 @@ const { sort } = useSort();
 const prepare = (items) => {
   items = items.map((item) => ({
     ...item,
-    is_checked: item.id === salary_id.value,
+    is_checked: item.value === salary_id.value,
   }));
   filterItems.value = items;
 };
