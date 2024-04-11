@@ -1,7 +1,7 @@
 import { useFetch, useRuntimeConfig } from "nuxt/app";
 import axios from "axios";
 
-const useApi = async (method, options = {}) => {
+const useApi2 = async (method, options = {}) => {
   // console.log(options);
 
   // const { data, pending, error, refresh } = await useFetch(url, {
@@ -235,4 +235,4 @@ const useApi = async (method, options = {}) => {
     }
   }
 };
-export default useApi;
+export default useApi2;
