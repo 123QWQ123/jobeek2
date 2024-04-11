@@ -49,6 +49,21 @@ const state = reactive({
   success: null,
 });
 
+watch(() => state.code.val, (newValue) => {
+  if (newValue && String(newValue).length !== 4){
+    state.code.isValid = false;
+    return;
+  }
+  state.code.isValid = true;
+})
+
+const isConfirmSMSButton = computed(() => {
+  if (isLoading.value) return false;
+  if (state.code.val){
+    return String(state.code.val).length === 4;
+  }
+  return false;
+})
 const phoneInputElement = ref();
 const phoneMask = ref(null);
 onMounted(() => {
@@ -90,14 +105,7 @@ const onSubmit = async () => {
       phone: state.phone.val,
     });
 
-    console.log(response);
-
-    if (response.status === "success") {
-      state.token = response.data.token;
-      tabs.isConfirmTab = true;
-      tabs.isRegisterTab = false;
-      tabs.isResetTab = false;
-    } else {
+    if (response.status !== "success") {
       if (response.data && "errors" in response.data) {
         Swal.fire({
           title: "Ошибка!",
@@ -113,7 +121,14 @@ const onSubmit = async () => {
           confirmButtonText: "ОК",
         });
       }
+      return;
     }
+
+    state.token = response.data.token;
+    tabs.isConfirmTab = true;
+    tabs.isRegisterTab = false;
+    tabs.isResetTab = false;
+    isLoading.value = false;
   }
 };
 
@@ -236,6 +251,9 @@ function close() {
               placeholder="Код потверждения"
               @focusout="clearValidity('code')"
             />
+            <span v-if="!state.code.isValid" class="text text-danger">
+              Введите 4 значный код подтверждения
+            </span>
           </div>
           <div class="note">
             <img src="~/assets/img/svg/i.svg" alt="#" />
@@ -244,7 +262,7 @@ function close() {
               пароля.
             </p>
           </div>
-          <button class="btn button-accent" type="submit">Подтвердить</button>
+          <button class="btn button-accent" type="submit" :disabled="!isConfirmSMSButton">Подтвердить</button>
         </form>
         <form
           v-else-if="tabs.isResetTab"
@@ -273,7 +291,7 @@ function close() {
             <img src="~/assets/img/svg/i.svg" alt="#" />
             <p>Устаноните новый пароль для аккаунта +{{ state.phone.val }}</p>
           </div>
-          <button class="btn button-accent" type="submit">Подтвердить</button>
+          <button class="btn button-accent" type="submit" >Подтвердить</button>
         </form>
         <div class="f-prompt">
           Хотите войти?
