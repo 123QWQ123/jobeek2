@@ -37,8 +37,6 @@ onBeforeMount(() => {
       localStorage.setItem("preset_phone", route.query.phone);
     }
   }
-  console.log(route.query.phone);
-  console.log(localPhone);
 
   if (isAuthed.value === true) {
     router.replace({ name: "profile" });
@@ -80,6 +78,11 @@ function validateForm() {
   if (state.i_agree.val !== true) {
     state.i_agree.isValid = false;
     state.isFormValid = false;
+  }
+
+  if (state.phone.val !== null && state.i_agree.val === true){
+    state.i_agree.isValid = true;
+    state.isFormValid = true;
   }
 }
 
@@ -130,6 +133,25 @@ const onSubmit = async () => {
   }
 };
 
+watch(() => state.code.val, (newValue) => {
+  if (newValue && String(newValue).length !== 4){
+    state.code.isValid = false;
+    return;
+  }
+  state.code.isValid = true;
+})
+
+const isConfirmSMSButton = computed(() => {
+  if (isLoading.value) return false;
+  if (state.code.val){
+    return String(state.code.val).length === 4;
+  }
+  return false;
+})
+const onChangePhone = () => {
+  isConfirmTab.value = false;
+  isRegisterTab.value = true;
+}
 const onSendOneMoreTime = () => {
   isFirstTimeCodeSent.value = false;
   onSubmit();
@@ -155,6 +177,7 @@ const onSMSSubmit = async () => {
     });
     return;
   }
+  isLoading.value = false;
   await localStorage.removeItem("preset_phone");
 
   if (!(await tryLogin(response.data.token))) {
@@ -262,14 +285,19 @@ onMounted(() => {
         >
           <h1>Потверждения телефона</h1>
           <div class="i-wrap">
+
             <span
               class="text-success mt-1 py-2 px-3"
               v-if="isFirstTimeCodeSent"
             >
-              Мы вам отправили код потверждения на телефон. Введите код.
+              Мы вам отправили код потверждения на телефон {{state.phone.val}}.
+              <br/>
+              <a href="#" class="py-2 px-3" @click="onChangePhone">Изменить номер</a>
             </span>
             <span class="text-success mt-1 py-2 px-3" v-else>
-              Мы вам еще раз отправили код потверждения на телефон. Введите код.
+              Мы вам еще раз отправили код потверждения на телефон {{state.phone.val}}.
+              <br/>
+              <a href="#" class="py-2 px-3" @click="onChangePhone">Изменить номер</a>
             </span>
             <input
               type="number"
@@ -279,6 +307,9 @@ onMounted(() => {
               @focusout="clearValidity('code')"
               autofocus
             />
+            <span v-if="!state.code.isValid" class="text text-danger">
+              Введите 4 значный код подтверждения
+            </span>
             <span class="col-auto px-3" type="button" disabled>
               Не получили код?
               <a class="link link-primary" @click="onSendOneMoreTime">
@@ -286,7 +317,7 @@ onMounted(() => {
               </a>
             </span>
           </div>
-          <button class="btn button-accent mt-4" type="submit">
+          <button class="btn button-accent mt-4" type="submit" :disabled="!isConfirmSMSButton">
             Подтвердить
           </button>
         </form>
