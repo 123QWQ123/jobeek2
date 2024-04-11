@@ -24,23 +24,22 @@ const error = ref(null);
 
 const route = useRoute();
 onBeforeMount(() => {
-  const localPhone = localStorage.getItem("preset_phone");
-  console.log(route.query.phone);
-  console.log(localPhone);
-  if (!localPhone) {
-    if (route.query.phone) {
-      localStorage.setItem("preset_phone", route.query.phone);
-      state.phone.val = route.query.phone;
-    }
-  } else {
-    state.phone.val = localPhone;
+  const newPhone = route.query.phone;
+  let localPhone = localStorage.getItem("preset_phone");
 
-    if (route.query.phone) {
-      console.log(1);
+  if (newPhone) {
+    localPhone = newPhone;
+    localStorage.setItem("preset_phone", newPhone);
+    state.phone.val = route.query.phone;
+  } else {
+    if (localPhone) {
+      state.phone.val = localPhone;
       localStorage.setItem("preset_phone", route.query.phone);
-      state.phone.val = route.query.phone;
     }
   }
+  console.log(route.query.phone);
+  console.log(localPhone);
+
   if (isAuthed.value === true) {
     router.replace({ name: "profile" });
   }
@@ -99,8 +98,6 @@ const onSubmit = async () => {
       phone: state.phone.val,
     });
 
-    console.log(response);
-
     if (response.status !== "success") {
       let responseMessage = "Unknown error";
       if (response) {
@@ -143,6 +140,7 @@ const onSMSSubmit = async () => {
     phone: state.phone.val,
     session: state.session,
     code: state.code.val,
+    preset: phoneDisabled.value,
   });
   if (response.status !== "success") {
     let message = "Неизвестная ошибка!";
@@ -157,7 +155,7 @@ const onSMSSubmit = async () => {
     });
     return;
   }
-  await localStorage.setItem("preset_phone", undefined);
+  await localStorage.removeItem("preset_phone");
 
   if (!(await tryLogin(response.data.token))) {
     let message = "Неизвестная ошибка!";

@@ -64,7 +64,7 @@ export const useResumeStore = defineStore("resume", {
         this.providers = response.data.data;
         return this.providers;
       }
-      return data;
+      return response;
     },
 
     async importResumes() {
