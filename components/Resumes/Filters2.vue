@@ -6,23 +6,34 @@
         <button class="clear-all" @click="resetFilters">Очистить все</button>
       </div>
 
-      <ResumesFiltersSalary />
+      <ResumesFiltersMetro
+        @onFormChange="onFormChange"
+        :selected-ids="form.metros"
+      />
+      <ResumesFiltersIndustry
+        @onFormChange="onFormChange"
+        :selected-ids="form.industries"
+      />
+      <ResumesFiltersSpecialization
+        @onFormChange="onFormChange"
+        :selected-ids="form.professional_roles"
+      />
 
-      <ResumesFiltersIndustry />
-
-      <ResumesFiltersRegion :is-city-mode="isCityMode" />
-
-      <ResumesFiltersCity />
-      <ResumesFiltersMetro />
-
-      <ResumesFiltersPartTime />
-      <ResumesFiltersExperience />
-      <ResumesFiltersWorkType />
-      <ResumesFiltersSchedule />
-
-      <!--      <ClientOnly>-->
-      <!--        <VacanciesFiltersSpecialization />-->
-      <!--      </ClientOnly>-->
+      <ResumesFiltersRegion
+        :is-city-mode="isCityMode"
+        :selected-country="form.country"
+        @onFormChange="onFormChange"
+      />
+      <ResumesFiltersCity
+        v-if="isCityMode"
+        :selected-region="selectedRegion"
+        @onFormChange="onFormChange"
+      />
+      <ResumesFiltersPartTime @onFormChange="onFormChange" />
+      <ResumesFiltersExperience @onFormChange="onFormChange" />
+      <ResumesFiltersSalary @onFormChange="onFormChange" />
+      <ResumesFiltersWorkType @onFormChange="onFormChange" />
+      <ResumesFiltersSchedule @onFormChange="onFormChange" />
     </div>
     <button class="close-aside" @click="toggleSidebar">
       <svg
@@ -49,9 +60,9 @@
 </template>
 
 <script setup>
+import { useRoute, useRouter } from "nuxt/app";
 import { useUIStore } from "~/store/ui";
 import { useNuxtApp } from "#app";
-import { useForm } from "vee-validate";
 import { useResumeStore } from "~/store/resume.js";
 
 const resumeStore = useResumeStore();
@@ -69,32 +80,35 @@ if (isMobile) {
   turnOffMobileMode();
 }
 
-const initialValues = {
-  industries: [],
-  countries: [1],
-  regions: [],
-  cities: [],
-};
-const { getCurrentQueryParams } = useQueryParams();
-const currentParams = ref(getCurrentQueryParams(initialValues) ?? {});
+const form = ref(useResumeForm());
 
-const { values, setValues } = useForm({
-  initialValues,
+const route = useRoute();
+const router = useRouter();
+
+const selectedRegion = computed(() => {
+  if (form.value.regions.length === 1) {
+    return form.value.regions[0];
+  }
 });
-setValues(currentParams.value);
-
 const isCityMode = computed(() => {
-  // if (values.regions.length === 1) {
-  //   return true;
-  // }
+  if (form.value.regions.length === 1) {
+    return true;
+  }
   return false;
 });
 
 const { clearResumes, getResumes } = resumeStore;
 
 const resetFilters = () => {
-  resetForm();
-  // router.push({ query: toFrond(values) });
+  const params = useResumeForm(null, "reset");
+  form.value = params;
+  const resetParams = useResumeForm(form.value, "front");
+  router.push({ query: resetParams });
+};
+const onFormChange = (filter_name, filter_value) => {
+  form.value[filter_name] = filter_value;
+  const params = useResumeForm(form.value, "front");
+  router.push({ query: params });
 };
 </script>
 

@@ -1,8 +1,8 @@
 <template>
   <div class="filter-box" :class="{'open': filterClass}">
     <div class="filter-box-handle" @click="filterClass = !filterClass">
-      <strong>Образование</strong>
-      <img src="~/assets/img/svg/Arrow-Down.svg" alt="#" @click="toggleMore">
+      <strong>Подработка</strong>
+      <img src="~/assets/img/svg/Arrow-Down.svg" alt="#">
     </div>
 
     <div class="filter-box-body">
@@ -22,13 +22,14 @@
 </template>
 
 <script setup>
-import useSort from "~/composables/useSort";
+import {useDictionaryStore} from "~/store/dictionary";
 
 const emit = defineEmits(['onFormChange'])
 import {useVacancyStore} from "../../../store/vacancy";
 import {useVacancyForm} from "../../../composables/useVacancyForm";
 
 const vacancyStore = useVacancyStore();
+const dictionaryStore = useDictionaryStore();
 
 const filterClass = ref(true);
 const isMore = ref(true);
@@ -38,7 +39,7 @@ const filterItems = ref([]);
 const toggleMore = () => isMore.value = !isMore.value;
 
 const form = ref(useVacancyForm());
-const selectedFilterItems = ref(form.value.educations);
+const selectedFilterItems = ref(form.value.part_times);
 
 const toggle = (id) => {
   filterItems.value.map((item, key) => {
@@ -55,9 +56,11 @@ const toggle = (id) => {
     }
     return item;
   });
-  form.value.educations = selectedFilterItems.value;
+  form.value.part_times = selectedFilterItems.value;
   submitSearch();
 };
+
+
 
 const {sort} = useSort();
 
@@ -76,13 +79,13 @@ const prepare = (items, custom_items) => {
   });
 };
 
-watch(() => vacancyStore.educations, prepare);
-const {getEducations} = vacancyStore;
+watch(() => dictionaryStore.part_times, prepare);
+const {getPartTimes} = dictionaryStore;
 onMounted(async () => {
-  if (vacancyStore.educations.length === 0){
-    await getEducations();
+  if (dictionaryStore.part_times.length === 0){
+    await getPartTimes();
   }else{
-    prepare(null, vacancyStore.educations);
+    prepare(null, dictionaryStore.part_times);
   }
 });
 
@@ -90,7 +93,7 @@ const  isLoading = ref(false);
 const {clearVacancies} = vacancyStore;
 const router  = useRouter();
 const submitSearch = () => {
-  emit('onFormChange', 'educations', selectedFilterItems.value);
+  emit('onFormChange', 'part_times', selectedFilterItems.value);
 }
 
 </script>

@@ -124,11 +124,8 @@ watch(
   },
 );
 
-onMounted(() => {
-  isLoading.value = true;
-  getVacancies({ ...getCurrentQueryParams() });
-  getMyResumes();
-  isLoading.value = false;
+onMounted(async () => {
+  await getMyResumes();
 });
 const listStyles = {
   left: "unset",

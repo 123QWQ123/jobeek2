@@ -42,6 +42,8 @@ const isMore = ref(false);
 
 const { getQueryParam, getCurrentQueryParams } = useQueryParams();
 const current_params = getCurrentQueryParams() ?? {};
+await getVacancies({ ...getCurrentQueryParams() });
+
 const params = ref(current_params);
 watch(
   () => getCurrentQueryParams(),
