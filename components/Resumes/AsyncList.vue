@@ -2,71 +2,86 @@
   <div class="content">
     <div>
       <ul class="favorites-list">
-        <ResumesItem v-for="item in vacanciesItems" :key="item.id" :item="item" />
+        <ResumesItem v-for="item in resumes" :key="item.id" :item="item" />
       </ul>
 
-      <button ref="loadMoreButton" v-if="isMore" id="load_more_button" class="create-button show-more" @click="loadMore">
+      <button
+        ref="loadMoreButton"
+        v-if="isMore"
+        id="load_more_button"
+        class="create-button show-more"
+        @click="loadMore"
+      >
         Показать еще
-        <div v-if="isLoading" class="ms-2 spinner-grow spinner-grow-sm" role="status">
+        <div
+          v-if="isLoading"
+          class="ms-2 spinner-grow spinner-grow-sm"
+          role="status"
+        >
           <span class="visually-hidden">Loading...</span>
         </div>
-        <img v-else src="~/assets/img/svg/Arrow-Down2.svg" alt="#">
+        <img v-else src="~/assets/img/svg/Arrow-Down2.svg" alt="#" />
       </button>
     </div>
   </div>
-
 </template>
 
 <script setup>
-import {storeToRefs} from "pinia";
-import {useVacancyStore} from "~/store/vacancy";
-import {useVacancyForm} from "~/composables/useVacancyForm";
+import { storeToRefs } from "pinia";
 import Swal from "sweetalert2";
-import {useResumeStore} from "~/store/resume";
+import useQueryParams from "~/composables/useQueryParams.js";
+import { useResumeStore } from "~/store/resume.js";
 
-const vacancyStore = useVacancyStore();
 const resumeStore = useResumeStore();
-const {getResumes} = resumeStore;
-const {vacancies, current_page} = storeToRefs(vacancyStore);
-const form = ref(useVacancyForm());
+const { getResumes } = resumeStore;
 
-const params = useVacancyForm(form.value, 'backend');
-// const res = await getVacancies({...params});
-const vacanciesItems = ref(await getResumes({...params}));
+const { resumes, current_page } = storeToRefs(resumeStore);
 
 const loadMoreButton = ref();
 const isLoading = ref(false);
 const isMore = ref(false);
 
+const { getQueryParam, getCurrentQueryParams } = useQueryParams();
+const current_params = getCurrentQueryParams("back") ?? {};
+console.log(current_params);
+await getResumes({ ...current_params });
+
+const params = ref(current_params);
+watch(
+  () => getCurrentQueryParams(),
+  (newParams) => {
+    isLoading.value = true;
+    params.value = newParams;
+  },
+);
 const route = useRoute();
 onMounted(() => {
-  if (vacancies.value.length > 0){
-    isMore.value = true;
-  }
-})
-watch(vacancies, (newValues) => {
-  vacanciesItems.value = newValues;
-  if (newValues.length > 0){
+  if (resumes.value.length > 0) {
     isMore.value = true;
   }
 });
-const loadMore = async() => {
+watch(resumes, (newValues) => {
+  if (newValues.length > 0) {
+    isMore.value = true;
+  }
+});
+const loadMore = async () => {
   isLoading.value = true;
-  const params = useVacancyForm(form.value, 'backend');
-  const res = await getVacancies({...params, page: parseInt(current_page.value) + 1}, true);
-  if (res.length < 1){
+  const res = await getResumes(
+    { ...params, page: parseInt(current_page.value) + 1 },
+    true,
+  );
+  if (res.length < 1) {
     isMore.value = false;
     Swal.fire({
-      title: 'Больше вакансий не найдено!',
+      title: "Больше резюме не найдено!",
       icon: "success",
     });
   }
   isLoading.value = false;
 
   loadMoreButton.value.scrollIntoView({ behavior: "smooth", block: "start" });
-}
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -1,10 +1,7 @@
 <template>
-  <div
-    class="filter-modal-overlay filter-modal-overlay_visible"
-    :class="{ hidden: !props.isOpen }"
-  >
+  <div class="filter-modal-overlay filter-modal-overlay_visible">
     <div class="filter-modal-container filter-modal-container_visible">
-      <div class="filter-modal" v-click-outside="onClickOutside">
+      <div class="filter-modal">
         <div class="filter-modal-header">
           <span class="filter-modal-title">{{ title }} </span>
           <br />
@@ -21,29 +18,23 @@
           </div>
         </div>
         <div class="filter-tree-selector-popup">
-          {{ props.selected_ids }}
           <div class="filter-tree-selector-popup-content" v-if="!isLoading">
-            <VacanciesFiltersSpecializationItem
+            <VacanciesFiltersIndustryItem2
               v-if="isSearching"
-              v-for="item in items"
+              v-for="item in groupedSpecs"
               :item="item"
               :items="item.items"
               :key="item.id"
-              @add="addIds"
-              @remove="removeIds"
-              :checked="item.checked"
+              @set="updateSelectedSpecs"
               :is-open="true"
             />
-            <VacanciesFiltersSpecializationItem
+            <VacanciesFiltersIndustryItem2
               v-else
-              v-for="item in items"
+              v-for="item in groupedSpecs"
               :item="item"
               :items="item.items"
-              @add="addIds"
-              @remove="removeIds"
               :key="item.id"
-              :checked="item.checked"
-              v-model="selectedSpecs"
+              @set="updateSelectedSpecs"
             />
           </div>
           <div class="filter-tree-selector-popup-content" v-else>
@@ -65,11 +56,7 @@
               </button>
             </div>
             <div class="filter-form-spacer">
-              <button
-                class="btn button-accent"
-                type="button"
-                @click.prevent="apply"
-              >
+              <button class="btn button-accent" type="button" @click="apply">
                 <span>Выбрать</span>
               </button>
             </div>
@@ -84,8 +71,7 @@
 </template>
 
 <script setup>
-import useFilter from "~/composables/useFilter.js";
-import useQueryParams from "~/composables/useQueryParams.js";
+import { useField } from "vee-validate";
 
 const props = defineProps({
   items: {
@@ -103,63 +89,37 @@ const props = defineProps({
   name: {
     required: true,
   },
-  selected_ids: {
-    required: true,
-  },
 });
 
-const { isOpen, items: professional_roles, modelValue, title } = props;
+const { isOpen, items: specializations, modelValue, title } = props;
 
 const emit = defineEmits({
-  close: {
+  toggle: {
     required: true,
   },
   "update:modelValue": {
-    required: false,
+    required: true,
   },
 });
 
-const { updateQueryParam, getQueryParam } = useQueryParams();
+const {
+  value: industry_ids,
+  setValue,
+  errorMessage,
+} = useField(() => props.name);
 
-const selected_ids = ref(props.selected_ids);
-
-watch(
-  () => props.selected_ids,
-  (newValues) => {
-    console.log(newValues);
-  },
-);
-
-// const {
-//   value: industry_ids,
-//   setValue,
-//   errorMessage,
-// } = useField(() => props.name);
-
+// const selected_ids = ref(industry_ids.value ?? []);
 const options = ref(props.items ?? []);
-const selectedSpecs = ref(selected_ids.value ?? []);
-const items = ref([]);
-
+const selectedSpecs = ref({});
 const isLoading = ref(false);
-const { uniq } = useFilter();
+
 const apply = () => {
-  const ids = [...selectedSpecs.value].filter((item) => item);
-  updateQueryParam(
-    "professional_roles",
-    JSON.stringify(Array.from(new Set(ids))),
+  let ids = [];
+  Object.keys(selectedSpecs.value).map(
+    (item_id) => (ids = ids.concat(selectedSpecs.value[item_id])),
   );
-};
-const addIds = (new_ids) => {
-  let ids = [...selectedSpecs.value];
-  ids = new_ids.concat(ids);
-  selectedSpecs.value = ids;
-  prepare(props.items, false);
-};
-const removeIds = (old_ids) => {
-  let ids = [...selectedSpecs.value];
-  ids = ids.filter((id) => !old_ids.includes(id));
-  selectedSpecs.value = ids;
-  prepare(props.items, false);
+  ids = ids.filter((item) => item);
+  setValue(ids);
 };
 const searchInput = ref("");
 
@@ -169,75 +129,79 @@ const isSearching = computed(() => {
   }
   return true;
 });
+const groupedSpecs = ref([]);
 
 const onSearch = () => {
-  prepare(props.items, false);
+  prepare(props.items);
 };
 const prepare = (newValues, is_first = false) => {
-  let dynamicItems = [];
-  if (isSearching.value) {
-    dynamicItems = [
-      ...newValues.map((item) => {
-        item.items = [...item.items].filter((sub_item) =>
-          sub_item.title
+  console.log(newValues);
+  const selected_ids = [...industry_ids.value];
+  let groupItems = newValues.filter((newItem) => newItem.parent_id === null);
+  groupItems = groupItems.map((newItem) => {
+    let is_checked = false;
+    if (Array.from(selected_ids).includes(newItem.id)) {
+      is_checked = true;
+    }
+    newItem.is_checked = is_checked;
+    newItem.name = newItem.title;
+    return newItem;
+  });
+
+  for (let i = 0; i < groupItems.length; i++) {
+    const item = groupItems[i];
+    for (let j = 0; j < item.items.length; j++) {
+      const sub_item = item.items[j];
+      if (!sub_item.hasOwnProperty("parent_id")) continue;
+
+      if (isSearching.value) {
+        if (
+          !sub_item.title
             .toLowerCase()
-            .includes(searchInput.value.toLowerCase()),
-        );
-        return item;
-      }),
-    ];
-  } else {
-    dynamicItems = [...newValues];
-  }
-  dynamicItems = dynamicItems.map((item) => {
-    const is_parent_checked = selectedSpecs.value.includes(item.id);
-    item.checked = is_parent_checked;
-    const d_items = item.items.map((sub_item) => {
-      if (!is_parent_checked) {
-        sub_item.checked = selectedSpecs.value.includes(sub_item.id);
-      } else {
-        if (is_first) {
-          sub_item.checked = true;
-        } else {
-          sub_item.checked = selectedSpecs.value.includes(sub_item.id);
-          // sub_item.checked = false;
+            .includes(searchInput.value.toLowerCase())
+        ) {
+          continue;
         }
       }
-      return sub_item;
-    });
-    // checking if an item has only checked children, if yes add all children ids to selected list
-    if (!d_items.some((item) => item.checked === false)) {
-      item.checked = true;
-      const ids = d_items.map((item) => item.id);
-      ids.push(item.id);
-      const new_ids = Array.from(new Set([...selectedSpecs.value].concat(ids)));
-      selectedSpecs.value = new_ids;
-    }
-    item.items = d_items;
-    return item;
-  });
-  items.value = dynamicItems;
-};
 
-watch(
-  () => selected_ids.value,
-  () => {
-    prepare(props.items);
-  },
-);
+      let is_checked = false;
+      if (!sub_item) {
+        continue;
+      }
+      if (sub_item.parent_id === null) {
+        sub_item.parent_id = item.id;
+        sub_item.is_checked = false;
+      }
+      if (sub_item.parent_id === item.id) {
+        if (Array.from(selected_ids).includes(sub_item.id)) {
+          is_checked = true;
+        }
+      }
+      sub_item.is_checked = is_checked;
+    }
+  }
+  if (isSearching.value) {
+    groupedSpecs.value = groupItems.filter((spec) => spec.items.length);
+  } else {
+    groupedSpecs.value = groupItems;
+  }
+  console.log(groupItems);
+};
 
 onMounted(() => {
   setTimeout(() => {
-    prepare(props.items, true);
+    prepare(props.items);
   }, 100);
 });
 
-const onClickOutside = (e) => {
-  if (e.target.classList.contains("filter-modal-container")) {
-    close();
-  }
+const updateSelectedSpecs = (id, newSelections) => {
+  console.log(newSelections);
+  const newItems = { ...selectedSpecs.value };
+  newItems[id] = newSelections;
+  selectedSpecs.value = newItems;
 };
-const close = () => emit("close");
+
+const close = () => emit("toggle");
 </script>
 
 <style scoped>
@@ -264,10 +228,6 @@ const close = () => emit("close");
   background-color: rgba(48, 50, 51, 0.9);
   visibility: visible;
   opacity: 1;
-}
-
-.filter-modal-overlay_visible.hidden {
-  display: none;
 }
 
 .filter-modal-container_visible {

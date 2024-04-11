@@ -1,7 +1,7 @@
 <template>
   <div class="filter-box" :class="{ open: filterClass }">
     <div class="filter-box-handle" @click="filterClass = !filterClass">
-      <strong>Отрасль компании({{ industries?.length }})</strong>
+      <strong>Специализации</strong>
       <img src="~/assets/img/svg/Arrow-Down.svg" alt="#" />
     </div>
     <div class="filter-box-body">
@@ -24,12 +24,13 @@
         </div>
       </div>
 
-      <LazyVacanciesFiltersIndustryModal
-        :title="'Отрасль компании'"
+      <VacanciesFiltersSpecializationModal2
+        :title="'Специализации'"
+        v-if="isModalOpen"
         :is-open="isModalOpen"
-        @close="toggleModal"
-        name="industries"
-        :items="vacancyStore.industries_formatted_for_filter"
+        @toggle="toggleModal"
+        v-model="selectedSpecs"
+        :items="specializations"
       />
 
       <button class="more-filters" @click="toggleModal">Выбрать</button>
@@ -38,67 +39,54 @@
 </template>
 
 <script setup>
-import { useVacancyStore } from "~/store/vacancy";
-import { storeToRefs } from "pinia";
-import useQueryParams from "~/composables/useQueryParams.js";
-
 const emit = defineEmits(["onFormChange"]);
-const props = defineProps(["name", "isOpen"]);
+const { selectedIds } = defineProps(["selected-ids"]);
+import { useVacancyStore } from "../../../store/vacancy";
+import { storeToRefs } from "pinia";
 
 const vacancyStore = useVacancyStore();
-const { updateQueryParam, getQueryParam } = useQueryParams();
 
-const { getIndustries } = vacancyStore;
-const { industries } = storeToRefs(vacancyStore);
+const { getSpecializations } = vacancyStore;
+const { specializations } = storeToRefs(vacancyStore);
 
-const industry_ids = ref(getQueryParam("industries") ?? []);
-watch(
-  () => getQueryParam("industries") ?? [],
-  (newValues, oldValues) => {
-    if (JSON.stringify(newValues) !== JSON.stringify(oldValues)) {
-      industry_ids.value = newValues;
-      prepare(vacancyStore.regions_formatted);
-    }
-  },
-);
 const isModalOpen = ref(false);
+const selectedSpecs = ref(selectedIds);
 const firstItems = ref([]);
+
+watch(selectedSpecs, (newValues) => {
+  emit("onFormChange", "professional_roles", newValues);
+});
 
 const toggleModal = () => (isModalOpen.value = !isModalOpen.value);
 const toggleSelect = (id) => {
-  let selected_ids = [...industry_ids.value];
+  const selectedItemIds = [...selectedSpecs.value];
   const dynItems = [...firstItems.value].map((item) => {
     if (item.id === id) {
       item.is_checked = !item.is_checked;
-      if (item.is_checked && !selected_ids.includes(id)) {
-        selected_ids.push(item.id);
+      if (item.is_checked && !selectedItemIds.includes(id)) {
+        selectedItemIds.push(item.id);
       } else {
-        const index = selected_ids.indexOf(item.id);
+        const index = selectedItemIds.indexOf(item.id);
         if (index !== -1) {
-          selected_ids.splice(index, 1);
+          selectedItemIds.splice(index, 1);
         }
       }
     }
     return item;
   });
 
-  selected_ids = selected_ids.length === 0 ? undefined : selected_ids;
-
-  updateQueryParam(
-    "industries",
-    JSON.stringify(Array.from(new Set(selected_ids))),
-  );
+  selectedSpecs.value = selectedItemIds;
   firstItems.value = dynItems;
 };
 
-const industryItems = ref([]);
 const prepare = (newItems, oldItems) => {
-  industryItems.value = newItems;
-  if (!newItems || newItems.length < 1) return;
+  if (!newItems || newItems.length < 1) {
+    return;
+  }
   for (let i = 0; i < 5; i++) {
     let item = newItems[i];
     let is_checked = false;
-    if (industry_ids.value.includes(item.id)) {
+    if (selectedIds.includes(item.id)) {
       is_checked = true;
     }
     firstItems.value.push({
@@ -108,16 +96,13 @@ const prepare = (newItems, oldItems) => {
     });
   }
 };
-watch(() => vacancyStore.industries_formatted_for_filter, prepare);
+watch(() => vacancyStore.specializations, prepare);
 
 const filterClass = ref(true);
-await getIndustries();
+
 onMounted(() => {
-  setTimeout(async () => {
-    if (vacancyStore.industries_formatted_for_filter.length > 0) {
-      prepare(vacancyStore.industries_formatted_for_filter);
-    }
-  }, 100);
+  if (specializations.value.length === 0) getSpecializations();
+  else prepare(specializations.value);
 });
 </script>
 

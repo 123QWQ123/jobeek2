@@ -1,8 +1,8 @@
 <template>
   <div class="filter-box" :class="{'open': filterClass}">
     <div class="filter-box-handle" @click="filterClass = !filterClass">
-      <strong>Образование</strong>
-      <img src="~/assets/img/svg/Arrow-Down.svg" alt="#" @click="toggleMore">
+      <strong>Тип занятости</strong>
+      <img src="~/assets/img/svg/Arrow-Down.svg" alt="#">
     </div>
 
     <div class="filter-box-body">
@@ -22,13 +22,15 @@
 </template>
 
 <script setup>
-import useSort from "~/composables/useSort";
+import {useDictionaryStore} from "~/store/dictionary";
 
 const emit = defineEmits(['onFormChange'])
 import {useVacancyStore} from "../../../store/vacancy";
 import {useVacancyForm} from "../../../composables/useVacancyForm";
+import useSort from "~/composables/useSort";
 
 const vacancyStore = useVacancyStore();
+const dictionaryStore = useDictionaryStore();
 
 const filterClass = ref(true);
 const isMore = ref(true);
@@ -38,7 +40,7 @@ const filterItems = ref([]);
 const toggleMore = () => isMore.value = !isMore.value;
 
 const form = ref(useVacancyForm());
-const selectedFilterItems = ref(form.value.educations);
+const selectedFilterItems = ref(form.value.work_types);
 
 const toggle = (id) => {
   filterItems.value.map((item, key) => {
@@ -55,18 +57,26 @@ const toggle = (id) => {
     }
     return item;
   });
-  form.value.educations = selectedFilterItems.value;
+  form.value.work_types = selectedFilterItems.value;
   submitSearch();
 };
+
+
+const  isLoading = ref(false);
+const {clearVacancies} = vacancyStore;
+const router  = useRouter();
+const submitSearch = () => {
+  emit('onFormChange', 'work_types', selectedFilterItems.value);
+}
 
 const {sort} = useSort();
 
 const prepare = (items, custom_items) => {
-
   let unsortedItems = items;
   if (!items){
     unsortedItems = custom_items;
   }
+
 
   const sortedItems = sort(unsortedItems, {by: 'alpha'});
 
@@ -76,22 +86,16 @@ const prepare = (items, custom_items) => {
   });
 };
 
-watch(() => vacancyStore.educations, prepare);
-const {getEducations} = vacancyStore;
+watch(() => dictionaryStore.work_types, prepare);
+const {getWorkTypes} = dictionaryStore;
 onMounted(async () => {
-  if (vacancyStore.educations.length === 0){
-    await getEducations();
+  if (dictionaryStore.work_types.length === 0){
+    await getWorkTypes();
   }else{
-    prepare(null, vacancyStore.educations);
+    prepare(null, dictionaryStore.work_types);
   }
 });
 
-const  isLoading = ref(false);
-const {clearVacancies} = vacancyStore;
-const router  = useRouter();
-const submitSearch = () => {
-  emit('onFormChange', 'educations', selectedFilterItems.value);
-}
 
 </script>
 

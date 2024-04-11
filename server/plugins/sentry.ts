@@ -1,3 +1,7 @@
+// import * as Sentry from "@sentry/node";
+// import { ProfilingIntegration } from "@sentry/profiling-node";
+// import { H3Error } from "h3";
+
 export default defineNitroPlugin((nitroApp) => {
   const {
     public: { sentry },
@@ -30,10 +34,6 @@ export default defineNitroPlugin((nitroApp) => {
   //       return;
   //     }
   //   }
-  //
-  //   const headers = errorContext.event?._headers;
-  //   console.log(headers);
-  //
   //   Sentry.captureException(error);
   //   Sentry.setContext("server_error", { error, content: errorContext });
   // });
