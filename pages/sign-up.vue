@@ -151,7 +151,6 @@ const isConfirmSMSButton = computed(() => {
 const onChangePhone = () => {
   isConfirmTab.value = false;
   isRegisterTab.value = true;
-  state.phone.val = "";
 }
 const onSendOneMoreTime = () => {
   isFirstTimeCodeSent.value = false;
