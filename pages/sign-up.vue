@@ -81,6 +81,11 @@ function validateForm() {
     state.i_agree.isValid = false;
     state.isFormValid = false;
   }
+
+  if (state.phone.val !== null && state.i_agree.val === true){
+    state.i_agree.isValid = true;
+    state.isFormValid = true;
+  }
 }
 
 const router = useRouter();
@@ -90,9 +95,11 @@ const isConfirmTab = ref(false);
 const isFirstTimeCodeSent = ref(true);
 
 const onSubmit = async () => {
+  console.log(1)
   state.phone.val = phoneMask.value.unmaskedValue;
   validateForm();
   isLoading.value = true;
+  console.log(state.isFormValid)
   if (state.isFormValid) {
     const response = await signUp({
       phone: state.phone.val,
