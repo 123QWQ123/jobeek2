@@ -37,8 +37,6 @@ onBeforeMount(() => {
       localStorage.setItem("preset_phone", route.query.phone);
     }
   }
-  console.log(route.query.phone);
-  console.log(localPhone);
 
   if (isAuthed.value === true) {
     router.replace({ name: "profile" });
@@ -95,11 +93,9 @@ const isConfirmTab = ref(false);
 const isFirstTimeCodeSent = ref(true);
 
 const onSubmit = async () => {
-  console.log(1)
   state.phone.val = phoneMask.value.unmaskedValue;
   validateForm();
   isLoading.value = true;
-  console.log(state.isFormValid)
   if (state.isFormValid) {
     const response = await signUp({
       phone: state.phone.val,
@@ -137,6 +133,26 @@ const onSubmit = async () => {
   }
 };
 
+watch(() => state.code.val, (newValue) => {
+  if (newValue && String(newValue).length !== 4){
+    state.code.isValid = false;
+    return;
+  }
+  state.code.isValid = true;
+})
+
+const isConfirmSMSButton = computed(() => {
+  if (isLoading.value) return false;
+  if (state.code.val){
+    return String(state.code.val).length === 4;
+  }
+  return false;
+})
+const onChangePhone = () => {
+  isConfirmTab.value = false;
+  isRegisterTab.value = true;
+  state.phone.val = "";
+}
 const onSendOneMoreTime = () => {
   isFirstTimeCodeSent.value = false;
   onSubmit();
@@ -162,6 +178,7 @@ const onSMSSubmit = async () => {
     });
     return;
   }
+  isLoading.value = false;
   await localStorage.removeItem("preset_phone");
 
   if (!(await tryLogin(response.data.token))) {
@@ -183,6 +200,19 @@ function close() {
 }
 
 const phoneInputElement = ref();
+
+onUpdated(() => {
+  console.log(phoneInputElement.value)
+  if (phoneInputElement.value){
+    phoneMask.value = new IMask(phoneInputElement.value, {
+      mask: "+{7}(000)000-00-00",
+    });
+    phoneInputElement.value.addEventListener("input", () => {
+      state.phone.val = phoneMask.value.unmaskedValue;
+    });
+    phoneMask.value.unmaskedValue = state.phone.val;
+  }
+})
 const phoneMask = ref(null);
 onMounted(() => {
   phoneMask.value = new IMask(phoneInputElement.value, {
@@ -269,14 +299,19 @@ onMounted(() => {
         >
           <h1>Потверждения телефона</h1>
           <div class="i-wrap">
+
             <span
               class="text-success mt-1 py-2 px-3"
               v-if="isFirstTimeCodeSent"
             >
-              Мы вам отправили код потверждения на телефон. Введите код.
+              Мы вам отправили код потверждения на телефон {{state.phone.val}}.
+              <br/>
+              <a href="#" class="py-2 px-3" @click="onChangePhone">Изменить номер</a>
             </span>
             <span class="text-success mt-1 py-2 px-3" v-else>
-              Мы вам еще раз отправили код потверждения на телефон. Введите код.
+              Мы вам еще раз отправили код потверждения на телефон {{state.phone.val}}.
+              <br/>
+              <a href="#" class="py-2 px-3" @click="onChangePhone">Изменить номер</a>
             </span>
             <input
               type="number"
@@ -286,6 +321,9 @@ onMounted(() => {
               @focusout="clearValidity('code')"
               autofocus
             />
+            <span v-if="!state.code.isValid" class="text text-danger">
+              Введите 4 значный код подтверждения
+            </span>
             <span class="col-auto px-3" type="button" disabled>
               Не получили код?
               <a class="link link-primary" @click="onSendOneMoreTime">
@@ -293,7 +331,7 @@ onMounted(() => {
               </a>
             </span>
           </div>
-          <button class="btn button-accent mt-4" type="submit">
+          <button class="btn button-accent mt-4" type="submit" :disabled="!isConfirmSMSButton">
             Подтвердить
           </button>
         </form>
