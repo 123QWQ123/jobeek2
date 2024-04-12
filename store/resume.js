@@ -25,6 +25,7 @@ export const useResumeStore = defineStore("resume", {
       experiences: [],
       part_times: [],
       metros: [],
+      can_create_resume: {},
       providers: {
         hh: null,
         superjob: null,
@@ -184,6 +185,19 @@ export const useResumeStore = defineStore("resume", {
     //   }
     //   return data;
     // },
+    async getCreateAvailability(payload = {}) {
+      const response = await useApi("seeker/resumes/creation_availability", {
+        method: "get",
+        params: payload,
+      });
+      console.log(response);
+      if (response.status === "success") {
+        this.can_create_resume = response.data.data;
+        return;
+      }
+      return response;
+    },
+
     async createResume(payload) {
       console.log(payload);
       const response = await useApi("seeker/resumes/create", {

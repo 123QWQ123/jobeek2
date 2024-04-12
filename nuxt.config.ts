@@ -40,7 +40,6 @@ const config = {
     // pageTransition: { name: 'layout', mode: 'out-in' }
     head: {
       link: [
-        { rel: "icon", type: "image/ico", href: "_nuxt/assets/favicon.ico" },
         {
           // rel: 'stylesheet', href: 'https://sem-dev.co.ua/jobeek.css'
         },

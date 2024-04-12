@@ -44,6 +44,8 @@ export const useVacancyStore = defineStore("vacancy", {
       childrens: [],
       vacancy_billing_types: [],
       vacancy_types: [],
+      can_create_vacancy: null,
+      can_create_vacancy_count: 1,
 
       providers: {
         hh: null,
@@ -235,6 +237,20 @@ export const useVacancyStore = defineStore("vacancy", {
     },
     async clearVacancies() {
       this.vacancies = [];
+    },
+
+    async getCreateAvailability(payload = {}) {
+      const response = await useApi("employer/vacancy/availability_create", {
+        method: "get",
+        params: payload,
+      });
+      console.log(response);
+      if (response.status === "success") {
+        this.can_create_vacancy = response.data.data.available;
+        this.can_create_vacancy_count = response.data.data.free ?? 0;
+        return;
+      }
+      return response;
     },
 
     async createDraft(payload, content_type = "application/json") {
