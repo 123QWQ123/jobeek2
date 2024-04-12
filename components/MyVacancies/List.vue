@@ -1,9 +1,27 @@
 <template>
   <PageLoader v-if="isLoading" />
   <div class="">
-    <NuxtLink class="create-button" type="link" :to="{ name: 'create-vacancy' }"
+    <div class="notification mt-0">
+      <div class="ic">
+        <img src="~/assets/img/svg/crown2.svg" alt="#" />
+      </div>
+      <div class="notification-text">
+        <strong class="title">Подключите премиум</strong>
+        <p>
+          У вас стоит лимит на создание подписок:
+          {{ vacancyStore.can_create_vacancy_count }} шт. Чтобы создавать
+          неограниченное кол-во подписок, подключите премиум
+        </p>
+      </div>
+    </div>
+    <NuxtLink
+      v-if="canCreateVacancy"
+      class="create-button"
+      type="link"
+      :to="{ name: 'create-vacancy' }"
       >Создать вакансию
     </NuxtLink>
+    <div v-else></div>
     <div class="col d-flex justify-content-between mt-4">
       <h1 ref="filterRef" class="lk-page-title mt-4">Ваши вакансии</h1>
     </div>
@@ -94,9 +112,13 @@ useHead({
   title: "Jobeek - Мои вакансии",
 });
 
-const router = useRouter();
 const vacancyStore = useVacancyStore();
-const { getMyVacancies, getMyDrafts, getArchivedVacancies } = vacancyStore;
+const {
+  getMyVacancies,
+  getMyDrafts,
+  getArchivedVacancies,
+  getCreateAvailability,
+} = vacancyStore;
 
 const sortingOptions = ref(useMyVacancySortingOptions());
 const perPageOptions = ref(useMyVacancyPerPageOptions());
@@ -163,6 +185,10 @@ watch(
     }
   },
 );
+await getCreateAvailability();
+const canCreateVacancy = computed(() => {
+  return vacancyStore.can_create_vacancy ?? false;
+});
 
 const onFilterChange = (filter) => {
   navigateTo({ name: "my-vacancies", query: { status: filter } });

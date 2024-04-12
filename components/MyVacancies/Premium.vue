@@ -30,17 +30,3 @@ const onClickConnect = () => {
   window.open(authStore.premium_url);
 };
 </script>
-
-<style scoped>
-.vacancy_tabs .nav-link {
-  padding: 0.8rem 2rem 0.5rem 2rem;
-}
-
-.theme-checker input ~ .theme-checker-ui .circle.left {
-  transform: translate(3px, -50%);
-}
-
-.theme-checker input ~ .theme-checker-ui .circle.right {
-  transform: translate(30px, -50%);
-}
-</style>
