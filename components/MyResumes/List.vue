@@ -7,13 +7,14 @@
       <div class="notification-text">
         <strong class="title">Подключите премиум</strong>
         <p>
-          У вас стоит лимит на создание подписок: {{ canCreateResumeCount }} шт.
-          Чтобы создавать неограниченное кол-во подписок, подключите премиум
+          У вас есть лимит на создание резюме:
+          {{ resumeStore.can_create_resume_count }} штук. Чтобы создавать
+          неограниченное количество резюме, подключите премиум-подписку.
         </p>
       </div>
     </div>
     <NuxtLink
-      v-if="canCreateResume"
+      v-if="resumeStore.can_create_resume"
       class="create-button"
       type="link"
       :to="{ name: 'create-resume' }"
@@ -47,9 +48,9 @@ useHead({
 });
 
 const resumeStore = useResumeStore();
-const { getMyResumes, getCreateAvailability } = resumeStore;
+const { getMyResumes, getAvailabilityCreate } = resumeStore;
 
-await getCreateAvailability();
+await getAvailabilityCreate();
 const canCreateResume = computed(() => {
   const { hh, superjob } = resumeStore.can_create_resume;
   if (hh && superjob) {
@@ -61,15 +62,16 @@ const canCreateResume = computed(() => {
   return false;
 });
 
-const canCreateResumeCount = computed(() => {
-  const { hh, superjob } = resumeStore.can_create_resume;
-  if (hh && superjob) {
-    return hh.remaining > superjob.remaining
-      ? hh.remaining
-      : superjob.remaining;
-  }
-  return false;
-});
+//
+// const canCreateResumeCount = computed(() => {
+//   const { hh, superjob } = resumeStore.can_create_resume;
+//   if (hh && superjob) {
+//     return hh.remaining > superjob.remaining
+//       ? hh.remaining
+//       : superjob.remaining;
+//   }
+//   return false;
+// });
 
 const { my_resumes, current_page, my_total } = storeToRefs(resumeStore);
 
