@@ -185,14 +185,15 @@ export const useResumeStore = defineStore("resume", {
     //   }
     //   return data;
     // },
-    async getCreateAvailability(payload = {}) {
-      const response = await useApi("seeker/resumes/creation_availability", {
+    async getAvailabilityCreate(payload = {}) {
+      const response = await useApi("seeker/resumes/availability_create", {
         method: "get",
         params: payload,
       });
       console.log(response);
       if (response.status === "success") {
-        this.can_create_resume = response.data.data;
+        this.can_create_resume = response.data.data.available;
+        this.can_create_resume_count = response.data.data.free ?? 0;
         return;
       }
       return response;
