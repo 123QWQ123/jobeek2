@@ -1,18 +1,22 @@
 <template>
   <div class="">
-    <!--    <div class="notification mt-0">-->
-    <!--      <div class="ic">-->
-    <!--        <img src="~/assets/img/svg/crown2.svg" alt="#" />-->
-    <!--      </div>-->
-    <!--      <div class="notification-text">-->
-    <!--        <strong class="title">Подключите премиум</strong>-->
-    <!--        <p>-->
-    <!--          У вас стоит лимит на создание подписок: 3 шт. Чтобы создавать-->
-    <!--          неограниченное кол-во подписок, подключите премиум-->
-    <!--        </p>-->
-    <!--      </div>-->
-    <!--    </div>-->
-    <NuxtLink class="create-button" type="link" :to="{ name: 'create-resume' }"
+    <div class="notification mt-0">
+      <div class="ic">
+        <img src="~/assets/img/svg/crown2.svg" alt="#" />
+      </div>
+      <div class="notification-text">
+        <strong class="title">Подключите премиум</strong>
+        <p>
+          У вас стоит лимит на создание подписок: {{ canCreateResumeCount }} шт.
+          Чтобы создавать неограниченное кол-во подписок, подключите премиум
+        </p>
+      </div>
+    </div>
+    <NuxtLink
+      v-if="canCreateResume"
+      class="create-button"
+      type="link"
+      :to="{ name: 'create-resume' }"
       >Создать резюме
     </NuxtLink>
     <div class="col d-flex justify-content-between mt-4">
@@ -42,9 +46,30 @@ useHead({
   title: "Jobeek - Мои вакансии",
 });
 
-const router = useRouter();
 const resumeStore = useResumeStore();
-const { getMyResumes } = resumeStore;
+const { getMyResumes, getCreateAvailability } = resumeStore;
+
+await getCreateAvailability();
+const canCreateResume = computed(() => {
+  const { hh, superjob } = resumeStore.can_create_resume;
+  if (hh && superjob) {
+    return (
+      hh.is_creation_available === true ||
+      superjob.is_creation_available === true
+    );
+  }
+  return false;
+});
+
+const canCreateResumeCount = computed(() => {
+  const { hh, superjob } = resumeStore.can_create_resume;
+  if (hh && superjob) {
+    return hh.remaining > superjob.remaining
+      ? hh.remaining
+      : superjob.remaining;
+  }
+  return false;
+});
 
 const { my_resumes, current_page, my_total } = storeToRefs(resumeStore);
 
