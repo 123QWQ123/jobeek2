@@ -42,18 +42,7 @@ const isCompleted = computed(() => {
           <MyVacanciesList></MyVacanciesList>
         </div>
         <aside class="sidebar">
-          <div class="premium-col sticky-item">
-            <div class="title" v-if="isEmployer">Премиум</div>
-            <div class="title" v-else>Подключите Премиум подписку</div>
-            <div class="term" v-if="isEmployer">
-              <span>Действует до</span><strong>24 августа 2024</strong>
-            </div>
-            <a class="btn button-xs" href="#" v-if="isEmployer">Отключить </a>
-            <!--            <a class="btn button-xs" href="#" v-else>Подключить</a>-->
-            <a class="notification-button button-accent" href="#"
-              >Подключить
-            </a>
-          </div>
+          <MyVacanciesPremium />
         </aside>
       </div>
     </div>

@@ -75,7 +75,6 @@ const searchPlaceHolder = computed(() =>
 );
 const { getCurrentQueryParams } = useQueryParams();
 const params = getCurrentQueryParams();
-console.log(params);
 
 const router = useRouter();
 const route = useRoute();

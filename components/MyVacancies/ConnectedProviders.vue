@@ -243,7 +243,6 @@ watch(
 );
 
 const isAnyProviderConnected = computed(() => {
-  console.log(vacancyStore.providers);
   if (!vacancyStore.providers) return false;
   if (
     vacancyStore.providers.hh === true ||
@@ -256,7 +255,6 @@ const route = useRoute();
 const redirect_url = useRequestURL();
 onMounted(async () => {
   const response = await getConnectedEmployerProviders();
-  console.log(response);
   // if (response.status !== "success") {
   //   toast.info(response.message, { autoClose: 3000 });
   //   return;

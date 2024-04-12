@@ -273,7 +273,6 @@ const route = useRoute();
 const redirect_url = useRequestURL();
 onMounted(async () => {
   const response = await getConnectedSeekerProviders();
-  console.log(response);
   // if (response.status !== "success") {
   //   toast.info(response.message, { autoClose: 3000 });
   //   return;

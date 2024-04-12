@@ -15,7 +15,9 @@ export const useAuthStore = defineStore("auth", {
       seeker: null,
       isAuthed: null,
       isEmployerMode: false,
+      isSubscribed: false,
       geo: null,
+      premium_url: null,
     };
   },
   getters: {
@@ -331,10 +333,36 @@ export const useAuthStore = defineStore("auth", {
     async getLocation(payload = {}) {
       const response = await useApi("area/location", {
         method: "get",
-        payload,
+        params: payload,
       });
+    },
+    async getPremium(payload = {}) {
+      const response = await useApi("premium", {
+        method: "get",
+        params: payload,
+      });
+      if (response.status === "success") {
+        this.isSubscribed = response.data.data.premium;
+        return this.isSubscribed;
+      }
+      return response;
+    },
 
-      console.log(response);
+    async getPremiumUrl() {
+      const url = useRequestURL();
+      const hostname = url.hostname;
+      const response = await useApi("getSettings", {
+        method: "get",
+        params: {
+          setting_key: "sub_url",
+          host: hostname,
+        },
+      });
+      if (response.status === "success") {
+        this.premium_url = response.data.data;
+        return this.premium_url;
+      }
+      return response;
     },
   },
 });

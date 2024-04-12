@@ -28,10 +28,14 @@ export const useUIStore = defineStore("ui", {
       }
     },
     async getFooterSettings() {
+      const url = useRequestURL();
+      const hostname = url.hostname;
+      console.log(hostname);
       const response = await useApi("getSettings", {
         method: "get",
         params: {
           setting_key: "footer",
+          host: hostname,
         },
       });
       if (response.status === "success") {
