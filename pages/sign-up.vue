@@ -19,7 +19,8 @@ const isAuthed = computed(() => authStore.isAuthed);
 
 const phoneDisabled = ref(false);
 const isFormValid = ref(true);
-const isLoading = ref(true);
+const isLoading = ref(false);
+const registerButtonDisabled = ref(false);
 const error = ref(null);
 
 const route = useRoute();
@@ -80,7 +81,7 @@ function validateForm() {
     state.isFormValid = false;
   }
 
-  if (state.phone.val !== null && state.i_agree.val === true){
+  if (state.phone.val !== null && state.i_agree.val === true) {
     state.i_agree.isValid = true;
     state.isFormValid = true;
   }
@@ -95,8 +96,9 @@ const isFirstTimeCodeSent = ref(true);
 const onSubmit = async () => {
   state.phone.val = phoneMask.value.unmaskedValue;
   validateForm();
-  isLoading.value = true;
   if (state.isFormValid) {
+    isLoading.value = true;
+
     const response = await signUp({
       phone: state.phone.val,
     });
@@ -133,25 +135,34 @@ const onSubmit = async () => {
   }
 };
 
-watch(() => state.code.val, (newValue) => {
-  if (newValue && String(newValue).length !== 4){
-    state.code.isValid = false;
-    return;
-  }
-  state.code.isValid = true;
-})
-
+watch(
+  () => state.code.val,
+  (newValue) => {
+    if (newValue && String(newValue).length !== 4) {
+      state.code.isValid = false;
+      return;
+    }
+    state.code.isValid = true;
+  },
+);
 const isConfirmSMSButton = computed(() => {
   if (isLoading.value) return false;
-  if (state.code.val){
+  if (state.code.val) {
     return String(state.code.val).length === 4;
   }
   return false;
-})
+});
+const isRegisterButton = computed(() => {
+  if (isLoading.value) return false;
+  if (state.phone.val) {
+    return String(state.phone.val).length === 11;
+  }
+  return false;
+});
 const onChangePhone = () => {
   isConfirmTab.value = false;
   isRegisterTab.value = true;
-}
+};
 const onSendOneMoreTime = () => {
   isFirstTimeCodeSent.value = false;
   onSubmit();
@@ -200,9 +211,13 @@ function close() {
 
 const phoneInputElement = ref();
 
+function validatePhoneNumber(phoneNumber) {
+  const phoneNumberPattern = /^\+7\(\d{3}\)\d{3}-\d{2}-\d{2}$/;
+  return phoneNumberPattern.test(phoneNumber);
+}
+
 onUpdated(() => {
-  console.log(phoneInputElement.value)
-  if (phoneInputElement.value){
+  if (phoneInputElement.value) {
     phoneMask.value = new IMask(phoneInputElement.value, {
       mask: "+{7}(000)000-00-00",
     });
@@ -211,7 +226,7 @@ onUpdated(() => {
     });
     phoneMask.value.unmaskedValue = state.phone.val;
   }
-})
+});
 const phoneMask = ref(null);
 onMounted(() => {
   phoneMask.value = new IMask(phoneInputElement.value, {
@@ -222,7 +237,6 @@ onMounted(() => {
   });
   if (state.phone.val) {
     phoneDisabled.value = true;
-
     phoneMask.value.unmaskedValue = state.phone.val;
   }
 });
@@ -287,8 +301,13 @@ onMounted(() => {
               >
             </div>
           </div>
-          <button class="btn button-accent" type="submit">
+          <button
+            class="btn button-accent"
+            type="submit"
+            :disabled="!isRegisterButton"
+          >
             Зарегистрироваться
+            <Loader class="text-light spinner-border-sm" v-if="isLoading" />
           </button>
         </form>
         <form
@@ -298,21 +317,23 @@ onMounted(() => {
         >
           <h1>Потверждения телефона</h1>
           <div class="i-wrap">
-
-            <span
-              class="text-success mt-1 py-2 px-3"
-              v-if="isFirstTimeCodeSent"
-            >
-              Мы вам отправили код потверждения на телефон {{state.phone.val}}.
-              <br/>
-              <a href="#" class="py-2 px-3" @click="onChangePhone">Изменить номер</a>
-            </span>
-            <span class="text-success mt-1 py-2 px-3" v-else>
-              Мы вам еще раз отправили код потверждения на телефон {{state.phone.val}}.
-              <br/>
-              <a href="#" class="py-2 px-3" @click="onChangePhone">Изменить номер</a>
-            </span>
+            <div class="note">
+              <img src="~/assets/img/svg/i.svg" alt="#" />
+              <p class="">
+                <span v-if="isFirstTimeCodeSent">
+                  Мы вам отправили код потверждения на телефон
+                </span>
+                <span v-else>
+                  Мы вам еще раз отправили код потверждения на телефон
+                </span>
+                <span class="text-success">{{ state.phone.val }}.</span>
+                <a href="#" class="fw-medium" @click.prevent="onChangePhone">
+                  Изменить номер
+                </a>
+              </p>
+            </div>
             <input
+              class="mt-2"
               type="number"
               name="code"
               v-model="state.code.val"
@@ -330,7 +351,11 @@ onMounted(() => {
               </a>
             </span>
           </div>
-          <button class="btn button-accent mt-4" type="submit" :disabled="!isConfirmSMSButton">
+          <button
+            class="btn button-accent mt-4"
+            type="submit"
+            :disabled="!isConfirmSMSButton"
+          >
             Подтвердить
           </button>
         </form>

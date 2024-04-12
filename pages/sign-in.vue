@@ -235,8 +235,8 @@ onMounted(() => {
             </NuxtLink>
           </div>
           <button class="btn button-accent" type="submit" :disabled="isLoading">
-            <Loader class="text-light spinner-border-sm" v-if="isLoading" />
             Войти
+            <Loader class="text-light spinner-border-sm" v-if="isLoading" />
           </button>
         </form>
         <div class="f-prompt">
