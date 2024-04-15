@@ -53,7 +53,6 @@ watch(
     params.value = newParams;
   },
 );
-const route = useRoute();
 onMounted(() => {
   if (resumes.value.length > 0) {
     isMore.value = true;
@@ -67,7 +66,7 @@ watch(resumes, (newValues) => {
 const loadMore = async () => {
   isLoading.value = true;
   const res = await getResumes(
-    { ...params, page: parseInt(current_page.value) + 1 },
+    { ...params.value, page: parseInt(current_page.value) + 1 },
     true,
   );
   if (res.length < 1) {

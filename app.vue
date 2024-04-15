@@ -67,4 +67,9 @@ onMounted(async () => {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* global.css */
+:root {
+  --vh: 9.32px;
+}
 </style>

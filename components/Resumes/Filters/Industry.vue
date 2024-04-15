@@ -1,7 +1,7 @@
 <template>
   <div class="filter-box" :class="{ open: filterClass }">
     <div class="filter-box-handle" @click="filterClass = !filterClass">
-      <strong>Отрасль компании({{ industries?.length }})</strong>
+      <strong>Специализации({{ industries?.length }})</strong>
       <img src="~/assets/img/svg/Arrow-Down.svg" alt="#" />
     </div>
     <div class="filter-box-body">

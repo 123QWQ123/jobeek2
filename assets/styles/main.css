@@ -7550,7 +7550,7 @@ svg.progress {
 }
 
 .list-of-providers .provider-item .provider-label.reload {
-	position: absolute;
+    position: absolute;
     left: 42px;
     height: 24px;
     width: 24px;

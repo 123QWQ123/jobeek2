@@ -265,18 +265,18 @@ export const useResumeStore = defineStore("resume", {
       this.resumes = [];
     },
     async getMyFavoriteResumes(payload) {
-      const { data } = await useApi("favorite/vacancies", {
+      const response = await useApi("employer/resume/favorites", {
         method: "get",
         payload,
       });
-      console.log(data);
-      if ("items" in data) {
-        this.my_favorite_resumes = data.items;
+      console.log(response);
+      if (response.status === "success") {
+        this.my_favorite_resumes = response.data.data;
         if (payload.page) {
           this.current_page = payload.page;
         }
       }
-      return data;
+      return response;
     },
     async getRegions(payload = {}) {
       const { data } = await useApi("area/regions", {

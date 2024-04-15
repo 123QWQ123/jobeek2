@@ -16,11 +16,11 @@
             >
               {{ item.title }}
             </NuxtLink>
-            <span class="count text-uppercase">{{ item.provider }}</span>
+            <span class="count">{{ experienceText }}</span>
           </div>
         </div>
-        <div class="salary" v-if="item.salary">
-          От {{ vueNumberFormat(item.salary, {}) }} {{ item.currency }}
+        <div class="salary">
+          {{ salaryText }}
         </div>
       </div>
       <div class="favorites-card-body">
@@ -28,8 +28,19 @@
           <span>{{ moment(item.published_date).format("hh:mm") }}</span
           ><strong>{{ item.city }}</strong>
         </div>
-        <p>{{ resumeDescription }}</p>
       </div>
+
+      <ul class="list-group list-group-flush">
+        <li
+          class="list-group-item d-flex justify-content-between align-items-center"
+        >
+          Последнее место работы:
+
+          <span class="badge bg-light p-3 text-black">
+            {{ lastWorkplace }}
+          </span>
+        </li>
+      </ul>
       <div class="favorites-card-footer">
         <div class="favorites-card-footer-row">
           <div class="group">
@@ -65,10 +76,45 @@
 import moment from "moment";
 import Swal from "sweetalert2";
 import { useResumeStore } from "~/store/resume.js";
+import { useNuxtApp } from "#app";
 
 const props = defineProps(["item"]);
 const { item } = props;
 
+const {
+  $format_number,
+  $format_years,
+  $format_months,
+  $convert_month_to_text,
+} = useNuxtApp();
+const salaryText = computed(() => {
+  if (item.salary) {
+    return `От ${$format_number(item.salary)} ${item.currency}`;
+  }
+  return "По договору";
+});
+
+const experienceText = computed(() => {
+  if (item && item.experience_month_count) {
+    const years = $format_years(
+      parseInt($format_years(item.experience_month_count / 12)),
+    );
+    const months = $format_months(parseInt(item.experience_month_count % 12));
+
+    return `${years} ${months}`;
+  }
+  return "Нет опыт работы";
+});
+const lastWorkplace = computed(() => {
+  if (item && item.experience) {
+    const lastExperience = item.experience[0];
+    if (lastExperience) {
+      const { company, profession, start_year, start_month } = lastExperience;
+      return `${company} * ${profession} | ${$convert_month_to_text(start_month)} ${start_year} -  `;
+    }
+  }
+  return "Нет опыт работы";
+});
 const resumeDescription = computed(() => {
   if (item.description) {
     let text = item.description.slice(0, 150);
