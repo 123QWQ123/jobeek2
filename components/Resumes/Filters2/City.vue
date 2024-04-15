@@ -117,7 +117,6 @@ const onSearch = (e) => {
 };
 
 const form = ref(useResumeForm());
-console.log(form.value.cities);
 const selectedItems = ref(form.value.cities);
 
 const toggleRegion = (id) => {

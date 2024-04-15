@@ -132,7 +132,6 @@ const useApi = async (method, options = {}) => {
         status,
       };
     } catch (res) {
-      console.log(res);
       if (res instanceof Object) {
         if (res.hasOwnProperty("response")) {
           const { data } = res.response;

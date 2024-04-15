@@ -33,7 +33,6 @@ onMounted(async () => {
   await getConnectedEmployerProviders();
   await getConnectedSeekerProviders();
   if (route.query.message) {
-    console.log(12);
     toast.info(route.query.message, { autoClose: 3000 });
   }
 });

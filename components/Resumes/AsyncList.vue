@@ -43,7 +43,6 @@ const isMore = ref(false);
 
 const { getQueryParam, getCurrentQueryParams } = useQueryParams();
 const current_params = getCurrentQueryParams("back") ?? {};
-console.log(current_params);
 await getResumes({ ...current_params });
 
 const params = ref(current_params);

@@ -67,7 +67,6 @@ const loadMore = async () => {
     { ...params, page: parseInt(current_page.value) + 1 },
     true,
   );
-  console.log(res);
   if (res.items.length < 1) {
     isMore.value = false;
     Swal.fire({

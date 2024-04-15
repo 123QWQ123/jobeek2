@@ -45,7 +45,6 @@ export const useResumeStore = defineStore("resume", {
   },
   actions: {
     async getAreas(payload) {
-      console.log(payload);
       const { data } = await useApi("area", {
         method: "get",
         payload,
