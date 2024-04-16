@@ -252,14 +252,15 @@ export const useResumeStore = defineStore("resume", {
       return response;
     },
     async getResume(id, payload) {
-      const { data } = await useApi("seeker/resumes/" + id, {
+      const response = await useApi("seeker/resumes/" + id, {
         method: "get",
-        payload,
+        params: payload,
       });
-      if (data) {
+      if (response.status === "success") {
         this.resume = data.data;
+        return this.resume;
       }
-      return data;
+      return response;
     },
     async clearResumes() {
       this.resumes = [];

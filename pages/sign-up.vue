@@ -169,6 +169,8 @@ const onSendOneMoreTime = () => {
 };
 
 const onSMSSubmit = async () => {
+  isLoading.value = true;
+
   const response = await confirmPhoneCode({
     phone: state.phone.val,
     session: state.session,
@@ -186,6 +188,7 @@ const onSMSSubmit = async () => {
       icon: "error",
       confirmButtonText: "ОК",
     });
+    isLoading.value = false;
     return;
   }
   isLoading.value = false;
@@ -357,6 +360,7 @@ onMounted(() => {
             :disabled="!isConfirmSMSButton"
           >
             Подтвердить
+            <Loader class="text-light spinner-border-sm" v-if="isLoading" />
           </button>
         </form>
         <div class="f-prompt">

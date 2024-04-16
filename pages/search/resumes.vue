@@ -1,6 +1,9 @@
 <script setup>
 import { useAuthStore } from "../../store/auth";
 
+useHead({
+  title: "Поиск резюме - Jobeek",
+});
 definePageMeta({
   layout: "cabinet",
 });

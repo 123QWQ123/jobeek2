@@ -12,7 +12,7 @@ const props = defineProps({
     required: true,
   },
 });
-const { value, setValue, errorMessage } = useField(() => props.name);
+const { value, setValue, errorMessage, setErrors } = useField(() => props.name);
 const email_to_verify = ref();
 const email = ref(value.value);
 const is_email_to_verify_sent = ref(false);
@@ -34,6 +34,7 @@ const onInputEmail = (e) => {
 };
 const currentValue = ref(null);
 
+const isLoading = ref(false);
 const isConfirmButton = ref(false);
 const isCheckButton = ref(false);
 const isConfirmationSent = ref(false);
@@ -115,17 +116,22 @@ onMounted(() => {
 const { confirmEmail, checkEmailConfirmation } = profileStore;
 const onEmailConfirm = async (e) => {
   e.preventDefault();
-
+  isLoading.value = true;
   const inputEmail = email_to_verify.value
     ? email_to_verify.value
     : email.value;
   const resData = await confirmEmail({ email: inputEmail });
-  if (resData.status === "success") {
-    isConfirmButton.value = false;
-    isConfirmationSent.value = true;
-    is_email_to_verify_sent.value = true;
-    setValue(inputEmail);
+  if (resData.status !== "success") {
+    const message = resData.errors?.email ?? resData.message;
+    setErrors(message);
+    isLoading.value = false;
+    return;
   }
+  isConfirmButton.value = false;
+  isConfirmationSent.value = true;
+  is_email_to_verify_sent.value = true;
+  setValue(inputEmail);
+  isLoading.value = false;
 };
 </script>
 
@@ -145,6 +151,7 @@ const onEmailConfirm = async (e) => {
       class="btn btn-outline-primary absolute_button"
     >
       Потверждать
+      <Loader class="text-light spinner-border-sm" v-if="isLoading" />
     </span>
     <span
       v-if="isConfirmationSent"
@@ -206,7 +213,7 @@ input[type="email"]:disabled {
 .absolute_button {
   position: absolute;
   top: 0.25rem;
-  right: 0;
+  right: 0.3rem;
 }
 
 .green_icon {

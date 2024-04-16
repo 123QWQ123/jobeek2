@@ -84,49 +84,6 @@
       </button>
     </div>
   </form>
-  <!--  <div class="main-section main-section-mob">-->
-  <!--    <div class="wrapper wrapper&#45;&#45;xl">-->
-  <!--      <form-->
-  <!--        class="search-form search-form&#45;&#45;mobile"-->
-  <!--        @submit.prevent="onSubmit"-->
-  <!--        role="form"-->
-  <!--        autocomplete="off"-->
-  <!--      >-->
-  <!--        <div class="search-row">-->
-  <!--          <div class="input-wrap has-icon has-label">-->
-  <!--            <img class="icon" src="~/assets/img/svg/search.svg" alt="#" />-->
-  <!--            <label for="keyword_mobile">Названии вакансии </label>-->
-  <!--            <input-->
-  <!--              type="text"-->
-  <!--              name="name"-->
-  <!--              id="keyword_mobile"-->
-  <!--              :placeholder="searchPlaceHolder"-->
-  <!--              autocomplete="off"-->
-  <!--              v-model="form.name"-->
-  <!--            />-->
-  <!--          </div>-->
-  <!--          <div class="input-wrap has-label">-->
-  <!--            <label>Желаемая зарплата </label>-->
-  <!--            <HeaderSalarySelectInForm-->
-  <!--              v-model="form.salary"-->
-  <!--              @change="onChange"-->
-  <!--            ></HeaderSalarySelectInForm>-->
-  <!--          </div>-->
-  <!--          <div class="input-wrap has-icon">-->
-  <!--            <SelectWithSearch-->
-  <!--              :options="cityOptions"-->
-  <!--              v-model.number="city"-->
-  <!--              placeholder="Город"-->
-  <!--              @input="updateCityInput"-->
-  <!--            ></SelectWithSearch>-->
-  <!--          </div>-->
-  <!--          <button class="button-accent submit-search-form" type="submit">-->
-  <!--            Поиск-->
-  <!--          </button>-->
-  <!--        </div>-->
-  <!--      </form>-->
-  <!--    </div>-->
-  <!--  </div>-->
 </template>
 
 <script setup>
@@ -150,7 +107,6 @@ const searchPlaceHolder = computed(() =>
 );
 const { getCurrentQueryParams, getQueryParam } = useQueryParams();
 const params = getCurrentQueryParams();
-console.log(params);
 
 const router = useRouter();
 const route = useRoute();

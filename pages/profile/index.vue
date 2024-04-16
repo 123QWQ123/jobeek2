@@ -52,7 +52,7 @@ onMounted(() => {
 
     <div class="has-sidebar has-sidebar--v2 wrapper wrapper-1290">
       <div class="content">
-        <div class="w-box w-box--main bg-white" v-if="!isCompleted">
+        <div class="w-box bg-white" v-if="!isCompleted">
           <p class="text-danger p-3">
             Перед использовании сервиса требуется заполнения вашего профиля.
           </p>
@@ -101,5 +101,13 @@ onMounted(() => {
 .content-enter-from,
 .content-leave-to {
   opacity: 0;
+}
+
+.content {
+  order: 1;
+}
+
+.sidebar {
+  order: 1;
 }
 </style>

@@ -3,11 +3,11 @@
   <PageLoader v-if="isLoading" />
   <div class="favorites-list-container">
     <ul class="favorites-list">
-      <VacanciesItem
+      <ResumesItem
         v-for="item in items"
         :key="item.id"
         :item="item"
-      ></VacanciesItem>
+      ></ResumesItem>
     </ul>
 
     <div class="footer mt-3" v-if="items.length">

@@ -9,7 +9,7 @@
           <div class="company-name">
             <NuxtLink
               :to="{
-                name: 'vacancies-slug',
+                name: 'resumes-slug',
                 params: { slug: item.id },
                 query: { provider: 'hh' },
               }"
@@ -133,9 +133,15 @@ const { addToFavorite, removeFromFavorite } = resumeStore;
 const toggleFavorite = async () => {
   let response = {};
   if (!isFavorite.value === true) {
-    response = await addToFavorite({ id: item.id, provider: "hh" });
+    response = await addToFavorite({
+      resume_id: item.id,
+      provider: item.provider,
+    });
   } else {
-    response = await removeFromFavorite({ id: item.id, provider: "hh" });
+    response = await removeFromFavorite({
+      resume_id: item.id,
+      provider: item.provider,
+    });
   }
   if (response.status === "success") {
     isFavorite.value = !isFavorite.value;

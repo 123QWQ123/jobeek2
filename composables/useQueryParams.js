@@ -37,7 +37,7 @@ export default function useQueryParams(initialValues) {
         query[key] = JSON.parse(query[key]);
       } catch (error) {
         query[key] = query[key];
-        console.log(error);
+        // console.log(error);
         // Ignore error, it means it's not a JSON string
       }
     }
