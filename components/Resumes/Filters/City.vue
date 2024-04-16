@@ -163,7 +163,6 @@ const onSearch = (e) => {
   prepare(items);
 };
 
-const { values, toFront } = useVacancySearchParams();
 const toggleRegion = (id) => {
   let selected_ids = [...cities.value];
 
