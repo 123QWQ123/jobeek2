@@ -1,9 +1,10 @@
 <template>
   <div class="layout">
-    <!--    <header class="header" v-if="hasHeaderSlot">-->
-    <!--      <slot name="header"></slot>-->
-    <!--    </header>-->
-    <HeaderTheHeader></HeaderTheHeader>
+    <header class="header" v-if="hasHeaderSlot">
+      <slot name="header">
+        <HeaderTheHeader></HeaderTheHeader>
+      </slot>
+    </header>
     <main class="main" role="main">
       <NuxtPage />
     </main>
