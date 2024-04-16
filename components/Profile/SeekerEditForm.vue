@@ -157,7 +157,6 @@ watch(
     if (Object.keys(diffData).length) {
       resetForm({ values: newData });
       const country_id = newData.country_id;
-
       if (country_id) {
         getCities({ country_ids: [country_id] });
       }
