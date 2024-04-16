@@ -25,6 +25,7 @@
       >
         {{ item.name }}
       </li>
+      <li v-if="options.length === 0">Нет найдено</li>
     </ul>
   </div>
 
