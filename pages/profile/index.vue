@@ -103,11 +103,13 @@ onMounted(() => {
   opacity: 0;
 }
 
-.content {
-  order: 1;
-}
+@media (max-width: 768px) {
+  .content {
+    order: 2;
+  }
 
-.sidebar {
-  order: 1;
+  .sidebar {
+    order: 1;
+  }
 }
 </style>

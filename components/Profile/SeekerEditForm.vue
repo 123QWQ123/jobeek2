@@ -138,7 +138,7 @@ const getFields = (newObject) => {
     phone: newObject.phone,
     birth_date: newObject.birth_date,
     city_id: newObject.city_id,
-    country_id: newObject.country_id,
+    country_id: newObject.country_id ?? 1,
     photo_url: newObject.photo_url,
   };
 };
@@ -157,9 +157,10 @@ watch(
     if (Object.keys(diffData).length) {
       resetForm({ values: newData });
       const country_id = newData.country_id;
-      // if (country_id) {
-      //   getCities({ country_ids: [country_id] });
-      // }
+
+      if (country_id) {
+        getCities({ country_ids: [country_id] });
+      }
     }
   },
 );
@@ -178,7 +179,7 @@ await getCountries();
 const { countryOptions } = storeToRefs(profileStore);
 const cityOptions = ref([]);
 
-const { value: country_id } = useField("country_id");
+const { value: country_id, setValue: setCountryId } = useField("country_id");
 
 watch(
   () => country_id.value,

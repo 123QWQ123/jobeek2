@@ -90,7 +90,7 @@ async function onSubmit() {
     if (response.status !== "success") {
       Swal.fire({
         title: "Ошибка!",
-        text: response.message,
+        text: response.message ?? "Неизвестная ошибка!",
         icon: "error",
         confirmButtonText: "ОК",
       });
