@@ -19,7 +19,7 @@ const { recoverPasswordCode } = authStore;
 const isAuthed = computed(() => authStore.isAuthed);
 
 const isFormValid = ref(true);
-const isLoading = ref(true);
+const isLoading = ref(false);
 const error = ref(null);
 onBeforeMount(() => {
   if (isAuthed.value === true) {
@@ -49,21 +49,24 @@ const state = reactive({
   success: null,
 });
 
-watch(() => state.code.val, (newValue) => {
-  if (newValue && String(newValue).length !== 4){
-    state.code.isValid = false;
-    return;
-  }
-  state.code.isValid = true;
-})
+watch(
+  () => state.code.val,
+  (newValue) => {
+    if (newValue && String(newValue).length !== 4) {
+      state.code.isValid = false;
+      return;
+    }
+    state.code.isValid = true;
+  },
+);
 
 const isConfirmSMSButton = computed(() => {
   if (isLoading.value) return false;
-  if (state.code.val){
+  if (state.code.val) {
     return String(state.code.val).length === 4;
   }
   return false;
-})
+});
 const phoneInputElement = ref();
 const phoneMask = ref(null);
 onMounted(() => {
@@ -98,56 +101,57 @@ const tabs = reactive({
 const onSubmit = async () => {
   // console.log(isFormValid.value, state.i_agree);
   validateForm();
-  if (state.isFormValid) {
-    state.phone.val = phoneMask.value.unmaskedValue;
-
-    const response = await sendRecoveryCode({
-      phone: state.phone.val,
+  if (!state.isFormValid) {
+    Swal.fire({
+      title: "Ошибка!",
+      text: "Неправильные данные ввели.",
+      icon: "error",
+      confirmButtonText: "ОК",
     });
-
-    if (response.status !== "success") {
-      if (response.data && "errors" in response.data) {
-        Swal.fire({
-          title: "Ошибка!",
-          text: response.data.errors.phone[0],
-          icon: "error",
-          confirmButtonText: "ОК",
-        });
-      } else {
-        Swal.fire({
-          title: "Ошибка!",
-          text: response.data.message,
-          icon: "error",
-          confirmButtonText: "ОК",
-        });
-      }
-      return;
-    }
-
-    state.token = response.data.token;
-    tabs.isConfirmTab = true;
-    tabs.isRegisterTab = false;
-    tabs.isResetTab = false;
-    isLoading.value = false;
+    return;
   }
+  isLoading.value = true;
+  state.phone.val = phoneMask.value.unmaskedValue;
+
+  const response = await sendRecoveryCode({
+    phone: state.phone.val,
+  });
+
+  if (response.status !== "success") {
+    if (response.data && "errors" in response.data) {
+      Swal.fire({
+        title: "Ошибка!",
+        text: response.data.errors.phone[0],
+        icon: "error",
+        confirmButtonText: "ОК",
+      });
+    } else {
+      Swal.fire({
+        title: "Ошибка!",
+        text: response.data.message,
+        icon: "error",
+        confirmButtonText: "ОК",
+      });
+    }
+    return;
+  }
+
+  state.token = response.data.token;
+  tabs.isConfirmTab = true;
+  tabs.isRegisterTab = false;
+  tabs.isResetTab = false;
+  isLoading.value = false;
 };
 
 const { sendRecoveryCode } = authStore;
 const onSMSSubmit = async () => {
+  isLoading.value = true;
   const response = await recoverPasswordCode({
     phone: state.phone.val,
     code: state.code.val,
     token: state.token,
   });
-
-  if (response.status === "success") {
-    state.token = response.data.token;
-    console.log(response.data.token);
-    tabs.isConfirmTab = false;
-    tabs.isRegisterTab = false;
-    tabs.isResetTab = true;
-    // isRegisterTab.value = false;
-  } else {
+  if (response.status !== "success") {
     if ("errors" in response && response.message) {
       Swal.fire({
         title: "Ошибка!",
@@ -163,11 +167,20 @@ const onSMSSubmit = async () => {
         confirmButtonText: "ОК",
       });
     }
+    isLoading.value = false;
+    return;
   }
+
+  state.token = response.data.token;
+  tabs.isConfirmTab = false;
+  tabs.isRegisterTab = false;
+  tabs.isResetTab = true;
+  isLoading.value = false;
 };
 //
 const { resetPassword } = authStore;
 const onPasswordSubmit = async () => {
+  isLoading.value = true;
   const response = await resetPassword({
     phone: state.phone.val,
     code: state.code.val,
@@ -176,9 +189,8 @@ const onPasswordSubmit = async () => {
     password_confirmation: state.password_confirmation.val,
   });
 
-  if (response.status === "success") {
-    navigateTo({ name: "sign-in" });
-  } else {
+  if (response.status !== "success") {
+    isLoading.value = false;
     if ("errors" in response && response.message) {
       Swal.fire({
         title: "Ошибка!",
@@ -194,7 +206,9 @@ const onPasswordSubmit = async () => {
         confirmButtonText: "ОК",
       });
     }
+    return;
   }
+  navigateTo({ name: "sign-in" });
 };
 
 function close() {
@@ -236,7 +250,10 @@ function close() {
               @focusout="clearValidity('phone')"
             />
           </div>
-          <button class="btn button-accent" type="submit">Отправить</button>
+          <button class="btn button-accent" type="submit">
+            Отправить
+            <Loader class="text-light spinner-border-sm" v-if="isLoading" />
+          </button>
         </form>
         <form
           v-else-if="tabs.isConfirmTab"
@@ -262,7 +279,14 @@ function close() {
               пароля.
             </p>
           </div>
-          <button class="btn button-accent" type="submit" :disabled="!isConfirmSMSButton">Подтвердить</button>
+          <button
+            class="btn button-accent"
+            type="submit"
+            :disabled="!isConfirmSMSButton"
+          >
+            Подтвердить
+            <Loader class="text-light spinner-border-sm" v-if="isLoading" />
+          </button>
         </form>
         <form
           v-else-if="tabs.isResetTab"
@@ -291,7 +315,10 @@ function close() {
             <img src="~/assets/img/svg/i.svg" alt="#" />
             <p>Устаноните новый пароль для аккаунта +{{ state.phone.val }}</p>
           </div>
-          <button class="btn button-accent" type="submit" >Подтвердить</button>
+          <button class="btn button-accent" type="submit">
+            Подтвердить
+            <Loader class="text-light spinner-border-sm" v-if="isLoading" />
+          </button>
         </form>
         <div class="f-prompt">
           Хотите войти?
