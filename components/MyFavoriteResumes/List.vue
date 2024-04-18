@@ -1,5 +1,5 @@
 <template>
-  <h2 class="lk-page-title">Избранные</h2>
+  <h2 class="lk-page-title mb-4">Избранные</h2>
   <PageLoader v-if="isLoading" />
   <div class="favorites-list-container">
     <ul class="favorites-list">

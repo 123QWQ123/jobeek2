@@ -2432,7 +2432,7 @@ body .main-section-mob {
     }
 
     .enter-page-content {
-        min-height: calc(var(--vh, 1vh) * 100);
+        min-height: calc(var(--vh, 1vh) * 100 - 100px);
         height: auto;
     }
 }
@@ -2471,6 +2471,44 @@ body .main-section-mob {
     .check-block label {
         font-size: 14px;
     }
+
+    .search-row .input-wrap.has-label .nice-select input::-webkit-input-placeholder {
+        font-size: 14px;
+    }
+
+    .search-row .input-wrap.has-label .nice-select input::-moz-placeholder {
+        font-size: 14px;
+    }
+
+    .search-row .input-wrap.has-label .nice-select input:-ms-input-placeholder {
+        font-size: 14px;
+    }
+
+    .search-row .input-wrap.has-label .nice-select input::-ms-input-placeholder {
+        font-size: 14px;
+    }
+
+    .search-row .input-wrap.has-label .nice-select input, .search-row .input-wrap.has-label .nice-select input::placeholder {
+        font-size: 14px;
+    }
+    
+    .help-box a {
+        font-size: 14px;
+	}
+	
+	.search-row input {
+	    font-size: 14px;
+	}
+	
+	form.w-box-body .absolute_button {
+	    justify-content: center;
+	    display: flex;
+	    height: 38px;
+	}
+	
+	.search-row .input-wrap.has-label .nice-select {
+		padding-left: 0px !important;
+	}
 
     .i-wrap input::-webkit-input-placeholder {
         font-size: 14px;
@@ -7574,4 +7612,10 @@ svg.progress {
     justify-content: center;
     align-items: center;
     top: 33px;
+}
+
+@media (max-width: 768px) {
+	.profile-page {
+	    padding-top: 0px;
+	}
 }

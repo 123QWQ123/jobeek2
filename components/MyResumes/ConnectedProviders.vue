@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="lk-page-title">Cервисы</h1>
+    <h1 class="lk-page-title mb-4">Cервисы</h1>
     <div class="card mb-4 border-0 px-2 py-0" style="border-radius: 12px">
       <div class="row align-baseline justify-between">
         <div class="col-6 list-of-providers">
@@ -155,7 +155,7 @@
         </div>
         <div class="col-6 refresh-button_col">
           <div class="h-100 d-flex align-items-center">
-            <div class="sync-card d-flex flex-column pe-4 pb-3">
+            <div class="sync-card d-flex flex-column pe-4">
               <button
                 class="sync-button"
                 :class="{ rotating: isSyncing }"
