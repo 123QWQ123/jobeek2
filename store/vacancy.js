@@ -197,22 +197,23 @@ export const useVacancyStore = defineStore("vacancy", {
       return data;
     },
     async getVacancies(payload, add = false) {
-      const { data } = await useApi("vacancies/search", {
+      const response = await useApi("vacancies/search", {
         method: "get",
         params: payload,
       });
-      if (data && "items" in data) {
+      if (response.status === "success") {
         if (add) {
-          this.vacancies = this.vacancies.concat(data.items);
+          console.log(response.data);
+          this.vacancies = this.vacancies.concat(response.data.items);
           this.current_page++;
         } else {
-          this.vacancies = data.items;
+          this.vacancies = response.data.items;
           this.current_page = 1;
         }
-        this.total = data.found;
-        return this.vacancies;
+        this.total = response.data.found;
+        return response;
       }
-      return data;
+      return response;
     },
     async getCurrencyCityVacancies(payload) {
       const { data } = await useApi("vacancies/search", {

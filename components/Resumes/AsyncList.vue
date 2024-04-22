@@ -1,6 +1,7 @@
 <template>
   <div class="content">
     <div>
+      {{ resumes }}
       <ul class="favorites-list">
         <ResumesItem v-for="item in resumes" :key="item.id" :item="item" />
       </ul>
@@ -35,15 +36,26 @@ import { useResumeStore } from "~/store/resume.js";
 const resumeStore = useResumeStore();
 const { getResumes } = resumeStore;
 
-const { resumes, current_page } = storeToRefs(resumeStore);
+const { current_page } = storeToRefs(resumeStore);
 
 const loadMoreButton = ref();
 const isLoading = ref(false);
 const isMore = ref(false);
 
+// const { getQueryParam, getCurrentQueryParams } = useQueryParams();
+// const current_params = getCurrentQueryParams("back") ?? {};
 const { getQueryParam, getCurrentQueryParams } = useQueryParams();
-const current_params = getCurrentQueryParams("back") ?? {};
-await getResumes({ ...current_params });
+const current_params = getCurrentQueryParams() ?? {};
+if (process.server) {
+  await getResumes({ ...getCurrentQueryParams("back") }, false, true);
+}
+const resumes = ref(resumeStore.resumes ?? []);
+watch(
+  () => resumeStore.resumes,
+  () => {
+    resumes.value = resumeStore.resumes;
+  },
+);
 
 const params = ref(current_params);
 watch(
@@ -69,15 +81,15 @@ const loadMore = async () => {
     { ...params.value, page: parseInt(current_page.value) + 1 },
     true,
   );
-  if (res.length < 1) {
+  isLoading.value = false;
+  if (res.status !== "success") {
     isMore.value = false;
     Swal.fire({
       title: "Больше резюме не найдено!",
       icon: "success",
     });
+    return;
   }
-  isLoading.value = false;
-
   loadMoreButton.value.scrollIntoView({ behavior: "smooth", block: "start" });
 };
 </script>

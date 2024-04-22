@@ -71,7 +71,7 @@
             </NuxtLink>
           </li>
           <li>
-            <NuxtLink :to="{ name: 'your-subscriptions' }">
+            <NuxtLink :to="{ name: 'my-subscriptions' }">
               <span>Подписки</span></NuxtLink
             >
           </li>

@@ -34,15 +34,24 @@ import useQueryParams from "~/composables/useQueryParams.js";
 
 const vacancyStore = useVacancyStore();
 const { getVacancies } = vacancyStore;
-const { vacancies, current_page } = storeToRefs(vacancyStore);
+const { current_page } = storeToRefs(vacancyStore);
+
+const { getQueryParam, getCurrentQueryParams } = useQueryParams();
+const current_params = getCurrentQueryParams() ?? {};
+if (process.server) {
+  await getVacancies({ ...getCurrentQueryParams("back") });
+}
+const vacancies = ref(vacancyStore.vacancies ?? []);
+watch(
+  () => vacancyStore.vacancies,
+  () => {
+    vacancies.value = vacancyStore.vacancies;
+  },
+);
 
 const loadMoreButton = ref();
 const isLoading = ref(false);
 const isMore = ref(false);
-
-const { getQueryParam, getCurrentQueryParams } = useQueryParams();
-const current_params = getCurrentQueryParams() ?? {};
-await getVacancies({ ...getCurrentQueryParams() });
 
 const params = ref(current_params);
 watch(
@@ -68,18 +77,20 @@ watch(vacancies, (newValues) => {
 const loadMore = async () => {
   isLoading.value = true;
   const res = await getVacancies(
-    { ...params, page: parseInt(current_page.value) + 1 },
+    { ...params.value, page: parseInt(current_page.value) + 1 },
     true,
   );
-  if (res.length < 1) {
+  isLoading.value = false;
+
+  console.log(res);
+  if (res.status !== "success") {
     isMore.value = false;
     Swal.fire({
       title: "Больше вакансий не найдено!",
       icon: "success",
     });
+    return;
   }
-  isLoading.value = false;
-
   loadMoreButton.value.scrollIntoView({ behavior: "smooth", block: "start" });
 };
 </script>

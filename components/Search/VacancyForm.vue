@@ -1,5 +1,5 @@
 <template>
-  <div v-if="props.with_wrapper" class="main-section-mob">
+  <div v-if="props.with_wrapper">
     <div class="wrapper">
       <form class="search-form" role="form" autocomplete="off">
         <div class="search-row">
@@ -10,7 +10,7 @@
               type="text"
               name="name"
               id="keyword"
-              :placeholder="searchPlaceHolder"
+              placeholder="Какой специалист вы ищете?"
               autocomplete="off"
               v-model="search"
             />
@@ -27,7 +27,6 @@
               placeholder="Город"
               @input="updateCityInput"
               @change="onCityChange"
-              not_found="Город не найдено"
             />
           </div>
           <button
@@ -42,12 +41,7 @@
     </div>
   </div>
 
-  <form
-    v-else
-    class="search-form main-section-mob"
-    role="form"
-    autocomplete="off"
-  >
+  <form v-else class="search-form" role="form" autocomplete="off">
     <div class="search-row">
       <div class="input-wrap has-icon has-label">
         <img class="icon" src="~/assets/img/svg/search.svg" alt="#" />
@@ -56,7 +50,7 @@
           type="text"
           name="name"
           id="keyword"
-          :placeholder="searchPlaceHolder"
+          placeholder="Какую вакансию вы ищете?"
           autocomplete="off"
           v-model="search"
         />
@@ -102,26 +96,21 @@ const props = defineProps({
 
 const auth = useAuthStore();
 
-const isEmployer = computed(() => auth.isEmployer);
-const searchPlaceHolder = computed(() =>
-  auth.isEmployer ? "Какой специалист вы ищете?" : "Какую вакансию вы ищете?",
-);
 const { getCurrentQueryParams, getQueryParam } = useQueryParams();
-const params = getCurrentQueryParams();
+const params = ref(getCurrentQueryParams() ?? {});
 
 const router = useRouter();
 const route = useRoute();
 
 const vacancyStore = useVacancyStore();
 const profileStore = useProfileStore();
-const { searchCities } = profileStore;
 
 const search = ref(route.query?.search ?? undefined);
 
 const salary = ref({
-  from: undefined,
-  to: undefined,
-  id: undefined,
+  min: undefined,
+  max: undefined,
+  value: undefined,
 });
 salary.value = getQueryParam("salary");
 const city = ref(null);
@@ -129,6 +118,7 @@ const city = ref(null);
 watch(
   () => getQueryParam("salary"),
   (newValue) => {
+    console.log(newValue);
     salary.value = newValue;
   },
 );
@@ -140,6 +130,8 @@ const onCityChange = (cityItem) => {
     city.value = cityItem.value;
   }
 };
+const { searchCities } = profileStore;
+const { getVacancies, getCities } = vacancyStore;
 
 const updateCityInput = async (newValue = "") => {
   const items = (await searchCities({ search: newValue })) ?? [];
@@ -149,19 +141,15 @@ const updateCityInput = async (newValue = "") => {
   }));
 };
 
-const { getVacancies, getCities } = vacancyStore;
-const vacancies = computed(() => vacancyStore.vacancies);
-
-const { cities } = storeToRefs(vacancyStore);
 const cityOptions = ref([]);
 
-const page = useRoute();
-
-const country = computed(() => {
-  if (params.countries && params.countries.length === 1) {
-    return params.countries[0];
-  } else return 1;
-});
+// const page = useRoute();
+//
+// const country = computed(() => {
+//   if (params.countries && params.countries.length === 1) {
+//     return params.countries[0];
+//   } else return 1;
+// });
 
 const isLoading = ref(false);
 
@@ -170,40 +158,22 @@ const onSubmit = async (e) => {
   isLoading.value = true;
   clearVacancies();
   const cities = city.value ? [city.value] : undefined;
-  const queryVacancy = {
+  const queryParams = {
     cities: JSON.stringify(cities),
     salary: JSON.stringify(salary.value),
     search: search.value,
   };
-  if (isEmployer.value) {
-    router.push({
-      name: "search-resumes",
-      query: queryVacancy,
-    });
-  } else {
-    router.push({
-      name: "search-vacancies",
-      query: queryVacancy,
-    });
-  }
+  router.push({
+    name: "search-vacancies",
+    query: queryParams,
+  });
+
   isLoading.value = false;
 };
 </script>
 
 <style scoped>
-.search-form--widget {
-  display: block;
-}
-
-.main-section-mob {
-  margin-top: 1rem;
-  padding-top: 3rem;
-  margin-bottom: 3rem;
-}
-
-@media only screen and (max-width: 960px) {
-  .search-form-mobile {
-    display: none;
-  }
+.search-form {
+  box-shadow: none;
 }
 </style>

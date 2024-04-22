@@ -1,7 +1,13 @@
 <template>
-  <input v-model="value" :type="props.type" :placeholder="props.placeholder" />
-  <div class="text-danger d-block" v-if="errorMessage">
-    {{ errorMessage }}
+  <div>
+    <input
+      v-model="value"
+      :type="props.type"
+      :placeholder="props.placeholder"
+    />
+    <span class="text-danger d-block" v-if="errorMessage">
+      {{ errorMessage }}
+    </span>
   </div>
 </template>
 

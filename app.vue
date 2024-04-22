@@ -8,14 +8,21 @@
 import { useAuthStore } from "~/store/auth";
 import { useVacancyStore } from "~/store/vacancy";
 import { useResumeStore } from "~/store/resume";
-import { toast } from "vue3-toastify";
 
+useHead({
+  meta: [
+    {
+      name: "viewport",
+      content:
+        "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0",
+    },
+  ],
+});
 const { getConnectedEmployerProviders } = useVacancyStore();
 const { getConnectedSeekerProviders } = useResumeStore();
 const vacancyStore = useVacancyStore();
 
 const authStore = useAuthStore();
-const isEmployer = computed(() => authStore.isEmployer);
 
 const route = useRoute();
 
@@ -33,7 +40,7 @@ onMounted(async () => {
   await getConnectedEmployerProviders();
   await getConnectedSeekerProviders();
   if (route.query.message) {
-    toast.info(route.query.message, { autoClose: 3000 });
+    useNuxtApp().$toast.info(route.query.message, { autoClose: 3000 });
   }
 });
 </script>

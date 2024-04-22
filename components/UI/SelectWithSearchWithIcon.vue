@@ -32,6 +32,10 @@
       >
         {{ item.name }}
       </li>
+
+      <li v-if="options.length === 0">
+        {{ props.not_found }}
+      </li>
     </ul>
   </div>
 </template>
@@ -65,6 +69,11 @@ const props = defineProps({
   },
   selected: {
     required: false,
+  },
+  not_found: {
+    required: false,
+    type: String,
+    default: "Не найдено",
   },
 });
 

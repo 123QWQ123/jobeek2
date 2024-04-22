@@ -1,52 +1,108 @@
 <template>
   <li>
-    <div class="favorites-card">
-      <div class="favorites-card-head">
-        <div class="company">
-          <div class="company-logo">
-            <img class="w-100" :src="photo" :alt="item.company" />
+    <div class="favorites-card resume-card-t2">
+      <div class="resume-card-t2__head">
+        <div class="resume-card-t2__head-info">
+          <div class="status-list">
+            <span style="color: #0dc267">
+              Опубликовано
+              {{ moment(item.updated_at).format("hh:mm") }}
+            </span>
+            <span style="color: #0dc267">{{ viewedText }}</span>
           </div>
-          <div class="company-name">
+
+          <a href="#" class="resume-title">
             <NuxtLink
               :to="{
                 name: 'resumes-slug',
                 params: { slug: item.id },
-                query: { provider: 'hh' },
+                query: { provider: item.provider },
               }"
             >
               {{ item.title }}
             </NuxtLink>
-            <span class="count">{{ experienceText }}</span>
+          </a>
+          <div class="salary">
+            {{ salaryText }}
           </div>
+          <!--          <span class="yo">30 лет</span>-->
+
+          <div class="resume-tag">Рассматривает предложения</div>
         </div>
-        <div class="salary">
-          {{ salaryText }}
-        </div>
-      </div>
-      <div class="favorites-card-body">
-        <div class="time-location">
-          <span>{{ moment(item.published_date).format("hh:mm") }}</span
-          ><strong>{{ item.city }}</strong>
+
+        <div class="resume-card-t2__head-img">
+          <img :src="photo" :alt="item.profession" />
         </div>
       </div>
 
-      <ul class="list-group list-group-flush">
-        <li
-          class="list-group-item d-flex justify-content-between align-items-center"
-        >
-          Последнее место работы:
+      <div class="resume-card-t2__body">
+        <ul>
+          <li>
+            <div>Опыт работы</div>
 
-          <span class="badge bg-light p-3 text-black">
-            {{ lastWorkplace }}
-          </span>
-        </li>
-      </ul>
+            <div>{{ experienceText }}</div>
+          </li>
+
+          <li>
+            <div>Последнее место работы</div>
+
+            <div>
+              <div class="rrow">
+                {{ lastWorkplace }}
+                <!--                <strong></strong> • PHP-программист • Ноябрь 2018 — по настоящее-->
+                <!--                время-->
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <div>Названия компаний, в которых работал кандидат</div>
+
+            <div>
+              <div class="rrow" v-for="ex_item in experienceItems">
+                <strong>{{ ex_item.company }}</strong> •
+                {{ ex_item.profession }} •
+
+                {{ ex_item.dateText }}
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <div>Специализации</div>
+
+            <div>Программист, разработчик</div>
+          </li>
+
+          <!--          <li>-->
+          <!--            <div>Регион и переезд</div>-->
+
+          <!--            <div>-->
+          <!--              Москва-->
+          <!--              <span class="m" style="background-color: #943e90"></span> м.-->
+          <!--              Полежаевская • Переезд невозможен-->
+          <!--            </div>-->
+          <!--          </li>-->
+
+          <li>
+            <div>Основное образование</div>
+
+            <div>{{ educationLevelText }}</div>
+          </li>
+
+          <!--          <li>-->
+          <!--            <div>Знание иностранных языков</div>-->
+
+          <!--            <div>-->
+          <!--              Родной язык — Русский • Английский, B2 — Средне-продвинутый-->
+          <!--            </div>-->
+          <!--          </li>-->
+        </ul>
+      </div>
+
       <div class="favorites-card-footer">
         <div class="favorites-card-footer-row">
-          <div class="group">
-            <button class="group-action btn button-md">Пригласить</button>
-          </div>
-          <div class="group">
+          <div class="group" style="margin-left: auto">
             <button
               class="group-action ic-btn fav-btn"
               :class="{ active: isFavorite }"
@@ -87,11 +143,46 @@ const {
   $format_months,
   $convert_month_to_text,
 } = useNuxtApp();
+
+const viewedText = computed(() => {
+  if (!item.date_view) return item.viewed ? "Просмотрено" : "";
+  return "Просмотрено" + moment(item.date_view).format("hh:mm");
+});
 const salaryText = computed(() => {
-  if (item.salary) {
+  if (!item.agreement) {
     return `От ${$format_number(item.salary)} ${item.currency}`;
   }
   return "По договору";
+});
+const educationLevelText = computed(() => {
+  const { education_level } = props.item.educations;
+  const { primary } = props.item.educations;
+  let level = "Среднее";
+  if (education_level) {
+    level = education_level.name;
+  }
+  let instituteText = undefined;
+  if (primary && primary.length > 0) {
+    const edu = primary[0];
+    const institute = edu.institute ? ", " + edu.institute : "";
+    const profession = edu.profession ? ", " + edu.profession : "";
+    const end_year = edu.end_year ? ", " + edu.end_year : "";
+    instituteText = `${institute}${profession}${end_year}`;
+  }
+
+  if (instituteText)
+    return level + `${instituteText ? ", " : ""} ${instituteText}`;
+  else return level;
+});
+
+const educationPlaceText = computed(() => {
+  const { education_level } = props.item.educations;
+  let level = "Среднее";
+  if (education_level) {
+    level = education_level.name;
+  }
+
+  return level + "-" + "";
 });
 
 const experienceText = computed(() => {
@@ -105,12 +196,19 @@ const experienceText = computed(() => {
   }
   return "Нет опыт работы";
 });
+const formatEndDate = (end_year = null, end_month = null) => {
+  if (!end_year || !end_month) return "по настоящее";
+  return $convert_month_to_text(end_month) + " " + end_year;
+};
 const lastWorkplace = computed(() => {
   if (item && item.experience) {
     const lastExperience = item.experience[0];
     if (lastExperience) {
       const { company, profession, start_year, start_month } = lastExperience;
-      return `${company} * ${profession} | ${$convert_month_to_text(start_month)} ${start_year} -  `;
+      return (
+        `${company} * ${profession} | ${$convert_month_to_text(start_month)} ${start_year} - ` +
+        formatEndDate(lastExperience.end_year, lastExperience.end_month)
+      );
     }
   }
   return "Нет опыт работы";
@@ -126,6 +224,22 @@ const resumeDescription = computed(() => {
   return item.description;
 });
 
+const experienceItems = ref([]);
+const prepareExperienceItems = (newExperience) => {
+  const items = newExperience.map((ex_item) => {
+    let text = "-";
+    text =
+      `${$convert_month_to_text(ex_item.start_month)} ${ex_item.start_year}` +
+      " - " +
+      formatEndDate(ex_item.end_year, ex_item.end_month);
+    return { ...ex_item, dateText: text };
+  });
+
+  experienceItems.value = items;
+};
+watch(() => props.item.experience, prepareExperienceItems);
+prepareExperienceItems(item.experience);
+
 const isFavorite = ref(item.is_favorite ?? false);
 
 const resumeStore = useResumeStore();
@@ -134,14 +248,15 @@ const toggleFavorite = async () => {
   let response = {};
   if (!isFavorite.value === true) {
     response = await addToFavorite({
-      resume_id: item.id,
+      resume_id: String(item.id),
       provider: item.provider,
     });
   } else {
-    response = await removeFromFavorite({
-      resume_id: item.id,
-      provider: item.provider,
-    });
+    if (!item.favorite_id) {
+      isFavorite.value = false;
+      return;
+    }
+    response = await removeFromFavorite(item.favorite_id);
   }
   if (response.status === "success") {
     isFavorite.value = !isFavorite.value;

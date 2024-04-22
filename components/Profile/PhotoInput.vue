@@ -1,7 +1,6 @@
 <script setup>
 import { useField } from "vee-validate";
-
-const props = defineProps(["name", "preview"]);
+const props = defineProps(["name", "preview", "avatar"]);
 
 const CONFIG = useRuntimeConfig();
 
@@ -39,6 +38,12 @@ watch(
     photo_url.value = previewUrl.value;
   },
 );
+watch(
+  () => props.avatar,
+  () => {
+    photo_url.value = previewUrl.value;
+  },
+);
 
 const openFileBrowser = () => {
   photoElement.value.click();
@@ -52,7 +57,7 @@ const photoUrl = computed(() => {
     return base64.value;
   } else if (photo_url.value) {
     return photo_url.value;
-  } else return CONFIG.public.base + "/assets/images/avatar.png";
+  } else return props.avatar;
 });
 </script>
 

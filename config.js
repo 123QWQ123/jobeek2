@@ -12,25 +12,29 @@ const public_routes = [
 ];
 
 const protected_routes = [
-  "profile",
   "my-resumes",
-  "your-favorites",
+  "create-resume",
   "my-vacancies",
   "create-vacancy",
-  "create-resume",
+  "favorite-vacancies",
+  "favorite-resumes",
+  "profile-negotiations",
+  "my-subscriptions",
+  "services-search-phone",
 ];
 const search_exception_routes = ["index", "search-vacancies", "search-resumes"];
 const employer_routes = [
   "my-vacancies",
-  "your-favorites",
-  "your-subscriptions",
+  "favorite/vacancies",
   "your-responses",
 ];
 const seeker_routes = [
   "my-resumes",
+  "my-subscriptions",
+  "favorite-vacancies",
+  "profile-negotiations",
   "your-favorites",
   "your-responses",
-  "advice",
 ];
 
 export {

@@ -76,7 +76,14 @@ const { $format_number } = useNuxtApp();
 const vacancyStore = useVacancyStore();
 const dictionaryStore = useDictionaryStore();
 const uiStore = useUIStore();
-const total = computed(() => $format_number(vacancyStore.total));
+const total = ref($format_number(vacancyStore.total) ?? 0);
+
+onBeforeMount(() => {
+  console.log(123);
+  total.value = $format_number(vacancyStore.total);
+});
+// if (process.server) {
+// }
 const isSidebarOpen = computed(() => uiStore.isSidebarOpen);
 const { toggleSidebar } = uiStore;
 
@@ -127,11 +134,6 @@ watch(
 onMounted(async () => {
   await getMyResumes();
 });
-const listStyles = {
-  left: "unset",
-  right: 0,
-  width: "auto !important",
-};
 </script>
 <style></style>
 <style scoped>

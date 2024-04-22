@@ -9,6 +9,9 @@
       class="current"
       v-model="searchInput"
       @input="onChangeHandler"
+      role="presentation"
+      autocomplete="off"
+      autofill="off"
       @focusin="onFocus"
       @focusout="onFocusout"
       :class="{ placeholder: placeholderClass }"
@@ -25,7 +28,9 @@
       >
         {{ item.name }}
       </li>
-      <li v-if="options.length === 0">Нет найдено</li>
+      <li v-if="options.length === 0">
+        {{ props.not_found }}
+      </li>
     </ul>
   </div>
 
@@ -40,8 +45,6 @@ export default {
 </script>
 
 <script setup>
-import { useFieldArray } from "vee-validate";
-
 const emit = defineEmits(["change", "update:modelValue", "input"]);
 const props = defineProps({
   options: {
@@ -64,6 +67,11 @@ const props = defineProps({
   },
   selected: {
     required: false,
+  },
+  not_found: {
+    required: false,
+    type: String,
+    default: "Не найдено",
   },
 });
 // The `name` is returned in a function because we want to make sure it stays reactive
