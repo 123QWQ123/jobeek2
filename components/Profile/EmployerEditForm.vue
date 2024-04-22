@@ -6,7 +6,7 @@
   >
     <PageLoader v-if="isLoading" />
 
-    <ProfilePhotoInput name="logo" preview="logo_url" />
+    <ProfilePhotoInput name="logo" preview="logo_url" :avatar="avatar" />
 
     <div class="input-row">
       <label for="password">Название компании <b>*</b></label>
@@ -77,6 +77,7 @@ import { useCheckJSON } from "~/composables/useCheckJSON";
 import { useDiff } from "~/composables/useDiff.js";
 import { useForm } from "vee-validate";
 
+import avatar from "~/assets/img/company.png";
 const CONFIG = useRuntimeConfig();
 
 const profileStore = useProfileStore();
@@ -167,8 +168,7 @@ const handleSubmit = async (e) => {
   setErrors({});
 
   errorMessage.value = "";
-  const formData = getFormData(values);
-  console.log(values.company_url);
+  const formData = getFormData(JSON.parse(JSON.stringify(values)));
   if (values.hasOwnProperty("password")) {
     if (values.password != null) {
       formData.append("password_confirmation", values.password);

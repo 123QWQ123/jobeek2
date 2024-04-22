@@ -8,32 +8,33 @@
             <div class="found-count">
               Найдено
               {{ total }}
-              резюме
+              вакансий
             </div>
           </div>
           <div class="col d-flex justify-content-end">
-            <div class="d-inline-flex">
-              <form class="sort mx-1 mr-2" action="#">
-                <span>Валюта:</span>
-                <CustomSelect
-                  v-model="form.currency"
-                  :options="currencyOptions"
-                  class="bg-white w-auto"
-                  @change="onChangeCurrency"
-                  :listStyles="listStyles"
-                ></CustomSelect>
-              </form>
-              <form class="sort mx-1" action="#">
-                <span>Сортировать:</span>
-                <CustomSelect
-                  v-model="form.order_by"
-                  :options="sortingOptions"
-                  @change="onChangeSorting"
-                  class="bg-white w-auto"
-                  :listStyles="listStyles"
-                ></CustomSelect>
-              </form>
-            </div>
+            <div class="d-inline-flex"></div>
+            <!--            <div class="d-inline-flex">-->
+            <!--              <form class="sort mx-1 mr-2" action="#">-->
+            <!--                <span>Валюта:</span>-->
+            <!--                <CustomSelect-->
+            <!--                  v-model="form.currency"-->
+            <!--                  :options="currencyOptions"-->
+            <!--                  class="bg-white w-auto"-->
+            <!--                  @change="onChangeCurrency"-->
+            <!--                  :listStyles="listStyles"-->
+            <!--                ></CustomSelect>-->
+            <!--              </form>-->
+            <!--              <form class="sort mx-1" action="#">-->
+            <!--                <span>Сортировать:</span>-->
+            <!--                <CustomSelect-->
+            <!--                  v-model="form.order_by"-->
+            <!--                  :options="sortingOptions"-->
+            <!--                  @change="onChangeSorting"-->
+            <!--                  class="bg-white w-auto"-->
+            <!--                  :listStyles="listStyles"-->
+            <!--                ></CustomSelect>-->
+            <!--              </form>-->
+            <!--            </div>-->
           </div>
         </div>
         <button class="mob-get-aside-btn" @click="toggle">
@@ -41,7 +42,9 @@
           Фильтры
         </button>
         <div class="aside-container">
+          <BlockLoader class="position-fixed" v-if="isLoading" />
           <ResumesFilters></ResumesFilters>
+
           <ResumesList :key="$route.fullPath"></ResumesList>
         </div>
       </div>
@@ -50,15 +53,16 @@
 </template>
 
 <script setup>
-import CustomSelect from "../UI/CustomSelect";
 import { useCurrencyOptions } from "~/composables/useCurrencyOptions";
 import { useSortingOptions } from "~/composables/useSortingOptions";
+import { useVacancyForm } from "~/composables/useVacancyForm";
 import { navigateTo } from "nuxt/app";
 import { useDictionaryStore } from "~/store/dictionary";
 import { useUIStore } from "~/store/ui";
 
 import { useNuxtApp } from "#app";
-import { useResumeStore } from "~/store/resume";
+import useQueryParams from "~/composables/useQueryParams.js";
+import { useResumeStore } from "~/store/resume.js";
 import FilterIcon from "~/components/Vacancies/FilterIcon.vue";
 
 const { $format_number } = useNuxtApp();
@@ -79,31 +83,49 @@ const { name: search_keyword } = route.query;
 const currencyOptions = ref(useCurrencyOptions());
 const sortingOptions = ref(useSortingOptions());
 
-const form = ref(useResumeForm());
+const form = ref(useVacancyForm());
 
 const isLoading = ref(false);
 const router = useRouter();
 const { clearResumes } = resumeStore;
 const onChangeSorting = (sorting) => {
   form.value.order_by = sorting;
-  console.log(sorting);
-  const params = useResumeForm(form.value, "front");
+  const params = useVacancyForm(form.value, "front");
   navigateTo({ query: params });
 };
 
 const onChangeCurrency = (currency) => {
   form.value.currency = currency;
-  const params = useResumeForm(form.value, "front");
+  const params = useVacancyForm(form.value, "front");
   navigateTo({ query: params });
 };
 
+const { getResumes } = resumeStore;
+const { getCurrentQueryParams } = useQueryParams();
+const currentParams = ref(getCurrentQueryParams());
+watch(
+  () => ({ ...getCurrentQueryParams() }),
+  async (newValues) => {
+    isLoading.value = true;
+
+    console.log(newValues);
+    currentParams.value = newValues;
+    await getResumes(newValues, false, true);
+
+    isLoading.value = false;
+  },
+);
+
+onMounted(async () => {
+  // await getMyResumes();
+});
 const listStyles = {
   left: "unset",
   right: 0,
   width: "auto !important",
 };
 </script>
-
+<style></style>
 <style scoped>
 .sort {
   align-items: baseline;

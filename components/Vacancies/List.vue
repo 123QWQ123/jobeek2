@@ -1,17 +1,15 @@
 <template>
   <!--      <PageLoader v-if="isLoading"/>-->
   <div class="content">
-    <ClientOnly>
-      <Suspense>
-        <template #default>
-          <AsyncList />
-        </template>
+    <Suspense>
+      <template #default>
+        <AsyncList />
+      </template>
 
-        <template #fallback>
-          <VacanciesLoadingList />
-        </template>
-      </Suspense>
-    </ClientOnly>
+      <template #fallback>
+        <VacanciesLoadingList />
+      </template>
+    </Suspense>
   </div>
 </template>
 

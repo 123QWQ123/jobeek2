@@ -110,22 +110,30 @@ export const useResumeStore = defineStore("resume", {
       }
       return data;
     },
-    async getResumes(payload, add = false) {
-      const { data } = await useApi("resumes/search", {
+    async getResumes(payload, add = false, new_data = false) {
+      console.log(payload, add);
+      if (new_data !== true && this.resumes.length > 0) {
+        return {
+          status: "success",
+          data: this.resumes,
+        };
+      }
+      const response = await useApi("resumes/search", {
         method: "get",
         params: payload,
       });
-      if (data && "items" in data) {
+      console.log(response);
+      if (response.status === "status") {
         if (add) {
-          this.resumes = this.resumes.concat(data.items);
+          this.resumes = this.resumes.concat(response.data.items);
           this.current_page++;
         } else {
-          this.resumes = data.items;
+          this.resumes = response.data.items;
           this.current_page = 1;
         }
-        this.total = data.found;
+        this.total = response.data.found;
       }
-      return data;
+      return response;
     },
     async getMyNegotiations(payload) {
       const response = await useApi("seeker/negotiations", {
@@ -373,10 +381,20 @@ export const useResumeStore = defineStore("resume", {
     },
 
     async addToFavorite(payload) {
-      const response = await useApi("resume/favorite", {
+      const response = await useApi("employer/resume/favorite", {
         method: "post",
         payload,
       });
+      console.log(this.resumes);
+      if (response.status === "success") {
+        this.resumes = this.resumes.map((resume) => {
+          if (String(resume.id) === payload.resume_id) {
+            resume.is_favorite = false;
+            resume.favorite_id = response.data.data.id;
+          }
+          return resume;
+        });
+      }
       return response;
     },
 
@@ -404,11 +422,18 @@ export const useResumeStore = defineStore("resume", {
       return response;
     },
 
-    async removeFromFavorite(payload) {
-      const response = await useApi("resume/favorite", {
+    async removeFromFavorite(id) {
+      const response = await useApi("employer/resume/favorite/" + id, {
         method: "delete",
-        payload,
       });
+      if (response.status === "success") {
+        this.resumes = this.resumes.map((resume) => {
+          if (resume.id === id) {
+            resume.is_favorite = false;
+          }
+          return resume;
+        });
+      }
       return response;
     },
   },

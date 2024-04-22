@@ -26,6 +26,7 @@
             :listStyles="searchSelectStyles"
             @input="updateCityInput"
             :listItemStyles="searchSelectItemStyles"
+            not_found="Город не найдено"
           />
         </div>
         <button

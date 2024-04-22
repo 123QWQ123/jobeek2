@@ -10,7 +10,7 @@
               type="text"
               name="name"
               id="keyword"
-              :placeholder="searchPlaceHolder"
+              placeholder="Какую вакансию вы ищете"
               autocomplete="off"
               v-model="search"
             />
@@ -96,21 +96,16 @@ const props = defineProps({
 
 const auth = useAuthStore();
 
-const isEmployer = computed(() => auth.isEmployer);
-const searchPlaceHolder = computed(() =>
-  auth.isEmployer ? "Какой специалист вы ищете?" : "Какую вакансию вы ищете?",
-);
 const { getCurrentQueryParams, getQueryParam } = useQueryParams();
-const params = getCurrentQueryParams();
+const params = ref(getCurrentQueryParams() ?? {});
 
 const router = useRouter();
 const route = useRoute();
 
 const vacancyStore = useVacancyStore();
 const profileStore = useProfileStore();
-const { searchCities } = profileStore;
 
-const search = ref(route.query?.search ?? undefined);
+const search = ref(route.query?.name ?? undefined);
 
 const salary = ref({
   min: undefined,
@@ -135,6 +130,8 @@ const onCityChange = (cityItem) => {
     city.value = cityItem.value;
   }
 };
+const { searchCities } = profileStore;
+const { getVacancies, getCities } = vacancyStore;
 
 const updateCityInput = async (newValue = "") => {
   const items = (await searchCities({ search: newValue })) ?? [];
@@ -144,19 +141,15 @@ const updateCityInput = async (newValue = "") => {
   }));
 };
 
-const { getVacancies, getCities } = vacancyStore;
-const vacancies = computed(() => vacancyStore.vacancies);
-
-const { cities } = storeToRefs(vacancyStore);
 const cityOptions = ref([]);
 
-const page = useRoute();
-
-const country = computed(() => {
-  if (params.countries && params.countries.length === 1) {
-    return params.countries[0];
-  } else return 1;
-});
+// const page = useRoute();
+//
+// const country = computed(() => {
+//   if (params.countries && params.countries.length === 1) {
+//     return params.countries[0];
+//   } else return 1;
+// });
 
 const isLoading = ref(false);
 
@@ -165,22 +158,16 @@ const onSubmit = async (e) => {
   isLoading.value = true;
   clearVacancies();
   const cities = city.value ? [city.value] : undefined;
-  const queryVacancy = {
+  const queryParams = {
     cities: JSON.stringify(cities),
     salary: JSON.stringify(salary.value),
     search: search.value,
   };
-  if (isEmployer.value) {
-    router.push({
-      name: "search-resumes",
-      query: queryVacancy,
-    });
-  } else {
-    router.push({
-      name: "search-vacancies",
-      query: queryVacancy,
-    });
-  }
+  router.push({
+    name: "search-vacancies",
+    query: queryParams,
+  });
+
   isLoading.value = false;
 };
 </script>

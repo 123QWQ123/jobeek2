@@ -151,14 +151,16 @@ function close() {
   state.error = null;
   state.success = null;
 }
+watch(
+  () => route.query.message,
+  () => {
+    if (route.query.message) {
+      useNuxtApp().$toast.info(route.query.message, { autoClose: 3000 });
+    }
+  },
+);
 
-const { handleAlert } = useAlert();
-
-watch(() => route.query.message, handleAlert);
-
-onMounted(() => {
-  handleAlert();
-});
+onMounted(() => {});
 </script>
 
 <template>

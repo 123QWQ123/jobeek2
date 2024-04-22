@@ -86,8 +86,6 @@ export const useProfileStore = defineStore("profile", {
     },
 
     async searchPhone(payload = {}) {
-      // domain/api/
-      console.log(payload);
       const { data } = await useApi("scam/getPhoneInfo", {
         method: "get",
         payload,
@@ -234,11 +232,9 @@ export const useProfileStore = defineStore("profile", {
       return response;
     },
     async getEmployer(url = "") {
-      console.log(url);
       const response = await useApi(url, {
         method: "get",
       });
-      console.log(response);
       if (response && response.data && "data" in response.data) {
         this.employer = response.data.data;
         this.user = { phone: this.employer?.phone };
@@ -246,13 +242,11 @@ export const useProfileStore = defineStore("profile", {
       return response;
     },
     async updateSeeker(payload) {
-      console.log(payload);
       const response = await useApi("seeker/profile", {
         method: "post",
         content_type: "multipart/form-data",
         payload,
       });
-      console.log(response);
       if ("data" in response) {
         this.user = response.data?.data;
       }
@@ -263,7 +257,6 @@ export const useProfileStore = defineStore("profile", {
       payload.forEach(function (value, key) {
         object[key] = value;
       });
-      console.log(object);
       const response = await useApi("employer/profile", {
         method: "post",
         content_type: "multipart/form-data",
@@ -309,7 +302,6 @@ export const useProfileStore = defineStore("profile", {
           },
         });
         if ("data" in response) {
-          console.log(response.data);
           return {
             status: "success",
             path: response.data.path,
@@ -348,7 +340,6 @@ export const useProfileStore = defineStore("profile", {
         content_type: "multipart/form-data",
         payload,
       });
-      console.log(response);
       return response;
     },
     async getArtifact(id) {

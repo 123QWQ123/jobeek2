@@ -1,11 +1,9 @@
 <template>
-  <form class="w-box-body" @submit.prevent="handleSubmit">
+  <form class="w-box-body" autocomplete="off" @submit.prevent="handleSubmit">
     <PageLoader v-if="isLoading" />
 
-    <div class="alert alert-danger" v-if="errorMessage">
-      {{ errorMessage }}
-    </div>
-    <ProfilePhotoInput name="photo" preview="photo_url" />
+    <ProfilePhotoInput name="photo" preview="photo_url" :avatar="avatar" />
+
     <div class="input-row">
       <label for="name">Имя и фамилия <b>*</b></label>
       <div class="input-wrapper">
@@ -28,7 +26,8 @@
           :options="countryOptions"
           name="country_id"
           placeholder="Выберите страну"
-        ></VeeSelectWithSearch>
+          not_found="Страна не найдено"
+        />
 
         <div class="mt-2">
           <VeeSelectWithSearch
@@ -36,7 +35,8 @@
             @input="updateCityInput"
             name="city_id"
             :placeholder="'Выберите город'"
-          ></VeeSelectWithSearch>
+            not_found="Город не найдено"
+          />
         </div>
       </div>
 
@@ -84,6 +84,8 @@ import useFormValidation from "~/composables/useFormValidation.js";
 import useResumeHooks from "~/hooks/useResumeHooks.js";
 import { useDiff } from "~/composables/useDiff.js";
 import PhoneDisabledInput from "~/components/Profile/PhoneDisabledInput.vue";
+
+import avatar from "~/assets/img/russian-man.png";
 
 const profileStore = useProfileStore();
 
@@ -236,7 +238,7 @@ const handleSubmit = async (e) => {
   validate();
   setErrors({});
   errorMessage.value = "";
-  const formData = getFormData(values);
+  const formData = getFormData(JSON.parse(JSON.stringify(values)));
   if (values.hasOwnProperty("password")) {
     if (values.password !== "") {
       formData.append("password_confirmation", values.password);

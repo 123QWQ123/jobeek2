@@ -19,12 +19,7 @@
             <span class="count">{{ item.company }}</span>
           </div>
         </div>
-        <div class="salary" v-if="item.salary_from">
-          От {{ vueNumberFormat(item.salary_from, {}) }} {{ item.currency }}
-        </div>
-        <div class="salary" v-else>
-          До {{ vueNumberFormat(item.salary_to, {}) }} {{ item.currency }}
-        </div>
+        <div class="salary">{{ salaryText }}</div>
       </div>
       <div class="favorites-card-body">
         <div class="time-location">
@@ -36,7 +31,7 @@
       <div class="favorites-card-footer">
         <div class="favorites-card-footer-row">
           <div class="group me-auto">
-            <div class="select-resume-row">
+            <div class="select-resume-row" v-if="useAuthStore().isAuthed">
               <div class="custom-select-wrapper">
                 <CustomSelectWithRadio
                   label="Выберите резюме"
@@ -55,6 +50,14 @@
               <span class="text text-danger" v-if="selectedResumeError">
                 {{ selectedResumeError }}
               </span>
+            </div>
+            <div
+              class="select-resume-row d-inline-flex justify-content-center align-items-center"
+            >
+              <nuxt-link class="button-accent" :to="{ name: 'sign-in' }"
+                >Войти</nuxt-link
+              >
+              чтобы откликаться
             </div>
           </div>
           <div class="group">
@@ -90,10 +93,21 @@ import Swal from "sweetalert2";
 import { toast } from "vue3-toastify";
 import { ref } from "vue";
 import { useResumeStore } from "~/store/resume.js";
+import { useAuthStore } from "~/store/auth.js";
 
+const { $format_number } = useNuxtApp();
 const props = defineProps(["item"]);
 const { item } = props;
-
+const salaryText = computed(() => {
+  if (item.salary_from && item.salary_to) {
+    return `${$format_number(item.salary_from)} - ${$format_number(item.salary_to)} ${item.currency}`;
+  } else if (item.salary_from && !item.salary_to) {
+    return `От ${$format_number(item.salary_from)} ${item.currency}`;
+  } else if (!item.salary_from && item.salary_to) {
+    return `До ${$format_number(item.salary_from)} ${item.currency}`;
+  }
+  return "По договору";
+});
 const isFavorite = ref(item.is_favorite ?? false);
 
 const selectedResume = ref(null);

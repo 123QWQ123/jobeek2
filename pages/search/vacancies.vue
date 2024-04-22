@@ -14,25 +14,25 @@ const authStore = useAuthStore();
 const isEmployer = computed(() => authStore.isEmployer);
 
 const route = useRoute();
+
+watch(
+  () => authStore.isEmployer,
+  (new_value) => {
+    if (!new_value) {
+      navigateTo({ name: "search-resumes" });
+    }
+  },
+);
 onMounted(async () => {
   console.log("only client - vacancies");
-  if (isEmployer.value) {
+  if (!isEmployer.value) {
     navigateTo({ name: "search-resumes" });
   }
-
-  watch(
-    () => isEmployer.value,
-    (new_value) => {
-      if (new_value) {
-        navigateTo({ name: "search-resumes" });
-      }
-    },
-  );
 });
 </script>
 <template>
   <div>
-    <SearchForm2 with_wrapper="true" />
+    <SearchVacancyForm with_wrapper="true" />
 
     <VacanciesResults></VacanciesResults>
   </div>

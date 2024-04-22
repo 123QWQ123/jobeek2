@@ -8,6 +8,7 @@ definePageMeta({
 
 const scamStore = useScamStore();
 
+const errorMessage = ref(null);
 const { searchPhone, getScamOptions } = scamStore;
 
 const route = useRoute();
@@ -25,15 +26,13 @@ onMounted(async () => {
 
   if (route.query.hasOwnProperty("phone")) {
     const resData = await searchPhone({ phone: route.query.phone });
-    console.log(resData);
-    if (resData.status === "success") {
-      phones.value = resData.data.data;
-      console.log(phones.value);
-    }
+    isLoading.value = false;
     phoneMask.value.value = route.query.phone;
-    setTimeout(() => {
-      isLoading.value = false;
-    }, 1000);
+    if (resData.status !== "success") {
+      errorMessage.value = resData.message;
+      return;
+    }
+    phones.value = resData.data.data;
   } else {
     isLoading.value = false;
   }
@@ -60,12 +59,13 @@ watch(
     isLoading.value = true;
     phoneMask.value.value = newPhone;
     const resData = await searchPhone({ phone: newPhone });
-    if (resData.status === "success") {
-      phones.value = resData.data;
+    isLoading.value = false;
+
+    if (resData.status !== "success") {
+      errorMessage.value = resData.message;
+      return;
     }
-    setTimeout(() => {
-      isLoading.value = false;
-    }, 1000);
+    phones.value = resData.data;
   },
 );
 </script>
@@ -106,10 +106,14 @@ watch(
             class="search-phone-input"
             ref="phoneInputElement"
             type="text"
-            placeholder="+777"
+            placeholder="+7"
           />
-          <button class="button-accent">Сохранить</button>
+          <button class="button-accent">Поиск</button>
         </form>
+
+        <span class="text-danger">
+          {{ errorMessage }}
+        </span>
       </div>
     </div>
 

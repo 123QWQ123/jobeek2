@@ -132,8 +132,8 @@ onMounted(async () => {
 const isLoading = ref(false);
 const { clearVacancies } = vacancyStore;
 const onSubmit = (e) => {
-  const params = useVacancyForm(form.value, "front");
-  navigateTo({ name: "search-vacancies", query: params });
+  const params = {name: search.value, cities: JSON.stringify(cities)};);
+  navigateTo({ name: "search-resumes", query: params });
 };
 
 const searchPlaceHolder = computed(() =>

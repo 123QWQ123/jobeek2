@@ -1,5 +1,5 @@
 <script setup>
-import { useAuthStore } from "../../store/auth";
+import { useAuthStore } from "~/store/auth";
 
 useHead({
   title: "Поиск резюме - Jobeek",
@@ -9,14 +9,21 @@ definePageMeta({
 });
 const authStore = useAuthStore();
 const isEmployer = computed(() => authStore.isEmployer);
-
+watch(
+  () => authStore.isEmployer,
+  (new_value) => {
+    if (new_value) {
+      navigateTo({ name: "search-vacancies" });
+    }
+  },
+);
 const route = useRoute();
 onMounted(() => {
   console.log("only client");
   console.log(isEmployer.value);
-  // if (!isEmployer.value){
-  //   navigateTo({name: 'search-vacancies'});
-  // }
+  if (authStore.isEmployer) {
+    navigateTo({ name: "search-vacancies" });
+  }
   // watch(() => isEmployer.value, (new_value) => {
   //   if (!new_value){
   //     navigateTo({name: 'search-vacancies'});
@@ -26,7 +33,7 @@ onMounted(() => {
 </script>
 <template>
   <div>
-    <ResumesForm></ResumesForm>
+    <SearchResumeForm with_wrapper="true" />
     <ResumesResults></ResumesResults>
   </div>
 </template>

@@ -117,6 +117,7 @@ const onSubmit = async () => {
     phone: state.phone.val,
   });
 
+  isLoading.value = false;
   if (response.status !== "success") {
     if (response.data && "errors" in response.data) {
       Swal.fire({
@@ -151,6 +152,8 @@ const onSMSSubmit = async () => {
     code: state.code.val,
     token: state.token,
   });
+  isLoading.value = false;
+
   if (response.status !== "success") {
     if ("errors" in response && response.message) {
       Swal.fire({
@@ -189,8 +192,9 @@ const onPasswordSubmit = async () => {
     password_confirmation: state.password_confirmation.val,
   });
 
+  isLoading.value = false;
+
   if (response.status !== "success") {
-    isLoading.value = false;
     if ("errors" in response && response.message) {
       Swal.fire({
         title: "Ошибка!",
@@ -208,7 +212,7 @@ const onPasswordSubmit = async () => {
     }
     return;
   }
-  navigateTo({ name: "sign-in" });
+  return navigateTo({ name: "sign-in" });
 };
 
 function close() {

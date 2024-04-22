@@ -25,6 +25,11 @@
       >
         {{ item.name }}
       </li>
+
+      <li v-if="options.length === 0">
+        <span v-if="isFirstOpen">{{ props.hint }}</span>
+        <span v-else>{{ props.not_found }}</span>
+      </li>
     </ul>
   </div>
 </template>
@@ -59,12 +64,31 @@ const props = defineProps({
   selected: {
     required: false,
   },
+  not_found: {
+    required: false,
+    type: String,
+    default: "Не найдено",
+  },
+  hint: {
+    required: false,
+    type: String,
+    default: "Введите...",
+  },
 });
 
 const isFirst = ref(false);
+const isFirstOpen = ref(true);
 const isOpen = ref(false);
+
+// watch(
+//   () => isOpen.value,
+//   (newValue) => {
+//     console.log(newValue);
+//
+//   },
+// );
+
 const options = ref(props.options);
-const placeholder = computed(() => props.placeholder);
 const searchInput = ref(props.placeholder ?? "");
 
 watch(
@@ -107,20 +131,6 @@ onMounted(() => {
   }
 });
 
-const labelText = computed(() => {
-  if (!isOpen.value) {
-    if (selectedOption.value) {
-      return selectedOption.value.name;
-    } else {
-      if (isFirst.value || !selectedOption.value) {
-        return placeholder.value;
-      }
-      return searchInput.value;
-    }
-  } else {
-    return searchInput.value;
-  }
-});
 const input = ref("");
 
 const placeholderClass = computed(() => {
@@ -159,7 +169,10 @@ function onSelect(id) {
 
 const onChangeHandler = (e) => {
   isOpen.value = true;
+
   const typedName = e.target.value.toLowerCase();
+  if (typedName.length > 0) isFirstOpen.value = false;
+
   emit("input", typedName);
   if (typedName === "") {
     options.value = props.options;
