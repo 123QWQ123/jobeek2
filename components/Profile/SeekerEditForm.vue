@@ -85,7 +85,7 @@ import useResumeHooks from "~/hooks/useResumeHooks.js";
 import { useDiff } from "~/composables/useDiff.js";
 import PhoneDisabledInput from "~/components/Profile/PhoneDisabledInput.vue";
 
-import avatar from "~/assets/img/russian-man.png";
+import avatar from "~/assets/img/jobeek-avatar.png";
 
 const profileStore = useProfileStore();
 
