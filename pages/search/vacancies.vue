@@ -18,14 +18,14 @@ const route = useRoute();
 watch(
   () => authStore.isEmployer,
   (new_value) => {
-    if (!new_value) {
+    if (new_value) {
       navigateTo({ name: "search-resumes" });
     }
   },
 );
 onMounted(async () => {
   console.log("only client - vacancies");
-  if (!isEmployer.value) {
+  if (isEmployer.value) {
     navigateTo({ name: "search-resumes" });
   }
 });
