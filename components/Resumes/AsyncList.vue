@@ -1,7 +1,6 @@
 <template>
   <div class="content">
     <div>
-      {{ resumes }}
       <ul class="favorites-list">
         <ResumesItem v-for="item in resumes" :key="item.id" :item="item" />
       </ul>
@@ -70,15 +69,19 @@ onMounted(() => {
     isMore.value = true;
   }
 });
-watch(resumes, (newValues) => {
-  if (newValues.length > 0) {
-    isMore.value = true;
-  }
-});
+watch(
+  () => resumes.value,
+  (newValues) => {
+    if (newValues.length > 0) {
+      isMore.value = true;
+    }
+  },
+);
 const loadMore = async () => {
   isLoading.value = true;
   const res = await getResumes(
     { ...params.value, page: parseInt(current_page.value) + 1 },
+    true,
     true,
   );
   isLoading.value = false;

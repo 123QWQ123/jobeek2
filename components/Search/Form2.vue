@@ -10,7 +10,7 @@
               type="text"
               name="name"
               id="keyword"
-              placeholder="Какую вакансию вы ищете"
+              placeholder="Какую вакансию вы ищете?"
               autocomplete="off"
               v-model="search"
             />
@@ -50,7 +50,7 @@
           type="text"
           name="name"
           id="keyword"
-          :placeholder="searchPlaceHolder"
+          placeholder="Какую вакансию вы ищете?"
           autocomplete="off"
           v-model="search"
         />
@@ -163,10 +163,17 @@ const onSubmit = async (e) => {
     salary: JSON.stringify(salary.value),
     search: search.value,
   };
-  router.push({
-    name: "search-vacancies",
-    query: queryParams,
-  });
+  if (auth.isEmployer) {
+    navigateTo({
+      name: "search-resumes",
+      query: queryParams,
+    });
+  } else {
+    navigateTo({
+      name: "search-vacancies",
+      query: queryParams,
+    });
+  }
 
   isLoading.value = false;
 };

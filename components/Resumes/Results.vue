@@ -105,25 +105,18 @@ const { getCurrentQueryParams } = useQueryParams();
 const currentParams = ref(getCurrentQueryParams());
 watch(
   () => ({ ...getCurrentQueryParams() }),
-  async (newValues) => {
-    isLoading.value = true;
+  async (newValues, oldValues) => {
+    if (JSON.stringify(newValues) !== JSON.stringify(oldValues)) {
+      isLoading.value = true;
 
-    console.log(newValues);
-    currentParams.value = newValues;
-    await getResumes(newValues, false, true);
+      console.log(newValues);
+      currentParams.value = newValues;
+      await getResumes(newValues, false, true);
 
-    isLoading.value = false;
+      isLoading.value = false;
+    }
   },
 );
-
-onMounted(async () => {
-  // await getMyResumes();
-});
-const listStyles = {
-  left: "unset",
-  right: 0,
-  width: "auto !important",
-};
 </script>
 <style></style>
 <style scoped>
