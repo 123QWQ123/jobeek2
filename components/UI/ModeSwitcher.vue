@@ -18,6 +18,7 @@
     <span class="v v2" :class="{ active: auth.isEmployer }" title="Работодатель"
       >Работодатель</span
     >
+    {{ auth.isEmployer }}
   </div>
 </template>
 

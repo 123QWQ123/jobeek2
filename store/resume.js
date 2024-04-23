@@ -111,7 +111,6 @@ export const useResumeStore = defineStore("resume", {
       return data;
     },
     async getResumes(payload, add = false, new_data = false) {
-      console.log(payload, add);
       if (new_data !== true && this.resumes.length > 0) {
         return {
           status: "success",
@@ -122,8 +121,7 @@ export const useResumeStore = defineStore("resume", {
         method: "get",
         params: payload,
       });
-      console.log(response);
-      if (response.status === "status") {
+      if (response.status === "success") {
         if (add) {
           this.resumes = this.resumes.concat(response.data.items);
           this.current_page++;
@@ -141,7 +139,6 @@ export const useResumeStore = defineStore("resume", {
         params: payload,
       });
       if (response.hasOwnProperty("data")) {
-        console.log(response.data);
         this.my_negotiations = response.data.items;
       }
       return response;
