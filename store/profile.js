@@ -226,7 +226,7 @@ export const useProfileStore = defineStore("profile", {
       if (response.status === "success") {
         const { data } = response;
         if (!data) return;
-        this.seeker = data.data;
+        this.seeker = { ...data.data };
         this.user = { phone: this.seeker?.phone };
       }
       return response;

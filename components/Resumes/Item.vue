@@ -22,12 +22,11 @@
               {{ item.title }}
             </NuxtLink>
           </a>
-          <div class="salary">
-            {{ salaryText }}
-          </div>
-          <!--          <span class="yo">30 лет</span>-->
-
-          <div class="resume-tag">Рассматривает предложения</div>
+          <client-only>
+            <div class="salary">
+              {{ salaryText }}
+            </div>
+          </client-only>
         </div>
 
         <div class="resume-card-t2__head-img">
@@ -129,6 +128,8 @@
 </template>
 
 <script setup>
+import jobeekPhoto from "~/assets/img/jobeek-avatar.png";
+
 import moment from "moment";
 import Swal from "sweetalert2";
 import { useResumeStore } from "~/store/resume.js";
@@ -272,7 +273,7 @@ const toggleFavorite = async () => {
 const photo = computed(() => {
   if (item.photo) {
     return item.photo;
-  } else return new URL("/assets/img/avatar.png", import.meta.url);
+  } else return jobeekPhoto;
 });
 </script>
 

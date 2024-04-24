@@ -104,35 +104,37 @@ async function onSubmit() {
     }
     const route_name = route.query.redirect;
 
-    // if (isEmployer && auth.employer && auth.employer.is_completed) {
-    //   setTimeout(() => {
-    //     if (route_name) {
-    //       router.replace({ name: route_name });
-    //     } else {
-    //       router.replace({ name: "my-vacancies" });
-    //     }
-    //   });
-    //
-    //   return;
-    // }
-    // if (!isEmployer && auth.seeker && auth.seeker.is_completed) {
-    //   setTimeout(() => {
-    //     if (route_name) {
-    //       router.replace({ name: route_name });
-    //     } else {
-    //       router.replace({ name: "my-resumes" });
-    //     }
-    //   });
-    //   return;
-    // }
-
-    setTimeout(() => {
-      if (route_name) {
-        router.replace({ name: route_name });
-      } else {
-        router.replace({ name: "profile" });
+    if (auth.isEmployer && auth.employer) {
+      if (auth.employer.is_completed) {
+        if (route_name) {
+          navigateTo({ name: route_name });
+        } else {
+          navigateTo({ name: "my-vacancies" });
+        }
+        return;
       }
-    });
+
+      return navigateTo({ name: "profile" });
+    }
+
+    if (!auth.isEmployer && auth.seeker) {
+      if (auth.seeker.is_completed) {
+        if (route_name) {
+          navigateTo({ name: route_name });
+        } else {
+          navigateTo({ name: "my-resumes" });
+        }
+        return;
+      }
+
+      return navigateTo({ name: "profile" });
+    }
+
+    if (route_name) {
+      navigateTo({ name: route_name });
+    } else {
+      navigateTo({ name: "profile" });
+    }
   }
 }
 

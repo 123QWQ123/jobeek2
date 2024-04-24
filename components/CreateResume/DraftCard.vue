@@ -5,7 +5,7 @@
       <div class="descr">
         Получайте уведомления о новых по созданному запросу
       </div>
-      <span class="arrow"></span>
+      <!--      <span class="arrow"></span>-->
     </div>
 
     <div class="w-box-body" :class="{ disabled: isLoading }">
@@ -161,17 +161,10 @@ const props = defineProps(["title"]);
 
 const resumeStore = useResumeStore();
 const profileStore = useProfileStore();
-const CONFIG = useRuntimeConfig();
-const route = useRoute();
-
-const { seeker } = profileStore;
-const { resume } = storeToRefs(resumeStore);
 const formTitle = computed(() => props.title);
 
 const isSaved = ref(false);
 const isChanged = ref(false);
-const isFirst = ref(true);
-const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
 const schema = z.object({

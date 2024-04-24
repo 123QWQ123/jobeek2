@@ -7,7 +7,7 @@
       >Соискатель</span
     >
     <div class="theme-checker">
-      <input type="checkbox" id="employer" :checked="auth.isEmployer" />
+      <input type="checkbox" id="employer" :checked="!auth.isEmployer" />
       <div class="theme-checker-ui">
         <div
           class="circle"
@@ -18,7 +18,6 @@
     <span class="v v2" :class="{ active: auth.isEmployer }" title="Работодатель"
       >Работодатель</span
     >
-    {{ auth.isEmployer }}
   </div>
 </template>
 

@@ -12,23 +12,17 @@ const isEmployer = computed(() => authStore.isEmployer);
 watch(
   () => authStore.isEmployer,
   (new_value) => {
-    if (new_value) {
+    if (!new_value) {
       navigateTo({ name: "search-vacancies" });
     }
   },
 );
-const route = useRoute();
 onMounted(() => {
   console.log("only client");
   console.log(isEmployer.value);
-  if (authStore.isEmployer) {
+  if (!authStore.isEmployer) {
     navigateTo({ name: "search-vacancies" });
   }
-  // watch(() => isEmployer.value, (new_value) => {
-  //   if (!new_value){
-  //     navigateTo({name: 'search-vacancies'});
-  //   }
-  // })
 });
 </script>
 <template>

@@ -77,7 +77,8 @@ import { useCheckJSON } from "~/composables/useCheckJSON";
 import { useDiff } from "~/composables/useDiff.js";
 import { useForm } from "vee-validate";
 
-import avatar from "~/assets/img/company.png";
+import avatar from "~/assets/img/jobeek-avatar.png";
+
 const CONFIG = useRuntimeConfig();
 
 const profileStore = useProfileStore();
