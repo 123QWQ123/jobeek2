@@ -22,16 +22,16 @@
     <div class="input-row">
       <label for="country">Город проживания <b>*</b></label>
       <div class="input-wrapper">
-        <VeeSelectWithSearch
-          :options="countryOptions"
-          name="country_id"
-          placeholder="Выберите страну"
-          not_found="Страна не найдено"
-        />
+        <!--        <VeeSelectWithSearch-->
+        <!--          :options="countryOptions"-->
+        <!--          name="country_id"-->
+        <!--          placeholder="Выберите страну"-->
+        <!--          not_found="Страна не найдено"-->
+        <!--        />-->
 
         <div class="mt-2">
           <VeeSelectWithSearch
-            :options="cityOptions"
+            :options="countryAndCityOptions"
             @input="updateCityInput"
             name="city_id"
             :placeholder="'Выберите город'"
@@ -91,16 +91,17 @@ const profileStore = useProfileStore();
 
 const { getUser } = profileStore;
 const { refreshSeeker } = useAuthStore();
-const { getCityNameFromArea2 } = useResumeHooks();
-const { searchCities } = profileStore;
+const { getCityNameFromArea, getCityNameFromArea2 } = useResumeHooks();
+const { searchCities, searchAreas } = profileStore;
 const updateCityInput = async (newValue = "") => {
   if (newValue) {
-    const items = await searchCities({
+    const items = await searchAreas({
       search: newValue,
     });
-    cityOptions.value = items.map((item) => ({
-      value: item.id,
-      name: getCityNameFromArea2(item),
+    console.log(items);
+    countryAndCityOptions.value = items.map((item) => ({
+      value: item.cityId,
+      name: getCityNameFromArea(item),
     }));
   }
 };
@@ -179,6 +180,7 @@ await getCountries();
 
 const { countryOptions } = storeToRefs(profileStore);
 const cityOptions = ref([]);
+const countryAndCityOptions = ref([]);
 
 const { value: country_id, setValue: setCountryId } = useField("country_id");
 
@@ -194,7 +196,7 @@ watch(
 watch(
   () => profileStore.cities,
   (newItems) => {
-    cityOptions.value = newItems.map((item) => ({
+    countryAndCityOptions.value = newItems.map((item) => ({
       value: item.id,
       name: getCityNameFromArea2(item),
     }));

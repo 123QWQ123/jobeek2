@@ -27,6 +27,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         path: "/sign-in",
         query: {
           message: "Пожалуйста, зайдите в профиль",
+          redirect: to.name,
         },
       });
     }
