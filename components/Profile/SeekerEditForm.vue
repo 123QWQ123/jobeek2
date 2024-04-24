@@ -37,6 +37,13 @@
             :placeholder="'Выберите город'"
             not_found="Город не найдено"
           />
+          <div
+            v-if="isCityLoading"
+            class="ms-2 bg-primary spinner-grow spinner-grow-sm"
+            role="status"
+          >
+            <span class="visually-hidden">Loading...</span>
+          </div>
         </div>
       </div>
 
@@ -93,11 +100,17 @@ const { getUser } = profileStore;
 const { refreshSeeker } = useAuthStore();
 const { getCityNameFromArea, getCityNameFromArea2 } = useResumeHooks();
 const { searchCities, searchAreas } = profileStore;
+const isCityLoading = ref(false);
+
 const updateCityInput = async (newValue = "") => {
   if (newValue) {
+    isCityLoading.value = true;
+    console.log(newValue);
     const items = await searchAreas({
       search: newValue,
     });
+    isCityLoading.value = false;
+
     console.log(items);
     countryAndCityOptions.value = items.map((item) => ({
       value: item.cityId,
@@ -141,6 +154,7 @@ const getFields = (newObject) => {
     phone: newObject.phone,
     birth_date: newObject.birth_date,
     city_id: newObject.city_id,
+    city_name: newObject.city_name,
     country_id: newObject.country_id ?? 1,
     photo_url: newObject.photo_url,
   };
@@ -159,9 +173,9 @@ watch(
     const diffData = useDiff(newData, oldData);
     if (Object.keys(diffData).length) {
       resetForm({ values: newData });
-      const country_id = newData.country_id;
-      if (country_id) {
-        getCities({ country_ids: [country_id] });
+      console.log(newData);
+      if (newData.city_id) {
+        updateCityInput(newData.city_name);
       }
     }
   },
