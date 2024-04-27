@@ -52,6 +52,7 @@
               </span>
             </div>
             <div
+              v-else
               class="select-resume-row d-inline-flex justify-content-center align-items-center"
             >
               <nuxt-link class="button-accent" :to="{ name: 'sign-in' }"

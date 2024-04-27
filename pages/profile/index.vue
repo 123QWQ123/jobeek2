@@ -5,15 +5,17 @@ definePageMeta({
   layout: "cabinet",
 });
 const authStore = useAuthStore();
-console.log(authStore.isEmployer + "profile/index");
-if (authStore.isEmployer) {
-  navigateTo({ name: "profile-employer" });
-} else {
+
+if (process.server) {
   navigateTo({ name: "profile-seeker" });
 }
+
 // onMounted(() => {
-//   console.log(authStore.isEmployer);
+//   setTimeout(() => {
+//     if (authStore.isEmployer) {
+//     } else {
+//       navigateTo({ name: "profile-seeker" });
+//     }
+//   }, 100);
 // });
 </script>
-
-<template></template>

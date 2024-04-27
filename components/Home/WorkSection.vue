@@ -42,6 +42,7 @@ v
     <div v-else>
       <div class="swiper cards-slider-row">
         <swiper
+          v-if="isInitialized"
           :slides-per-view="'auto'"
           :space-between="20"
           :class="'cards-slider'"
@@ -85,9 +86,27 @@ const vacancyStore = useVacancyStore();
 const { getVacancies } = vacancyStore;
 const { top_10: vacancies } = storeToRefs(vacancyStore);
 const isLoading = ref(false);
+const isInitialized = ref(false);
+watch(
+  () => vacancyStore.top_10,
+  () => {
+    if (vacancyStore.top_10.length > 0) {
+      isInitialized.value = true;
+    } else {
+      isInitialized.value = false;
+    }
+  },
+);
+
 onMounted(async () => {
   isLoading.value = true;
   await getVacancies({ countries: [1], region_ids: [22] });
+  const TIMEOUT = 500;
+  if (vacancies.value.length > 0) {
+    setTimeout(() => {
+      isInitialized.value = true;
+    }, TIMEOUT);
+  }
   isLoading.value = false;
 });
 const getProfessionalRoles = (objectData) => {

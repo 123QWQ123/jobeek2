@@ -2,6 +2,7 @@
   <form class="w-box-body" autocomplete="off" @submit.prevent="handleSubmit">
     <PageLoader v-if="isLoading" />
 
+    <!--    {{ values }}-->
     <ProfilePhotoInput name="photo" preview="photo_url" :avatar="avatar" />
 
     <div class="input-row">
@@ -20,34 +21,26 @@
       </div>
     </div>
     <div class="input-row">
-      <label for="country">Город проживания <b>*</b></label>
+      <label for="country">Страна и город проживания <b>*</b></label>
       <div class="input-wrapper">
-        <!--        <VeeSelectWithSearch-->
-        <!--          :options="countryOptions"-->
-        <!--          name="country_id"-->
-        <!--          placeholder="Выберите страну"-->
-        <!--          not_found="Страна не найдено"-->
-        <!--        />-->
-
-        <div class="mt-2">
+        <div class="c2">
           <VeeSelectWithSearch
-            :options="countryAndCityOptions"
+            :options="countryOptions"
+            name="country_id"
+            placeholder="Выберите страну"
+            not_found="Страна не найдено"
+          />
+
+          <VeeSelectWithSearch
+            v-if="cityOptions.length > 0"
+            :options="cityOptions"
             @input="updateCityInput"
             name="city_id"
             :placeholder="'Выберите город'"
             not_found="Город не найдено"
           />
-          <div
-            v-if="isCityLoading"
-            class="ms-2 bg-primary spinner-grow spinner-grow-sm"
-            role="status"
-          >
-            <span class="visually-hidden">Loading...</span>
-          </div>
         </div>
       </div>
-
-      <div class="input-wrapper mt-2"></div>
     </div>
     <div class="input-row">
       <label for="phone">Телефон</label>
@@ -99,27 +92,21 @@ const profileStore = useProfileStore();
 const { getUser } = profileStore;
 const { refreshSeeker } = useAuthStore();
 const { getCityNameFromArea, getCityNameFromArea2 } = useResumeHooks();
-const { searchCities, searchAreas } = profileStore;
+const { searchCities } = profileStore;
 const isCityLoading = ref(false);
-
+const { countryOptions } = storeToRefs(profileStore);
 const updateCityInput = async (newValue = "") => {
   if (newValue) {
-    isCityLoading.value = true;
-    console.log(newValue);
-    const items = await searchAreas({
+    const items = await searchCities({
       search: newValue,
     });
-    isCityLoading.value = false;
-
-    console.log(items);
-    countryAndCityOptions.value = items.map((item) => ({
-      value: item.cityId,
-      name: getCityNameFromArea(item),
+    cityOptions.value = items.map((item) => ({
+      value: item.id,
+      name: getCityNameFromArea2(item),
     }));
   }
 };
 
-const seeker = computed(() => profileStore.seeker);
 const schema = computed(() => {
   return {
     first_name: "required|min:1|max:100",
@@ -137,11 +124,33 @@ const { values, errors, meta, setErrors, resetForm, validate } = useForm({
     email: null,
     birth_date: null,
     city_id: null,
-    country_id: 1,
+    country_id: null,
   },
   initialTouched: true,
   validationSchema: schema,
 });
+const cityOptions = ref([]);
+
+const { value: country_id, setValue: setCountryId } = useField("country_id");
+
+watch(
+  () => country_id.value,
+  (new_value) => {
+    if (new_value) {
+      getCities({ country_ids: [new_value] });
+    }
+  },
+);
+
+watch(
+  () => profileStore.cities,
+  (newItems) => {
+    cityOptions.value = newItems.map((item) => ({
+      value: item.id,
+      name: getCityNameFromArea2(item),
+    }));
+  },
+);
 
 const sectionData = ref({});
 
@@ -155,8 +164,8 @@ const getFields = (newObject) => {
     birth_date: newObject.birth_date,
     city_id: newObject.city_id,
     city_name: newObject.city_name,
-    country_id: newObject.country_id ?? 1,
     photo_url: newObject.photo_url,
+    country_id: newObject.country_id ?? 1,
   };
 };
 watch(
@@ -173,9 +182,9 @@ watch(
     const diffData = useDiff(newData, oldData);
     if (Object.keys(diffData).length) {
       resetForm({ values: newData });
-      console.log(newData);
-      if (newData.city_id) {
-        updateCityInput(newData.city_name);
+      const country_id = newData.country_id;
+      if (country_id) {
+        getCities({ country_ids: [country_id] });
       }
     }
   },
@@ -192,20 +201,7 @@ onMounted(() => {
 const { getCountries, getCities } = profileStore;
 await getCountries();
 
-const { countryOptions } = storeToRefs(profileStore);
-const cityOptions = ref([]);
 const countryAndCityOptions = ref([]);
-
-const { value: country_id, setValue: setCountryId } = useField("country_id");
-
-watch(
-  () => country_id.value,
-  (new_value) => {
-    if (new_value) {
-      getCities({ country_ids: [new_value] });
-    }
-  },
-);
 
 watch(
   () => profileStore.cities,
@@ -261,6 +257,9 @@ const handleSubmit = async (e) => {
     } else {
       formData.delete("password");
     }
+  }
+  if (values.hasOwnProperty("photo") && values.photo instanceof File) {
+    formData.append("photo", values.photo) !== "";
   }
 
   formData.append("_method", "put");
