@@ -13,6 +13,12 @@ const props = defineProps({
   },
 });
 const { value, setValue, errorMessage, setErrors } = useField(() => props.name);
+const {
+  value: value_to_verify,
+  setValue: setValueToVerify,
+  errorMessage: errorMessageVerify,
+  setErrors: setVerifyErrors,
+} = useField(() => props.name);
 const email_to_verify = ref();
 const email = ref(value.value);
 const is_email_to_verify_sent = ref(false);
@@ -49,7 +55,7 @@ const disabled = computed(() => {
 const reAssignEmails = (newObject) => {
   email_to_verify.value = newObject.email_to_verify;
   email.value = newObject.email;
-  currentValue.value = newObject.email ?? newObject.email_to_verify;
+  currentValue.value = newObject.email_to_verify ?? newObject.email;
   if (!newObject.is_completed) {
     if (newObject.email !== null) {
       isCheckButton.value = false;
@@ -107,12 +113,6 @@ onMounted(() => {
   }
 });
 
-// watch(
-//   () => value.value,
-//   (newEmail) => {
-//     setValue(newEmail);
-//   },
-// );
 const { confirmEmail, checkEmailConfirmation } = profileStore;
 const onEmailConfirm = async (e) => {
   e.preventDefault();
@@ -149,9 +149,10 @@ const onEmailConfirm = async (e) => {
       @click="onEmailConfirm"
       v-if="isConfirmButton"
       class="btn btn-outline-primary absolute_button"
+      @hover="hovered = true"
     >
-      Потверждать
-      <Loader class="text-light spinner-border-sm" v-if="isLoading" />
+      Подтверждать
+      <Loader class="spinner-border-sm" v-if="isLoading" />
     </span>
     <span
       v-if="isConfirmationSent"
@@ -199,6 +200,10 @@ const onEmailConfirm = async (e) => {
 
   <div class="text-success" v-if="is_email_to_verify_sent">
     На вашу электронную почту отправлено письмо с кодом подтверждения.
+  </div>
+  <div class="text-info" v-if="is_sent_and_verified">
+    Войдите в электронную почту и откройте письмо с заголовком Jobeek и
+    подтвердите свой адрес электронной почты.
   </div>
   <div class="text-danger">
     {{ errorMessage }}

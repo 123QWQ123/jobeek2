@@ -45,11 +45,11 @@
               ><span>Отклики<span class="count">12</span></span></NuxtLink
             >
           </li>
-          <li v-else>
-            <NuxtLink :to="{ name: 'profile-negotiations' }">
-              <span>Отклики и приглашения<span class="count">12</span></span>
-            </NuxtLink>
-          </li>
+          <!--          <li v-else>-->
+          <!--            <NuxtLink :to="{ name: 'profile-negotiations' }">-->
+          <!--              <span>Отклики и приглашения<span class="count">12</span></span>-->
+          <!--            </NuxtLink>-->
+          <!--          </li>-->
           <li v-if="!isEmployer">
             <NuxtLink :to="{ name: 'my-resumes' }">
               <span>Мои резюме</span></NuxtLink

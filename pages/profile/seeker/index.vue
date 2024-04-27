@@ -10,13 +10,6 @@ useHead({
   title: "Ваш аккаунт",
 });
 const authStore = useAuthStore();
-const isEmployer = computed(() => authStore.isEmployer);
-
-const route = useRoute();
-
-const error = computed(() => {
-  return route.query.message;
-});
 
 const isCompleted = computed(() => {
   if (!authStore.isEmployer) {
@@ -44,10 +37,6 @@ watch(
     }
   },
 );
-
-onMounted(() => {
-  handleAlert();
-});
 </script>
 
 <template>
@@ -65,12 +54,9 @@ onMounted(() => {
           <div class="w-box-head">
             <h1 class="title">Профиль</h1>
           </div>
-          <transition name="content">
-            <!--            <client-only>-->
-            <!--              TODO TO_REMOVE-->
+          <div name="content">
             <ProfileSeekerEditForm />
-            <!--            </client-only>-->
-          </transition>
+          </div>
         </div>
       </div>
       <aside class="sidebar">

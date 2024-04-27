@@ -41,9 +41,10 @@
     </div>
     <div v-else>
       <swiper
-        :slides-per-view="'auto'"
+        v-if="isInitialized"
+        slides-per-view="auto"
         :space-between="20"
-        :class="'cards-slider'"
+        class="cards-slider"
         :wrapper-class="'vacancy-list'"
       >
         <swiper-slide v-for="item in vacancies">
@@ -88,6 +89,8 @@ import { useVacancyStore } from "~/store/vacancy";
 import { useAreaStore } from "~/store/area";
 import { useNuxtApp } from "#app";
 
+const isInitialized = ref(false);
+
 const { $format_number } = useNuxtApp();
 const vacancyStore = useVacancyStore();
 const areaStore = useAreaStore();
@@ -96,7 +99,19 @@ const { getCurrencyCityVacancies } = vacancyStore;
 const { getLocation } = areaStore;
 const isLoading = ref(false);
 
+watch(
+  () => vacancyStore.vacancies_in_my_city,
+  () => {
+    if (vacancyStore.vacancies_in_my_city.length > 0) {
+      isInitialized.value = true;
+    } else {
+      isInitialized.value = false;
+    }
+  },
+);
 onMounted(async () => {
+  // my transition page is 300, when TIMEOUT set to 300 is not work. so must larger than transition page
+
   isLoading.value = true;
   const location = await getLocation({ ip: "213.232.228.45" });
   await getCurrencyCityVacancies({
@@ -104,6 +119,12 @@ onMounted(async () => {
     region_ids: [location?.region?.id],
     city_id: location?.city?.id,
   });
+  const TIMEOUT = 500;
+  if (vacancies.value.length > 0) {
+    setTimeout(() => {
+      isInitialized.value = true;
+    }, TIMEOUT);
+  }
   isLoading.value = false;
 });
 const vacancies = computed(() => vacancyStore.vacancies_in_my_city.sort());

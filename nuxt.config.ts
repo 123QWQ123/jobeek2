@@ -16,10 +16,6 @@ const config = {
         dsn: "https://cd6d558f98e968695f6d8fa0a88c115f@o4506751504482304.ingest.sentry.io/4506757163057152",
         environment: "development",
       },
-
-      backend: {
-        host: "https://jobeek.me",
-      },
     },
   },
   ssr: true,

@@ -9,6 +9,10 @@ definePageMeta({
   layout: "cabinet",
 });
 
+useHead({
+  title: "Отклики - Jobeek",
+});
+
 const authStore = useAuthStore();
 const profileStore = useProfileStore();
 

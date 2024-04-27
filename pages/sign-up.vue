@@ -194,7 +194,8 @@ const onSMSSubmit = async () => {
   isLoading.value = false;
   await localStorage.removeItem("preset_phone");
 
-  if (!(await tryLogin(response.data.token))) {
+  const tryLoginData = await tryLogin(response.data.token);
+  if (!tryLoginData) {
     let message = "Неизвестная ошибка!";
     Swal.fire({
       title: "Ошибка!",
@@ -202,7 +203,7 @@ const onSMSSubmit = async () => {
       icon: "error",
       confirmButtonText: "ОК",
     });
-    return;
+    return navigateTo({ name: "sign-in" });
   }
 
   navigateTo({ name: "profile" });

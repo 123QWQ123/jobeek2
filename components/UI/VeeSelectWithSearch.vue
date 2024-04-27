@@ -1,41 +1,43 @@
 <template>
-  <div
-    class="nice-select n-select d-select"
-    :class="{ open: isOpen }"
-    v-click-outside="() => (isOpen = false)"
-    tabindex="0"
-  >
-    <input
-      class="current"
-      v-model="searchInput"
-      @input="onChangeHandler"
-      role="presentation"
-      autocomplete="off"
-      autofill="off"
-      @focusin="onFocus"
-      @focusout="onFocusout"
-      :class="{ placeholder: placeholderClass }"
-    />
-    <span class="select_arrow" @click="toggle"></span>
-    <ul class="list" :style="listStyles" v-if="isOpen">
-      <li
-        v-for="item in options"
-        :key="item.value"
-        :data-value="item.value"
-        class="option"
-        @click="onSelect(item.value)"
-        :style="listItemStyles"
-      >
-        {{ item.name }}
-      </li>
-      <li v-if="options.length === 0">
-        {{ props.not_found }}
-      </li>
-    </ul>
-  </div>
+  <div>
+    <div
+      class="nice-select n-select d-select"
+      :class="{ open: isOpen }"
+      v-click-outside="() => (isOpen = false)"
+      tabindex="0"
+    >
+      <input
+        class="current"
+        v-model="searchInput"
+        @input="onChangeHandler"
+        role="presentation"
+        autocomplete="off"
+        autofill="off"
+        @focusin="onFocus"
+        @focusout="onFocusout"
+        :class="{ placeholder: placeholderClass }"
+      />
+      <span class="select_arrow" @click="toggle"></span>
+      <ul class="list" :style="listStyles" v-if="isOpen">
+        <li
+          v-for="item in options"
+          :key="item.value"
+          :data-value="item.value"
+          class="option"
+          @click="onSelect(item.value)"
+          :style="listItemStyles"
+        >
+          {{ item.name }}
+        </li>
+        <li v-if="options.length === 0">
+          {{ props.not_found }}
+        </li>
+      </ul>
+    </div>
 
-  <div class="text-danger d-block">
-    {{ errorMessage }}
+    <div class="text-danger d-block">
+      {{ errorMessage }}
+    </div>
   </div>
 </template>
 <script>
@@ -209,7 +211,7 @@ input.current::-webkit-inner-spin-button {
   height: unset !important;
   cursor: pointer;
   margin: 0;
-  padding-left: 0;
+  padding: 0.5rem;
 }
 
 .placeholder {

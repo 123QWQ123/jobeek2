@@ -17,6 +17,7 @@ const handleUploadFile = async (e) => {
       base64.value = e.target.result;
       // state.photo.base64 = e.target.result;
     };
+    console.log(file[0]);
     reader.readAsDataURL(file[0]);
   }
 };
@@ -28,6 +29,7 @@ const photo = ref(null);
 watch(
   () => photo.value,
   () => {
+    console.log(photo.value);
     setValue(photo.value);
   },
 );
@@ -50,6 +52,8 @@ const openFileBrowser = () => {
 };
 const clearPhotoUrl = () => {
   photo_url.value = "";
+  photo.value = "";
+  base64.value = "";
 };
 
 const photoUrl = computed(() => {
