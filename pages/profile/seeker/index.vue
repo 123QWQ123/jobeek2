@@ -27,7 +27,11 @@ const isCompleted = computed(() => {
   return false;
 });
 const { handleAlert } = useAlert();
-
+onMounted(() => {
+  if (authStore.isEmployer) {
+    navigateTo({ name: "profile-employer" });
+  }
+});
 watch(
   () => authStore.isEmployer,
   (newValue) => {

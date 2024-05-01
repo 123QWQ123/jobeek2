@@ -86,6 +86,8 @@ import { useDiff } from "~/composables/useDiff.js";
 import PhoneDisabledInput from "~/components/Profile/PhoneDisabledInput.vue";
 
 import avatar from "~/assets/img/jobeek-avatar.png";
+import { toTypedSchema } from "@vee-validate/zod";
+import { z } from "~/hooks/ru-zod.js";
 
 const profileStore = useProfileStore();
 
@@ -107,15 +109,13 @@ const updateCityInput = async (newValue = "") => {
   }
 };
 
-const schema = computed(() => {
-  return {
-    first_name: "required|min:1|max:100",
-    last_name: "required|min:1|max:100",
-    email: { required: true, email: true },
-    birth_date: "required|date",
-    city_id: "required|numeric",
-    country_id: "required|numeric",
-  };
+const schema = z.object({
+  first_name: z.string(),
+  last_name: z.string().url(),
+  birth_date: z.string(),
+  email: z.string().email(),
+  city_id: z.number().safe("Выберити город из списка"),
+  country_id: z.number().safe("Выберити страну из списка"),
 });
 const { values, errors, meta, setErrors, resetForm, validate } = useForm({
   initialValues: {
@@ -127,7 +127,7 @@ const { values, errors, meta, setErrors, resetForm, validate } = useForm({
     country_id: null,
   },
   initialTouched: true,
-  validationSchema: schema,
+  validationSchema: toTypedSchema(schema),
 });
 const cityOptions = ref([]);
 
@@ -162,7 +162,7 @@ const getFields = (newObject) => {
     email_to_verify: newObject.email_to_verify,
     phone: newObject.phone,
     birth_date: newObject.birth_date,
-    city_id: newObject.city_id,
+    city_id: newObject.city_id ?? undefined,
     city_name: newObject.city_name,
     photo_url: newObject.photo_url,
     country_id: newObject.country_id ?? 1,
@@ -267,6 +267,7 @@ const handleSubmit = async (e) => {
 
   if (resData.status !== "success") {
     errorMessage.value = resData.message;
+    console.log(resData);
     if (resData.hasOwnProperty("errors")) {
       setErrors(resData.errors);
     }

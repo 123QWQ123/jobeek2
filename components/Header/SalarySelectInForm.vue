@@ -42,6 +42,12 @@ const onChange = (id) => {
 </script>
 
 <style>
+@media (max-width: 768px) {
+  .search-row .input-wrap.has-label .nice-select {
+    padding-left: 1rem !important;
+  }
+}
+
 .no_bg {
   background: none !important;
 }

@@ -105,4 +105,25 @@ function close() {
   padding-right: 3.125rem;
   width: auto;
 }
+
+.nice-select:after {
+  content: "";
+  display: block;
+  margin-top: -4px;
+  pointer-events: none;
+  position: absolute;
+  transform-origin: 66% 66%;
+  transform: rotate(45deg);
+  transition: all 0.15s ease-in-out;
+  width: 10px;
+  height: 10px;
+  top: 44%;
+  right: 24px;
+  border-width: 1.5px;
+  border-color: #78757e;
+}
+
+.nice-select.open:after {
+  transform: rotate(225deg);
+}
 </style>

@@ -216,6 +216,13 @@ input {
   padding-left: 5px !important;
 }
 
+@media (max-width: 768px) {
+  .search-row .input-wrap.has-label .nice-select input,
+  .search-row .input-wrap.has-label .nice-select input::placeholder {
+    padding-left: 0px !important;
+  }
+}
+
 .current {
   color: #0a2540;
   width: 100%;
@@ -223,6 +230,7 @@ input {
   cursor: pointer;
   margin: 0;
   padding-left: 0;
+  z-index: 1;
 }
 
 .placeholder {
@@ -246,19 +254,23 @@ input {
 }
 
 .select_arrow {
-  border-bottom: 2px solid #999;
-  border-right: 2px solid #999;
-  content: "";
-  display: block;
-  height: 8px;
+  display: inline-block;
   margin-top: -4px;
-  pointer-events: initial;
   position: absolute;
-  right: 16px;
-  top: 50%;
   transform-origin: 66% 66%;
   transform: rotate(45deg);
   transition: all 0.15s ease-in-out;
-  width: 8px;
+  width: 10px;
+  height: 10px;
+  top: 44%;
+  right: 24px;
+  border-color: #78757e;
+  border-bottom: 1.5px solid #999;
+  border-right: 1.5px solid #999;
+  z-index: 10;
+}
+
+.nice-select.open .select_arrow {
+  transform: rotate(225deg);
 }
 </style>

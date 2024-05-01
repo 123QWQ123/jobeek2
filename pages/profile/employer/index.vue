@@ -34,11 +34,14 @@ const isCompleted = computed(() => {
   return false;
 });
 const { handleAlert } = useAlert();
-
+onMounted(() => {
+  if (!authStore.isEmployer) {
+    navigateTo({ name: "profile-seeker" });
+  }
+});
 watch(
   () => authStore.isEmployer,
   (newValue) => {
-    console.log(newValue);
     if (!newValue) {
       navigateTo({ name: "profile-seeker" });
     }

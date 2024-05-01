@@ -1,6 +1,9 @@
 <template>
   <div>
     <NuxtLayout></NuxtLayout>
+    <client-only>
+      <Hv />
+    </client-only>
   </div>
 </template>
 
