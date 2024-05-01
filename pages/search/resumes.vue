@@ -7,6 +7,9 @@ useHead({
 definePageMeta({
   layout: "cabinet",
 });
+if (process.server) {
+  console.log("server");
+}
 const authStore = useAuthStore();
 const isEmployer = computed(() => authStore.isEmployer);
 watch(

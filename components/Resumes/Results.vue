@@ -103,6 +103,10 @@ const onChangeCurrency = (currency) => {
 const { getResumes } = resumeStore;
 const { getCurrentQueryParams } = useQueryParams();
 const currentParams = ref(getCurrentQueryParams());
+onMounted(async () => {
+  const resData = await getResumes(currentParams.value, false);
+  console.log(resData);
+});
 watch(
   () => ({ ...getCurrentQueryParams() }),
   async (newValues, oldValues) => {
