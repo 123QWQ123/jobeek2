@@ -6,8 +6,10 @@ definePageMeta({
 });
 const authStore = useAuthStore();
 
-if (process.server) {
+if (!authStore.isEmployer) {
   navigateTo({ name: "profile-seeker" });
+} else {
+  navigateTo({ name: "profile-employer" });
 }
 
 // onMounted(() => {

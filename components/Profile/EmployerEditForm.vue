@@ -78,6 +78,8 @@ import { useDiff } from "~/composables/useDiff.js";
 import { useForm } from "vee-validate";
 
 import avatar from "~/assets/img/jobeek-avatar.png";
+import { toTypedSchema } from "@vee-validate/zod";
+import { z } from "~/hooks/ru-zod.js";
 
 const CONFIG = useRuntimeConfig();
 
@@ -86,13 +88,11 @@ const profileStore = useProfileStore();
 const { getUser } = profileStore;
 const { employer } = storeToRefs(profileStore);
 
-const schema = computed(() => {
-  return {
-    company_name: "required|min:1|max:100",
-    company_url: "required|min:1|max:2500",
-    company_description: "required|min:1|max:255",
-    email: { required: true, email: true },
-  };
+const schema = z.object({
+  company_name: z.string(),
+  company_url: z.string().url(),
+  company_description: z.string(),
+  email: z.string().email(),
 });
 const { values, errors, meta, setErrors, resetForm, validate } = useForm({
   initialValues: {
@@ -103,7 +103,7 @@ const { values, errors, meta, setErrors, resetForm, validate } = useForm({
     email: null,
   },
   initialTouched: true,
-  validationSchema: schema,
+  validationSchema: toTypedSchema(schema),
 });
 
 const sectionData = ref({});

@@ -78,7 +78,7 @@ const config = {
     // Add cors headers
     "/api/**": { cors: true },
     // Add redirect headers
-    // '/old-page': { redirect: '/new-page' },
+    "/profile": { redirect: "/profile/employer" },
     // '/old-page2': { redirect: { to: '/new-page', statusCode: 302 } }
   },
   fcm: {
