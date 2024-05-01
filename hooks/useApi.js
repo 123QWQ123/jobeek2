@@ -76,9 +76,16 @@ const useApi = async (method, options = {}) => {
           const { data } = res.response;
           if (data) {
             const { errors, message } = data;
-            if (errors || message) {
+            console.log(errors);
+            if (errors) {
               return {
                 errors,
+                message: message,
+                status: "error",
+              };
+            }
+            if (message) {
+              return {
                 message: message,
                 status: "error",
               };
@@ -93,7 +100,6 @@ const useApi = async (method, options = {}) => {
       }
 
       return {
-        data: {},
         message: res,
         status: "error",
       };

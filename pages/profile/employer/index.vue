@@ -42,7 +42,6 @@ onMounted(() => {
 watch(
   () => authStore.isEmployer,
   (newValue) => {
-    console.log(newValue);
     if (!newValue) {
       navigateTo({ name: "profile-seeker" });
     }

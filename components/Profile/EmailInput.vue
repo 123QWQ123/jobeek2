@@ -13,13 +13,15 @@ const props = defineProps({
   },
 });
 const { value, setValue, errorMessage, setErrors } = useField(() => props.name);
-const {
-  value: value_to_verify,
-  setValue: setValueToVerify,
-  errorMessage: errorMessageVerify,
-  setErrors: setVerifyErrors,
-} = useField(() => props.name);
+
 const email_to_verify = ref();
+watch(
+  () => email_to_verify.value,
+  (newValue) => {
+    setValue(newValue);
+    setErrors(null);
+  },
+);
 const email = ref(value.value);
 const is_email_to_verify_sent = ref(false);
 const is_sent_and_verified = computed(() => {
@@ -235,8 +237,5 @@ input[type="email"]:disabled {
   position: absolute;
   top: 0.25rem;
   right: 0.3rem;
-}
-
-.green_icon {
 }
 </style>
