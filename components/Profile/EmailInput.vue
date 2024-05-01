@@ -22,6 +22,19 @@ const {
 const email_to_verify = ref();
 const email = ref(value.value);
 const is_email_to_verify_sent = ref(false);
+const is_sent_and_verified = computed(() => {
+  if (props.type === "seeker") {
+    if (profileStore.seeker) {
+      if (profileStore.seeker.email_to_verify) return true;
+    }
+    return false;
+  } else {
+    if (profileStore.employer) {
+      if (profileStore.employer.email_to_verify) return true;
+    }
+    return false;
+  }
+});
 const onInputEmail = (e) => {
   currentValue.value = e.target.value;
   email_to_verify.value = e.target.value;
@@ -201,7 +214,10 @@ const onEmailConfirm = async (e) => {
   <div class="text-success" v-if="is_email_to_verify_sent">
     На вашу электронную почту отправлено письмо с кодом подтверждения.
   </div>
-  <div class="text-info" v-if="is_sent_and_verified">
+  <div
+    class="text-primary"
+    v-if="is_sent_and_verified && !is_email_to_verify_sent"
+  >
     Войдите в электронную почту и откройте письмо с заголовком Jobeek и
     подтвердите свой адрес электронной почты.
   </div>
