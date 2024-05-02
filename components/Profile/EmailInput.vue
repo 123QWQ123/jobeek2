@@ -18,8 +18,10 @@ const email_to_verify = ref();
 watch(
   () => email_to_verify.value,
   (newValue) => {
-    setValue(newValue);
-    setErrors(null);
+    if (!value.value) {
+      setValue(newValue);
+      setErrors(null);
+    }
   },
 );
 const email = ref(value.value);

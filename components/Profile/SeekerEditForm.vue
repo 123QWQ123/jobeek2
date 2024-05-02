@@ -3,7 +3,12 @@
     <PageLoader v-if="isLoading" />
 
     <!--    {{ values }}-->
-    <ProfilePhotoInput name="photo" preview="photo_url" :avatar="avatar" />
+    <ProfilePhotoInput
+      class="photo_radius"
+      name="photo"
+      preview="photo_url"
+      :avatar="avatar"
+    />
 
     <div class="input-row">
       <label for="name">Имя и фамилия <b>*</b></label>
@@ -111,7 +116,7 @@ const updateCityInput = async (newValue = "") => {
 
 const schema = z.object({
   first_name: z.string(),
-  last_name: z.string().url(),
+  last_name: z.string(),
   birth_date: z.string(),
   email: z.string().email(),
   city_id: z.number().safe("Выберити город из списка"),

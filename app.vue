@@ -43,7 +43,12 @@ onMounted(async () => {
   await getConnectedEmployerProviders();
   await getConnectedSeekerProviders();
   if (route.query.message) {
-    useNuxtApp().$toast.info(route.query.message, { autoClose: 3000 });
+    useNuxtApp().$toast.info(route.query.message, {
+      autoClose: 3000,
+      onClose: () => {
+        navigateTo({ path: route.path });
+      },
+    });
   }
 });
 </script>

@@ -60,7 +60,8 @@ export const useResumeStore = defineStore("resume", {
         method: "get",
       });
 
-      if (response.data && "data" in response.data) {
+      console.log(response);
+      if (response.status === "success") {
         this.providers = response.data.data;
         return this.providers;
       }
@@ -86,29 +87,28 @@ export const useResumeStore = defineStore("resume", {
     },
 
     async disconnectProviders(payload) {
-      const { data } = await useApi("seeker/disconnect_providers", {
+      return await useApi("seeker/disconnect_providers", {
         method: "DELETE",
         params: payload,
       });
-
-      return data;
     },
 
     async getSeekerProvidersAuthEndpoints(
       payload,
       redirect_to = "/profile/service-verify",
     ) {
-      const { data } = await useApi(
+      const response = await useApi(
         "services/auth/redirect-url?profile=seeker&redirect_to=" + redirect_to,
         {
           method: "get",
           payload,
         },
       );
-      if ("data" in data) {
-        return data.data;
+      console.log(response);
+      if (response.status === "success") {
+        return response.data.data;
       }
-      return data;
+      return response;
     },
     async getResumes(payload, add = false, new_data = false) {
       if (new_data !== true && this.resumes.length > 0) {
