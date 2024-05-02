@@ -1,18 +1,15 @@
 <script setup>
-import IMask from "imask";
-
+const { $format_phone } = useNuxtApp();
 const props = defineProps(["name"]);
 const { value, setValue, error: errorMessage } = useField(() => props.name);
 
 const phoneInputElement = ref();
-const phoneMask = ref(null);
+const phoneValue = ref($format_phone(value.value));
+
 watch(
   () => value.value,
   (newPhone) => {
-    phoneMask.value = new IMask(phoneInputElement.value, {
-      mask: "+{7}(000)000-00-00",
-    });
-    phoneMask.value.unmaskedValue = newPhone;
+    phoneValue.value = $format_phone(newPhone);
   },
 );
 </script>
@@ -22,6 +19,7 @@ watch(
     type="text"
     ref="phoneInputElement"
     placeholder="Телефон"
+    :value="phoneValue"
     disabled
     id="phone"
   />

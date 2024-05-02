@@ -2,7 +2,6 @@
   <form class="w-box-body" autocomplete="off" @submit.prevent="handleSubmit">
     <PageLoader v-if="isLoading" />
 
-    <!--    {{ values }}-->
     <ProfilePhotoInput
       class="photo_radius"
       name="photo"
@@ -14,15 +13,15 @@
       <label for="name">Имя и фамилия <b>*</b></label>
       <div class="input-wrapper">
         <div class="c2">
-          <CustomTextInput name="first_name" placeholder="Имя" />
-          <CustomTextInput name="last_name" placeholder="Фамилия" />
+          <VeeCustomTextInput name="first_name" placeholder="Имя" />
+          <VeeCustomTextInput name="last_name" placeholder="Фамилия" />
         </div>
       </div>
     </div>
     <div class="input-row">
       <label>Дата рождения <b>*</b></label>
       <div class="input-wrapper">
-        <VeeBirthDatePicker name="birth_date"></VeeBirthDatePicker>
+        <VeeBirthDatePicker name="birth_date" />
       </div>
     </div>
     <div class="input-row">
@@ -37,7 +36,6 @@
           />
 
           <VeeSelectWithSearch
-            v-if="cityOptions.length > 0"
             :options="cityOptions"
             @input="updateCityInput"
             name="city_id"
@@ -79,6 +77,7 @@
 </template>
 
 <script setup>
+console.log("render");
 import { useProfileStore } from "~/store/profile";
 import Swal from "sweetalert2";
 import PageLoader from "../UI/PageLoader";
@@ -137,12 +136,19 @@ const { values, errors, meta, setErrors, resetForm, validate } = useForm({
 const cityOptions = ref([]);
 
 const { value: country_id, setValue: setCountryId } = useField("country_id");
+const { value: city_id, setValue: setCityId } = useField("city_id");
 
 watch(
   () => country_id.value,
   (new_value) => {
     if (new_value) {
-      getCities({ country_ids: [new_value] });
+      const city = values.city_id;
+      if (city) {
+        setCityId(values.city_id ?? undefined);
+        getCities({ city_id: values.city_id });
+      } else {
+        getCities({ country_ids: [new_value] });
+      }
     }
   },
 );
@@ -187,10 +193,6 @@ watch(
     const diffData = useDiff(newData, oldData);
     if (Object.keys(diffData).length) {
       resetForm({ values: newData });
-      const country_id = newData.country_id;
-      if (country_id) {
-        getCities({ country_ids: [country_id] });
-      }
     }
   },
 );
@@ -205,19 +207,6 @@ onMounted(() => {
 
 const { getCountries, getCities } = profileStore;
 await getCountries();
-
-const countryAndCityOptions = ref([]);
-
-watch(
-  () => profileStore.cities,
-  (newItems) => {
-    countryAndCityOptions.value = newItems.map((item) => ({
-      value: item.id,
-      name: getCityNameFromArea2(item),
-    }));
-  },
-);
-const { upload } = profileStore;
 
 const { errors: serverErrors, handleErrorResponse } = useFormValidation();
 
@@ -272,8 +261,7 @@ const handleSubmit = async (e) => {
 
   if (resData.status !== "success") {
     errorMessage.value = resData.message;
-    console.log(resData);
-    if (resData.hasOwnProperty("errors")) {
+    if (resData.hasOwnProperty("errors") && resData.errors) {
       setErrors(resData.errors);
     }
     isLoading.value = false;
@@ -285,7 +273,6 @@ const handleSubmit = async (e) => {
     title: "Успешно!",
     text: resData.message,
     icon: "success",
-    confirmButtonText: "ОК",
     preConfirm: () => {
       // navigateTo({ path: "/", query: {} });
     },

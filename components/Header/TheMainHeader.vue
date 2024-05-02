@@ -21,9 +21,6 @@
       </div>
     </div>
   </header>
-  <!--  <div class="lk-header">-->
-  <!--    <div class="lk-header-main"></div>-->
-  <!--  </div>-->
 </template>
 
 <script setup>

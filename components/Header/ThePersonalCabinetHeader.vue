@@ -40,6 +40,16 @@ const isCabinetNavbarShown = computed(() => {
 function onChange(selectedOption) {
   console.log(selectedOption);
 }
+
+const onProfileClick = () => {
+  if (!auth.isEmployer) {
+    navigateTo({ name: "profile-seeker" });
+  } else {
+    navigateTo({ name: "profile-employer" });
+  }
+};
+
+const isPremium = computed(() => auth.isSubscribed);
 </script>
 <template>
   <div class="lk-header" v-if="isAuthed">
@@ -48,13 +58,14 @@ function onChange(selectedOption) {
         <Logo />
         <CabinetHeaderSearchForm v-if="!isCabinetNavbarShown" />
         <div class="profile-action">
-          <NuxtLink
+          <a
             class="btn button-xs sign-in-btn ms-4"
-            :to="{ name: 'profile' }"
+            @click="onProfileClick"
             role="link"
-            >{{ user?.phone }}
-          </NuxtLink>
-          <button class="profile-button" type="button">
+          >
+            {{ user?.phone }}
+          </a>
+          <button class="profile-button" type="button" v-if="isPremium">
             <PremiumIcon />
           </button>
           <button class="exit-button" type="button" @click="logout">
