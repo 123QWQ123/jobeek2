@@ -4,7 +4,7 @@
       <div class="logo">
         <Logo />
       </div>
-      <ModeSwitcher class="me-3 ms-auto text-white"></ModeSwitcher>
+      <ModeSwitcher class="me-3 ms-auto"></ModeSwitcher>
       <div class="header-actions">
         <NuxtLink
           class="btn button-xs sign-in-btn"

@@ -3,7 +3,10 @@
     class="theme-checker-box cursor-pointer checker-box right__box"
     @click="toggle"
   >
-    <span class="v v1" :class="{ active: !auth.isEmployer }" title="Соискатель"
+    <span
+      class="v v1"
+      :class="{ active: !auth.isEmployer, white: !auth.isAuthenticated }"
+      title="Соискатель"
       >Соискатель</span
     >
     <div class="theme-checker">
@@ -15,7 +18,10 @@
         ></div>
       </div>
     </div>
-    <span class="v v2" :class="{ active: auth.isEmployer }" title="Работодатель"
+    <span
+      class="v v2"
+      :class="{ active: auth.isEmployer, white: !auth.isAuthenticated }"
+      title="Работодатель"
       >Работодатель</span
     >
   </div>
@@ -55,7 +61,7 @@ onMounted(() => {
   margin-left: auto;
 }
 
-.checker-box .v {
+.checker-box .v.white {
   color: white;
 }
 
