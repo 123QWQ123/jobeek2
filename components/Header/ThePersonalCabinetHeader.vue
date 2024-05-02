@@ -45,9 +45,7 @@ function onChange(selectedOption) {
   <div class="lk-header" v-if="isAuthed">
     <div class="lk-header-main">
       <div class="header-wrapper">
-        <NuxtLink class="logo" to="/"
-          ><img src="~/assets/img/jobeek-white.svg" alt="#"
-        /></NuxtLink>
+        <Logo />
         <CabinetHeaderSearchForm v-if="!isCabinetNavbarShown" />
         <div class="profile-action">
           <NuxtLink

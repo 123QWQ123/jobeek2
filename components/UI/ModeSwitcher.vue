@@ -3,19 +3,25 @@
     class="theme-checker-box cursor-pointer checker-box right__box"
     @click="toggle"
   >
-    <span class="v v1" :class="{ active: !auth.isEmployer }" title="Соискатель"
+    <span
+      class="v v1"
+      :class="{ active: !auth.isEmployer, white: !auth.isAuthenticated }"
+      title="Соискатель"
       >Соискатель</span
     >
     <div class="theme-checker">
       <input type="checkbox" id="employer" :checked="!auth.isEmployer" />
-      <div class="theme-checker-ui">
+      <div class="theme-checker-ui" :class="{ yellow: !auth.isAuthenticated }">
         <div
           class="circle"
           :class="{ left: !auth.isEmployer, right: auth.isEmployer }"
         ></div>
       </div>
     </div>
-    <span class="v v2" :class="{ active: auth.isEmployer }" title="Работодатель"
+    <span
+      class="v v2"
+      :class="{ active: auth.isEmployer, white: !auth.isAuthenticated }"
+      title="Работодатель"
       >Работодатель</span
     >
   </div>
@@ -54,9 +60,15 @@ onMounted(() => {
 .right__box {
   margin-left: auto;
 }
+
+.checker-box .v.white {
+  color: white;
+}
+
 .theme-checker input ~ .theme-checker-ui .circle.left {
   transform: translate(3px, -50%);
 }
+
 .theme-checker input ~ .theme-checker-ui .circle.right {
   transform: translate(30px, -50%);
 }
@@ -70,6 +82,11 @@ onMounted(() => {
 .theme-checker input ~ .theme-checker-ui {
   background: #5375fd;
 }
+
+.theme-checker input ~ .theme-checker-ui.yellow {
+  background: #ffc955;
+}
+
 .theme-checker input ~ .theme-checker-ui .circle {
   background: #ffffff;
 }
