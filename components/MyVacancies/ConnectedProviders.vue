@@ -204,7 +204,7 @@ const lastSyncedTime = computed(() => {
   return moment().format("h:mm a, DD.MM.Y");
 });
 
-const { synVacancies } = vacancyStore;
+const { synVacancies, disconnectProviders } = vacancyStore;
 const onSync = async () => {
   isSyncing.value = true;
   const resData = await synVacancies();
@@ -213,12 +213,19 @@ const onSync = async () => {
     toast.info(resData.message, { autoClose: 3000 });
   }
   isSyncing.value = false;
-  console.log(resData);
-  // window.location.reload();
+  await getEmployerProvidersAuthEndpoints();
 };
 
-const onDisconnect = () => {
+const onDisconnect = async () => {
   console.log(isSyncing.value);
+  const resData = await disconnectProviders({ providers: [prov] });
+  if (resData.status !== "success") {
+    toast.error(resData.message, { autoClose: 3000 });
+    return;
+  }
+  toast.success(resData.message, { autoClose: 3000 });
+  await getConnectedEmployerProviders();
+  await getEmployerProvidersAuthEndpoints();
 };
 
 const onOpen = (url) => {

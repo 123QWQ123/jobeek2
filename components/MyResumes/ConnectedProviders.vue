@@ -231,13 +231,19 @@ const onSync = async () => {
   setTimeout(() => {
     window.location.reload();
   }, 1000);
+  await getSeekerProvidersAuthEndpoints();
 };
 
 const { disconnectProviders } = resumeStore;
 const onDisconnect = async (prov) => {
   const resData = await disconnectProviders({ providers: [prov] });
-  console.log(resData);
-  // console.log(isSyncing.value);
+  if (resData.status !== "success") {
+    toast.error(resData.message, { autoClose: 3000 });
+    return;
+  }
+  toast.success(resData.message, { autoClose: 3000 });
+  await getConnectedSeekerProviders();
+  await getSeekerProvidersAuthEndpoints();
 };
 
 const onOpen = (url) => {
@@ -277,7 +283,7 @@ onMounted(async () => {
   //   toast.info(response.message, { autoClose: 3000 });
   //   return;
   // }
-  if (!isAnyProviderConnected.value) {
+  if (!isSuperjobConnected.value || !isHHConnected.value) {
     const authData = await getSeekerProvidersAuthEndpoints({}, redirect_url);
     providers.value.hh.url = authData.hh;
     providers.value.superjob.url = authData.superjob;

@@ -172,6 +172,12 @@ export const useVacancyStore = defineStore("vacancy", {
       return data;
     },
 
+    async disconnectProviders(payload) {
+      return await useApi("employer/disconnect_providers", {
+        method: "DELETE",
+        params: payload,
+      });
+    },
     async getEmployerProvidersAuthEndpoints(
       payload,
       redirect_to = "/profile/service-verify",
