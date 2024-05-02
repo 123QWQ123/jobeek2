@@ -8,7 +8,7 @@
     >
     <div class="theme-checker">
       <input type="checkbox" id="employer" :checked="!auth.isEmployer" />
-      <div class="theme-checker-ui">
+      <div class="theme-checker-ui" :class="{ yellow: !auth.isAuthenticated }">
         <div
           class="circle"
           :class="{ left: !auth.isEmployer, right: auth.isEmployer }"
@@ -54,9 +54,15 @@ onMounted(() => {
 .right__box {
   margin-left: auto;
 }
+
+.checker-box .v {
+  color: white;
+}
+
 .theme-checker input ~ .theme-checker-ui .circle.left {
   transform: translate(3px, -50%);
 }
+
 .theme-checker input ~ .theme-checker-ui .circle.right {
   transform: translate(30px, -50%);
 }
@@ -70,6 +76,11 @@ onMounted(() => {
 .theme-checker input ~ .theme-checker-ui {
   background: #5375fd;
 }
+
+.theme-checker input ~ .theme-checker-ui.yellow {
+  background: #ffc955;
+}
+
 .theme-checker input ~ .theme-checker-ui .circle {
   background: #ffffff;
 }

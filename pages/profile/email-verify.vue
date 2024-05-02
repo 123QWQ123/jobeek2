@@ -14,15 +14,19 @@ const profileStore = useProfileStore();
 const { isEmployer } = storeToRefs(authStore);
 
 const route = useRoute();
-const isSuccess = ref("-");
+const isSuccess = ref(false);
+const errorMessage = ref("");
 const { code, email } = route.query;
-
 const { verifyEmailConfirmation, getUser } = profileStore;
 const { refreshSeeker, refreshEmployer } = useAuthStore();
 
 onMounted(async () => {
   const resData = await verifyEmailConfirmation({ code, email });
-  if (resData.status === "success") {
+  if (resData.status !== "success") {
+    isSuccess.value = false;
+    errorMessage.value = resData.message;
+    return;
+  } else {
     isSuccess.value = true;
 
     await getUser();
@@ -37,18 +41,14 @@ onMounted(async () => {
           message: "Вы успешно потвердили ваш электронная почта.",
         },
       });
-    }, 500);
+    }, 100);
 
     setTimeout(() => {
       navigateTo({
         name: "profile",
         query: {},
       });
-    }, 5000);
-  } else {
-    isSuccess.value = false;
-
-    navigateTo({ name: "404" });
+    }, 100);
   }
 });
 </script>
@@ -58,10 +58,14 @@ onMounted(async () => {
     <div class="wrapper">
       <div class="w-box" v-if="isSuccess">
         <div class="w-box-head">
-          <h1 class="title">Ваш электронная почта подтержден!</h1>
+          <h2 class="title text-success">Ваш электронная почта подтержден!</h2>
         </div>
-        <div class="w-box-body">
-          <p>Через 5 секунд редиректится!</p>
+      </div>
+      <div class="w-box" v-else>
+        <div class="w-box-head">
+          <h2 class="title text-danger" v-if="errorMessage">
+            {{ errorMessage }}
+          </h2>
         </div>
       </div>
     </div>

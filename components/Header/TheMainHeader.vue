@@ -2,11 +2,9 @@
   <header class="main-header">
     <div class="header-wrapper header-wrapper--fxstart">
       <div class="logo">
-        <NuxtLink to="/">
-          <img src="~/assets/img/jobeek-dark.svg" alt="#" />
-        </NuxtLink>
+        <Logo />
       </div>
-      <ModeSwitcher class="me-3 ms-auto"></ModeSwitcher>
+      <ModeSwitcher class="me-3 ms-auto text-white"></ModeSwitcher>
       <div class="header-actions">
         <NuxtLink
           class="btn button-xs sign-in-btn"
@@ -23,6 +21,9 @@
       </div>
     </div>
   </header>
+  <!--  <div class="lk-header">-->
+  <!--    <div class="lk-header-main"></div>-->
+  <!--  </div>-->
 </template>
 
 <script setup>
@@ -37,6 +38,10 @@ const user = computed(() => auth.user);
 </script>
 
 <style scoped>
+.main-header {
+  background-color: #5375fd;
+}
+
 .nav-link {
   color: #fff !important;
 }
