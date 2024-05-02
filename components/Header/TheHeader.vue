@@ -2,7 +2,7 @@
   <header class="main-header">
     <div class="header-wrapper">
       <NuxtLink to="/" class="logo">
-        <img src="~/assets/img/jobeek-dark.svg" alt="#"
+        <img src="~/assets/img/jobeek-white.svg" alt="#"
       /></NuxtLink>
       <div class="header-actions" v-if="!isAuthed">
         <NuxtLink
