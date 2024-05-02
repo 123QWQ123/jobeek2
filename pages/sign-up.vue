@@ -40,7 +40,11 @@ onBeforeMount(() => {
   }
 
   if (isAuthed.value === true) {
-    router.replace({ name: "profile" });
+    if (!auth.isEmployer) {
+      navigateTo({ name: "profile-seeker" });
+    } else {
+      navigateTo({ name: "profile-employer" });
+    }
   }
 });
 const state = reactive({
@@ -206,7 +210,11 @@ const onSMSSubmit = async () => {
     return navigateTo({ name: "sign-in" });
   }
 
-  navigateTo({ name: "profile" });
+  if (!auth.isEmployer) {
+    navigateTo({ name: "profile-seeker" });
+  } else {
+    navigateTo({ name: "profile-employer" });
+  }
 };
 
 function close() {

@@ -2,7 +2,6 @@
 import Swal from "sweetalert2";
 import { useAuthStore } from "~~/store/auth";
 import IMask from "imask";
-import useAlert from "~/composables/useAlert";
 import { useVacancyStore } from "~/store/vacancy.js";
 import { useResumeStore } from "~/store/resume.js";
 import { ref } from "vue";
@@ -25,7 +24,11 @@ const router = useRouter();
 
 onBeforeMount(() => {
   if (isAuthed.value === true) {
-    router.replace({ name: "profile" });
+    if (!auth.isEmployer) {
+      navigateTo({ name: "profile-seeker" });
+    } else {
+      navigateTo({ name: "profile-employer" });
+    }
   }
 });
 
@@ -113,8 +116,7 @@ async function onSubmit() {
         }
         return;
       }
-
-      return navigateTo({ name: "profile" });
+      return navigateTo({ name: "profile-employer" });
     }
 
     if (!auth.isEmployer && auth.seeker) {
@@ -127,13 +129,17 @@ async function onSubmit() {
         return;
       }
 
-      return navigateTo({ name: "profile" });
+      return navigateTo({ name: "profile-seeker" });
     }
 
     if (route_name) {
       navigateTo({ name: route_name });
     } else {
-      navigateTo({ name: "profile" });
+      if (!auth.isEmployer) {
+        navigateTo({ name: "profile-seeker" });
+      } else {
+        navigateTo({ name: "profile-employer" });
+      }
     }
   }
 }
@@ -153,6 +159,7 @@ function close() {
   state.error = null;
   state.success = null;
 }
+
 watch(
   () => route.query.message,
   () => {
