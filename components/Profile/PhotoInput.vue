@@ -1,5 +1,6 @@
 <script setup>
 import { useField } from "vee-validate";
+
 const props = defineProps(["name", "preview", "avatar"]);
 
 const CONFIG = useRuntimeConfig();
@@ -69,7 +70,7 @@ const photoUrl = computed(() => {
   <div class="input-row">
     <label for="photo">Фото</label>
     <div class="dwld-photo">
-      <div class="photo">
+      <div class="photo photo_radius">
         <input
           ref="photoElement"
           @change="handleUploadFile"
@@ -135,4 +136,9 @@ const photoUrl = computed(() => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.photo_radius {
+  border-radius: 0.8rem;
+  overflow: hidden;
+}
+</style>
