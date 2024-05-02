@@ -14,9 +14,19 @@ const props = defineProps({
 });
 const { value, setValue, errorMessage, setErrors } = useField(() => props.name);
 
+const currentValue = ref(null);
+
+const isLoading = ref(false);
+const isConfirmButton = ref(false);
+const isCheckButton = ref(false);
+const isConfirmationSent = ref(false);
+const inputEmail = ref();
+
+const profileStore = useProfileStore();
+const seeker = storeToRefs(profileStore);
 const email_to_verify = ref();
 watch(
-  () => email_to_verify.value,
+  () => currentValue.value,
   (newValue) => {
     if (!value.value) {
       setValue(newValue);
@@ -55,23 +65,13 @@ const onInputEmail = (e) => {
     isCheckButton.value = false;
   }
 };
-const currentValue = ref(null);
-
-const isLoading = ref(false);
-const isConfirmButton = ref(false);
-const isCheckButton = ref(false);
-const isConfirmationSent = ref(false);
-const inputEmail = ref();
-
-const profileStore = useProfileStore();
-const seeker = storeToRefs(profileStore);
 const disabled = computed(() => {
   if (!value.value) return false;
   return true;
 });
 const reAssignEmails = (newObject) => {
   email_to_verify.value = newObject.email_to_verify;
-  email.value = newObject.email;
+  email.value = newObject.email ? newObject.email : newObject.email_to_verify;
   currentValue.value = newObject.email_to_verify ?? newObject.email;
   if (!newObject.is_completed) {
     if (newObject.email !== null) {
@@ -161,6 +161,7 @@ const onEmailConfirm = async (e) => {
       :value="currentValue"
       placeholder="Электронная почта"
       @input="onInputEmail"
+      @blur="setValue(currentValue)"
     />
     <span
       @click="onEmailConfirm"

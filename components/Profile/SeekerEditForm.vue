@@ -61,7 +61,7 @@
     <div class="input-row">
       <label for="password">Пароль<b>*</b></label>
       <div class="input-wrapper position-relative">
-        <CustomTextInput
+        <VeeCustomTextInput
           type="password"
           name="password"
           placeholder="********"
@@ -77,7 +77,6 @@
 </template>
 
 <script setup>
-console.log("render");
 import { useProfileStore } from "~/store/profile";
 import Swal from "sweetalert2";
 import PageLoader from "../UI/PageLoader";
@@ -92,6 +91,8 @@ import PhoneDisabledInput from "~/components/Profile/PhoneDisabledInput.vue";
 import avatar from "~/assets/img/jobeek-avatar.png";
 import { toTypedSchema } from "@vee-validate/zod";
 import { z } from "~/hooks/ru-zod.js";
+
+console.log("render");
 
 const profileStore = useProfileStore();
 
@@ -261,6 +262,11 @@ const handleSubmit = async (e) => {
 
   if (resData.status !== "success") {
     errorMessage.value = resData.message;
+    if (
+      resData.message === "требуется создать Пароль при первом входе в систему!"
+    ) {
+      setErrors({ password: resData.message });
+    }
     if (resData.hasOwnProperty("errors") && resData.errors) {
       setErrors(resData.errors);
     }
