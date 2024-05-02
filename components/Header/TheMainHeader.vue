@@ -4,8 +4,8 @@
       <div class="logo">
         <Logo />
       </div>
-      <ModeSwitcher class="me-3 ms-auto"></ModeSwitcher>
-      <div class="header-actions">
+      <!--      <ModeSwitcher class="me-3 ms-auto"></ModeSwitcher>-->
+      <div class="header-actions ms-auto">
         <NuxtLink
           class="btn button-xs sign-in-btn"
           :to="{ name: 'sign-in' }"
@@ -37,6 +37,8 @@ const user = computed(() => auth.user);
 <style scoped>
 .main-header {
   background-color: #5375fd;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 
 .nav-link {
