@@ -40,7 +40,7 @@ onBeforeMount(() => {
   }
 
   if (isAuthed.value === true) {
-    if (!auth.isEmployer) {
+    if (!authStore.isEmployer) {
       navigateTo({ name: "profile-seeker" });
     } else {
       navigateTo({ name: "profile-employer" });
@@ -210,7 +210,7 @@ const onSMSSubmit = async () => {
     return navigateTo({ name: "sign-in" });
   }
 
-  if (!auth.isEmployer) {
+  if (!authStore.isEmployer) {
     navigateTo({ name: "profile-seeker" });
   } else {
     navigateTo({ name: "profile-employer" });
