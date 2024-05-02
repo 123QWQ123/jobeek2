@@ -266,7 +266,7 @@ onMounted(async () => {
   //   toast.info(response.message, { autoClose: 3000 });
   //   return;
   // }
-  if (!isAnyProviderConnected.value) {
+  if (!isSuperjobConnected.value || !isHHConnected.value) {
     const authData = await getEmployerProvidersAuthEndpoints({}, redirect_url);
     providers.value.hh.url = authData.data.hh;
     providers.value.superjob.url = authData.data.superjob;
