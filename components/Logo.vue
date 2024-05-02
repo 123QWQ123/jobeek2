@@ -8,10 +8,10 @@ const auth = useAuthStore();
   <NuxtLink to="/">
     <img
       v-if="auth.isAuthenticated"
-      src="~/assets/img/jobeek-dark.svg"
-      alt="#"
+      src="~/assets/img/jobeek-white.svg"
+      alt="Jobeek"
     />
-    <img v-else src="~/assets/img/jobeek-white.svg" alt="#" />
+    <img v-else src="~/assets/img/jobeek-white.svg" alt="Jobeek" />
   </NuxtLink>
 </template>
 
