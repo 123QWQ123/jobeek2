@@ -251,7 +251,6 @@ export const useVacancyStore = defineStore("vacancy", {
         method: "get",
         params: payload,
       });
-      console.log(response);
       if (response.status === "success") {
         this.can_create_vacancy = response.data.data.available;
         this.can_create_vacancy_count = response.data.data.free ?? 0;

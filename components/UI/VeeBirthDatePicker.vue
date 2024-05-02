@@ -118,7 +118,7 @@ const dayItems = computed(() => {
 watch(
   () => value.value,
   (newDate) => {
-    if (isFirst.value && newDate) {
+    if (newDate) {
       const d = moment(newDate, "YYYY-MM-DD");
       const year = d.format("YYYY");
       const month = d.format("MM");

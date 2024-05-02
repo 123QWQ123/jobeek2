@@ -22,6 +22,14 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       return true;
     }
 
+    if (to.name === "profile") {
+      if (!authStore.isEmployer) {
+        navigateTo({ name: "profile-seeker" });
+      } else {
+        navigateTo({ name: "profile-employer" });
+      }
+    }
+
     if (isAuthed.value !== true) {
       return navigateTo({
         path: "/sign-in",

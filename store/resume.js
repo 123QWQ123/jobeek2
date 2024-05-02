@@ -60,7 +60,6 @@ export const useResumeStore = defineStore("resume", {
         method: "get",
       });
 
-      console.log(response);
       if (response.status === "success") {
         this.providers = response.data.data;
         return this.providers;
@@ -104,7 +103,6 @@ export const useResumeStore = defineStore("resume", {
           payload,
         },
       );
-      console.log(response);
       if (response.status === "success") {
         return response.data.data;
       }

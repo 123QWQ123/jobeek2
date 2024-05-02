@@ -9,22 +9,23 @@
           class="btn button-xs sign-in-btn"
           :to="{ name: 'sign-in' }"
           role="link"
-          >Войти</NuxtLink
-        >
+          >Войти
+        </NuxtLink>
         <NuxtLink
           class="btn button-xl sign-up-btn"
           :to="{ name: 'sign-up' }"
           role="link"
-          >Регистрация</NuxtLink
-        >
+          >Регистрация
+        </NuxtLink>
       </div>
       <div class="header-actions" v-else>
-        <NuxtLink
+        <a
           class="btn button-xs sign-in-btn"
-          :to="{ name: 'profile' }"
           role="link"
-          >{{ phone }}</NuxtLink
+          @click="onProfileClick"
         >
+          {{ phone }}
+        </a>
         <button class="exit-button" type="button" @click="logout">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -61,12 +62,20 @@ onMounted(() => {
 
 const isAuthed = computed(() => auth.isAuthed);
 const phone = computed(() => auth.user?.phone);
+const onProfileClick = () => {
+  if (!auth.isEmployer) {
+    navigateTo({ name: "profile-seeker" });
+  } else {
+    navigateTo({ name: "profile-employer" });
+  }
+};
 </script>
 
 <style scoped>
 .nav-link {
   color: #fff !important;
 }
+
 .router-link-exact-active {
   color: #6c757d !important;
 }
