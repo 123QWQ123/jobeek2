@@ -231,11 +231,6 @@ input.current::-webkit-inner-spin-button {
   -moz-appearance: textfield;
 }
 
-input {
-  //padding-left: 42px !important;
-  //margin-top: 24px;
-}
-
 .search-row .n-select .current {
   width: 100%;
   color: #0a2540;
@@ -286,9 +281,5 @@ input {
   width: 100%;
   height: 100%;
   display: inline-flex;
-  //justify-content: center;
-  //align-items: center;
-  //border: none;
-  //padding-right: 10px;
 }
 </style>

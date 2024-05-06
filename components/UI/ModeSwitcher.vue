@@ -43,7 +43,7 @@ const toggle = () => {
 
 onMounted(() => {
   if (!process.server) {
-    if (!localStorage.getItem("isEmployer") === null) {
+    if (localStorage.getItem("isEmployer") === null) {
       localStorage.setItem("isEmployer", auth.isEmployer);
     } else {
       const isEmployerMode =

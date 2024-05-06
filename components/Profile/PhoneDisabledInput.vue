@@ -1,31 +1,35 @@
 <script setup>
-const { $format_phone } = useNuxtApp();
+import { useNuxtApp } from "#app";
+import { useAuthStore } from "~/store/auth.js";
+
 const props = defineProps(["name"]);
-const { value, setValue, error: errorMessage } = useField(() => props.name);
 
-const phoneInputElement = ref();
-const phoneValue = ref($format_phone(value.value));
+const { $format_phone } = useNuxtApp();
 
-watch(
-  () => value.value,
-  (newPhone) => {
-    phoneValue.value = $format_phone(newPhone);
-  },
-);
+const authStore = useAuthStore();
+const currentValue = ref($format_phone(authStore.user?.phone) ?? null);
 </script>
 
 <template>
-  <input
-    type="text"
-    ref="phoneInputElement"
-    placeholder="Телефон"
-    :value="phoneValue"
-    disabled
-    id="phone"
-  />
-  <div class="text-danger d-block">
-    {{ errorMessage }}
+  <div>
+    <input
+      type="text"
+      placeholder="Телефон"
+      class="disabled"
+      :value="currentValue"
+      id="phone"
+    />
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.disabled {
+  pointer-events: none;
+  background: #ccc;
+  user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+</style>

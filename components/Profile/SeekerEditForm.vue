@@ -2,12 +2,16 @@
   <form class="w-box-body" autocomplete="off" @submit.prevent="handleSubmit">
     <PageLoader v-if="isLoading" />
 
-    <ProfilePhotoInput
-      class="photo_radius"
-      name="photo"
-      preview="photo_url"
-      :avatar="avatar"
-    />
+    <div class="input-row">
+      <label for="photo">Фото</label>
+      <ProfilePhotoInput
+        class="photo_radius"
+        v-if="profileStore.seeker"
+        name="photo"
+        :preview="profileStore.seeker.photo_url"
+        :avatar="avatar"
+      />
+    </div>
 
     <div class="input-row">
       <label for="name">Имя и фамилия <b>*</b></label>
@@ -48,7 +52,7 @@
     <div class="input-row">
       <label for="phone">Телефон</label>
       <div class="input-wrapper">
-        <PhoneDisabledInput name="phone" />
+        <ProfilePhoneDisabledInput name="phone" />
       </div>
     </div>
     <div class="input-row">
@@ -85,21 +89,18 @@ import { useCheckJSON } from "~/composables/useCheckJSON";
 import { navigateTo } from "#app";
 import useFormValidation from "~/composables/useFormValidation.js";
 import useResumeHooks from "~/hooks/useResumeHooks.js";
-import { useDiff } from "~/composables/useDiff.js";
-import PhoneDisabledInput from "~/components/Profile/PhoneDisabledInput.vue";
-
-import avatar from "~/assets/img/jobeek-avatar.png";
 import { toTypedSchema } from "@vee-validate/zod";
+import avatar from "~/assets/img/jobeek-avatar.png";
 import { z } from "~/hooks/ru-zod.js";
 
-console.log("render");
-
 const profileStore = useProfileStore();
-
 const { getUser } = profileStore;
+await getUser();
+
 const { refreshSeeker } = useAuthStore();
-const { getCityNameFromArea, getCityNameFromArea2 } = useResumeHooks();
+const { getCityNameFromArea2 } = useResumeHooks();
 const { searchCities } = profileStore;
+
 const isCityLoading = ref(false);
 const { countryOptions } = storeToRefs(profileStore);
 const updateCityInput = async (newValue = "") => {
@@ -122,22 +123,28 @@ const schema = z.object({
   city_id: z.number().safe("Выберити город из списка"),
   country_id: z.number().safe("Выберити страну из списка"),
 });
+
+const authStore = useAuthStore();
+const initialValues = {
+  ...profileStore.seeker,
+  phone: authStore.user?.phone,
+};
 const { values, errors, meta, setErrors, resetForm, validate } = useForm({
-  initialValues: {
-    first_name: null,
-    last_name: null,
-    email: null,
-    birth_date: null,
-    city_id: null,
-    country_id: null,
-  },
+  initialValues,
   initialTouched: true,
   validationSchema: toTypedSchema(schema),
 });
-const cityOptions = ref([]);
+
+const { getCountries, getCities } = profileStore;
+
+await getCities({ city_id: values.city_id });
+
+const cityOptions = ref(profileStore.cityOptions ?? []);
 
 const { value: country_id, setValue: setCountryId } = useField("country_id");
 const { value: city_id, setValue: setCityId } = useField("city_id");
+
+setCityId(values.city_id ?? undefined);
 
 watch(
   () => country_id.value,
@@ -172,12 +179,13 @@ const getFields = (newObject) => {
     last_name: newObject.last_name,
     email: newObject.email,
     email_to_verify: newObject.email_to_verify,
-    phone: newObject.phone,
     birth_date: newObject.birth_date,
     city_id: newObject.city_id ?? undefined,
     city_name: newObject.city_name,
-    photo_url: newObject.photo_url,
+    photo: newObject.photo ?? null,
+    photo_url: newObject.photo_url ?? null,
     country_id: newObject.country_id ?? 1,
+    phone: authStore.user?.phone,
   };
 };
 watch(
@@ -188,25 +196,21 @@ watch(
     }
   },
 );
-watch(
-  () => sectionData.value,
-  (newData, oldData) => {
-    const diffData = useDiff(newData, oldData);
-    if (Object.keys(diffData).length) {
-      resetForm({ values: newData });
-    }
-  },
-);
-
-onMounted(() => {
-  if (!profileStore.seeker) {
-    getUser();
-  } else {
+// watch(
+//   () => sectionData.value,
+//   (newData, oldData) => {
+//     const diffData = useDiff(newData, oldData);
+//     if (Object.keys(diffData).length) {
+//       resetForm({ values: newData });
+//     }
+//   },
+// );
+onBeforeMount(() => {
+  if (profileStore.seeker) {
     sectionData.value = getFields(profileStore.seeker);
   }
 });
 
-const { getCountries, getCities } = profileStore;
 await getCountries();
 
 const { errors: serverErrors, handleErrorResponse } = useFormValidation();

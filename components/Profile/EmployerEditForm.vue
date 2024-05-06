@@ -5,8 +5,16 @@
     :style="{ overflowY: 'hidden' }"
   >
     <PageLoader v-if="isLoading" />
-
-    <ProfilePhotoInput name="logo" preview="logo_url" :avatar="avatar" />
+    <div class="input-row">
+      <label for="photo">Лого</label>
+      <ProfilePhotoInput
+        class="photo_radius"
+        v-if="profileStore.employer"
+        name="logo"
+        :preview="profileStore.employer.logo_url"
+        :avatar="avatar"
+      />
+    </div>
 
     <div class="input-row">
       <label for="password">Название компании <b>*</b></label>
@@ -70,23 +78,18 @@
 
 <script setup>
 import { useProfileStore } from "~/store/profile";
-import { storeToRefs } from "pinia";
 import Swal from "sweetalert2";
-import { useRuntimeConfig } from "nuxt/app";
-import { useCheckJSON } from "~/composables/useCheckJSON";
 import { useDiff } from "~/composables/useDiff.js";
 import { useForm } from "vee-validate";
 
 import avatar from "~/assets/img/jobeek-avatar.png";
 import { toTypedSchema } from "@vee-validate/zod";
 import { z } from "~/hooks/ru-zod.js";
-
-const CONFIG = useRuntimeConfig();
+import { useAuthStore } from "~/store/auth.js";
 
 const profileStore = useProfileStore();
 
 const { getUser } = profileStore;
-const { employer } = storeToRefs(profileStore);
 
 const schema = z.object({
   company_name: z.string(),
@@ -94,14 +97,14 @@ const schema = z.object({
   company_description: z.string(),
   email: z.string().email(),
 });
+
+const authStore = useAuthStore();
+const initialValues = {
+  ...profileStore.employer,
+  phone: authStore.user?.phone,
+};
 const { values, errors, meta, setErrors, resetForm, validate } = useForm({
-  initialValues: {
-    logo: null,
-    company_name: null,
-    company_url: null,
-    company_description: null,
-    email: null,
-  },
+  initialValues,
   initialTouched: true,
   validationSchema: toTypedSchema(schema),
 });
@@ -116,7 +119,7 @@ const getFields = (newObject) => {
     email: newObject.email,
     company_url: newObject.company_url,
     logo_url: newObject.logo_url,
-    phone: newObject.phone,
+    phone: authStore.user?.phone,
   };
 };
 watch(
@@ -145,17 +148,9 @@ onMounted(() => {
   }
 });
 
-const route = useRoute();
-const routeErrorMessage = computed(() => {
-  if (useCheckJSON(route.query.message)) {
-    return JSON.parse(route.query.message).text;
-  }
-  return route.query.message;
-});
 const { updateEmployer } = profileStore;
 
 function getFormData(object) {
-  console.log(object);
   const formData = new FormData();
   Object.keys(object).forEach((key) => formData.append(key, object[key]));
   return formData;

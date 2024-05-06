@@ -80,7 +80,7 @@ v
 
 <script setup>
 import { storeToRefs } from "pinia";
-import { useVacancyStore } from "../../store/vacancy";
+import { useVacancyStore } from "~/store/vacancy";
 
 const vacancyStore = useVacancyStore();
 const { getVacancies } = vacancyStore;

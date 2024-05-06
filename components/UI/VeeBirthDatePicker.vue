@@ -56,10 +56,16 @@ const emit = defineEmits({
 
 const years = ref([]);
 
+const birth = new Date(value.value);
+const d = moment(value.value, "YYYY-MM-DD");
+const year = d.format("YYYY");
+const month = d.format("MM");
+const day = parseInt(d.format("DD"));
+
 const date = reactive({
-  year: null,
-  month: null,
-  day: null,
+  year: year,
+  month: month,
+  day: day,
 });
 
 const isFirst = ref(true);
@@ -91,6 +97,7 @@ const getModelValue = (newDate = null) => {
     "YYYY-MM-DD",
   ).format("YYYY-MM-DD");
 };
+
 const maxDate = computed(() => {
   if ([1, 2, 4, 6, 7, 9, 11].includes(date.month)) {
     return 31;

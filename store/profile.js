@@ -227,7 +227,11 @@ export const useProfileStore = defineStore("profile", {
         const { data } = response;
         if (!data) return;
         this.seeker = { ...data.data };
-        this.user = { phone: this.seeker?.phone };
+        this.user = {
+          phone: this.seeker?.phone ?? 7,
+          email: this.employer?.email,
+          email_to_verify: this.employer?.email_to_verify,
+        };
       }
       return response;
     },
@@ -237,7 +241,11 @@ export const useProfileStore = defineStore("profile", {
       });
       if (response && response.data && "data" in response.data) {
         this.employer = response.data.data;
-        this.user = { phone: this.employer?.phone };
+        this.user = {
+          phone: this.employer?.phone ?? 7,
+          email: this.employer?.email,
+          email_to_verify: this.employer?.email_to_verify,
+        };
       }
       return response;
     },

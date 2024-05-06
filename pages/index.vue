@@ -2,9 +2,9 @@
   <div>
     <HomeMainSection />
     <HomePlaceSection />
-    <HomeVacancySection />
+    <!--    <HomeVacancySection />-->
     <HomeCompaniesSection />
-    <HomeWorkSection />
+    <!--    <HomeWorkSection />-->
     <HomeSearchSection />
   </div>
 </template>

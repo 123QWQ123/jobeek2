@@ -36,7 +36,6 @@ onMounted(async () => {
   } else {
     isLoading.value = false;
   }
-  // phoneInputElement.value.addEventListener("input", () => {});
 });
 
 const phones = ref([]);
