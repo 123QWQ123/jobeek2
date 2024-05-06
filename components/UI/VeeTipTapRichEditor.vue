@@ -59,8 +59,6 @@ onBeforeUnmount(() => {
   font-feature-settings: var(--font-feature-settings, normal);
   font-size: 1rem;
   color: #000;
-  //background: #d5d5d5;
-  //padding: 0.5rem 0.75rem;
   border: 1px solid #bbbbbb;
   transition:
     background-color 0.2s,

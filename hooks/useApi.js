@@ -76,7 +76,6 @@ const useApi = async (method, options = {}) => {
           const { data } = res.response;
           if (data) {
             const { errors, message } = data;
-            console.log(errors);
             if (errors) {
               return {
                 errors,
@@ -150,18 +149,22 @@ const useApi = async (method, options = {}) => {
                 status: "error",
               };
             }
+            if (message) {
+              return {
+                message: message,
+                status: "error",
+              };
+            }
           }
         }
 
         return {
-          data: {},
           message: res.message,
           status: "error",
         };
       }
 
       return {
-        data: {},
         message: res,
         status: "error",
       };

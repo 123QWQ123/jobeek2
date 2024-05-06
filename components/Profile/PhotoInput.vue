@@ -3,48 +3,36 @@ import { useField } from "vee-validate";
 
 const props = defineProps(["name", "preview", "avatar"]);
 
-const CONFIG = useRuntimeConfig();
-
 const { value, setValue, errorMessage } = useField(() => props.name);
-const { value: previewUrl } = useField(() => props.preview);
 
 const handleUploadFile = async (e) => {
   photo.value = photoElement.value.files[0];
-  // state.photo.val = photoElement.value.files[0];
   const file = photoElement.value.files;
   if (file && file[0]) {
     let reader = new FileReader();
     reader.onload = (e) => {
       base64.value = e.target.result;
-      // state.photo.base64 = e.target.result;
     };
-    console.log(file[0]);
     reader.readAsDataURL(file[0]);
   }
 };
 
 const photoElement = ref();
 const base64 = ref(null);
-const photo_url = ref(previewUrl.value ?? null);
+
+const photo_url = ref(props.preview ?? null);
+
 const photo = ref(null);
 watch(
   () => photo.value,
   () => {
-    console.log(photo.value);
     setValue(photo.value);
   },
 );
-
 watch(
-  () => previewUrl.value,
+  () => props.preview,
   () => {
-    photo_url.value = previewUrl.value;
-  },
-);
-watch(
-  () => props.avatar,
-  () => {
-    photo_url.value = previewUrl.value;
+    photo_url.value = props.preview;
   },
 );
 
@@ -52,23 +40,29 @@ const openFileBrowser = () => {
   photoElement.value.click();
 };
 const clearPhotoUrl = () => {
-  photo_url.value = "";
-  photo.value = "";
-  base64.value = "";
+  photo_url.value = null;
+  photo.value = null;
+  base64.value = null;
 };
-
-const photoUrl = computed(() => {
-  if (base64.value) {
-    return base64.value;
-  } else if (photo_url.value) {
+const isPreviewPhoto = computed(() => {
+  if (
+    photo_url.value &&
+    (base64.value === null || base64.value === undefined)
+  ) {
     return photo_url.value;
-  } else return props.avatar;
+  }
+  if (base64.value !== null) {
+    return base64.value;
+  }
+  if (props.avatar !== null) {
+    return props.avatar;
+  }
+  return false;
 });
 </script>
 
 <template>
-  <div class="input-row">
-    <label for="photo">Фото</label>
+  <div>
     <div class="dwld-photo">
       <div class="photo photo_radius">
         <input
@@ -78,7 +72,10 @@ const photoUrl = computed(() => {
           name="photo"
           id="photo"
         />
-        <img :src="photoUrl" alt="#" />
+        <img v-if="isPreviewPhoto" :src="isPreviewPhoto" alt="#" />
+        <!--        <img v-else-if="base64" :src="base64" alt="#" />-->
+        <!--        <img v-else-if="props.avatar" :src="props.avatar" alt="#" />-->
+
         <div class="photo-actions">
           <button
             class="photo-action redact"

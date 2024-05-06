@@ -1,6 +1,5 @@
 <script setup>
 import { useAuthStore } from "~/store/auth";
-import useAlert from "~/composables/useAlert";
 import Premium from "~/components/MyVacancies/Premium.vue";
 
 definePageMeta({
@@ -26,7 +25,6 @@ const isCompleted = computed(() => {
   }
   return false;
 });
-const { handleAlert } = useAlert();
 onMounted(() => {
   if (authStore.isEmployer) {
     navigateTo({ name: "profile-employer" });
@@ -35,7 +33,6 @@ onMounted(() => {
 watch(
   () => authStore.isEmployer,
   (newValue) => {
-    console.log(newValue);
     if (newValue) {
       navigateTo({ name: "profile-employer" });
     }

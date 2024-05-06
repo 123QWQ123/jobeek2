@@ -66,8 +66,8 @@ const onInputEmail = (e) => {
   }
 };
 const disabled = computed(() => {
-  if (!value.value) return false;
-  return true;
+  if (value.value) return true;
+  return false;
 });
 const reAssignEmails = (newObject) => {
   email_to_verify.value = newObject.email_to_verify;
@@ -157,7 +157,7 @@ const onEmailConfirm = async (e) => {
     <input
       ref="inputEmail"
       type="email"
-      :disabled="disabled"
+      :disabled="true"
       :value="currentValue"
       placeholder="Электронная почта"
       @input="onInputEmail"

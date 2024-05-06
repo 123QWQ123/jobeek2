@@ -487,7 +487,6 @@ const openProviderAuthUrl = (url) => {
   height: calc(100% + 2px);
   width: calc(100% + 2px);
   position: absolute;
-  //padding-top: 50px;
   -webkit-backface-visibility: hidden;
   left: -1px;
   right: 0;
