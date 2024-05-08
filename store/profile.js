@@ -255,7 +255,9 @@ export const useProfileStore = defineStore("profile", {
         content_type: "multipart/form-data",
         payload,
       });
-      if ("data" in response) {
+      if (response.status === "success") {
+        this.employer = response.data.data;
+        localStorage.setItem("seeker", JSON.stringify(this.seeker));
         this.user = response.data?.data;
       }
       return response;
@@ -270,7 +272,9 @@ export const useProfileStore = defineStore("profile", {
         content_type: "multipart/form-data",
         payload,
       });
-      if ("data" in response) {
+      if (response.status === "success") {
+        this.employer = response.data.data;
+        localStorage.setItem("employer", JSON.stringify(this.employer));
         this.user = response.data?.data;
       }
       return response;

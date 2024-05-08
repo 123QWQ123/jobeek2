@@ -36,7 +36,7 @@ const vacancyStore = useVacancyStore();
 const { getVacancies } = vacancyStore;
 const { current_page } = storeToRefs(vacancyStore);
 
-const { getQueryParam, getCurrentQueryParams } = useQueryParams();
+const { getCurrentQueryParams } = useQueryParams();
 const current_params = getCurrentQueryParams() ?? {};
 if (process.server) {
   await getVacancies({ ...getCurrentQueryParams("back") });

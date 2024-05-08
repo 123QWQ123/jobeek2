@@ -1,5 +1,5 @@
 <script setup>
-import { useProfileStore } from "~/store/profile.js";
+import { useAuthStore } from "~/store/auth.js";
 
 const props = defineProps({
   name: {
@@ -22,8 +22,7 @@ const isCheckButton = ref(false);
 const isConfirmationSent = ref(false);
 const inputEmail = ref();
 
-const profileStore = useProfileStore();
-const seeker = storeToRefs(profileStore);
+const authStore = useAuthStore();
 const email_to_verify = ref();
 watch(
   () => currentValue.value,
@@ -38,13 +37,13 @@ const email = ref(value.value);
 const is_email_to_verify_sent = ref(false);
 const is_sent_and_verified = computed(() => {
   if (props.type === "seeker") {
-    if (profileStore.seeker) {
-      if (profileStore.seeker.email_to_verify) return true;
+    if (authStore.seeker) {
+      if (authStore.seeker.email_to_verify) return true;
     }
     return false;
   } else {
-    if (profileStore.employer) {
-      if (profileStore.employer.email_to_verify) return true;
+    if (authStore.employer) {
+      if (authStore.employer.email_to_verify) return true;
     }
     return false;
   }
@@ -65,10 +64,7 @@ const onInputEmail = (e) => {
     isCheckButton.value = false;
   }
 };
-const disabled = computed(() => {
-  if (value.value) return true;
-  return false;
-});
+
 const reAssignEmails = (newObject) => {
   email_to_verify.value = newObject.email_to_verify;
   email.value = newObject.email ? newObject.email : newObject.email_to_verify;
@@ -96,22 +92,22 @@ const reAssignEmails = (newObject) => {
   }
 };
 watch(
-  () => profileStore.seeker,
+  () => authStore.seeker,
   (newObject) => {
     if (props.type === "seeker") {
-      if (profileStore.seeker) {
-        reAssignEmails(profileStore.seeker);
+      if (authStore.seeker) {
+        reAssignEmails(authStore.seeker);
       }
     }
   },
 );
 
 watch(
-  () => profileStore.employer,
+  () => authStore.employer,
   (newObject) => {
     if (props.type === "employer") {
-      if (profileStore.employer) {
-        reAssignEmails(profileStore.employer);
+      if (authStore.employer) {
+        reAssignEmails(authStore.employer);
       }
     }
   },
@@ -119,18 +115,18 @@ watch(
 
 onMounted(() => {
   if (props.type === "seeker") {
-    if (profileStore.seeker) {
-      reAssignEmails(profileStore.seeker);
+    if (authStore.seeker) {
+      reAssignEmails(authStore.seeker);
     }
   }
   if (props.type === "employer") {
-    if (profileStore.employer) {
-      reAssignEmails(profileStore.employer);
+    if (authStore.employer) {
+      reAssignEmails(authStore.employer);
     }
   }
 });
 
-const { confirmEmail, checkEmailConfirmation } = profileStore;
+const { confirmEmail, checkEmailConfirmation } = authStore;
 const onEmailConfirm = async (e) => {
   e.preventDefault();
   isLoading.value = true;
@@ -160,6 +156,7 @@ const onEmailConfirm = async (e) => {
       :disabled="true"
       :value="currentValue"
       placeholder="Электронная почта"
+      autocomplete="off"
       @input="onInputEmail"
       @blur="setValue(currentValue)"
     />

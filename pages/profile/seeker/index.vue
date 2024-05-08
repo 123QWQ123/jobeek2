@@ -25,6 +25,14 @@ const isCompleted = computed(() => {
   }
   return false;
 });
+
+const { setSeeker } = authStore;
+onBeforeUnmount(() => {
+  const seeker = JSON.parse(sessionStorage.getItem("seeker"));
+  if (seeker) {
+    setSeeker(seeker);
+  }
+});
 onMounted(() => {
   if (authStore.isEmployer) {
     navigateTo({ name: "profile-employer" });
@@ -45,7 +53,7 @@ watch(
     <PersonalCabinetSearchMobile />
 
     <div class="has-sidebar has-sidebar--v2 wrapper wrapper-1290">
-      <div class="content">
+      <div class="content" v-if="authStore.seeker">
         <div class="w-box bg-white" v-if="!isCompleted">
           <p class="text-danger p-3">
             Перед использовании сервиса требуется заполнения вашего профиля.
@@ -60,6 +68,7 @@ watch(
           </div>
         </div>
       </div>
+      <div class="content" v-else></div>
       <aside class="sidebar">
         <Premium />
       </aside>

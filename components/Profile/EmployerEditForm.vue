@@ -3,6 +3,7 @@
     class="w-box-body"
     @submit.prevent="handleSubmit"
     :style="{ overflowY: 'hidden' }"
+    autocomplete="off"
   >
     <PageLoader v-if="isLoading" />
     <div class="input-row">
@@ -11,6 +12,7 @@
         class="photo_radius"
         v-if="profileStore.employer"
         name="logo"
+        name_url="logo_url"
         :preview="profileStore.employer.logo_url"
         :avatar="avatar"
       />
@@ -19,8 +21,9 @@
     <div class="input-row">
       <label for="password">Название компании <b>*</b></label>
       <div class="input-wrapper position-relative">
-        <CustomTextInput
+        <VeeCustomTextInput
           type="text"
+          :autofill="false"
           name="company_name"
           placeholder="Название"
         />
@@ -29,16 +32,17 @@
     <div class="input-row">
       <label for="password">О компании <b>*</b></label>
       <div class="input-wrapper position-relative">
-        <CustomTextInput type="text" name="company_description" />
+        <VeeCustomTextInput type="text" name="company_description" />
       </div>
     </div>
 
     <div class="input-row">
       <label for="password">Сайт компании<b>*</b></label>
       <div class="input-wrapper position-relative">
-        <CustomTextInput
+        <VeeCustomTextInput
           type="text"
           name="company_url"
+          :autofill="false"
           placeholder="https://"
         />
       </div>
@@ -60,7 +64,7 @@
     <div class="input-row">
       <label for="password">Пароль<b>*</b></label>
       <div class="input-wrapper position-relative">
-        <CustomTextInput
+        <VeeCustomTextInput
           type="password"
           name="password"
           placeholder="********"
@@ -98,11 +102,19 @@ const schema = z.object({
   email: z.string().email(),
 });
 
-const authStore = useAuthStore();
-const initialValues = {
-  ...profileStore.employer,
-  phone: authStore.user?.phone,
+const getFields = (newObject) => {
+  if (!newObject) return {};
+  return {
+    logo: newObject.logo ?? null,
+    company_name: newObject.company_name,
+    company_description: newObject.company_description,
+    email: newObject.email,
+    company_url: newObject.company_url,
+    phone: newObject.phone,
+  };
 };
+const authStore = useAuthStore();
+const initialValues = getFields(authStore.employer);
 const { values, errors, meta, setErrors, resetForm, validate } = useForm({
   initialValues,
   initialTouched: true,
@@ -111,19 +123,8 @@ const { values, errors, meta, setErrors, resetForm, validate } = useForm({
 
 const sectionData = ref({});
 
-const getFields = (newObject) => {
-  return {
-    logo: newObject.logo ?? null,
-    company_name: newObject.company_name,
-    company_description: newObject.company_description,
-    email: newObject.email,
-    company_url: newObject.company_url,
-    logo_url: newObject.logo_url,
-    phone: authStore.user?.phone,
-  };
-};
 watch(
-  () => profileStore.employer,
+  () => authStore.employer,
   (newObject) => {
     if (newObject) {
       sectionData.value = getFields(newObject);
@@ -141,10 +142,10 @@ watch(
 );
 
 onMounted(() => {
-  if (!profileStore.employer) {
+  if (!authStore.employer) {
     getUser();
   } else {
-    sectionData.value = getFields(profileStore.employer);
+    sectionData.value = getFields(authStore.employer);
   }
 });
 
@@ -185,8 +186,7 @@ const handleSubmit = async (e) => {
     await getUser();
 
     Swal.fire({
-      title: "Успешно!",
-      text: resData.message,
+      text: "Успешно сохранено",
       icon: "success",
       confirmButtonText: "ОК",
       preConfirm: () => {

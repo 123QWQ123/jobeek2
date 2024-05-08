@@ -1,5 +1,6 @@
 <template>
   <div>
+    <NuxtLoadingIndicator color="#fff" />
     <NuxtLayout></NuxtLayout>
     <client-only>
       <Hv />

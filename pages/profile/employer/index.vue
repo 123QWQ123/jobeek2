@@ -13,10 +13,6 @@ const isEmployer = computed(() => authStore.isEmployer);
 
 const route = useRoute();
 
-const error = computed(() => {
-  return route.query.message;
-});
-
 const isCompleted = computed(() => {
   if (!authStore.isEmployer) {
     if (authStore.seeker) {
@@ -63,7 +59,7 @@ watch(
             <h1 class="title">Профиль</h1>
           </div>
           <transition name="content">
-            <ProfileEmployerEditForm />
+            <ProfileEmployerEditForm v-if="authStore.isAuthed" />
           </transition>
         </div>
       </div>

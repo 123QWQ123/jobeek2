@@ -1,13 +1,14 @@
 <script setup>
 import { useNuxtApp } from "#app";
-import { useAuthStore } from "~/store/auth.js";
+import { useField } from "vee-validate";
 
 const props = defineProps(["name"]);
 
 const { $format_phone } = useNuxtApp();
 
-const authStore = useAuthStore();
-const currentValue = ref($format_phone(authStore.user?.phone) ?? null);
+const { value } = useField(() => props.name);
+console.log(value.value);
+const currentValue = ref($format_phone(value.value) ?? null);
 </script>
 
 <template>
@@ -15,7 +16,8 @@ const currentValue = ref($format_phone(authStore.user?.phone) ?? null);
     <input
       type="text"
       placeholder="Телефон"
-      class="disabled"
+      disabled
+      autocomplete="off"
       :value="currentValue"
       id="phone"
     />

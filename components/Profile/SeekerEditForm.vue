@@ -2,15 +2,23 @@
   <form class="w-box-body" autocomplete="off" @submit.prevent="handleSubmit">
     <PageLoader v-if="isLoading" />
 
+    {{ values }}
     <div class="input-row">
       <label for="photo">Фото</label>
       <ProfilePhotoInput
         class="photo_radius"
-        v-if="profileStore.seeker"
+        v-if="authStore.seeker"
         name="photo"
-        :preview="profileStore.seeker.photo_url"
+        name_url="photo_url"
+        :preview="authStore.seeker.photo_url"
         :avatar="avatar"
       />
+      <!--      <ProfilePhotoInput-->
+      <!--        class="photo_radius"-->
+      <!--        name="photo"-->
+      <!--        :preview="authStore.seeker.photo_url"-->
+      <!--        :avatar="avatar"-->
+      <!--      />-->
     </div>
 
     <div class="input-row">
@@ -37,6 +45,8 @@
             name="country_id"
             placeholder="Выберите страну"
             not_found="Страна не найдено"
+            :error="countryError"
+            @input="updateCountryInput"
           />
 
           <VeeSelectWithSearch
@@ -45,6 +55,7 @@
             name="city_id"
             :placeholder="'Выберите город'"
             not_found="Город не найдено"
+            :error="cityError"
           />
         </div>
       </div>
@@ -52,13 +63,13 @@
     <div class="input-row">
       <label for="phone">Телефон</label>
       <div class="input-wrapper">
-        <ProfilePhoneDisabledInput name="phone" />
+        <ProfilePhoneDisabledInput v-if="authStore.seeker.phone" name="phone" />
       </div>
     </div>
     <div class="input-row">
       <label for="email">Электронная почта<b>*</b></label>
       <div class="input-wrapper">
-        <ProfileEmailInput name="email" type="seeker" key="employer_email" />
+        <ProfileEmailInput name="email" type="seeker" key="seeker_email" />
       </div>
     </div>
 
@@ -95,7 +106,6 @@ import { z } from "~/hooks/ru-zod.js";
 
 const profileStore = useProfileStore();
 const { getUser } = profileStore;
-await getUser();
 
 const { refreshSeeker } = useAuthStore();
 const { getCityNameFromArea2 } = useResumeHooks();
@@ -103,8 +113,25 @@ const { searchCities } = profileStore;
 
 const isCityLoading = ref(false);
 const { countryOptions } = storeToRefs(profileStore);
+
+const cityError = ref("");
+const countryError = ref("");
+const updateCountryInput = async (newValue = "") => {
+  if (newValue) {
+    if (!newValue.toLowerCase().match(/[а-я]/i)) {
+      countryError.value = "Используйте только алфавит кириллица";
+      return;
+    }
+  } else {
+    countryError.value = "";
+  }
+};
 const updateCityInput = async (newValue = "") => {
   if (newValue) {
+    if (!newValue.toLowerCase().match(/[а-я]/i)) {
+      cityError.value = "Используйте только алфавит кириллица";
+      return;
+    }
     const items = await searchCities({
       search: newValue,
     });
@@ -112,9 +139,26 @@ const updateCityInput = async (newValue = "") => {
       value: item.id,
       name: getCityNameFromArea2(item),
     }));
+  } else {
+    cityError.value = "";
   }
 };
-
+const getFields = (newObject) => {
+  if (!newObject) return {};
+  console.log(newObject.phone);
+  return {
+    first_name: newObject.first_name,
+    last_name: newObject.last_name,
+    email: newObject.email,
+    email_to_verify: newObject.email_to_verify,
+    birth_date: newObject.birth_date,
+    city_id: newObject.city_id ?? undefined,
+    city_name: newObject.city_name,
+    photo: newObject.photo ?? null,
+    country_id: newObject.country_id ?? 1,
+    phone: newObject.phone,
+  };
+};
 const schema = z.object({
   first_name: z.string(),
   last_name: z.string(),
@@ -125,16 +169,28 @@ const schema = z.object({
 });
 
 const authStore = useAuthStore();
-const initialValues = {
-  ...profileStore.seeker,
-  phone: authStore.user?.phone,
-};
+// watch(
+//   () => authStore.seeker,
+//   (newValues) => {
+//     resetForm({ values: getFields(newValues), touched: false });
+//   },
+// );
+
+const initialValues = getFields(authStore.seeker);
+console.log(initialValues);
+
 const { values, errors, meta, setErrors, resetForm, validate } = useForm({
   initialValues,
-  initialTouched: true,
+  initialTouched: false,
   validationSchema: toTypedSchema(schema),
 });
 
+watch(
+  () => values.city_id,
+  () => {
+    cityError.value = "";
+  },
+);
 const { getCountries, getCities } = profileStore;
 
 await getCities({ city_id: values.city_id });
@@ -150,13 +206,12 @@ watch(
   () => country_id.value,
   (new_value) => {
     if (new_value) {
+      countryError.value = "";
+
       const city = values.city_id;
-      if (city) {
-        setCityId(values.city_id ?? undefined);
-        getCities({ city_id: values.city_id });
-      } else {
-        getCities({ country_ids: [new_value] });
-      }
+      getCities({ country_ids: [new_value] });
+
+      setCityId(null);
     }
   },
 );
@@ -173,44 +228,27 @@ watch(
 
 const sectionData = ref({});
 
-const getFields = (newObject) => {
-  return {
-    first_name: newObject.first_name,
-    last_name: newObject.last_name,
-    email: newObject.email,
-    email_to_verify: newObject.email_to_verify,
-    birth_date: newObject.birth_date,
-    city_id: newObject.city_id ?? undefined,
-    city_name: newObject.city_name,
-    photo: newObject.photo ?? null,
-    photo_url: newObject.photo_url ?? null,
-    country_id: newObject.country_id ?? 1,
-    phone: authStore.user?.phone,
-  };
-};
-watch(
-  () => profileStore.seeker,
-  (newObject) => {
-    if (newObject) {
-      sectionData.value = getFields(newObject);
-    }
-  },
-);
+// watch(
+//   () => authStore.seeker,
+//   (newObject) => {
+//     if (newObject) {
+//       sectionData.value = getFields(newObject);
+//     }
+//   },
+// );
 // watch(
 //   () => sectionData.value,
 //   (newData, oldData) => {
 //     const diffData = useDiff(newData, oldData);
 //     if (Object.keys(diffData).length) {
-//       resetForm({ values: newData });
+//       resetForm({ values: newData, touched: false });
 //     }
 //   },
 // );
-onBeforeMount(() => {
-  if (profileStore.seeker) {
-    sectionData.value = getFields(profileStore.seeker);
-  }
-});
 
+onMounted(async () => {
+  // await getUser();
+});
 await getCountries();
 
 const { errors: serverErrors, handleErrorResponse } = useFormValidation();
@@ -280,9 +318,8 @@ const handleSubmit = async (e) => {
   await getUser();
   await refreshSeeker();
   Swal.fire({
-    title: "Успешно!",
-    text: resData.message,
     icon: "success",
+    text: "Успешно сохранено",
     preConfirm: () => {
       // navigateTo({ path: "/", query: {} });
     },

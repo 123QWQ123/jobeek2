@@ -1,9 +1,10 @@
 <script setup>
 import { useField } from "vee-validate";
 
-const props = defineProps(["name", "preview", "avatar"]);
+const props = defineProps(["name", "preview", "avatar", "name_url"]);
 
 const { value, setValue, errorMessage } = useField(() => props.name);
+const { setUrlValue } = useField(() => props.name_url);
 
 const handleUploadFile = async (e) => {
   photo.value = photoElement.value.files[0];
@@ -43,6 +44,7 @@ const clearPhotoUrl = () => {
   photo_url.value = null;
   photo.value = null;
   base64.value = null;
+  setValue(null);
 };
 const isPreviewPhoto = computed(() => {
   if (
@@ -73,8 +75,6 @@ const isPreviewPhoto = computed(() => {
           id="photo"
         />
         <img v-if="isPreviewPhoto" :src="isPreviewPhoto" alt="#" />
-        <!--        <img v-else-if="base64" :src="base64" alt="#" />-->
-        <!--        <img v-else-if="props.avatar" :src="props.avatar" alt="#" />-->
 
         <div class="photo-actions">
           <button

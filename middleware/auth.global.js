@@ -1,21 +1,44 @@
 import { useAuthStore } from "~/store/auth";
 import { protected_routes, public_routes } from "~/config";
-import { useProfileStore } from "~/store/profile";
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
   if (!process.server) {
     const authStore = useAuthStore();
-    const profileStore = useProfileStore();
-    const { getEmployer, getSeeker } = profileStore;
     let employer = computed(() => authStore.employer);
     let seeker = computed(() => authStore.seeker);
     let isAuthed = computed(() => authStore.isAuthenticated);
 
     const isEmployer =
       localStorage.getItem("isEmployer") !== "true" ? false : true;
-    const { tryLogin, logout } = authStore;
-    if (authStore.isAuthed === null) {
-      const isAuthed = await tryLogin();
+    const {
+      tryLogin,
+      setSeeker,
+      setEmployer,
+      setUser,
+      refreshSeeker,
+      refreshEmployer,
+    } = authStore;
+    const token = localStorage.getItem("token");
+    if (!token) {
+      if (authStore.isAuthed === null) {
+        const isAuthed = await tryLogin();
+      }
+    } else {
+      if (!localStorage.getItem("seeker")) {
+        const seeker = await refreshSeeker();
+      }
+      if (!localStorage.getItem("employer")) {
+        const employer = await refreshEmployer();
+      }
+      const seeker = JSON.parse(localStorage.getItem("seeker"));
+      const employer = JSON.parse(localStorage.getItem("employer"));
+      setSeeker(seeker);
+      setEmployer(employer);
+      if (isEmployer) {
+        setUser(employer);
+      } else {
+        setUser(seeker);
+      }
     }
 
     if (public_routes.includes(to.name)) {

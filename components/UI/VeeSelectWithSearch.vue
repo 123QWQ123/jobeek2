@@ -8,6 +8,7 @@
     >
       <input
         class="current"
+        ref="inputRef"
         v-model="searchInput"
         @input="onChangeHandler"
         role="presentation"
@@ -35,8 +36,11 @@
       </ul>
     </div>
 
-    <div class="text-danger d-block">
+    <div class="text-danger">
       {{ errorMessage }}
+    </div>
+    <div class="text-danger" v-if="props.error">
+      {{ props.error }}
     </div>
   </div>
 </template>
@@ -75,7 +79,16 @@ const props = defineProps({
     type: String,
     default: "Не найдено",
   },
+  error: {
+    required: false,
+    type: String,
+    default: "",
+  },
 });
+
+const customErrorMessage = ref(props.error);
+const inputRef = ref();
+
 // The `name` is returned in a function because we want to make sure it stays reactive
 // If the name changes you want `useField` to be able to pick it up
 const { value, errorMessage } = useField(() => props.name);
@@ -111,7 +124,13 @@ watch(
     const found = options.value.find(
       (item) => String(item.value) === String(newValue),
     );
-    if (!found) return;
+    console.log(found);
+    if (!found) {
+      searchInput.value = "";
+      selectedOption.value = {};
+      inputRef.value.focus();
+      return;
+    }
     selectedOption.value = found;
     searchInput.value = found.name;
   },

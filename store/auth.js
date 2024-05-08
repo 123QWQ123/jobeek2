@@ -43,7 +43,17 @@ export const useAuthStore = defineStore("auth", {
       this.isEmployerMode = !this.isEmployerMode;
     },
     setUser(payload) {
+      console.log(payload);
+      this.isAuthed = true;
       this.user = payload;
+    },
+    setSeeker(payload) {
+      this.seeker = payload;
+      this.isAuthed = true;
+    },
+    setEmployer(payload) {
+      this.employer = payload;
+      this.isAuthed = true;
     },
     async signUp(payload) {
       console.log(payload);
@@ -159,13 +169,11 @@ export const useAuthStore = defineStore("auth", {
             "Content-Type": "application/json",
           },
         });
-        console.log(response);
         return {
           status: "success",
           data: response.data.data,
         };
       } catch (error) {
-        console.log(error);
         if ("data" in error.response) {
           return {
             status: "error",
@@ -186,6 +194,7 @@ export const useAuthStore = defineStore("auth", {
       if (data && "data" in data) {
         this.seeker = data.data;
         this.user = { phone: this.seeker?.phone };
+        localStorage.setItem("seeker", JSON.stringify(this.seeker));
       }
       return data;
     },
@@ -197,6 +206,7 @@ export const useAuthStore = defineStore("auth", {
       if (response && response.data && "data" in response.data) {
         this.employer = response.data.data;
         this.user = { phone: this.employer?.phone };
+        localStorage.setItem("employer", JSON.stringify(this.employer));
       }
       return response;
     },
@@ -227,7 +237,8 @@ export const useAuthStore = defineStore("auth", {
           }
 
           this.user = response.data.data;
-          this.seeker = this.user;
+          this.seeker = { ...response.data.data };
+          localStorage.setItem("seeker", JSON.stringify(this.seeker));
           this.isAuthed = true;
           const response2 = await axios.get(url2, {
             headers: {
@@ -237,6 +248,9 @@ export const useAuthStore = defineStore("auth", {
           });
           this.user = { ...response2.data.data };
           this.employer = this.user;
+
+          localStorage.setItem("employer", JSON.stringify(this.employer));
+
           return true;
         } catch (error) {
           // console.log(error);
@@ -272,6 +286,8 @@ export const useAuthStore = defineStore("auth", {
         if (response.status === 200) {
           localStorage.setItem("token", resData.token);
           this.user = resData.user;
+          localStorage.setItem("user", JSON.stringify(this.user));
+
           this.isAuthed = true;
 
           setTimeout(async () => {

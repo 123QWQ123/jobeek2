@@ -48,6 +48,7 @@ const onProfileClick = () => {
     navigateTo({ name: "profile-employer" });
   }
 };
+const phone = computed(() => auth.user?.phone);
 
 const isPremium = computed(() => auth.isSubscribed);
 </script>
@@ -63,7 +64,7 @@ const isPremium = computed(() => auth.isSubscribed);
             @click="onProfileClick"
             role="link"
           >
-            {{ user?.phone }}
+            {{ phone }}
           </a>
           <button class="profile-button" type="button" v-if="isPremium">
             <PremiumIcon />
