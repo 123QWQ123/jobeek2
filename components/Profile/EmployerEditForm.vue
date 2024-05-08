@@ -82,7 +82,6 @@
 <script setup>
 import { useProfileStore } from "~/store/profile";
 import Swal from "sweetalert2";
-import { useDiff } from "~/composables/useDiff.js";
 import { useForm } from "vee-validate";
 
 import avatar from "~/assets/img/jobeek-avatar.png";
@@ -122,32 +121,6 @@ const { values, errors, meta, setErrors, resetForm, validate } = useForm({
 });
 
 const sectionData = ref({});
-
-// watch(
-//   () => authStore.employer,
-//   (newObject) => {
-//     if (newObject) {
-//       sectionData.value = getFields(newObject);
-//     }
-//   },
-// );
-watch(
-  () => sectionData.value,
-  (newData, oldData) => {
-    const diffData = useDiff(newData, oldData);
-    if (Object.keys(diffData).length) {
-      resetForm({ values: newData });
-    }
-  },
-);
-
-// onMounted(() => {
-//   if (!authStore.employer) {
-//     getUser();
-//   } else {
-//     sectionData.value = getFields(authStore.employer);
-//   }
-// });
 
 const { updateEmployer } = profileStore;
 

@@ -7,7 +7,6 @@ const props = defineProps(["name"]);
 const { $format_phone } = useNuxtApp();
 
 const { value } = useField(() => props.name);
-console.log(value.value);
 const currentValue = ref($format_phone(value.value) ?? null);
 </script>
 

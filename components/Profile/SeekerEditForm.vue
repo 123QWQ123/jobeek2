@@ -137,7 +137,6 @@ const updateCityInput = async (newValue = "") => {
 };
 const getFields = (newObject) => {
   if (!newObject) return {};
-  console.log(newObject.phone);
   return {
     first_name: newObject.first_name,
     last_name: newObject.last_name,
@@ -162,15 +161,8 @@ const schema = z.object({
 });
 
 const authStore = useAuthStore();
-// watch(
-//   () => authStore.seeker,
-//   (newValues) => {
-//     resetForm({ values: getFields(newValues), touched: false });
-//   },
-// );
 
 const initialValues = getFields(authStore.seeker);
-console.log(initialValues);
 
 const { values, errors, meta, setErrors, resetForm, validate } = useForm({
   initialValues,
@@ -218,26 +210,6 @@ watch(
     }));
   },
 );
-
-const sectionData = ref({});
-
-// watch(
-//   () => authStore.seeker,
-//   (newObject) => {
-//     if (newObject) {
-//       sectionData.value = getFields(newObject);
-//     }
-//   },
-// );
-// watch(
-//   () => sectionData.value,
-//   (newData, oldData) => {
-//     const diffData = useDiff(newData, oldData);
-//     if (Object.keys(diffData).length) {
-//       resetForm({ values: newData, touched: false });
-//     }
-//   },
-// );
 
 onMounted(async () => {
   // await getUser();

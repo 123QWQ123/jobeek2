@@ -43,7 +43,6 @@ export const useAuthStore = defineStore("auth", {
       this.isEmployerMode = !this.isEmployerMode;
     },
     setUser(payload) {
-      console.log(payload);
       this.isAuthed = true;
       this.user = payload;
     },
@@ -56,7 +55,6 @@ export const useAuthStore = defineStore("auth", {
       this.isAuthed = true;
     },
     async signUp(payload) {
-      console.log(payload);
       const response = await useApi("auth/register", {
         method: "post",
         payload,
