@@ -227,6 +227,8 @@ export const useProfileStore = defineStore("profile", {
         const { data } = response;
         if (!data) return;
         this.seeker = { ...data.data };
+        const { setSeeker } = useAuthStore();
+        setSeeker(this.seeker);
         this.user = {
           phone: this.seeker?.phone ?? 7,
           email: this.employer?.email,
@@ -241,6 +243,8 @@ export const useProfileStore = defineStore("profile", {
       });
       if (response && response.data && "data" in response.data) {
         this.employer = response.data.data;
+        const { setEmployer } = useAuthStore();
+        setEmployer(this.employer);
         this.user = {
           phone: this.employer?.phone ?? 7,
           email: this.employer?.email,

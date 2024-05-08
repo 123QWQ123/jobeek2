@@ -2,23 +2,15 @@
   <form class="w-box-body" autocomplete="off" @submit.prevent="handleSubmit">
     <PageLoader v-if="isLoading" />
 
-    {{ values }}
     <div class="input-row">
       <label for="photo">Фото</label>
       <ProfilePhotoInput
         class="photo_radius"
-        v-if="authStore.seeker"
         name="photo"
         name_url="photo_url"
         :preview="authStore.seeker.photo_url"
         :avatar="avatar"
       />
-      <!--      <ProfilePhotoInput-->
-      <!--        class="photo_radius"-->
-      <!--        name="photo"-->
-      <!--        :preview="authStore.seeker.photo_url"-->
-      <!--        :avatar="avatar"-->
-      <!--      />-->
     </div>
 
     <div class="input-row">
@@ -166,6 +158,7 @@ const schema = z.object({
   email: z.string().email(),
   city_id: z.number().safe("Выберити город из списка"),
   country_id: z.number().safe("Выберити страну из списка"),
+  phone: z.string(),
 });
 
 const authStore = useAuthStore();

@@ -10,10 +10,9 @@
       <label for="photo">Лого</label>
       <ProfilePhotoInput
         class="photo_radius"
-        v-if="profileStore.employer"
         name="logo"
         name_url="logo_url"
-        :preview="profileStore.employer.logo_url"
+        :preview="authStore.employer.logo_url"
         :avatar="avatar"
       />
     </div>
@@ -100,6 +99,7 @@ const schema = z.object({
   company_url: z.string().url(),
   company_description: z.string(),
   email: z.string().email(),
+  phone: z.string(),
 });
 
 const getFields = (newObject) => {
@@ -123,14 +123,14 @@ const { values, errors, meta, setErrors, resetForm, validate } = useForm({
 
 const sectionData = ref({});
 
-watch(
-  () => authStore.employer,
-  (newObject) => {
-    if (newObject) {
-      sectionData.value = getFields(newObject);
-    }
-  },
-);
+// watch(
+//   () => authStore.employer,
+//   (newObject) => {
+//     if (newObject) {
+//       sectionData.value = getFields(newObject);
+//     }
+//   },
+// );
 watch(
   () => sectionData.value,
   (newData, oldData) => {
@@ -141,13 +141,13 @@ watch(
   },
 );
 
-onMounted(() => {
-  if (!authStore.employer) {
-    getUser();
-  } else {
-    sectionData.value = getFields(authStore.employer);
-  }
-});
+// onMounted(() => {
+//   if (!authStore.employer) {
+//     getUser();
+//   } else {
+//     sectionData.value = getFields(authStore.employer);
+//   }
+// });
 
 const { updateEmployer } = profileStore;
 
