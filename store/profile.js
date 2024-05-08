@@ -70,19 +70,25 @@ export const useProfileStore = defineStore("profile", {
     },
   },
   actions: {
-    async getCountries(payload = {}) {
-      const { data } = await useApi("area/countries", {
+    async getCountries(payload = {}, is_new = false) {
+      const items = localStorage.getItem("countries");
+      if (items && !is_new) {
+        this.countries = JSON.parse(items);
+        return this.countries;
+      }
+      const response = await useApi("area/countries", {
         method: "get",
         payload,
       });
-      if (data && "data" in data) {
-        if (data.data.hasOwnProperty("countries")) {
-          this.countries = data.data.countries;
+      if (response.status === "success") {
+        if (response.data.data.hasOwnProperty("countries")) {
+          this.countries = response.data.data.countries;
         } else {
-          this.countries = data.data;
+          this.countries = response.data.data;
         }
+        localStorage.setItem("countries", JSON.stringify(this.countries));
       }
-      return data;
+      return response;
     },
 
     async searchPhone(payload = {}) {
@@ -107,19 +113,25 @@ export const useProfileStore = defineStore("profile", {
       }
       return data;
     },
-    async getCities(payload = {}) {
-      const { data } = await useApi("area/cities", {
+    async getCities(payload = {}, is_new = false) {
+      const items = localStorage.getItem("cities");
+      if (items && !is_new) {
+        this.cities = JSON.parse(items);
+        return this.cities;
+      }
+      const response = await useApi("area/cities", {
         method: "get",
         params: payload,
       });
-      if (data && "data" in data) {
-        if (data.data.hasOwnProperty("cities")) {
-          this.cities = data.data.cities;
+      if (response.status === "success") {
+        if (response.data.data.hasOwnProperty("cities")) {
+          this.cities = response.data.data.cities;
         } else {
-          this.cities = data.data;
+          this.cities = response.data.data;
         }
+        localStorage.setItem("cities", JSON.stringify(this.cities));
       }
-      return data;
+      return response;
     },
     async searchAreas(payload = {}) {
       const response = await useApi("area", {

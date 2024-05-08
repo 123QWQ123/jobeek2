@@ -124,13 +124,18 @@ const updateCityInput = async (newValue = "") => {
       cityError.value = "Используйте только алфавит кириллица";
       return;
     }
-    const items = await searchCities({
-      search: newValue,
-    });
-    cityOptions.value = items.map((item) => ({
-      value: item.id,
-      name: getCityNameFromArea2(item),
-    }));
+    const items = await getCities(
+      {
+        country_ids: [country_id.value],
+        search: newValue,
+      },
+      true,
+    );
+    console.log(items);
+    // cityOptions.value = items.map((item) => ({
+    //   value: item.id,
+    //   name: getCityNameFromArea2(item),
+    // }));
   } else {
     cityError.value = "";
   }
@@ -177,6 +182,7 @@ watch(
   },
 );
 const { getCountries, getCities } = profileStore;
+await getCountries();
 
 await getCities({ city_id: values.city_id });
 
@@ -194,7 +200,7 @@ watch(
       countryError.value = "";
 
       const city = values.city_id;
-      getCities({ country_ids: [new_value] });
+      getCities({ country_ids: [new_value] }, true);
 
       setCityId(null);
     }
@@ -210,11 +216,6 @@ watch(
     }));
   },
 );
-
-onMounted(async () => {
-  // await getUser();
-});
-await getCountries();
 
 const { errors: serverErrors, handleErrorResponse } = useFormValidation();
 
