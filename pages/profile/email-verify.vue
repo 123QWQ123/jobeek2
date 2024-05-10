@@ -25,7 +25,6 @@ onMounted(async () => {
   if (resData.status !== "success") {
     isSuccess.value = false;
     errorMessage.value = resData.message;
-    return;
   } else {
     isSuccess.value = true;
 

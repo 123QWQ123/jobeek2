@@ -7,6 +7,7 @@
   >
     <input
       class="current"
+      :value="searchInput"
       @input="onChangeHandler"
       @focusin="onFocus"
       @focusout="onFocusout"

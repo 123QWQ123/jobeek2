@@ -290,7 +290,7 @@ export const useProfileStore = defineStore("profile", {
         payload,
       });
       if (response.status === "success") {
-        this.employer = response.data.data;
+        this.seeker = response.data.data;
         localStorage.setItem("seeker", JSON.stringify(this.seeker));
         this.user = response.data?.data;
       }

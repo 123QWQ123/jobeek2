@@ -4,7 +4,7 @@ import fs from "fs";
 
 const config = {
   server: {},
-  devtools: { enabled: false, vscode: {} },
+  devtools: { enabled: Boolean(process.env.DEVTOOLS_ENABLED), vscode: {} },
   runtimeConfig: {
     // The private keys which are only available within server-side
     apiSecret: "123",
@@ -26,7 +26,6 @@ const config = {
     "~/assets/styles/hamburger.min.css",
     "~/assets/styles/main.css",
     "~/assets/styles/app.scss",
-    "~/assets/styles/main.css",
     "~/assets/styles/styles-new.css",
     "~/assets/styles/lk-vacancy.css",
     "~/assets/styles/resume.css",

@@ -70,7 +70,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       if (
         protected_routes.includes(to.name) &&
         employer.value &&
-        employer.value.is_completed == false
+        employer.value.is_completed === false
       ) {
         return navigateTo({
           path: "/profile/employer",
