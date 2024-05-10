@@ -232,6 +232,13 @@ export const useProfileStore = defineStore("profile", {
       }
     },
     async getSeeker(url = "") {
+      const { setSeeker } = useAuthStore();
+      const seeker = localStorage.getItem("seeker");
+      if (seeker && seeker !== "null") {
+        this.seeker = JSON.parse(seeker);
+        setSeeker(this.seeker);
+        return this.seeker;
+      }
       const response = await useApi(url, {
         method: "get",
       });
@@ -239,8 +246,9 @@ export const useProfileStore = defineStore("profile", {
         const { data } = response;
         if (!data) return;
         this.seeker = { ...data.data };
-        const { setSeeker } = useAuthStore();
         setSeeker(this.seeker);
+        localStorage.setItem("seeker", JSON.stringify(this.seeker));
+
         this.user = {
           phone: this.seeker?.phone ?? 7,
           email: this.employer?.email,
@@ -250,13 +258,23 @@ export const useProfileStore = defineStore("profile", {
       return response;
     },
     async getEmployer(url = "") {
+      const { setEmployer } = useAuthStore();
+
+      const employer = localStorage.getItem("employer");
+      if (employer && employer !== "null") {
+        this.employer = JSON.parse(employer);
+        setEmployer(this.employer);
+        return this.employer;
+      }
+
       const response = await useApi(url, {
         method: "get",
       });
-      if (response && response.data && "data" in response.data) {
+      if (response.status === "success") {
         this.employer = response.data.data;
-        const { setEmployer } = useAuthStore();
         setEmployer(this.employer);
+
+        localStorage.setItem("employer", JSON.stringify(this.employer));
         this.user = {
           phone: this.employer?.phone ?? 7,
           email: this.employer?.email,

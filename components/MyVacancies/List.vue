@@ -108,10 +108,6 @@ import { useMyVacancySortingOptions } from "~/composables/useMyVacancySortingOpt
 import { useMyVacancyPerPageOptions } from "~/composables/useMyVacancyPerPageOptions";
 import { useMyVacanciesFilterOptions } from "~/composables/useMyVacanciesFilterOptions";
 
-useHead({
-  title: "Jobeek - Мои вакансии",
-});
-
 const vacancyStore = useVacancyStore();
 const {
   getMyVacancies,

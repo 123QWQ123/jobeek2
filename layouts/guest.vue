@@ -1,6 +1,6 @@
 <template>
   <div class="layout">
-    <HeaderThePersonalCabinetHeader />
+    <HeaderTheGuestCabinetHeader />
     <div>
       <NuxtPage />
     </div>
@@ -15,23 +15,7 @@
     <!--          </p>-->
     <!--        </div>-->
     <!--      </template>-->
-
-    <footer class="footer" v-if="hasFooterSlot">
-      <slot name="footer"></slot>
-    </footer>
-    <the-footer v-else></the-footer>
+    <the-footer />
   </div>
 </template>
-
-<script>
-export default {
-  computed: {
-    hasHeaderSlot() {
-      return !!this.$slots.header;
-    },
-    hasFooterSlot() {
-      return !!this.$slots.footer;
-    },
-  },
-};
-</script>
+<script setup lang="ts"></script>

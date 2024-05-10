@@ -63,7 +63,6 @@ watch(
     params.value = newParams;
   },
 );
-const route = useRoute();
 onMounted(() => {
   if (vacancies.value.length > 0) {
     isMore.value = true;

@@ -34,7 +34,7 @@
 }
 
 
-.vacancy-list{
+.vacancy-list {
     display: grid !important;
 }
 
@@ -81,4 +81,36 @@
 
 .input-wrapper .select2-container {
     width: 100% !important;
+}
+
+.pu-skeleton {
+    background-size: 200px 100%;
+    background-repeat: no-repeat;
+    border-radius: 3px;
+    display: inline-block;
+    line-height: 1;
+    width: 100%;
+    background-color: rgb(238, 238, 238);
+    background-image: linear-gradient(90deg, rgb(238, 238, 238), rgb(245, 245, 245), rgb(238, 238, 238));
+    animation: 1.5s ease-in-out 0s infinite normal none running SkeletonLoading;
+    height: 30px;
+}
+
+@keyframes SkeletonLoading {
+    0% {
+        background-position: -200px 0;
+    }
+    100% {
+        background-position: calc(200px + 100%) 0;
+    }
+}
+
+.no-favorites-txt {
+    font-weight: bold;
+}
+
+
+.sign-in-btn {
+    min-width: 140px;
+    min-height: 47px;
 }

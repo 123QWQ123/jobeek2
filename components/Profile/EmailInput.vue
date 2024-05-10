@@ -17,6 +17,7 @@ const { value, setValue, errorMessage, setErrors } = useField(() => props.name);
 const currentValue = ref(null);
 
 const isLoading = ref(false);
+const isDisabled = ref(!!value.value);
 const isConfirmButton = ref(false);
 const isCheckButton = ref(false);
 const isConfirmationSent = ref(false);
@@ -153,7 +154,7 @@ const onEmailConfirm = async (e) => {
     <input
       ref="inputEmail"
       type="email"
-      :disabled="true"
+      :disabled="isDisabled"
       :value="currentValue"
       placeholder="Электронная почта"
       autocomplete="off"

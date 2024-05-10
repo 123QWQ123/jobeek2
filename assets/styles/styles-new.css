@@ -1,7 +1,5 @@
 
-
-
-.scam-phone-page{
+.scam-phone-page {
     margin-bottom: 4rem;
     padding-bottom: 150px;
 }
@@ -304,6 +302,7 @@
 .w-badge.gray {
     background: #2f2f2f;
 }
+
 .w-badge.green {
     background: #7fc78f;
 }
@@ -455,7 +454,6 @@
     /*    border-radius: 0;*/
     /*    min-height: 50px;*/
     /*}*/
-
     .search-button {
         top: 24%;
     }
@@ -496,3 +494,6 @@
     font-size: 14px;
     line-height: 19px;
 }
+
+
+

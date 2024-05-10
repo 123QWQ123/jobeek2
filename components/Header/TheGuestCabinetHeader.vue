@@ -57,20 +57,19 @@ const isPremium = computed(() => auth.isSubscribed);
       <div class="header-wrapper">
         <Logo />
         <CabinetHeaderSearchForm v-if="!isCabinetNavbarShown" class="mr-2" />
-        <div class="profile-action">
-          <a
-            class="btn button-xs sign-in-btn ms-4"
-            @click="onProfileClick"
+        <div class="header-actions ms-auto">
+          <NuxtLink
+            class="btn button-xs sign-in-btn"
+            :to="{ name: 'sign-in' }"
             role="link"
-          >
-            {{ phone }}
-          </a>
-          <button class="profile-button" type="button" v-if="isPremium">
-            <PremiumIcon />
-          </button>
-          <button class="exit-button" type="button" @click="logout">
-            <ExitIcon />
-          </button>
+            >Войти
+          </NuxtLink>
+          <NuxtLink
+            class="btn button-xl sign-up-btn"
+            :to="{ name: 'sign-up' }"
+            role="link"
+            >Регистрация
+          </NuxtLink>
         </div>
       </div>
     </div>

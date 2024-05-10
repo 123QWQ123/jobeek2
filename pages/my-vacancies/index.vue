@@ -1,12 +1,9 @@
 <script setup>
-import { useAuthStore } from "../../store/auth";
+import { useAuthStore } from "~/store/auth";
 import { useVacancyStore } from "~/store/vacancy.js";
 
 definePageMeta({
   layout: "cabinet",
-});
-useHead({
-  title: "Мои вакансии - Jobeek",
 });
 
 const authStore = useAuthStore();

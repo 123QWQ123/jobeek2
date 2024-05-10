@@ -1,82 +1,91 @@
 <template>
-  <form
-    class="w-box-body"
-    @submit.prevent="handleSubmit"
-    :style="{ overflowY: 'hidden' }"
-    autocomplete="off"
-  >
-    <PageLoader v-if="isLoading" />
-    <div class="input-row">
-      <label for="photo">Лого</label>
-      <ProfilePhotoInput
-        class="photo_radius"
-        name="logo"
-        name_url="logo_url"
-        :preview="authStore.employer.logo_url"
-        :avatar="avatar"
-      />
+  <div class="w-box w-box--main">
+    <div class="w-box-head">
+      <h1 class="title">Профиль</h1>
     </div>
-
-    <div class="input-row">
-      <label for="password">Название компании <b>*</b></label>
-      <div class="input-wrapper position-relative">
-        <VeeCustomTextInput
-          type="text"
-          :autofill="false"
-          name="company_name"
-          placeholder="Название"
+    <form
+      class="w-box-body"
+      @submit.prevent="handleSubmit"
+      :style="{ overflowY: 'hidden' }"
+      autocomplete="off"
+    >
+      <PageLoader v-if="isLoading" />
+      <div class="input-row">
+        <label for="photo">Лого</label>
+        <ProfilePhotoInput
+          class="photo_radius"
+          name="logo"
+          name_url="logo_url"
+          :preview="authStore.employer?.logo_url"
+          :avatar="avatar"
         />
       </div>
-    </div>
-    <div class="input-row">
-      <label for="password">О компании <b>*</b></label>
-      <div class="input-wrapper position-relative">
-        <VeeCustomTextInput type="text" name="company_description" />
-      </div>
-    </div>
 
-    <div class="input-row">
-      <label for="password">Сайт компании<b>*</b></label>
-      <div class="input-wrapper position-relative">
-        <VeeCustomTextInput
-          type="text"
-          name="company_url"
-          :autofill="false"
-          placeholder="https://"
-        />
+      <div class="input-row">
+        <label for="password">Название компании <b>*</b></label>
+        <div class="input-wrapper position-relative">
+          <VeeCustomTextInput
+            type="text"
+            :autofill="false"
+            name="company_name"
+            placeholder="Название"
+          />
+        </div>
       </div>
-    </div>
+      <div class="input-row">
+        <label for="password">О компании <b>*</b></label>
+        <div class="input-wrapper position-relative">
+          <VeeCustomTextInput type="text" name="company_description" />
+        </div>
+      </div>
 
-    <div class="input-row">
-      <label for="phone">Телефон</label>
-      <div class="input-wrapper">
-        <ProfilePhoneDisabledInput name="phone" />
+      <div class="input-row">
+        <label for="password">Сайт компании<b>*</b></label>
+        <div class="input-wrapper position-relative">
+          <VeeCustomTextInput
+            type="text"
+            name="company_url"
+            :autofill="false"
+            placeholder="https://"
+          />
+        </div>
       </div>
-    </div>
-    <div class="input-row">
-      <label for="email">Электронная почта<b>*</b></label>
-      <div class="input-wrapper">
-        <ProfileEmailInput name="email" type="employer" key="employer_email" />
-      </div>
-    </div>
 
-    <div class="input-row">
-      <label for="password">Пароль<b>*</b></label>
-      <div class="input-wrapper position-relative">
-        <VeeCustomTextInput
-          type="password"
-          name="password"
-          placeholder="********"
-        />
+      <div class="input-row">
+        <label for="phone">Телефон</label>
+        <div class="input-wrapper">
+          <ProfilePhoneDisabledInput name="phone" />
+        </div>
       </div>
-    </div>
+      <div class="input-row">
+        <label for="email">Электронная почта<b>*</b></label>
+        <div class="input-wrapper">
+          <ProfileEmailInput
+            name="email"
+            type="employer"
+            key="employer_email"
+          />
+        </div>
+      </div>
 
-    <div class="input-row">
-      <div class="input-wrapper">
-        <base-button type="submit">Сохранить</base-button>
+      <div class="input-row">
+        <label for="password">Пароль<b>*</b></label>
+        <div class="input-wrapper position-relative">
+          <VeeCustomTextInput
+            type="password"
+            name="password"
+            placeholder="********"
+          />
+        </div>
       </div>
-    </div>
-  </form>
+
+      <div class="input-row">
+        <div class="input-wrapper">
+          <base-button type="submit">Сохранить</base-button>
+        </div>
+      </div>
+    </form>
+  </div>
 </template>
 
 <script setup>
@@ -92,6 +101,9 @@ import { useAuthStore } from "~/store/auth.js";
 const profileStore = useProfileStore();
 
 const { getUser } = profileStore;
+const authStore = useAuthStore();
+
+const user = await getUser();
 
 const schema = z.object({
   company_name: z.string(),
@@ -112,16 +124,19 @@ const getFields = (newObject) => {
     phone: newObject.phone,
   };
 };
-const authStore = useAuthStore();
 const initialValues = getFields(authStore.employer);
 const { values, errors, meta, setErrors, resetForm, validate } = useForm({
   initialValues,
   initialTouched: true,
   validationSchema: toTypedSchema(schema),
 });
-
-const sectionData = ref({});
-
+watch(
+  () => authStore.employer,
+  () => {
+    resetForm({ values: getFields(authStore.employer) });
+  },
+);
+onBeforeUnmount(() => {});
 const { updateEmployer } = profileStore;
 
 function getFormData(object) {

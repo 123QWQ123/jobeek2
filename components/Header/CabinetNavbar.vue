@@ -40,11 +40,11 @@
           <li>
             <NuxtLink to="/"><span>Главная</span></NuxtLink>
           </li>
-          <li v-if="isEmployer">
-            <NuxtLink :to="{ name: 'your-responses' }"
-              ><span>Отклики<span class="count">12</span></span></NuxtLink
-            >
-          </li>
+          <!--          <li v-if="isEmployer">-->
+          <!--            <NuxtLink :to="{ name: 'your-responses' }"-->
+          <!--              ><span>Отклики<span class="count">12</span></span></NuxtLink-->
+          <!--            >-->
+          <!--          </li>-->
           <!--          <li v-else>-->
           <!--            <NuxtLink :to="{ name: 'profile-negotiations' }">-->
           <!--              <span>Отклики и приглашения<span class="count">12</span></span>-->
@@ -100,24 +100,22 @@
 </template>
 
 <script setup>
-const { $isMobile } = useNuxtApp();
+import { useAuthStore } from "~/store/auth";
+import { search_exception_routes } from "~/config.js";
 
-import { useAuthStore } from "~~/store/auth";
+const { $isMobile } = useNuxtApp();
 
 const auth = useAuthStore();
 const isAuthed = computed(() => auth.isAuthed);
 const isEmployer = computed(() => auth.isEmployer);
 
 const user = computed(() => auth.user);
-</script>
-
-<script>
-export default {
-  name: "LkNavbar.vue",
-};
-
 const isMobileNavigationActive = ref(false);
 
+const route = useRoute();
+const isCabinetNavbarShown = computed(() => {
+  return search_exception_routes.includes(route.name);
+});
 const toggleMobileNavigation = () => {
   isMobileNavigationActive.value = !isMobileNavigationActive.value;
 };

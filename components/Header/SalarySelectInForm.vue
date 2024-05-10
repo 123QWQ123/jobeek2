@@ -1,7 +1,7 @@
 <template>
   <CustomSelect
     class="no_bg"
-    label="Зарплата"
+    label="Все"
     v-model="selectedSalary"
     :options="salaryOptions"
     @change="onChange"

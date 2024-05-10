@@ -1,5 +1,5 @@
 <script setup>
-import {navigateTo} from "nuxt/app";
+import { navigateTo } from "nuxt/app";
 
 definePageMeta({
   layout: "cabinet",
@@ -7,21 +7,19 @@ definePageMeta({
 
 const route = useRoute();
 onMounted(() => {
-  if (route.name === 'advice'){
-    navigateTo({name: 'advice-category', params: {category: 'popular'}});
+  if (route.name === "advice") {
+    navigateTo({ name: "advice-category", params: { category: "popular" } });
   }
-})
-
+});
 </script>
 <template>
-    <main class="main cabinet advice-page bg-wrapper" role="main">
-      <NuxtLayout name="custom">
-        <div class="articles-grid-container wrapper wrapper-1290">
-            <NuxtPage ></NuxtPage>
-        </div>
-      </NuxtLayout>
-    </main>
-
+  <main class="main cabinet advice-page bg-wrapper" role="main">
+    <NuxtLayout name="guest">
+      <div class="articles-grid-container wrapper wrapper-1290">
+        <NuxtPage></NuxtPage>
+      </div>
+    </NuxtLayout>
+  </main>
 </template>
 
 <style>

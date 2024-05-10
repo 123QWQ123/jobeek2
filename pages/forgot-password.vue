@@ -3,6 +3,7 @@ import Swal from "sweetalert2";
 import { useAuthStore } from "~~/store/auth";
 import IMask from "imask";
 import { navigateTo } from "nuxt/app";
+import { ref } from "vue";
 
 definePageMeta({
   layout: "custom",
@@ -215,6 +216,12 @@ const onPasswordSubmit = async () => {
   return navigateTo({ name: "sign-in" });
 };
 
+const isFirstTimeCodeSent = ref(true);
+const onSendOneMoreTime = () => {
+  isFirstTimeCodeSent.value = false;
+  onSubmit();
+};
+
 function close() {
   state.error = null;
 }
@@ -265,7 +272,23 @@ function close() {
           @submit.prevent="onSMSSubmit"
         >
           <div class="i-wrap">
+            <div class="note" v-if="isFirstTimeCodeSent">
+              <img src="~/assets/img/svg/i.svg" alt="#" />
+              <p>
+                На номер +{{ state.phone.val }} отправлен код восстановления
+                пароля.
+              </p>
+            </div>
+            <div class="note" v-else>
+              <img src="~/assets/img/svg/i.svg" alt="#" />
+              <p>
+                На номер +{{ state.phone.val }} повторно отправлен код
+                восстановления пароля.
+              </p>
+            </div>
+
             <input
+              class="mt-2"
               type="number"
               name="code"
               v-model="state.code.val"
@@ -275,13 +298,12 @@ function close() {
             <span v-if="!state.code.isValid" class="text text-danger">
               Введите 4 значный код подтверждения
             </span>
-          </div>
-          <div class="note">
-            <img src="~/assets/img/svg/i.svg" alt="#" />
-            <p>
-              На номер +{{ state.phone.val }} отправлен код восстановления
-              пароля.
-            </p>
+            <span class="col-auto px-3" type="button" disabled>
+              Не получили код?
+              <a class="link link-primary" @click="onSendOneMoreTime">
+                Отправить еще раз
+              </a>
+            </span>
           </div>
           <button
             class="btn button-accent"

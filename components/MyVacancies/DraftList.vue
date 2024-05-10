@@ -86,7 +86,6 @@ const route = useRoute();
 watch(
   () => route.query.page,
   () => {
-    console.log(route.query.page);
     current_page.value = route.query.page ?? 1;
   },
 );
@@ -94,7 +93,6 @@ watch(
 watch(
   () => current_page.value,
   async (newPage) => {
-    console.log(current_page.value);
     await getMyDrafts({
       page: newPage,
     });

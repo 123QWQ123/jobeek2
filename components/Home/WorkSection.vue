@@ -41,78 +41,84 @@ v
     </div>
     <div v-else>
       <div class="swiper cards-slider-row">
-        <swiper
-          v-if="isInitialized"
-          :slides-per-view="'auto'"
-          :space-between="20"
-          :class="'cards-slider'"
-          :wrapper-class="'cards-grid'"
-        >
-          <swiper-slide v-for="item in vacancies">
-            <NuxtLink
-              class="tile-card"
-              :to="{
-                name: 'search-vacancies',
-                query: {
-                  countries: [1],
-                  regions: [22],
-                  professional_roles: getProfessionalRoles(
-                    item.professional_roles,
-                  ),
-                },
-              }"
-            >
-              <h4 class="tile-card-title">{{ item.name }}</h4>
-              <span class="tile-card-dop-info" v-if="item.salary_to"
-                >До {{ vueNumberFormat(item.salary_to, {}) }} ₽ / месяц</span
+        <div v-if="isInitialized">
+          <swiper
+            :slides-per-view="'auto'"
+            :space-between="20"
+            :class="'cards-slider'"
+            :wrapper-class="'cards-grid'"
+          >
+            <swiper-slide v-for="item in vacancies">
+              <NuxtLink
+                class="tile-card"
+                :to="{
+                  name: 'search-vacancies',
+                  query: {
+                    countries: [1],
+                    regions: [22],
+                    professional_roles: getProfessionalRoles(
+                      item.professional_roles,
+                    ),
+                  },
+                }"
               >
-              <span v-else class="tile-card-dop-info"
-                >От {{ vueNumberFormat(item.salary_from, {}) }} ₽ / месяц</span
-              >
-              <!--            <strong class="tile-card-count">2142 вакансии</strong>-->
-            </NuxtLink>
-          </swiper-slide>
-        </swiper>
+                <h4 class="tile-card-title">{{ item.name }}</h4>
+                <span class="tile-card-dop-info" v-if="item.salary_to"
+                  >До {{ vueNumberFormat(item.salary_to, {}) }} ₽ / месяц</span
+                >
+                <span v-else class="tile-card-dop-info"
+                  >От {{ vueNumberFormat(item.salary_from, {}) }} ₽ /
+                  месяц</span
+                >
+                <!--            <strong class="tile-card-count">2142 вакансии</strong>-->
+              </NuxtLink>
+            </swiper-slide>
+          </swiper>
+          <div v-if="!isLoading">
+            <span class="text-danger">
+              {{ noVacancyFoundMessage }}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 </template>
 
 <script setup>
-import { storeToRefs } from "pinia";
 import { useVacancyStore } from "~/store/vacancy";
 
 const vacancyStore = useVacancyStore();
-const { getVacancies } = vacancyStore;
-const { top_10: vacancies } = storeToRefs(vacancyStore);
+const { getVacanciesInMoscow } = vacancyStore;
 const isLoading = ref(false);
 const isInitialized = ref(false);
-watch(
-  () => vacancyStore.top_10,
-  () => {
-    if (vacancyStore.top_10.length > 0) {
-      isInitialized.value = true;
-    } else {
-      isInitialized.value = false;
-    }
-  },
-);
+const noVacancyFoundMessage = ref(null);
 
 onMounted(async () => {
   isLoading.value = true;
-  await getVacancies({ countries: [1], region_ids: [22] });
+  const resData = await getVacanciesInMoscow({
+    countries: [1],
+    region_ids: [22],
+  });
+  isLoading.value = false;
+  isInitialized.value = true;
+  if (resData.status !== "success") {
+    noVacancyFoundMessage.value = resData.message;
+    return;
+  }
   const TIMEOUT = 500;
   if (vacancies.value.length > 0) {
     setTimeout(() => {
       isInitialized.value = true;
     }, TIMEOUT);
   }
-  isLoading.value = false;
 });
 const getProfessionalRoles = (objectData) => {
   if (objectData) return Object.keys(objectData);
   return [];
 };
+
+const vacancies = computed(() => vacancyStore.vacancies_in_moscow.sort());
 </script>
 <style scoped>
 .section-head .more {
