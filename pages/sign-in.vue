@@ -7,7 +7,7 @@ import { useResumeStore } from "~/store/resume.js";
 import { ref } from "vue";
 
 definePageMeta({
-  layout: "custom",
+  layout: "cabinet",
 });
 
 useHead({

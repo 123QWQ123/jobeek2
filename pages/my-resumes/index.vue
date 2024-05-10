@@ -5,15 +5,10 @@ import { useResumeStore } from "~/store/resume.js";
 definePageMeta({
   layout: "cabinet",
 });
-useHead({
-  title: "Мои резюме - Jobeek",
-});
 
 const authStore = useAuthStore();
 
 const isEmployer = computed(() => authStore.isEmployer);
-const user = computed(() => authStore.user);
-const employer = computed(() => authStore.employer);
 
 watch(
   () => isEmployer.value,

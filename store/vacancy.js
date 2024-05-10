@@ -7,6 +7,7 @@ export const useVacancyStore = defineStore("vacancy", {
     return {
       vacancies: [],
       vacancies_in_my_city: [],
+      vacancies_in_moscow: [],
       vacancy: null,
       my_vacancy: null,
       total: 0,
@@ -46,7 +47,10 @@ export const useVacancyStore = defineStore("vacancy", {
       vacancy_types: [],
       can_create_vacancy: null,
       can_create_vacancy_count: 1,
-
+      provider_auth_urls: {
+        hh: null,
+        superjob: null,
+      },
       providers: {
         hh: null,
         superjob: null,
@@ -127,6 +131,11 @@ export const useVacancyStore = defineStore("vacancy", {
   },
   actions: {
     async getConnectedEmployerProviders() {
+      const providers = localStorage.getItem("employer_providers");
+      if (providers) {
+        this.providers = JSON.parse(providers);
+        return this.providers;
+      }
       const response = await useApi("employer/used_providers", {
         method: "get",
         params: {},
@@ -134,6 +143,10 @@ export const useVacancyStore = defineStore("vacancy", {
 
       if ("data" in response) {
         this.providers = response.data.data;
+        localStorage.setItem(
+          "employer_providers",
+          JSON.stringify(this.providers),
+        );
         return response;
       }
       return response;
@@ -182,12 +195,21 @@ export const useVacancyStore = defineStore("vacancy", {
       payload,
       redirect_to = "/profile/service-verify",
     ) {
+      const urls = localStorage.getItem("employer_providers_redirect_url");
+      if (urls) {
+        this.provider_auth_urls = JSON.parse(urls);
+        return this.provider_auth_urls;
+      }
       const response = await useApi("services/auth/redirect-url", {
         method: "get",
         params: { ...payload, redirect_to, profile: "employer" },
       });
-      if ("data" in response) {
-        return response.data;
+      if (response.status === "success") {
+        localStorage.setItem(
+          "employer_providers_redirect_url",
+          JSON.stringify(response.data.data),
+        );
+        return this.provider_auth_urls;
       }
       return response;
     },
@@ -221,16 +243,46 @@ export const useVacancyStore = defineStore("vacancy", {
       }
       return response;
     },
-    async getCurrencyCityVacancies(payload) {
-      const { data } = await useApi("vacancies/search", {
+    async getVacanciesInMoscow(payload, is_new = false) {
+      const vacancies_in_moscow = localStorage.getItem("vacancies_in_moscow");
+      if (vacancies_in_moscow) {
+        this.vacancies_in_moscow = JSON.parse(vacancies_in_moscow);
+        return this.vacancies_in_moscow;
+      }
+      const response = await useApi("vacancies/search", {
         method: "get",
         params: payload,
       });
-      if (data && "items" in data) {
-        this.vacancies_in_my_city = data.items;
+      if (response.status === "success") {
+        this.vacancies_in_moscow = this.vacancies.concat(response.data.items);
+        localStorage.setItem(
+          "vacancies_in_moscow",
+          JSON.stringify(this.vacancies_in_moscow),
+        );
+        this.vacancies_in_moscow_total = response.data.found;
+        return response;
+      }
+      return response;
+    },
+    async getCurrencyCityVacancies(payload) {
+      const vacancies_in_my_city = localStorage.getItem("vacancies_in_my_city");
+      if (vacancies_in_my_city) {
+        this.vacancies_in_my_city = JSON.parse(vacancies_in_my_city);
         return this.vacancies_in_my_city;
       }
-      return data;
+      const response = await useApi("vacancies/search", {
+        method: "get",
+        params: payload,
+      });
+      if (response.status === "success") {
+        this.vacancies_in_my_city = response.data.items;
+        localStorage.setItem(
+          "vacancies_in_my_city",
+          JSON.stringify(this.vacancies_in_my_city),
+        );
+        return this.vacancies_in_my_city;
+      }
+      return response;
     },
     async getVacancy(id, payload) {
       const response = await useApi("vacancy/" + id, {

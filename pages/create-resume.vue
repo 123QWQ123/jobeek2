@@ -31,18 +31,19 @@ watch(() => route.query.message, handleAlert);
 
 const authStore = useAuthStore();
 
-const isEmployer = computed(() => authStore.isEmployer);
-const user = computed(() => authStore.user);
-const employer = computed(() => authStore.employer);
 watch(
-  () => isEmployer.value,
-  (new_value) => {
-    console.log(new_value);
-    if (new_value === true) {
+  () => authStore.isEmployer,
+  () => {
+    if (authStore.isEmployer === true) {
       navigateTo({ name: "create-vacancy" });
     }
   },
 );
+onMounted(() => {
+  if (authStore.isEmployer === true) {
+    navigateTo({ name: "create-vacancy" });
+  }
+});
 const saveAsDraft = (e) => {
   e.preventDefault();
   isLoading.value = true;

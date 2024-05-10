@@ -101,7 +101,6 @@ const { getUser } = profileStore;
 
 const { refreshSeeker } = useAuthStore();
 const { getCityNameFromArea2 } = useResumeHooks();
-const { searchCities } = profileStore;
 
 const isCityLoading = ref(false);
 const { countryOptions } = storeToRefs(profileStore);
@@ -124,18 +123,13 @@ const updateCityInput = async (newValue = "") => {
       cityError.value = "Используйте только алфавит кириллица";
       return;
     }
-    const items = await getCities(
+    await getCities(
       {
         country_ids: [country_id.value],
         search: newValue,
       },
       true,
     );
-    console.log(items);
-    // cityOptions.value = items.map((item) => ({
-    //   value: item.id,
-    //   name: getCityNameFromArea2(item),
-    // }));
   } else {
     cityError.value = "";
   }
@@ -171,7 +165,7 @@ const initialValues = getFields(authStore.seeker);
 
 const { values, errors, meta, setErrors, resetForm, validate } = useForm({
   initialValues,
-  initialTouched: false,
+  initialTouched: true,
   validationSchema: toTypedSchema(schema),
 });
 
@@ -198,10 +192,9 @@ watch(
   (new_value) => {
     if (new_value) {
       countryError.value = "";
-
-      const city = values.city_id;
+      countryError.value = "";
+      cityError.value = "";
       getCities({ country_ids: [new_value] }, true);
-
       setCityId(null);
     }
   },
@@ -261,6 +254,7 @@ const handleSubmit = async (e) => {
       formData.delete("password");
     }
   }
+  console.log(values.photo);
   if (values.hasOwnProperty("photo") && values.photo instanceof File) {
     formData.append("photo", values.photo) !== "";
   }

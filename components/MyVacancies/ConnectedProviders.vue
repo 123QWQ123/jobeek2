@@ -174,13 +174,11 @@
 </template>
 
 <script setup>
-import { useProfileStore } from "~/store/profile";
 import { toast } from "vue3-toastify";
 import moment from "moment";
 import { useVacancyStore } from "~/store/vacancy";
 
 const vacancyStore = useVacancyStore();
-const profileStore = useProfileStore();
 const { getEmployerProvidersAuthEndpoints, getConnectedEmployerProviders } =
   vacancyStore;
 
@@ -208,7 +206,6 @@ const { synVacancies, disconnectProviders } = vacancyStore;
 const onSync = async () => {
   isSyncing.value = true;
   const resData = await synVacancies();
-  console.log(resData);
   if (resData.hasOwnProperty("message")) {
     toast.info(resData.message, { autoClose: 3000 });
   }
@@ -217,7 +214,6 @@ const onSync = async () => {
 };
 
 const onDisconnect = async () => {
-  console.log(isSyncing.value);
   const resData = await disconnectProviders({ providers: [prov] });
   if (resData.status !== "success") {
     toast.error(resData.message, { autoClose: 3000 });
@@ -268,8 +264,8 @@ onMounted(async () => {
   // }
   if (!isSuperjobConnected.value || !isHHConnected.value) {
     const authData = await getEmployerProvidersAuthEndpoints({}, redirect_url);
-    providers.value.hh.url = authData.data.hh;
-    providers.value.superjob.url = authData.data.superjob;
+    providers.value.hh.url = authData.hh;
+    providers.value.superjob.url = authData.superjob;
   }
 });
 

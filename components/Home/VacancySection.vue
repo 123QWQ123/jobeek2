@@ -40,47 +40,53 @@
       <BlockLoader />
     </div>
     <div v-else>
-      <swiper
-        v-if="isInitialized"
-        slides-per-view="auto"
-        :space-between="20"
-        class="cards-slider"
-        :wrapper-class="'vacancy-list'"
-      >
-        <swiper-slide v-for="item in vacancies">
-          <div class="vacancy-card">
-            <div class="vacancy-card-body">
-              <div class="company">
-                <div class="company-logo">
-                  <img src="~/assets/img/logos/megafon.svg" alt="#" />
+      <div v-if="isInitialized">
+        <swiper
+          slides-per-view="auto"
+          :space-between="20"
+          class="cards-slider"
+          :wrapper-class="'vacancy-list'"
+        >
+          <swiper-slide v-for="item in vacancies">
+            <div class="vacancy-card">
+              <div class="vacancy-card-body">
+                <div class="company">
+                  <div class="company-logo">
+                    <img src="~/assets/img/logos/megafon.svg" alt="#" />
+                  </div>
+                  <div class="company-name">
+                    <strong>{{ item.company }}</strong>
+                    <span class="location">{{ item.city }}</span>
+                  </div>
                 </div>
-                <div class="company-name">
-                  <strong>{{ item.company }}</strong>
-                  <span class="location">{{ item.city }}</span>
-                </div>
+                <nuxt-link
+                  :to="{
+                    name: 'vacancies-slug',
+                    params: { slug: item.id },
+                    query: { provider: item.provider },
+                  }"
+                  class="vacancy-card-title"
+                  >{{ item.name }}
+                </nuxt-link>
+                <span class="vacancy-card-dop-info" v-if="item.salary_from"
+                  >От {{ $format_number(item.salary_from) }} ₽</span
+                >
+                <span class="vacancy-card-dop-info" v-else
+                  >До {{ $format_number(item.salary_to) }} ₽</span
+                >
               </div>
-              <nuxt-link
-                :to="{
-                  name: 'vacancies-slug',
-                  params: { slug: item.id },
-                  query: { provider: item.provider },
-                }"
-                class="vacancy-card-title"
-                >{{ item.name }}
-              </nuxt-link>
-              <span class="vacancy-card-dop-info" v-if="item.salary_from"
-                >От {{ $format_number(item.salary_from) }} ₽</span
-              >
-              <span class="vacancy-card-dop-info" v-else
-                >До {{ $format_number(item.salary_to) }} ₽</span
-              >
+              <div class="vacancy-card-footer">
+                <a class="btn button-md" href="#">Откликнуться</a>
+              </div>
             </div>
-            <div class="vacancy-card-footer">
-              <a class="btn button-md" href="#">Откликнуться</a>
-            </div>
-          </div>
-        </swiper-slide>
-      </swiper>
+          </swiper-slide>
+        </swiper>
+        <div v-if="!isLoading">
+          <span class="text-danger">
+            {{ noVacancyFoundMessage }}
+          </span>
+        </div>
+      </div>
     </div>
   </section>
 </template>
@@ -88,6 +94,7 @@
 import { useVacancyStore } from "~/store/vacancy";
 import { useAreaStore } from "~/store/area";
 import { useNuxtApp } from "#app";
+import axios from "axios";
 
 const isInitialized = ref(false);
 
@@ -98,34 +105,33 @@ const areaStore = useAreaStore();
 const { getCurrencyCityVacancies } = vacancyStore;
 const { getLocation } = areaStore;
 const isLoading = ref(false);
-
-watch(
-  () => vacancyStore.vacancies_in_my_city,
-  () => {
-    if (vacancyStore.vacancies_in_my_city.length > 0) {
-      isInitialized.value = true;
-    } else {
-      isInitialized.value = false;
-    }
-  },
-);
+const noVacancyFoundMessage = ref();
 onMounted(async () => {
   // my transition page is 300, when TIMEOUT set to 300 is not work. so must larger than transition page
 
+  const ipData = await axios.get("api/getIp");
   isLoading.value = true;
   const location = await getLocation({ ip: "213.232.228.45" });
-  await getCurrencyCityVacancies({
+
+  const resData = await getCurrencyCityVacancies({
     countries: [location?.country?.id],
     region_ids: [location?.region?.id],
     city_id: location?.city?.id,
   });
+  isLoading.value = false;
+  isInitialized.value = true;
+
+  if (resData.status !== "success") {
+    noVacancyFoundMessage.value = resData.message;
+    return;
+  }
+  console.log(resData);
   const TIMEOUT = 500;
   if (vacancies.value.length > 0) {
     setTimeout(() => {
       isInitialized.value = true;
     }, TIMEOUT);
   }
-  isLoading.value = false;
 });
 const vacancies = computed(() => vacancyStore.vacancies_in_my_city.sort());
 </script>

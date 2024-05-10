@@ -8,10 +8,8 @@ definePageMeta({
 useHead({
   title: "Ваш аккаунт",
 });
-const authStore = useAuthStore();
-const isEmployer = computed(() => authStore.isEmployer);
 
-const route = useRoute();
+const authStore = useAuthStore();
 
 const isCompleted = computed(() => {
   if (!authStore.isEmployer) {
@@ -54,14 +52,8 @@ watch(
             Перед использовании сервиса требуется заполнения вашего профиля.
           </p>
         </div>
-        <div class="w-box w-box--main">
-          <div class="w-box-head">
-            <h1 class="title">Профиль</h1>
-          </div>
-          <transition name="content">
-            <ProfileEmployerEditForm v-if="authStore.isAuthed" />
-          </transition>
-        </div>
+
+        <ProfileParentEmployerProfile />
       </div>
       <aside class="sidebar">
         <Premium />
@@ -71,16 +63,6 @@ watch(
 </template>
 
 <style scoped>
-.content-enter-active,
-.content-leave-active {
-  transition: opacity 0.5s ease;
-}
-
-.content-enter-from,
-.content-leave-to {
-  opacity: 0;
-}
-
 @media (max-width: 768px) {
   .content {
     order: 2;

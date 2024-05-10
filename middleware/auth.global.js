@@ -25,19 +25,21 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       }
     } else {
       if (!localStorage.getItem("seeker")) {
-        const seeker = await refreshSeeker();
+        // const seeker = await refreshSeeker();
       }
       if (!localStorage.getItem("employer")) {
-        const employer = await refreshEmployer();
+        // const employer = await refreshEmployer();
       }
       const seeker = JSON.parse(localStorage.getItem("seeker"));
       const employer = JSON.parse(localStorage.getItem("employer"));
       setSeeker(seeker);
       setEmployer(employer);
-      if (isEmployer) {
+      if (isEmployer && employer) {
         setUser(employer);
       } else {
-        setUser(seeker);
+        if (seeker) {
+          setUser(seeker);
+        }
       }
     }
 

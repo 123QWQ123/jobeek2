@@ -5,6 +5,7 @@ import useApi from "~/hooks/useApi.js";
 export const useUIStore = defineStore("ui", {
   state: () => {
     return {
+      footer: null,
       isSidebarOpen: true,
       isMobileMode: false,
       footer_settings: {},
@@ -28,6 +29,14 @@ export const useUIStore = defineStore("ui", {
       }
     },
     async getFooterSettings() {
+      if (!process.server) {
+        const footer = localStorage.getItem("footer");
+        if (footer && footer !== "null") {
+          this.footer = footer;
+          return this.footer;
+        }
+      }
+
       const url = useRequestURL();
       const hostname = url.hostname;
       const response = await useApi("getSettings", {
@@ -38,8 +47,11 @@ export const useUIStore = defineStore("ui", {
         },
       });
       if (response.status === "success") {
-        this.footer_settings = response.data.data;
-        return this.footer_settings;
+        this.footer = response.data.data;
+        if (!process.server) {
+          localStorage.setItem("footer", JSON.stringify(this.footer));
+        }
+        return this.footer;
       }
       return response;
     },

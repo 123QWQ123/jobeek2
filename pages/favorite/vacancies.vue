@@ -5,7 +5,7 @@ definePageMeta({
   layout: "cabinet",
 });
 useHead({
-  title: "Мои вакансии резюме - Jobeek",
+  title: "Мои избранные вакансии - Jobeek",
 });
 
 const authStore = useAuthStore();

@@ -22,8 +22,11 @@ import { useAuthStore } from "~/store/auth.js";
 
 const authStore = useAuthStore();
 const { getPremium, getPremiumUrl } = authStore;
-const premiumUrl = await getPremiumUrl();
-const premium = await getPremium();
+
+onMounted(async () => {
+  const premium = await getPremium();
+  const premiumUrl = await getPremiumUrl();
+});
 
 const onClickConnect = () => {
   console.log(authStore.premium_url);

@@ -73,7 +73,7 @@
     </div>
     <div class="main-footer-bottom">
       <div class="wrapper">
-        <div class="text-center" v-html="uiStore.footer_settings"></div>
+        <div class="text-center" v-html="uiStore.footer"></div>
       </div>
     </div>
   </footer>

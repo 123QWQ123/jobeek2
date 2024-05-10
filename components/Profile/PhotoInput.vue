@@ -1,5 +1,8 @@
 <script setup>
 import { useField } from "vee-validate";
+import useApi from "~/hooks/useApi.js";
+import { toast } from "vue3-toastify";
+import { useAuthStore } from "~/store/auth.js";
 
 const props = defineProps(["name", "preview", "avatar", "name_url"]);
 
@@ -40,11 +43,27 @@ watch(
 const openFileBrowser = () => {
   photoElement.value.click();
 };
-const clearPhotoUrl = () => {
-  photo_url.value = null;
-  photo.value = null;
+const { refreshEmployer, refreshSeeker } = useAuthStore();
+const clearPhotoUrl = async () => {
+  let url = "seeker/photo";
+  if (props.name === "logo") {
+    url = "employer/logo";
+  }
+  const resData = await useApi(url, { method: "DELETE" });
+  if (resData.status !== "success") {
+    toast.error(resData.message);
+    return;
+  }
+  toast.success("Удалено успешно.");
+  photo_url.value = undefined;
+  photo.value = undefined;
   base64.value = null;
-  setValue(null);
+  setValue(undefined);
+  if (props.name === "logo") {
+    await refreshEmployer();
+  } else {
+    await refreshSeeker();
+  }
 };
 const isPreviewPhoto = computed(() => {
   if (

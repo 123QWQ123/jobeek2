@@ -32,6 +32,14 @@ export const useAuthStore = defineStore("auth", {
     },
     isAuthenticated(state) {
       let authed = false;
+      if (!process.server) {
+        const token = localStorage.getItem("token");
+        if (token && token !== "null") {
+          authed = true;
+          return authed;
+        }
+      }
+
       if (state.isAuthed === true) {
         authed = true;
       }
@@ -186,15 +194,16 @@ export const useAuthStore = defineStore("auth", {
     },
 
     async refreshSeeker(url = "seeker/profile") {
-      const { data } = await useApi(url, {
+      const response = await useApi(url, {
         method: "get",
       });
-      if (data && "data" in data) {
-        this.seeker = data.data;
+      console.log(response);
+      if (response.status === "success") {
+        this.setSeeker(response.data.data);
         this.user = { phone: this.seeker?.phone };
         localStorage.setItem("seeker", JSON.stringify(this.seeker));
       }
-      return data;
+      return response;
     },
 
     async refreshEmployer(url = "employer/profile") {
@@ -202,7 +211,7 @@ export const useAuthStore = defineStore("auth", {
         method: "get",
       });
       if (response && response.data && "data" in response.data) {
-        this.employer = response.data.data;
+        this.setEmployer(response.data.data);
         this.user = { phone: this.employer?.phone };
         localStorage.setItem("employer", JSON.stringify(this.employer));
       }
@@ -351,18 +360,33 @@ export const useAuthStore = defineStore("auth", {
       });
     },
     async getPremium(payload = {}) {
+      const subscription = localStorage.getItem("subscription");
+      if (subscription && subscription !== "null") {
+        const tariff = JSON.parse(subscription);
+        this.isSubscribed = tariff.premium;
+        return this.isSubscribed;
+      }
       const response = await useApi("premium", {
         method: "get",
         params: payload,
       });
       if (response.status === "success") {
         this.isSubscribed = response.data.data.premium;
+        localStorage.setItem(
+          "subscription",
+          JSON.stringify(response.data.data),
+        );
         return this.isSubscribed;
       }
       return response;
     },
 
     async getPremiumUrl() {
+      const premium_url = localStorage.getItem("premium_url");
+      if (premium_url && premium_url !== "null") {
+        this.premium_url = premium_url;
+        return this.premium_url;
+      }
       const url = useRequestURL();
       const hostname = url.hostname;
       const response = await useApi("getSettings", {
@@ -374,6 +398,7 @@ export const useAuthStore = defineStore("auth", {
       });
       if (response.status === "success") {
         this.premium_url = response.data.data;
+        localStorage.setItem("premium_url", JSON.stringify(this.premium_url));
         return this.premium_url;
       }
       return response;

@@ -26,6 +26,10 @@ export const useResumeStore = defineStore("resume", {
       part_times: [],
       metros: [],
       can_create_resume: {},
+      provider_auth_urls: {
+        hh: null,
+        superjob: null,
+      },
       providers: {
         hh: null,
         superjob: null,
@@ -56,12 +60,21 @@ export const useResumeStore = defineStore("resume", {
     },
 
     async getConnectedSeekerProviders(payload) {
+      const providers = localStorage.getItem("seeker_providers");
+      if (providers) {
+        this.providers = JSON.parse(providers);
+        return this.providers;
+      }
       const response = await useApi("seeker/used_providers", {
         method: "get",
       });
 
       if (response.status === "success") {
         this.providers = response.data.data;
+        localStorage.setItem(
+          "seeker_providers",
+          JSON.stringify(this.providers),
+        );
         return this.providers;
       }
       return response;
@@ -96,6 +109,11 @@ export const useResumeStore = defineStore("resume", {
       payload,
       redirect_to = "/profile/service-verify",
     ) {
+      const urls = localStorage.getItem("seeker_providers_redirect_url");
+      if (urls) {
+        this.provider_auth_urls = JSON.parse(urls);
+        return this.provider_auth_urls;
+      }
       const response = await useApi(
         "services/auth/redirect-url?profile=seeker&redirect_to=" + redirect_to,
         {
@@ -104,7 +122,12 @@ export const useResumeStore = defineStore("resume", {
         },
       );
       if (response.status === "success") {
-        return response.data.data;
+        this.provider_auth_urls = response.data.data;
+        localStorage.setItem(
+          "seeker_providers_redirect_url",
+          JSON.stringify(this.provider_auth_urls),
+        );
+        return this.provider_auth_urls;
       }
       return response;
     },

@@ -192,13 +192,11 @@
 </template>
 
 <script setup>
-import { useProfileStore } from "~/store/profile";
 import { toast } from "vue3-toastify";
 import { useResumeStore } from "~/store/resume";
 import moment from "moment";
 
 const resumeStore = useResumeStore();
-const profileStore = useProfileStore();
 const { getSeekerProvidersAuthEndpoints, getConnectedSeekerProviders } =
   resumeStore;
 

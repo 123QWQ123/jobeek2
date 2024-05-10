@@ -1,6 +1,6 @@
 <template>
   <div class="layout">
-    <HeaderHomePersonalCabinetHeader />
+    <HeaderThePersonalCabinetHeader />
     <div>
       <NuxtPage />
     </div>
@@ -15,20 +15,6 @@
     <!--          </p>-->
     <!--        </div>-->
     <!--      </template>-->
-
-    <the-footer></the-footer>
+    <the-footer />
   </div>
 </template>
-
-<script>
-export default {
-  computed: {
-    hasHeaderSlot() {
-      return !!this.$slots.header;
-    },
-    hasFooterSlot() {
-      return !!this.$slots.footer;
-    },
-  },
-};
-</script>
