@@ -60,7 +60,7 @@
         <HeaderSalarySelectInForm v-model="salary" />
       </div>
       <div class="input-wrap has-label">
-        <label for="salary">Город</label>
+        <label for="city">Город</label>
         <SelectWithSearch
           :options="cityOptions"
           v-model.number="city"
