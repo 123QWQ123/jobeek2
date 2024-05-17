@@ -4,14 +4,18 @@ import fs from "fs";
 
 const config = {
   server: {},
-  devtools: { enabled: Boolean(process.env.DEVTOOLS_ENABLED), vscode: {} },
+  devtools: {
+    enabled: Boolean(process.env.DEVTOOLS_ENABLED),
+    vscode: {},
+    timeline: { enabled: Boolean(process.env.DEVTOOLS_TIMELINE_ENABLED) }
+  },
   runtimeConfig: {
     // The private keys which are only available within server-side
     apiSecret: "123",
     // Keys within public, will be also exposed to the client-side
     public: {
-      apiBase: "https://api.jobeek.online/api/",
-      base: "https://api.jobeek.online/",
+      apiBase: process.env.NUXT_PUBLIC_API_BASE,
+      base: process.env.NUXT_PUBLIC_BASE,
       sentry: {
         dsn: "https://cd6d558f98e968695f6d8fa0a88c115f@o4506751504482304.ingest.sentry.io/4506757163057152",
         environment: "development",
