@@ -282,6 +282,7 @@ export const useAuthStore = defineStore("auth", {
 
     clearAuth() {
       localStorage.removeItem("token");
+      localStorage.removeItem("user");
     },
 
     async signIn(payload) {
