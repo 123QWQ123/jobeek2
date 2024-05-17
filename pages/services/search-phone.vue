@@ -64,7 +64,7 @@ watch(
       errorMessage.value = resData.message;
       return;
     }
-    phones.value = resData.data;
+    phones.value = resData.data.data;
   },
 );
 </script>

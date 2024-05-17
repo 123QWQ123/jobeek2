@@ -107,8 +107,7 @@ const onSubmit = async () => {
           <img src="~/assets/img/logos/megafon.svg" alt="#" />
         </div>
         <div class="company-name">
-          <a href="#">{{ $phone_number }}</a
-          ><span class="count">{{ operator }}</span>
+          <span class="count">{{ operator }}</span>
         </div>
 
         <div class="company-info">
