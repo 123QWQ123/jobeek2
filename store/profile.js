@@ -71,9 +71,7 @@ export const useProfileStore = defineStore("profile", {
   },
   actions: {
     async getCountries(payload = {}, is_new = false) {
-      const items = localStorage.getItem("countries");
-      if (items && !is_new) {
-        this.countries = JSON.parse(items);
+      if (this.countries && !is_new) {
         return this.countries;
       }
       const response = await useApi("area/countries", {
@@ -86,9 +84,8 @@ export const useProfileStore = defineStore("profile", {
         } else {
           this.countries = response.data.data;
         }
-        localStorage.setItem("countries", JSON.stringify(this.countries));
       }
-      return response;
+      return this.countries;
     },
 
     async searchPhone(payload = {}) {
@@ -114,9 +111,7 @@ export const useProfileStore = defineStore("profile", {
       return data;
     },
     async getCities(payload = {}, is_new = false) {
-      const items = localStorage.getItem("cities");
-      if (items && !is_new) {
-        this.cities = JSON.parse(items);
+      if (this.cities && !is_new) {
         return this.cities;
       }
       const response = await useApi("area/cities", {
@@ -129,9 +124,8 @@ export const useProfileStore = defineStore("profile", {
         } else {
           this.cities = response.data.data;
         }
-        localStorage.setItem("cities", JSON.stringify(this.cities));
       }
-      return response;
+      return this.cities;
     },
     async searchAreas(payload = {}) {
       const response = await useApi("area", {
@@ -233,12 +227,11 @@ export const useProfileStore = defineStore("profile", {
     },
     async getSeeker(url = "") {
       const { setSeeker } = useAuthStore();
-      const seeker = localStorage.getItem("seeker");
-      if (seeker && seeker !== "null") {
-        this.seeker = JSON.parse(seeker);
-        setSeeker(this.seeker);
+
+      if (this.seeker) {
         return this.seeker;
       }
+
       const response = await useApi(url, {
         method: "get",
       });
@@ -247,7 +240,6 @@ export const useProfileStore = defineStore("profile", {
         if (!data) return;
         this.seeker = { ...data.data };
         setSeeker(this.seeker);
-        localStorage.setItem("seeker", JSON.stringify(this.seeker));
 
         this.user = {
           phone: this.seeker?.phone ?? 7,
@@ -255,15 +247,12 @@ export const useProfileStore = defineStore("profile", {
           email_to_verify: this.employer?.email_to_verify,
         };
       }
-      return response;
+      return this.seeker;
     },
     async getEmployer(url = "") {
       const { setEmployer } = useAuthStore();
 
-      const employer = localStorage.getItem("employer");
-      if (employer && employer !== "null") {
-        this.employer = JSON.parse(employer);
-        setEmployer(this.employer);
+      if (this.employer) {
         return this.employer;
       }
 
@@ -274,14 +263,14 @@ export const useProfileStore = defineStore("profile", {
         this.employer = response.data.data;
         setEmployer(this.employer);
 
-        localStorage.setItem("employer", JSON.stringify(this.employer));
         this.user = {
           phone: this.employer?.phone ?? 7,
           email: this.employer?.email,
           email_to_verify: this.employer?.email_to_verify,
         };
       }
-      return response;
+
+      return this.employer;
     },
     async updateSeeker(payload) {
       const response = await useApi("seeker/profile", {
@@ -291,10 +280,9 @@ export const useProfileStore = defineStore("profile", {
       });
       if (response.status === "success") {
         this.seeker = response.data.data;
-        localStorage.setItem("seeker", JSON.stringify(this.seeker));
         this.user = response.data?.data;
       }
-      return response;
+      return this.seeker;
     },
     async updateEmployer(payload) {
       var object = {};
@@ -308,10 +296,9 @@ export const useProfileStore = defineStore("profile", {
       });
       if (response.status === "success") {
         this.employer = response.data.data;
-        localStorage.setItem("employer", JSON.stringify(this.employer));
         this.user = response.data?.data;
       }
-      return response;
+      return this.employer;
     },
 
     async sendMessage(payload) {
@@ -336,10 +323,6 @@ export const useProfileStore = defineStore("profile", {
     async upload(payload) {
       const CONFIG = useRuntimeConfig();
       let url = CONFIG.public.apiBase + "upload";
-      let token;
-      if (typeof window !== "undefined") {
-        token = localStorage.getItem("token");
-      }
 
       try {
         const response = await axios.post(url, payload, {
@@ -396,7 +379,7 @@ export const useProfileStore = defineStore("profile", {
       if (response.status === "success") {
         this.my_resume_photo_artifact = response.data.data;
       }
-      return response;
+      return this.my_resume_photo_artifact;
     },
     async deleteArtifact(id) {
       const response = await useApi("seeker/artifact/" + id, {

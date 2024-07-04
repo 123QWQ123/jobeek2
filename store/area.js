@@ -13,6 +13,10 @@ export const useAreaStore = defineStore("area", {
   },
   actions: {
     async getRegions(payload) {
+      if (this.regions) {
+        return this.regions
+      }
+
       const { data } = await useApi("area/regions", {
         method: "get",
         payload,
@@ -23,6 +27,10 @@ export const useAreaStore = defineStore("area", {
       return data;
     },
     async getLocation(payload) {
+      if (this.location) {
+        return this.location
+      }
+
       const { data } = await useApi("area/location", {
         method: "get",
         params: payload,

@@ -15,7 +15,7 @@ const vacancyStore = useVacancyStore();
 const resumeStore = useResumeStore();
 const { refreshSeeker, refreshEmployer } = auth;
 const isAuthed = computed(() => auth.isAuthed);
-const { signIn } = auth;
+const { signIn, setFcmToken } = auth;
 const router = useRouter();
 
 onBeforeMount(() => {
@@ -93,6 +93,7 @@ async function onSubmit() {
         icon: "error",
         confirmButtonText: "ОК",
       });
+      await setFcmToken();
       isLoading.value = false;
       return;
     }

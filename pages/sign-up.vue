@@ -29,7 +29,6 @@ onBeforeMount(() => {
   let localPhone = localStorage.getItem("preset_phone");
 
   if (newPhone) {
-    localPhone = newPhone;
     localStorage.setItem("preset_phone", newPhone);
     state.phone.val = route.query.phone;
   } else {

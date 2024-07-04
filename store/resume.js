@@ -60,9 +60,7 @@ export const useResumeStore = defineStore("resume", {
     },
 
     async getConnectedSeekerProviders(payload) {
-      const providers = localStorage.getItem("seeker_providers");
-      if (providers) {
-        this.providers = JSON.parse(providers);
+      if (this.providers) {
         return this.providers;
       }
       const response = await useApi("seeker/used_providers", {
@@ -71,13 +69,8 @@ export const useResumeStore = defineStore("resume", {
 
       if (response.status === "success") {
         this.providers = response.data.data;
-        localStorage.setItem(
-          "seeker_providers",
-          JSON.stringify(this.providers),
-        );
-        return this.providers;
       }
-      return response;
+      return this.providers;
     },
 
     async importResumes() {
@@ -109,9 +102,7 @@ export const useResumeStore = defineStore("resume", {
       payload,
       redirect_to = "/profile/service-verify",
     ) {
-      const urls = localStorage.getItem("seeker_providers_redirect_url");
-      if (urls) {
-        this.provider_auth_urls = JSON.parse(urls);
+      if (this.provider_auth_urls) {
         return this.provider_auth_urls;
       }
       const response = await useApi(
@@ -123,13 +114,8 @@ export const useResumeStore = defineStore("resume", {
       );
       if (response.status === "success") {
         this.provider_auth_urls = response.data.data;
-        localStorage.setItem(
-          "seeker_providers_redirect_url",
-          JSON.stringify(this.provider_auth_urls),
-        );
-        return this.provider_auth_urls;
       }
-      return response;
+      return this.provider_auth_urls;
     },
     async getResumes(payload, add = false, new_data = false) {
       if (new_data !== true && this.resumes.length > 0) {

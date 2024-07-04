@@ -290,14 +290,7 @@ export const useAuthStore = defineStore("auth", {
     },
 
     logout() {
-      // setPageLayout('guest')
-      this.isAuthed = false;
-      this.user = null;
-      this.tokenType = null;
-      this.expiresAt = null;
-      this.setEmployer(null);
-      this.setSeeker(null);
-      this.setToken(null);
+      this.$reset()
       navigateTo("/");
     },
     async getLocation(payload = {}) {
@@ -307,11 +300,7 @@ export const useAuthStore = defineStore("auth", {
       });
     },
     async getPremium(payload = {}) {
-      // todo delete
-      const subscription = localStorage.getItem("subscription");
-      if (subscription && subscription !== "null") {
-        const tariff = JSON.parse(subscription);
-        this.isSubscribed = tariff.premium;
+      if (this.isSubscribed) {
         return this.isSubscribed;
       }
       const response = await useApi("premium", {
@@ -320,21 +309,13 @@ export const useAuthStore = defineStore("auth", {
       });
       if (response.status === "success") {
         this.isSubscribed = response.data.data.premium;
-        // todo delete
-        localStorage.setItem(
-          "subscription",
-          JSON.stringify(response.data.data),
-        );
-        return this.isSubscribed;
       }
-      return response;
+
+      return this.isSubscribed;
     },
 
     async getPremiumUrl() {
-      // todo delete
-      const premium_url = localStorage.getItem("premium_url");
-      if (premium_url && premium_url !== "null") {
-        this.premium_url = premium_url;
+      if (this.premium_url) {
         return this.premium_url;
       }
       const url = useRequestURL();
@@ -348,11 +329,9 @@ export const useAuthStore = defineStore("auth", {
       });
       if (response.status === "success") {
         this.premium_url = response.data.data;
-        // todo delete
-        localStorage.setItem("premium_url", JSON.stringify(this.premium_url));
-        return this.premium_url;
       }
-      return response;
+
+      return this.premium_url;
     },
   },
 });
