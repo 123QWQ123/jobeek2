@@ -41,7 +41,6 @@ const resetObject = {
 };
 
 watch(() => props.errors, (newData) => {
-  console.log(newData)
     const newItems = selectedItems.value;
     selectedItems.value.map((item, index) => {
         newData?.map((error, errorIndex) => {

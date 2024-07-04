@@ -85,7 +85,6 @@ export default function useFormValidation(state = null) {
         } else {
           Object.assign(errors, { ...newErrors, message: response.message });
         }
-        console.log(newErrors);
       }
     } else {
       errors.value = { message: response.message };

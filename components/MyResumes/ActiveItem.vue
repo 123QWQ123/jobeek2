@@ -278,7 +278,6 @@ const onArchive = async(id) => {
 
 const onCreateFromVacancy = async(id) => {
   const resData = await createDraftFromActiveVacancy(id);
-  console.log(resData);
   if(resData.status !== 'success'){
     Swal.fire({
       title: 'Ошибка!',

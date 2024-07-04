@@ -490,7 +490,6 @@ const updateCityInput = async (newValue = "") => {
 watch(
   () => useWatchStateValues(state, true, false, ["providers"]),
   (newState, oldState) => {
-    // console.log(newState, oldState);
     if (!isFirst.value) {
       isChanged.value = true;
     } else {

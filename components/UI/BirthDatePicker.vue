@@ -139,7 +139,6 @@ watch(
 watch(
   () => ({ ...date }),
   (newDate) => {
-    console.log(newDate);
     emitDate(newDate);
   }
 );

@@ -1,9 +1,6 @@
 <script setup>
-import { useAuthStore } from "../../store/auth";
+import { useAuthStore } from "~/store/auth";
 
-definePageMeta({
-  layout: "cabinet",
-});
 useHead({
   title: "Мои избранные вакансии - Jobeek",
 });

@@ -170,7 +170,6 @@ const { walkThroughFields } = useProviderFields(salary, fields);
 
 // watch(props.providers, walkThroughFields);
 
-console.log(props.providers);
 // onMounted(() => {
 //   walkThroughFields(props.providers);
 // });
@@ -230,7 +229,6 @@ const errors = ref({});
 watch(
   () => props.errors,
   (newErrors) => {
-    console.log(errors.value, newErrors);
     errors.value = newErrors;
   },
 );

@@ -5,10 +5,6 @@ import { useProfileStore } from "../../store/profile";
 import { useResumeStore } from "~/store/resume";
 import { useVacancyStore } from "~/store/vacancy";
 
-definePageMeta({
-  layout: "cabinet",
-});
-
 const authStore = useAuthStore();
 const profileStore = useProfileStore();
 

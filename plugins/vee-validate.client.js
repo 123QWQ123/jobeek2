@@ -30,7 +30,6 @@ const messages = localize({
     },
   },
 });
-// console.log(messages);
 export default defineNuxtPlugin((nuxtApp) => {
   Object.keys(AllRules).forEach((rule) => {
     defineRule(rule, AllRules[rule]);

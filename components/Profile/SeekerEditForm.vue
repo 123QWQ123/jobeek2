@@ -254,7 +254,6 @@ const handleSubmit = async (e) => {
       formData.delete("password");
     }
   }
-  console.log(values.photo);
   if (values.hasOwnProperty("photo") && values.photo instanceof File) {
     formData.append("photo", values.photo) !== "";
   }

@@ -33,7 +33,6 @@ watch(selectedType, (new_value) => {
 });
 
 function onChange(selectedOption) {
-  console.log(selectedOption);
 }
 
 const onProfileClick = () => {
@@ -63,7 +62,7 @@ const isPremium = computed(() => auth.isSubscribed);
         <div class="lk-header-main">
           <div class="header-wrapper">
             <Logo />
-            <div class="profile-action" v-if="auth.isAuthenticated">
+            <div class="profile-action" v-if="auth.isAuthed">
               <a
                 class="btn button-xs sign-in-btn ms-4"
                 @click="onProfileClick"

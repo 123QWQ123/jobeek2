@@ -83,7 +83,6 @@ const skyBlueBG = {
 }
 const errors = ref({});
 watch(() => props.errors, (newErrors) => {
-    console.log(errors.value, newErrors);
     errors.value = newErrors;
 })
 

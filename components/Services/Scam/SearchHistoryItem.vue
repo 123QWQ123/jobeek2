@@ -30,10 +30,8 @@ const operatorLogo = computed(
 
 const { addFavorite, removeFavorite } = useScamStore();
 const toggleFavorite = async (is_favor) => {
-  console.log(is_favor);
   if (!is_favor) {
     const resData = await addFavorite({ phone_id: phone_id.value });
-    console.log(resData);
     if (resData.status === "success") {
       Swal.fire({
         text: "Вы успешно подписались!",
@@ -43,7 +41,6 @@ const toggleFavorite = async (is_favor) => {
     }
   } else {
     const resData = await removeFavorite({ phone_id: phone_id.value });
-    console.log(resData);
     if (resData.status === "success") {
       Swal.fire({
         text: "Вы успешно отписались!",

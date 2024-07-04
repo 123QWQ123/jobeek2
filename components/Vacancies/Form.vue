@@ -115,12 +115,7 @@ const country = computed(() => {
 
 onMounted(async () => {
   await getRegions({ country_id: country.value });
-  // const region_ids = regions.value.map((item) => item.id);
-  // console.log(region_ids);
   await getCities({ country_id: country.value });
-  //
-  // console.log(regions.value);
-  // console.log(cities.value);
 
   prepareCities();
 });

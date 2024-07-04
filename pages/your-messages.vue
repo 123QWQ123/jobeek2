@@ -1,10 +1,6 @@
 
 <script setup>
 
-definePageMeta({
-  layout: "cabinet",
-});
-
 </script>
 
 <template>

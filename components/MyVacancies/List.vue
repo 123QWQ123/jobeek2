@@ -171,7 +171,6 @@ watch(
     }
     form.value.status = newStatus;
     const params = { status: newStatus };
-    console.log(params);
     if (newStatus === "draft") {
       await getMyDrafts(params);
     } else if (newStatus === "active") {

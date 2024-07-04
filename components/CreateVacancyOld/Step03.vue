@@ -95,7 +95,6 @@ watch(vacancy_billing_type, (newValues) => {
 const updateState = (name, value) => emit('set', name, value);
 
 const goToPrevStep = () => {
-  console.log(1);
   emit('prev');
 }
 </script>

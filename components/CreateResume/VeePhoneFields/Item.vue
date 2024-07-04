@@ -312,8 +312,6 @@ const onSendConfirmationCode = async () => {
     phone: phoneInput,
   });
 
-  console.log(resData);
-
   if (resData.status !== "success") {
     const { data } = resData;
     if (!data) {
@@ -338,17 +336,14 @@ const onSendConfirmationCode = async () => {
     isConfirmationCodeInputShown.value = true;
     isConfirmationCodeButtonShown.value = true;
 
-    console.log(resData.data.hh.can_request_code_again_in);
     seconds.value = resData.data.hh.can_request_code_again_in;
     timer.value = setInterval(() => {
       seconds.value--;
-      console.log(timer.value);
       if (seconds.value < 1 && timer.value) {
         clearInterval(timer.value);
       }
     }, 1000);
   }
-  console.log(resData);
 };
 const onConfirmPhone = async () => {
   isConfirmationButtonClicked.value = true;
@@ -357,7 +352,6 @@ const onConfirmPhone = async () => {
     phone: phoneInput,
     confirmation_code: state.confirmation_code.val,
   });
-  console.log(resData);
   if (resData.status !== "success") {
     return;
   }
@@ -367,7 +361,6 @@ const onConfirmPhone = async () => {
   isCaptchaUrlShown.value = false;
 };
 const onChangeCountryCode = async (newCountryCode) => {
-  console.log(newCountryCode);
   if (typeof newCountryCode === "string") {
     state.phone.country_code = newCountryCode;
   }
@@ -389,7 +382,6 @@ const onPhoneChange = async (e) => {
     return;
   }
 
-  console.log(phoneObject);
   if (!phoneObject.need_verification) {
     isPhoneChecking.value = false;
     phoneMessage.value = null;
@@ -424,7 +416,6 @@ watch(
     is_preferred: values.is_preferred,
   }),
   (newValues) => {
-    console.log(newValues);
     emit("update:modelValue", newValues);
   },
 );

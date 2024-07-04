@@ -17,9 +17,7 @@ function notifyMe() {
     // if so, create a notification
     const notification = new Notification("Test notification", {image: "/assets/img/unsplash_QBpZGqEMsKgmini.jpg", data: {redirect_uri: '/profile'}});
     notification.onclick = (e) => {
-      console.log(e.srcElement);
       const {data: {redirect_uri}} = e.srcElement;
-      console.log(redirect_uri);
       if (redirect_uri){
         navigateTo(redirect_uri);
       }
@@ -34,7 +32,6 @@ function notifyMe() {
         // …
       }
     }).catch((error) => {
-      console.log(error);
     });
   }
 

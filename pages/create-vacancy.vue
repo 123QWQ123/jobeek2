@@ -4,10 +4,6 @@ import useAlert from "~/composables/useAlert";
 import { useResumeStore } from "~/store/resume";
 import { useAuthStore } from "~/store/auth.js";
 
-definePageMeta({
-  layout: "cabinet",
-});
-
 const route = useRoute();
 
 const vacancyStore = useVacancyStore();
@@ -50,7 +46,6 @@ const saveAsDraft = (e) => {
   isLoading.value = true;
 
   isLoading.value = false;
-  console.log("saved as draft");
 };
 
 const paramProviders = computed(() => {

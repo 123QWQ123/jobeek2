@@ -1,7 +1,4 @@
 <script setup>
-definePageMeta({
-  layout: "cabinet",
-});
 const hasFavs = ref(true);
 </script>
 <template>

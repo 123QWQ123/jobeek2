@@ -8,7 +8,7 @@
     >
     <div class="theme-checker">
       <input type="checkbox" id="employer" :checked="!auth.isEmployer" />
-      <div class="theme-checker-ui" :class="{ yellow: !auth.isAuthenticated }">
+      <div class="theme-checker-ui" :class="{ yellow: !auth.isAuthed }">
         <div
           class="circle"
           :class="{ left: !auth.isEmployer, right: auth.isEmployer }"
@@ -28,6 +28,7 @@ const auth = useAuthStore();
 const { toggleUserMode } = auth;
 
 const toggle = () => {
+  // todo delete
   let isEmployerMode = localStorage.getItem("isEmployer");
   if (isEmployerMode === String(auth.isEmployer)) {
     localStorage.setItem("isEmployer", !auth.isEmployer);
@@ -37,9 +38,11 @@ const toggle = () => {
 
 onMounted(() => {
   if (!process.server) {
+    // todo delete
     if (localStorage.getItem("isEmployer") === null) {
       localStorage.setItem("isEmployer", auth.isEmployer);
     } else {
+      // todo delete
       const isEmployerMode =
         localStorage.getItem("isEmployer") === "false" ? false : true;
       if (isEmployerMode !== auth.isEmployer) {

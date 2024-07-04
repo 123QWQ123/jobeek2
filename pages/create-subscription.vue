@@ -3,9 +3,6 @@ import { z } from "~/hooks/ru-zod.js";
 import { useAuthStore } from "~/store/auth.js";
 import { toTypedSchema } from "@vee-validate/zod";
 
-definePageMeta({
-  layout: "cabinet",
-});
 useHead({
   title: "Создание подписку",
 });

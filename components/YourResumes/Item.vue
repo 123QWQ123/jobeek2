@@ -184,13 +184,10 @@
 
 <script setup>
 const onMessage = (e) => {
-  console.log(e);
 }
 const onEdit = (e) => {
-  console.log(e)
 }
 const onDelete = (e) => {
-  console.log(e)
 }
 </script>
 

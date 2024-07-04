@@ -135,24 +135,6 @@ const {
 } = resumeStore;
 await getConnectedSeekerProviders();
 
-// watch(vacancyProviders.value, (newValues) => {
-//   console.log(newValues);
-//   const providersNewValues = {...resetObject};
-//
-//   if (newValues.includes('hh')){
-//     providersNewValues.hh = true;
-//   }else{
-//     providersNewValues.superjob = false;
-//   }
-//   if (newValues.includes('superjob')){
-//     providersNewValues.superjob = true;
-//   }else{
-//     providersNewValues.superjob = false;
-//   }
-//   console.log(providersNewValues);
-//   selectedProviders.value = providersNewValues;
-// });
-
 const enabledProviders = ref(resumeStore.providers);
 const isHHEnabled = computed(() => enabledProviders.value.hh);
 const isSuperjobEnabled = computed(() => enabledProviders.value.superjob);
@@ -213,7 +195,6 @@ const reset = () => {
 };
 
 onMounted(() => {
-  // console.log(vacancyProviders.value);
 });
 const { updateResume } = resumeStore;
 // const providers = ref(resetObject);
@@ -253,7 +234,6 @@ const toggle = async (provider) => {
   };
   data.form_data = "PROVIDERS_DATA";
   let resData = {};
-  console.log(resumeID.value);
   if (resumeID.value) {
     if (provider === "hh") {
       isHHLoading.value = true;

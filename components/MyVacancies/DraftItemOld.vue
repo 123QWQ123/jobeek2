@@ -338,7 +338,6 @@ const selectedProviders = ref(resetObject.value);
 
 const toggle = async (provider) => {
   selectedProviders.value[provider] = !selectedProviders.value[provider];
-  console.log(selectedProviders.value);
   const providerParams = [];
 
   if (selectedProviders.value.hh) {

@@ -35,12 +35,8 @@ definePageMeta({
 const onPageChange = () => {
 
 }
-// const props = defineProps(['category']);
-
-// console.log(props);
 
 const route = useRoute();
-console.log(route.params.category);
 const quantity = ref(3);
 </script>
 

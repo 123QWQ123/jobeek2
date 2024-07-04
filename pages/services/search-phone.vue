@@ -2,10 +2,6 @@
 import IMask from "imask";
 import { useScamStore } from "~/store/scam";
 
-definePageMeta({
-  layout: "cabinet",
-});
-
 const scamStore = useScamStore();
 
 const errorMessage = ref(null);

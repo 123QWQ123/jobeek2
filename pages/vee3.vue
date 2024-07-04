@@ -26,7 +26,6 @@ const schema = yup.object().shape({
 });
 
 function onSubmit() {
-  console.log(JSON.stringify(values, null, 2));
   validate();
 }
 

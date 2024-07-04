@@ -63,6 +63,7 @@ const config = {
     "@vueuse/nuxt",
     "@vee-validate/nuxt",
     "nuxt-tiptap-editor",
+    "@pinia-plugin-persistedstate/nuxt",
   ],
   tiptap: {
     prefix: "Tiptap", //prefix for Tiptap imports, composables not included
@@ -70,15 +71,6 @@ const config = {
   routeRules: {
     // Static page generated on-demand, revalidates in background
     // Render these routes with SPA
-    "/**": { swr: 5 }, // 👈🏻 TTL in seconds
-    "/sign-in": { ssr: false },
-    "/sign-up": { ssr: false },
-    // '/profile': { ssr: true },
-    // '/my-resumes': { ssr: false },
-    // '/my-vacancies': { ssr: false },
-    "/create-vacancy": { ssr: false },
-    "/create-resume": { ssr: false },
-    "/my-resume/*": { ssr: false },
     // Add cors headers
     "/api/**": { cors: true },
     // Add redirect headers
@@ -100,7 +92,6 @@ const config = {
       "BNhzs3ta5UD12WZIz6pP4ONTohrOsoMP3lyomaLsw2fRjsg4u0OzGKoOAFW7i0DK4GscckYJ5v0D99YJlFNhv3I",
   },
 };
-console.log(process.env.NODE_ENV);
 if (process.env.NODE_ENV === "development") {
   config.server = {
     https: {

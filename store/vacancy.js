@@ -131,8 +131,9 @@ export const useVacancyStore = defineStore("vacancy", {
   },
   actions: {
     async getConnectedEmployerProviders() {
+      //to do delete
       const providers = localStorage.getItem("employer_providers");
-      if (providers) {
+      if (!this.providers && providers) {
         this.providers = JSON.parse(providers);
         return this.providers;
       }
@@ -166,11 +167,6 @@ export const useVacancyStore = defineStore("vacancy", {
         payload: { providers: payload },
       });
 
-      // console.log(data.message);
-      //
-      // if (data.hasOwnProperty('message')){
-      //   this.employerMessage = data.message;
-      // }
       return data;
     },
 
@@ -231,7 +227,6 @@ export const useVacancyStore = defineStore("vacancy", {
       });
       if (response.status === "success") {
         if (add) {
-          console.log(response.data);
           this.vacancies = this.vacancies.concat(response.data.items);
           this.current_page++;
         } else {
@@ -450,11 +445,10 @@ export const useVacancyStore = defineStore("vacancy", {
       return response;
     },
     async getMyFavoriteVacancies(payload) {
-      const { data } = await useApi("seeker/favorites", {
+      const { data } = await useApi("seeker/vacancies/favorites", {
         method: "get",
         params: payload,
       });
-      console.log(data);
       if (data && data.data && "items" in data.data) {
         this.my_favorite_vacancies = data.data.items;
         if (payload.page) {
@@ -518,10 +512,8 @@ export const useVacancyStore = defineStore("vacancy", {
         method: "get",
         params: payload,
       });
-      console.log(response);
       if (response && "data" in response) {
         this.professional_roles = response.data.data ?? [];
-        console.log(this.professional_roles);
         return this.professional_roles;
       }
       return response;
@@ -561,7 +553,6 @@ export const useVacancyStore = defineStore("vacancy", {
           method: "delete",
         },
       );
-      console.log(response);
       return response;
     },
     async deleteDraft(id) {

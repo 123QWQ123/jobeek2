@@ -99,7 +99,6 @@ onMounted(( ) => {
     mask: "+{7}(000)000-00-00",
   });
   phoneInputElement.value.addEventListener("input", (e) => {
-    console.log(state.type.val);
     if (state.type.val === 'phone'){
       state.value.val = phoneMask.value.unmaskedValue;
     }else{
@@ -152,7 +151,6 @@ const state = reactive({
 });
 
 watch(() => state.type.val, (newType) => {
-  console.log(newType);
   if (newType === 'phone'){
     phoneMask.value = new IMask(phoneInputElement.value, {
       mask: "+{7}(000)000-00-00",

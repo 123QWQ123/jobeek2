@@ -125,7 +125,6 @@ onMounted(async () => {
     noVacancyFoundMessage.value = resData.message;
     return;
   }
-  console.log(resData);
   const TIMEOUT = 500;
   if (vacancies.value.length > 0) {
     setTimeout(() => {

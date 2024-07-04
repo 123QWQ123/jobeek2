@@ -1,10 +1,6 @@
 <script setup>
 import { navigateTo } from "nuxt/app";
 
-definePageMeta({
-  layout: "cabinet",
-});
-
 const route = useRoute();
 onMounted(() => {
   if (route.name === "advice") {

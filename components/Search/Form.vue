@@ -114,40 +114,10 @@ const prepareCities = () => {
 
 const page = useRoute();
 
-// watch(region, async(newRegion) => {
-//
-//   if (region.value !== '*'){
-//     await getCities({region_ids: [newRegion]});
-//   }
-//   prepareCities();
-// });
-
-// const country = computed(() => {
-//   if (form.value.countries.length === 0) {
-//     return form.value.countries[0];
-//   } else return 1;
-// });
-//
-// onMounted(async () => {
-//   // await getRegions({ country_id: country.value });
-//   // const region_ids = regions.value.map((item) => item.id);
-//   // console.log(region_ids);
-//   // console.log(form.value.countries);
-//
-//   // await getCities({ country_ids: form.value.countries });
-//   //
-//   // console.log(regions.value);
-//   // console.log(cities.value);
-//
-//   prepareCities();
-// });
-
 const isLoading = ref(false);
 const { clearVacancies } = vacancyStore;
 const onSubmit = (e) => {
-  console.log(e);
   const params = useVacancyForm(form.value, "front");
-  // console.log(params);
   navigateTo({
     name: "search-vacancies",
     query: {

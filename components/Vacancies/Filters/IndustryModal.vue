@@ -122,7 +122,6 @@ const industry_ids = ref(getQueryParam("industries") ?? []);
 watch(
   () => industry_ids.value,
   (newValues) => {
-    console.log(newValues);
   },
 );
 

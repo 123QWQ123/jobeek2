@@ -1,7 +1,9 @@
 <template>
   <div>
     <NuxtLoadingIndicator color="#fff" />
-    <NuxtLayout></NuxtLayout>
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
     <client-only>
       <Hv />
     </client-only>
@@ -13,36 +15,28 @@ import { useAuthStore } from "~/store/auth";
 import { useVacancyStore } from "~/store/vacancy";
 import { useResumeStore } from "~/store/resume";
 
-useHead({
-  meta: [
-    {
-      name: "viewport",
-      content:
-        "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0",
-    },
-  ],
+definePageMeta({
+  middleware: [function (to, from, next) {
+    to.meta.layout = isAuthed.value ? 'auth' : 'guest';
+    to.meta.name = 'viewport';
+    to.meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0';
+  }]
 });
+
 const { getConnectedEmployerProviders } = useVacancyStore();
 const { getConnectedSeekerProviders } = useResumeStore();
 const vacancyStore = useVacancyStore();
 
 const authStore = useAuthStore();
-
+const {isAuthed, user} = storeToRefs(authStore);
 const route = useRoute();
 
-watch(
-  () => route.query.message,
-  () => {
-    // if (route.query.message) {
-    //   console.log(321);
-    //   toast.info(route.query.message, { autoClose: 3000 });
-    // }
-  },
-);
-
 onMounted(async () => {
-  await getConnectedEmployerProviders();
-  await getConnectedSeekerProviders();
+  if (isAuthed.value) {
+    await getConnectedEmployerProviders();
+    await getConnectedSeekerProviders();
+  }
+
   if (route.query.message) {
     useNuxtApp().$toast.info(route.query.message, {
       autoClose: 3000,

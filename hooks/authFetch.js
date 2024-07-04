@@ -1,9 +1,11 @@
+import {useAuthStore} from "~/store/auth.js";
+
 export default function (url, options = {}) {
-    const token = localStorage.getItem('token');
+  let {tokenAuth} = storeToRefs(useAuthStore())
 
     const headers = {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${tokenAuth.value}`
     };
 
     const requestOptions = {

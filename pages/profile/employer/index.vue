@@ -2,9 +2,6 @@
 import { useAuthStore } from "~/store/auth";
 import Premium from "~/components/MyVacancies/Premium.vue";
 
-definePageMeta({
-  layout: "cabinet",
-});
 useHead({
   title: "Ваш аккаунт",
 });

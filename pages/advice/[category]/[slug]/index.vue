@@ -5,7 +5,7 @@ definePageMeta({
   layout: "advice-post",
 });
 const route = useRoute();
-console.log(route);
+
 </script>
 <template>
   <main class="main cabinet advice-single-page bg-wrapper" role="main">

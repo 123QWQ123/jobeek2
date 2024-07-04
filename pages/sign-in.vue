@@ -6,10 +6,6 @@ import { useVacancyStore } from "~/store/vacancy.js";
 import { useResumeStore } from "~/store/resume.js";
 import { ref } from "vue";
 
-definePageMeta({
-  layout: "cabinet",
-});
-
 useHead({
   title: "Авторизация",
 });
@@ -23,7 +19,7 @@ const { signIn } = auth;
 const router = useRouter();
 
 onBeforeMount(() => {
-  if (isAuthed.value === true) {
+  if (isAuthed.value) {
     if (!auth.isEmployer) {
       navigateTo({ name: "profile-seeker" });
     } else {

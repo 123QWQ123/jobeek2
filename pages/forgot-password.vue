@@ -23,7 +23,7 @@ const isFormValid = ref(true);
 const isLoading = ref(false);
 const error = ref(null);
 onBeforeMount(() => {
-  if (isAuthed.value === true) {
+  if (isAuthed.value) {
     router.replace({ name: "profile" });
   }
 });
@@ -100,7 +100,6 @@ const tabs = reactive({
 });
 
 const onSubmit = async () => {
-  // console.log(isFormValid.value, state.i_agree);
   validateForm();
   if (!state.isFormValid) {
     Swal.fire({

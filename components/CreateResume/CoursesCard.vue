@@ -201,7 +201,6 @@ watch(
       Object.keys(newErrors).map(
         (item) => (backendErrors[item] = newErrors[item]),
       );
-      console.log(backendErrors);
       setErrors(backendErrors);
     }
   },
@@ -223,8 +222,6 @@ const save = async (is_from_parent = false) => {
     },
     providers: getSelectedProviders(props.providers),
   });
-
-  console.log(resData);
 
   if (resData.status !== "success") {
     return handleErrorResponse(resData.data, true);

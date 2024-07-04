@@ -216,7 +216,6 @@ watch(
       Object.keys(newErrors).map(
         (item) => (backendErrors[item] = newErrors[item]),
       );
-      console.log(backendErrors);
       setErrors(backendErrors);
     }
   },

@@ -6,7 +6,6 @@
 <script setup>
 const props = defineProps(['item']);
 const {item} = props;
-console.log(item);
 </script>
 
 <style scoped>

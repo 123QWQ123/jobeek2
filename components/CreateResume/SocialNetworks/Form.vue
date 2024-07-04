@@ -106,12 +106,8 @@ watch(
 );
 const source = ref("foo");
 
-// const { stop, ignoreUpdates } = watchIgnorable(selectedSocialNetworks, (v) =>
-//   console.log(`Changed to ${v}!`)
-// );
 const reset = () => {
   resetObject.key = uuidv4();
-  console.log(resetObject);
   selectedSocialNetworks.value = [{ ...resetObject }];
 };
 const create = () => {

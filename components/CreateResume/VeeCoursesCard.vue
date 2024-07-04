@@ -212,7 +212,6 @@ watch(
       Object.keys(newErrors).map(
         (item) => (backendErrors[item] = newErrors[item]),
       );
-      console.log(backendErrors);
       setErrors(backendErrors);
     }
   },
@@ -237,8 +236,6 @@ const save = async (is_from_parent = false) => {
     },
     providers: getSelectedProviders(providers.value),
   });
-
-  console.log(resData);
 
   if (resData.status !== "success") {
     errorMessage.value = resData.message;

@@ -51,7 +51,6 @@ export function useVacancyForm(data = null, to_ = "front") {
       order_by: null,
     };
   }
-  console.log(data);
   if (!data) {
     if (params.metros) {
       if (params.metros instanceof Array) {
@@ -105,7 +104,6 @@ export function useVacancyForm(data = null, to_ = "front") {
     if (params.experiences) {
       let item = JSON.parse(params.experiences);
       if (item instanceof Array) {
-        console.log(item);
         experiences = item.map((item) => parseInt(item));
       } else {
         experiences = [item];
@@ -130,7 +128,6 @@ export function useVacancyForm(data = null, to_ = "front") {
     if (params.industries) {
       let item = JSON.parse(params.industries);
       if (item instanceof Array) {
-        console.log(item);
         industries = item.map((item) => parseInt(item));
       } else {
         industries = [item];

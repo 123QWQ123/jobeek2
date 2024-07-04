@@ -379,7 +379,6 @@ const save = async (is_from_parent = false) => {
   }
   const resume_id = resData.data.data.id;
   setTimeout(() => {
-    console.log("redirecting...");
     navigateTo({ name: "my-resume-id", params: { id: resume_id } });
   }, 100);
   isLoading.value = false;

@@ -105,7 +105,6 @@ const { getCurrentQueryParams } = useQueryParams();
 const currentParams = ref(getCurrentQueryParams());
 onMounted(async () => {
   const resData = await getResumes(currentParams.value, false);
-  console.log(resData);
 });
 watch(
   () => ({ ...getCurrentQueryParams() }),
@@ -113,7 +112,6 @@ watch(
     if (JSON.stringify(newValues) !== JSON.stringify(oldValues)) {
       isLoading.value = true;
 
-      console.log(newValues);
       currentParams.value = newValues;
       await getResumes(newValues, false, true);
 

@@ -68,7 +68,6 @@ watch(
     if (newData.completed_test_or_exams) {
       selectedExams.value.map((item, index) => {
         newData.completed_test_or_exams.map((error, errorIndex) => {
-          console.log(errorIndex === index);
           if (errorIndex === index) {
             if (!newItems[index]) {
               newItems[index] = {};

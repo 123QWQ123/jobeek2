@@ -113,7 +113,6 @@ const { getResume, updateResume } = resumeStore;
 
 const { errors, handleErrorResponse } = useFormValidation();
 const save = async () => {
-  // console.log(isChanged.value);
   if (isChanged.value) {
     const resData = await updateResume(draftID.value, {
       form_data: "KNOWLEDGE_AND_SKILLS_DATA",

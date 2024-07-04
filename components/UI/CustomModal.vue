@@ -32,6 +32,7 @@ const auth = useAuthStore();
 const { toggleUserMode } = auth;
 
 const toggle = () => {
+  // todo delete
   let isEmployerMode = localStorage.getItem("isEmployer");
   if (isEmployerMode === String(isEmployer.value)) {
     localStorage.setItem("isEmployer", !isEmployer.value);
@@ -40,7 +41,6 @@ const toggle = () => {
 };
 
 const close = () => {
-  console.log(1);
   emit("close");
 };
 </script>

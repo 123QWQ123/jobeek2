@@ -75,16 +75,13 @@ const route = useRoute();
 const profileStore = useProfileStore();
 const {sendMessage} = profileStore;
 async function onSubmit() {
-  console.log(1);
   validateForm();
-  console.log(state.isFormValid);
   if (state.isFormValid) {
     const response = await sendMessage({
       email: state.email.val,
       phone: phoneMask.value.unmaskedValue,
       message: state.message.val,
     });
-    console.log(response);
     if (response.status === 'success'){
       Swal.fire({
         title: 'Успешно!',

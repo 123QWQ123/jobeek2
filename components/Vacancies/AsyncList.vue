@@ -57,7 +57,6 @@ const params = ref(current_params);
 watch(
   () => getCurrentQueryParams(),
   (newParams) => {
-    console.log(newParams);
     isLoading.value = true;
 
     params.value = newParams;
@@ -81,7 +80,6 @@ const loadMore = async () => {
   );
   isLoading.value = false;
 
-  console.log(res);
   if (res.status !== "success") {
     isMore.value = false;
     Swal.fire({

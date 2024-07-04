@@ -69,7 +69,6 @@ const validate = () => {
     } else {
         contacts.phones.isValid = false;
     }
-    console.log(contacts.name.val, )
     emit('set', 'contacts', {name: contacts.name.val, email: contacts.email.val});
 }
 watch(() => contacts.name.val, (newValue) => {

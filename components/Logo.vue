@@ -7,7 +7,7 @@ const auth = useAuthStore();
 <template>
   <NuxtLink to="/">
     <img
-      v-if="auth.isAuthenticated"
+      v-if="auth.isAuthed"
       src="~/assets/img/jobeek-white.svg"
       alt="Jobeek"
     />

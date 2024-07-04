@@ -79,7 +79,6 @@ const uiStore = useUIStore();
 const total = ref($format_number(vacancyStore.total) ?? 0);
 
 onBeforeMount(() => {
-  console.log(123);
   total.value = $format_number(vacancyStore.total);
 });
 // if (process.server) {
@@ -123,7 +122,6 @@ watch(
   async (newValues) => {
     isLoading.value = true;
 
-    console.log(newValues);
     currentParams.value = newValues;
     await getVacancies(newValues);
 

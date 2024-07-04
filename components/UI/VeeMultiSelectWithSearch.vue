@@ -183,7 +183,6 @@ watch(
   () => (searchInput.value = props.placeholder),
 );
 const onChangeHandler = (e) => {
-  console.log("input");
   isOpen.value = true;
   const typedName = e.target.textContent.toLowerCase();
   emit("input", searchInput.value);
