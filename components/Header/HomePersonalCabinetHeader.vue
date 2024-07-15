@@ -3,18 +3,11 @@ import { useAuthStore } from "~~/store/auth";
 import TheMainHeader from "~/components/Header/TheMainHeader.vue";
 
 const auth = useAuthStore();
-const { logout, toggleUserMode } = auth;
-
-const route = useRoute();
+const { logout } = auth;
 
 const isAuthed = computed(() => auth.isAuthed);
 const isEmployer = computed(() => auth.isEmployer);
 const user = computed(() => auth.user);
-
-const searchOptions = [
-  { value: "vacancies", name: "Вакансии" },
-  { value: "resumes", name: "Резюме" },
-];
 
 const selectedType = computed(() =>
   auth.isEmployer ? "resumes" : "vacancies",
@@ -42,13 +35,7 @@ const onProfileClick = () => {
     navigateTo({ name: "profile-employer" });
   }
 };
-const phone = computed(() => {
-  if (!auth.isEmployer) {
-    return auth.seeker?.phone;
-  } else {
-    return auth.employer?.phone;
-  }
-});
+const phone = computed(() => auth.user?.phone);
 
 const isPremium = computed(() => auth.isSubscribed);
 </script>

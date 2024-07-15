@@ -26,6 +26,7 @@ export const useResumeStore = defineStore("resume", {
       part_times: [],
       metros: [],
       can_create_resume: {},
+      can_create_resume_count: 0,
       provider_auth_urls: {
         hh: null,
         superjob: null,
@@ -35,6 +36,12 @@ export const useResumeStore = defineStore("resume", {
         superjob: null,
       },
     };
+  },
+  persist: {
+    storage: persistedState.cookiesWithOptions({
+      sameSite: 'lax',
+      maxAge: 72000000,
+    }),
   },
   getters: {
     top_10: (state) => {
@@ -60,7 +67,7 @@ export const useResumeStore = defineStore("resume", {
     },
 
     async getConnectedSeekerProviders(payload) {
-      if (this.providers) {
+      if (this.providers.hh && this.providers.superjob) {
         return this.providers;
       }
       const response = await useApi("seeker/used_providers", {
@@ -102,7 +109,7 @@ export const useResumeStore = defineStore("resume", {
       payload,
       redirect_to = "/profile/service-verify",
     ) {
-      if (this.provider_auth_urls) {
+      if (this.provider_auth_urls.hh && this.provider_auth_urls.superjob) {
         return this.provider_auth_urls;
       }
       const response = await useApi(

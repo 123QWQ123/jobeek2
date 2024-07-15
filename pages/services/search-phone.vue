@@ -113,21 +113,19 @@ watch(
     </div>
 
     <div class="wrapper wrapper-1290">
-      <client-only>
-        <div class="course-grid">
-          <ServicesScamLoadingList v-if="isLoading" />
-          <ServicesScamAsyncList
+      <div class="course-grid">
+        <ServicesScamLoadingList v-if="isLoading"/>
+        <ServicesScamAsyncList
             :phones="phones"
             :get-phones="getPhones"
             v-else
-          />
+        />
 
-          <div class="search-history-sidebar">
-            <ServicesScamSubscriptionList />
-          </div>
+        <div class="search-history-sidebar">
+          <ServicesScamSubscriptionList/>
         </div>
-        <ServicesScamHistoryList />
-      </client-only>
+      </div>
+      <ServicesScamHistoryList/>
     </div>
   </main>
 </template>

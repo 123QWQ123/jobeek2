@@ -42,7 +42,7 @@ const { my_favorite_vacancies, current_page } = storeToRefs(vacancyStore);
 
 const items = ref([]);
 
-const isLoading = ref(true);
+const isLoading = ref(false);
 const isMore = ref(false);
 
 const route = useRoute();

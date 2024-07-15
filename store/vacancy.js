@@ -46,7 +46,7 @@ export const useVacancyStore = defineStore("vacancy", {
       vacancy_billing_types: [],
       vacancy_types: [],
       can_create_vacancy: null,
-      can_create_vacancy_count: 1,
+      can_create_vacancy_count: 0,
       provider_auth_urls: {
         hh: null,
         superjob: null,

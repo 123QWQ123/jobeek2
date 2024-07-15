@@ -176,7 +176,7 @@ export const useAuthStore = defineStore("auth", {
         this.setSeeker(response.data.data);
         this.user = { phone: this.seeker?.phone };
       }
-      return response;
+      return this.seeker;
     },
 
     async refreshEmployer(url = "employer/profile") {
@@ -187,7 +187,7 @@ export const useAuthStore = defineStore("auth", {
         this.setEmployer(response.data.data);
         this.user = { phone: this.employer?.phone };
       }
-      return response;
+      return this.employer;
     },
 
     async tryLogin(token = "") {
