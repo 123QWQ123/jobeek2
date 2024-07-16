@@ -56,7 +56,6 @@ const { addFavorite, removeFavorite, saveComment } = useScamStore();
 const toggleFavorite = async (is_favor) => {
   if (!is_favor) {
     const resData = await addFavorite({ phone_id: phone_id.value });
-    console.log(resData);
     if (resData.status === "success") {
       Swal.fire({
         text: "Вы успешно подписались!",
@@ -95,7 +94,6 @@ const onSubmit = async () => {
     });
     return;
   }
-  console.log(resData);
 };
 </script>
 

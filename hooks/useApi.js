@@ -1,9 +1,10 @@
 import axios from "axios";
 import https from "node:https";
+import {useAuthStore} from "~/store/auth";
 
 const useApi = async (method, options = {}) => {
-  // console.log(options);
   const CONFIG = useRuntimeConfig();
+  const {tokenAuth} = storeToRefs(useAuthStore())
   // TO DO prefix
   // const host = null;
   // if (options.hasOwnProperty('host')){
@@ -51,7 +52,7 @@ const useApi = async (method, options = {}) => {
         transformRequest: [
           function (data, headers) {
             // Do whatever you want to transform the data
-            const token = localStorage.getItem("token");
+            const token = tokenAuth.value;
             if (token) {
               headers.Authorization = `Bearer ${token}`;
             }

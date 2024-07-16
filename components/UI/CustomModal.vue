@@ -26,21 +26,16 @@
 <script setup>
 const props = defineProps(["title"]);
 const emit = defineEmits(["close"]);
-import { useAuthStore } from "~~/store/auth";
+import { useAuthStore } from "~/store/auth";
 
 const auth = useAuthStore();
 const { toggleUserMode } = auth;
 
 const toggle = () => {
-  let isEmployerMode = localStorage.getItem("isEmployer");
-  if (isEmployerMode === String(isEmployer.value)) {
-    localStorage.setItem("isEmployer", !isEmployer.value);
-  }
   toggleUserMode();
 };
 
 const close = () => {
-  console.log(1);
   emit("close");
 };
 </script>

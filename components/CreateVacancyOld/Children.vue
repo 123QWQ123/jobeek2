@@ -21,7 +21,6 @@ const {getChildren} = dictionaryStore;
 await getChildren();
 
 const childrenOptions = computed(() => dictionaryStore.children.map(item => ({value: item.id, name: item.name})));
-console.log(childrenOptions);
 
 const children = ref(15);
 

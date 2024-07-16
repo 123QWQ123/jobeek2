@@ -82,8 +82,6 @@ const languageLevelOptions = computed(() => {
     return dictionaryStore.language_levels.map((item) => ({name: item.name, value: item.id}));
 })
 
-
-console.log(languageOptions);
 const save = () => {
     emit('update', props.id, useFormData(state));
 }

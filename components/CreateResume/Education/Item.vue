@@ -192,7 +192,6 @@ watch(
 watch(
   () => props.parent_type_id,
   (newParentTypeId) => {
-    console.log(newParentTypeId);
     state.type_id.val = state.type_id.val
       ? state.type_id.val
       : props.parent_type_id;
@@ -304,7 +303,6 @@ onMounted(() => {
   }
 });
 const save = () => {
-  console.log("ID" + props.id);
   emit("update", props.id, useFormData(state));
 };
 watch(() => useWatchStateValues(state, true, true), save);

@@ -66,7 +66,6 @@ const onUpdated = (newValue) => {
       (item) => item.value === newValue,
     );
     updateQueryParam("salary", { ...found });
-    console.log("updated");
   } else {
     updateQueryParam("salary", undefined);
   }

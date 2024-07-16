@@ -24,14 +24,6 @@
 </template>
 
 <script setup>
-import { useAuthStore } from "~~/store/auth";
-
-const auth = useAuthStore();
-const { logout } = auth;
-
-const isAuthed = computed(() => auth.isAuthed);
-const isEmployer = computed(() => auth.isEmployer);
-const user = computed(() => auth.user);
 </script>
 
 <style scoped>

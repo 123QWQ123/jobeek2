@@ -10,7 +10,6 @@
 
 <script setup>
 const { slug } = route.params;
-console.log(slug);
 </script>
 
 <style scoped></style>

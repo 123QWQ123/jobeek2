@@ -6,10 +6,6 @@ import { useVacancyStore } from "~/store/vacancy.js";
 import { useResumeStore } from "~/store/resume.js";
 import { ref } from "vue";
 
-definePageMeta({
-  layout: "cabinet",
-});
-
 useHead({
   title: "Авторизация",
 });
@@ -19,11 +15,11 @@ const vacancyStore = useVacancyStore();
 const resumeStore = useResumeStore();
 const { refreshSeeker, refreshEmployer } = auth;
 const isAuthed = computed(() => auth.isAuthed);
-const { signIn } = auth;
+const { signIn, setFcmToken } = auth;
 const router = useRouter();
 
 onBeforeMount(() => {
-  if (isAuthed.value === true) {
+  if (isAuthed.value) {
     if (!auth.isEmployer) {
       navigateTo({ name: "profile-seeker" });
     } else {
@@ -97,6 +93,7 @@ async function onSubmit() {
         icon: "error",
         confirmButtonText: "ОК",
       });
+      await setFcmToken();
       isLoading.value = false;
       return;
     }

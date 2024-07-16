@@ -4,12 +4,7 @@ import { useAuthStore } from "~/store/auth";
 useHead({
   title: "Поиск резюме - Jobeek",
 });
-definePageMeta({
-  layout: "cabinet",
-});
-if (process.server) {
-  console.log("server");
-}
+
 const authStore = useAuthStore();
 const isEmployer = computed(() => authStore.isEmployer);
 watch(
@@ -21,8 +16,6 @@ watch(
   },
 );
 onMounted(() => {
-  console.log("only client");
-  console.log(isEmployer.value);
   if (!authStore.isEmployer) {
     navigateTo({ name: "search-vacancies" });
   }

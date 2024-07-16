@@ -126,7 +126,6 @@ const selected_ids = ref(props.selected_ids);
 watch(
   () => props.selected_ids,
   (newValues) => {
-    console.log(newValues);
   },
 );
 

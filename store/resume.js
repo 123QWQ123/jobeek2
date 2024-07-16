@@ -26,6 +26,7 @@ export const useResumeStore = defineStore("resume", {
       part_times: [],
       metros: [],
       can_create_resume: {},
+      can_create_resume_count: 0,
       provider_auth_urls: {
         hh: null,
         superjob: null,
@@ -35,6 +36,12 @@ export const useResumeStore = defineStore("resume", {
         superjob: null,
       },
     };
+  },
+  persist: {
+    storage: persistedState.cookiesWithOptions({
+      sameSite: 'lax',
+      maxAge: 72000000,
+    }),
   },
   getters: {
     top_10: (state) => {
@@ -60,9 +67,7 @@ export const useResumeStore = defineStore("resume", {
     },
 
     async getConnectedSeekerProviders(payload) {
-      const providers = localStorage.getItem("seeker_providers");
-      if (providers) {
-        this.providers = JSON.parse(providers);
+      if (this.providers.hh && this.providers.superjob) {
         return this.providers;
       }
       const response = await useApi("seeker/used_providers", {
@@ -71,13 +76,8 @@ export const useResumeStore = defineStore("resume", {
 
       if (response.status === "success") {
         this.providers = response.data.data;
-        localStorage.setItem(
-          "seeker_providers",
-          JSON.stringify(this.providers),
-        );
-        return this.providers;
       }
-      return response;
+      return this.providers;
     },
 
     async importResumes() {
@@ -109,9 +109,7 @@ export const useResumeStore = defineStore("resume", {
       payload,
       redirect_to = "/profile/service-verify",
     ) {
-      const urls = localStorage.getItem("seeker_providers_redirect_url");
-      if (urls) {
-        this.provider_auth_urls = JSON.parse(urls);
+      if (this.provider_auth_urls.hh && this.provider_auth_urls.superjob) {
         return this.provider_auth_urls;
       }
       const response = await useApi(
@@ -123,13 +121,8 @@ export const useResumeStore = defineStore("resume", {
       );
       if (response.status === "success") {
         this.provider_auth_urls = response.data.data;
-        localStorage.setItem(
-          "seeker_providers_redirect_url",
-          JSON.stringify(this.provider_auth_urls),
-        );
-        return this.provider_auth_urls;
       }
-      return response;
+      return this.provider_auth_urls;
     },
     async getResumes(payload, add = false, new_data = false) {
       if (new_data !== true && this.resumes.length > 0) {
@@ -190,12 +183,10 @@ export const useResumeStore = defineStore("resume", {
     },
 
     async deleteResume(id) {
-      console.log(id);
       const response = await useApi("seeker/resumes/" + id, {
         method: "delete",
         payload: {},
       });
-      console.log(response);
       return response;
     },
     // async getMyDrafts(payload, add = false) {
@@ -215,7 +206,6 @@ export const useResumeStore = defineStore("resume", {
         method: "get",
         params: payload,
       });
-      console.log(response);
       if (response.status === "success") {
         this.can_create_resume = response.data.data.available;
         this.can_create_resume_count = response.data.data.free ?? 0;
@@ -225,27 +215,17 @@ export const useResumeStore = defineStore("resume", {
     },
 
     async createResume(payload) {
-      console.log(payload);
       const response = await useApi("seeker/resumes/create", {
         method: "post",
         payload,
       });
-      console.log(response);
-      // if ('data' in response){
-      //   this.resume = response.data;
-      // }
       return response;
     },
     async submitResume(payload) {
-      console.log(payload);
       const response = await useApi("seeker/negotiations", {
         method: "post",
         payload,
       });
-      console.log(response);
-      // if ('data' in response){
-      //   this.resume = response.data;
-      // }
       return response;
     },
     async modifyNotifications(payload) {
@@ -266,7 +246,6 @@ export const useResumeStore = defineStore("resume", {
       return response;
     },
     async publishResume(id, payload, content_type = "application/json") {
-      console.log(payload);
       const response = await useApi("seeker/resumes/publish/" + id, {
         method: "PUT",
         content_type,
@@ -292,11 +271,10 @@ export const useResumeStore = defineStore("resume", {
       this.resumes = [];
     },
     async getMyFavoriteResumes(payload) {
-      const response = await useApi("employer/resume/favorites", {
+      const response = await useApi("employer/favorites", {
         method: "get",
         payload,
       });
-      console.log(response);
       if (response.status === "success") {
         this.my_favorite_resumes = response.data.data;
         if (payload.page) {
@@ -316,13 +294,11 @@ export const useResumeStore = defineStore("resume", {
       return data;
     },
     async getCities(payload = {}) {
-      console.log(payload);
       const { data } = await useApi("area/cities", {
         method: "get",
         payload,
       });
       if (data) {
-        console.log(data);
         this.cities = data.data.cities;
       }
       return data;
@@ -403,7 +379,6 @@ export const useResumeStore = defineStore("resume", {
         method: "post",
         payload,
       });
-      console.log(this.resumes);
       if (response.status === "success") {
         this.resumes = this.resumes.map((resume) => {
           if (String(resume.id) === payload.resume_id) {

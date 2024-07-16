@@ -85,7 +85,6 @@ const onSearch = (e) => {
 };
 
 const form = ref(useVacancyForm());
-console.log(form.value.cities)
 const selectedItems = ref(form.value.cities);
 
 const toggleRegion = (id) => {

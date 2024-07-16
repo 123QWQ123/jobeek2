@@ -16,10 +16,8 @@
 <script setup>
 
 const myChangeEvent = (event) => {
-  console.log("myChangeEvent: ", event);
 }
 const mySelectEvent = (e) => {
-  console.log("mySelectEvent: ", event);
 }
 const myOptions = [
   {id: 1, text: 'apple'},

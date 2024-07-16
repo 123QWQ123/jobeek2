@@ -29,7 +29,6 @@ const dictionaryStore = useDictionaryStore();
 const {getWorkTypes} = useDictionaryStore();
 const workTypesOptions = computed(() => dictionaryStore.work_types);
 await getWorkTypes();
-console.log(workTypesOptions.value);
 
 const employment = ref(null);
 

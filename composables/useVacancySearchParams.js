@@ -2,7 +2,6 @@ export default function useVacancySearchParams(
   name = "vacancy_search_params",
   initialValues = null,
 ) {
-  console.log(name);
   const values = useState(name, () => initialValues);
 
   // if (initialValues) {

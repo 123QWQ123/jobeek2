@@ -8,13 +8,13 @@
         <strong class="title">Подключите премиум</strong>
         <p>
           У вас есть лимит на создание резюме:
-          {{ resumeStore.can_create_resume_count }} штук. Чтобы создавать
+          {{ can_create_resume_count }} штук. Чтобы создавать
           неограниченное количество резюме, подключите премиум-подписку.
         </p>
       </div>
     </div>
     <NuxtLink
-      v-if="resumeStore.can_create_resume"
+      v-if="can_create_resume_count"
       class="create-button"
       type="link"
       :to="{ name: 'create-resume' }"
@@ -49,6 +49,7 @@ useHead({
 
 const resumeStore = useResumeStore();
 const { getMyResumes, getAvailabilityCreate } = resumeStore;
+const { can_create_resume_count } = storeToRefs(resumeStore);
 
 await getAvailabilityCreate();
 const canCreateResume = computed(() => {
@@ -77,8 +78,7 @@ const { my_resumes, current_page, my_total } = storeToRefs(resumeStore);
 
 const form = useMyResumeForm();
 const isPrevDisabled = computed(() => {
-  if (parseInt(current_page.value) === 1) return true;
-  return false;
+  return parseInt(current_page.value) === 1;
 });
 
 const total = computed(() => {

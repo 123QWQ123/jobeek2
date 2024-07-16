@@ -125,7 +125,6 @@ onMounted(() => {
 
 const onFocusout = (e) => {
   e.preventDefault();
-  console.log(1);
 };
 const labelText = computed(() => {
   if (!isOpen.value) {

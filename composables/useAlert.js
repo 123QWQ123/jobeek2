@@ -20,7 +20,7 @@ export default function useAlert(my_message = null) {
         }
         return route.query.message
     });
-    const isAuthed = computed(() => authStore.isAuthenticated);
+    const isAuthed = computed(() => authStore.isAuthed);
     const redirect = computed(() => {
         return message.value?.redirect;
     });
@@ -47,7 +47,6 @@ export default function useAlert(my_message = null) {
             }
 
             if (!redirect.value){
-                console.log(redirect.value);
                 if (isAuthed.value){
                     setTimeout(() => {
                         navigateTo({
@@ -62,8 +61,6 @@ export default function useAlert(my_message = null) {
                     }, 3000)
                 }
             }else{
-
-                console.log(redirect);
                 setTimeout(() => {
                     const queryParams = { ...route.query };
 

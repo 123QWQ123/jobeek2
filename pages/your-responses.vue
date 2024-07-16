@@ -3,10 +3,6 @@
 import CustomSelect from "../components/UI/CustomSelect";
 import Paginate from "vuejs-paginate-next";
 
-definePageMeta({
-  layout: "cabinet",
-});
-
 const sortingOptions = [
   {name: 'По дате', value: 'by_date'},
   {name: 'По типу', value: 'by_type'},
@@ -15,7 +11,6 @@ const sortingOptions = [
 const selectedSorting = ref("by_date");
 
 const onPageChange = (data) => {
-  console.log(data);
 }
 </script>
 

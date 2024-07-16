@@ -183,7 +183,6 @@ const isFocused = ref(false);
 
 const { deleteArtifact } = profileStore;
 const onDeleteArtifact = async (id) => {
-  console.log(id);
   const resData = await deleteArtifact(id);
   if (resData.status === "success") {
     await getArtifacts({ type: 1 });

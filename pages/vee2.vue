@@ -46,11 +46,7 @@ const schema2 = {
   email: "required|email",
 };
 
-console.log(schema);
-console.log(schema2);
-
 function onSubmit() {
-  console.log(JSON.stringify(values, null, 2));
   validate();
 }
 

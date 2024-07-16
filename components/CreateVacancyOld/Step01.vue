@@ -53,7 +53,6 @@ const state =  reactive({
         type: 'object',
         is_valid: true,
         check: (prop, value, state) => {
-            console.log(value.hh, value.superjob);
             if (value.hh === true || value.superjob === true) return true;
             else return false;
         },
@@ -64,8 +63,6 @@ const state =  reactive({
         val: "",
         type: 'string',
         check: (prop, value, state) => {
-            console.log(prop, value, state);
-            console.log(value.length);
             return value.length >= state[prop].min;
         },
         is_valid: true,
@@ -136,7 +133,6 @@ const updateState = (prop, value) => {
 }
 
 const reset = (name) => {
-    console.log(name);
     state[name].is_valid = true;
 }
 
@@ -178,7 +174,6 @@ const validate = () => {
         }
         return true;
     });
-    console.log(filtered_keys);
     Object.keys(state).map(item => {
         if (item !== 'is_checked'){
             state[item].is_valid = filtered_keys.includes(item);
@@ -190,8 +185,6 @@ const validate = () => {
 
 const onSubmit = () => {
     validate();
-
-    console.log(state);
 
     state.is_checked = true;
     // emit('next')

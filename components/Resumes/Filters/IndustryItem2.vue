@@ -124,7 +124,6 @@ const vacancyStore = useVacancyStore();
 const toggle = () => (isOpen.value = !isOpen.value);
 const selectToggle = () => {
   let is_checked = !item.value.is_checked;
-  console.log(is_checked);
   if (is_checked) {
     selectedSubItems.value = items.value.map((spec) => spec.id);
   } else {
@@ -139,7 +138,6 @@ const selectToggle = () => {
   let is_any_not_checked = sub_items.some(
     (sub_item) => sub_item.is_checked === false,
   );
-  console.log(is_any_not_checked);
   items.value = sub_items;
   item.value = { ...item.value, is_checked: is_checked };
 };

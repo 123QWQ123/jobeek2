@@ -207,7 +207,6 @@ const selectedProviders = ref(props.modelValue ?? resetObject);
 watch(
   () => selectedProviders.value,
   (newSelectedItems) => {
-    console.log(newSelectedItems);
     emit("update:modelValue", newSelectedItems);
   },
 );

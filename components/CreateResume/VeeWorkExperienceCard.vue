@@ -239,10 +239,8 @@ const save = async (is_from_parent = false) => {
     form_data: "EXPERIENCE_DATA",
     ...values,
   };
-  console.log(values);
   const resData = await updateResume(resumeID.value, payload);
 
-  console.log(resData);
   if (resData.status !== "success") {
     errorMessage.value = resData.message;
     if (resData.hasOwnProperty("errors")) {

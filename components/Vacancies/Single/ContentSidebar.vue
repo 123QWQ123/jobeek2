@@ -178,9 +178,7 @@ const responseLetter = ref(null);
 const requiredLetter = computed(() => {
   return data.value.response_letter_required ?? false;
 });
-// const submitResume = async (resume_id, vacancy_id, provider) => {
-//   console.log(resume_id, vacancy_id, provider);
-// };
+
 const selectedResumeError = ref();
 const onSubmit = async (e) => {
   if (!selectedResume.value) {
@@ -199,14 +197,13 @@ const onSubmit = async (e) => {
     toast.info("Введите в полье письмо");
     return;
   }
-  console.log(resumeStore.my_resumes);
 
   const response = await submitResume({
     vacancy_id: data.value.id,
     resume_id: selectedResume.value,
     providers: ["hh"],
   });
-  console.log(response);
+
   if (response.status === "success") {
     isFavorite.value = !isFavorite.value;
   } else {

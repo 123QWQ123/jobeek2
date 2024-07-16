@@ -277,13 +277,11 @@ const onSendConfirmationCode = async () => {
     seconds.value = resData.data.hh.can_request_code_again_in;
     timer.value = setInterval(() => {
       seconds.value--;
-      console.log(timer.value);
       if (seconds.value < 1 && timer.value) {
         clearInterval(timer.value);
       }
     }, 1000);
   }
-  console.log(resData);
 };
 
 const onConfirmPhone = async () => {
@@ -293,7 +291,6 @@ const onConfirmPhone = async () => {
     phone: phoneInput,
     confirmation_code: confirmation_code.val,
   });
-  console.log(resData);
   if (resData.status !== "success") {
     confirmationCodeMessage.value = resData.message;
     return;

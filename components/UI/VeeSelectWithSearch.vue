@@ -124,7 +124,7 @@ watch(
     const found = options.value.find(
       (item) => String(item.value) === String(newValue),
     );
-    console.log(found);
+
     if (!found) {
       searchInput.value = "";
       selectedOption.value = {};

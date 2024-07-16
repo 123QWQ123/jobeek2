@@ -30,7 +30,7 @@ const { my_favorite_resumes, current_page } = storeToRefs(resumeStore);
 
 const items = ref([]);
 
-const isLoading = ref(true);
+const isLoading = ref(false);
 const isMore = ref(false);
 
 const route = useRoute();
@@ -43,6 +43,7 @@ watch(my_favorite_resumes, (newValues) => {
 });
 
 onMounted(async () => {
+  isLoading.value = true;
   await getMyFavoriteResumes({});
   isLoading.value = false;
 });

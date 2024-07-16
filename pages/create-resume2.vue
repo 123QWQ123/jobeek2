@@ -2,10 +2,6 @@
 import {storeToRefs} from "pinia";
 import {useResumeStore} from "~/store/resume";
 
-definePageMeta({
-    layout: "cabinet",
-});
-
 const pageTitle = computed(() => {
   if (draftId.value) {
       return "Создание резюме - Jobeek"
@@ -17,7 +13,6 @@ const route = useRoute();
 const draftId = computed(() => route.query.draft_id);
 const vacancyID = computed(() => route.query.vacancy_id);
 watch(() => route.query.draft_id, (newDraftId) => {
-    console.log(newDraftId)
     if (newDraftId){
         getResume(draftId.value);
     }
@@ -43,11 +38,9 @@ onMounted(() => {
 
 const saveAsDraft = (e) => {
     e.preventDefault();
-    console.log('saved as draft');
 }
 const save = (e) => {
     e.preventDefault();
-    console.log('saving and publishing or redirecting to edit page');
 }
 // groups[]=
 </script>

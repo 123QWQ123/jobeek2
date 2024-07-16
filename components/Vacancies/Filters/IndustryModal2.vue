@@ -135,7 +135,6 @@ const onSearch = () => {
   prepare(props.items);
 };
 const prepare = (newValues, is_first = false) => {
-  console.log(newValues);
   const selected_ids = [...industry_ids.value];
   let groupItems = newValues.filter((newItem) => newItem.parent_id === null);
   groupItems = groupItems.map((newItem) => {
@@ -185,7 +184,6 @@ const prepare = (newValues, is_first = false) => {
   } else {
     groupedSpecs.value = groupItems;
   }
-  console.log(groupItems);
 };
 
 onMounted(() => {
@@ -195,7 +193,6 @@ onMounted(() => {
 });
 
 const updateSelectedSpecs = (id, newSelections) => {
-  console.log(newSelections);
   const newItems = { ...selectedSpecs.value };
   newItems[id] = newSelections;
   selectedSpecs.value = newItems;

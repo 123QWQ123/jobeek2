@@ -292,7 +292,6 @@ const openProviderAuthUrl = (url) => {
   window.open(url);
 };
 const onIframeLoaded = (data) => {
-  console.log(data, iframe);
 };
 const iframe = ref();
 </script>

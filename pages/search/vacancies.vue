@@ -2,9 +2,6 @@
 import { useAuthStore } from "~/store/auth";
 import { navigateTo } from "nuxt/app";
 
-definePageMeta({
-  layout: "cabinet",
-});
 useHead({
   title: "Поиск вакансий - Jobeek",
 });
@@ -24,7 +21,6 @@ watch(
   },
 );
 onMounted(async () => {
-  console.log("only client - vacancies");
   if (isEmployer.value) {
     navigateTo({ name: "search-resumes" });
   }

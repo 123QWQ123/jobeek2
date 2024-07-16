@@ -81,14 +81,6 @@ const isFirst = ref(false);
 const isFirstOpen = ref(true);
 const isOpen = ref(false);
 
-// watch(
-//   () => isOpen.value,
-//   (newValue) => {
-//     console.log(newValue);
-//
-//   },
-// );
-
 const options = ref(props.options);
 const searchInput = ref(props.placeholder ?? "");
 

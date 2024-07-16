@@ -52,7 +52,6 @@ const computedSelectedSkills = computed(() => {
     return selectedSkills.value.filter(item => item);
 })
 const setCurrent = (index) => {
-    console.log(index);
     currentSkillId.value = index;
     currentSkill.value = selectedSkills.value[index];
 }
@@ -60,7 +59,6 @@ const reset = () => {
     selectedSkills.value = [null];
 }
 const addItem = (newItem) => {
-    console.log(newItem);
     const newItems = selectedSkills.value.filter((item) => item);
     newItems.push(newItem);
     newItems.push(null);
@@ -69,7 +67,6 @@ const addItem = (newItem) => {
 
 
 const updateItem = (id, newItem) => {
-    console.log(newItem);
     // const newItems = selectedLanguages.value;
     const newItems = selectedSkills.value.map((item, index) => {
         if (index === id){

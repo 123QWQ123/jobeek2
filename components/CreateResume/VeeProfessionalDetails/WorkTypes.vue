@@ -101,24 +101,6 @@ watch(
   },
 );
 const resumeStore = useResumeStore();
-// watch(
-//   () => work_type_ids.value,
-//   async () => {
-//     console.log(resumeStore.my_resume);
-//     let items = Object.keys(resumeStore.my_resume.work_types).map((key) => ({
-//       name: resumeStore.my_resume.work_types[key],
-//       value: key,
-//     }));
-//     items = items.concat(
-//       [...workTypeOptions.value].filter((item) =>
-//         work_type_ids.value.includes(item.value),
-//       ),
-//     );
-//     items = uniq(items, "value");
-//
-//     onUpdateSelectedOptions(items);
-//   },
-// );
 
 const onUpdateSelectedOptions = async (newItems) => {
   selectedWorkTypeOptions.value = newItems;

@@ -9,13 +9,13 @@
         <strong class="title">Подключите премиум</strong>
         <p>
           У вас есть лимит на создание вакансий:
-          {{ vacancyStore.can_create_vacancy_count }} штук. Чтобы создавать
+          {{ can_create_vacancy_count }} штук. Чтобы создавать
           неограниченное количество вакансий, подключите премиум-подписку
         </p>
       </div>
     </div>
     <NuxtLink
-      v-if="canCreateVacancy"
+      v-if="can_create_vacancy_count"
       class="create-button"
       type="link"
       :to="{ name: 'create-vacancy' }"
@@ -125,12 +125,8 @@ const providerOptions = ref([
   { value: "superjob", name: "Superjob" },
 ]);
 
-const { my_vacancies, current_page, my_total } = storeToRefs(vacancyStore);
+const { can_create_vacancy_count, current_page, my_total } = storeToRefs(vacancyStore);
 
-const isPrevDisabled = computed(() => {
-  if (parseInt(current_page.value) === 1) return true;
-  return false;
-});
 const form = ref(useMyVacancyForm());
 
 const total = computed(() => {
@@ -171,7 +167,6 @@ watch(
     }
     form.value.status = newStatus;
     const params = { status: newStatus };
-    console.log(params);
     if (newStatus === "draft") {
       await getMyDrafts(params);
     } else if (newStatus === "active") {

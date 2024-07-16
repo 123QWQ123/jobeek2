@@ -3,18 +3,11 @@ import { useAuthStore } from "~~/store/auth";
 import TheMainHeader from "~/components/Header/TheMainHeader.vue";
 
 const auth = useAuthStore();
-const { logout, toggleUserMode } = auth;
-
-const route = useRoute();
+const { logout } = auth;
 
 const isAuthed = computed(() => auth.isAuthed);
 const isEmployer = computed(() => auth.isEmployer);
 const user = computed(() => auth.user);
-
-const searchOptions = [
-  { value: "vacancies", name: "Вакансии" },
-  { value: "resumes", name: "Резюме" },
-];
 
 const selectedType = computed(() =>
   auth.isEmployer ? "resumes" : "vacancies",
@@ -33,7 +26,6 @@ watch(selectedType, (new_value) => {
 });
 
 function onChange(selectedOption) {
-  console.log(selectedOption);
 }
 
 const onProfileClick = () => {
@@ -43,13 +35,7 @@ const onProfileClick = () => {
     navigateTo({ name: "profile-employer" });
   }
 };
-const phone = computed(() => {
-  if (!auth.isEmployer) {
-    return auth.seeker?.phone;
-  } else {
-    return auth.employer?.phone;
-  }
-});
+const phone = computed(() => auth.user?.phone);
 
 const isPremium = computed(() => auth.isSubscribed);
 </script>
@@ -63,7 +49,7 @@ const isPremium = computed(() => auth.isSubscribed);
         <div class="lk-header-main">
           <div class="header-wrapper">
             <Logo />
-            <div class="profile-action" v-if="auth.isAuthenticated">
+            <div class="profile-action" v-if="auth.isAuthed">
               <a
                 class="btn button-xs sign-in-btn ms-4"
                 @click="onProfileClick"

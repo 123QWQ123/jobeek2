@@ -73,7 +73,6 @@ import Swal from "sweetalert2";
 const props = defineProps(["item"]);
 
 const item = computed(() => props.item);
-console.log(item);
 const isFavorite = ref(item?.is_favorite ?? false);
 
 const vacancyStore = useVacancyStore();

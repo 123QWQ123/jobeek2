@@ -71,7 +71,6 @@ const errors = ref(props.errors ?? []);
 watch(
   () => props.errors,
   (newData) => {
-    console.log(newData);
     const newItems = selectedEducations.value;
     if (newData.courses) {
       selectedEducations.value.map((item, index) => {

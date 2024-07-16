@@ -124,14 +124,12 @@ const onSubmit = async (e) => {
     toast.info("Введите в полье письмо");
     return;
   }
-  console.log(resumeStore.my_resumes);
 
   const response = await submitResume({
     vacancy_id: data.value.id,
     resume_id: selectedResume.value,
     providers: ["hh"],
   });
-  console.log(response);
   if (response.status === "success") {
     isFavorite.value = !isFavorite.value;
   } else {
@@ -149,7 +147,6 @@ const { getMyFavoriteVacancies, removeFromFavorite } = vacancyStore;
 const removeFavorite = async () => {
   let response = {};
   response = await removeFromFavorite(props.item.id, { provider: "hh" });
-  console.log(response);
   if (response.status !== "success") {
     Swal.fire({
       title: "Ошибка!",

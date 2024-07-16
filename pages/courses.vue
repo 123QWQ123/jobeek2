@@ -1,7 +1,4 @@
 <script setup>
-definePageMeta({
-  layout: "cabinet",
-});
 </script>
 <template>
   <main class="main cabinet " role="main">

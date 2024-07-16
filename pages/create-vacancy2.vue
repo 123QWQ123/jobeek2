@@ -2,10 +2,6 @@
 import { useVacancyStore } from "~/store/vacancy";
 import useAlert from "~/composables/useAlert";
 
-definePageMeta({
-  layout: "cabinet",
-});
-
 const route = useRoute();
 
 const vacancyStore = useVacancyStore();
@@ -31,9 +27,6 @@ const saveAsDraft = (e) => {
   isLoading.value = true;
 
   isLoading.value = false;
-  console.log("saved as draft");
-
-  // createDraft()
 };
 
 const paramProviders = computed(() => {

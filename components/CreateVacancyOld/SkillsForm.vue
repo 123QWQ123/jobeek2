@@ -29,8 +29,6 @@ const props = defineProps({
     }
 });
 
-console.log(props.isNew, props.skill);
-
 const isNew = ref(props.isNew);
 const skill = ref(props.skill);
 

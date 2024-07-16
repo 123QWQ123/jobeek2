@@ -101,9 +101,6 @@
 
 <script setup>
 import { useAuthStore } from "~/store/auth";
-import { search_exception_routes } from "~/config.js";
-
-const { $isMobile } = useNuxtApp();
 
 const auth = useAuthStore();
 const isAuthed = computed(() => auth.isAuthed);
@@ -112,10 +109,6 @@ const isEmployer = computed(() => auth.isEmployer);
 const user = computed(() => auth.user);
 const isMobileNavigationActive = ref(false);
 
-const route = useRoute();
-const isCabinetNavbarShown = computed(() => {
-  return search_exception_routes.includes(route.name);
-});
 const toggleMobileNavigation = () => {
   isMobileNavigationActive.value = !isMobileNavigationActive.value;
 };

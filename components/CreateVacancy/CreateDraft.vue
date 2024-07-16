@@ -121,8 +121,6 @@ const { providers } = useProviders();
 watch(
   () => providers.value,
   () => {
-    console.log(1);
-    // setProviders(providers.value);
   },
 );
 
@@ -244,7 +242,6 @@ const onSubmit = handleSubmit((submittedValues) => {
 const save = async (is_from_parent = false) => {
   validate();
   if (!meta.value.valid) {
-    console.log(1);
     errorMessage.value = "Вам необходимо заполнить";
     scrollTop();
     errorMessageElement.value.scrollIntoView({ behavior: "smooth" });
@@ -254,11 +251,8 @@ const save = async (is_from_parent = false) => {
   errorMessage.value = "";
   isLoading.value = true;
 
-  console.log(values);
-
   let resData = await createDraft(unref(values));
 
-  console.log(resData);
   if (resData.status !== "success") {
     errorMessage.value = resData.message;
     isLoading.value = false;
@@ -272,7 +266,6 @@ const save = async (is_from_parent = false) => {
   }
   const vacancy_id = resData.data.data.id;
   setTimeout(() => {
-    console.log("redirecting...");
     navigateTo({
       name: "my-vacancy-id",
       params: { id: vacancy_id },

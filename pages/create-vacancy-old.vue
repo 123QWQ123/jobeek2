@@ -62,13 +62,6 @@
 
 <script setup>
 import {useVacancyStore} from "../store/vacancy";
-import {useProfileStore} from "~/store/profile";
-import {useResumeStore} from "~/store/resume";
-
-
-definePageMeta({
-  layout: "cabinet",
-});
 
 useHead({
     title: "Создание вакансии - Jobeek"
@@ -138,7 +131,6 @@ const state =  reactive({
 });
 
 const updateState = (prop, value) => {
-    console.log(prop, value);
   state[prop] = value;
 }
 
@@ -154,7 +146,6 @@ const isThirdStep = computed(() => currentStep.value === 'third');
 
 const currentStep = ref('first');
 const goToPrevStep = () => {
-  console.log(2)
     let newStep = currentStep.value;
     if (currentStep.value === 'third'){
         newStep = 'second';
@@ -165,7 +156,6 @@ const goToPrevStep = () => {
     currentStep.value = newStep;
 }
 const goToNextStep = () => {
-    console.log(currentStep.value);
     let newStep = currentStep.value;
     if (currentStep.value === 'second'){
         newStep = 'third';
@@ -176,7 +166,6 @@ const goToNextStep = () => {
     currentStep.value = newStep;
 }
 const onSubmit = () => {
-  console.log(state);
 }
 </script>
 

@@ -30,9 +30,7 @@ export const useUIStore = defineStore("ui", {
     },
     async getFooterSettings() {
       if (!process.server) {
-        const footer = localStorage.getItem("footer");
-        if (footer && footer !== "null") {
-          this.footer = footer;
+        if (this.footer) {
           return this.footer;
         }
       }
@@ -48,12 +46,8 @@ export const useUIStore = defineStore("ui", {
       });
       if (response.status === "success") {
         this.footer = response.data.data;
-        if (!process.server) {
-          localStorage.setItem("footer", JSON.stringify(this.footer));
-        }
-        return this.footer;
       }
-      return response;
+      return this.footer;
     },
   },
 });

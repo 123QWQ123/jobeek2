@@ -28,21 +28,15 @@ useHead({
   title: pageTitle.value ?? "Loading",
 });
 
-definePageMeta({
-  layout: "cabinet",
-});
-
 const route = useRoute();
 const resumeStore = useResumeStore();
 const { getResume } = resumeStore;
 const { resume } = storeToRefs(resumeStore);
 
 const { slug } = route.params;
-console.log(slug);
 const { provider } = route.query;
 onMounted(async () => {
   const resumeData = await getResume(slug, { provider });
-  console.log(resumeData);
 });
 // if (
 //   !vacancyData.hasOwnProperty("hh") &&

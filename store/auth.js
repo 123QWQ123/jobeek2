@@ -3,9 +3,7 @@ import { navigateTo, useRuntimeConfig } from "nuxt/app";
 import { acceptHMRUpdate, defineStore } from "pinia";
 import axios from "axios";
 import useApi from "~/hooks/useApi";
-import { useFcm } from "#imports";
-
-let timer;
+import {useFcm} from "#imports";
 
 export const useAuthStore = defineStore("auth", {
   state: () => {
@@ -13,16 +11,26 @@ export const useAuthStore = defineStore("auth", {
       user: null,
       employer: null,
       seeker: null,
-      isAuthed: null,
+      isAuthed: false,
       isEmployerMode: false,
       isSubscribed: false,
       geo: null,
       premium_url: null,
+      tokenAuth: null,
+      tokenType: null,
+      expiresAt: null,
+      ttl: null,
     };
+  },
+  persist: {
+    storage: persistedState.cookiesWithOptions({
+      sameSite: 'lax',
+      maxAge: 72000000,
+    }),
   },
   getters: {
     token(state) {
-      return state.user?.token;
+      return state.tokenAuth;
     },
     userId(state) {
       return state.user?.userId;
@@ -31,19 +39,7 @@ export const useAuthStore = defineStore("auth", {
       return state.isEmployerMode;
     },
     isAuthenticated(state) {
-      let authed = false;
-      if (!process.server) {
-        const token = localStorage.getItem("token");
-        if (token && token !== "null") {
-          authed = true;
-          return authed;
-        }
-      }
-
-      if (state.isAuthed === true) {
-        authed = true;
-      }
-      return authed;
+      return state.isAuthed;
     },
   },
   actions: {
@@ -51,16 +47,16 @@ export const useAuthStore = defineStore("auth", {
       this.isEmployerMode = !this.isEmployerMode;
     },
     setUser(payload) {
-      this.isAuthed = true;
       this.user = payload;
     },
     setSeeker(payload) {
       this.seeker = payload;
-      this.isAuthed = true;
+    },
+    setToken(payload) {
+      this.tokenAuth = payload;
     },
     setEmployer(payload) {
       this.employer = payload;
-      this.isAuthed = true;
     },
     async signUp(payload) {
       const response = await useApi("auth/register", {
@@ -75,13 +71,13 @@ export const useAuthStore = defineStore("auth", {
         method: "post",
         payload,
       });
-      console.log(response);
+
       if (
         response &&
         response.data &&
         response.data.data.hasOwnProperty("token")
       ) {
-        localStorage.setItem("token", response.data?.data.token);
+        this.tokenAuth = response.data?.data.token
       }
 
       return response;
@@ -107,7 +103,6 @@ export const useAuthStore = defineStore("auth", {
           };
         }
       } catch (error) {
-        // console.log(error);
         if ("data" in error.response) {
           return {
             status: "error",
@@ -119,25 +114,6 @@ export const useAuthStore = defineStore("auth", {
           message: error.message,
         };
       }
-      // const resData = await response;
-      // const expiresIn = resData.expiresIn * 1000;
-      // const expirationDate = new Date().getTime() + expiresIn;
-      //
-      // localStorage.setItem('token', resData.idToken);
-      // localStorage.setItem('userId', resData.localId);
-      // localStorage.setItem('tokenExpirationDate', expirationDate);
-      //
-      // timer = setTimeout(() => {
-      //   this.autoLogout();
-      // }, expiresIn);
-
-      // if (response.ok) {
-      //   this.setUser({
-      //     token: resData.idToken,
-      //     userId: resData.localId,
-      //   });
-      //   this.isAuthed = true;
-      // }
     },
     async recoverPasswordCode(payload) {
       const CONFIG = useRuntimeConfig();
@@ -153,7 +129,6 @@ export const useAuthStore = defineStore("auth", {
           data: response.data.data,
         };
       } catch (error) {
-        console.log(error);
         if ("data" in error.response) {
           return {
             status: "error",
@@ -197,13 +172,11 @@ export const useAuthStore = defineStore("auth", {
       const response = await useApi(url, {
         method: "get",
       });
-      console.log(response);
       if (response.status === "success") {
         this.setSeeker(response.data.data);
         this.user = { phone: this.seeker?.phone };
-        localStorage.setItem("seeker", JSON.stringify(this.seeker));
       }
-      return response;
+      return this.seeker;
     },
 
     async refreshEmployer(url = "employer/profile") {
@@ -213,19 +186,14 @@ export const useAuthStore = defineStore("auth", {
       if (response && response.data && "data" in response.data) {
         this.setEmployer(response.data.data);
         this.user = { phone: this.employer?.phone };
-        localStorage.setItem("employer", JSON.stringify(this.employer));
       }
-      return response;
+      return this.employer;
     },
 
     async tryLogin(token = "") {
       const CONFIG = useRuntimeConfig();
       let url = CONFIG.public.apiBase + "seeker/profile";
       let url2 = CONFIG.public.apiBase + "employer/profile";
-      if (!token) token = localStorage.getItem("token");
-      // const userId = localStorage.getItem('userId');
-      // const tokenExpirationDate = localStorage.getItem('tokenExpirationDate');
-      // const expiresIn = tokenExpirationDate - new Date().getTime();
 
       if (token) {
         try {
@@ -245,7 +213,6 @@ export const useAuthStore = defineStore("auth", {
 
           this.user = response.data.data;
           this.seeker = { ...response.data.data };
-          localStorage.setItem("seeker", JSON.stringify(this.seeker));
           this.isAuthed = true;
           const response2 = await axios.get(url2, {
             headers: {
@@ -256,12 +223,8 @@ export const useAuthStore = defineStore("auth", {
           this.user = { ...response2.data.data };
           this.employer = this.user;
 
-          localStorage.setItem("employer", JSON.stringify(this.employer));
-
           return true;
         } catch (error) {
-          // console.log(error);
-          console.log("UnAuthorized");
           this.logout();
           return false;
         }
@@ -269,60 +232,28 @@ export const useAuthStore = defineStore("auth", {
       this.setUser(null);
       this.isAuthed = false;
       return false;
-      // TODO
-      // if (expiresIn < 0) {
-      //   this.autoLogout();
-      //   return;
-      // }
-      //
-      // timer = setTimeout(function () {
-      //   this.autoLogout();
-      // }, expiresIn);
-    },
-
-    clearAuth() {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
     },
 
     async signIn(payload) {
-      const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + "auth/login";
       try {
-        const response = await axios.post(url, payload);
-        const resData = response.data.data;
-        if (response.status === 200) {
-          localStorage.setItem("token", resData.token);
-          this.user = resData.user;
-          localStorage.setItem("user", JSON.stringify(this.user));
-
+        const {data: data, status} = await useApi("auth/login", {
+          method: 'post',
+          payload: payload,
+        });
+        if (status === 'success') {
+          this.tokenAuth = data.data.token;
+          this.tokenType = data.data.token_type;
+          this.expiresAt = data.data.expires_at;
+          // this.persist.maxAge = res.data.ttl;
+          this.user = data.data.user;
+          this.seeker = data.data.user.seeker;
+          this.employer = data.data.user.employer;
           this.isAuthed = true;
-
-          setTimeout(async () => {
-            const token = await useFcm().getToken();
-            const { data } = await useApi("fcm/setToken", {
-              method: "post",
-              payload: {
-                fcm_token: token,
-              },
-            });
-          });
-
-          return {
-            status: "success",
-            data: this.user,
-          };
         }
-        // TODO
-        // const expiresIn = resData.expiresIn * 1000;
-        // const expirationDate = new Date().getTime() + expiresIn;
-        //
-
-        // localStorage.setItem('tokenExpirationDate', expirationDate);
-
-        // timer = setTimeout(() => {
-        //   this.autoLogout();
-        // }, expiresIn);
+        return {
+          status: "success",
+          data: this.user,
+        };
       } catch (error) {
         if (error.response && "data" in error.response) {
           if ("errors" in error.response.data) {
@@ -344,14 +275,22 @@ export const useAuthStore = defineStore("auth", {
         };
       }
     },
+    async setFcmToken() {
+      const token = await useFcm().getToken();
+      const { data } = await useApi("fcm/setToken", {
+        method: "post",
+        payload: {
+          fcm_token: token,
+        },
+      });
+    },
     autoLogout() {
       this.logout();
+      navigateTo('/');
     },
 
     logout() {
-      this.clearAuth();
-      this.setUser(null);
-      this.isAuthed = false;
+      this.$reset()
       navigateTo("/");
     },
     async getLocation(payload = {}) {
@@ -361,10 +300,7 @@ export const useAuthStore = defineStore("auth", {
       });
     },
     async getPremium(payload = {}) {
-      const subscription = localStorage.getItem("subscription");
-      if (subscription && subscription !== "null") {
-        const tariff = JSON.parse(subscription);
-        this.isSubscribed = tariff.premium;
+      if (this.isSubscribed) {
         return this.isSubscribed;
       }
       const response = await useApi("premium", {
@@ -373,19 +309,13 @@ export const useAuthStore = defineStore("auth", {
       });
       if (response.status === "success") {
         this.isSubscribed = response.data.data.premium;
-        localStorage.setItem(
-          "subscription",
-          JSON.stringify(response.data.data),
-        );
-        return this.isSubscribed;
       }
-      return response;
+
+      return this.isSubscribed;
     },
 
     async getPremiumUrl() {
-      const premium_url = localStorage.getItem("premium_url");
-      if (premium_url && premium_url !== "null") {
-        this.premium_url = premium_url;
+      if (this.premium_url) {
         return this.premium_url;
       }
       const url = useRequestURL();
@@ -399,10 +329,9 @@ export const useAuthStore = defineStore("auth", {
       });
       if (response.status === "success") {
         this.premium_url = response.data.data;
-        localStorage.setItem("premium_url", JSON.stringify(this.premium_url));
-        return this.premium_url;
       }
-      return response;
+
+      return this.premium_url;
     },
   },
 });

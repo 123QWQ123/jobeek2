@@ -6,10 +6,6 @@ import { toast } from "vue3-toastify";
 import { useAuthStore } from "~/store/auth.js";
 import useProviders from "~/composables/useProviders.js";
 
-definePageMeta({
-  layout: "cabinet",
-});
-
 const route = useRoute();
 
 const vacancyStore = useVacancyStore();
@@ -56,7 +52,6 @@ const pageTitle = computed(() => {
 watch(
   () => route.query.draft_id,
   (newDraftId) => {
-    console.log(newDraftId);
     if (newDraftId) {
       getMyDraft(draftID.value);
     }
@@ -111,7 +106,6 @@ const employer = computed(() => authStore.employer);
 watch(
   () => isEmployer.value,
   (new_value) => {
-    console.log(new_value);
     if (new_value === false) {
       navigateTo({ name: "create-resume" });
     }
@@ -119,7 +113,6 @@ watch(
 );
 const saveAsDraft = (e) => {
   e.preventDefault();
-  console.log("saved as draft");
 };
 
 const canBePublished = computed(() => {
@@ -177,10 +170,8 @@ const saveAllSections = async () => {
     billing_el.value.save(true),
   ]);
 
-  console.log(promises);
   const promisesResult = promises.every((item) => item === true);
 
-  console.log(promisesResult);
   return new Promise((resolve, reject) =>
     promisesResult ? resolve(true) : reject(false),
   );
@@ -234,12 +225,9 @@ const save = async (e) => {
         errorItems = errorItems.concat(superjob.map((item) => item.errors));
       }
       errors.value = errorItems;
-
-      console.log(errorItems);
     }
     return;
   }
-  console.log(resData);
 
   toast.info(resData.data.message, { autoClose: 3000 });
 

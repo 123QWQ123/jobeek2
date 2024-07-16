@@ -74,7 +74,6 @@ const updateItem = (id, newItem) => {
   isNew.value = true;
 };
 const deleteItem = (deleteItem) => {
-  console.log(deleteItem);
   remove(deleteItem);
 };
 onMounted(() => {

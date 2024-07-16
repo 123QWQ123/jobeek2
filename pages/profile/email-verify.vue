@@ -4,10 +4,6 @@ import { storeToRefs } from "pinia";
 import { useProfileStore } from "~/store/profile";
 import { navigateTo } from "nuxt/app";
 
-definePageMeta({
-  layout: "cabinet",
-});
-
 const authStore = useAuthStore();
 const profileStore = useProfileStore();
 

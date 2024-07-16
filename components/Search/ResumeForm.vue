@@ -118,7 +118,6 @@ const city = ref(null);
 watch(
   () => getQueryParam("salary"),
   (newValue) => {
-    console.log(newValue);
     salary.value = newValue;
   },
 );

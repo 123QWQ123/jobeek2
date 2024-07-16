@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@nuxtjs/moment": "^1.6.1",
+    "@pinia-plugin-persistedstate/nuxt": "^1.2.0",
     "nuxt": "^3.9.3",
     "nuxt-tiptap-editor": "^1.1.0",
     "prettier": "3.2.4",

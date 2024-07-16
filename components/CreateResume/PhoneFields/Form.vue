@@ -91,13 +91,7 @@ watch(
 );
 
 const errors = ref(props.errors ?? {});
-// watch(
-//   () => props.modelValue,
-//   (newData) => {
-//     console.log(newData);
-//     selectedPhones.value = [...newData] ?? [];
-//   }
-// );
+
 watch(
   () => props.errors,
   (newErrors) => {

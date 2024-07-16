@@ -1,9 +1,6 @@
 <script setup>
 import { useAuthStore } from "~/store/auth";
 
-definePageMeta({
-  layout: "cabinet",
-});
 const authStore = useAuthStore();
 
 if (!authStore.isEmployer) {

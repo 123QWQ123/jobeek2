@@ -5,10 +5,6 @@ import { useProfileStore } from "~/store/profile";
 import { useResumeStore } from "~/store/resume.js";
 import CustomSelect from "~/components/UI/CustomSelect.vue";
 
-definePageMeta({
-  layout: "cabinet",
-});
-
 useHead({
   title: "Отклики - Jobeek",
 });

@@ -95,7 +95,6 @@ watch(() => resumeStore.resume, (newResume) => {
 });
 
 watch(() => driver_licenses.value, (newData) => {
-    console.log(newData);
     isChanged.value = true;
 });
 

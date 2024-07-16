@@ -49,7 +49,6 @@ const salary = reactive({
 
 const validate = () => {
     salary.from.isChecked = true;
-    console.log(parseInt(salary.from.val));
     if (parseInt(salary.from.val) > 0){
         salary.from.isValid = true;
     }else{

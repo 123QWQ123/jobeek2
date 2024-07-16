@@ -44,11 +44,6 @@ watch(
     }
   },
 );
-//
-// const focus = () => {
-//   console.log(phoneElement.value);
-//   phoneElement.value.focus();
-// };
 
 defineExpose({
   focus,

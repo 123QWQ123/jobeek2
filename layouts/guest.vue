@@ -2,7 +2,7 @@
   <div class="layout">
     <HeaderTheGuestCabinetHeader />
     <div>
-      <NuxtPage />
+      <slot/>
     </div>
     <!--       <template #error="{ error }">-->
     <!--        <div>-->

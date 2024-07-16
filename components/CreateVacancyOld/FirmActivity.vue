@@ -14,7 +14,6 @@ const vacancyStore = useVacancyStore();
 
 const firm_activity = ref("");
 watch(firm_activity, (newValues) => {
-    console.log(newValues);
     emit('set', 'firm_activity', newValues);
 })
 </script>

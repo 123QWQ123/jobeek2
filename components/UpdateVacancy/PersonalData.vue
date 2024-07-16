@@ -299,7 +299,6 @@ const state = reactive({
 });
 
 watch(() => useWatchStateValues(state, true, true),   (newState, oldState) => {
-    console.log('update');
     if (!isFirst.value){
         isChanged.value = true;
     }else{
@@ -375,7 +374,6 @@ const {updateResume, createResume} = resumeStore;
 
 const {errors, handleErrorResponse} = useFormValidation();
 const save = async () => {
-    console.log(isChanged.value);
     if (isChanged.value){
         state.isLoading = true;
         // validate();
@@ -387,7 +385,6 @@ const save = async () => {
             const formData = useFormData(state, 'form_data')
             formData.append('form_data', 'personal_data');
             const unrefed = state.social_networks.val.map((item) => ({type: item.type, value:item.value}));
-            console.log(unrefed);
             formData.delete('social_networks');
             formData.delete('providers');
             formData.delete('title');
@@ -402,7 +399,6 @@ const save = async () => {
             const formData = useFormData(state, 'form_data');
 
             const unrefed = state.social_networks.val.map((item) => ({type: item.type, value:item.value}));
-            console.log(unrefed);
             formData.delete('social_networks');
             formData.delete('providers');
             useCreateFormData(formData, 'social_networks', unrefed);
@@ -414,7 +410,6 @@ const save = async () => {
                 const resume_id = resData.data.data.id;
                 state.isNew = false;
                 setTimeout(() => {
-                    console.log('redirecting...')
                     navigateTo({name: 'create-resume', query: {draft_id: resume_id}})
                 }, 100);
             }

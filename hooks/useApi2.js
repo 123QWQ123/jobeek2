@@ -1,9 +1,8 @@
 import { useFetch, useRuntimeConfig } from "nuxt/app";
 import axios from "axios";
+import {useAuthStore} from "~/store/auth";
 
 const useApi2 = async (method, options = {}) => {
-  // console.log(options);
-
   // const { data, pending, error, refresh } = await useFetch(url, {
   //     onRequest({ request, options }) {
   //         // Set the request headers
@@ -33,13 +32,12 @@ const useApi2 = async (method, options = {}) => {
 
   // if request is made from client side
   if (!process.server) {
-    // console.log(process.server);
-    const token = localStorage.getItem("token");
+    let {tokenAuth} = storeToRefs(useAuthStore())
 
     const headers = {
       Accept: "application/json",
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${tokenAuth.value}`,
     };
 
     if (options.content_type) {
@@ -204,7 +202,6 @@ const useApi2 = async (method, options = {}) => {
         };
       }
     } catch (error) {
-      console.log(error);
       if (
         error.response &&
         error.response.hasOwnProperty("data") &&

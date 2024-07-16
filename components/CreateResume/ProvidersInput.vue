@@ -150,27 +150,8 @@ await getConnectedSeekerProviders();
 
 const { value, errorMessage } = useField(() => props.name);
 
-// watch(vacancyProviders.value, (newValues) => {
-//   console.log(newValues);
-//   const providersNewValues = {...resetObject};
-//
-//   if (newValues.includes('hh')){
-//     providersNewValues.hh = true;
-//   }else{
-//     providersNewValues.superjob = false;
-//   }
-//   if (newValues.includes('superjob')){
-//     providersNewValues.superjob = true;
-//   }else{
-//     providersNewValues.superjob = false;
-//   }
-//   console.log(providersNewValues);
-//   selectedProviders.value = providersNewValues;
-// });
-
-const enabledProviders = ref(resumeStore.providers);
-const isHHEnabled = computed(() => enabledProviders.value.hh);
-const isSuperjobEnabled = computed(() => enabledProviders.value.superjob);
+const isHHEnabled = computed(() => resumeStore.providers.hh);
+const isSuperjobEnabled = computed(() => resumeStore.providers.superjob);
 
 const resetObject = {
   superjob: false,
@@ -244,9 +225,6 @@ const toggle = async (provider) => {
   }
   value.value = selectedProvidersValue;
   emit("update:modelValue", selectedProvidersValue);
-};
-const openProviderAuthUrl = (url) => {
-  window.open(url);
 };
 </script>
 

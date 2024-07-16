@@ -85,7 +85,6 @@ const metroOptions = ref([]);
 const updateInput = async (newValue = "") => {
   cityHasNoMetro.value = false;
   const items = (await searchMetro({ city_ids: cities.value })) ?? [];
-  console.log(items);
   let newOptions = items.map((item) => ({
     value: item.id,
     name: `${item.name}`,

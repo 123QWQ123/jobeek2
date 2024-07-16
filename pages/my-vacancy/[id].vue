@@ -5,10 +5,6 @@ import { toast } from "vue3-toastify";
 import useProviders from "~/composables/useProviders.js";
 import { useVacancyStore } from "~/store/vacancy.js";
 
-definePageMeta({
-  layout: "cabinet",
-});
-
 const route = useRoute();
 
 const vacancyStore = useVacancyStore();
@@ -67,12 +63,6 @@ onMounted(async () => {
       resData = await getMyVacancy(vacancyID.value);
     }
 
-    // const {
-    //   data: { data: vacData },
-    // } = resData;
-    // console.log(vacData);
-    // setProviders(vacData.providers);
-
     if (!resData) {
       return;
     }
@@ -101,7 +91,6 @@ watch(() => route.query.message, handleAlert);
 
 const saveAsDraft = (e) => {
   e.preventDefault();
-  console.log("saved as draft");
 };
 
 const paramProviders = computed(() => {
@@ -166,7 +155,6 @@ const driver_licences_el = ref();
 // citizenship_el.value.save(true),
 
 const saveAllSections = async () => {
-  // console.log(family_and_citizenship_el.value.hasOwnProperty("save"));
   const promises = await Promise.all([
     // photo_el.value.save(true),
     // personal_fields_el.value.save(true),
@@ -182,7 +170,6 @@ const saveAllSections = async () => {
 
   const promisesResult = promises.every((item) => item === true);
 
-  console.log(promisesResult);
   return new Promise((resolve, reject) =>
     promisesResult ? resolve(true) : reject(false),
   );
@@ -219,10 +206,7 @@ const saveAndPublishAll = async (e) => {
     providers: paramProviders.value,
   };
 
-  console.log(payload);
   const resData = await publishDraft(vacancyID.value, payload);
-  console.log(resData);
-  // isLoading.value = false;
   if (resData.hasOwnProperty("status") && resData.status !== "success") {
     Swal.fire({
       title: "Ошибка!",
@@ -252,7 +236,6 @@ const saveAndPublishProvider = async (provider = null) => {
 
   isLoading.value = true;
   const resAll = await saveAllSections();
-  console.log(resAll);
   if (!resAll) {
     Swal.fire({
       title: "Ошибка!",
@@ -269,10 +252,7 @@ const saveAndPublishProvider = async (provider = null) => {
     providers: [provider],
   };
 
-  console.log(payload);
   const resData = await publishVacancy(vacancyID.value, payload);
-  console.log(resData);
-  // isLoading.value = false;
   if (resData.hasOwnProperty("status") && resData.status !== "success") {
     Swal.fire({
       title: "Ошибка!",

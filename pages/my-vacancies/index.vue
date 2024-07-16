@@ -2,10 +2,6 @@
 import { useAuthStore } from "~/store/auth";
 import { useVacancyStore } from "~/store/vacancy.js";
 
-definePageMeta({
-  layout: "cabinet",
-});
-
 const authStore = useAuthStore();
 
 const isEmployer = computed(() => authStore.isEmployer);

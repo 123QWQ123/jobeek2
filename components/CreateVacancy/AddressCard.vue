@@ -226,7 +226,6 @@ onMounted(() => {
 });
 
 const onAddressSearch = async (newString) => {
-  console.log(newString);
 };
 const { errors, handleErrorResponse } = useFormValidation();
 const isFocused = ref(false);

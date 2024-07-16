@@ -29,7 +29,6 @@ onMounted(async () => {
 });
 
 const onClickConnect = () => {
-  console.log(authStore.premium_url);
   window.open(authStore.premium_url);
 };
 </script>

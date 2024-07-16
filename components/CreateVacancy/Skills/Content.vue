@@ -100,7 +100,6 @@ const deleteItem = (deleteItem) => {
 }
 
 watch(() => state.skills.val, (newValues) => {
-  console.log(newValues);
   if (!isFirst.value){
     emit('update:modelValue', newValues.filter(item => item));
   }else{
@@ -110,7 +109,6 @@ watch(() => state.skills.val, (newValues) => {
 
 const errors = ref({});
 watch(() => props.errors, (newErrors) => {
-  console.log(errors.value, newErrors);
   errors.value = newErrors;
 })
 

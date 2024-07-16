@@ -103,7 +103,7 @@ watch(() => vacancyStore.my_vacancy, (newVacancy) => {
         isUpdated.value = false;
         return;
     }
-  console.log(newVacancy);
+
     if (newVacancy){
         sectionData.value = {
             cities: newVacancy.cities,

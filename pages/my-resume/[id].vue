@@ -5,10 +5,6 @@ import { toast } from "vue3-toastify";
 import { useResumeStore } from "~/store/resume";
 import useProviders from "~/composables/useProviders.js";
 
-definePageMeta({
-  layout: "cabinet",
-});
-
 const route = useRoute();
 
 const resumeStore = useResumeStore();
@@ -76,7 +72,6 @@ watch(() => route.query.message, handleAlert);
 
 const saveAsDraft = (e) => {
   e.preventDefault();
-  console.log("saved as draft");
 };
 
 const paramProviders = computed(() => {
@@ -146,7 +141,6 @@ const access_el = ref();
 // citizenship_el.value.save(true),
 
 const saveAllSections = async () => {
-  // console.log(family_and_citizenship_el.value.hasOwnProperty("save"));
   const promises = await Promise.all([
     photo_el.value.save(true),
     personal_fields_el.value.save(true),
@@ -161,8 +155,6 @@ const saveAllSections = async () => {
   ]);
 
   const promisesResult = promises.every((item) => item === true);
-
-  console.log(promisesResult);
   return new Promise((resolve, reject) =>
     promisesResult ? resolve(true) : reject(false),
   );
@@ -184,7 +176,6 @@ const saveAndPublishAll = async (e) => {
 
   isLoading.value = true;
   const resAll = await saveAllSections();
-  console.log(resAll);
   if (!resAll) {
     Swal.fire({
       title: "Ошибка!",
@@ -202,7 +193,6 @@ const saveAndPublishAll = async (e) => {
   };
 
   const resData = await publishResume(resumeID.value, payload);
-  console.log(resData);
   // isLoading.value = false;
   if (resData.hasOwnProperty("status") && resData.status !== "success") {
     Swal.fire({
@@ -233,7 +223,6 @@ const saveAndPublishProvider = async (provider = null) => {
 
   isLoading.value = true;
   const resAll = await saveAllSections();
-  console.log(resAll);
   if (!resAll) {
     Swal.fire({
       title: "Ошибка!",

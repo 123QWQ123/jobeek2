@@ -74,7 +74,6 @@ watch(
       await getMyResumes();
       return;
     } else {
-      console.log(1);
       setValues({
         all: newValue.push_notification && newValue.email_notification,
         notifications: newValue,

@@ -1,11 +1,6 @@
 <script setup>
 import { useAuthStore } from "~/store/auth";
 import { useResumeStore } from "~/store/resume.js";
-
-definePageMeta({
-  layout: "cabinet",
-});
-
 const authStore = useAuthStore();
 
 const isEmployer = computed(() => authStore.isEmployer);
@@ -13,7 +8,6 @@ const isEmployer = computed(() => authStore.isEmployer);
 watch(
   () => isEmployer.value,
   (new_value) => {
-    console.log(new_value);
     if (new_value === true) {
       navigateTo({ name: "my-vacancies" });
     }

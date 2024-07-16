@@ -46,7 +46,7 @@ export const useVacancyStore = defineStore("vacancy", {
       vacancy_billing_types: [],
       vacancy_types: [],
       can_create_vacancy: null,
-      can_create_vacancy_count: 1,
+      can_create_vacancy_count: 0,
       provider_auth_urls: {
         hh: null,
         superjob: null,
@@ -131,9 +131,7 @@ export const useVacancyStore = defineStore("vacancy", {
   },
   actions: {
     async getConnectedEmployerProviders() {
-      const providers = localStorage.getItem("employer_providers");
-      if (providers) {
-        this.providers = JSON.parse(providers);
+      if (this.providers) {
         return this.providers;
       }
       const response = await useApi("employer/used_providers", {
@@ -143,13 +141,8 @@ export const useVacancyStore = defineStore("vacancy", {
 
       if ("data" in response) {
         this.providers = response.data.data;
-        localStorage.setItem(
-          "employer_providers",
-          JSON.stringify(this.providers),
-        );
-        return response;
       }
-      return response;
+      return this.providers;
     },
     async importVacancies() {
       const payload = [];
@@ -166,11 +159,6 @@ export const useVacancyStore = defineStore("vacancy", {
         payload: { providers: payload },
       });
 
-      // console.log(data.message);
-      //
-      // if (data.hasOwnProperty('message')){
-      //   this.employerMessage = data.message;
-      // }
       return data;
     },
 
@@ -195,9 +183,7 @@ export const useVacancyStore = defineStore("vacancy", {
       payload,
       redirect_to = "/profile/service-verify",
     ) {
-      const urls = localStorage.getItem("employer_providers_redirect_url");
-      if (urls) {
-        this.provider_auth_urls = JSON.parse(urls);
+      if (this.provider_auth_urls) {
         return this.provider_auth_urls;
       }
       const response = await useApi("services/auth/redirect-url", {
@@ -205,13 +191,10 @@ export const useVacancyStore = defineStore("vacancy", {
         params: { ...payload, redirect_to, profile: "employer" },
       });
       if (response.status === "success") {
-        localStorage.setItem(
-          "employer_providers_redirect_url",
-          JSON.stringify(response.data.data),
-        );
-        return this.provider_auth_urls;
+        this.provider_auth_urls = response.data.data;
       }
-      return response;
+
+      return this.provider_auth_urls;
     },
 
     async getAreas(payload) {
@@ -231,7 +214,6 @@ export const useVacancyStore = defineStore("vacancy", {
       });
       if (response.status === "success") {
         if (add) {
-          console.log(response.data);
           this.vacancies = this.vacancies.concat(response.data.items);
           this.current_page++;
         } else {
@@ -244,9 +226,7 @@ export const useVacancyStore = defineStore("vacancy", {
       return response;
     },
     async getVacanciesInMoscow(payload, is_new = false) {
-      const vacancies_in_moscow = localStorage.getItem("vacancies_in_moscow");
-      if (vacancies_in_moscow) {
-        this.vacancies_in_moscow = JSON.parse(vacancies_in_moscow);
+      if (this.vacancies_in_moscow) {
         return this.vacancies_in_moscow;
       }
       const response = await useApi("vacancies/search", {
@@ -255,19 +235,11 @@ export const useVacancyStore = defineStore("vacancy", {
       });
       if (response.status === "success") {
         this.vacancies_in_moscow = this.vacancies.concat(response.data.items);
-        localStorage.setItem(
-          "vacancies_in_moscow",
-          JSON.stringify(this.vacancies_in_moscow),
-        );
-        this.vacancies_in_moscow_total = response.data.found;
-        return response;
       }
-      return response;
+      return this.vacancies_in_moscow;
     },
     async getCurrencyCityVacancies(payload) {
-      const vacancies_in_my_city = localStorage.getItem("vacancies_in_my_city");
-      if (vacancies_in_my_city) {
-        this.vacancies_in_my_city = JSON.parse(vacancies_in_my_city);
+      if (this.vacancies_in_my_city) {
         return this.vacancies_in_my_city;
       }
       const response = await useApi("vacancies/search", {
@@ -276,13 +248,8 @@ export const useVacancyStore = defineStore("vacancy", {
       });
       if (response.status === "success") {
         this.vacancies_in_my_city = response.data.items;
-        localStorage.setItem(
-          "vacancies_in_my_city",
-          JSON.stringify(this.vacancies_in_my_city),
-        );
-        return this.vacancies_in_my_city;
       }
-      return response;
+      return this.vacancies_in_my_city;
     },
     async getVacancy(id, payload) {
       const response = await useApi("vacancy/" + id, {
@@ -450,11 +417,10 @@ export const useVacancyStore = defineStore("vacancy", {
       return response;
     },
     async getMyFavoriteVacancies(payload) {
-      const { data } = await useApi("seeker/favorites", {
+      const { data } = await useApi("seeker/vacancies/favorites", {
         method: "get",
         params: payload,
       });
-      console.log(data);
       if (data && data.data && "items" in data.data) {
         this.my_favorite_vacancies = data.data.items;
         if (payload.page) {
@@ -518,10 +484,8 @@ export const useVacancyStore = defineStore("vacancy", {
         method: "get",
         params: payload,
       });
-      console.log(response);
       if (response && "data" in response) {
         this.professional_roles = response.data.data ?? [];
-        console.log(this.professional_roles);
         return this.professional_roles;
       }
       return response;
@@ -561,7 +525,6 @@ export const useVacancyStore = defineStore("vacancy", {
           method: "delete",
         },
       );
-      console.log(response);
       return response;
     },
     async deleteDraft(id) {

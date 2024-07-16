@@ -62,6 +62,5 @@ const {
 });
 
 const onSubmit = () => {
-  console.log(1);
 };
 </script>
