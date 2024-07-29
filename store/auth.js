@@ -3,7 +3,7 @@ import { navigateTo, useRuntimeConfig } from "nuxt/app";
 import { acceptHMRUpdate, defineStore } from "pinia";
 import axios from "axios";
 import useApi from "~/hooks/useApi";
-import {useFcm} from "#imports";
+import { useFcm } from "#imports";
 
 export const useAuthStore = defineStore("auth", {
   state: () => {
@@ -14,7 +14,6 @@ export const useAuthStore = defineStore("auth", {
       isAuthed: false,
       isEmployerMode: false,
       isSubscribed: false,
-      geo: null,
       premium_url: null,
       tokenAuth: null,
       tokenType: null,
@@ -24,7 +23,7 @@ export const useAuthStore = defineStore("auth", {
   },
   persist: {
     storage: persistedState.cookiesWithOptions({
-      sameSite: 'lax',
+      sameSite: "lax",
       maxAge: 72000000,
     }),
   },
@@ -77,7 +76,7 @@ export const useAuthStore = defineStore("auth", {
         response.data &&
         response.data.data.hasOwnProperty("token")
       ) {
-        this.tokenAuth = response.data?.data.token
+        this.tokenAuth = response.data?.data.token;
       }
 
       return response;
@@ -236,11 +235,11 @@ export const useAuthStore = defineStore("auth", {
 
     async signIn(payload) {
       try {
-        const {data: data, status} = await useApi("auth/login", {
-          method: 'post',
+        const { data: data, status } = await useApi("auth/login", {
+          method: "post",
           payload: payload,
         });
-        if (status === 'success') {
+        if (status === "success") {
           this.tokenAuth = data.data.token;
           this.tokenType = data.data.token_type;
           this.expiresAt = data.data.expires_at;
@@ -284,13 +283,8 @@ export const useAuthStore = defineStore("auth", {
         },
       });
     },
-    autoLogout() {
-      this.logout();
-      navigateTo('/');
-    },
-
     logout() {
-      this.$reset()
+      this.$reset();
       navigateTo("/");
     },
     async getLocation(payload = {}) {

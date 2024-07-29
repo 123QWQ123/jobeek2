@@ -5,7 +5,6 @@ const route = useRoute();
 const isCabinetNavbarShown = computed(() => {
   return search_exception_routes.includes(route.name);
 });
-
 </script>
 <template>
   <div class="lk-header">
@@ -29,7 +28,6 @@ const isCabinetNavbarShown = computed(() => {
         </div>
       </div>
     </div>
-    <HeaderCabinetNavbar></HeaderCabinetNavbar>
   </div>
 </template>
 

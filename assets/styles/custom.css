@@ -111,6 +111,12 @@
 
 
 .sign-in-btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-btn {
     min-width: 140px;
-    min-height: 47px;
+    min-height: 44px;
 }
