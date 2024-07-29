@@ -217,12 +217,10 @@ export const useProfileStore = defineStore("profile", {
     },
     async getUser(payload = "") {
       const { isEmployer } = useAuthStore();
-      let url = "seeker/profile";
       if (isEmployer) {
-        url = "employer/profile";
-        return this.getEmployer(url);
+        return this.getEmployer("employer/profile");
       } else {
-        return this.getSeeker(url);
+        return this.getSeeker("seeker/profile");
       }
     },
     async getSeeker(url = "") {

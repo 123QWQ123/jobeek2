@@ -138,8 +138,16 @@
 //    height: 58px;
 //  }
 //}
+.lk-header-main {
+  max-height: 62px;
+  min-height: 62px;
+}
 
 .lk-header-main .header-wrapper {
-  padding-top: 6px !important;
-  padding-bottom: 7px !important;
+  padding-top: 9px !important;
+  padding-bottom: 9px !important;
+}
+
+.search-form--widget .search-row {
+  //min-height: 42px;
 }

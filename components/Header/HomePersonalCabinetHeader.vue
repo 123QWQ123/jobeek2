@@ -25,8 +25,7 @@ watch(selectedType, (new_value) => {
   form.value = { ...form.value, type: new_value };
 });
 
-function onChange(selectedOption) {
-}
+function onChange(selectedOption) {}
 
 const onProfileClick = () => {
   if (!auth.isEmployer) {
@@ -81,7 +80,7 @@ const isPremium = computed(() => auth.isSubscribed);
             </div>
           </div>
         </div>
-        <HeaderCabinetNavbar />
+        <HeaderCabinetNavbar v-if="auth.isAuthed" />
       </div>
     </template>
   </Suspense>

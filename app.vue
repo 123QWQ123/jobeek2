@@ -16,11 +16,15 @@ import { useVacancyStore } from "~/store/vacancy";
 import { useResumeStore } from "~/store/resume";
 
 definePageMeta({
-  middleware: [function (to, from, next) {
-    to.meta.layout = isAuthed.value ? 'auth' : 'guest';
-    to.meta.name = 'viewport';
-    to.meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0';
-  }]
+  middleware: [
+    function (to, from, next) {
+      const { isAuthed } = storeToRefs(useAuthStore());
+      to.meta.layout = isAuthed.value ? "auth" : "guest";
+      to.meta.name = "viewport";
+      to.meta.content =
+        "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0";
+    },
+  ],
 });
 
 const { getConnectedEmployerProviders } = useVacancyStore();
@@ -28,7 +32,7 @@ const { getConnectedSeekerProviders } = useResumeStore();
 const vacancyStore = useVacancyStore();
 
 const authStore = useAuthStore();
-const {isAuthed, user} = storeToRefs(authStore);
+const { isAuthed, user } = storeToRefs(authStore);
 const route = useRoute();
 
 onMounted(async () => {
