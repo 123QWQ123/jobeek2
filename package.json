@@ -69,7 +69,9 @@
     "zod-i18n-map": "^2.27.0",
     "zod-to-json-schema": "^3.22.4"
   },
-  "resolutions": {
-    "rollup": "npm:@rollup/wasm-node"
+  "pnpm": {
+    "overrides": {
+      "rollup": "npm:@rollup/wasm-node"
+    }
   }
 }
