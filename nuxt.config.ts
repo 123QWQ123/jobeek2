@@ -91,6 +91,12 @@ const config = {
     vapidKey:
       "BNhzs3ta5UD12WZIz6pP4ONTohrOsoMP3lyomaLsw2fRjsg4u0OzGKoOAFW7i0DK4GscckYJ5v0D99YJlFNhv3I",
   },
+  primevue: {
+    components: {
+      include: '*',
+      exclude: [],
+    }
+  }
 };
 if (process.env.NODE_ENV === "development") {
   config.server = {
