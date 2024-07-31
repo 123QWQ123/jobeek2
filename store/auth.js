@@ -3,7 +3,7 @@ import { navigateTo, useRuntimeConfig } from "nuxt/app";
 import { acceptHMRUpdate, defineStore } from "pinia";
 import axios from "axios";
 import useApi from "~/hooks/useApi";
-import { useFcm } from "#imports";
+// import { useFcm } from "#imports";
 
 export const useAuthStore = defineStore("auth", {
   state: () => {
@@ -274,15 +274,15 @@ export const useAuthStore = defineStore("auth", {
         };
       }
     },
-    async setFcmToken() {
-      const token = await useFcm().getToken();
-      const { data } = await useApi("fcm/setToken", {
-        method: "post",
-        payload: {
-          fcm_token: token,
-        },
-      });
-    },
+    // async setFcmToken() {
+    //   const token = await useFcm().getToken();
+    //   const { data } = await useApi("fcm/setToken", {
+    //     method: "post",
+    //     payload: {
+    //       fcm_token: token,
+    //     },
+    //   });
+    // },
     logout() {
       this.$reset();
       navigateTo("/");

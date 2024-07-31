@@ -32,7 +32,9 @@ const messages = localize({
 });
 export default defineNuxtPlugin((nuxtApp) => {
   Object.keys(AllRules).forEach((rule) => {
-    defineRule(rule, AllRules[rule]);
+    if (rule !== "all") {
+      defineRule(rule, AllRules[rule]);
+    }
   });
   defineRule("date", (value, [limit]) => {
     if (moment(value, "YYYY-MM-DD", true).isValid()) {
