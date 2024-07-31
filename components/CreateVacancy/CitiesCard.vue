@@ -1,62 +1,60 @@
 <template>
-
   <div class="w-box" v-click-outside="save" @click="isFocused = true">
     <div class="w-box-head">
-      <h3 class="title">Где публиковать?({{isChanged}})</h3>
-      <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
-
+      <h3 class="title">Где публиковать?({{ isChanged }})</h3>
+      <span
+        class="arrow"
+        :class="{ up: isCollapsed, 'is-completed': isCompleted }"
+        @click="isCollapsed = !isCollapsed"
+      ></span>
     </div>
 
     <div class="text-danger d-block p-4" v-if="errors.message">
       {{ errors.message }}
     </div>
     <transition>
-      <div class="w-box-body" :class="{collapse: isCollapsed}">
-
+      <div class="w-box-body" :class="{ collapse: isCollapsed }">
         <div class="input-row">
           <label>Список городов:<b>*</b></label>
           <div class="input-wrapper mt-2">
-            <MultiSelectWithSearch :disabled="vacancyID" :options="cityOptions" v-model="state.cities.val" :label="'Выберите город'" @input="updateCityInput" @focusin="() => errors.cities = ''"></MultiSelectWithSearch>
+            <MultiSelectWithSearch
+              :disabled="vacancyID"
+              :options="cityOptions"
+              v-model="state.cities.val"
+              :label="'Выберите город'"
+              @input="updateCityInput"
+              @focusin="() => (errors.cities = '')"
+            ></MultiSelectWithSearch>
 
             <div class="text-danger d-block" v-if="errors.cities">
               Вам нужно выбрать город для публикации!
             </div>
-
           </div>
-
         </div>
       </div>
     </transition>
-
   </div>
-
-
 </template>
 
 <script setup>
-import {useVacancyStore} from "~/store/vacancy";
+import { useVacancyStore } from "~/store/vacancy";
 
-const props = defineProps(['title']);
+const props = defineProps(["title"]);
 
-import {useProfileStore} from "~/store/profile";
-import {useFormData} from "~/composables/useFormData";
-import {useRuntimeConfig} from "#app";
+import { useProfileStore } from "~/store/profile";
+import { useFormData } from "~/composables/useFormData";
 import useFormValidation from "~/composables/useFormValidation";
-import {useWatchStateValues} from "~/composables/useWatchStateValues";
-import {useDiff} from "~/composables/useDiff";
-import {v4 as uuidv4} from "uuid";
-import {useCreateFormData} from "~/composables/useCreateFormData";
+import { useWatchStateValues } from "~/composables/useWatchStateValues";
+import { useDiff } from "~/composables/useDiff";
 import useResumeHooks from "~/hooks/useResumeHooks";
 const vacancyStore = useVacancyStore();
 const profileStore = useProfileStore();
-const CONFIG = useRuntimeConfig();
 const route = useRoute();
 
 const draftID = computed(() => route.query.draft_id);
 const vacancyID = computed(() => route.query.vacancy_id);
-const {updateVacancy, updateDraft, getMyVacancy, getMyDraft} = vacancyStore;
+const { updateDraft } = vacancyStore;
 
-const {employer} = profileStore;
 const my_vacancy = computed(() => vacancyStore.my_vacancy);
 
 const isSaved = ref(false);
@@ -65,121 +63,135 @@ const isFirst = ref(true);
 const isCollapsed = ref(true);
 const isUpdated = ref(false);
 
-
 const state = reactive({
-    cities: {
-        val:  [],
-        isValid: true
-    },
-    isFormValid: true,
-    isNew: true,
-    isLoading: false,
-    error: null,
-    success: null,
+  cities: {
+    val: [],
+    isValid: true,
+  },
+  isFormValid: true,
+  isNew: true,
+  isLoading: false,
+  error: null,
+  success: null,
 });
 
-watch(() => useWatchStateValues(state, true, true),   (newState, oldState) => {
-    if (!isFirst.value){
-        isChanged.value = true;
-    }else{
-        isFirst.value = false;
+watch(
+  () => useWatchStateValues(state, true, true),
+  (newState, oldState) => {
+    if (!isFirst.value) {
+      isChanged.value = true;
+    } else {
+      isFirst.value = false;
     }
-});
+  },
+);
 
 const sectionData = ref({});
-watch(() => sectionData.value, (newData, oldData) => {
-    const diffData =  useDiff(newData, oldData);
-    if (Object.keys(diffData).length){
-        if (newData['cities'].length > 0){
-          selectedOptions.value = newData['cities'].map((item) => ({name: item.name, value: item.id}));
-          const newOptions = cityOptions.value;
-          cityOptions.value = newOptions.concat(selectedOptions.value);
-          state['cities'].val = newData['cities'].map((item) => item.id);
-        }
+watch(
+  () => sectionData.value,
+  (newData, oldData) => {
+    const diffData = useDiff(newData, oldData);
+    if (Object.keys(diffData).length) {
+      if (newData["cities"].length > 0) {
+        selectedOptions.value = newData["cities"].map((item) => ({
+          name: item.name,
+          value: item.id,
+        }));
+        const newOptions = cityOptions.value;
+        cityOptions.value = newOptions.concat(selectedOptions.value);
+        state["cities"].val = newData["cities"].map((item) => item.id);
+      }
     }
-})
-watch(() => vacancyStore.my_vacancy, (newVacancy) => {
-    if (isUpdated.value){
-        isUpdated.value = false;
-        return;
+  },
+);
+watch(
+  () => vacancyStore.my_vacancy,
+  (newVacancy) => {
+    if (isUpdated.value) {
+      isUpdated.value = false;
+      return;
     }
 
-    if (newVacancy){
-        sectionData.value = {
-            cities: newVacancy.cities,
-        };
+    if (newVacancy) {
+      sectionData.value = {
+        cities: newVacancy.cities,
+      };
     }
-})
+  },
+);
 
-const {searchCities} = profileStore;
+const { searchCities } = profileStore;
 const selectedOptions = ref([]);
 const cityOptions = ref([]);
 
-const {getCityName} = useResumeHooks();
-const updateCityInput = async (newValue = '') => {
-  if (newValue.length > 2){
-    const items = await searchCities({search: newValue}) ?? [];
-    let newOptions = items.filter(item => item.cityId).map(item => ({value: item.cityId, name: getCityName(item) }));
+const { getCityName } = useResumeHooks();
+const updateCityInput = async (newValue = "") => {
+  if (newValue.length > 2) {
+    const items = (await searchCities({ search: newValue })) ?? [];
+    let newOptions = items
+      .filter((item) => item.cityId)
+      .map((item) => ({ value: item.cityId, name: getCityName(item) }));
     cityOptions.value = newOptions.concat(selectedOptions.value);
   }
-}
+};
 
-
-const {errors, handleErrorResponse} = useFormValidation();
+const { errors, handleErrorResponse } = useFormValidation();
 const isFocused = ref(false);
 const save = async (is_from_parent = false) => {
-  if (is_from_parent === true){
+  if (is_from_parent === true) {
     isFocused.value = true;
   }
-  if (!isFocused.value){
+  if (!isFocused.value) {
     return true;
   }
 
-  if (isChanged.value){
-        state.isLoading = true;
-        errors.value = {};
-        state.errorMessage = "";
-        let resData = {};
-        const jsonData = useFormData(state);
-        jsonData.action = 'UpdateCities';
-        resData = await updateDraft(draftID.value, jsonData);
-        isUpdated.value = true;
-        if (resData.status !== 'success'){
-          return handleErrorResponse(resData.data);
-        }
+  if (isChanged.value) {
+    state.isLoading = true;
+    errors.value = {};
+    state.errorMessage = "";
+    let resData = {};
+    const jsonData = useFormData(state);
+    jsonData.action = "UpdateCities";
+    resData = await updateDraft(draftID.value, jsonData);
+    isUpdated.value = true;
+    if (resData.status !== "success") {
+      return handleErrorResponse(resData.data);
+    }
 
     isChanged.value = false;
     isSaved.value = false;
     isUpdated.value = false;
-    if (is_from_parent)
-    {
+    if (is_from_parent) {
       return new Promise((resolve, reject) => {
         resolve(true);
       });
     }
-  }
-  else{
+  } else {
     return true;
   }
-}
+};
 
 const isCompleted = computed(() => {
-    const myVacancy = my_vacancy.value;
-    if (myVacancy && !isCollapsed.value){
-        return (myVacancy.first_name && myVacancy.last_name && myVacancy.id && myVacancy.birth_date && myVacancy.city_id && myVacancy.phone && myVacancy.phone_time_start && myVacancy.phone_time_end && myVacancy.email);
-    }
-    return false;
+  const myVacancy = my_vacancy.value;
+  if (myVacancy && !isCollapsed.value) {
+    return (
+      myVacancy.first_name &&
+      myVacancy.last_name &&
+      myVacancy.id &&
+      myVacancy.birth_date &&
+      myVacancy.city_id &&
+      myVacancy.phone &&
+      myVacancy.phone_time_start &&
+      myVacancy.phone_time_end &&
+      myVacancy.email
+    );
+  }
+  return false;
 });
 
 defineExpose({
-  save
-})
+  save,
+});
 </script>
 
-<style>
-
-.from-to-block{
-
-}
-
-</style>
+<style></style>
