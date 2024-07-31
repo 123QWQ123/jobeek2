@@ -39,8 +39,6 @@
 </template>
 
 <script setup>
-import { watchIgnorable } from "@vueuse/core";
-
 import { v4 as uuidv4 } from "uuid";
 const emit = defineEmits(["update:modelValue"]);
 const props = defineProps({
@@ -65,7 +63,7 @@ watch(
     if (newSelectedItems.length) {
       emit("update:modelValue", newSelectedItems);
     }
-  }
+  },
 );
 
 const errors = ref(props.errors ?? {});
@@ -80,7 +78,7 @@ watch(
   () => props.errors,
   (newErrors) => {
     errors.value = newErrors;
-  }
+  },
 );
 watch(
   () => errors.value,
@@ -102,7 +100,7 @@ watch(
       });
       selectedSocialNetworks.value = newItems;
     }
-  }
+  },
 );
 const source = ref("foo");
 
@@ -133,7 +131,7 @@ const updateItem = (key, newItem) => {
 };
 const deleteItem = (deleteItem) => {
   const newItems = selectedSocialNetworks.value.filter(
-    (item) => item.key !== deleteItem
+    (item) => item.key !== deleteItem,
   );
   selectedSocialNetworks.value = newItems;
 };
