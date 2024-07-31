@@ -7,7 +7,7 @@ const config = {
   devtools: {
     enabled: Boolean(process.env.DEVTOOLS_ENABLED),
     vscode: {},
-    timeline: { enabled: Boolean(process.env.DEVTOOLS_TIMELINE_ENABLED) }
+    timeline: { enabled: Boolean(process.env.DEVTOOLS_TIMELINE_ENABLED) },
   },
   runtimeConfig: {
     // The private keys which are only available within server-side
@@ -46,12 +46,12 @@ const config = {
         },
       ],
       script: [
-        {
-          src: "https://www.gstatic.com/firebasejs/8.3.2/firebase-app.js",
-        },
-        {
-          src: "https://www.gstatic.com/firebasejs/8.3.2/firebase-messaging.js",
-        },
+        // {
+        //   src: "https://www.gstatic.com/firebasejs/8.3.2/firebase-app.js",
+        // },
+        // {
+        //   src: "https://www.gstatic.com/firebasejs/8.3.2/firebase-messaging.js",
+        // },
       ],
     },
   },
@@ -59,7 +59,7 @@ const config = {
     "@pinia/nuxt",
     "@nuxt/devtools",
     "nuxt-swiper",
-    "@bg-dev/nuxt-fcm",
+    // "@bg-dev/nuxt-fcm",
     "@vueuse/nuxt",
     "@vee-validate/nuxt",
     "nuxt-tiptap-editor",
@@ -77,26 +77,26 @@ const config = {
 
     // '/old-page2': { redirect: { to: '/new-page', statusCode: 302 } }
   },
-  fcm: {
-    firebaseConfig: {
-      apiKey: "AIzaSyDaqZCxvD1wNu8bKxFB1fjUeaZo4k2Gyyg",
-      authDomain: "espays.firebaseapp.com",
-      databaseURL: "https://espays.firebaseio.com",
-      projectId: "espays",
-      storageBucket: "espays.appspot.com",
-      messagingSenderId: "889800109407",
-      appId: "1:889800109407:web:e6a37cf3f262f5ae4d1aea",
-      measurementId: "G-ZS2ZHFHJ56",
-    },
-    vapidKey:
-      "BNhzs3ta5UD12WZIz6pP4ONTohrOsoMP3lyomaLsw2fRjsg4u0OzGKoOAFW7i0DK4GscckYJ5v0D99YJlFNhv3I",
-  },
+  // fcm: {
+  //   firebaseConfig: {
+  //     apiKey: "AIzaSyDaqZCxvD1wNu8bKxFB1fjUeaZo4k2Gyyg",
+  //     authDomain: "espays.firebaseapp.com",
+  //     databaseURL: "https://espays.firebaseio.com",
+  //     projectId: "espays",
+  //     storageBucket: "espays.appspot.com",
+  //     messagingSenderId: "889800109407",
+  //     appId: "1:889800109407:web:e6a37cf3f262f5ae4d1aea",
+  //     measurementId: "G-ZS2ZHFHJ56",
+  //   },
+  //   vapidKey:
+  //     "BNhzs3ta5UD12WZIz6pP4ONTohrOsoMP3lyomaLsw2fRjsg4u0OzGKoOAFW7i0DK4GscckYJ5v0D99YJlFNhv3I",
+  // },
   primevue: {
     components: {
-      include: '*',
+      include: "*",
       exclude: [],
-    }
-  }
+    },
+  },
 };
 if (process.env.NODE_ENV === "development") {
   config.server = {
