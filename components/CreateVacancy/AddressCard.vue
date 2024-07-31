@@ -89,27 +89,18 @@ const props = defineProps({
   },
 });
 
-import { useProfileStore } from "~/store/profile";
 import { useFormData } from "~/composables/useFormData";
-import { useRuntimeConfig } from "#app";
 import useFormValidation from "~/composables/useFormValidation";
 import { useWatchStateValues } from "~/composables/useWatchStateValues";
 import { useDiff } from "~/composables/useDiff";
-import { v4 as uuidv4 } from "uuid";
-import { useCreateFormData } from "~/composables/useCreateFormData";
 import { useDictionaryStore } from "~/store/dictionary";
-import Swal from "sweetalert2";
 import useProviderFields from "~/composables/useProviderFields";
 const vacancyStore = useVacancyStore();
-const profileStore = useProfileStore();
-const CONFIG = useRuntimeConfig();
 const route = useRoute();
 
 const draftID = computed(() => route.query.draft_id);
-const vacancyID = computed(() => route.query.vacancy_id);
-const { updateVacancy, updateDraft, getMyVacancy, getMyDraft } = vacancyStore;
+const { updateVacancy, updateDraft } = vacancyStore;
 
-const { employer } = profileStore;
 const my_vacancy = computed(() => vacancyStore.my_vacancy);
 
 const isSaved = ref(false);
@@ -166,7 +157,7 @@ watch(
     } else {
       isFirst.value = false;
     }
-  }
+  },
 );
 
 const sectionData = ref({});
@@ -179,7 +170,7 @@ watch(
       state.address.val = newData.address;
       state.show_metro_only.val = newData.show_metro_only;
     }
-  }
+  },
 );
 watch(
   () => vacancyStore.my_vacancy,
@@ -195,7 +186,7 @@ watch(
         show_metro_only: newVacancy.address?.show_metro_only,
       };
     }
-  }
+  },
 );
 
 const dictionaryStore = useDictionaryStore();
@@ -225,8 +216,7 @@ onMounted(() => {
   }, 500);
 });
 
-const onAddressSearch = async (newString) => {
-};
+const onAddressSearch = async (newString) => {};
 const { errors, handleErrorResponse } = useFormValidation();
 const isFocused = ref(false);
 const save = async (is_from_parent = false) => {
@@ -281,7 +271,4 @@ defineExpose({
 });
 </script>
 
-<style>
-.from-to-block {
-}
-</style>
+<style></style>
