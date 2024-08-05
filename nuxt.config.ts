@@ -3,7 +3,9 @@ import path from "path";
 import fs from "fs";
 
 const config = {
-  server: {},
+  server: {
+    host: "127.0.0.1",
+  },
   devtools: {
     enabled: Boolean(process.env.DEVTOOLS_ENABLED),
     vscode: {},
