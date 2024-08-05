@@ -1,4 +1,6 @@
-import VueTelInput from "vue3-tel-input";
+import pkg from "vue3-tel-input";
+const { VueTelInput } = pkg;
+
 import "vue3-tel-input/dist/vue3-tel-input.css";
 
 const VueTelInputOptions = {
