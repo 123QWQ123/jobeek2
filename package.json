@@ -8,10 +8,8 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "deploy-stage": "nuxt generate && scp -r ./.output/public/* jobeek:~/web/nuxt",
-    "deploy-stage-ssr": "nuxt build && scp -rp g+rwx ./.output/* jobeek:~/web/nuxt",
-    "upload-stage-ssr": "scp -rp g+rwx ./.output/* jobeek:~/web/nuxt",
-    "upload-stage-using-rsync": "rsync -rt --chmod=u+rwx,g+rwx,o+rx ./.output/* jobeek:~/web/nuxt"
+    "server-clear": "rm -rf .nuxt/ && rm -rf node_modules/ && rm yarn.lock",
+    "server-start": "cross-env HOST=127.1.1.0 node .output/server/index.mjs"
   },
   "devDependencies": {
     "@nuxtjs/moment": "^1.6.1",
@@ -48,6 +46,7 @@
     "axios": "^1.6.7",
     "bootstrap": "^5.3.2",
     "click-outside-vue3": "^4.0.1",
+    "cross-env": "^7.0.3",
     "fs": "^0.0.1-security",
     "h3": "^1.10.1",
     "i18next": "^23.8.2",
