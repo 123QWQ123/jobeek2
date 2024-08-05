@@ -43,17 +43,11 @@ bun run dev
 Build the application for production:
 
 ```bash
-# npm
-npm run build
-
-# pnpm
-pnpm run build
-
 # yarn
+yarn install
+yarn run server-clear
 yarn build
-
-# bun
-bun run build
+yarn run server-start &&
 ```
 
 Locally preview production build:
