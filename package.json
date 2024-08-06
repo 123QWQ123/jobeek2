@@ -9,7 +9,7 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "server-clear": "rm -rf .nuxt/ && rm -rf node_modules/ && rm yarn.lock",
-    "server-start": "cross-env HOST=127.1.1.0 node .output/server/index.mjs"
+    "server-start": "cross-env HOST=127.0.0.1 node .output/server/index.mjs"
   },
   "devDependencies": {
     "@nuxtjs/moment": "^1.6.1",

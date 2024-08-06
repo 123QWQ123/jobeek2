@@ -47,7 +47,7 @@ Build the application for production:
 yarn install
 yarn run server-clear
 yarn build
-yarn run server-start &&
+yarn run server-start & ''
 ```
 
 Locally preview production build:
