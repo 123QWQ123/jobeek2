@@ -1,7 +1,7 @@
 <template>
   <div>
     <NuxtLoadingIndicator color="#fff" />
-    <NuxtLayout>
+    <NuxtLayout :name="nameLayout">
       <NuxtPage />
     </NuxtLayout>
     <client-only>
@@ -18,11 +18,10 @@ import { useResumeStore } from "~/store/resume";
 definePageMeta({
   middleware: [
     function (to, from, next) {
-      const { isAuthed } = storeToRefs(useAuthStore());
-      to.meta.layout = isAuthed.value ? "auth" : "guest";
       to.meta.name = "viewport";
       to.meta.content =
         "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0";
+      return;
     },
   ],
 });
@@ -34,6 +33,9 @@ const vacancyStore = useVacancyStore();
 const authStore = useAuthStore();
 const { isAuthed, user } = storeToRefs(authStore);
 const route = useRoute();
+let nameLayout = computed(() => {
+  return isAuthed.value ? "auth" : "guest";
+});
 
 onMounted(async () => {
   if (isAuthed.value) {
@@ -41,7 +43,7 @@ onMounted(async () => {
     await getConnectedSeekerProviders();
   }
 
-  if (route.query.message) {
+  if (route.query?.message) {
     useNuxtApp().$toast.info(route.query.message, {
       autoClose: 3000,
       onClose: () => {

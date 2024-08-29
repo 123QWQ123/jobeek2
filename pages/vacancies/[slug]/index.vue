@@ -31,7 +31,11 @@ const { vacancy } = storeToRefs(vacancyStore);
 const { slug } = route.params;
 const { provider } = route.query;
 const vacancyData = await getVacancy(slug, { provider });
-const pageTitle = computed(() => vacancyData[provider]?.name + " - Jobeek");
+let pageTitle = ref("Not found  - Jobeek");
+
+if (vacancyData && vacancyData[provider]?.name) {
+  pageTitle.value = vacancyData[provider]?.name + " - Jobeek";
+}
 
 // if (
 //   !vacancyData.hasOwnProperty("hh") &&

@@ -1,5 +1,4 @@
 // no need to import defineStore and acceptHMRUpdate
-import { acceptHMRUpdate, defineStore } from "pinia";
 import useApi from "~/hooks/useApi";
 
 export const useVacancyStore = defineStore("vacancy", {
@@ -57,6 +56,9 @@ export const useVacancyStore = defineStore("vacancy", {
       },
       employerMessage: "",
     };
+  },
+  persist: {
+    storage: persistedState.localStorage,
   },
   getters: {
     top_10: (state) => {
@@ -131,7 +133,7 @@ export const useVacancyStore = defineStore("vacancy", {
   },
   actions: {
     async getConnectedEmployerProviders() {
-      if (this.providers) {
+      if (this.providers.hh && this.providers.superjob) {
         return this.providers;
       }
       const response = await useApi("employer/used_providers", {
@@ -183,7 +185,7 @@ export const useVacancyStore = defineStore("vacancy", {
       payload,
       redirect_to = "/profile/service-verify",
     ) {
-      if (this.provider_auth_urls) {
+      if (this.provider_auth_urls.hh && this.provider_auth_urls.superjob) {
         return this.provider_auth_urls;
       }
       const response = await useApi("services/auth/redirect-url", {
@@ -226,7 +228,7 @@ export const useVacancyStore = defineStore("vacancy", {
       return response;
     },
     async getVacanciesInMoscow(payload, is_new = false) {
-      if (this.vacancies_in_moscow) {
+      if (this.vacancies_in_moscow.length > 0) {
         return this.vacancies_in_moscow;
       }
       const response = await useApi("vacancies/search", {
@@ -239,7 +241,7 @@ export const useVacancyStore = defineStore("vacancy", {
       return this.vacancies_in_moscow;
     },
     async getCurrencyCityVacancies(payload) {
-      if (this.vacancies_in_my_city) {
+      if (this.vacancies_in_my_city.length > 0) {
         return this.vacancies_in_my_city;
       }
       const response = await useApi("vacancies/search", {
@@ -256,10 +258,14 @@ export const useVacancyStore = defineStore("vacancy", {
         method: "get",
         params: payload,
       });
-      if (response.hasOwnProperty("data")) {
-        this.vacancy = response.data;
+      if (response.status === "success") {
+        if (response.hasOwnProperty("data")) {
+          this.vacancy = response.data;
+        }
+        return response.data;
+      } else {
+        useNuxtApp().$toast.info(response.message, { autoClose: 3000 });
       }
-      return response.data;
     },
     async clearVacancies() {
       this.vacancies = [];

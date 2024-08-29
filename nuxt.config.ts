@@ -2,7 +2,7 @@
 import path from "path";
 import fs from "fs";
 
-const config = {
+let config = {
   server: {},
   devtools: {
     enabled: Boolean(process.env.DEVTOOLS_ENABLED),
@@ -59,12 +59,15 @@ const config = {
     "@pinia/nuxt",
     "@nuxt/devtools",
     "nuxt-swiper",
-    // "@bg-dev/nuxt-fcm",
+    "@bg-dev/nuxt-fcm",
     "@vueuse/nuxt",
     "@vee-validate/nuxt",
     "nuxt-tiptap-editor",
     "@pinia-plugin-persistedstate/nuxt",
   ],
+  pinia: {
+    autoImports: ["defineStore", "acceptHMRUpdate"],
+  },
   tiptap: {
     prefix: "Tiptap", //prefix for Tiptap imports, composables not included
   },
@@ -77,25 +80,19 @@ const config = {
 
     // '/old-page2': { redirect: { to: '/new-page', statusCode: 302 } }
   },
-  // fcm: {
-  //   firebaseConfig: {
-  //     apiKey: "AIzaSyDaqZCxvD1wNu8bKxFB1fjUeaZo4k2Gyyg",
-  //     authDomain: "espays.firebaseapp.com",
-  //     databaseURL: "https://espays.firebaseio.com",
-  //     projectId: "espays",
-  //     storageBucket: "espays.appspot.com",
-  //     messagingSenderId: "889800109407",
-  //     appId: "1:889800109407:web:e6a37cf3f262f5ae4d1aea",
-  //     measurementId: "G-ZS2ZHFHJ56",
-  //   },
-  //   vapidKey:
-  //     "BNhzs3ta5UD12WZIz6pP4ONTohrOsoMP3lyomaLsw2fRjsg4u0OzGKoOAFW7i0DK4GscckYJ5v0D99YJlFNhv3I",
-  // },
-  primevue: {
-    components: {
-      include: "*",
-      exclude: [],
+  fcm: {
+    firebaseConfig: {
+      apiKey: "AIzaSyDaqZCxvD1wNu8bKxFB1fjUeaZo4k2Gyyg",
+      authDomain: "espays.firebaseapp.com",
+      databaseURL: "https://espays.firebaseio.com",
+      projectId: "espays",
+      storageBucket: "espays.appspot.com",
+      messagingSenderId: "889800109407",
+      appId: "1:889800109407:web:e6a37cf3f262f5ae4d1aea",
+      measurementId: "G-ZS2ZHFHJ56",
     },
+    vapidKey:
+      "BNhzs3ta5UD12WZIz6pP4ONTohrOsoMP3lyomaLsw2fRjsg4u0OzGKoOAFW7i0DK4GscckYJ5v0D99YJlFNhv3I",
   },
 };
 if (process.env.NODE_ENV === "development") {

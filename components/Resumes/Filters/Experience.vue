@@ -61,10 +61,12 @@ const prepare = (items) => {
 
   const sortedItems = sort(items, { by: "alpha" });
 
-  items = sortedItems.map((item) => ({
-    ...item,
-    is_checked: selected_ids.includes(item.id),
-  }));
+  if (sortedItems) {
+    items = sortedItems.map((item) => ({
+      ...item,
+      is_checked: selected_ids.includes(item.id),
+    }));
+  }
   filterItems.value = items;
 };
 

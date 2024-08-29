@@ -7,9 +7,9 @@ const { logout, toggleUserMode } = auth;
 
 const route = useRoute();
 
-const isAuthed = computed(() => auth.isAuthed);
-const isEmployer = computed(() => auth.isEmployer);
-const user = computed(() => auth.user);
+// const isAuthed = computed(() => auth.isAuthed);
+// const isEmployer = computed(() => auth.isEmployer);
+// const user = computed(() => auth.user);
 
 const searchOptions = [
   { value: "vacancies", name: "Вакансии" },
