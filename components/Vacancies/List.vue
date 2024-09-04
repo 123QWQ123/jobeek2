@@ -3,7 +3,7 @@
   <div class="content">
     <Suspense>
       <template #default>
-        <AsyncList />
+        <VacanciesAsyncList />
       </template>
 
       <template #fallback>
@@ -13,10 +13,6 @@
   </div>
 </template>
 
-<script setup>
-import { defineAsyncComponent } from "vue";
-
-const AsyncList = defineAsyncComponent(() => import("./AsyncList.vue"));
-</script>
+<script setup></script>
 
 <style scoped></style>

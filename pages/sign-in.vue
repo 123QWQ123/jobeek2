@@ -79,24 +79,22 @@ async function onSubmit() {
     isLoading.value = true;
     let response;
     try {
+      debugger;
+
       response = await signIn({
         phone: phoneMask.value.unmaskedValue,
         password: state.password.val,
       });
+      await setFcmToken();
+      isLoading.value = false;
     } catch (error) {
       state.error = error.message;
     }
+
     if (response.status !== "success") {
-      Swal.fire({
-        title: "Ошибка!",
-        text: response.message ?? "Неизвестная ошибка!",
-        icon: "error",
-        confirmButtonText: "ОК",
-      });
-      await setFcmToken();
-      isLoading.value = false;
       return;
     }
+
     if (auth.isEmployer) {
       await refreshEmployer();
     } else {
@@ -107,37 +105,34 @@ async function onSubmit() {
     if (auth.isEmployer && auth.employer) {
       if (auth.employer.is_completed) {
         if (route_name) {
-          navigateTo({ name: route_name });
+          await navigateTo({ name: route_name, redirectCode: 301 });
         } else {
-          navigateTo({ name: "my-vacancies" });
+          await navigateTo({ name: "my-vacancies", redirectCode: 301 });
         }
-        return;
       }
-      return navigateTo({ name: "profile-employer" });
+      return;
     }
 
     if (!auth.isEmployer && auth.seeker) {
       if (auth.seeker.is_completed) {
         if (route_name) {
-          navigateTo({ name: route_name });
+          await navigateTo({ name: route_name, redirectCode: 301 });
         } else {
-          navigateTo({ name: "my-resumes" });
+          await navigateTo({ name: "my-resumes", redirectCode: 301 });
         }
-        return;
       }
-
-      return navigateTo({ name: "profile-seeker" });
+      return;
     }
 
-    if (route_name) {
-      navigateTo({ name: route_name });
-    } else {
-      if (!auth.isEmployer) {
-        navigateTo({ name: "profile-seeker" });
-      } else {
-        navigateTo({ name: "profile-employer" });
-      }
-    }
+    // if (route_name) {
+    //   navigateTo({ name: route_name });
+    // } else {
+    //   if (!auth.isEmployer) {
+    //     navigateTo({ name: "profile-seeker" });
+    //   } else {
+    //     navigateTo({ name: "profile-employer" });
+    //   }
+    // }
   }
 }
 
@@ -156,15 +151,6 @@ function close() {
   state.error = null;
   state.success = null;
 }
-
-watch(
-  () => route.query.message,
-  () => {
-    if (route.query.message) {
-      useNuxtApp().$toast.info(route.query.message, { autoClose: 3000 });
-    }
-  },
-);
 </script>
 
 <template>

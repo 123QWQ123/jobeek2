@@ -12,7 +12,7 @@
   "devDependencies": {
     "@nuxtjs/moment": "^1.6.1",
     "@pinia-plugin-persistedstate/nuxt": "^1.2.0",
-    "nuxt": "^3.9.3",
+    "nuxt": "^3.13.0",
     "nuxt-tiptap-editor": "^1.1.0",
     "prettier": "3.2.4",
     "sass": "^1.70.0",
@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@bg-dev/nuxt-fcm": "^0.2.8",
+    "@nuxtjs/toast": "^3.3.1",
     "@pinia/nuxt": "^0.5.1",
     "@sentry/cli": "^2.28.6",
     "@sentry/node": "^7.101.1",
@@ -66,8 +67,5 @@
     "zod": "^3.22.4",
     "zod-i18n-map": "^2.27.0",
     "zod-to-json-schema": "^3.22.4"
-  },
-  "overrides": {
-    "vue": "latest"
   }
 }

@@ -3,39 +3,16 @@
     <div class="results-page-content">
       <div class="wrapper">
         <div class="search-head">
-          <div class="col">
-            <div class="search-item">{{ search_keyword }}</div>
-            <div class="found-count">
-              Найдено
-              {{ total }}
-              вакансий
+          <client-only>
+            <div class="col">
+              <div class="search-item">{{ search_keyword }}</div>
+              <div class="found-count">
+                Найдено
+                {{ total }}
+                вакансий
+              </div>
             </div>
-          </div>
-          <div class="col d-flex justify-content-end">
-            <div class="d-inline-flex"></div>
-            <!--            <div class="d-inline-flex">-->
-            <!--              <form class="sort mx-1 mr-2" action="#">-->
-            <!--                <span>Валюта:</span>-->
-            <!--                <CustomSelect-->
-            <!--                  v-model="form.currency"-->
-            <!--                  :options="currencyOptions"-->
-            <!--                  class="bg-white w-auto"-->
-            <!--                  @change="onChangeCurrency"-->
-            <!--                  :listStyles="listStyles"-->
-            <!--                ></CustomSelect>-->
-            <!--              </form>-->
-            <!--              <form class="sort mx-1" action="#">-->
-            <!--                <span>Сортировать:</span>-->
-            <!--                <CustomSelect-->
-            <!--                  v-model="form.order_by"-->
-            <!--                  :options="sortingOptions"-->
-            <!--                  @change="onChangeSorting"-->
-            <!--                  class="bg-white w-auto"-->
-            <!--                  :listStyles="listStyles"-->
-            <!--                ></CustomSelect>-->
-            <!--              </form>-->
-            <!--            </div>-->
-          </div>
+          </client-only>
         </div>
         <button class="mob-get-aside-btn" @click="toggle">
           <FilterIcon />

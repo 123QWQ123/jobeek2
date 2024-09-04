@@ -58,7 +58,10 @@ export const useVacancyStore = defineStore("vacancy", {
     };
   },
   persist: {
-    storage: persistedState.localStorage,
+    storage: persistedState.cookiesWithOptions({
+      sameSite: "lax",
+      maxAge: 72000000,
+    }),
   },
   getters: {
     top_10: (state) => {
@@ -228,9 +231,6 @@ export const useVacancyStore = defineStore("vacancy", {
       return response;
     },
     async getVacanciesInMoscow(payload, is_new = false) {
-      if (this.vacancies_in_moscow.length > 0) {
-        return this.vacancies_in_moscow;
-      }
       const response = await useApi("vacancies/search", {
         method: "get",
         params: payload,

@@ -66,4 +66,21 @@ yarn preview
 bun run preview
 ```
 
+Alerts:
+```bash
+# Toast example
+1)  useNuxtApp().$toast.info(message, {autoClose: 3000})
+2)  import { toast } from "vue3-toastify";
+    toast.info(resData.message, { autoClose: 3000 });
+    
+# Swal example
+    Swal.fire({
+       title: "Title!",
+       text: message,
+       icon: "error | success | warning | info | question",
+       confirmButtonText: "ОК",
+    });
+```
+[Sweetalert2 Documentation](https://sweetalert2.github.io)
+
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
