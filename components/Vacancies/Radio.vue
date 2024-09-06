@@ -28,25 +28,13 @@ const props = defineProps({
   modelValue: {
     default: undefined,
   },
-  is_header: {
-    type: Boolean,
-    required: false,
-    default: false,
-  },
 });
 
-const modelValue = ref(props.modelValue);
-
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    modelValue.value = newValue;
-  },
-);
+const { modelValue } = props;
 
 const emit = defineEmits(["update:modelValue"]);
-const update = () => {
-  emit("update:modelValue", modelValue.value);
+const update = (event) => {
+  emit("update:modelValue", parseInt(event.target.value));
 };
 </script>
 

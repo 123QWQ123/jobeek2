@@ -6,8 +6,8 @@ v
       <NuxtLink
         class="more"
         :to="{
-          name: 'search-vacancies',
-          query: { countries: [1], regions: [22] },
+          name: !auth.isEmployer ? 'search-vacancies' : 'search-resumes',
+          query: { countries: `[${1}]`, regions: `[${22}]` },
         }"
       >
         Все <span> вакансии </span>
@@ -87,12 +87,14 @@ v
 
 <script setup>
 import { useVacancyStore } from "~/store/vacancy";
+import { useAuthStore } from "~/store/auth.js";
 
 const vacancyStore = useVacancyStore();
 const { getVacanciesInMoscow } = vacancyStore;
 const isLoading = ref(false);
 const isInitialized = ref(false);
 const noVacancyFoundMessage = ref(null);
+const auth = storeToRefs(useAuthStore());
 
 onMounted(async () => {
   isLoading.value = true;

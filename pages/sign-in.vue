@@ -79,8 +79,6 @@ async function onSubmit() {
     isLoading.value = true;
     let response;
     try {
-      debugger;
-
       response = await signIn({
         phone: phoneMask.value.unmaskedValue,
         password: state.password.val,

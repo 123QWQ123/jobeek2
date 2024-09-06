@@ -9,7 +9,7 @@
             <input
               type="text"
               name="name"
-              id="keyword"
+              id="keyword_wrap"
               placeholder="Какой специалист вы ищете?"
               autocomplete="off"
               v-model="search"
