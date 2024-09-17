@@ -8,7 +8,7 @@
       <input
         type="checkbox"
         :name="props.name"
-        :id="props.name"
+        :id="props.id"
         :checked="props.checked"
       />
       <div class="checkbox-mask" :class="{ checked: props.checked }">
@@ -35,14 +35,15 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  id: {
+    type: Number,
+    required: false,
+  },
 });
 const emit = defineEmits(["change"]);
-const toggle = () => {
-  emit("change", !props.checked);
+const toggle = (event) => {
+  emit("change", event.target.checked);
 };
-const checked = computed(() => {
-  return props.checked;
-});
 </script>
 
 <style scoped>

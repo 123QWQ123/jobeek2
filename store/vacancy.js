@@ -80,8 +80,10 @@ export const useVacancyStore = defineStore("vacancy", {
       let new_items = JSON.parse(JSON.stringify(state.industries));
       new_items = new_items.map((item) => {
         item.parent_id = null;
+        item.checked = false;
         item.items = item.industries.map((sub_item) => {
           sub_item.parent_id = item.id;
+          sub_item.checked = false;
           return sub_item;
         });
         delete item.industries;
