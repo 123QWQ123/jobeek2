@@ -13,28 +13,6 @@
           </div>
           <div class="col d-flex justify-content-end">
             <div class="d-inline-flex"></div>
-            <!--            <div class="d-inline-flex">-->
-            <!--              <form class="sort mx-1 mr-2" action="#">-->
-            <!--                <span>Валюта:</span>-->
-            <!--                <CustomSelect-->
-            <!--                  v-model="form.currency"-->
-            <!--                  :options="currencyOptions"-->
-            <!--                  class="bg-white w-auto"-->
-            <!--                  @change="onChangeCurrency"-->
-            <!--                  :listStyles="listStyles"-->
-            <!--                ></CustomSelect>-->
-            <!--              </form>-->
-            <!--              <form class="sort mx-1" action="#">-->
-            <!--                <span>Сортировать:</span>-->
-            <!--                <CustomSelect-->
-            <!--                  v-model="form.order_by"-->
-            <!--                  :options="sortingOptions"-->
-            <!--                  @change="onChangeSorting"-->
-            <!--                  class="bg-white w-auto"-->
-            <!--                  :listStyles="listStyles"-->
-            <!--                ></CustomSelect>-->
-            <!--              </form>-->
-            <!--            </div>-->
           </div>
         </div>
         <button class="mob-get-aside-btn" @click="toggle">
@@ -53,11 +31,8 @@
 </template>
 
 <script setup>
-import { useCurrencyOptions } from "~/composables/useCurrencyOptions";
-import { useSortingOptions } from "~/composables/useSortingOptions";
 import { useVacancyForm } from "~/composables/useVacancyForm";
 import { navigateTo } from "nuxt/app";
-import { useDictionaryStore } from "~/store/dictionary";
 import { useUIStore } from "~/store/ui";
 
 import { useNuxtApp } from "#app";
@@ -67,10 +42,8 @@ import FilterIcon from "~/components/Vacancies/FilterIcon.vue";
 
 const { $format_number } = useNuxtApp();
 const resumeStore = useResumeStore();
-const dictionaryStore = useDictionaryStore();
 const uiStore = useUIStore();
 const total = computed(() => $format_number(resumeStore.total));
-const isSidebarOpen = computed(() => uiStore.isSidebarOpen);
 const { toggleSidebar } = uiStore;
 
 const toggle = () => {
@@ -80,31 +53,15 @@ const toggle = () => {
 const route = useRoute();
 const { name: search_keyword } = route.query;
 
-const currencyOptions = ref(useCurrencyOptions());
-const sortingOptions = ref(useSortingOptions());
-
 const form = ref(useVacancyForm());
 
 const isLoading = ref(false);
-const router = useRouter();
-const { clearResumes } = resumeStore;
-const onChangeSorting = (sorting) => {
-  form.value.order_by = sorting;
-  const params = useVacancyForm(form.value, "front");
-  navigateTo({ query: params });
-};
-
-const onChangeCurrency = (currency) => {
-  form.value.currency = currency;
-  const params = useVacancyForm(form.value, "front");
-  navigateTo({ query: params });
-};
 
 const { getResumes } = resumeStore;
 const { getCurrentQueryParams } = useQueryParams();
 const currentParams = ref(getCurrentQueryParams());
 onMounted(async () => {
-  const resData = await getResumes(currentParams.value, false);
+  await getResumes(currentParams.value, false);
 });
 watch(
   () => ({ ...getCurrentQueryParams() }),

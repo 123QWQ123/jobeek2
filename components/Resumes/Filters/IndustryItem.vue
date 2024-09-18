@@ -22,22 +22,20 @@
           <div
             class="checkbox ms-1"
             :title="item.checked + '-' + isHalfChecked"
-            @click="selectToggle(item.id, checked)"
           >
             <input
               type="checkbox"
               :checked="checked"
               :class="{ is_half_checked: isHalfChecked }"
+              :id="`industry_${props.item.id}`"
+              @change="selectToggle($event)"
             />
             <div class="checkbox-mask">
               <img v-if="allChecked" src="~/assets/img/svg/check.svg" alt="#" />
               <img src="~/assets/img/svg/dash.svg" alt="#" v-else />
             </div>
           </div>
-          <label
-            @click="selectToggle(item.id, checked)"
-            :for="`industry_${item.id}`"
-            >{{ item.title }}</label
+          <label :for="`industry_${item.id}`">{{ item.title }}</label
           >
         </div>
       </div>
@@ -45,13 +43,12 @@
     <div class="filter-tree-selector__items" v-if="isOpen">
       <div
         class="filter-tree-selector-item filter-tree-selector-item_no-children"
-        v-for="sub_item in items"
+        v-for="sub_item in props.item.items"
         :key="sub_item.id"
       >
         <VacanciesFiltersIndustrySubItem
           @toggle="toggleSubItem"
           :id="sub_item.id"
-          :parent_id="item.id"
           :checked="sub_item.checked"
           :label="sub_item.title"
         />
@@ -67,10 +64,6 @@ const props = defineProps({
     required: true,
     default: {},
   },
-  items: {
-    required: true,
-    default: {},
-  },
   isOpen: {
     required: false,
     default: false,
@@ -81,42 +74,61 @@ const props = defineProps({
   },
 });
 
-const item = ref(props.item ?? {});
-const items = ref(props.item.items ?? []);
-watch(
-  () => props.items,
-  () => {
-    items.value = props.items;
-  },
-);
 const isOpen = ref(props.isOpen);
 const { checked } = toRefs(props);
 
-const selectToggle = (id, oldValue) => {
-  const selected_ids = items.value.map((item) => item.id);
-  selected_ids.push(id);
-  if (oldValue) {
-    emit("remove", selected_ids);
-  } else {
+const selectToggle = (event) => {
+  props.item.checked = event.target.checked;
+  const selected_ids = props.item.items.map((item) => item.id);
+  let temp_industries = [];
+
+  selected_ids.push(props.item.id);
+  if (event.target.checked) {
+    temp_industries = props.item.items.map((item) => {
+      item.checked = true;
+      return item;
+    });
     emit("add", selected_ids);
+  } else {
+    temp_industries = props.item.items.map((item) => {
+      item.checked = false;
+      return item;
+    });
+
+    emit("remove", selected_ids);
   }
+
+  props.item.items = temp_industries;
 };
 
 const toggleSubItem = (id, checked) => {
+  props.item.items = props.item.items.map((item) => {
+    if (item.id === id) {
+      item.checked = checked;
+    }
+    return item;
+  });
+
   if (checked) {
+    if (allChecked) {
+      props.item.checked = true;
+    }
     emit("add", [id]);
   } else {
-    emit("remove", [id, item.value.id]);
+    if (!anyChecked.value) {
+      props.item.checked = false;
+    }
+    emit("remove", [id, props.item.id]);
   }
 };
 
 const toggle = () => (isOpen.value = !isOpen.value);
 
 const anyChecked = computed(() => {
-  return props.items.some((item) => item.checked === true);
+  return props.item.items.some((item) => item?.checked === true);
 });
 const anyUnchecked = computed(() => {
-  return props.items.some((item) => item.checked === false);
+  return props.item.items.some((item) => item?.checked === false);
 });
 const isHalfChecked = computed(() => {
   return anyChecked.value && anyUnchecked.value;

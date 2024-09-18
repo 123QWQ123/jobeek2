@@ -6,14 +6,14 @@
     </div>
     <div class="filter-box-body">
       <div class="check-block-list">
-        <div
-          v-for="item in firstItems"
-          :key="item.title"
-          class="check-block"
-          @click="toggleSelect(item.id)"
-        >
+        <div v-for="item in firstItems" :key="item.title" class="check-block">
           <div class="checkbox">
-            <input type="checkbox" :id="item.id" :checked="item.is_checked" />
+            <input
+              type="checkbox"
+              :id="item.id"
+              :checked="item.is_checked"
+              @change="toggleSelect($event, item.id)"
+            />
             <div class="checkbox-mask">
               <img src="~/assets/img/svg/check.svg" alt="#" />
             </div>
@@ -29,7 +29,7 @@
         :is-open="isModalOpen"
         @close="toggleModal"
         name="industries"
-        :items="vacancyStore.industries_formatted_for_filter"
+        :items="items"
       />
 
       <button class="more-filters" @click="toggleModal">Выбрать</button>
@@ -50,6 +50,7 @@ const { updateQueryParam, getQueryParam } = useQueryParams();
 
 const { getIndustries } = vacancyStore;
 const { industries } = storeToRefs(vacancyStore);
+let items = vacancyStore.industries_formatted_for_filter;
 
 const industry_ids = ref(getQueryParam("industries") ?? []);
 watch(
@@ -57,7 +58,9 @@ watch(
   (newValues, oldValues) => {
     if (JSON.stringify(newValues) !== JSON.stringify(oldValues)) {
       industry_ids.value = newValues;
-      prepare(vacancyStore.regions_formatted);
+      items = getCheckedItems(items, newValues);
+
+      prepare(items);
     }
   },
 );
@@ -65,18 +68,22 @@ const isModalOpen = ref(false);
 const firstItems = ref([]);
 
 const toggleModal = () => (isModalOpen.value = !isModalOpen.value);
-const toggleSelect = (id) => {
+const toggleSelect = (event, id) => {
+  let checked = event.target.checked;
   let selected_ids = [...industry_ids.value];
   const dynItems = [...firstItems.value].map((item) => {
     if (item.id === id) {
-      item.is_checked = !item.is_checked;
-      if (item.is_checked && !selected_ids.includes(id)) {
+      item.is_checked = checked;
+      if (checked && !selected_ids.includes(id)) {
         selected_ids.push(item.id);
-      } else {
-        const index = selected_ids.indexOf(item.id);
-        if (index !== -1) {
-          selected_ids.splice(index, 1);
-        }
+        selected_ids.push(...item.items.map((sub) => sub.id));
+      } else if (!checked) {
+        selected_ids = selected_ids.filter((selected_id) => {
+          if (selected_id === item.id) {
+            return false;
+          }
+          return !item.items.some((sub_item) => sub_item.id === selected_id);
+        });
       }
     }
     return item;
@@ -93,31 +100,53 @@ const toggleSelect = (id) => {
 
 const industryItems = ref([]);
 const prepare = (newItems, oldItems) => {
-  industryItems.value = newItems;
   if (!newItems || newItems.length < 1) return;
+  let arr = [];
   for (let i = 0; i < 5; i++) {
     let item = newItems[i];
     let is_checked = false;
     if (industry_ids.value.includes(item.id)) {
       is_checked = true;
     }
-    firstItems.value.push({
+    arr.push({
       id: item.id,
       title: item.title,
       is_checked,
+      items: item.items,
     });
   }
+  firstItems.value = arr;
 };
-watch(() => vacancyStore.industries_formatted_for_filter, prepare);
+// watch(() => vacancyStore.industries_formatted_for_filter, prepare);
+
+const getCheckedItems = (items, ids_from_url) => {
+  return items.map((item) => {
+    if (ids_from_url.includes(item.id)) {
+      item.checked = true;
+      item.items = item.items.map((sub_item) => {
+        sub_item.checked = true;
+        return sub_item;
+      });
+    } else {
+      if (item.items.length > 0) {
+        item.items = item.items.map((sub_item) => {
+          if (ids_from_url.includes(sub_item.id)) {
+            sub_item.checked = true;
+          }
+          return sub_item;
+        });
+      }
+    }
+    return item;
+  });
+};
 
 const filterClass = ref(true);
 await getIndustries();
 onMounted(() => {
-  setTimeout(async () => {
-    if (vacancyStore.industries_formatted_for_filter.length > 0) {
-      prepare(vacancyStore.industries_formatted_for_filter);
-    }
-  }, 100);
+  if (vacancyStore.industries_formatted_for_filter.length > 0) {
+    prepare(vacancyStore.industries_formatted_for_filter);
+  }
 });
 </script>
 

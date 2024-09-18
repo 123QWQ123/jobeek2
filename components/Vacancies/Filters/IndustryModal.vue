@@ -91,7 +91,7 @@ const props = defineProps({
   },
 });
 
-const { isOpen, items: industries, modelValue, title } = props;
+const { items: industries, title } = props;
 
 const emit = defineEmits({
   close: {
@@ -155,12 +155,13 @@ const prepare = (newValues) => {
   if (isSearching.value) {
     dynamicItems = [
       ...newValues.map((item) => {
-        item.items = [...item.items].filter((sub_item) =>
+        let temp = {...item}
+        temp.items = item.items.filter((sub_item) =>
           sub_item.title
             .toLowerCase()
             .includes(searchInput.value.toLowerCase()),
         );
-        return item;
+        return temp;
       }),
     ];
   } else {

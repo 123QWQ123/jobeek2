@@ -51,16 +51,13 @@ import FilterIcon from "~/components/Vacancies/FilterIcon.vue";
 
 const { $format_number } = useNuxtApp();
 const vacancyStore = useVacancyStore();
-const dictionaryStore = useDictionaryStore();
 const uiStore = useUIStore();
 const total = ref($format_number(vacancyStore.total) ?? 0);
 const { getMyResumes } = useResumeStore();
 const { getVacancies } = vacancyStore;
 const { getCurrentQueryParams } = useQueryParams();
-const currentParams = ref(getCurrentQueryParams());
 
 onBeforeMount(async () => {
-  // await getVacancies(currentParams.value);
   await getMyResumes();
   total.value = $format_number(vacancyStore.total);
 });
@@ -77,17 +74,6 @@ const { name: search_keyword } = route.query;
 const form = ref(useVacancyForm());
 
 const isLoading = ref(false);
-const onChangeSorting = (sorting) => {
-  form.value.order_by = sorting;
-  const params = useVacancyForm(form.value, "front");
-  navigateTo({ query: params });
-};
-
-const onChangeCurrency = (currency) => {
-  form.value.currency = currency;
-  const params = useVacancyForm(form.value, "front");
-  navigateTo({ query: params });
-};
 
 watch(
   () => ({ ...getCurrentQueryParams() }),

@@ -5,6 +5,7 @@
         @change="toggle"
         :label="props.label"
         :checked="props.checked"
+        :id="props.id"
       />
     </div>
   </div>
@@ -13,9 +14,6 @@
 <script setup>
 const emit = defineEmits(["toggle"]);
 const props = defineProps({
-  parent_id: {
-    required: true,
-  },
   id: {
     required: true,
   },
