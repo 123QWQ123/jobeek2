@@ -26,13 +26,9 @@ import { useVacancyStore } from "~/store/vacancy";
 import useQueryParams from "~/composables/useQueryParams.js";
 
 const emit = defineEmits(["onFormChange"]);
-
-const vacancyStore = useVacancyStore();
 const dictionaryStore = useDictionaryStore();
-
 const filterClass = ref(true);
 const filterItems = ref([]);
-
 const { getQueryParam, updateQueryParam } = useQueryParams();
 const experiences = ref(getQueryParam("experiences") ?? []);
 watch(

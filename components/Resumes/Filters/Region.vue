@@ -102,7 +102,6 @@ import useQueryParams from "~/composables/useQueryParams.js";
 
 const emit = defineEmits(["onFormChange"]);
 const props = defineProps(["name", "isOpen", "selectedCountry"]);
-const { selectedCountry } = props;
 const { updateQueryParam, getQueryParam } = useQueryParams();
 const countries = ref(getQueryParam("countries") ?? [1]);
 
@@ -133,11 +132,7 @@ const vacancyStore = useVacancyStore();
 const search = ref("");
 
 const total = computed(() => {
-  if (vacancyStore.regions.length > 5) {
-    return vacancyStore.regions.length - 5;
-  } else {
-    return 0;
-  }
+  return vacancyStore.regions.length > 5 ? vacancyStore.regions.length - 5 : 0;
 });
 const filterClass = ref(true);
 const isMore = ref(false);
@@ -161,7 +156,7 @@ const onSearch = (e) => {
       return item.name.toLowerCase().includes(search.toLowerCase());
     });
   }
-  groupedFilterItems.value = items;
+
   prepare(items);
 };
 
@@ -176,10 +171,6 @@ const toggleRegion = (id) => {
   selected_ids = selected_ids.length === 0 ? undefined : selected_ids;
   updateQueryParam("regions", selected_ids);
 };
-
-const isLoading = ref(false);
-const { clearVacancies } = vacancyStore;
-const router = useRouter();
 
 const { sort } = useSort();
 const prepare = (items) => {
@@ -196,7 +187,6 @@ const prepare = (items) => {
     (item) => !selected_ids.includes(item.value),
   );
   filterItems = sort(filterItems, { by: "alpha" });
-
   groupedFilterItems.value = [];
   filterItems.map((item, key) => {
     const firstLetter = item.name.charAt(0);

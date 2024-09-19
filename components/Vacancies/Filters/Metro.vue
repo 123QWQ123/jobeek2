@@ -149,13 +149,13 @@ const firstXSelectedItems = computed(() => {
 const toggleMore = () => (isMore.value = !isMore.value);
 const onSearch = (e) => {
   const search = e.target.value;
-  let items = [...groupedFilterItems.value];
+  let items = [];
   if (search !== "") {
-    items = items.filter((item, key) => {
+    items = vacancyStore.metros_formatted.filter((item, key) => {
       return item.name.toLowerCase().includes(search.toLowerCase());
     });
   } else {
-    items = items.filter((item, key) => {
+    items = vacancyStore.metros_formatted.filter((item, key) => {
       return item.name.toLowerCase().includes(search.toLowerCase());
     });
   }
@@ -163,7 +163,7 @@ const onSearch = (e) => {
   prepare(items);
 };
 
-const { values, toFront } = useVacancySearchParams();
+const { values } = useVacancySearchParams();
 const toggleRegion = (id) => {
   let selected_ids = [...metros.value];
 
@@ -175,10 +175,6 @@ const toggleRegion = (id) => {
   selected_ids = selected_ids.length === 0 ? undefined : selected_ids;
   updateQueryParam("metros", selected_ids);
 };
-
-const isLoading = ref(false);
-const { clearVacancies } = vacancyStore;
-const router = useRouter();
 
 const { sort } = useSort();
 const prepare = (items) => {

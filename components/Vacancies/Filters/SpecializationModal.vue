@@ -108,7 +108,7 @@ const props = defineProps({
   },
 });
 
-const { isOpen, items: professional_roles, modelValue, title } = props;
+const { items: professional_roles, title } = props;
 
 const emit = defineEmits({
   close: {
@@ -119,28 +119,15 @@ const emit = defineEmits({
   },
 });
 
-const { updateQueryParam, getQueryParam } = useQueryParams();
+const { updateQueryParam } = useQueryParams();
 
 const selected_ids = ref(props.selected_ids);
 
-watch(
-  () => props.selected_ids,
-  (newValues) => {
-  },
-);
-
-// const {
-//   value: industry_ids,
-//   setValue,
-//   errorMessage,
-// } = useField(() => props.name);
-
-const options = ref(props.items ?? []);
 const selectedSpecs = ref(selected_ids.value ?? []);
 const items = ref([]);
 
 const isLoading = ref(false);
-const { uniq } = useFilter();
+
 const apply = () => {
   const ids = [...selectedSpecs.value].filter((item) => item);
   updateQueryParam(

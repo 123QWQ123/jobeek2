@@ -98,7 +98,6 @@ const toggleSelect = (event, id) => {
   firstItems.value = dynItems;
 };
 
-const industryItems = ref([]);
 const prepare = (newItems, oldItems) => {
   if (!newItems || newItems.length < 1) return;
   let arr = [];
@@ -117,7 +116,6 @@ const prepare = (newItems, oldItems) => {
   }
   firstItems.value = arr;
 };
-// watch(() => vacancyStore.industries_formatted_for_filter, prepare);
 
 const getCheckedItems = (items, ids_from_url) => {
   return items.map((item) => {

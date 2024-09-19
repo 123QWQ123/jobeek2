@@ -10,7 +10,7 @@
 
       <VacanciesFiltersIndustry />
 
-      <VacanciesFiltersRegion :is-city-mode="isCityMode" />
+      <VacanciesFiltersRegion />
 
       <VacanciesFiltersCity />
       <VacanciesFiltersMetro />
@@ -78,23 +78,15 @@ const initialValues = {
 const { getCurrentQueryParams } = useQueryParams();
 const currentParams = ref(getCurrentQueryParams(initialValues) ?? {});
 
-const { values, setValues } = useForm({
+const { setValues } = useForm({
   initialValues,
 });
 setValues(currentParams.value);
-
-const isCityMode = computed(() => {
-  // if (values.regions.length === 1) {
-  //   return true;
-  // }
-  return false;
-});
 
 const { clearVacancies, getVacancies } = vacancyStore;
 
 const resetFilters = () => {
   resetForm();
-  // router.push({ query: toFrond(values) });
 };
 </script>
 

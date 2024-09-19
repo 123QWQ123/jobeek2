@@ -22,17 +22,13 @@
 
 <script setup>
 import { useDictionaryStore } from "~/store/dictionary";
-import { useVacancyStore } from "~/store/vacancy";
 import useQueryParams from "~/composables/useQueryParams.js";
 
 const emit = defineEmits(["onFormChange"]);
 
-const vacancyStore = useVacancyStore();
 const dictionaryStore = useDictionaryStore();
-
 const filterClass = ref(true);
 const isMore = ref(true);
-const search = ref("");
 const filterItems = ref([]);
 
 const { getQueryParam, updateQueryParam } = useQueryParams();
@@ -43,8 +39,6 @@ watch(
     schedules.value = newValues;
   },
 );
-
-const selectedFilterItems = ref([]);
 
 const toggle = (id) => {
   let selected_ids = [...schedules.value];
