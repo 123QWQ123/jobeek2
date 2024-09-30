@@ -6,7 +6,7 @@ v
       <NuxtLink
         class="more"
         :to="{
-          name: !auth.isEmployer ? 'search-vacancies' : 'search-resumes',
+          name: auth.isEmployer ? 'search-vacancies' : 'search-resumes',
           query: { countries: `[${1}]`, regions: `[${22}]` },
         }"
       >

@@ -222,7 +222,7 @@ export const useVacancyStore = defineStore("vacancy", {
       if (response.status === "success") {
         if (add) {
           this.vacancies = this.vacancies.concat(response.data.items);
-          this.current_page++;
+          this.current_page = response.data.current_page;
         } else {
           this.vacancies = response.data.items;
           this.current_page = 1;

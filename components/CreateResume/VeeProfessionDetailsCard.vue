@@ -52,7 +52,7 @@
             <label>Графиков работы:<b>*</b></label>
             <div class="input-wrapper mt-2">
               <VeeMultiSelectWithSearch
-                :options="scheduleOptions"
+                :options="dictionaryStore.schedules_formatted"
                 name="schedules"
                 placeholder="Выберите"
               />
@@ -114,8 +114,6 @@
 
 <script setup>
 import { useCurrencyOptions } from "~/composables/useCurrencyOptions.js";
-import { useProfileStore } from "~/store/profile";
-import { useRuntimeConfig } from "#app";
 import useFormValidation from "~/composables/useFormValidation";
 import { useDiff } from "~/composables/useDiff";
 import { useDictionaryStore } from "~/store/dictionary";
@@ -138,24 +136,15 @@ const props = defineProps({
   },
 });
 
-const profileStore = useProfileStore();
-const CONFIG = useRuntimeConfig();
 const route = useRoute();
-
 const resumeID = computed(() => route.params.id);
-
-const { employer } = profileStore;
 const resumeStore = useResumeStore();
 const { updateResume } = resumeStore;
 const my_resume = computed(() => resumeStore.my_resume);
-
 const isSaved = ref(false);
-const isChanged = ref(false);
-const isFirst = ref(true);
 const isCollapsed = ref(false);
 const isUpdated = ref(false);
 const { providers } = useProviders();
-
 const currencyOptions = useCurrencyOptions();
 
 const schema = computed(() => {
@@ -167,7 +156,7 @@ const schema = computed(() => {
       place_of_work_id: z.number().nullable(),
       professional_roles: z.array(z.number()).nonempty(),
       work_types: z.array(z.number()).nonempty(),
-      schedules: z.array(z.number()).nonempty(),
+      schedules: z.array(z.number()).optional(),
     });
   }
   if (providers.value.hh === false && providers.value.superjob === true) {
@@ -178,14 +167,14 @@ const schema = computed(() => {
       place_of_work_id: z.number().nullable(),
       professional_roles: z.array(z.number()).nonempty(),
       work_types: z.array(z.number()).nonempty(),
-      schedules: z.array(z.number()).nonempty(),
+      schedules: z.array(z.number()).optional(),
     });
   }
   return z.object({
     title: z.string().min(2),
     professional_roles: z.array(z.number()).nonempty(),
     work_types: z.array(z.number()).nonempty(),
-    schedules: z.array(z.number()).nonempty(),
+    schedules: z.array(z.number()).optional(),
     salary: z.number().nullable(),
     currency: z.string(),
     place_of_work_id: z.number().nullable(),
@@ -201,20 +190,12 @@ const initialValues = {
   salary: null,
   currency: "RUB",
 };
-const {
-  values,
-  errors,
-  meta,
-  resetForm,
-  setValues,
-  setErrors,
-  handleSubmit,
-  validate,
-} = useForm({
-  initialValues: initialValues,
-  initialTouched: true,
-  validationSchema: toTypedSchema(schema.value),
-});
+const { values, meta, resetForm, setErrors, validate, getErrors, errors } =
+  useForm({
+    initialValues: initialValues,
+    initialTouched: true,
+    validationSchema: toTypedSchema(schema.value),
+  });
 
 const state = reactive({
   title: {
@@ -311,8 +292,6 @@ watch(
   },
 );
 
-const { searchCities } = profileStore;
-
 const { getPlaceOfWorks, getSchedules } = dictionaryStore;
 
 const placeOfWorkOptions = computed(() => {
@@ -357,15 +336,16 @@ const save = async (is_from_parent = false) => {
   }
 
   if (!meta.value.valid) {
+    console.log("save getErrors", getErrors);
+    console.log("save errors", errors);
     errorMessage.value = "Запольните все поля";
     return false;
   }
   isLoading.value = true;
   setErrors({});
   errorMessage.value = "";
-  let resData = {};
 
-  resData = await updateResume(resumeID.value, {
+  let resData = await updateResume(resumeID.value, {
     ...JSON.parse(JSON.stringify(values)),
     form_data: "PROFESSION_DETAILS_DATA",
   });

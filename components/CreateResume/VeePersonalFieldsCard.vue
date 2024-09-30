@@ -169,14 +169,11 @@
 </template>
 
 <script setup>
-import { useVacancyStore } from "~/store/vacancy";
 import { useProfileStore } from "~/store/profile";
-import { useRuntimeConfig } from "#app";
 import useFormValidation from "~/composables/useFormValidation";
 import { useDiff } from "~/composables/useDiff";
 import { useDictionaryStore } from "~/store/dictionary";
 import useProviderFields from "~/composables/useProviderFields";
-
 import { useResumeStore } from "~/store/resume";
 import useResumeHooks from "~/hooks/useResumeHooks";
 import ResumeTextInput from "~/components/CreateResume/ResumeTextInput.vue";
@@ -194,21 +191,17 @@ const props = defineProps({
   },
 });
 
-const vacancyStore = useVacancyStore();
 const profileStore = useProfileStore();
-const CONFIG = useRuntimeConfig();
 const route = useRoute();
 
 const resumeID = computed(() => route.params.id);
 
-const { employer } = profileStore;
 const resumeStore = useResumeStore();
 const { updateResume } = resumeStore;
 const my_resume = computed(() => resumeStore.my_resume);
 
 const isSaved = ref(false);
 const isChanged = ref(false);
-const isFirst = ref(true);
 const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
@@ -324,16 +317,7 @@ const initialValues = ref({
   business_trip_id: null,
   address: null,
 });
-const {
-  errors,
-  values,
-  setErrors,
-  meta,
-  handleSubmit,
-  setValues,
-  resetForm,
-  validate,
-} = useForm({
+const { errors, values, setErrors, meta, resetForm, validate } = useForm({
   initialValues: initialValues,
   validationSchema: toTypedSchema(schema.value),
 });
@@ -470,17 +454,15 @@ onMounted(() => {
   walkThroughFields(providers.value);
 });
 
+//todo сделать константы для этих магических чисел
 const canBeRelocated = computed(() => {
   return (
     parseInt(values.relocation_type_id) === 148 ||
     parseInt(values.relocation_type_id) === 149
   );
 });
-const isMetroEnabled = computed(() => {
-  return true;
-});
 
-const { getCityNameFromArea, getCityNameFromArea2 } = useResumeHooks();
+const { getCityNameFromArea2 } = useResumeHooks();
 const cityOptions = ref([]);
 const selectedProviders = computed(() => {
   if (providers.value.hh === true && providers.value.superjob === false)
@@ -588,7 +570,7 @@ const onSearchCitiesByCountryId = async (country_id, name) => {
   }));
 };
 
-const { errors: serverErrors, handleErrorResponse } = useFormValidation();
+const { errors: serverErrors } = useFormValidation();
 watch(
   () => serverErrors.value,
   (newErrors) => {
@@ -621,7 +603,6 @@ const save = async (is_from_parent = false) => {
     return false;
   }
   setErrors({});
-  let resData = {};
   const jsonData = { ...JSON.parse(JSON.stringify(values)) };
 
   jsonData.form_data = "PERSONAL_DATA";
@@ -630,7 +611,7 @@ const save = async (is_from_parent = false) => {
     phone: item.phone?.replace("+", ""),
   }));
 
-  resData = await updateResume(resumeID.value, jsonData);
+  let resData = await updateResume(resumeID.value, jsonData);
 
   isUpdated.value = true;
   if (resData.status !== "success") {

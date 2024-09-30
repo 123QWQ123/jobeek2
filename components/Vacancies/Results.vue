@@ -58,8 +58,11 @@ const { getVacancies } = vacancyStore;
 const { getCurrentQueryParams } = useQueryParams();
 
 onBeforeMount(async () => {
+  isLoading.value = true;
   await getMyResumes();
+  await getVacancies(getCurrentQueryParams());
   total.value = $format_number(vacancyStore.total);
+  isLoading.value = false;
 });
 
 const { toggleSidebar } = uiStore;

@@ -42,6 +42,13 @@ export const useProfileStore = defineStore("profile", {
           value: item.id,
         }));
     },
+    professional_roles_without_parent: (state) => {
+      let child = [];
+      state.professional_roles
+        .filter((item) => item.parent_id !== 0)
+        .map((item) => child.push(...item.professional_roles));
+      return child;
+    },
     hh_professional_roles_with_parent: (state) => {
       return state.hh_professional_roles
         .filter((item) => item.parent_id !== 0)
@@ -71,7 +78,7 @@ export const useProfileStore = defineStore("profile", {
   },
   actions: {
     async getCountries(payload = {}, is_new = false) {
-      if (this.countries && !is_new) {
+      if (this.countries.length > 0 && !is_new) {
         return this.countries;
       }
       const response = await useApi("area/countries", {
