@@ -91,14 +91,11 @@ const props = defineProps({
   },
 });
 
-const { errorMessage } = useField(() => props.name);
 const { remove, push, fields, replace } = useFieldArray(() => props.name);
-
 const isOpen = ref(false);
 const options = ref(props.options);
-
-const modelValue = ref(props.modelValue);
 const { sort } = useSort();
+
 watch(
   () => props.options,
   (newValue) => {
@@ -113,27 +110,27 @@ watch(
 const selectedOptions = ref([]);
 onMounted(() => {
   const selected_ids = [...fields.value.map((item) => item.value)];
-  selectedOptions.value = [
-    ...options.value.filter((item) => selected_ids.includes(item.value)),
-  ];
+  selectedOptions.value = props.options.filter((item) =>
+    selected_ids.includes(item.value),
+  );
 });
 
 watch(
   () => [...fields.value],
   () => {
-    const selected_ids = [...fields.value.map((item) => item.value)];
-    selectedOptions.value = [
-      ...options.value.filter((item) => selected_ids.includes(item.value)),
-    ];
+    const selected_ids = fields.value.map((item) => item.value);
+    selectedOptions.value = props.options.filter((item) =>
+      selected_ids.includes(item.value),
+    );
   },
 );
 watch(
   () => options.value,
   () => {
     const selected_ids = [...fields.value.map((item) => item.value)];
-    selectedOptions.value = [
-      ...options.value.filter((item) => selected_ids.includes(item.value)),
-    ];
+    selectedOptions.value = props.options.filter((item) =>
+      selected_ids.includes(item.value),
+    );
   },
 );
 
@@ -142,7 +139,7 @@ const disabled = ref(props.disabled ?? false);
 function onSelect(selectedOptionValue) {
   if (disabled.value) return true;
   isOpen.value = false;
-  const selectedOptionItem = options.value.find(
+  const selectedOptionItem = props.options.find(
     (item) => String(item.value) === String(selectedOptionValue),
   );
   if (!selectedOptionItem) {
@@ -164,7 +161,7 @@ const getCurrentFieldName = (newValue) => {
 
 function onUnselect(deleteId, oldValue) {
   const selectedOptionValue = String(oldValue);
-  const selectedOptionItem = options.value.find(
+  const selectedOptionItem = props.options.find(
     (item) => String(item.value) === String(selectedOptionValue),
   );
   if (!selectedOptionItem) {

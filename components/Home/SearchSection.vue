@@ -15,16 +15,18 @@
               :class="{ expanded: isMoreIndustries }"
             >
               <ul class="labels-list">
-                <li v-for="item in industries">
-                  <NuxtLink
-                    :to="{
-                      name: 'search-vacancies',
-                      query: { industries: [item.id] },
-                    }"
-                    class="label"
-                    >{{ item.title }}
-                  </NuxtLink>
-                </li>
+                <client-only>
+                  <li v-for="item in industries" :key="item.id">
+                    <NuxtLink
+                      :to="{
+                        name: 'search-vacancies',
+                        query: { industries: [item.id] },
+                      }"
+                      class="label"
+                      >{{ item.title }}
+                    </NuxtLink>
+                  </li>
+                </client-only>
               </ul>
             </div>
             <button

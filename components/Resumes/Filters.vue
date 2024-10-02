@@ -10,7 +10,7 @@
 
       <ResumesFiltersIndustry />
 
-      <ResumesFiltersRegion :is-city-mode="isCityMode" />
+      <ResumesFiltersRegion />
 
       <ResumesFiltersCity />
       <ResumesFiltersMetro />
@@ -52,9 +52,6 @@
 import { useUIStore } from "~/store/ui";
 import { useNuxtApp } from "#app";
 import { useForm } from "vee-validate";
-import { useResumeStore } from "~/store/resume.js";
-
-const resumeStore = useResumeStore();
 
 const uiStore = useUIStore();
 const { toggleSidebar } = uiStore;
@@ -78,23 +75,13 @@ const initialValues = {
 const { getCurrentQueryParams } = useQueryParams();
 const currentParams = ref(getCurrentQueryParams(initialValues) ?? {});
 
-const { values, setValues } = useForm({
+const { setValues } = useForm({
   initialValues,
 });
 setValues(currentParams.value);
 
-const isCityMode = computed(() => {
-  // if (values.regions.length === 1) {
-  //   return true;
-  // }
-  return false;
-});
-
-const { clearResumes, getResumes } = resumeStore;
-
 const resetFilters = () => {
   resetForm();
-  // router.push({ query: toFrond(values) });
 };
 </script>
 

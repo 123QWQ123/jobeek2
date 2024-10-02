@@ -3,39 +3,16 @@
     <div class="results-page-content">
       <div class="wrapper">
         <div class="search-head">
-          <div class="col">
-            <div class="search-item">{{ search_keyword }}</div>
-            <div class="found-count">
-              Найдено
-              {{ total }}
-              вакансий
+          <client-only>
+            <div class="col">
+              <div class="search-item">{{ search_keyword }}</div>
+              <div class="found-count">
+                Найдено
+                {{ total }}
+                вакансий
+              </div>
             </div>
-          </div>
-          <div class="col d-flex justify-content-end">
-            <div class="d-inline-flex"></div>
-            <!--            <div class="d-inline-flex">-->
-            <!--              <form class="sort mx-1 mr-2" action="#">-->
-            <!--                <span>Валюта:</span>-->
-            <!--                <CustomSelect-->
-            <!--                  v-model="form.currency"-->
-            <!--                  :options="currencyOptions"-->
-            <!--                  class="bg-white w-auto"-->
-            <!--                  @change="onChangeCurrency"-->
-            <!--                  :listStyles="listStyles"-->
-            <!--                ></CustomSelect>-->
-            <!--              </form>-->
-            <!--              <form class="sort mx-1" action="#">-->
-            <!--                <span>Сортировать:</span>-->
-            <!--                <CustomSelect-->
-            <!--                  v-model="form.order_by"-->
-            <!--                  :options="sortingOptions"-->
-            <!--                  @change="onChangeSorting"-->
-            <!--                  class="bg-white w-auto"-->
-            <!--                  :listStyles="listStyles"-->
-            <!--                ></CustomSelect>-->
-            <!--              </form>-->
-            <!--            </div>-->
-          </div>
+          </client-only>
         </div>
         <button class="mob-get-aside-btn" @click="toggle">
           <FilterIcon />
@@ -74,16 +51,20 @@ import FilterIcon from "~/components/Vacancies/FilterIcon.vue";
 
 const { $format_number } = useNuxtApp();
 const vacancyStore = useVacancyStore();
-const dictionaryStore = useDictionaryStore();
 const uiStore = useUIStore();
 const total = ref($format_number(vacancyStore.total) ?? 0);
+const { getMyResumes } = useResumeStore();
+const { getVacancies } = vacancyStore;
+const { getCurrentQueryParams } = useQueryParams();
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
+  isLoading.value = true;
+  await getMyResumes();
+  await getVacancies(getCurrentQueryParams());
   total.value = $format_number(vacancyStore.total);
+  isLoading.value = false;
 });
-// if (process.server) {
-// }
-const isSidebarOpen = computed(() => uiStore.isSidebarOpen);
+
 const { toggleSidebar } = uiStore;
 
 const toggle = () => {
@@ -93,45 +74,21 @@ const toggle = () => {
 const route = useRoute();
 const { name: search_keyword } = route.query;
 
-const currencyOptions = ref(useCurrencyOptions());
-const sortingOptions = ref(useSortingOptions());
-
 const form = ref(useVacancyForm());
 
 const isLoading = ref(false);
-const router = useRouter();
-const { clearVacancies } = vacancyStore;
-const onChangeSorting = (sorting) => {
-  form.value.order_by = sorting;
-  const params = useVacancyForm(form.value, "front");
-  navigateTo({ query: params });
-};
 
-const onChangeCurrency = (currency) => {
-  form.value.currency = currency;
-  const params = useVacancyForm(form.value, "front");
-  navigateTo({ query: params });
-};
-
-const { getMyResumes } = useResumeStore();
-const { getVacancies } = vacancyStore;
-const { getCurrentQueryParams } = useQueryParams();
-const currentParams = ref(getCurrentQueryParams());
 watch(
   () => ({ ...getCurrentQueryParams() }),
   async (newValues) => {
     isLoading.value = true;
 
-    currentParams.value = newValues;
+    // currentParams.value = newValues;
     await getVacancies(newValues);
 
     isLoading.value = false;
   },
 );
-
-onMounted(async () => {
-  await getMyResumes();
-});
 </script>
 <style></style>
 <style scoped>

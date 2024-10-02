@@ -22,58 +22,32 @@
 </template>
 
 <script setup>
-import { useDictionaryStore } from "~/store/dictionary";
-import { useVacancyStore } from "~/store/vacancy";
 import useQueryParams from "~/composables/useQueryParams.js";
 import { useSalaryOptions } from "~/composables/useSalaryOptions.js";
 
-const vacancyStore = useVacancyStore();
-const dictionaryStore = useDictionaryStore();
-
 const filterClass = ref(true);
-const search = ref("");
 const filterItems = ref([]);
 
 const { getQueryParam, updateQueryParam } = useQueryParams();
-const getSalaryValue = () => {
-  return (
-    getQueryParam("salary") ?? {
-      value: undefined,
-      name: "Все",
-    }
-  );
-};
+const getSalaryValue = () =>
+  getQueryParam("salary") ?? { value: undefined, name: "Все" };
 const salary = ref(getSalaryValue());
+const salaryOptions = ref(useSalaryOptions());
 const salary_id = ref(salary.value?.value ?? undefined);
-
-watch(
-  () => getSalaryValue(),
-  (newValues, oldValues) => {
-    salary.value = newValues;
-  },
-);
-watch(
-  () => salary.value,
-  (newValues, oldValues) => {
-    salary_id.value = newValues.value;
-    prepare([...salaryOptions.value]);
-  },
-);
 
 const onUpdated = (newValue) => {
   if (newValue) {
     const found = [...salaryOptions.value].find(
       (item) => item.value === newValue,
     );
+    salary.value = found;
+    salary_id.value = newValue;
+    prepare([...salaryOptions.value]);
     updateQueryParam("salary", { ...found });
   } else {
     updateQueryParam("salary", undefined);
   }
 };
-
-const salaryOptions = ref(useSalaryOptions());
-
-const { sort } = useSort();
 
 const prepare = (items) => {
   items = items.map((item) => ({
@@ -86,5 +60,3 @@ onMounted(async () => {
   prepare([...salaryOptions.value]);
 });
 </script>
-
-<style scoped></style>

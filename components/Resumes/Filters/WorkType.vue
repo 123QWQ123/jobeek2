@@ -26,13 +26,9 @@ import { useVacancyStore } from "~/store/vacancy";
 import useQueryParams from "~/composables/useQueryParams.js";
 
 const emit = defineEmits(["onFormChange"]);
-
-const vacancyStore = useVacancyStore();
 const dictionaryStore = useDictionaryStore();
-
 const filterClass = ref(true);
 const isMore = ref(true);
-const search = ref("");
 const filterItems = ref([]);
 
 const { getQueryParam, updateQueryParam } = useQueryParams();
@@ -43,8 +39,6 @@ watch(
     work_types.value = newValues;
   },
 );
-
-const selectedFilterItems = ref([]);
 
 const toggle = (id) => {
   let selected_ids = [...work_types.value];
@@ -65,10 +59,12 @@ const prepare = (items) => {
 
   const sortedItems = sort(items, { by: "alpha" });
 
-  items = sortedItems.map((item) => ({
-    ...item,
-    is_checked: selected_ids.includes(item.id),
-  }));
+  if (sortedItems) {
+    items = sortedItems.map((item) => ({
+      ...item,
+      is_checked: selected_ids.includes(item.id),
+    }));
+  }
   filterItems.value = items;
 };
 

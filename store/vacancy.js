@@ -1,5 +1,4 @@
 // no need to import defineStore and acceptHMRUpdate
-import { acceptHMRUpdate, defineStore } from "pinia";
 import useApi from "~/hooks/useApi";
 
 export const useVacancyStore = defineStore("vacancy", {
@@ -58,6 +57,12 @@ export const useVacancyStore = defineStore("vacancy", {
       employerMessage: "",
     };
   },
+  persist: {
+    storage: persistedState.cookiesWithOptions({
+      sameSite: "lax",
+      maxAge: 72000000,
+    }),
+  },
   getters: {
     top_10: (state) => {
       return state.vacancies.slice(0, 10);
@@ -75,8 +80,10 @@ export const useVacancyStore = defineStore("vacancy", {
       let new_items = JSON.parse(JSON.stringify(state.industries));
       new_items = new_items.map((item) => {
         item.parent_id = null;
+        item.checked = false;
         item.items = item.industries.map((sub_item) => {
           sub_item.parent_id = item.id;
+          sub_item.checked = false;
           return sub_item;
         });
         delete item.industries;
@@ -131,7 +138,7 @@ export const useVacancyStore = defineStore("vacancy", {
   },
   actions: {
     async getConnectedEmployerProviders() {
-      if (this.providers) {
+      if (this.providers.hh && this.providers.superjob) {
         return this.providers;
       }
       const response = await useApi("employer/used_providers", {
@@ -183,7 +190,7 @@ export const useVacancyStore = defineStore("vacancy", {
       payload,
       redirect_to = "/profile/service-verify",
     ) {
-      if (this.provider_auth_urls) {
+      if (this.provider_auth_urls.hh && this.provider_auth_urls.superjob) {
         return this.provider_auth_urls;
       }
       const response = await useApi("services/auth/redirect-url", {
@@ -215,7 +222,7 @@ export const useVacancyStore = defineStore("vacancy", {
       if (response.status === "success") {
         if (add) {
           this.vacancies = this.vacancies.concat(response.data.items);
-          this.current_page++;
+          this.current_page = response.data.current_page;
         } else {
           this.vacancies = response.data.items;
           this.current_page = 1;
@@ -226,9 +233,6 @@ export const useVacancyStore = defineStore("vacancy", {
       return response;
     },
     async getVacanciesInMoscow(payload, is_new = false) {
-      if (this.vacancies_in_moscow) {
-        return this.vacancies_in_moscow;
-      }
       const response = await useApi("vacancies/search", {
         method: "get",
         params: payload,
@@ -239,7 +243,7 @@ export const useVacancyStore = defineStore("vacancy", {
       return this.vacancies_in_moscow;
     },
     async getCurrencyCityVacancies(payload) {
-      if (this.vacancies_in_my_city) {
+      if (this.vacancies_in_my_city.length > 0) {
         return this.vacancies_in_my_city;
       }
       const response = await useApi("vacancies/search", {
@@ -256,10 +260,14 @@ export const useVacancyStore = defineStore("vacancy", {
         method: "get",
         params: payload,
       });
-      if (response.hasOwnProperty("data")) {
-        this.vacancy = response.data;
+      if (response.status === "success") {
+        if (response.hasOwnProperty("data")) {
+          this.vacancy = response.data;
+        }
+        return response.data;
+      } else {
+        useNuxtApp().$toast.info(response.message, { autoClose: 3000 });
       }
-      return response.data;
     },
     async clearVacancies() {
       this.vacancies = [];

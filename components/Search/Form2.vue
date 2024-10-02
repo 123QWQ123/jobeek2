@@ -10,7 +10,7 @@
               type="text"
               name="name"
               id="keyword"
-              placeholder="Какую вакансию вы ищете?"
+              :placeholder="searchPlaceHolder"
               autocomplete="off"
               v-model="search"
             />
@@ -20,7 +20,7 @@
             <HeaderSalarySelectInForm v-model="salary" />
           </div>
           <div class="input-wrap has-label">
-            <label for="salary">Город</label>
+            <label for="city">Город</label>
             <SelectWithSearch
               :options="cityOptions"
               v-model.number="city"
@@ -50,7 +50,7 @@
           type="text"
           name="name"
           id="keyword"
-          placeholder="Какую вакансию вы ищете?"
+          :placeholder="searchPlaceHolder"
           autocomplete="off"
           v-model="search"
         />
@@ -84,7 +84,6 @@
 <script setup>
 import { useAuthStore } from "~/store/auth";
 import { useVacancyStore } from "~/store/vacancy";
-import { storeToRefs } from "pinia";
 import { useProfileStore } from "~/store/profile";
 import useQueryParams from "~/composables/useQueryParams.js";
 
@@ -93,13 +92,13 @@ const props = defineProps({
     default: false,
   },
 });
-
 const auth = useAuthStore();
 
+const searchPlaceHolder = computed(() =>
+  auth.isEmployer ? "Какого специалиста вы ищете?" : "Какую вакансию вы ищете?",
+);
 const { getCurrentQueryParams, getQueryParam } = useQueryParams();
-const params = ref(getCurrentQueryParams() ?? {});
 
-const router = useRouter();
 const route = useRoute();
 
 const vacancyStore = useVacancyStore();

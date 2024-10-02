@@ -10,7 +10,6 @@
       :value="searchInput"
       @input="onChangeHandler"
       @focusin="onFocus"
-      @focusout="onFocusout"
       :placeholder="props.placeholder"
       :class="{ placeholder: placeholderClass }"
     />
@@ -82,12 +81,12 @@ const isFirstOpen = ref(true);
 const isOpen = ref(false);
 
 const options = ref(props.options);
-const searchInput = ref(props.placeholder ?? "");
+const searchInput = ref("");
 
-watch(
-  () => props.placeholder,
-  () => (searchInput.value = props.placeholder),
-);
+// watch(
+//   () => props.placeholder,
+//   () => (searchInput.value = props.placeholder),
+// );
 
 watch(
   () => props.options,
@@ -111,10 +110,10 @@ watch(
 
 const selectedOption = ref({});
 
-watch(
-  () => selectedOption.value,
-  () => (searchInput.value = selectedOption.value?.name),
-);
+// watch(
+//   () => selectedOption.value,
+//   () => (searchInput.value = selectedOption.value?.name),
+// );
 
 onMounted(() => {
   if (props.modelValue) {
@@ -124,13 +123,9 @@ onMounted(() => {
   }
 });
 
-const input = ref("");
-
 const placeholderClass = computed(() => {
   return isFirst.value || !selectedOption.value;
 });
-
-const searchInputElement = ref();
 
 function toggle() {
   isOpen.value = !isOpen.value;
@@ -162,7 +157,7 @@ function onSelect(id) {
 
 const onChangeHandler = (e) => {
   isOpen.value = true;
-
+  searchInput.value = e.target.value;
   const typedName = e.target.value.toLowerCase();
   if (typedName.length > 0) isFirstOpen.value = false;
 

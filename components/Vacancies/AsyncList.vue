@@ -2,7 +2,13 @@
   <div class="content">
     <div>
       <ul class="favorites-list">
-        <VacanciesItem v-for="item in vacancies" :key="item.id" :item="item" />
+        <client-only>
+          <VacanciesItem
+            v-for="item in vacancies"
+            :key="item.id"
+            :item="item"
+          />
+        </client-only>
       </ul>
 
       <button

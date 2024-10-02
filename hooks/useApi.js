@@ -1,10 +1,11 @@
 import axios from "axios";
 import https from "node:https";
-import {useAuthStore} from "~/store/auth";
+import { useAuthStore } from "~/store/auth";
+// import Swal from "sweetalert2";
 
 const useApi = async (method, options = {}) => {
   const CONFIG = useRuntimeConfig();
-  const {tokenAuth} = storeToRefs(useAuthStore())
+  const { tokenAuth } = storeToRefs(useAuthStore());
   // TO DO prefix
   // const host = null;
   // if (options.hasOwnProperty('host')){
@@ -58,6 +59,30 @@ const useApi = async (method, options = {}) => {
             }
 
             return data;
+          },
+        ],
+        transformResponse: [
+          function (data, headers) {
+            let res = JSON.parse(data);
+
+            if (data && res.message) {
+              if (res.status && res.status !== "success") {
+                // Swal.fire({
+                //   title: "Ошибка!",
+                //   text: res.message ?? "Неизвестная ошибка!",
+                //   icon: "error",
+                //   confirmButtonText: "ОК",
+                // });
+                useNuxtApp().$toast.error(res.message, { autoClose: 10000 });
+              } else {
+                // Swal.fire({
+                //   text: res.message,
+                //   icon: "info",
+                // });
+                useNuxtApp().$toast.info(res.message, { autoClose: 10000 });
+              }
+            }
+            return res;
           },
         ],
       });

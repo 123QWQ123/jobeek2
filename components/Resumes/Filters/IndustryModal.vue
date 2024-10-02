@@ -23,26 +23,13 @@
         <div class="filter-tree-selector-popup">
           <div class="filter-tree-selector-popup-content" v-if="!isLoading">
             <VacanciesFiltersIndustryItem
-              v-if="isSearching"
-              v-for="item in items"
-              :item="item"
-              :items="item.items"
-              :key="item.id"
-              @add="addIds"
-              @remove="removeIds"
-              :checked="item.checked"
-              :is-open="true"
-            />
-            <VacanciesFiltersIndustryItem
-              v-else
-              v-for="item in items"
-              :item="item"
-              :items="item.items"
-              @add="addIds"
-              @remove="removeIds"
-              :key="item.id"
-              :checked="item.checked"
-              v-model="selectedSpecs"
+                v-for="item in items"
+                :item="item"
+                :key="item.id"
+                @add="addIds"
+                @remove="removeIds"
+                :checked="item.checked"
+                :is-open="isSearching"
             />
           </div>
           <div class="filter-tree-selector-popup-content" v-else>
@@ -104,7 +91,7 @@ const props = defineProps({
   },
 });
 
-const { isOpen, items: industries, modelValue, title } = props;
+const { items: industries, title } = props;
 
 const emit = defineEmits({
   close: {
@@ -118,28 +105,14 @@ const emit = defineEmits({
 const { updateQueryParam, getQueryParam } = useQueryParams();
 
 const industry_ids = ref(getQueryParam("industries") ?? []);
-
-watch(
-  () => industry_ids.value,
-  (newValues) => {
-  },
-);
-
-// const {
-//   value: industry_ids,
-//   setValue,
-//   errorMessage,
-// } = useField(() => props.name);
-
-const options = ref(props.items ?? []);
 const selectedSpecs = ref(industry_ids.value ?? []);
 const items = ref([]);
-
 const isLoading = ref(false);
-const { uniq } = useFilter();
+
 const apply = () => {
   const ids = [...selectedSpecs.value].filter((item) => item);
   updateQueryParam("industries", JSON.stringify(Array.from(new Set(ids))));
+  close();
 };
 const addIds = (new_ids) => {
   let ids = [...selectedSpecs.value];
@@ -156,72 +129,75 @@ const removeIds = (old_ids) => {
 const searchInput = ref("");
 
 const isSearching = computed(() => {
-  if (searchInput.value === "") {
-    return false;
-  }
-  return true;
+  return searchInput.value !== "";
 });
 
-const onSearch = () => {
-  prepare(props.items, false);
+const onSearch = (event) => {
+  const q = event.target.value;
+
+  if (!q) {
+    items.value = props.items;
+  }
+
+  items.value = props.items
+      .map((item) => {
+        let temp = { ...item };
+        temp.items = temp.items.filter((sub_item) => {
+          return sub_item.title.toLowerCase().includes(q.toLowerCase());
+        });
+        return temp;
+      })
+      .filter((item) => item.items.length > 0);
 };
 const prepare = (newValues, is_first = false) => {
   let dynamicItems = [];
   if (isSearching.value) {
     dynamicItems = [
       ...newValues.map((item) => {
-        item.items = [...item.items].filter((sub_item) =>
+        let temp = {...item}
+        temp.items = item.items.filter((sub_item) =>
           sub_item.title
             .toLowerCase()
             .includes(searchInput.value.toLowerCase()),
         );
-        return item;
+        return temp;
       }),
     ];
   } else {
     dynamicItems = [...newValues];
   }
+
   dynamicItems = dynamicItems.map((item) => {
-    const is_parent_checked = selectedSpecs.value.includes(item.id);
-    item.checked = is_parent_checked;
-    const d_items = item.items.map((sub_item) => {
-      if (!is_parent_checked) {
-        sub_item.checked = selectedSpecs.value.includes(sub_item.id);
-      } else {
-        if (is_first) {
-          sub_item.checked = true;
-        } else {
-          sub_item.checked = selectedSpecs.value.includes(sub_item.id);
-          // sub_item.checked = false;
-        }
-      }
-      return sub_item;
-    });
-    // checking if an item has only checked children, if yes add all children ids to selected list
-    if (!d_items.some((item) => item.checked === false)) {
+    if (selectedSpecs.value.includes(item.id)) {
       item.checked = true;
-      const ids = d_items.map((item) => item.id);
-      ids.push(item.id);
-      const new_ids = Array.from(new Set([...selectedSpecs.value].concat(ids)));
-      selectedSpecs.value = new_ids;
+      item.items = item.items.map((sub_item) => {
+        sub_item.checked = true;
+        return sub_item;
+      });
+    } else {
+      if (item.items.length > 0) {
+        item.items = item.items.map((sub_item) => {
+          if (selectedSpecs.value.includes(sub_item.id)) {
+            sub_item.checked = true;
+          }
+          return sub_item;
+        });
+      }
     }
-    item.items = d_items;
     return item;
   });
   items.value = dynamicItems;
 };
 
 watch(
-  () => industry_ids.value,
+  () => selectedSpecs.value,
   () => {
     prepare(props.items);
   },
 );
 
 onMounted(() => {
-  setTimeout(() => {
-    prepare(props.items, true);
-  }, 100);
+  prepare(props.items, true);
 });
 
 const onClickOutside = (e) => {

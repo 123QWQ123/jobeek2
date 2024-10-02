@@ -8,7 +8,6 @@ import useProviders from "~/composables/useProviders.js";
 const route = useRoute();
 
 const resumeStore = useResumeStore();
-const my_resume = computed(() => resumeStore.my_resume);
 
 const providers = ref({
   superjob: false,
@@ -161,12 +160,10 @@ const saveAllSections = async () => {
 };
 
 const errorMessage = ref(null);
-const hhErrorMessage = ref(null);
-const superjobErrorMessage = ref(null);
 const errors = ref([]);
 const isLoading = ref(false);
-const saveAndPublishAll = async (e) => {
-  e.preventDefault();
+const saveAndPublishAll = async (event) => {
+  event.preventDefault();
   if (!canOnlyOnePublished.value) {
     toast.info("Пока вы не можете опубликовать если не заполняйте все поля!", {
       autoClose: 3000,
@@ -193,7 +190,7 @@ const saveAndPublishAll = async (e) => {
   };
 
   const resData = await publishResume(resumeID.value, payload);
-  // isLoading.value = false;
+  isLoading.value = false;
   if (resData.hasOwnProperty("status") && resData.status !== "success") {
     Swal.fire({
       title: "Ошибка!",
@@ -201,63 +198,15 @@ const saveAndPublishAll = async (e) => {
       icon: "error",
       confirmButtonText: "ОК",
     });
-    isLoading.value = false;
     errorMessage.value = resData.message;
     return;
   }
 
   toast.info(resData.data.message, { autoClose: 3000 });
 
-  setTimeout(() => {
-    navigateTo({ name: "my-resumes" });
-  }, 500);
+  navigateTo({ name: "my-resumes" });
 };
-const saveAndPublishProvider = async (provider = null) => {
-  // e.preventDefault();
-  if (!hhPublishable.value && !superjobPublishable.value) {
-    toast.info("Пока вы не можете опубликовать если не заполняйте все поля.", {
-      autoClose: 3000,
-    });
-    return;
-  }
 
-  isLoading.value = true;
-  const resAll = await saveAllSections();
-  if (!resAll) {
-    Swal.fire({
-      title: "Ошибка!",
-      text: "не все обязательные поля заполнены верно!",
-      icon: "error",
-      confirmButtonText: "ОК",
-    });
-    isLoading.value = false;
-
-    return;
-  }
-
-  const payload = {
-    providers: [provider],
-  };
-
-  const resData = await publishResume(resumeID.value, payload);
-  if (resData.hasOwnProperty("status") && resData.status !== "success") {
-    Swal.fire({
-      title: "Ошибка!",
-      text: resData.message,
-      icon: "error",
-      confirmButtonText: "ОК",
-    });
-    isLoading.value = false;
-    errorMessage.value = resData.message;
-    return;
-  }
-
-  toast.info(resData.data.message, { autoClose: 3000 });
-
-  setTimeout(() => {
-    navigateTo({ name: "my-resumes" });
-  }, 500);
-};
 const canOnlyOnePublished = computed(() => {
   if (
     (hhPublishable.value === true || superjobPublishable.value === true) &&
@@ -267,7 +216,6 @@ const canOnlyOnePublished = computed(() => {
   }
   return false;
 });
-const phone = ref("");
 </script>
 <template>
   <main class="main cabinet my-resumes-page" role="main">

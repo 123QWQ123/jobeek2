@@ -1,5 +1,5 @@
 <template>
-  <div class="has-sidebar has-sidebar--v3">
+  <div v-if="data" class="has-sidebar has-sidebar--v3">
     <div class="content">
       <div class="vacancy-single">
         <div class="vacancy-single-head">
@@ -56,7 +56,7 @@ const props = defineProps({
 });
 const { data } = storeToRefs(props);
 const { $format_number } = useNuxtApp();
-const isFavorite = ref(data.value.is_favorite ?? false);
+const isFavorite = ref(data?.value.is_favorite ?? false);
 const salary_from = computed(() => {
   return $format_number(data.value.salary_from);
 });

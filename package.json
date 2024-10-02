@@ -7,14 +7,12 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
-    "server-clear": "rm -rf .nuxt/ && rm -rf node_modules/ && rm yarn.lock",
-    "server-start": "cross-env HOST=127.1.1.0 node .output/server/index.mjs"
+    "postinstall": "nuxt prepare"
   },
   "devDependencies": {
     "@nuxtjs/moment": "^1.6.1",
     "@pinia-plugin-persistedstate/nuxt": "^1.2.0",
-    "nuxt": "^3.9.3",
+    "nuxt": "^3.13.0",
     "nuxt-tiptap-editor": "^1.1.0",
     "prettier": "3.2.4",
     "sass": "^1.70.0",
@@ -23,6 +21,7 @@
   },
   "dependencies": {
     "@bg-dev/nuxt-fcm": "^0.2.8",
+    "@nuxtjs/toast": "^3.3.1",
     "@pinia/nuxt": "^0.5.1",
     "@sentry/cli": "^2.28.6",
     "@sentry/node": "^7.101.1",
@@ -46,7 +45,6 @@
     "axios": "^1.6.7",
     "bootstrap": "^5.3.2",
     "click-outside-vue3": "^4.0.1",
-    "cross-env": "^7.0.3",
     "fs": "^0.0.1-security",
     "h3": "^1.10.1",
     "i18next": "^23.8.2",
@@ -57,6 +55,7 @@
     "nuxt-swiper": "^1.2.2",
     "path": "^0.12.7",
     "pinia": "^2.1.7",
+    "pinia-plugin-persistedstate": "^3.2.1",
     "sweetalert2": "^11.6.13",
     "uuid": "^10.0.0",
     "vee-validate": "^4.12.5",
@@ -68,8 +67,5 @@
     "zod": "^3.22.4",
     "zod-i18n-map": "^2.27.0",
     "zod-to-json-schema": "^3.22.4"
-  },
-  "resolutions": {
-    "rollup": "npm:@rollup/wasm-node"
   }
 }

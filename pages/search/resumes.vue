@@ -24,6 +24,6 @@ onMounted(() => {
 <template>
   <div>
     <SearchResumeForm with_wrapper="true" />
-    <ResumesResults></ResumesResults>
+    <ResumesResults />
   </div>
 </template>

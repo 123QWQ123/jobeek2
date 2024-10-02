@@ -141,19 +141,6 @@ const cities_el = ref();
 const prof_roles_el = ref();
 const driver_licences_el = ref();
 
-// const photo_el = ref();
-// const personal_fields_el = ref();
-// const profession_fields_el = ref();
-// const foreign_language_el = ref();
-// const driver_licences_el = ref();
-// const work_experience_el = ref();
-// const education_el = ref();
-// const courses_el = ref();
-// const citizenship_el = ref();
-// const knowledge_and_skills_el = ref();
-// const access_el = ref();
-// citizenship_el.value.save(true),
-
 const saveAllSections = async () => {
   const promises = await Promise.all([
     // photo_el.value.save(true),
@@ -266,19 +253,12 @@ const saveAndPublishProvider = async (provider = null) => {
   }
 
   toast.info(resData.data.message, { autoClose: 3000 });
-
-  // setTimeout(() => {
-  //   navigateTo({ name: "my-resumes" });
-  // }, 500);
 };
 const canOnlyOnePublished = computed(() => {
-  if (
+  return (
     (hhPublishable.value === true || superjobPublishable.value === true) &&
     (superjobPublishable.value === false || hhPublishable.value === false)
-  ) {
-    return true;
-  }
-  return false;
+  );
 });
 const phone = ref("");
 </script>

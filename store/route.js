@@ -1,5 +1,4 @@
 // no need to import defineStore and acceptHMRUpdate
-import { acceptHMRUpdate, defineStore } from "pinia";
 import vueNumberFormat from "~/plugins/vueNumberFormat.js";
 
 export const useRoute = defineStore("route", {

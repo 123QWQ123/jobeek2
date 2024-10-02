@@ -9,8 +9,8 @@
             <input
               type="text"
               name="name"
-              id="keyword"
-              placeholder="Какой специалист вы ищете?"
+              id="keyword_wrap"
+              placeholder="Какого специалиста вы ищете?"
               autocomplete="off"
               v-model="search"
             />

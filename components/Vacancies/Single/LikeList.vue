@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-const { slug } = route.params;
+// const { slug } = route.params;
 </script>
 
 <style scoped></style>
