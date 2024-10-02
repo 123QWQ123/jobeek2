@@ -29,7 +29,6 @@ const isSuperjobSelected = computed(() =>
 const cities = ref([]);
 
 const { searchCities, searchProfessionalRoles } = profileStore;
-const { getCountryCities } = profileStore;
 const cityOptions = ref([]);
 const selectedCityOptions = ref(props.selected_options ?? []);
 
@@ -45,11 +44,19 @@ watch(
 );
 const { getCityName } = useResumeHooks();
 const updateCityInput = async (newValue = "") => {
-  const items =
-    (await searchCities({
-      search: newValue,
-      providers: [...selectedProviders.value],
-    })) ?? [];
+  let items;
+  if (newValue === "") {
+    items =
+      (await searchCities({
+        providers: [...selectedProviders.value],
+      })) ?? [];
+  } else {
+    items =
+      (await searchCities({
+        search: newValue,
+        providers: [...selectedProviders.value],
+      })) ?? [];
+  }
   cityOptions.value = items.map((item) => ({
     value: item.id,
     name: item.name,
@@ -72,7 +79,7 @@ watch(
     );
     items = uniq(items, "value");
 
-    onUpdateSelectedOptions(items);
+    await onUpdateSelectedOptions(items);
   },
 );
 
@@ -80,7 +87,9 @@ const onUpdateSelectedOptions = async (newItems) => {
   selectedCityOptions.value = newItems;
 };
 
-onMounted(() => {});
+onMounted(() => {
+  updateCityInput();
+});
 </script>
 
 <template>

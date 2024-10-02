@@ -10,7 +10,7 @@
               type="text"
               name="name"
               id="keyword_wrap"
-              placeholder="Какой специалист вы ищете?"
+              placeholder="Какого специалиста вы ищете?"
               autocomplete="off"
               v-model="search"
             />

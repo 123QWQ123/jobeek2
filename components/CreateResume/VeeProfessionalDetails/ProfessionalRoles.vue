@@ -39,22 +39,6 @@ const updateProfessionalInput = async (newValue = "", providers = []) => {
   }
 };
 
-const isHHProfRolesNeeded = computed(() => {
-  if (!isHHSelected.value) return false;
-  if (prof_role_ids.value.length < 1) return true;
-  const selected_fields_values = [...prof_role_ids.value];
-  return !selected_fields_values.some((item) =>
-    profileStore.hh_professional_roles_with_parent_ids.includes(item),
-  );
-});
-const isSuperjobProfRolesNeeded = computed(() => {
-  if (!isSuperjobSelected.value) return false;
-  if (prof_role_ids.value.length < 1) return true;
-  const selected_fields_values = [...prof_role_ids.value];
-  return !selected_fields_values.some((item) =>
-    profileStore.superjob_professional_roles_with_parent_ids.includes(item),
-  );
-});
 const updateHHProfessionalRoles = async (newValue = "") => {
   await searchHHProfessionalRoles();
 };

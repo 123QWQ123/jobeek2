@@ -104,7 +104,7 @@ const auth = useAuthStore();
 
 const isEmployer = computed(() => auth.isEmployer);
 const searchPlaceHolder = computed(() =>
-  auth.isEmployer ? "Какой специалист вы ищете?" : "Какую вакансию вы ищете?",
+  auth.isEmployer ? "Какого специалиста вы ищете?" : "Какую вакансию вы ищете?",
 );
 const { getCurrentQueryParams, getQueryParam } = useQueryParams();
 const params = getCurrentQueryParams();

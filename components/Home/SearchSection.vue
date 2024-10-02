@@ -16,7 +16,7 @@
             >
               <ul class="labels-list">
                 <client-only>
-                  <li v-for="item in industries">
+                  <li v-for="item in industries" :key="item.id">
                     <NuxtLink
                       :to="{
                         name: 'search-vacancies',

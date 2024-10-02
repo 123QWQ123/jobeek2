@@ -115,14 +115,7 @@ import { useVacancyStore } from "~/store/vacancy.js";
 import useProviders from "~/composables/useProviders.js";
 
 const props = defineProps(["title"]);
-
-// const providers = ref({ hh: false, superjob: false });
 const { providers } = useProviders();
-watch(
-  () => providers.value,
-  () => {
-  },
-);
 
 const vacancyStore = useVacancyStore();
 const dictionaryStore = useDictionaryStore();

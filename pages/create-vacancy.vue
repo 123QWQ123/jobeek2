@@ -5,29 +5,25 @@ import { useResumeStore } from "~/store/resume";
 import { useAuthStore } from "~/store/auth.js";
 
 const route = useRoute();
-
 const vacancyStore = useVacancyStore();
-
 const providers = ref({
   superjob: false,
   hh: false,
 });
-
 const resumeStore = useResumeStore();
 const { getMyResume } = resumeStore;
-const pageTitle = computed(() => {
-  return "Создание вакансии";
-});
-
-const error = computed(() => {
-  return route.query.message;
-});
+const pageTitle = computed(() => "Создание вакансии");
+const error = computed(() => route.query.message);
 const { handleAlert } = useAlert();
+const draft_el = ref();
+const errorMessage = ref(null);
+const errors = ref([]);
+const isLoading = ref(false);
+const authStore = useAuthStore();
+const isEmployer = computed(() => authStore.isEmployer);
+
 watch(() => route.query.message, handleAlert);
 
-const authStore = useAuthStore();
-
-const isEmployer = computed(() => authStore.isEmployer);
 watch(
   () => authStore.isEmployer,
   (new_value) => {
@@ -41,34 +37,6 @@ onMounted(() => {
     navigateTo({ name: "create-resume" });
   }
 });
-const saveAsDraft = (e) => {
-  e.preventDefault();
-  isLoading.value = true;
-
-  isLoading.value = false;
-};
-
-const paramProviders = computed(() => {
-  if (providers.value.hh && providers.value.superjob) {
-    return ["hh", "superjob"];
-  }
-  if (providers.value.hh) {
-    return ["hh"];
-  }
-  if (providers.value.superjob) {
-    return ["superjob"];
-  }
-  return [];
-});
-
-const draft_el = ref();
-
-const errorMessage = ref(null);
-const hhErrorMessage = ref(null);
-const superjobErrorMessage = ref(null);
-const errors = ref([]);
-const isLoading = ref(false);
-// groups[]=
 </script>
 <template>
   <main class="main cabinet create-subscribe-page bg-wrapper" role="main">
