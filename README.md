@@ -43,11 +43,10 @@ bun run dev
 Build the application for production:
 
 ```bash
-# yarn
-yarn install
-yarn run server-clear
-yarn build
-yarn run server-start & ''
+# npm
+npm i
+npm run build
+pm2 restart JobeekOnline
 ```
 
 Locally preview production build:

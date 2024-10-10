@@ -126,9 +126,12 @@ const { addToFavorite, removeFromFavorite } = vacancyStore;
 const toggleFavorite = async () => {
   let response = {};
   if (!isFavorite.value === true) {
-    response = await addToFavorite({ id: item.id, provider: "superjob" });
+    response = await addToFavorite({ id: item.id, provider: item.provider });
   } else {
-    response = await removeFromFavorite({ id: item.id, provider: "superjob" });
+    response = await removeFromFavorite({
+      id: item.id,
+      provider: item.provider,
+    });
   }
   if (response.status === "success") {
     isFavorite.value = !isFavorite.value;
