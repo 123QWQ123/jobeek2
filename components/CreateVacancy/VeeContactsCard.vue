@@ -96,7 +96,7 @@ import { useVacancyStore } from "~/store/vacancy";
 import { useProfileStore } from "~/store/profile";
 import { useRuntimeConfig } from "#app";
 import { useDiff } from "~/composables/useDiff";
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import useProviderFields from "~/composables/useProviderFields.js";
@@ -126,19 +126,19 @@ const isUpdated = ref(false);
 const dictionaryStore = useDictionaryStore();
 
 const schema = computed(() => {
-  return z.object({
-    contacts: z.object({
-      name: z.string(),
-      email: z.string(),
-      company_name: z.string(),
-      company_description: z.string(),
-      company_url: z.string(),
-      company_logo: z.string(),
-      phones: z.object({
-        phone: z.string(),
-        phone_comment: z.string().optional().nullish(),
-        additional_phone: z.string().optional().nullish(),
-        additional_phone_comment: z.string().optional().nullish(),
+  return zod.object({
+    contacts: zod.object({
+      name: zod.string(),
+      email: zod.string(),
+      company_name: zod.string(),
+      company_description: zod.string(),
+      company_url: zod.string(),
+      company_logo: zod.string(),
+      phones: zod.object({
+        phone: zod.string(),
+        phone_comment: zod.string().optional().nullish(),
+        additional_phone: zod.string().optional().nullish(),
+        additional_phone_comment: zod.string().optional().nullish(),
       }),
     }),
   });

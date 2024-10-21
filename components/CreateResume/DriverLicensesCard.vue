@@ -32,7 +32,7 @@
 </template>
 
 <script setup>
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 import { useProfileStore } from "~/store/profile";
 import { useRuntimeConfig } from "#app";
 import useFormValidation from "~/composables/useFormValidation";
@@ -77,9 +77,9 @@ const isUpdated = ref(false);
 
 const schema = computed(() => {
   const s = toTypedSchema(
-    z.object({
-      has_vehicle: z.boolean().nullable(),
-      driver_license_types: z.number().array().optional(),
+    zod.object({
+      has_vehicle: zod.boolean().nullable(),
+      driver_license_types: zod.number().array().optional(),
     }),
   );
   return s;

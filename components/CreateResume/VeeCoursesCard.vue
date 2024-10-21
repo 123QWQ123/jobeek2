@@ -67,7 +67,7 @@ import useFormValidation from "~/composables/useFormValidation";
 import { useResumeStore } from "~/store/resume";
 import { useDiff } from "~/composables/useDiff";
 import { useDictionaryStore } from "~/store/dictionary";
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 import { useForm } from "vee-validate";
 import useProviders from "~/composables/useProviders.js";
 import { toTypedSchema } from "@vee-validate/zod";
@@ -95,39 +95,39 @@ const isUpdated = ref(false);
 const { providers } = useProviders();
 const schema = computed(() => {
   if (providers.value.hh === true && providers.value.superjob === false) {
-    const coursesScheme = z.object({
-      title: z.string(),
-      organization: z.string(),
-      end_year: z.number(),
-      profession: z.string().nullish().optional(),
-      certificate_url: z.string().nullish().optional(),
+    const coursesScheme = zod.object({
+      title: zod.string(),
+      organization: zod.string(),
+      end_year: zod.number(),
+      profession: zod.string().nullish().optional(),
+      certificate_url: zod.string().nullish().optional(),
     });
-    return z.object({
-      courses: z.array(coursesScheme).optional(),
+    return zod.object({
+      courses: zod.array(coursesScheme).optional(),
     });
   }
   if (providers.value.hh === false && providers.value.superjob === true) {
-    const coursesScheme = z.object({
-      title: z.string().nullish().optional(),
-      organization: z.string(),
-      end_year: z.number(),
-      profession: z.string().nullish().optional(),
-      certificate_url: z.string().nullish().optional(),
+    const coursesScheme = zod.object({
+      title: zod.string().nullish().optional(),
+      organization: zod.string(),
+      end_year: zod.number(),
+      profession: zod.string().nullish().optional(),
+      certificate_url: zod.string().nullish().optional(),
     });
-    return z.object({
-      courses: z.array(coursesScheme).optional(),
+    return zod.object({
+      courses: zod.array(coursesScheme).optional(),
     });
   }
 
-  const coursesScheme = z.object({
-    title: z.string(),
-    organization: z.string(),
-    end_year: z.number(),
-    profession: z.string().nullish().optional(),
-    certificate_url: z.string().nullish().optional(),
+  const coursesScheme = zod.object({
+    title: zod.string(),
+    organization: zod.string(),
+    end_year: zod.number(),
+    profession: zod.string().nullish().optional(),
+    certificate_url: zod.string().nullish().optional(),
   });
-  return z.object({
-    courses: z.array(coursesScheme).optional(),
+  return zod.object({
+    courses: zod.array(coursesScheme).optional(),
   });
 });
 

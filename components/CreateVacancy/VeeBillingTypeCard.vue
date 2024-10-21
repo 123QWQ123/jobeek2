@@ -34,7 +34,7 @@ import { useVacancyStore } from "~/store/vacancy.js";
 import { useProfileStore } from "~/store/profile.js";
 import { useRuntimeConfig } from "#app";
 import { useDiff } from "~/composables/useDiff.js";
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import useProviderFields from "~/composables/useProviderFields.js";
@@ -87,8 +87,8 @@ const schema = computed(() => {
   //     billing_type_id: z.number(),
   //   });
   // }
-  return z.object({
-    billing_type_id: z.number(),
+  return zod.object({
+    billing_type_id: zod.number(),
   });
 });
 

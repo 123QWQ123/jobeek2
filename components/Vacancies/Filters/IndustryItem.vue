@@ -35,7 +35,9 @@
               <img src="~/assets/img/svg/dash.svg" alt="#" v-else />
             </div>
           </div>
-          <label :for="`industry_${props.item.id}`">{{ props.item.title }}</label>
+          <label :for="`industry_${props.item.id}`">{{
+            props.item.title
+          }}</label>
         </div>
       </div>
     </div>

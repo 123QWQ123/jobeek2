@@ -118,7 +118,7 @@ import useFormValidation from "~/composables/useFormValidation";
 import { useDiff } from "~/composables/useDiff";
 import { useDictionaryStore } from "~/store/dictionary";
 import useProviderFields from "~/composables/useProviderFields";
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useResumeStore } from "~/store/resume";
 import ResumeTextInput from "~/components/CreateResume/ResumeTextInput.vue";
@@ -149,35 +149,35 @@ const currencyOptions = useCurrencyOptions();
 
 const schema = computed(() => {
   if (providers.value.hh === true && providers.value.superjob === false) {
-    return z.object({
-      title: z.string().min(2),
-      salary: z.number(),
-      currency: z.string().nullable().optional(),
-      place_of_work_id: z.number().nullable(),
-      professional_roles: z.array(z.number()).nonempty(),
-      work_types: z.array(z.number()).nonempty(),
-      schedules: z.array(z.number()).optional(),
+    return zod.object({
+      title: zod.string().min(2),
+      salary: zod.number(),
+      currency: zod.string().nullable().optional(),
+      place_of_work_id: zod.number().nullable(),
+      professional_roles: zod.array(zod.number()).nonempty(),
+      work_types: zod.array(zod.number()).nonempty(),
+      schedules: zod.array(zod.number()).optional(),
     });
   }
   if (providers.value.hh === false && providers.value.superjob === true) {
-    return z.object({
-      title: z.string().nullable().optional(),
-      salary: z.number().min(2),
-      currency: z.string().nullable().optional(),
-      place_of_work_id: z.number().nullable(),
-      professional_roles: z.array(z.number()).nonempty(),
-      work_types: z.array(z.number()).nonempty(),
-      schedules: z.array(z.number()).optional(),
+    return zod.object({
+      title: zod.string().nullable().optional(),
+      salary: zod.number().min(2),
+      currency: zod.string().nullable().optional(),
+      place_of_work_id: zod.number().nullable(),
+      professional_roles: zod.array(zod.number()).nonempty(),
+      work_types: zod.array(zod.number()).nonempty(),
+      schedules: zod.array(zod.number()).optional(),
     });
   }
-  return z.object({
-    title: z.string().min(2),
-    professional_roles: z.array(z.number()).nonempty(),
-    work_types: z.array(z.number()).nonempty(),
-    schedules: z.array(z.number()).optional(),
-    salary: z.number().nullable(),
-    currency: z.string(),
-    place_of_work_id: z.number().nullable(),
+  return zod.object({
+    title: zod.string().min(2),
+    professional_roles: zod.array(zod.number()).nonempty(),
+    work_types: zod.array(zod.number()).nonempty(),
+    schedules: zod.array(zod.number()).optional(),
+    salary: zod.number().nullable(),
+    currency: zod.string(),
+    place_of_work_id: zod.number().nullable(),
   });
 });
 
@@ -336,8 +336,6 @@ const save = async (is_from_parent = false) => {
   }
 
   if (!meta.value.valid) {
-    console.log("save getErrors", getErrors);
-    console.log("save errors", errors);
     errorMessage.value = "Запольните все поля";
     return false;
   }

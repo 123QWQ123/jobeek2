@@ -154,7 +154,7 @@ import { storeToRefs } from "pinia";
 import useResumeHooks from "~/hooks/useResumeHooks";
 import ResumeCheckboxInput from "~/components/CreateResume/ResumeCheckboxInput.vue";
 import ResumeTextInput from "~/components/CreateResume/ResumeTextInput.vue";
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 import { toTypedSchema } from "@vee-validate/zod";
 
 const props = defineProps(["title"]);
@@ -167,20 +167,20 @@ const isSaved = ref(false);
 const isChanged = ref(false);
 const isUpdated = ref(false);
 
-const schema = z.object({
-  providers: z.array(z.string()).nonempty("Выберите хотя бы 1 сервис"),
-  title: z.string(),
-  first_name: z.string(),
-  last_name: z.string(),
-  middle_name: z.string().optional().nullable(),
-  email: z.string(),
-  is_preferred_email: z.boolean(),
-  birth_date: z.string(),
-  city_id: z.number(),
-  gender_id: z.number(),
-  business_trip_id: z.number(),
-  relocation_type_id: z.number(),
-  work_types: z.array(z.number()).nonempty("Выберите хотя бы 1"),
+const schema = zod.object({
+  providers: zod.array(zod.string()).nonempty("Выберите хотя бы 1 сервис"),
+  title: zod.string(),
+  first_name: zod.string(),
+  last_name: zod.string(),
+  middle_name: zod.string().optional().nullable(),
+  email: zod.string(),
+  is_preferred_email: zod.boolean(),
+  birth_date: zod.string(),
+  city_id: zod.number(),
+  gender_id: zod.number(),
+  business_trip_id: zod.number(),
+  relocation_type_id: zod.number(),
+  work_types: zod.array(zod.number()).nonempty("Выберите хотя бы 1"),
 });
 
 const { values, errors, validate, meta, setTouched, setErrors, handleSubmit } =

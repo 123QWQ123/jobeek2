@@ -278,6 +278,7 @@ export const useProfileStore = defineStore("profile", {
       return this.employer;
     },
     async updateSeeker(payload) {
+      const { setUser, setSeeker } = useAuthStore();
       const response = await useApi("seeker/profile", {
         method: "post",
         content_type: "multipart/form-data",
@@ -286,6 +287,8 @@ export const useProfileStore = defineStore("profile", {
       if (response.status === "success") {
         this.seeker = response.data.data;
         this.user = response.data?.data;
+        setUser(this.user);
+        setSeeker(this.seeker);
       }
       return this.seeker;
     },
@@ -342,7 +345,6 @@ export const useProfileStore = defineStore("profile", {
           };
         }
       } catch (error) {
-        console.log(error);
         if ("response" in error && error.response.data?.errors) {
           return {
             status: "error",

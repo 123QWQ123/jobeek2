@@ -25,7 +25,7 @@ import { useVacancyStore } from "~/store/vacancy";
 import { useProfileStore } from "~/store/profile";
 import { useRuntimeConfig } from "#app";
 import { useDiff } from "~/composables/useDiff";
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import useProviderFields from "~/composables/useProviderFields.js";
@@ -55,12 +55,12 @@ const isUpdated = ref(false);
 const dictionaryStore = useDictionaryStore();
 
 const schema = computed(() => {
-  return z.object({
-    languages: z
+  return zod.object({
+    languages: zod
       .array(
-        z.object({
-          language_id: z.number(),
-          level_id: z.number(),
+        zod.object({
+          language_id: zod.number(),
+          level_id: zod.number(),
         }),
       )
       .nonempty(),

@@ -94,7 +94,7 @@ import useFormValidation from "~/composables/useFormValidation.js";
 import useResumeHooks from "~/hooks/useResumeHooks.js";
 import { toTypedSchema } from "@vee-validate/zod";
 import avatar from "~/assets/img/jobeek-avatar.png";
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 
 const profileStore = useProfileStore();
 const { getUser } = profileStore;
@@ -149,14 +149,14 @@ const getFields = (newObject) => {
     phone: newObject.phone,
   };
 };
-const schema = z.object({
-  first_name: z.string(),
-  last_name: z.string(),
-  birth_date: z.string(),
-  email: z.string().email(),
-  city_id: z.number().safe("Выберити город из списка"),
-  country_id: z.number().safe("Выберити страну из списка"),
-  phone: z.string(),
+const schema = zod.object({
+  first_name: zod.string(),
+  last_name: zod.string(),
+  birth_date: zod.string(),
+  email: zod.string().email(),
+  city_id: zod.number().safe("Выберити город из списка"),
+  country_id: zod.number().safe("Выберити страну из списка"),
+  phone: zod.string(),
 });
 
 const authStore = useAuthStore();
@@ -255,14 +255,17 @@ const handleSubmit = async (e) => {
     }
   }
   if (values.hasOwnProperty("photo") && values.photo instanceof File) {
-    formData.append("photo", values.photo) !== "";
+    formData.append("photo", values.photo);
+  } else {
+    formData.delete("photo");
   }
 
   formData.append("_method", "put");
   const resData = await updateSeeker(formData);
-
+  isLoading.value = false;
   if (resData.status !== "success") {
     errorMessage.value = resData.message;
+    //todo  убрать это дебильное сравнение по тексту
     if (
       resData.message === "требуется создать Пароль при первом входе в систему!"
     ) {
@@ -271,19 +274,17 @@ const handleSubmit = async (e) => {
     if (resData.hasOwnProperty("errors") && resData.errors) {
       setErrors(resData.errors);
     }
-    isLoading.value = false;
     return;
   }
   await getUser();
   await refreshSeeker();
-  Swal.fire({
+  await Swal.fire({
     icon: "success",
     text: "Успешно сохранено",
     preConfirm: () => {
       // navigateTo({ path: "/", query: {} });
     },
   });
-  isLoading.value = false;
 
   if (routeErrorMessage.value) {
     navigateTo({ name: "profile", query: {} });

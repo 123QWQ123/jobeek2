@@ -79,7 +79,7 @@ import useFormValidation from "~/composables/useFormValidation";
 import { useResumeStore } from "~/store/resume";
 import { useDiff } from "~/composables/useDiff";
 import { useDictionaryStore } from "~/store/dictionary";
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 import { useForm } from "vee-validate";
 import useProviders from "~/composables/useProviders.js";
 import { toTypedSchema } from "@vee-validate/zod";
@@ -92,45 +92,45 @@ const dictionaryStore = useDictionaryStore();
 const { providers } = useProviders();
 const schema = computed(() => {
   if (providers.value.hh === true && providers.value.superjob === false) {
-    const educationScheme = z.object({
-      type_id: z.number().nullable().optional(),
-      end_year: z.number(),
-      institute: z.string(),
-      profession: z.string().nullable().optional(),
-      faculty: z.string().nullish().optional(),
-      form_id: z.number().nullable().optional(),
+    const educationScheme = zod.object({
+      type_id: zod.number().nullable().optional(),
+      end_year: zod.number(),
+      institute: zod.string(),
+      profession: zod.string().nullable().optional(),
+      faculty: zod.string().nullish().optional(),
+      form_id: zod.number().nullable().optional(),
     });
-    return z.object({
-      education_level_id: z.number().nullable(),
-      educations: z.array(educationScheme).optional(),
+    return zod.object({
+      education_level_id: zod.number().nullable(),
+      educations: zod.array(educationScheme).optional(),
     });
   }
   if (providers.value.hh === false && providers.value.superjob === true) {
-    const educationScheme = z.object({
-      type_id: z.number(),
-      end_year: z.number().nullish().optional(),
-      institute: z.string().nullish().optional(),
-      profession: z.string().nullable().optional(),
-      faculty: z.string().nullish().optional(),
-      form_id: z.number().nullable().optional(),
+    const educationScheme = zod.object({
+      type_id: zod.number(),
+      end_year: zod.number().nullish().optional(),
+      institute: zod.string().nullish().optional(),
+      profession: zod.string().nullable().optional(),
+      faculty: zod.string().nullish().optional(),
+      form_id: zod.number().nullable().optional(),
     });
-    return z.object({
-      education_level_id: z.number().nullable(),
-      educations: z.array(educationScheme).optional(),
+    return zod.object({
+      education_level_id: zod.number().nullable(),
+      educations: zod.array(educationScheme).optional(),
     });
   }
 
-  const educationScheme = z.object({
-    type_id: z.number(),
-    profession: z.string().nullable().optional(),
-    institute: z.string(),
-    faculty: z.string().nullish().optional(),
-    form_id: z.number().nullable().optional(),
-    end_year: z.number(),
+  const educationScheme = zod.object({
+    type_id: zod.number(),
+    profession: zod.string().nullable().optional(),
+    institute: zod.string(),
+    faculty: zod.string().nullish().optional(),
+    form_id: zod.number().nullable().optional(),
+    end_year: zod.number(),
   });
-  return z.object({
-    education_level_id: z.number().nullable(),
-    educations: z.array(educationScheme).optional(),
+  return zod.object({
+    education_level_id: zod.number().nullable(),
+    educations: zod.array(educationScheme).optional(),
   });
 });
 

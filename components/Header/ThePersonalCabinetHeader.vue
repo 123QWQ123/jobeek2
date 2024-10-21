@@ -36,10 +36,6 @@ const isCabinetNavbarShown = computed(() => {
   return search_exception_routes.includes(route.name);
 });
 
-function onChange(selectedOption) {
-  console.log(selectedOption);
-}
-
 const onProfileClick = () => {
   if (!auth.isEmployer) {
     navigateTo({ name: "profile-seeker" });

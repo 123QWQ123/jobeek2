@@ -1,7 +1,8 @@
 <script setup>
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 import { useAuthStore } from "~/store/auth.js";
 import { toTypedSchema } from "@vee-validate/zod";
+import useApi from "~/hooks/useApi.js";
 
 useHead({
   title: "Создание подписку",
@@ -9,50 +10,79 @@ useHead({
 const getFields = (newObject) => {
   if (!newObject) return {};
   return {
-    first_name: newObject.first_name,
-    last_name: newObject.last_name,
-    email: newObject.email,
-    email_to_verify: newObject.email_to_verify,
-    birth_date: newObject.birth_date,
-    city_id: newObject.city_id ?? undefined,
-    city_name: newObject.city_name,
-    photo: newObject.photo ?? null,
-    photo_url: newObject.photo_url ?? null,
-    country_id: newObject.country_id ?? 1,
-    phone: authStore.user?.phone,
+    text: "",
+    providers: null,
+    work_types: [], //
+    push_notification: false,
+    email_notification: false,
+    search_fields: [],
+    cities: [],
+    regions: [],
+    countries: [],
+    metros: [],
+    professional_roles: [],
+    salary: {
+      from: 0,
+      to: 0,
+    },
   };
 };
-const schema = z.object({
-  first_name: z.string(),
-  last_name: z.string(),
-  birth_date: z.string(),
-  email: z.string().email(),
-  city_id: z.number().safe("Выберити город из списка"),
-  country_id: z.number().safe("Выберити страну из списка"),
-});
+const schema = zod
+  .object({
+    text: zod.string(),
+    providers: zod.array(zod.string()).nonempty(),
+    work_types: zod.array(zod.number()).nonempty(),
+    push_notification: zod.boolean().optional(),
+    email_notification: zod.boolean().optional(),
+    cities: zod.array(zod.number()).optional(),
+    regions: zod.array(zod.number()).optional(),
+    countries: zod.array(zod.number()).optional(),
+    metros: zod.array(zod.number()).optional(),
+    professional_roles: zod.array(zod.number()).optional(),
+    salary: zod
+      .object({
+        from: zod.number().int().nullish(),
+        to: zod.number().int().nullish(),
+      })
+      .optional(),
+  })
+  .superRefine((value, ctx) => {
+    if (!(value.push_notification || value.email_notification)) {
+      ctx.addIssue({
+        code: zod.ZodIssueCode.custom,
+        message: "Обязательно выбрать один из типов уведомления!",
+      });
+    }
+    return value.push_notification || value.email_notification;
+  });
 
 const authStore = useAuthStore();
-watch(
-  () => authStore.seeker,
-  (newValues) => {
-    // resetForm({ values: newValues, touched: false });
-  },
-);
-
 const initialValues = getFields(authStore.seeker);
 
-const { values, errors, meta, setErrors, resetForm, validate } = useForm({
+const { values, meta } = useForm({
   initialValues,
   initialTouched: true,
   validationSchema: toTypedSchema(schema),
 });
+const save = async () => {
+  if (meta.value.dirty && meta.value.valid) {
+    await useApi("seeker/subscription", {
+      method: "POST",
+      payload: values,
+    });
+  }
+};
 </script>
 <template>
   <main class="main cabinet create-subscribe-page bg-wrapper" role="main">
     <div class="bg-wrapper pt">
       <PersonalCabinetSearchMobile />
       <div class="wrapper wrapper-1290">
-        <form class="create-subscribe" action="" name="create-subscribe ">
+        <form
+          class="create-subscribe"
+          name="create-subscribe"
+          @submit.prevent="save"
+        >
           <div class="w-box w-box--main w-box-subscribe">
             <div class="w-box-head">
               <h1 class="title">Создание подписки</h1>
@@ -61,85 +91,23 @@ const { values, errors, meta, setErrors, resetForm, validate } = useForm({
               </div>
             </div>
             <div class="w-box-body">
-              <div class="input-row input-row--checkboxes">
-                <label>Подключенные сервисы</label>
-                <div class="input-wrapper input-wrapper--flex">
-                  <div class="custom-check-wrap">
-                    <div class="theme-checker theme-checker--blue">
-                      <input type="checkbox" id="hh" />
-                      <div class="theme-checker-ui">
-                        <div class="circle"></div>
-                      </div>
-                    </div>
-                    <label for="hh"
-                      ><img src="~/assets/img/logos/hhmini.svg" alt="#" /><span
-                        >Hh.ru</span
-                      ></label
-                    >
-                  </div>
-                  <div class="custom-check-wrap">
-                    <div class="theme-checker theme-checker--blue">
-                      <input type="checkbox" id="sj" checked />
-                      <div class="theme-checker-ui">
-                        <div class="circle"></div>
-                      </div>
-                    </div>
-                    <label for="sj"
-                      ><img src="~/assets/img/logos/sj.svg" alt="#" /><span
-                        >Superjob.ru
-                      </span></label
-                    >
-                  </div>
-                </div>
-              </div>
-              <div class="input-row">
-                <label for="search-words">Что искать</label>
-                <div class="input-wrapper">
-                  <input type="text" id="search-words" />
-                  <div class="prompt">
-                    Слова через запятую: найдутся вакансии, где встречается хотя
-                    бы одно из указанных слов. Слова через пробел: найдутся
-                    вакансии, где встречаются все указанные слова.
-                  </div>
-                  <div class="check-block">
-                    <div class="checkbox">
-                      <input type="checkbox" id="do-not-show-date" checked />
-                      <div class="checkbox-mask">
-                        <img src="~/assets/img/svg/check.svg" alt="#" />
-                      </div>
-                    </div>
-                    <label for="do-not-show-date"
-                      >Только в названии вакансий</label
-                    >
-                  </div>
-                </div>
-              </div>
-              <div class="input-row">
-                <label for="exclude-words"
-                  >Исключать из названия вакансии</label
-                >
-                <div class="input-wrapper">
-                  <input type="text" id="exclude-words" />
-                </div>
-              </div>
-              <!--              <CreateSubscriptionProvidersAndKeywords></CreateSubscriptionProvidersAndKeywords>-->
+              <CreateSubscriptionProvidersAndKeywords></CreateSubscriptionProvidersAndKeywords>
               <div class="sep"></div>
               <CreateSubscriptionFieldsAndAreas></CreateSubscriptionFieldsAndAreas>
-              <div class="sep"></div>
-              <CreateSubscriptionVaccination></CreateSubscriptionVaccination>
+              <!--          <div class="sep"></div>-->
+              <!--          <CreateSubscriptionVaccination></CreateSubscriptionVaccination>-->
               <div class="sep"></div>
               <CreateSubscriptionJobSalaryAndCompany></CreateSubscriptionJobSalaryAndCompany>
               <div class="sep"></div>
               <CreateSubscriptionJobEmploymentAndLicense></CreateSubscriptionJobEmploymentAndLicense>
-              <div class="sep"></div>
-              <CreateSubscriptionForeignLanguages></CreateSubscriptionForeignLanguages>
+              <!--              <div class="sep"></div>-->
+              <!--              <CreateSubscriptionForeignLanguages></CreateSubscriptionForeignLanguages>-->
               <div class="sep"></div>
               <CreateSubscriptionNotifications></CreateSubscriptionNotifications>
             </div>
           </div>
           <div class="form-submit-container">
-            <p>Найдено 2 012 вакансий</p>
-            <button class="button-accent" type="submit">Сохранить</button>
+            <button class="button-accent">Сохранить</button>
           </div>
         </form>
       </div>

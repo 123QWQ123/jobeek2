@@ -84,11 +84,10 @@ async function onSubmit() {
         password: state.password.val,
       });
       await setFcmToken();
-      isLoading.value = false;
     } catch (error) {
       state.error = error.message;
     }
-
+    isLoading.value = false;
     if (response.status !== "success") {
       return;
     }

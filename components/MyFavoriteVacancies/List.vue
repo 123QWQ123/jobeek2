@@ -40,7 +40,7 @@ const vacancyStore = useVacancyStore();
 const { getMyFavoriteVacancies } = vacancyStore;
 const { my_favorite_vacancies, current_page } = storeToRefs(vacancyStore);
 
-const items = ref([]);
+const items = computed(() => my_favorite_vacancies.value);
 
 const isLoading = ref(false);
 const isMore = ref(false);
@@ -56,7 +56,6 @@ watch(my_favorite_vacancies, (newValues) => {
 
 onMounted(async () => {
   await getMyFavoriteVacancies({});
-  isLoading.value = false;
 });
 
 const prevPage = async () => {

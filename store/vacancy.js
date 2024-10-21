@@ -429,10 +429,11 @@ export const useVacancyStore = defineStore("vacancy", {
         method: "get",
         params: payload,
       });
-      if (data && data.data && "items" in data.data) {
-        this.my_favorite_vacancies = data.data.items;
+
+      if (data.data.length > 0) {
+        this.my_favorite_vacancies = data.data;
         if (payload.page) {
-          this.current_page = payload.page;
+          this.current_page = data.meta.current_page;
         }
       }
       return data;
@@ -511,7 +512,7 @@ export const useVacancyStore = defineStore("vacancy", {
     },
 
     async addToFavorite(payload = URLSearchParams) {
-      const response = await useApi("seeker/favorite", {
+      const response = await useApi("seeker/vacancies/favorites", {
         method: "post",
         payload,
       });

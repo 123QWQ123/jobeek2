@@ -1,7 +1,11 @@
 <template>
   <div class="subs-list-container">
     <ul class="subs-list">
-      <YourSubscriptionsListItem></YourSubscriptionsListItem>
+      <YourSubscriptionsListItem
+        v-for="notification in notifications"
+        :key="notification.id"
+        :notification="notification"
+      ></YourSubscriptionsListItem>
     </ul>
     <NuxtLink class="create-button" :to="{ name: 'create-subscription' }"
       >Создать подписку</NuxtLink
@@ -10,8 +14,20 @@
 </template>
 
 <script setup>
+import useApi from "~/hooks/useApi.js";
 
-const quantity = ref(2);
+const notifications = ref([]);
+onBeforeMount(async () => {
+  const {
+    data: { data, status },
+  } = await useApi("seeker/subscription", {
+    method: "get",
+  });
+
+  if (status === "success") {
+    notifications.value = data;
+  }
+});
 </script>
 
 <style scoped></style>

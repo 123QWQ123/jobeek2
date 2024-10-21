@@ -72,7 +72,7 @@ const props = defineProps({
     default: [],
   },
   selected_options: {
-    required: true,
+    required: false,
     default: [],
   },
   placeholder: {

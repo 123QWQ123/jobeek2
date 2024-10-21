@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import { z } from "zod";
+import { z as zod } from "zod";
 import { zodI18nMap } from "zod-i18n-map";
 // Import your language translation files
 import translation from "zod-i18n-map/locales/ru/zod.json";
@@ -11,7 +11,7 @@ i18next.init({
     ru: { zod: translation },
   },
 });
-z.setErrorMap(zodI18nMap);
+zod.setErrorMap(zodI18nMap);
 
 // export configured zod instance
-export { z };
+export { zod };

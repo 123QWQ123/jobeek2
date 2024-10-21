@@ -55,8 +55,8 @@
               v-else
               class="select-resume-row d-inline-flex justify-content-center align-items-center"
             >
-              <nuxt-link class="button-accent" :to="{ name: 'sign-in' }"
-                >Войти</nuxt-link
+              <NuxtLink class="button-accent" :to="{ name: 'sign-in' }"
+                >Войти</NuxtLink
               >
               чтобы откликаться
             </div>
@@ -65,7 +65,7 @@
             <button
               class="group-action ic-btn fav-btn"
               :class="{ active: isFavorite }"
-              @click="removeFavorite"
+              @click="toggleFavorite"
             >
               <svg
                 width="23"
@@ -109,7 +109,7 @@ const salaryText = computed(() => {
   }
   return "По договору";
 });
-const isFavorite = ref(item.is_favorite ?? false);
+const isFavorite = ref(item.is_favorite ?? true);
 
 const selectedResume = ref(null);
 
@@ -169,22 +169,32 @@ const onSubmit = async (e) => {
 };
 
 const vacancyStore = useVacancyStore();
-const { getMyFavoriteVacancies, removeFromFavorite } = vacancyStore;
-const removeFavorite = async () => {
+const { addToFavorite, getMyFavoriteVacancies, removeFromFavorite } =
+  vacancyStore;
+const toggleFavorite = async () => {
   let response = {};
-  response = await removeFromFavorite(props.item.id, { provider: "hh" });
-
-  if (response.status !== "success") {
+  if (!isFavorite.value === true) {
+    response = await addToFavorite({
+      id: String(item.id),
+      provider: item.provider,
+    });
+  } else {
+    if (!item.favorite_id) {
+      isFavorite.value = false;
+      return;
+    }
+    response = await removeFromFavorite(item.favorite_id);
+  }
+  if (response.status === "success") {
+    isFavorite.value = !isFavorite.value;
+  } else {
     Swal.fire({
       title: "Ошибка!",
       text: response.message,
       icon: "error",
       confirmButtonText: "ОК",
     });
-    return;
   }
-  toast.info("Вы успешно удалили из избранных.", { autoClose: 3000 });
-  await getMyFavoriteVacancies({});
 };
 const employerLogo = computed(() => {
   if (item && item.logo) {

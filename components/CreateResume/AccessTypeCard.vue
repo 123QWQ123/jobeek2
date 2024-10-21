@@ -41,7 +41,7 @@ import useFormValidation from "~/composables/useFormValidation";
 import { useDiff } from "~/composables/useDiff";
 import { useDictionaryStore } from "~/store/dictionary";
 import { useResumeStore } from "~/store/resume";
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 import useProviders from "~/composables/useProviders.js";
 
 const props = defineProps(["title", "providers"]);
@@ -73,17 +73,17 @@ watch(
 );
 const schema = computed(() => {
   if (providers.value.hh === true && providers.value.superjob === false) {
-    return z.object({
-      resume_access_type_id: z.number(),
+    return zod.object({
+      resume_access_type_id: zod.number(),
     });
   }
   if (providers.value.hh === false && providers.value.superjob === true) {
-    return z.object({
-      resume_access_type_id: z.number().optional(),
+    return zod.object({
+      resume_access_type_id: zod.number().optional(),
     });
   }
-  return z.object({
-    resume_access_type_id: z.number(),
+  return zod.object({
+    resume_access_type_id: zod.number(),
   });
 });
 

@@ -51,7 +51,7 @@ import { useVacancyStore } from "~/store/vacancy";
 import { useProfileStore } from "~/store/profile";
 import { useRuntimeConfig } from "#app";
 import { useDiff } from "~/composables/useDiff";
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import useProviderFields from "~/composables/useProviderFields.js";
@@ -92,11 +92,11 @@ const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
 const schema = computed(() => {
-  return z.object({
-    address: z.object({
-      address_id: z.number(),
-      address: z.string(),
-      show_metro_only: z.boolean(),
+  return zod.object({
+    address: zod.object({
+      address_id: zod.number(),
+      address: zod.string(),
+      show_metro_only: zod.boolean(),
     }),
   });
 });

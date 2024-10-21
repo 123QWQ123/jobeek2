@@ -70,7 +70,7 @@ import useFormValidation from "~/composables/useFormValidation";
 import { useResumeStore } from "~/store/resume";
 import { useDiff } from "~/composables/useDiff";
 import { useDictionaryStore } from "~/store/dictionary";
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import useProviders from "~/composables/useProviders.js";
@@ -107,36 +107,36 @@ const isUpdated = ref(false);
 const { providers } = useProviders();
 const schema = computed(() => {
   if (providers.value.hh === true && providers.value.superjob === false) {
-    const testScheme = z.object({
-      name: z.string(),
-      profession: z.string(),
-      organization: z.string(),
-      year: z.number(),
+    const testScheme = zod.object({
+      name: zod.string(),
+      profession: zod.string(),
+      organization: zod.string(),
+      year: zod.number(),
     });
-    return z.object({
-      completed_test_or_exams: z.array(testScheme).optional(),
+    return zod.object({
+      completed_test_or_exams: zod.array(testScheme).optional(),
     });
   }
   if (providers.value.hh === false && providers.value.superjob === true) {
-    const testScheme = z.object({
-      name: z.string(),
-      profession: z.string(),
-      organization: z.string(),
-      year: z.number(),
+    const testScheme = zod.object({
+      name: zod.string(),
+      profession: zod.string(),
+      organization: zod.string(),
+      year: zod.number(),
     });
-    return z.object({
-      completed_test_or_exams: z.array(testScheme).optional(),
+    return zod.object({
+      completed_test_or_exams: zod.array(testScheme).optional(),
     });
   }
 
-  const testScheme = z.object({
-    name: z.string(),
-    profession: z.string(),
-    organization: z.string(),
-    year: z.number(),
+  const testScheme = zod.object({
+    name: zod.string(),
+    profession: zod.string(),
+    organization: zod.string(),
+    year: zod.number(),
   });
-  return z.object({
-    completed_test_or_exams: z.array(testScheme).optional(),
+  return zod.object({
+    completed_test_or_exams: zod.array(testScheme).optional(),
   });
 });
 

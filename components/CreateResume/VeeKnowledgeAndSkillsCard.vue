@@ -52,7 +52,7 @@ import useFormValidation from "~/composables/useFormValidation";
 import { useResumeStore } from "~/store/resume";
 import { useDiff } from "~/composables/useDiff";
 import { useDictionaryStore } from "~/store/dictionary";
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 import { toTypedSchema } from "@vee-validate/zod";
 import ResumeTextarea from "~/components/CreateResume/ResumeTextarea.vue";
 import useProviders from "~/composables/useProviders.js";
@@ -72,20 +72,20 @@ const { providers } = useProviders();
 
 const schema = computed(() => {
   if (providers.value.hh === true && providers.value.superjob === false) {
-    return z.object({
-      skills: z.string().array().nonempty(),
-      other_skills: z.string(),
+    return zod.object({
+      skills: zod.string().array().nonempty(),
+      other_skills: zod.string(),
     });
   }
   if (providers.value.hh === false && providers.value.superjob === true) {
-    return z.object({
-      skills: z.string().array().nullable().optional(),
-      other_skills: z.string().nullable().optional(),
+    return zod.object({
+      skills: zod.string().array().nullable().optional(),
+      other_skills: zod.string().nullable().optional(),
     });
   }
-  return z.object({
-    skills: z.string().array().nonempty(),
-    other_skills: z.string(),
+  return zod.object({
+    skills: zod.string().array().nonempty(),
+    other_skills: zod.string(),
   });
 });
 

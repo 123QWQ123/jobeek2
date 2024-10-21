@@ -30,7 +30,7 @@ import { useVacancyStore } from "~/store/vacancy";
 import { useProfileStore } from "~/store/profile";
 import { useRuntimeConfig } from "#app";
 import { useDiff } from "~/composables/useDiff";
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import useProviderFields from "~/composables/useProviderFields.js";
@@ -75,8 +75,8 @@ const periodOptions = computed(() => {
 });
 
 const schema = computed(() => {
-  return z.object({
-    key_skills: z.array(z.string()).nonempty(),
+  return zod.object({
+    key_skills: zod.array(zod.string()).nonempty(),
   });
 });
 

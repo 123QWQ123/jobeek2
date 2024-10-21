@@ -83,11 +83,6 @@ const isOpen = ref(false);
 const options = ref(props.options);
 const searchInput = ref("");
 
-// watch(
-//   () => props.placeholder,
-//   () => (searchInput.value = props.placeholder),
-// );
-
 watch(
   () => props.options,
   (newOptions) => {
@@ -109,11 +104,6 @@ watch(
 );
 
 const selectedOption = ref({});
-
-// watch(
-//   () => selectedOption.value,
-//   () => (searchInput.value = selectedOption.value?.name),
-// );
 
 onMounted(() => {
   if (props.modelValue) {

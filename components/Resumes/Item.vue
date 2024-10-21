@@ -176,16 +176,6 @@ const educationLevelText = computed(() => {
   else return level;
 });
 
-const educationPlaceText = computed(() => {
-  const { education_level } = props.item.educations;
-  let level = "Среднее";
-  if (education_level) {
-    level = education_level.name;
-  }
-
-  return level + "-" + "";
-});
-
 const experienceText = computed(() => {
   if (item && item.experience_month_count) {
     const years = $format_years(
@@ -214,29 +204,16 @@ const lastWorkplace = computed(() => {
   }
   return "Нет опыт работы";
 });
-const resumeDescription = computed(() => {
-  if (item.description) {
-    let text = item.description.slice(0, 150);
-    if (item.description.length > 150) {
-      text += "...";
-    }
-    return text;
-  }
-  return item.description;
-});
 
 const experienceItems = ref([]);
 const prepareExperienceItems = (newExperience) => {
-  const items = newExperience.map((ex_item) => {
-    let text = "-";
-    text =
+  experienceItems.value = newExperience.map((ex_item) => {
+    let text =
       `${$convert_month_to_text(ex_item.start_month)} ${ex_item.start_year}` +
       " - " +
       formatEndDate(ex_item.end_year, ex_item.end_month);
     return { ...ex_item, dateText: text };
   });
-
-  experienceItems.value = items;
 };
 watch(() => props.item.experience, prepareExperienceItems);
 prepareExperienceItems(item.experience);
@@ -249,7 +226,7 @@ const toggleFavorite = async () => {
   let response = {};
   if (!isFavorite.value === true) {
     response = await addToFavorite({
-      resume_id: String(item.id),
+      id: String(item.id),
       provider: item.provider,
     });
   } else {
