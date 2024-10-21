@@ -95,7 +95,7 @@ import { useForm } from "vee-validate";
 
 import avatar from "~/assets/img/jobeek-avatar.png";
 import { toTypedSchema } from "@vee-validate/zod";
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 import { useAuthStore } from "~/store/auth.js";
 
 const profileStore = useProfileStore();
@@ -105,12 +105,12 @@ const authStore = useAuthStore();
 
 const user = await getUser();
 
-const schema = z.object({
-  company_name: z.string(),
-  company_url: z.string().url(),
-  company_description: z.string(),
-  email: z.string().email(),
-  phone: z.string(),
+const schema = zod.object({
+  company_name: zod.string(),
+  company_url: zod.string().url(),
+  company_description: zod.string(),
+  email: zod.string().email(),
+  phone: zod.string(),
 });
 
 const getFields = (newObject) => {

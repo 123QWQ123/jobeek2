@@ -54,7 +54,7 @@ import { useVacancyStore } from "~/store/vacancy";
 import { useProfileStore } from "~/store/profile";
 import { useRuntimeConfig } from "#app";
 import { useDiff } from "~/composables/useDiff";
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import useProviderFields from "~/composables/useProviderFields.js";
@@ -97,23 +97,23 @@ const isUpdated = ref(false);
 
 const schema = computed(() => {
   if (providers.value.hh === true && providers.value.superjob === false) {
-    return z.object({
-      type_id: z.number(),
-      custom_employer_name: z.string().nullable().optional(),
-      response_url: z.string().nullable().optional(),
+    return zod.object({
+      type_id: zod.number(),
+      custom_employer_name: zod.string().nullable().optional(),
+      response_url: zod.string().nullable().optional(),
     });
   }
   if (providers.value.hh === false && providers.value.superjob === true) {
-    return z.object({
-      type_id: z.number(),
-      custom_employer_name: z.string().optional().nullable(),
-      response_url: z.string().optional().nullable(),
+    return zod.object({
+      type_id: zod.number(),
+      custom_employer_name: zod.string().optional().nullable(),
+      response_url: zod.string().optional().nullable(),
     });
   }
-  return z.object({
-    type_id: z.number(),
-    custom_employer_name: z.string().nullable().optional(),
-    response_url: z.string().nullable().optional(),
+  return zod.object({
+    type_id: zod.number(),
+    custom_employer_name: zod.string().nullable().optional(),
+    response_url: zod.string().nullable().optional(),
   });
 });
 

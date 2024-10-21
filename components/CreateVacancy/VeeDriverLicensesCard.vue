@@ -25,7 +25,7 @@ import { useVacancyStore } from "~/store/vacancy";
 import { useProfileStore } from "~/store/profile";
 import { useRuntimeConfig } from "#app";
 import { useDiff } from "~/composables/useDiff";
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import useProviderFields from "~/composables/useProviderFields.js";
@@ -54,8 +54,8 @@ const isCollapsed = ref(true);
 const isUpdated = ref(false);
 
 const schema = computed(() => {
-  return z.object({
-    driver_license_types: z.array(z.number()).nonempty(),
+  return zod.object({
+    driver_license_types: zod.array(zod.number()).nonempty(),
   });
 });
 

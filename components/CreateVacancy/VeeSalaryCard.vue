@@ -73,7 +73,7 @@ import { useVacancyStore } from "~/store/vacancy";
 import { useProfileStore } from "~/store/profile";
 import { useRuntimeConfig } from "#app";
 import { useDiff } from "~/composables/useDiff";
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import useProviderFields from "~/composables/useProviderFields.js";
@@ -142,13 +142,13 @@ const schema = computed(() => {
   //       path: ["custom_employer_name"], // Pointing out which field is invalid
   //     });
   // }
-  return z.object({
-    salary: z.object({
-      currency: z.string(),
-      gross: z.boolean(),
-      from: z.number(),
-      to: z.number(),
-      period: z.number(),
+  return zod.object({
+    salary: zod.object({
+      currency: zod.string(),
+      gross: zod.boolean(),
+      from: zod.number(),
+      to: zod.number(),
+      period: zod.number(),
     }),
   });
 });

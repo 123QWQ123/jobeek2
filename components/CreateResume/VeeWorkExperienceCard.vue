@@ -45,7 +45,7 @@
 import useFormValidation from "~/composables/useFormValidation";
 import { useResumeStore } from "~/store/resume";
 import { useDiff } from "~/composables/useDiff";
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 import { useForm } from "vee-validate";
 import useProviders from "~/composables/useProviders.js";
 import { toTypedSchema } from "@vee-validate/zod";
@@ -66,66 +66,66 @@ const isUpdated = ref(false);
 const { providers } = useProviders();
 const schema = computed(() => {
   if (providers.value.hh === true && providers.value.superjob === false) {
-    const experienceScheme = z.object({
-      profession: z.string(),
-      responsibilities: z.string(),
-      company: z.string(),
-      achievements: z.string(),
-      start_year: z.number(),
-      start_month: z.string(),
-      end_year: z.number(),
-      end_month: z.string(),
-      until_today: z.boolean().nullable().optional(),
-      city_id: z.number(),
+    const experienceScheme = zod.object({
+      profession: zod.string(),
+      responsibilities: zod.string(),
+      company: zod.string(),
+      achievements: zod.string(),
+      start_year: zod.number(),
+      start_month: zod.string(),
+      end_year: zod.number(),
+      end_month: zod.string(),
+      until_today: zod.boolean().nullable().optional(),
+      city_id: zod.number(),
       // city_name: z.boolean().nullable().optional(),
-      company_url: z.string().nullish().optional(),
-      industries: z.number().array().nonempty(),
-      company_scope: z.string().nullish().optional(),
+      company_url: zod.string().nullish().optional(),
+      industries: zod.number().array().nonempty(),
+      company_scope: zod.string().nullish().optional(),
     });
-    return z.object({
-      experience: z.array(experienceScheme).nonempty(),
+    return zod.object({
+      experience: zod.array(experienceScheme).nonempty(),
     });
   }
   if (providers.value.hh === false && providers.value.superjob === true) {
-    const experienceScheme = z.object({
-      profession: z.string(),
-      responsibilities: z.string(),
-      company: z.string(),
-      achievements: z.string().nullable(),
-      start_year: z.number(),
-      start_month: z.string(),
-      end_year: z.number().nullish().optional(),
-      end_month: z.string().nullish().optional(),
-      until_today: z.boolean().nullable().optional(),
-      city_id: z.number(),
+    const experienceScheme = zod.object({
+      profession: zod.string(),
+      responsibilities: zod.string(),
+      company: zod.string(),
+      achievements: zod.string().nullable(),
+      start_year: zod.number(),
+      start_month: zod.string(),
+      end_year: zod.number().nullish().optional(),
+      end_month: zod.string().nullish().optional(),
+      until_today: zod.boolean().nullable().optional(),
+      city_id: zod.number(),
       // city_name: z.boolean().nullable().optional(),
-      company_url: z.string().nullish().optional(),
-      industries: z.number().array().nullable(),
-      company_scope: z.string().nullish().optional(),
+      company_url: zod.string().nullish().optional(),
+      industries: zod.number().array().nullable(),
+      company_scope: zod.string().nullish().optional(),
     });
-    return z.object({
-      experience: z.array(experienceScheme).optional(),
+    return zod.object({
+      experience: zod.array(experienceScheme).optional(),
     });
   }
 
-  const experienceScheme = z.object({
-    profession: z.string(),
-    responsibilities: z.string(),
-    company: z.string(),
-    achievements: z.string(),
-    start_year: z.number(),
-    start_month: z.string(),
-    end_year: z.number(),
-    end_month: z.string(),
-    until_today: z.boolean().nullable().optional(),
-    city_id: z.number(),
+  const experienceScheme = zod.object({
+    profession: zod.string(),
+    responsibilities: zod.string(),
+    company: zod.string(),
+    achievements: zod.string(),
+    start_year: zod.number(),
+    start_month: zod.string(),
+    end_year: zod.number(),
+    end_month: zod.string(),
+    until_today: zod.boolean().nullable().optional(),
+    city_id: zod.number(),
     // city_name: z.boolean().nullable().optional(),
-    company_url: z.string(),
-    industries: z.number().array().nonempty(),
-    company_scope: z.string(),
+    company_url: zod.string(),
+    industries: zod.number().array().nonempty(),
+    company_scope: zod.string(),
   });
-  return z.object({
-    experience: z.array(experienceScheme).nonempty(),
+  return zod.object({
+    experience: zod.array(experienceScheme).nonempty(),
   });
 });
 

@@ -81,7 +81,7 @@ import { useResumeStore } from "~/store/resume";
 import { useDiff } from "~/composables/useDiff";
 import { useDictionaryStore } from "~/store/dictionary";
 import { toTypedSchema } from "@vee-validate/zod";
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 import { useForm } from "vee-validate";
 
 const props = defineProps({
@@ -100,19 +100,19 @@ const resumeStore = useResumeStore();
 const resumeID = computed(() => route.params.id);
 const dictionaryStore = useDictionaryStore();
 
-const educationScheme = z.object({
-  type_id: z.number(),
-  profession: z.string(),
-  institute: z.string(),
-  faculty: z.string(),
-  form_id: z.number(),
-  end_year: z.number(),
+const educationScheme = zod.object({
+  type_id: zod.number(),
+  profession: zod.string(),
+  institute: zod.string(),
+  faculty: zod.string(),
+  form_id: zod.number(),
+  end_year: zod.number(),
 });
 const schema = computed(() => {
   const s = toTypedSchema(
-    z.object({
-      education_level_id: z.number().nullable(),
-      educations: z.array(educationScheme).optional(),
+    zod.object({
+      education_level_id: zod.number().nullable(),
+      educations: zod.array(educationScheme).optional(),
     }),
   );
   return s;

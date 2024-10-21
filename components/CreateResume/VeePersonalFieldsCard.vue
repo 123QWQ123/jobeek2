@@ -180,7 +180,7 @@ import ResumeTextInput from "~/components/CreateResume/ResumeTextInput.vue";
 import ResumeCheckboxInput from "~/components/CreateResume/ResumeCheckboxInput.vue";
 import { useI18n } from "vue-i18n";
 import { toTypedSchema } from "@vee-validate/zod";
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 import useProviders from "~/composables/useProviders.js";
 import { zodToJsonSchema } from "zod-to-json-schema";
 
@@ -221,78 +221,78 @@ const isHHSelected = computed(() => {
 
 const schema = computed(() => {
   if (providers.value.hh === true && providers.value.superjob === false) {
-    let phoneScheme = z.object({
-      type_id: z.number(),
-      comment: z.string().optional().nullable(),
-      phone: z.string(),
-      is_preferred: z.boolean().optional().nullable(),
+    let phoneScheme = zod.object({
+      type_id: zod.number(),
+      comment: zod.string().optional().nullable(),
+      phone: zod.string(),
+      is_preferred: zod.boolean().optional().nullable(),
     });
-    return z.object({
-      first_name: z.string().min(2),
-      last_name: z.string().min(2),
-      middle_name: z.string().nullable().optional(),
-      email: z.string().email(),
-      is_preferred_email: z.boolean().nullable(),
-      birth_date: z.string().nullable().optional(),
-      additional_information: z.string().nullable().optional(),
-      other_contacts: z.string().nullable().optional(),
-      gender_id: z.number(),
-      city_id: z.number(),
-      address: z.string().nullable().optional(),
-      business_trip_id: z.number(),
-      relocation_type_id: z.number().nullable().optional(),
-      social_networks: z.number().array().optional(),
-      phones: z.array(phoneScheme).nonempty(),
+    return zod.object({
+      first_name: zod.string().min(2),
+      last_name: zod.string().min(2),
+      middle_name: zod.string().nullable().optional(),
+      email: zod.string().email(),
+      is_preferred_email: zod.boolean().nullable(),
+      birth_date: zod.string().nullable().optional(),
+      additional_information: zod.string().nullable().optional(),
+      other_contacts: zod.string().nullable().optional(),
+      gender_id: zod.number(),
+      city_id: zod.number(),
+      address: zod.string().nullable().optional(),
+      business_trip_id: zod.number(),
+      relocation_type_id: zod.number().nullable().optional(),
+      social_networks: zod.number().array().optional(),
+      phones: zod.array(phoneScheme).nonempty(),
     });
   }
   if (providers.value.hh === false && providers.value.superjob === true) {
-    const phoneScheme = z.object({
-      start_available_time_phone: z.string().optional().nullable(),
-      end_available_time_phone: z.string().optional().nullable(),
-      phone: z.string(),
+    const phoneScheme = zod.object({
+      start_available_time_phone: zod.string().optional().nullable(),
+      end_available_time_phone: zod.string().optional().nullable(),
+      phone: zod.string(),
     });
-    return z.object({
-      first_name: z.string().min(2),
-      last_name: z.string().nullable().optional(),
-      middle_name: z.string().nullable().optional(),
-      email: z.string().email().nullable().optional(),
-      is_preferred_email: z.boolean().nullable().optional(),
-      birth_date: z.string(),
-      additional_information: z.string().nullable().optional(),
-      other_contacts: z.string().nullable().optional(),
-      gender_id: z.number(),
-      city_id: z.number(),
-      address: z.string().nullable().optional(),
-      business_trip_id: z.number().nullable(),
-      relocation_type_id: z.number().nullable().optional(),
-      social_networks: z.number().array().optional(),
-      phones: z.array(phoneScheme).optional(),
+    return zod.object({
+      first_name: zod.string().min(2),
+      last_name: zod.string().nullable().optional(),
+      middle_name: zod.string().nullable().optional(),
+      email: zod.string().email().nullable().optional(),
+      is_preferred_email: zod.boolean().nullable().optional(),
+      birth_date: zod.string(),
+      additional_information: zod.string().nullable().optional(),
+      other_contacts: zod.string().nullable().optional(),
+      gender_id: zod.number(),
+      city_id: zod.number(),
+      address: zod.string().nullable().optional(),
+      business_trip_id: zod.number().nullable(),
+      relocation_type_id: zod.number().nullable().optional(),
+      social_networks: zod.number().array().optional(),
+      phones: zod.array(phoneScheme).optional(),
     });
   }
-  let phoneScheme = z.object({
-    type_id: z.number(),
-    comment: z.string().optional().nullable(),
-    start_available_time_phone: z.string().optional().nullable(),
-    end_available_time_phone: z.string().optional().nullable(),
-    phone: z.string(),
-    is_preferred: z.boolean(),
+  let phoneScheme = zod.object({
+    type_id: zod.number(),
+    comment: zod.string().optional().nullable(),
+    start_available_time_phone: zod.string().optional().nullable(),
+    end_available_time_phone: zod.string().optional().nullable(),
+    phone: zod.string(),
+    is_preferred: zod.boolean(),
   });
-  return z.object({
-    first_name: z.string().min(2),
-    last_name: z.string().min(2),
-    middle_name: z.string().nullable().optional(),
-    email: z.string().email(),
-    is_preferred_email: z.boolean().nullable(),
-    birth_date: z.string(),
-    additional_information: z.string().nullable().optional(),
-    other_contacts: z.string().nullable().optional(),
-    gender_id: z.number(),
-    city_id: z.number(),
-    address: z.string().nullable().optional(),
-    business_trip_id: z.number(),
-    relocation_type_id: z.number().nullable().optional(),
-    social_networks: z.number().array().optional(),
-    phones: z.array(phoneScheme).nonempty(),
+  return zod.object({
+    first_name: zod.string().min(2),
+    last_name: zod.string().min(2),
+    middle_name: zod.string().nullable().optional(),
+    email: zod.string().email(),
+    is_preferred_email: zod.boolean().nullable(),
+    birth_date: zod.string(),
+    additional_information: zod.string().nullable().optional(),
+    other_contacts: zod.string().nullable().optional(),
+    gender_id: zod.number(),
+    city_id: zod.number(),
+    address: zod.string().nullable().optional(),
+    business_trip_id: zod.number(),
+    relocation_type_id: zod.number().nullable().optional(),
+    social_networks: zod.number().array().optional(),
+    phones: zod.array(phoneScheme).nonempty(),
   });
 });
 

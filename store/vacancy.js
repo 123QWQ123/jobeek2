@@ -429,7 +429,7 @@ export const useVacancyStore = defineStore("vacancy", {
         method: "get",
         params: payload,
       });
-      console.log("favorites", data.data);
+
       if (data.data.length > 0) {
         this.my_favorite_vacancies = data.data;
         if (payload.page) {

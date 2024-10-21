@@ -326,7 +326,7 @@ import useFormValidation from "~/composables/useFormValidation";
 import { useDiff } from "~/composables/useDiff";
 import { useDictionaryStore } from "~/store/dictionary";
 import useProviderFields from "~/composables/useProviderFields";
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import useProviders from "~/composables/useProviders.js";
@@ -394,26 +394,26 @@ const schema = computed(() => {
   //     schedules: z.array(z.number()).nonempty(),
   //   });
   // }
-  return z.object({
-    name: z.string().min(2),
-    description: z.string().min(2),
-    work_type_id: z.number().optional(),
-    experience_id: z.number().optional(),
-    accept_kids: z.boolean().optional(),
-    accept_temporary: z.boolean().optional(),
-    accept_incomplete_resumes: z.boolean().optional(),
-    accept_handicapped: z.boolean().optional(),
-    allow_messages: z.boolean().optional(),
-    schedule_id: z.number().optional().optional(),
-    response_notifications: z.boolean().optional(),
-    working_days_id: z.number().optional(),
-    with_zp: z.boolean().optional(),
-    response_letter_required: z.boolean().optional(),
-    working_time_intervals_id: z.number().optional(),
-    working_time_modes_id: z.number().optional(),
-    refresh_vac: z.boolean().optional(),
-    extend_vac_id: z.number().optional(),
-    resume_subscription_status: z.boolean().optional(),
+  return zod.object({
+    name: zod.string().min(2),
+    description: zod.string().min(2),
+    work_type_id: zod.number().optional(),
+    experience_id: zod.number().optional(),
+    accept_kids: zod.boolean().optional(),
+    accept_temporary: zod.boolean().optional(),
+    accept_incomplete_resumes: zod.boolean().optional(),
+    accept_handicapped: zod.boolean().optional(),
+    allow_messages: zod.boolean().optional(),
+    schedule_id: zod.number().optional().optional(),
+    response_notifications: zod.boolean().optional(),
+    working_days_id: zod.number().optional(),
+    with_zp: zod.boolean().optional(),
+    response_letter_required: zod.boolean().optional(),
+    working_time_intervals_id: zod.number().optional(),
+    working_time_modes_id: zod.number().optional(),
+    refresh_vac: zod.boolean().optional(),
+    extend_vac_id: zod.number().optional(),
+    resume_subscription_status: zod.boolean().optional(),
     // subscriptionKeywords: z
     //   .array(
     //     z.object({
@@ -425,16 +425,16 @@ const schema = computed(() => {
     //   )
     //   .nullish()
     //   .optional(),
-    place_of_work_id: z.number().optional(),
-    education_id: z.number().optional(),
-    marital_status_id: z.number().optional(),
-    children_id: z.number().optional(),
-    gender_id: z.number().optional(),
-    covid_vaccination_requirement_id: z.number(),
-    move_able: z.boolean().optional(),
-    video_url: z.string().nullable().optional(),
-    age_from: z.number().optional(),
-    age_to: z.number().optional(),
+    place_of_work_id: zod.number().optional(),
+    education_id: zod.number().optional(),
+    marital_status_id: zod.number().optional(),
+    children_id: zod.number().optional(),
+    gender_id: zod.number().optional(),
+    covid_vaccination_requirement_id: zod.number(),
+    move_able: zod.boolean().optional(),
+    video_url: zod.string().nullable().optional(),
+    age_from: zod.number().optional(),
+    age_to: zod.number().optional(),
   });
 });
 

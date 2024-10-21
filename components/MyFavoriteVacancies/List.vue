@@ -56,7 +56,6 @@ watch(my_favorite_vacancies, (newValues) => {
 
 onMounted(async () => {
   await getMyFavoriteVacancies({});
-  console.log(my_favorite_vacancies.value);
 });
 
 const prevPage = async () => {

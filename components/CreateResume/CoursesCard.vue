@@ -67,7 +67,7 @@ import useFormValidation from "~/composables/useFormValidation";
 import { useResumeStore } from "~/store/resume";
 import { useDiff } from "~/composables/useDiff";
 import { useDictionaryStore } from "~/store/dictionary";
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 
@@ -98,17 +98,17 @@ const isSaved = ref(false);
 const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
-const coursesScheme = z.object({
-  title: z.string(),
-  profession: z.string(),
-  organization: z.string(),
-  certificate_url: z.string(),
-  end_year: z.number(),
+const coursesScheme = zod.object({
+  title: zod.string(),
+  profession: zod.string(),
+  organization: zod.string(),
+  certificate_url: zod.string(),
+  end_year: zod.number(),
 });
 const schema = computed(() => {
   const s = toTypedSchema(
-    z.object({
-      courses: z.array(coursesScheme).optional(),
+    zod.object({
+      courses: zod.array(coursesScheme).optional(),
     }),
   );
   return s;

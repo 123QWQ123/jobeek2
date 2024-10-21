@@ -108,7 +108,7 @@ import { useProfileStore } from "~/store/profile";
 import { useRuntimeConfig } from "#app";
 import useFormValidation from "~/composables/useFormValidation";
 import { storeToRefs } from "pinia";
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useVacancyStore } from "~/store/vacancy.js";
@@ -140,18 +140,18 @@ onMounted(() => {
 });
 const currencyOptions = ref(useCurrencyOptions());
 
-const schema = z.object({
-  providers: z.array(z.string()).nonempty("Выберите хотя бы 1 сервис"),
-  name: z.string(),
-  cities: z.array(z.number()).nonempty("Выберите хотя бы 1"),
-  description: z.string(),
-  professional_roles: z.array(z.number()).nonempty("Выберите хотя бы 1"),
-  salary: z.object({
-    currency: z.string(),
-    from: z.number(),
-    to: z.number(),
-    gross: z.boolean(),
-    period: z.number(),
+const schema = zod.object({
+  providers: zod.array(zod.string()).nonempty("Выберите хотя бы 1 сервис"),
+  name: zod.string(),
+  cities: zod.array(zod.number()).nonempty("Выберите хотя бы 1"),
+  description: zod.string(),
+  professional_roles: zod.array(zod.number()).nonempty("Выберите хотя бы 1"),
+  salary: zod.object({
+    currency: zod.string(),
+    from: zod.number(),
+    to: zod.number(),
+    gross: zod.boolean(),
+    period: zod.number(),
   }),
 });
 const initialValues = {

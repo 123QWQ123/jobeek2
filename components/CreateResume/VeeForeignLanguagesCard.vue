@@ -36,7 +36,7 @@ import { useDiff } from "~/composables/useDiff";
 import { useResumeStore } from "~/store/resume";
 
 import { toTypedSchema } from "@vee-validate/zod";
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 
 const props = defineProps({
   title: {
@@ -63,11 +63,11 @@ const isUpdated = ref(false);
 
 const schema = computed(() => {
   return toTypedSchema(
-    z.object({
-      languages: z.array(
-        z.object({
-          language_id: z.number(),
-          level_id: z.number(),
+    zod.object({
+      languages: zod.array(
+        zod.object({
+          language_id: zod.number(),
+          level_id: zod.number(),
         }),
       ),
     }),

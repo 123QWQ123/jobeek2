@@ -88,7 +88,7 @@ import { useDiff } from "~/composables/useDiff";
 import { useDictionaryStore } from "~/store/dictionary";
 import { useFormData } from "~/composables/useFormData";
 import { toTypedSchema } from "@vee-validate/zod";
-import { z } from "~/hooks/ru-zod.js";
+import { zod } from "~/hooks/ru-zod.js";
 import useProviders from "~/composables/useProviders.js";
 import useProviderFields from "~/composables/useProviderFields.js";
 
@@ -192,29 +192,29 @@ onMounted(() => {
 
 const schema = computed(() => {
   if (providers.value.hh === true && providers.value.superjob === false) {
-    return z.object({
-      citizenship: z.number().array().nonempty(),
-      work_tickets: z.number().array().nonempty(),
-      marital_status_id: z.number().optional(),
-      travel_time_id: z.number().optional(),
-      children_id: z.number().optional(),
+    return zod.object({
+      citizenship: zod.number().array().nonempty(),
+      work_tickets: zod.number().array().nonempty(),
+      marital_status_id: zod.number().optional(),
+      travel_time_id: zod.number().optional(),
+      children_id: zod.number().optional(),
     });
   }
   if (providers.value.hh === false && providers.value.superjob === true) {
-    return z.object({
-      citizenship: z.number().array().nonempty().optional().nullable(),
-      work_tickets: z.number().array().nonempty().nullable().optional(),
-      marital_status_id: z.number().optional().nullable(),
-      travel_time_id: z.number().nullish().optional(),
-      children_id: z.number().nullable().optional(),
+    return zod.object({
+      citizenship: zod.number().array().nonempty().optional().nullable(),
+      work_tickets: zod.number().array().nonempty().nullable().optional(),
+      marital_status_id: zod.number().optional().nullable(),
+      travel_time_id: zod.number().nullish().optional(),
+      children_id: zod.number().nullable().optional(),
     });
   }
-  return z.object({
-    citizenship: z.number().array().nonempty(),
-    work_tickets: z.number().array().nonempty(),
-    marital_status_id: z.number().optional(),
-    travel_time_id: z.number().optional().nullable(),
-    children_id: z.number().optional().nullable(),
+  return zod.object({
+    citizenship: zod.number().array().nonempty(),
+    work_tickets: zod.number().array().nonempty(),
+    marital_status_id: zod.number().optional(),
+    travel_time_id: zod.number().optional().nullable(),
+    children_id: zod.number().optional().nullable(),
   });
 });
 const initialValues = ref({
