@@ -108,18 +108,12 @@ const maxDate = computed(() => {
 });
 const yearItems = computed(() => {
   return useYearOptions(1950, new Date().getUTCFullYear() - 16);
-  // let items = years.value.map((value, index) => {
-  //   return { name: value, value };
-  // });
-  // items = items.reverse();
-  return items;
 });
 const monthItems = useMonthOptions();
 const dayItems = computed(() => {
-  const items = Array.from({ length: maxDate.value }, (value, index) => {
+  return Array.from({ length: maxDate.value }, (value, index) => {
     return { name: index + 1, value: index + 1 };
   });
-  return items;
 });
 
 watch(

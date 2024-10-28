@@ -179,7 +179,7 @@ function onSelect(e) {
 }
 
 const getCurrentFieldName = (newValue) => {
-  const found = selectedOptions.value.find(
+  const found = options.value.find(
     (item) => String(item.value) === String(newValue),
   );
   if (!found) return;

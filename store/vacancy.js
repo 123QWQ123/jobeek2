@@ -1,5 +1,6 @@
 // no need to import defineStore and acceptHMRUpdate
 import useApi from "~/hooks/useApi";
+import { useAuthStore } from "~/store/auth.js";
 
 export const useVacancyStore = defineStore("vacancy", {
   state: () => {
@@ -138,18 +139,22 @@ export const useVacancyStore = defineStore("vacancy", {
   },
   actions: {
     async getConnectedEmployerProviders() {
+      const { isEmployer } = storeToRefs(useAuthStore());
       if (this.providers.hh && this.providers.superjob) {
         return this.providers;
       }
-      const response = await useApi("employer/used_providers", {
-        method: "get",
-        params: {},
-      });
 
-      if ("data" in response) {
-        this.providers = response.data.data;
+      if (isEmployer.value) {
+        const response = await useApi("employer/used_providers", {
+          method: "get",
+          params: {},
+        });
+
+        if ("data" in response) {
+          this.providers = response.data.data;
+        }
+        return this.providers;
       }
-      return this.providers;
     },
     async importVacancies() {
       const payload = [];

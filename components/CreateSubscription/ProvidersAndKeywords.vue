@@ -7,7 +7,7 @@
           <input
             type="checkbox"
             value="hh"
-            v-model="providers"
+            v-model="providersValues"
             @change="changeProviders"
           />
           <div class="theme-checker-ui">
@@ -25,7 +25,7 @@
           <input
             type="checkbox"
             value="sj"
-            v-model="providers"
+            v-model="providersValues"
             @change="changeProviders"
           />
           <div class="theme-checker-ui">
@@ -47,6 +47,9 @@
     <label for="search-words">Что искать</label>
     <div class="input-wrapper">
       <input type="text" name="search_words" @input="searchWordsInput" />
+      <div class="text-danger row">
+        <ErrorMessage name="text" />
+      </div>
       <div class="prompt">
         Слова через запятую: найдутся вакансии, где встречается хотя бы одно из
         указанных слов. Слова через пробел: найдутся вакансии, где встречаются
@@ -79,8 +82,15 @@
 <script setup>
 import { useSetFormValues } from "vee-validate";
 
-const providers = ref([]);
+let { providers } = defineProps({
+  providers: {
+    required: false,
+    default: null,
+  },
+});
+
 const setFormValues = useSetFormValues();
+const providersValues = useFieldValue("providers");
 const excludeWordsInput = (event) => {
   // setFormValues({ exclude_words: event.target.value });
 };
@@ -89,7 +99,7 @@ const searchWordsInput = (event) => {
 };
 
 const changeProviders = () => {
-  setFormValues({ providers: providers.value });
+  setFormValues({ providers: providers });
 };
 </script>
 

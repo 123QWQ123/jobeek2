@@ -1,21 +1,20 @@
 <template>
   <div class="layout">
-    <HeaderTheGuestCabinetHeader />
+    <client-only>
+      <HeaderTheGuestCabinetHeader v-if="isShow()" />
+    </client-only>
     <div>
-      <slot/>
+      <slot />
     </div>
-    <!--       <template #error="{ error }">-->
-    <!--        <div>-->
-    <!--          <p>-->
-    <!--            Oh no, something broke when loading the lesson!-->
-    <!--            <code>{{ error }}</code>-->
-    <!--          </p>-->
-    <!--          <p>-->
-    <!--            <NuxtLink class="hover:cursor-pointer" to="/"> Go to / </NuxtLink>-->
-    <!--          </p>-->
-    <!--        </div>-->
-    <!--      </template>-->
     <the-footer />
   </div>
 </template>
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const route = useRoute();
+const isShow = () => {
+  const exclude = ["sign-in", "sign-up"];
+  if (typeof route.name === "string") {
+    return !exclude.includes(route.name);
+  }
+};
+</script>

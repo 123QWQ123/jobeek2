@@ -102,7 +102,6 @@ const { getUser } = profileStore;
 const { refreshSeeker } = useAuthStore();
 const { getCityNameFromArea2 } = useResumeHooks();
 
-const isCityLoading = ref(false);
 const { countryOptions } = storeToRefs(profileStore);
 
 const cityError = ref("");

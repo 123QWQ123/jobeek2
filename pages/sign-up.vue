@@ -4,9 +4,6 @@ import IMask from "imask";
 import { useAuthStore } from "~~/store/auth";
 import { ref } from "vue";
 
-definePageMeta({
-  layout: "custom",
-});
 useHead({
   title: "Регистрация",
 });

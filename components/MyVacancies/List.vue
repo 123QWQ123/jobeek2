@@ -9,8 +9,8 @@
         <strong class="title">Подключите премиум</strong>
         <p>
           У вас есть лимит на создание вакансий:
-          {{ can_create_vacancy_count }} штук. Чтобы создавать
-          неограниченное количество вакансий, подключите премиум-подписку
+          {{ can_create_vacancy_count }} шт. Чтобы создавать неограниченное
+          количество вакансий, подключите премиум-подписку
         </p>
       </div>
     </div>
@@ -125,7 +125,7 @@ const providerOptions = ref([
   { value: "superjob", name: "Superjob" },
 ]);
 
-const { can_create_vacancy_count, current_page, my_total } = storeToRefs(vacancyStore);
+const { can_create_vacancy_count, current_page } = storeToRefs(vacancyStore);
 
 const form = ref(useMyVacancyForm());
 
