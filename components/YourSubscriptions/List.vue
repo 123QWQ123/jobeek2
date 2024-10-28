@@ -7,7 +7,7 @@
         :notification="notification"
       ></YourSubscriptionsListItem>
     </ul>
-    <NuxtLink class="create-button" :to="{ name: 'create-subscription' }"
+    <NuxtLink class="create-button" :to="{ name: 'subscriptions-create' }"
       >Создать подписку</NuxtLink
     >
   </div>

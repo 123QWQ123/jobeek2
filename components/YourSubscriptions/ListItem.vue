@@ -7,30 +7,37 @@
           ><span class="location">Омск</span>
         </div>
         <div class="subs-card-actions">
-          <button class="card-action">
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 28 28"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M4.02539 23.9749H23.9754"
-                stroke="#5375FD"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M14.2462 7.15927L19.7324 12.6455M14.2462 7.15927L17.3806 4.0249L22.8668 9.51115L19.7324 12.6455L14.2462 7.15927ZM14.2462 7.15927L8.03177 13.3737C7.82391 13.5815 7.70709 13.8634 7.70703 14.1573V19.1847H12.7344C13.0284 19.1846 13.3102 19.0678 13.518 18.8599L19.7324 12.6455L14.2462 7.15927Z"
-                stroke="#5375FD"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </button>
+          <nuxt-link
+            :to="{
+              name: 'subscriptions-edit-id',
+              params: { id: notification.id },
+            }"
+          >
+            <button class="card-action">
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 28 28"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M4.02539 23.9749H23.9754"
+                  stroke="#5375FD"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M14.2462 7.15927L19.7324 12.6455M14.2462 7.15927L17.3806 4.0249L22.8668 9.51115L19.7324 12.6455L14.2462 7.15927ZM14.2462 7.15927L8.03177 13.3737C7.82391 13.5815 7.70709 13.8634 7.70703 14.1573V19.1847H12.7344C13.0284 19.1846 13.3102 19.0678 13.518 18.8599L19.7324 12.6455L14.2462 7.15927Z"
+                  stroke="#5375FD"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </nuxt-link>
           <button class="card-action">
             <svg
               width="25"

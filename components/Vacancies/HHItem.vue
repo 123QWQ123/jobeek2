@@ -4,7 +4,7 @@
       <div class="favorites-card-head">
         <div class="company">
           <div class="company-logo">
-            <img class="w-100" :src="employerLogo" :alt="item.company" />
+            <img class="w-100 h-100" :src="employerLogo" :alt="item.company" />
           </div>
           <div class="company-name">
             <NuxtLink

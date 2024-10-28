@@ -9,6 +9,7 @@
             type="number"
             id="salary_from"
             name="salary_from"
+            :value="values.salary.from"
             @input="salaryFrom"
           />
           <div class="text-danger">
@@ -23,6 +24,7 @@
             type="number"
             id="salary_to"
             name="salary_to"
+            :value="values.salary.to"
             @input="salaryTo"
           />
           <div class="text-danger">
@@ -35,9 +37,10 @@
 </template>
 
 <script setup>
-import { useSetFormValues, useFormErrors } from "vee-validate";
+import { useSetFormValues, useFormErrors, useFormValues } from "vee-validate";
 
 const setFormValues = useSetFormValues();
+const values = useFormValues();
 
 const errors = useFormErrors();
 const salaryFrom = (event) => {

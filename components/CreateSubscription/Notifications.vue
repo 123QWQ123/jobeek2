@@ -9,6 +9,7 @@
             id="push_notification"
             name="push_notification"
             @change="toggle"
+            :checked="values.push_notification"
           />
           <div class="text-danger">
             <ErrorMessage name="push_notification" />
@@ -26,6 +27,7 @@
             id="email_notification"
             name="email_notification"
             @change="toggle"
+            :checked="values.email_notification"
           />
           <div class="text-danger">
             <ErrorMessage name="email_notification" />
@@ -44,9 +46,10 @@
 </template>
 
 <script setup>
-import { useSetFormValues } from "vee-validate";
+import { useFormValues, useSetFormValues } from "vee-validate";
 
 const setFormValues = useSetFormValues();
+const values = useFormValues();
 
 const toggle = (event) => {
   let obj = {};

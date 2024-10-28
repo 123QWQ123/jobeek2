@@ -21,12 +21,6 @@
         <div class="aside-container">
           <BlockLoader class="position-fixed" v-if="isLoading" />
           <VacanciesFilters></VacanciesFilters>
-          <!--          {{-->
-          <!--            vacancyStore.industries_formatted_for_filter.map((item) => ({-->
-          <!--              id: item.id,-->
-          <!--              title: item.title,-->
-          <!--            }))-->
-          <!--          }}-->
 
           <VacanciesList :key="$route.fullPath"></VacanciesList>
         </div>
@@ -37,13 +31,8 @@
 
 <script setup>
 import { useVacancyStore } from "~/store/vacancy";
-import { useCurrencyOptions } from "~/composables/useCurrencyOptions";
-import { useSortingOptions } from "~/composables/useSortingOptions";
 import { useVacancyForm } from "~/composables/useVacancyForm";
-import { navigateTo } from "nuxt/app";
-import { useDictionaryStore } from "~/store/dictionary";
 import { useUIStore } from "~/store/ui";
-
 import { useNuxtApp } from "#app";
 import useQueryParams from "~/composables/useQueryParams.js";
 import { useResumeStore } from "~/store/resume.js";
@@ -56,6 +45,7 @@ const total = ref($format_number(vacancyStore.total) ?? 0);
 const { getMyResumes } = useResumeStore();
 const { getVacancies } = vacancyStore;
 const { getCurrentQueryParams } = useQueryParams();
+const isLoading = ref(false);
 
 onBeforeMount(async () => {
   isLoading.value = true;
@@ -75,8 +65,6 @@ const route = useRoute();
 const { name: search_keyword } = route.query;
 
 const form = ref(useVacancyForm());
-
-const isLoading = ref(false);
 
 watch(
   () => ({ ...getCurrentQueryParams() }),
