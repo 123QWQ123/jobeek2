@@ -1,49 +1,42 @@
 <template>
-  <section class="companies-section section wrapper">
+  <section
+    v-if="topVacancies.length > 0"
+    class="companies-section section wrapper"
+  >
     <div class="section-head">
-      <h2 class="section-title"> Работайте у лучших</h2>
+      <h2 class="section-title">Работайте у лучших</h2>
     </div>
     <ul class="companies-list">
-      <li> <a class="company company-card" href="#">
-        <div class="company-logo"><img src="~/assets/img/logos/megafon.svg" alt="#"></div>
-        <div class="company-name"> <strong>Мегафон</strong><span class="count">21 142
-                                    вакансии</span></div>
-      </a></li>
-      <li> <a class="company company-card" href="#">
-        <div class="company-logo"><img src="~/assets/img/logos/logo1.svg" alt="#"></div>
-        <div class="company-name"> <strong>Мегафон</strong><span class="count">21 142
-                                    вакансии</span></div>
-      </a></li>
-      <li> <a class="company company-card" href="#">
-        <div class="company-logo"><img src="~/assets/img/logos/logo2.svg" alt="#"></div>
-        <div class="company-name"> <strong>Мегафон</strong><span class="count">21 142
-                                    вакансии</span></div>
-      </a></li>
-      <li> <a class="company company-card" href="#">
-        <div class="company-logo"><img src="~/assets/img/logos/logo3.svg" alt="#"></div>
-        <div class="company-name"> <strong>Мегафон</strong><span class="count">21 142
-                                    вакансии</span></div>
-      </a></li>
-      <li> <a class="company company-card" href="#">
-        <div class="company-logo"><img src="~/assets/img/logos/logo4.svg" alt="#"></div>
-        <div class="company-name"> <strong>Мегафон</strong><span class="count">21 142
-                                    вакансии</span></div>
-      </a></li>
-      <li> <a class="company company-card" href="#">
-        <div class="company-logo"><img src="~/assets/img/logos/logo5.svg" alt="#"></div>
-        <div class="company-name"> <strong>Мегафон</strong><span class="count">21 142
-                                    вакансии</span></div>
-      </a></li>
-      <li> <a class="company company-card" href="#">
-        <div class="company-logo"><img src="~/assets/img/logos/logo6.svg" alt="#"></div>
-        <div class="company-name"> <strong>Мегафон</strong><span class="count">21 142
-                                    вакансии</span></div>
-      </a></li>
-      <li> <a class="company company-card" href="#">
-        <div class="company-logo"><img src="~/assets/img/logos/logo7.svg" alt="#"></div>
-        <div class="company-name"> <strong>Мегафон</strong><span class="count">21 142 вакансии
-                                </span></div>
-      </a></li>
+      <li v-for="vacancy in topVacancies" :key="vacancy.id">
+        <nuxt-link
+          class="company company-card"
+          :to="{
+            name: 'search-vacancies',
+            query: { search: vacancy.name },
+          }"
+        >
+          <div class="company-logo">
+            <img :src="`~/assets/img/logos/${vacancy.logo}.svg`" alt="#" />
+          </div>
+          <div class="company-name">
+            <strong>{{ vacancy.name }}</strong
+            ><span class="count">{{ vacancy.open_vacancies }} вакансии</span>
+          </div>
+        </nuxt-link>
+      </li>
     </ul>
   </section>
 </template>
+<script setup>
+import { useVacancyStore } from "~/store/vacancy.js";
+
+const { getVacanciesInTopCompanies } = useVacancyStore();
+const topVacancies = ref([]);
+const isLoading = ref(false);
+
+onMounted(async () => {
+  isLoading.value = true;
+  topVacancies.value = await getVacanciesInTopCompanies();
+  isLoading.value = false;
+});
+</script>

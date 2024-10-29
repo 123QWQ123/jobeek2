@@ -8,6 +8,7 @@ export const useVacancyStore = defineStore("vacancy", {
       vacancies: [],
       vacancies_in_my_city: [],
       vacancies_in_moscow: [],
+      vacancies_in_top_companies: [],
       vacancy: null,
       my_vacancy: null,
       total: 0,
@@ -246,6 +247,13 @@ export const useVacancyStore = defineStore("vacancy", {
         this.vacancies_in_moscow = this.vacancies.concat(response.data.items);
       }
       return this.vacancies_in_moscow;
+    },
+    async getVacanciesInTopCompanies() {
+      const response = await useApi("getTopCompanies", { method: "get" });
+      if (response.status === "success") {
+        this.vacancies_in_top_companies = response.data;
+      }
+      return this.vacancies_in_top_companies;
     },
     async getCurrencyCityVacancies(payload) {
       if (this.vacancies_in_my_city.length > 0) {

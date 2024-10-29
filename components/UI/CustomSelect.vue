@@ -17,7 +17,7 @@
           :data-value="item.value"
           class="option"
         >
-          {{ item.name }}
+          {{ item.name }} <span v-if="!isNullOrUndefined(item.min)">₽</span>
         </li>
       </ul>
     </transition>
@@ -31,6 +31,8 @@ export default {
 </script>
 
 <script setup>
+import { isNullOrUndefined } from "@tinymce/tinymce-vue/lib/es2015/main/ts/Utils.js";
+
 const props = defineProps({
   options: {
     default: [],

@@ -15,17 +15,6 @@ import { useAuthStore } from "~/store/auth";
 import { useVacancyStore } from "~/store/vacancy";
 import { useResumeStore } from "~/store/resume";
 
-definePageMeta({
-  middleware: [
-    function (to, from, next) {
-      to.meta.name = "viewport";
-      to.meta.content =
-        "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0";
-      return;
-    },
-  ],
-});
-
 const { getConnectedEmployerProviders } = useVacancyStore();
 const { getConnectedSeekerProviders } = useResumeStore();
 const vacancyStore = useVacancyStore();
