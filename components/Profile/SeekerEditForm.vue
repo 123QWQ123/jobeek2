@@ -95,6 +95,7 @@ import useResumeHooks from "~/hooks/useResumeHooks.js";
 import { toTypedSchema } from "@vee-validate/zod";
 import avatar from "~/assets/img/jobeek-avatar.png";
 import { zod } from "~/hooks/ru-zod.js";
+import { isNullOrUndefined } from "@tinymce/tinymce-vue/lib/es2015/main/ts/Utils.js";
 
 const profileStore = useProfileStore();
 const { getUser } = profileStore;
@@ -264,10 +265,7 @@ const handleSubmit = async (e) => {
   isLoading.value = false;
   if (resData.status !== "success") {
     errorMessage.value = resData.message;
-    //todo  убрать это дебильное сравнение по тексту
-    if (
-      resData.message === "требуется создать Пароль при первом входе в систему!"
-    ) {
+    if (!isNullOrUndefined(resData.message)) {
       setErrors({ password: resData.message });
     }
     if (resData.hasOwnProperty("errors") && resData.errors) {
