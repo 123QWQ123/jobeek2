@@ -16,7 +16,7 @@
           }"
         >
           <div class="company-logo">
-            <img :src="`~/assets/img/logos/${vacancy.logo}.svg`" alt="#" />
+            <img :src="vacancy.logo" alt="#" />
           </div>
           <div class="company-name">
             <strong>{{ vacancy.name }}</strong

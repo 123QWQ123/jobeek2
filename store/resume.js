@@ -39,7 +39,7 @@ export const useResumeStore = defineStore("resume", {
   },
   persist: {
     storage: persistedState.cookiesWithOptions({
-      sameSite: 'lax',
+      sameSite: "lax",
       maxAge: 72000000,
     }),
   },
@@ -88,12 +88,7 @@ export const useResumeStore = defineStore("resume", {
       return data;
     },
     async syncResumes() {
-      const { data } = await useApi("seeker/resumes/sync", {
-        method: "get",
-        params: {
-          providers: ["hh", "superjob"],
-        },
-      });
+      const { data } = await useApi("seeker/resumes/sync", { method: "get" });
 
       return data;
     },
@@ -160,7 +155,7 @@ export const useResumeStore = defineStore("resume", {
     async getUserResumes(payload) {
       return useApi("seeker/resumes", {
         method: "get",
-        payload,
+        params: payload,
       });
     },
     async getMyResumes(payload) {
@@ -271,9 +266,9 @@ export const useResumeStore = defineStore("resume", {
       this.resumes = [];
     },
     async getMyFavoriteResumes(payload) {
-      const response = await useApi("employer/favorites", {
+      const response = await useApi("employer/resumes/favorites", {
         method: "get",
-        payload,
+        params: payload,
       });
       if (response.status === "success") {
         this.my_favorite_resumes = response.data.data;
@@ -375,7 +370,7 @@ export const useResumeStore = defineStore("resume", {
     },
 
     async addToFavorite(payload) {
-      const response = await useApi("employer/resume/favorite", {
+      const response = await useApi("employer/resumes/favorites", {
         method: "post",
         payload,
       });
@@ -416,7 +411,7 @@ export const useResumeStore = defineStore("resume", {
     },
 
     async removeFromFavorite(id) {
-      const response = await useApi("employer/resume/favorite/" + id, {
+      const response = await useApi("employer/resumes/favorites/" + id, {
         method: "delete",
       });
       if (response.status === "success") {
