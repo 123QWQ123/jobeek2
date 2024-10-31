@@ -1687,8 +1687,7 @@ header.main-header .checker-box .v.active:after {
 
 .search-row {
     display: grid;
-    grid-template-columns: 34.17% 18.56% 1fr 1fr 170px;
-    border: 1px solid #CBCBCB;
+    grid-template-columns: 34.17% 18.56% 1fr 170px;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     border-radius: 10px 10px 10px 10px;
@@ -1698,6 +1697,16 @@ header.main-header .checker-box .v.active:after {
 .search-row .input-wrap {
     height: 100%;
     border-right: 1px solid #CBCBCB;
+    border-top: 1px solid #CBCBCB;
+    border-bottom: 1px solid #CBCBCB;
+}
+
+.search-row .input-wrap:first-child {
+    border-left: 1px solid #CBCBCB;
+}
+
+.search-row .input-wrap:nth-child(3) {
+	border-right: 0 !important;
 }
 
 .search-row .input-wrap.has-icon input {
