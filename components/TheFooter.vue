@@ -6,47 +6,51 @@
       /></NuxtLink>
       <div class="footer-navigation navigation" role="navigation">
         <div class="col">
-          <h5 class="col-title">Работодателям</h5>
-          <ul>
-            <li>
-              <NuxtLink :to="{ name: 'create-vacancy' }"
-                >Создать вакансию
-              </NuxtLink>
-            </li>
-            <li>
-              <NuxtLink :to="{ name: 'search-resumes' }"
-                >Поиск соотрудников
-              </NuxtLink>
-            </li>
-            <li>
-              <NuxtLink :to="{ name: 'advice' }">Советы</NuxtLink>
-            </li>
-          </ul>
+          <div v-if="isAuthed">
+            <h5 class="col-title">Работодателям</h5>
+            <ul>
+              <li>
+                <NuxtLink :to="{ name: 'create-vacancy' }"
+                  >Создать вакансию
+                </NuxtLink>
+              </li>
+              <li>
+                <NuxtLink :to="{ name: 'search-resumes' }"
+                  >Поиск соотрудников
+                </NuxtLink>
+              </li>
+              <li>
+                <NuxtLink :to="{ name: 'advice' }">Советы</NuxtLink>
+              </li>
+            </ul>
+          </div>
         </div>
 
         <div class="col">
-          <h5 class="col-title">Соискателям</h5>
-          <ul>
-            <li>
-              <NuxtLink :to="{ name: 'create-vacancy' }"
-                >Создать резюме
-              </NuxtLink>
-            </li>
-            <li>
-              <NuxtLink :to="{ name: 'search-vacancies' }"
-                >Поиск работы
-              </NuxtLink>
-            </li>
-            <li>
-              <NuxtLink :to="{ name: 'advice' }">Советы</NuxtLink>
-            </li>
-          </ul>
+          <div v-if="isAuthed">
+            <h5 class="col-title">Соискателям</h5>
+            <ul>
+              <li>
+                <NuxtLink :to="{ name: 'create-vacancy' }"
+                  >Создать резюме
+                </NuxtLink>
+              </li>
+              <li>
+                <NuxtLink :to="{ name: 'search-vacancies' }"
+                  >Поиск работы
+                </NuxtLink>
+              </li>
+              <li>
+                <NuxtLink :to="{ name: 'advice' }">Советы</NuxtLink>
+              </li>
+            </ul>
+          </div>
         </div>
 
         <div class="col">
           <h5 class="col-title">Информация</h5>
           <ul>
-            <li>
+            <li v-if="isAuthed">
               <NuxtLink :to="{ name: 'profile' }">Личный кабинет</NuxtLink>
             </li>
             <li>
@@ -57,7 +61,7 @@
                 >Пользовательское соглашение</a
               >
             </li>
-            <li>
+            <li v-if="isAuthed">
               <a href="https://reg.jobeek.me/default-jobeek/control"
                 >Отмена премиума</a
               >
@@ -81,7 +85,9 @@
 
 <script setup>
 import { useUIStore } from "~/store/ui.js";
+import { useAuthStore } from "~/store/auth";
 
+const { isAuthed } = storeToRefs(useAuthStore());
 const uiStore = useUIStore();
 const { getFooterSettings } = uiStore;
 await getFooterSettings();
