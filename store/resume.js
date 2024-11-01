@@ -289,9 +289,12 @@ export const useResumeStore = defineStore("resume", {
       return data;
     },
     async getCities(payload = {}) {
+      if (!payload.search) {
+        return [];
+      }
       const { data } = await useApi("area/cities", {
         method: "get",
-        payload,
+        params: payload,
       });
       if (data) {
         this.cities = data.data.cities;
