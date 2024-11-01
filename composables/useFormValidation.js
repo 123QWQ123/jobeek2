@@ -60,12 +60,12 @@ export default function useFormValidation(state = null) {
               );
               const keys = itemMatch[0].split(".");
               if (!newErrors[keys[0]]) newErrors[keys[0]] = {};
-              if ((!newErrors[keys[0]]) instanceof Object)
+              if (!(newErrors[keys[0]] instanceof Object))
                 newErrors[keys[0]] = {};
               if (!newErrors[keys[0]][keys[1]])
                 newErrors[keys[0]][keys[1]] = {};
 
-              if ((!newErrors[keys[0]][keys[1]]) instanceof Object)
+              if (!(newErrors[keys[0]][keys[1]] instanceof Object))
                 newErrors[keys[0]][keys[1]] = {};
               newErrors[keys[0]][keys[1]][keys[2]] = response.errors[item][0];
             } else {

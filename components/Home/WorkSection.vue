@@ -98,10 +98,7 @@ const auth = storeToRefs(useAuthStore());
 
 onMounted(async () => {
   isLoading.value = true;
-  const resData = await getVacanciesInMoscow({
-    countries: [1],
-    region_ids: [22],
-  });
+  const resData = await getVacanciesInMoscow();
   isLoading.value = false;
   isInitialized.value = true;
   if (resData.status !== "success") {

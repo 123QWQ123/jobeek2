@@ -241,7 +241,10 @@ export const useVacancyStore = defineStore("vacancy", {
     async getVacanciesInMoscow(payload, is_new = false) {
       const response = await useApi("vacancies/search", {
         method: "get",
-        params: payload,
+        params: {
+          countries: [1],
+          region_ids: [22],
+        },
       });
       if (response.status === "success") {
         this.vacancies_in_moscow = this.vacancies.concat(response.data.items);
@@ -462,6 +465,9 @@ export const useVacancyStore = defineStore("vacancy", {
       return data;
     },
     async getCities(payload = {}) {
+      if (!payload.search) {
+        return [];
+      }
       const { data } = await useApi("area/cities", {
         method: "get",
         params: payload,
