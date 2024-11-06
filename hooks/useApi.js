@@ -1,6 +1,7 @@
 import axios from "axios";
 import https from "node:https";
 import { useAuthStore } from "~/store/auth";
+import { useSetFormErrors } from "vee-validate";
 // import Swal from "sweetalert2";
 
 const useApi = async (method, options = {}) => {
@@ -74,6 +75,10 @@ const useApi = async (method, options = {}) => {
                 //   confirmButtonText: "ОК",
                 // });
                 useNuxtApp().$toast.error(res.message, { autoClose: 10000 });
+                if (res.errors) {
+                  const setFormErrors = useSetFormErrors();
+                  setFormErrors(res.errors);
+                }
               } else {
                 // Swal.fire({
                 //   text: res.message,

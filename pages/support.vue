@@ -2,20 +2,19 @@
 import Swal from "sweetalert2";
 
 definePageMeta({
-  layout: 'default',
+  layout: "default",
 });
 
 useHead({
   title: "Обратная связь",
-})
+});
 
 import { useAuthStore } from "~~/store/auth";
 import IMask from "imask";
-import {useProfileStore} from "../store/profile";
+import { useProfileStore } from "../store/profile";
 
 const auth = useAuthStore();
 const isAuthed = computed(() => auth.isAuthed);
-const { signIn } = auth;
 const router = useRouter();
 
 const initialState = {
@@ -44,7 +43,6 @@ function clearValidity(input) {
 }
 
 function validateForm() {
-
   if (state.email.val === "") {
     state.email.isValid = false;
     state.isFormValid = false;
@@ -61,19 +59,17 @@ function validateForm() {
 
 function resetForm() {
   for (const [key, value] of Object.entries(state)) {
-    if (value && value.val)
-      state[key] = value.val;
-    else
-      state[key] = value;
+    if (value && value.val) state[key] = value.val;
+    else state[key] = value;
   }
 
-  phoneMask.value.unmaskedValue = '';
+  phoneMask.value.unmaskedValue = "";
 }
 
 const route = useRoute();
 
 const profileStore = useProfileStore();
-const {sendMessage} = profileStore;
+const { sendMessage } = profileStore;
 async function onSubmit() {
   validateForm();
   if (state.isFormValid) {
@@ -82,46 +78,48 @@ async function onSubmit() {
       phone: phoneMask.value.unmaskedValue,
       message: state.message.val,
     });
-    if (response.status === 'success'){
+    if (response.status === "success") {
       Swal.fire({
-        title: 'Успешно!',
+        title: "Успешно!",
         text: response.message,
         icon: "success",
-        confirmButtonText: 'ОК'
+        confirmButtonText: "ОК",
       });
       resetForm();
-    }else{
+    } else {
       Swal.fire({
-        title: 'Ошибка!',
+        title: "Ошибка!",
         text: response.message,
         icon: "error",
-        confirmButtonText: 'ОК'
+        confirmButtonText: "ОК",
       });
       return;
     }
 
-    if (response.status === 'error' && response.message) {
+    if (response.status === "error" && response.message) {
       Swal.fire({
-        title: 'Ошибка!',
+        title: "Ошибка!",
         text: response.message,
         icon: "error",
-        confirmButtonText: 'ОК'
+        confirmButtonText: "ОК",
       });
       return;
     }
   }
-
 }
 
 const phoneInputElement = ref();
 const phoneMask = ref(null);
-onMounted(( ) => {
+onMounted(() => {
   phoneMask.value = new IMask(phoneInputElement.value, {
     mask: "+{7}(000)000-00-00",
   });
-  phoneInputElement.value.addEventListener("input", (e) => state.phone.val = e.target.value);
-})
-function close(){
+  phoneInputElement.value.addEventListener(
+    "input",
+    (e) => (state.phone.val = e.target.value),
+  );
+});
+function close() {
   state.error = null;
   state.success = null;
 }
@@ -134,23 +132,49 @@ function close(){
     </base-modal>
     <main class="main enter-page sign-in" role="main">
       <div class="support-page">
-        <img alt="#" src="https://jobeek.me/assets/img/Frame2.svg" class="auth-bg-1">
-        <img alt="#" src="https://jobeek.me/assets/img/ft-bg-img.png" class="auth-bg-2">
+        <img
+          alt="#"
+          src="https://jobeek.me/assets/img/Frame2.svg"
+          class="auth-bg-1"
+        />
+        <img
+          alt="#"
+          src="https://jobeek.me/assets/img/ft-bg-img.png"
+          class="auth-bg-2"
+        />
         <div class="wrapper">
           <form class="support-form enter-form" @submit.prevent="onSubmit">
             <h1>Обратная связь</h1>
-            <p>По всем вопросам обращайтесь на <a href="#">support@hphelp.me</a>, или воспользуйтесь формой</p>
+            <p>
+              По всем вопросам обращайтесь на <a href="#">support@hphelp.me</a>,
+              или воспользуйтесь формой
+            </p>
             <div class="i-wrap">
-              <input type="text" name="email" v-model="state.email.val" placeholder="Email">
+              <input
+                type="text"
+                name="email"
+                v-model="state.email.val"
+                placeholder="Email"
+              />
             </div>
-            <div class="note"> <img src="~/assets/img/svg/i.svg" alt="#">
+            <div class="note">
+              <img src="~/assets/img/svg/i.svg" alt="#" />
               <p>Нужен для того что-бы мы смогли ответить вам.</p>
             </div>
             <div class="i-wrap">
-              <input type="tel" ref="phoneInputElement" name="tel" placeholder="Номер телефона">
+              <input
+                type="tel"
+                ref="phoneInputElement"
+                name="tel"
+                placeholder="Номер телефона"
+              />
             </div>
             <div class="i-wrap">
-              <textarea name="problem" v-model="state.message.val" placeholder="Опишите суть проблемы:"></textarea>
+              <textarea
+                name="problem"
+                v-model="state.message.val"
+                placeholder="Опишите суть проблемы:"
+              ></textarea>
             </div>
             <button class="btn button-accent" type="submit">Отправить</button>
           </form>

@@ -115,14 +115,12 @@ export const useAuthStore = defineStore("auth", {
       }
     },
     async recoverPasswordCode(payload) {
-      const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + "auth/check-reset-password-code";
       try {
-        const response = await axios.post(url, payload, {
-          headers: {
-            "Content-Type": "application/json",
-          },
+        const response = await useApi("auth/check-reset-password-code", {
+          method: "post",
+          payload,
         });
+
         return {
           status: "success",
           data: response.data.data,
@@ -141,14 +139,12 @@ export const useAuthStore = defineStore("auth", {
       }
     },
     async resetPassword(payload) {
-      const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + "auth/reset-password";
       try {
-        const response = await axios.post(url, payload, {
-          headers: {
-            "Content-Type": "application/json",
-          },
+        const response = await useApi("auth/reset-password", {
+          method: "post",
+          payload,
         });
+
         return {
           status: "success",
           data: response.data.data,
@@ -235,24 +231,21 @@ export const useAuthStore = defineStore("auth", {
 
     async signIn(payload) {
       try {
-        const { data: data, status } = await useApi("auth/login", {
+        const response = await useApi("auth/login", {
           method: "post",
           payload: payload,
         });
-        if (status === "success") {
-          this.tokenAuth = data.data.token;
-          this.tokenType = data.data.token_type;
-          this.expiresAt = data.data.expires_at;
+        if (response.data.status === "success") {
+          this.tokenAuth = response.data.data.token;
+          this.tokenType = response.data.data.token_type;
+          this.expiresAt = response.data.data.expires_at;
           // this.persist.maxAge = res.data.ttl;
-          this.user = data.data.user;
-          this.seeker = data.data.user.seeker;
-          this.employer = data.data.user.employer;
+          this.user = response.data.data.user;
+          this.seeker = response.data.data.user.seeker;
+          this.employer = response.data.data.user.employer;
           this.isAuthed = true;
         }
-        return {
-          status: "success",
-          data: this.user,
-        };
+        return response.data;
       } catch (error) {
         if (error.response && "data" in error.response) {
           if ("errors" in error.response.data) {
@@ -274,15 +267,15 @@ export const useAuthStore = defineStore("auth", {
         };
       }
     },
-    // async setFcmToken() {
-    //   const token = await useFcm().getToken();
-    //   const { data } = await useApi("fcm/setToken", {
-    //     method: "post",
-    //     payload: {
-    //       fcm_token: token,
-    //     },
-    //   });
-    // },
+    async setFcmToken() {
+      const token = await useFcm().getToken();
+      const { data } = await useApi("fcm/setToken", {
+        method: "post",
+        payload: {
+          fcm_token: token,
+        },
+      });
+    },
     logout() {
       this.$reset();
       navigateTo("/");

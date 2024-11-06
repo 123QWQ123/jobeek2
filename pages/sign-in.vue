@@ -68,9 +68,6 @@ function validateForm() {
 }
 
 const route = useRoute();
-
-const { getConnectedEmployerProviders } = vacancyStore;
-const { getConnectedSeekerProviders } = resumeStore;
 const isLoading = ref(false);
 
 async function onSubmit() {
@@ -83,7 +80,6 @@ async function onSubmit() {
         phone: phoneMask.value.unmaskedValue,
         password: state.password.val,
       });
-      await setFcmToken();
     } catch (error) {
       state.error = error.message;
     }
@@ -91,6 +87,7 @@ async function onSubmit() {
     if (response.status !== "success") {
       return;
     }
+    await setFcmToken();
 
     if (auth.isEmployer) {
       await refreshEmployer();
