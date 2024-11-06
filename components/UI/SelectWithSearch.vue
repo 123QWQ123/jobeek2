@@ -2,8 +2,9 @@
   <div
     class="nice-select n-select d-select"
     :class="{ open: isOpen }"
-    v-click-outside="() => (isOpen = false)"
+    v-click-outside="close"
     tabindex="0"
+    @click.prevent="onFocus"
   >
     <input
       class="current"

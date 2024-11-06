@@ -230,11 +230,13 @@ export const useProfileStore = defineStore("profile", {
       return [];
     },
     async getUser(payload = "") {
-      const { isEmployer } = useAuthStore();
-      if (isEmployer) {
-        return this.getEmployer("employer/profile");
-      } else {
-        return this.getSeeker("seeker/profile");
+      const { isEmployer, isAuthed } = storeToRefs(useAuthStore());
+      if (isAuthed) {
+        if (isEmployer) {
+          return this.getEmployer("employer/profile");
+        } else {
+          return this.getSeeker("seeker/profile");
+        }
       }
     },
     async getSeeker(url = "") {

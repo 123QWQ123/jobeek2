@@ -40,7 +40,7 @@
       <BlockLoader />
     </div>
     <div v-else>
-      <div v-if="isInitialized">
+      <div>
         <swiper
           slides-per-view="auto"
           :space-between="20"
@@ -52,7 +52,11 @@
               <div class="vacancy-card-body">
                 <div class="company">
                   <div class="company-logo">
-                    <img src="~/assets/img/logos/megafon.svg" alt="#" />
+                    <img
+                      class="h-100 w-100"
+                      :src="logo(item)"
+                      :alt="item.name"
+                    />
                   </div>
                   <div class="company-name">
                     <strong>{{ item.company }}</strong>
@@ -108,6 +112,15 @@ const { getCurrencyCityVacancies } = vacancyStore;
 const { getLocation } = areaStore;
 const isLoading = ref(false);
 const noVacancyFoundMessage = ref();
+/**
+ * Get logo url
+ * @param item Object
+ * @returns {module:url.URL}
+ */
+const logo = (item) =>
+  item.logo ||
+  new URL(`/assets/img/logos/${item.provider}.svg`, import.meta.url);
+
 onMounted(async () => {
   // my transition page is 300, when TIMEOUT set to 300 is not work. so must larger than transition page
 
