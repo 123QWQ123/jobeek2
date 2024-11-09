@@ -85,10 +85,9 @@ export const useAuthStore = defineStore("auth", {
       const CONFIG = useRuntimeConfig();
       let url = CONFIG.public.apiBase + "auth/forgot-password";
       try {
-        const response = await axios.post(url, payload, {
-          headers: {
-            "Content-Type": "application/json",
-          },
+        const response = await useApi("auth/forgot-password", {
+          method: "post",
+          payload,
         });
         if ("data" in response) {
           return {

@@ -68,22 +68,12 @@ const useApi = async (method, options = {}) => {
 
             if (data && res.message) {
               if (res.status && res.status !== "success") {
-                // Swal.fire({
-                //   title: "Ошибка!",
-                //   text: res.message ?? "Неизвестная ошибка!",
-                //   icon: "error",
-                //   confirmButtonText: "ОК",
-                // });
                 useNuxtApp().$toast.error(res.message, { autoClose: 10000 });
                 if (res.errors) {
                   const setFormErrors = useSetFormErrors();
                   setFormErrors(res.errors);
                 }
               } else {
-                // Swal.fire({
-                //   text: res.message,
-                //   icon: "info",
-                // });
                 useNuxtApp().$toast.info(res.message, { autoClose: 10000 });
               }
             }
