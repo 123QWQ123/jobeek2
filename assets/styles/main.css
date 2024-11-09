@@ -1694,18 +1694,18 @@ header.main-header .checker-box .v.active:after {
     min-height: 56px;
 }
 
-.search-row .input-wrap {
+.main-section .search-row .input-wrap {
     height: 100%;
     border-right: 1px solid #CBCBCB;
     border-top: 1px solid #CBCBCB;
     border-bottom: 1px solid #CBCBCB;
 }
 
-.search-row .input-wrap:first-child {
+.main-section .search-row .input-wrap:first-child {
     border-left: 1px solid #CBCBCB;
 }
 
-.search-row .input-wrap:nth-child(3) {
+.main-section .search-row .input-wrap:nth-child(3) {
 	border-right: 0 !important;
 }
 
@@ -1765,11 +1765,8 @@ header.main-header .checker-box .v.active:after {
     font-weight: 600;
     font-size: 18px;
     line-height: 25px;
-    width: calc(100% + 1px);
-    margin-right: -1px;
+    width: 100%;
     height: calc(100% + 2px);
-    margin-top: -1px;
-    margin-bottom: -1px;
 }
 
 .search-row .n-select {
