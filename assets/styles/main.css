@@ -1638,7 +1638,7 @@ header.main-header .checker-box .v.active:after {
 }
 
 .main-section {
-    background-image: url("../img/bg.jpg");
+    background-image: url("../img/bg.svg");
     background-position: top 0 center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -1703,6 +1703,7 @@ header.main-header .checker-box .v.active:after {
 
 .main-section .search-row .input-wrap:first-child {
     border-left: 1px solid #CBCBCB;
+    border-radius: 10px 0 0 10px;
 }
 
 .main-section .search-row .input-wrap:nth-child(3) {
@@ -1826,7 +1827,7 @@ body .main-section-mob {
     }
 
     .search-row .input-wrap {
-        height: 50px;
+        height: 50px !important;
         border-right: none;
         border-bottom: 1px solid #CBCBCB;
     }
@@ -7409,7 +7410,7 @@ svg.progress {
 
 .support-page {
     position: relative;
-    background-image: url("../img/bg.jpg");
+    background-image: url("../img/bg.svg");
     padding: 80px 0;
     background-size: cover;
     background-repeat: no-repeat;
@@ -7601,6 +7602,16 @@ svg.progress {
         grid-template-columns: 100%;
         row-gap: 50px;
     }
+	.main-section .search-row .input-wrap {
+	    border-left: 1px solid #cbcbcb;
+	    border-right: 1px solid #cbcbcb;
+    	border-top: 1px solid #cbcbcb;
+    	border-bottom: 0;
+	}
+	.main-section .search-row .input-wrap:first-child {
+	    border-radius: 10px 10px 0 0;
+	    border-bottom: 0;
+	}
 }
 
 @media (max-width: 420px) {
