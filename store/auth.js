@@ -83,7 +83,6 @@ export const useAuthStore = defineStore("auth", {
     },
     async sendRecoveryCode(payload) {
       const CONFIG = useRuntimeConfig();
-      let url = CONFIG.public.apiBase + "auth/forgot-password";
       try {
         const response = await useApi("auth/forgot-password", {
           method: "post",
