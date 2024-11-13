@@ -140,12 +140,12 @@ export const useVacancyStore = defineStore("vacancy", {
   },
   actions: {
     async getConnectedEmployerProviders() {
-      const { isEmployer } = storeToRefs(useAuthStore());
+      const { isEmployer, isAuthenticated } = storeToRefs(useAuthStore());
       if (this.providers.hh && this.providers.superjob) {
         return this.providers;
       }
 
-      if (isEmployer.value) {
+      if (isEmployer.value && isAuthenticated.value) {
         const response = await useApi("employer/used_providers", {
           method: "get",
           params: {},
