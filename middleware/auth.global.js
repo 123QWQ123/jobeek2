@@ -12,21 +12,24 @@ export default defineNuxtRouteMiddleware(async (to) => {
     return true;
   }
 
-  // Handle profile routes
-  if (to.name === "profile") {
-    return navigateTo({
-      name: authStore.isEmployerMode ? "profile-employer" : "profile-seeker",
-    });
-  }
-
   // Check if the user is authenticated
   if (!isAuthed) {
     return navigateTo({
       path: "/sign-in",
       query: {
-        message: "Please log in to access your profile",
+        message: JSON.stringify({
+          type: "error",
+          text: "Пожалуйста, зайдите в профиль",
+        }),
         redirect: to.name,
       },
+    });
+  }
+
+  // Handle profile routes
+  if (to.name === "profile") {
+    return navigateTo({
+      name: authStore.isEmployerMode ? "profile-employer" : "profile-seeker",
     });
   }
 
@@ -48,14 +51,5 @@ export default defineNuxtRouteMiddleware(async (to) => {
     protected_routes.includes(to.name)
   ) {
     return navigateTo({ path: "/profile/seeker" });
-  }
-
-  // Server-side authorization check
-  if (
-    process.server &&
-    !isAuthed &&
-    !["/sign-in", "/", "/sign-up"].includes(to.fullPath)
-  ) {
-    return navigateTo("/sign-in");
   }
 });

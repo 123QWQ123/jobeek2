@@ -164,6 +164,7 @@ export const useResumeStore = defineStore("resume", {
           params: payload,
         });
       }
+      return this.resumes;
     },
     async getMyResumes(payload) {
       const response = await this.getUserResumes(payload);

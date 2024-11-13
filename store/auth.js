@@ -96,7 +96,11 @@ export const useAuthStore = defineStore("auth", {
           payload,
         });
 
-        return { status: "success", data: response.data.data };
+        return {
+          status: "success",
+          data: response.data.data,
+          message: response.data.message,
+        };
       } catch (error) {
         return this.handleError(error);
       }

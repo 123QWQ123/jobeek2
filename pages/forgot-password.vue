@@ -212,7 +212,15 @@ const onPasswordSubmit = async () => {
     }
     return;
   }
-  return navigateTo({ name: "sign-in", params: { message: response.message } });
+  navigateTo({
+    name: "sign-in",
+    query: {
+      message: JSON.stringify({
+        type: "info",
+        text: response.message,
+      }),
+    },
+  });
 };
 
 const isFirstTimeCodeSent = ref(true);

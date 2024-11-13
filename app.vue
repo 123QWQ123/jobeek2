@@ -14,10 +14,12 @@
 import { useAuthStore } from "~/store/auth";
 import { useVacancyStore } from "~/store/vacancy";
 import { useResumeStore } from "~/store/resume";
+import useAlert from "~/composables/useAlert.js";
 
 const { getConnectedEmployerProviders } = useVacancyStore();
 const { getConnectedSeekerProviders } = useResumeStore();
 const vacancyStore = useVacancyStore();
+const { handleAlert } = useAlert();
 
 const authStore = useAuthStore();
 const { isAuthed, user } = storeToRefs(authStore);
@@ -32,15 +34,19 @@ onMounted(async () => {
     await getConnectedSeekerProviders();
   }
 
-  if (route.query?.message) {
-    useNuxtApp().$toast.info(route.query.message, {
-      autoClose: 3000,
-      onClose: () => {
-        navigateTo({ path: route.path });
-      },
-    });
+  if (route.query.message) {
+    handleAlert();
   }
 });
+
+watch(
+  () => route.query.message,
+  () => {
+    if (route.query.message) {
+      handleAlert();
+    }
+  },
+);
 </script>
 
 <style>
