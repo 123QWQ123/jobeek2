@@ -49,7 +49,6 @@
         <input
           type="text"
           name="name"
-          id="keyword"
           placeholder="Какую вакансию вы ищете?"
           autocomplete="off"
           v-model="search"

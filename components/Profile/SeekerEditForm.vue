@@ -17,8 +17,16 @@
       <label for="name">Имя и фамилия <b>*</b></label>
       <div class="input-wrapper">
         <div class="c2">
-          <VeeCustomTextInput name="first_name" placeholder="Имя" />
-          <VeeCustomTextInput name="last_name" placeholder="Фамилия" />
+          <VeeCustomTextInput
+            name="first_name"
+            placeholder="Имя"
+            :value="authStore.seeker.first_name"
+          />
+          <VeeCustomTextInput
+            name="last_name"
+            placeholder="Фамилия"
+            :value="authStore.seeker.last_name"
+          />
         </div>
       </div>
     </div>

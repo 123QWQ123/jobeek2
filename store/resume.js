@@ -69,11 +69,12 @@ export const useResumeStore = defineStore("resume", {
 
     async getConnectedSeekerProviders(payload) {
       const { isEmployer, isAuthenticated } = storeToRefs(useAuthStore());
+      let response = {};
       if (this.providers.hh && this.providers.superjob) {
         return this.providers;
       }
       if (!isEmployer.value && isAuthenticated.value) {
-        const response = await useApi("seeker/used_providers", {
+        response = await useApi("seeker/used_providers", {
           method: "get",
         });
       }

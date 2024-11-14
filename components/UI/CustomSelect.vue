@@ -16,6 +16,7 @@
           :key="item.value"
           :data-value="item.value"
           class="option"
+          @click="updateValue(item.value)"
         >
           {{ item.name }} <span v-if="!isNullOrUndefined(item.min)">₽</span>
         </li>
@@ -41,7 +42,6 @@ const props = defineProps({
   label: {},
   listStyles: {},
 });
-const emit = defineEmits(["change", "update:modelValue"]);
 const isOpen = ref(false);
 const options = computed(() => props.options);
 
@@ -52,15 +52,6 @@ const label = computed(() => {
   return props.label;
 });
 
-// const classes = computed(() => {
-//     let classes = props.class;
-//     if (isOpen.value){
-//         classes.open = isOpen.value;
-//     }
-//
-//     return classes;
-// });
-const selectedValue = computed(() => props.modelValue);
 const selectedOption = ref(null);
 
 const reApply = (newValue) => {
@@ -71,13 +62,9 @@ const reApply = (newValue) => {
     selectedOption.value = selectedItem;
   }
 };
-
+reApply();
 watch(() => props.modelValue, reApply);
 watch(() => props.options, reApply);
-
-onMounted(() => {
-  reApply();
-});
 
 function onClick(e) {
   if (
@@ -86,11 +73,11 @@ function onClick(e) {
   ) {
     isOpen.value = !isOpen.value;
   }
-  if (e.target.classList.contains("option")) {
-    isOpen.value = false;
-    emit("change", e.target.dataset.value ?? null);
-    emit("update:modelValue", e.target.dataset.value ?? null);
-  }
+}
+
+function updateValue(value) {
+  isOpen.value = false;
+  emit("update:modelValue", value ?? null);
 }
 
 function close() {
