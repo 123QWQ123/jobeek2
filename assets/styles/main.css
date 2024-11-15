@@ -477,6 +477,9 @@ img {
     border-radius: 8px;
     overflow: hidden;
     margin-right: 20px;
+    vertical-align: baseline;
+    display: flex;
+    align-items: center;
 }
 
 .company .company-name strong {
@@ -2521,27 +2524,27 @@ body .main-section-mob {
 	}
 
     .i-wrap input::-webkit-input-placeholder {
-        font-size: 14px;
+        font-size: 16px;
     }
 
     .i-wrap input::-moz-placeholder {
-        font-size: 14px;
+        font-size: 16px;
     }
 
     .i-wrap input:-ms-input-placeholder {
-        font-size: 14px;
+        font-size: 16px;
     }
 
     .i-wrap input::-ms-input-placeholder {
-        font-size: 14px;
+        font-size: 16px;
     }
 
     .i-wrap input, .i-wrap input::placeholder {
-        font-size: 14px;
+        font-size: 16px;
     }
 
     .i-wrap input {
-        height: 45px;
+        height: 58px;
     }
 
     .f-prompt {
@@ -7618,7 +7621,7 @@ svg.progress {
 	    border-bottom: 0;
 	}
 	.search-row .input-wrap:nth-child(3) {
-	    border-right: 1px solid #cbcbcb;
+	    border-right: 1px solid #cbcbcb !important;
 	}
 	.button-xs, .button-xl {
 	    padding: 9px 10px 10px;
