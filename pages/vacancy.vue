@@ -695,14 +695,12 @@
       </div>
     </div>
     <div class="bg-wrapper bt">
-      <HomeWorkSection></HomeWorkSection>
+      <HomeWorkSection />
     </div>
-    <HomeSearchSection></HomeSearchSection>
+    <HomeSearchSection />
   </main>
 </template>
 
-<script setup>
-</script>
+<script setup></script>
 
-<style scoped>
-</style>
+<style scoped></style>

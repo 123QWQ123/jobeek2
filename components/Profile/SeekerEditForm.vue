@@ -76,11 +76,7 @@
     <div class="input-row">
       <label for="password">Пароль<b>*</b></label>
       <div class="input-wrapper position-relative">
-        <VeeCustomTextInput
-          type="password"
-          name="password"
-          placeholder="********"
-        />
+        <VeeCustomTextInput name="password" placeholder="********" />
       </div>
     </div>
     <div class="input-row">

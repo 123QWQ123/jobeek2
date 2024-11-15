@@ -18,10 +18,7 @@ export const useAuthStore = defineStore("auth", {
     ttl: null,
   }),
   persist: {
-    storage: persistedState.cookiesWithOptions({
-      sameSite: "lax",
-      maxAge: 72000000,
-    }),
+    storage: persistedState.cookies,
   },
   getters: {
     token: (state) => state.tokenAuth,
