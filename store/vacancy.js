@@ -1,6 +1,7 @@
 // no need to import defineStore and acceptHMRUpdate
 import useApi from "~/hooks/useApi";
 import { useAuthStore } from "~/store/auth.js";
+import { defineStore } from "pinia";
 
 export const useVacancyStore = defineStore("vacancy", {
   state: () => {
@@ -60,10 +61,7 @@ export const useVacancyStore = defineStore("vacancy", {
     };
   },
   persist: {
-    storage: persistedState.cookiesWithOptions({
-      sameSite: "lax",
-      maxAge: 72000000,
-    }),
+    storage: persistedState.cookies,
   },
   getters: {
     top_10: (state) => {
@@ -239,6 +237,9 @@ export const useVacancyStore = defineStore("vacancy", {
       return response;
     },
     async getVacanciesInMoscow(payload, is_new = false) {
+      if (this.vacancies_in_moscow.length > 0) {
+        return this.vacancies_in_moscow;
+      }
       const response = await useApi("vacancies/search", {
         method: "get",
         params: {
@@ -247,7 +248,7 @@ export const useVacancyStore = defineStore("vacancy", {
         },
       });
       if (response.status === "success") {
-        this.vacancies_in_moscow = this.vacancies.concat(response.data.items);
+        this.vacancies_in_moscow = response.data.items;
       }
       return this.vacancies_in_moscow;
     },
@@ -531,19 +532,17 @@ export const useVacancyStore = defineStore("vacancy", {
     },
 
     async addToFavorite(payload = URLSearchParams) {
-      const response = await useApi("seeker/vacancies/favorites", {
+      return await useApi("seeker/vacancies/favorites", {
         method: "post",
         payload,
       });
-      return response;
     },
 
     async removeFromFavorite(id, payload) {
-      const response = await useApi("seeker/vacancies/favorites/" + id, {
+      return await useApi("seeker/vacancies/favorites/" + id, {
         method: "delete",
         data: JSON.stringify(payload),
       });
-      return response;
     },
 
     async deleteVacancy(id, payload = URLSearchParams) {
@@ -556,19 +555,17 @@ export const useVacancyStore = defineStore("vacancy", {
       return response;
     },
     async deleteDraft(id) {
-      const response = await useApi("employer/vacancy/draft/" + id, {
+      return await useApi("employer/vacancy/draft/" + id, {
         method: "delete",
       });
-      return response;
     },
 
     async archiveActiveVacancy(id, payload = URLSearchParams) {
-      const response = await useApi("employer/vacancy/archiving/" + id, {
+      return await useApi("employer/vacancy/archiving/" + id, {
         method: "PUT",
         content_type: "application/json",
         payload,
       });
-      return response;
     },
   },
 });

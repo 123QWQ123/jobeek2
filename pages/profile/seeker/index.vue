@@ -23,13 +23,6 @@ const isCompleted = computed(() => {
   return false;
 });
 
-const { setSeeker } = authStore;
-onBeforeUnmount(() => {
-  const seeker = JSON.parse(sessionStorage.getItem("seeker"));
-  if (seeker) {
-    setSeeker(seeker);
-  }
-});
 onMounted(() => {
   if (authStore.isEmployer) {
     navigateTo({ name: "profile-employer" });

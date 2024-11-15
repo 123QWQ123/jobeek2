@@ -9,7 +9,6 @@
             <input
               type="text"
               name="name"
-              id="keyword"
               :placeholder="searchPlaceHolder"
               autocomplete="off"
               v-model="search"
@@ -49,7 +48,6 @@
         <input
           type="text"
           name="name"
-          id="keyword"
           :placeholder="searchPlaceHolder"
           autocomplete="off"
           v-model="search"

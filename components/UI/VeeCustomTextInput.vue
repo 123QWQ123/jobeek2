@@ -30,12 +30,17 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  value: {
+    type: String,
+    required: false,
+    default: null,
+  },
 });
 const isAutoCompleted = computed(() => {
   return props.autofill ? "on" : "off";
 });
 const { value, setValue, errorMessage } = useField(() => props.name);
-const inputValue = ref(value.value ?? null);
+const inputValue = ref(value.value ?? props.value);
 
 watch(
   () => value.value,

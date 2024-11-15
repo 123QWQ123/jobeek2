@@ -85,7 +85,7 @@ v
   </section>
 </template>
 
-<script setup>
+<script async setup>
 import { useVacancyStore } from "~/store/vacancy";
 import { useAuthStore } from "~/store/auth.js";
 
@@ -95,6 +95,7 @@ const isLoading = ref(false);
 const isInitialized = ref(false);
 const noVacancyFoundMessage = ref(null);
 const auth = storeToRefs(useAuthStore());
+const vacancies = computed(() => vacancyStore.vacancies_in_moscow);
 
 onMounted(async () => {
   isLoading.value = true;
@@ -116,8 +117,6 @@ const getProfessionalRoles = (objectData) => {
   if (objectData) return Object.keys(objectData);
   return [];
 };
-
-const vacancies = computed(() => vacancyStore.vacancies_in_moscow.sort());
 </script>
 <style scoped>
 .section-head .more {

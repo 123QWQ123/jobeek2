@@ -17,8 +17,16 @@
       <label for="name">Имя и фамилия <b>*</b></label>
       <div class="input-wrapper">
         <div class="c2">
-          <VeeCustomTextInput name="first_name" placeholder="Имя" />
-          <VeeCustomTextInput name="last_name" placeholder="Фамилия" />
+          <VeeCustomTextInput
+            name="first_name"
+            placeholder="Имя"
+            :value="authStore.seeker.first_name"
+          />
+          <VeeCustomTextInput
+            name="last_name"
+            placeholder="Фамилия"
+            :value="authStore.seeker.last_name"
+          />
         </div>
       </div>
     </div>
@@ -68,11 +76,7 @@
     <div class="input-row">
       <label for="password">Пароль<b>*</b></label>
       <div class="input-wrapper position-relative">
-        <VeeCustomTextInput
-          type="password"
-          name="password"
-          placeholder="********"
-        />
+        <VeeCustomTextInput name="password" placeholder="********" />
       </div>
     </div>
     <div class="input-row">
