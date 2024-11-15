@@ -53,7 +53,7 @@
                 <div class="company">
                   <div class="company-logo">
                     <img
-                      class="h-100 w-100"
+                      class="w-100"
                       :src="logo(item)"
                       :alt="item.name"
                     />
