@@ -1,4 +1,3 @@
-v
 <template>
   <section class="work-section section wrapper">
     <div class="section-head">
@@ -41,44 +40,17 @@ v
     </div>
     <div v-else>
       <div class="swiper cards-slider-row">
-        <div v-if="isInitialized">
-          <swiper
-            :slides-per-view="'auto'"
-            :space-between="20"
-            :class="'cards-slider'"
-            :wrapper-class="'cards-grid'"
-          >
-            <swiper-slide v-for="item in vacancies">
-              <NuxtLink
-                class="tile-card"
-                :to="{
-                  name: 'search-vacancies',
-                  query: {
-                    countries: [1],
-                    regions: [22],
-                    professional_roles: getProfessionalRoles(
-                      item.professional_roles,
-                    ),
-                  },
-                }"
-              >
-                <h4 class="tile-card-title">{{ item.name }}</h4>
-                <span class="tile-card-dop-info" v-if="item.salary_to"
-                  >До {{ vueNumberFormat(item.salary_to, {}) }} ₽ / месяц</span
-                >
-                <span v-else class="tile-card-dop-info"
-                  >От {{ vueNumberFormat(item.salary_from, {}) }} ₽ /
-                  месяц</span
-                >
-                <!--            <strong class="tile-card-count">2142 вакансии</strong>-->
-              </NuxtLink>
-            </swiper-slide>
-          </swiper>
-          <div v-if="!isLoading">
-            <span class="text-danger">
-              {{ noVacancyFoundMessage }}
-            </span>
-          </div>
+        <div class="cards-slider">
+          <VacancyTile
+            v-for="item in vacancies"
+            :key="item.id"
+            :vacancy="item"
+          />
+        </div>
+        <div v-if="!isLoading && vacancies.length === 0">
+          <span class="text-danger">
+            {{ noVacancyFoundMessage }}
+          </span>
         </div>
       </div>
     </div>
@@ -86,39 +58,35 @@ v
 </template>
 
 <script setup>
+import { ref, computed, onMounted } from "vue";
 import { useVacancyStore } from "~/store/vacancy";
-import { useAuthStore } from "~/store/auth.js";
+import { useAuthStore } from "~/store/auth";
+import VacancyTile from "~/components/VacancyTile.vue";
 
 const vacancyStore = useVacancyStore();
-const { getVacanciesInMoscow } = vacancyStore;
 const isLoading = ref(false);
-const isInitialized = ref(false);
 const noVacancyFoundMessage = ref(null);
-const auth = storeToRefs(useAuthStore());
+const auth = computed(() => useAuthStore());
+const vacancies = computed(() =>
+  vacancyStore.vacancies_in_moscow.sort((a, b) => a.name.localeCompare(b.name)),
+);
 
 onMounted(async () => {
-  isLoading.value = true;
-  const resData = await getVacanciesInMoscow();
-  isLoading.value = false;
-  isInitialized.value = true;
-  if (resData.status !== "success") {
-    noVacancyFoundMessage.value = resData.message;
-    return;
-  }
-  const TIMEOUT = 500;
-  if (vacancies.value.length > 0) {
-    setTimeout(() => {
-      isInitialized.value = true;
-    }, TIMEOUT);
+  try {
+    isLoading.value = true;
+    const resData = await vacancyStore.getVacanciesInMoscow();
+    isLoading.value = false;
+
+    if (resData.status !== "success") {
+      noVacancyFoundMessage.value = resData.message;
+    }
+  } catch (error) {
+    isLoading.value = false;
+    noVacancyFoundMessage.value = "Ошибка при загрузке вакансий.";
   }
 });
-const getProfessionalRoles = (objectData) => {
-  if (objectData) return Object.keys(objectData);
-  return [];
-};
-
-const vacancies = computed(() => vacancyStore.vacancies_in_moscow.sort());
 </script>
+
 <style scoped>
 .section-head .more {
   gap: 0.3rem;

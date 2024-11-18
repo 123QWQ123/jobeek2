@@ -58,7 +58,6 @@ let config = {
   modules: [
     "@pinia/nuxt",
     "@nuxt/devtools",
-    "nuxt-swiper",
     "@bg-dev/nuxt-fcm",
     "@vueuse/nuxt",
     "@vee-validate/nuxt",
