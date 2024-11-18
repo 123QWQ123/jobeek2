@@ -61,7 +61,7 @@ export const useVacancyStore = defineStore("vacancy", {
     };
   },
   persist: {
-    storage: persistedState.cookies,
+    storage: persistedState.localStorage,
   },
   getters: {
     top_10: (state) => {
