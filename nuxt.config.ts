@@ -50,7 +50,7 @@ export default defineNuxtConfig({
   ],
   components: ["~/components", "~/components/UI"],
   app: {
-    pageTransition: { name: "layout", mode: "out-in" },
+    pageTransition: { name: "page", mode: "out-in" },
     head: {
       link: [
         {
