@@ -27,7 +27,6 @@ watch(
     <div class="bg-wrapper position-relative pt-4">
       <div class="wrapper wrapper-1290">
         <div class="content mb-4">
-          <MyResumesConnectedProviders />
           <MyFavoriteVacanciesList />
         </div>
       </div>
