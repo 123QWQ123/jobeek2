@@ -1,13 +1,26 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import path from "path";
-import fs from "fs";
+import { defineNuxtConfig } from "nuxt/config";
+import { readFileSync } from "fs";
+import { resolve } from "path";
 
-let config = {
-  server: {},
+// Convert to ESM syntax
+const devtoolsEnabled = Boolean(process.env.DEVTOOLS_ENABLED);
+const devtoolsTimelineEnabled = Boolean(process.env.DEVTOOLS_TIMELINE_ENABLED);
+const isDevelopment = process.env.NODE_ENV === "development";
+
+export default defineNuxtConfig({
+  server: isDevelopment
+    ? {
+        https: {
+          key: readFileSync(resolve("server.pem")),
+          cert: readFileSync(resolve("server.pem")),
+        },
+      }
+    : {},
   devtools: {
-    enabled: Boolean(process.env.DEVTOOLS_ENABLED),
+    enabled: devtoolsEnabled,
     vscode: {},
-    timeline: { enabled: Boolean(process.env.DEVTOOLS_TIMELINE_ENABLED) },
+    timeline: { enabled: devtoolsTimelineEnabled },
   },
   runtimeConfig: {
     // The private keys which are only available within server-side
@@ -36,9 +49,8 @@ let config = {
     "~/assets/styles/custom.css",
   ],
   components: ["~/components", "~/components/UI"],
-
   app: {
-    // pageTransition: { name: 'layout', mode: 'out-in' }
+    pageTransition: { name: "layout", mode: "out-in" },
     head: {
       link: [
         {
@@ -65,19 +77,14 @@ let config = {
     "@pinia-plugin-persistedstate/nuxt",
   ],
   pinia: {
-    autoImports: ["defineStore", "acceptHMRUpdate"],
+    autoImports: ["defineStore"],
   },
   tiptap: {
     prefix: "Tiptap", //prefix for Tiptap imports, composables not included
   },
   routeRules: {
     // Static page generated on-demand, revalidates in background
-    // Render these routes with SPA
-    // Add cors headers
     "/api/**": { cors: true },
-    // Add redirect headers
-
-    // '/old-page2': { redirect: { to: '/new-page', statusCode: 302 } }
   },
   fcm: {
     firebaseConfig: {
@@ -93,13 +100,7 @@ let config = {
     vapidKey:
       "BNhzs3ta5UD12WZIz6pP4ONTohrOsoMP3lyomaLsw2fRjsg4u0OzGKoOAFW7i0DK4GscckYJ5v0D99YJlFNhv3I",
   },
-};
-if (process.env.NODE_ENV === "development") {
-  config.server = {
-    https: {
-      key: fs.readFileSync(path.resolve(__dirname, "server.pem")),
-      cert: fs.readFileSync(path.resolve(__dirname, "server.pem")),
-    },
-  };
-}
-export default defineNuxtConfig(config);
+  router: {
+    middleware: ["auth"],
+  },
+});

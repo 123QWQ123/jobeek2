@@ -198,7 +198,7 @@ const onPasswordSubmit = async () => {
     if ("errors" in response && response.message) {
       Swal.fire({
         title: "Ошибка!",
-        text: response.data.message,
+        text: response.message,
         icon: "error",
         confirmButtonText: "ОК",
       });
@@ -212,7 +212,15 @@ const onPasswordSubmit = async () => {
     }
     return;
   }
-  return navigateTo({ name: "sign-in" });
+  navigateTo({
+    name: "sign-in",
+    query: {
+      message: JSON.stringify({
+        type: "info",
+        text: response.message,
+      }),
+    },
+  });
 };
 
 const isFirstTimeCodeSent = ref(true);

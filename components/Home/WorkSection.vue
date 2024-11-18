@@ -57,8 +57,7 @@
   </section>
 </template>
 
-<script setup>
-import { ref, computed, onMounted } from "vue";
+<script async setup>
 import { useVacancyStore } from "~/store/vacancy";
 import { useAuthStore } from "~/store/auth";
 import VacancyTile from "~/components/VacancyTile.vue";

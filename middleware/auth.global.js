@@ -1,57 +1,55 @@
 import { useAuthStore } from "~/store/auth";
 import { protected_routes, public_routes } from "~/config";
 
-export default defineNuxtRouteMiddleware(async (to, from) => {
-  if (!process.server) {
-    const authStore = useAuthStore();
-    let employer = computed(() => authStore.employer);
-    let seeker = computed(() => authStore.seeker);
-    let isAuthed = computed(() => authStore.isAuthed);
+export default defineNuxtRouteMiddleware(async (to) => {
+  const authStore = useAuthStore();
+  const { value: employer } = computed(() => authStore.employer);
+  const { value: seeker } = computed(() => authStore.seeker);
+  const { value: isAuthed } = computed(() => authStore.isAuthed);
 
-    if (public_routes.includes(to.name)) {
-      return true;
-    }
+  // Allow access if the route is public
+  if (public_routes.includes(to.name)) {
+    return true;
+  }
 
-    if (to.name === "profile") {
-      if (!authStore.isEmployerMode) {
-        navigateTo({ name: "profile-seeker" });
-      } else {
-        navigateTo({ name: "profile-employer" });
-      }
-    }
+  // Check if the user is authenticated
+  if (!isAuthed) {
+    return navigateTo({
+      path: "/sign-in",
+      query: {
+        message: JSON.stringify({
+          type: "error",
+          text: "Пожалуйста, зайдите в профиль",
+        }),
+        redirect: to.name,
+      },
+    });
+  }
 
-    if (!isAuthed.value) {
-      return navigateTo({
-        path: "/sign-in",
-        query: {
-          message: "Пожалуйста, зайдите в профиль",
-          redirect: to.name,
-        },
-      });
-    }
+  // Handle profile routes
+  if (to.name === "profile") {
+    return navigateTo({
+      name: authStore.isEmployerMode ? "profile-employer" : "profile-seeker",
+    });
+  }
 
-    if (employer.value !== null) {
-      if (
-        protected_routes.includes(to.name) &&
-        employer.value &&
-        employer.value.is_completed === false
-      ) {
-        return navigateTo({
-          path: "/profile/employer",
-        });
-      }
-      return;
-    } else {
-      if (
-        protected_routes.includes(to.name) &&
-        seeker.value &&
-        seeker.value.is_completed === false
-      ) {
-        return navigateTo({
-          path: "/profile/seeker",
-        });
-      }
-      return;
-    }
+  const isIncompleteProfile = (user) => user && !user.is_completed;
+
+  // Check if employer profile is incomplete
+  if (
+    employer &&
+    isIncompleteProfile(employer) &&
+    protected_routes.includes(to.name)
+  ) {
+    return navigateTo({ path: "/profile/employer" });
+  }
+
+  // Check if seeker profile is incomplete
+  if (
+    seeker &&
+    isIncompleteProfile(seeker) &&
+    protected_routes.includes(to.name)
+  ) {
+    return navigateTo({ path: "/profile/seeker" });
   }
 });

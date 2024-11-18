@@ -1,4 +1,6 @@
 <script setup>
+import { ref, computed, watch, onMounted } from "vue";
+import { useField } from "vee-validate";
 import { useAuthStore } from "~/store/auth.js";
 
 const props = defineProps({
@@ -12,19 +14,65 @@ const props = defineProps({
     required: true,
   },
 });
-const { value, setValue, errorMessage, setErrors } = useField(() => props.name);
+
+const authStore = useAuthStore();
+const { value, setValue, errorMessage, setErrors } = useField(props.name);
 
 const currentValue = ref(null);
-
+const email_to_verify = ref(null);
 const isLoading = ref(false);
 const isDisabled = ref(!!value.value);
 const isConfirmButton = ref(false);
 const isCheckButton = ref(false);
 const isConfirmationSent = ref(false);
-const inputEmail = ref();
+const inputEmail = ref("");
+const is_email_to_verify_sent = ref(false);
 
-const authStore = useAuthStore();
-const email_to_verify = ref();
+const is_sent_and_verified = computed(() => {
+  const user = props.type === "seeker" ? authStore.seeker : authStore.employer;
+  return user?.email_to_verify ? true : false;
+});
+
+const updateEmails = (user) => {
+  email_to_verify.value = user.email_to_verify;
+  currentValue.value = user.email ?? user.email_to_verify;
+
+  if (user.is_completed) {
+    isCheckButton.value =
+      currentValue.value && currentValue.value === user.email;
+    isConfirmButton.value =
+      email_to_verify.value && email_to_verify.value !== user.email;
+  } else {
+    isCheckButton.value = false;
+    isConfirmButton.value = !user.email;
+  }
+};
+
+const onInputEmail = (e) => {
+  currentValue.value = e.target.value;
+  email_to_verify.value = e.target.value;
+  isConfirmButton.value = currentValue.value !== email.value;
+  isCheckButton.value = currentValue.value === email.value;
+};
+
+const onEmailConfirm = async (e) => {
+  e.preventDefault();
+  isLoading.value = true;
+  const inputEmailValue = email_to_verify.value || email.value;
+  const resData = await authStore.confirmEmail({ email: inputEmailValue });
+
+  if (resData.status !== "success") {
+    setErrors(resData.errors?.email || resData.message);
+    isLoading.value = false;
+  } else {
+    isConfirmButton.value = false;
+    isConfirmationSent.value = true;
+    is_email_to_verify_sent.value = true;
+    setValue(inputEmailValue);
+    isLoading.value = false;
+  }
+};
+
 watch(
   () => currentValue.value,
   (newValue) => {
@@ -34,119 +82,21 @@ watch(
     }
   },
 );
-const email = ref(value.value);
-const is_email_to_verify_sent = ref(false);
-const is_sent_and_verified = computed(() => {
-  if (props.type === "seeker") {
-    if (authStore.seeker) {
-      if (authStore.seeker.email_to_verify) return true;
-    }
-    return false;
-  } else {
-    if (authStore.employer) {
-      if (authStore.employer.email_to_verify) return true;
-    }
-    return false;
-  }
-});
-const onInputEmail = (e) => {
-  currentValue.value = e.target.value;
-  email_to_verify.value = e.target.value;
-  if (currentValue.value) {
-    if (currentValue.value === email.value) {
-      isConfirmButton.value = false;
-      isCheckButton.value = true;
-    } else {
-      isConfirmButton.value = true;
-      isCheckButton.value = false;
-    }
-  } else {
-    isConfirmButton.value = true;
-    isCheckButton.value = false;
-  }
-};
-
-const reAssignEmails = (newObject) => {
-  email_to_verify.value = newObject.email_to_verify;
-  email.value = newObject.email ? newObject.email : newObject.email_to_verify;
-  currentValue.value = newObject.email_to_verify ?? newObject.email;
-  if (!newObject.is_completed) {
-    if (newObject.email !== null) {
-      isCheckButton.value = false;
-      isConfirmButton.value = false;
-    } else {
-      isCheckButton.value = false;
-      isConfirmButton.value = true;
-    }
-  } else {
-    if (
-      newObject.email_to_verify !== null &&
-      newObject.email !== newObject.email_to_verify
-    ) {
-      isCheckButton.value = false;
-      isConfirmButton.value = true;
-    } else {
-      currentValue.value = email.value;
-      isCheckButton.value = true;
-      isConfirmButton.value = false;
-    }
-  }
-};
-watch(
-  () => authStore.seeker,
-  (newObject) => {
-    if (props.type === "seeker") {
-      if (authStore.seeker) {
-        reAssignEmails(authStore.seeker);
-      }
-    }
-  },
-);
 
 watch(
-  () => authStore.employer,
-  (newObject) => {
-    if (props.type === "employer") {
-      if (authStore.employer) {
-        reAssignEmails(authStore.employer);
-      }
-    }
+  () => props.type,
+  () => {
+    const user =
+      props.type === "seeker" ? authStore.seeker : authStore.employer;
+    if (user) updateEmails(user);
   },
+  { immediate: true },
 );
 
 onMounted(() => {
-  if (props.type === "seeker") {
-    if (authStore.seeker) {
-      reAssignEmails(authStore.seeker);
-    }
-  }
-  if (props.type === "employer") {
-    if (authStore.employer) {
-      reAssignEmails(authStore.employer);
-    }
-  }
+  const user = props.type === "seeker" ? authStore.seeker : authStore.employer;
+  if (user) updateEmails(user);
 });
-
-const { confirmEmail, checkEmailConfirmation } = authStore;
-const onEmailConfirm = async (e) => {
-  e.preventDefault();
-  isLoading.value = true;
-  const inputEmail = email_to_verify.value
-    ? email_to_verify.value
-    : email.value;
-  const resData = await confirmEmail({ email: inputEmail });
-  if (resData.status !== "success") {
-    const message = resData.errors?.email ?? resData.message;
-    setErrors(message);
-    isLoading.value = false;
-    return;
-  }
-  isConfirmButton.value = false;
-  isConfirmationSent.value = true;
-  is_email_to_verify_sent.value = true;
-  setValue(inputEmail);
-  isLoading.value = false;
-};
 </script>
 
 <template>
@@ -161,11 +111,11 @@ const onEmailConfirm = async (e) => {
       @input="onInputEmail"
       @blur="setValue(currentValue)"
     />
+
     <span
-      @click="onEmailConfirm"
       v-if="isConfirmButton"
       class="btn btn-outline-primary absolute_button"
-      @hover="hovered = true"
+      @click="onEmailConfirm"
     >
       Подтверждать
       <Loader class="spinner-border-sm" v-if="isLoading" />
@@ -224,9 +174,7 @@ const onEmailConfirm = async (e) => {
     Войдите в электронную почту и откройте письмо с заголовком Jobeek и
     подтвердите свой адрес электронной почты.
   </div>
-  <div class="text-danger">
-    {{ errorMessage }}
-  </div>
+  <div class="text-danger">{{ errorMessage }}</div>
 </template>
 
 <style scoped>

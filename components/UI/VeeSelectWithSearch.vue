@@ -11,7 +11,7 @@
         ref="inputRef"
         v-model="searchInput"
         @input="onChangeHandler"
-        role="presentation"
+        role="spinbutton"
         autocomplete="off"
         autofill="off"
         @focusin="onFocus"
@@ -97,7 +97,18 @@ const isFirst = ref(false);
 const isOpen = ref(false);
 const options = ref(props.options);
 const placeholder = computed(() => props.placeholder);
-const searchInput = ref(props.placeholder ?? "");
+const searchInput = computed(() => {
+  return (
+    options.value.find((item) => String(item.value) === String(value.value))
+      ?.name || null
+  );
+});
+const selectedOption =
+  computed(() => {
+    return options.value.find(
+      (item) => String(item.value) === String(value.value),
+    );
+  }) || {};
 
 watch(
   () => props.placeholder,
@@ -135,8 +146,6 @@ watch(
     searchInput.value = found.name;
   },
 );
-
-const selectedOption = ref({});
 
 onMounted(() => {
   if (value.value) {

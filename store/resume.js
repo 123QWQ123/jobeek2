@@ -1,6 +1,7 @@
 // no need to import defineStore and acceptHMRUpdate
 import { acceptHMRUpdate, defineStore } from "pinia";
 import useApi from "~/hooks/useApi";
+import { useAuthStore } from "~/store/auth.js";
 
 export const useResumeStore = defineStore("resume", {
   state: () => {
@@ -67,12 +68,16 @@ export const useResumeStore = defineStore("resume", {
     },
 
     async getConnectedSeekerProviders(payload) {
+      const { isEmployer, isAuthenticated } = storeToRefs(useAuthStore());
+      let response = {};
       if (this.providers.hh && this.providers.superjob) {
         return this.providers;
       }
-      const response = await useApi("seeker/used_providers", {
-        method: "get",
-      });
+      if (!isEmployer.value && isAuthenticated.value) {
+        response = await useApi("seeker/used_providers", {
+          method: "get",
+        });
+      }
 
       if (response.status === "success") {
         this.providers = response.data.data;
@@ -153,10 +158,14 @@ export const useResumeStore = defineStore("resume", {
       return response;
     },
     async getUserResumes(payload) {
-      return useApi("seeker/resumes", {
-        method: "get",
-        params: payload,
-      });
+      const { isEmployer, isAuthenticated } = storeToRefs(useAuthStore());
+      if (!isEmployer.value && isAuthenticated.value) {
+        return useApi("seeker/resumes", {
+          method: "get",
+          params: payload,
+        });
+      }
+      return this.resumes;
     },
     async getMyResumes(payload) {
       const response = await this.getUserResumes(payload);

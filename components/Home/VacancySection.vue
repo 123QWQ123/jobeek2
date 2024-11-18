@@ -117,8 +117,6 @@ const logo = (item) =>
 
 onMounted(async () => {
   // my transition page is 300, when TIMEOUT set to 300 is not work. so must larger than transition page
-
-  const ipData = await axios.get("api/getIp");
   isLoading.value = true;
   const location = await getLocation({ ip: "213.232.228.45" });
 

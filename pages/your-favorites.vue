@@ -13,8 +13,10 @@ const hasFavs = ref(true);
             <strong class="title">У вас пока нет вакансий в избранном</strong>
             <p>Сохраняйте вакансии, нажимая на звёздочку</p>
           </div>
-          <NuxtLink class="notification-button button-accent"
-                    :to="{name: 'search-vacancies'}">
+          <NuxtLink
+            class="notification-button button-accent"
+            :to="{ name: 'search-vacancies' }"
+          >
             Найти вакансию
           </NuxtLink>
         </div>
@@ -25,9 +27,8 @@ const hasFavs = ref(true);
       </div>
     </div>
     <div class="bg-wrapper bt">
-      <HomeWorkSection></HomeWorkSection>
+      <HomeWorkSection />
     </div>
-    <HomeSearchSection></HomeSearchSection>
+    <HomeSearchSection />
   </main>
 </template>
-

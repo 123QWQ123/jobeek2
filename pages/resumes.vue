@@ -1,8 +1,4 @@
-<script setup>
-import SearchSection from "../components/Home/SearchSection";
-import WorkSection from "../components/Home/WorkSection";
-
-</script>
+<script setup></script>
 <template>
   <main class="main cabinet subs-page" role="main">
     <PersonalCabinetSearchMobile />
@@ -573,8 +569,8 @@ import WorkSection from "../components/Home/WorkSection";
       </div>
     </div>
     <div class="bg-wrapper bt">
-      <HomeWorkSection></HomeWorkSection>
+      <HomeWorkSection />
     </div>
-    <HomeSearchSection></HomeSearchSection>
+    <HomeSearchSection />
   </main>
 </template>
