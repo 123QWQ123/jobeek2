@@ -39,45 +39,47 @@
     <div>
       <div>
         <div class="cards-slider">
-          <client-only>
-            <div v-for="item in vacancies">
-              <div class="vacancy-card">
-                <div class="vacancy-card-body">
-                  <div class="company">
-                    <div class="company-logo">
-                      <img
-                        class="h-100 w-100"
-                        :src="logo(item)"
-                        :alt="item.name"
-                      />
+          <div class="vacancy-list">
+            <client-only>
+              <div v-for="item in vacancies">
+                <div class="vacancy-card">
+                  <div class="vacancy-card-body">
+                    <div class="company">
+                      <div class="company-logo">
+                        <img
+                          class="h-100 w-100"
+                          :src="logo(item)"
+                          :alt="item.name"
+                        />
+                      </div>
+                      <div class="company-name">
+                        <strong>{{ item.company }}</strong>
+                        <span class="location">{{ item.city }}</span>
+                      </div>
                     </div>
-                    <div class="company-name">
-                      <strong>{{ item.company }}</strong>
-                      <span class="location">{{ item.city }}</span>
-                    </div>
+                    <nuxt-link
+                      :to="{
+                        name: 'vacancies-slug',
+                        params: { slug: item.id },
+                        query: { provider: item.provider },
+                      }"
+                      class="vacancy-card-title"
+                      >{{ item.name }}
+                    </nuxt-link>
+                    <span class="vacancy-card-dop-info" v-if="item.salary_from"
+                      >От {{ $format_number(item.salary_from) }} ₽</span
+                    >
+                    <span class="vacancy-card-dop-info" v-else
+                      >До {{ $format_number(item.salary_to) }} ₽</span
+                    >
                   </div>
-                  <nuxt-link
-                    :to="{
-                      name: 'vacancies-slug',
-                      params: { slug: item.id },
-                      query: { provider: item.provider },
-                    }"
-                    class="vacancy-card-title"
-                    >{{ item.name }}
-                  </nuxt-link>
-                  <span class="vacancy-card-dop-info" v-if="item.salary_from"
-                    >От {{ $format_number(item.salary_from) }} ₽</span
-                  >
-                  <span class="vacancy-card-dop-info" v-else
-                    >До {{ $format_number(item.salary_to) }} ₽</span
-                  >
-                </div>
-                <div class="vacancy-card-footer">
-                  <a class="btn button-md" href="#">Откликнуться</a>
+                  <div class="vacancy-card-footer">
+                    <a class="btn button-md" href="#">Откликнуться</a>
+                  </div>
                 </div>
               </div>
-            </div>
-          </client-only>
+            </client-only>
+          </div>
         </div>
         <div v-if="!isLoading">
           <span class="text-danger">

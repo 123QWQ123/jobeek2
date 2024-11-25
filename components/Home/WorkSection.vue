@@ -40,7 +40,7 @@
     </div>
     <div v-else>
       <div class="swiper cards-slider-row">
-        <div class="cards-slider">
+        <div class="cards-slider cards-grid">
           <client-only>
             <VacancyTile
               v-for="item in vacancies"
