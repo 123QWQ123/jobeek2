@@ -33,6 +33,7 @@ export default {
 
 <script setup>
 import { isNullOrUndefined } from "@tinymce/tinymce-vue/lib/es2015/main/ts/Utils.js";
+import { ref } from "vue";
 
 const props = defineProps({
   options: {
@@ -77,6 +78,7 @@ function onClick(e) {
 
 function updateValue(value) {
   isOpen.value = false;
+  emit("change", value ?? null);
   emit("update:modelValue", value ?? null);
 }
 

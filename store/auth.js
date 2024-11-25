@@ -17,9 +17,6 @@ export const useAuthStore = defineStore("auth", {
     expiresAt: null,
     ttl: null,
   }),
-  persist: {
-    storage: persistedState.cookies,
-  },
   getters: {
     token: (state) => state.tokenAuth,
     userId: (state) => state.user?.userId,

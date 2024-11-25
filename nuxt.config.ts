@@ -74,10 +74,10 @@ export default defineNuxtConfig({
     "@vueuse/nuxt",
     "@vee-validate/nuxt",
     "nuxt-tiptap-editor",
-    "@pinia-plugin-persistedstate/nuxt",
   ],
   pinia: {
     autoImports: ["defineStore"],
+    storesDirs: ["./stores/**"],
   },
   tiptap: {
     prefix: "Tiptap", //prefix for Tiptap imports, composables not included

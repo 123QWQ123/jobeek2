@@ -41,16 +41,13 @@
     <div v-else>
       <div class="swiper cards-slider-row">
         <div class="cards-slider">
-          <VacancyTile
-            v-for="item in vacancies"
-            :key="item.id"
-            :vacancy="item"
-          />
-        </div>
-        <div v-if="!isLoading && vacancies.length === 0">
-          <span class="text-danger">
-            {{ noVacancyFoundMessage }}
-          </span>
+          <client-only>
+            <VacancyTile
+              v-for="item in vacancies"
+              :key="item.id"
+              :vacancy="item"
+            />
+          </client-only>
         </div>
       </div>
     </div>
@@ -62,23 +59,20 @@ import { useVacancyStore } from "~/store/vacancy";
 import { useAuthStore } from "~/store/auth";
 import VacancyTile from "~/components/VacancyTile.vue";
 
-const vacancyStore = useVacancyStore();
+const { getVacanciesInMoscow } = useVacancyStore();
+const { vacancies_in_moscow } = storeToRefs(useVacancyStore());
 const isLoading = ref(false);
 const noVacancyFoundMessage = ref(null);
 const auth = computed(() => useAuthStore());
 const vacancies = computed(() =>
-  vacancyStore.vacancies_in_moscow.sort((a, b) => a.name.localeCompare(b.name)),
+  vacancies_in_moscow.value.sort((a, b) => a.name.localeCompare(b.name)),
 );
 
 onMounted(async () => {
   try {
     isLoading.value = true;
-    const resData = await vacancyStore.getVacanciesInMoscow();
+    await getVacanciesInMoscow();
     isLoading.value = false;
-
-    if (resData.status !== "success") {
-      noVacancyFoundMessage.value = resData.message;
-    }
   } catch (error) {
     isLoading.value = false;
     noVacancyFoundMessage.value = "Ошибка при загрузке вакансий.";

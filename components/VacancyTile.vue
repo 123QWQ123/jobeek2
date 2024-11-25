@@ -4,9 +4,9 @@
     :to="{
       name: 'search-vacancies',
       query: {
-        countries: [1],
-        regions: [22],
-        professional_roles: getProfessionalRoles(vacancy.professional_roles),
+        countries: `[${1}]`,
+        regions: `[${22}]`,
+        professional_roles: `[${getProfessionalRoles(vacancy.professional_roles)}]`,
       },
     }"
   >
@@ -21,8 +21,6 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-
 const props = defineProps({
   vacancy: {
     type: Object,
@@ -33,11 +31,6 @@ const props = defineProps({
 const getProfessionalRoles = (objectData) => {
   if (objectData) return Object.keys(objectData);
   return [];
-};
-
-const vueNumberFormat = (number, options) => {
-  // Замените это функцией форматирования чисел, которую вы используете в проекте
-  return new Intl.NumberFormat("ru-RU", options).format(number);
 };
 </script>
 
