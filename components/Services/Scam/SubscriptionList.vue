@@ -32,7 +32,7 @@ const isEmpty = computed(() => scamStore.subscribed_items.length === 0);
     </span>
 
   </div>
-  <div class="subscribes-grid">
+  <div>
     <ServicesScamSubscriptionItem v-for="item in scamStore.subscribed_items" :phone="item"/>
   </div>
 </template>
