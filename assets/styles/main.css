@@ -299,6 +299,18 @@ img {
 
 .scam-phone-page .button-accent {
     width: auto;
+    border-radius: 0;
+    -webkit-border-top-right-radius: 10px;
+    -webkit-border-bottom-right-radius: 10px;
+    -moz-border-radius-topright: 10px;
+    -moz-border-radius-bottomright: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.scam-phone-page .search-phone-input {
+    border: 1px solid #cbcbcb;
+    border-radius: 10px 0 0 10px;
 }
 
 .button-accent--ts-bigger {
