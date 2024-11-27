@@ -155,7 +155,7 @@ const prepare = (newValues) => {
   if (isSearching.value) {
     dynamicItems = [
       ...newValues.map((item) => {
-        let temp = {...item}
+        let temp = { ...item };
         temp.items = item.items.filter((sub_item) =>
           sub_item.title
             .toLowerCase()
@@ -202,7 +202,7 @@ onMounted(() => {
 });
 
 const onClickOutside = (e) => {
-  if (e.target.classList.contains("filter-modal-container")) {
+  if (e.target.classList?.contains("filter-modal-container")) {
     close();
   }
 };

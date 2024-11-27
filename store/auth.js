@@ -2,6 +2,7 @@ import { navigateTo, useRuntimeConfig } from "nuxt/app";
 import { defineStore } from "pinia";
 import axios from "axios";
 import useApi from "~/hooks/useApi";
+import { parse, stringify } from "zipson/lib";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
@@ -18,7 +19,14 @@ export const useAuthStore = defineStore("auth", {
     ttl: null,
   }),
   persist: {
-    storage: persistedState.cookies,
+    storage: piniaPluginPersistedstate.cookies({
+      sameSite: "lax",
+      maxAge: 720000,
+    }),
+    serializer: {
+      deserialize: (serializer) => parse(decodeURIComponent(serializer)),
+      serialize: (state) => encodeURIComponent(stringify(state)),
+    },
   },
   getters: {
     token: (state) => state.tokenAuth,

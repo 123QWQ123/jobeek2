@@ -2,9 +2,8 @@
   <div
     class="nice-select n-select d-select"
     :class="{ open: isOpen }"
-    v-click-outside="close"
+    v-click-outside="() => (isOpen = false)"
     tabindex="0"
-    @click.prevent="onFocus"
   >
     <input
       class="current"
@@ -111,6 +110,7 @@ onMounted(() => {
     selectedOption.value = options.value.find(
       (item) => String(item.value) === String(props.modelValue),
     );
+    searchInput.value = selectedOption.value.name;
   }
 });
 

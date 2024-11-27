@@ -1,11 +1,9 @@
-<script setup>
-</script>
+<script setup></script>
 <template>
   <main class="main cabinet favorites-page" role="main">
     <div class="bg-wrapper pt">
       <PersonalCabinetSearchMobile />
       <div class="wrapper wrapper-1290">
-
         <h2 class="lk-page-title">
           Вакансии, которые могут вас заинтересовать
         </h2>
@@ -43,14 +41,18 @@
                     <ul>
                       <li>
                         <a class="tel" href="tel: +7 800 550 11 00">
-                          <img src="~/assets/img/svg/carbon_phone.svg" alt="#" />+7 800
-                          550 11 00
+                          <img
+                            src="~/assets/img/svg/carbon_phone.svg"
+                            alt="#"
+                          />+7 800 550 11 00
                         </a>
                       </li>
                       <li>
                         <a class="tel" href="tel: +7 800 550 11 00">
-                          <img src="~/assets/img/svg/carbon_phone.svg" alt="#" />+7 800
-                          550 11 00
+                          <img
+                            src="~/assets/img/svg/carbon_phone.svg"
+                            alt="#"
+                          />+7 800 550 11 00
                         </a>
                       </li>
                       <li>
@@ -148,7 +150,10 @@
                                   checked
                                 />
                                 <div class="checkbox-mask">
-                                  <img src="~/assets/img/svg/check.svg" alt="#" />
+                                  <img
+                                    src="~/assets/img/svg/check.svg"
+                                    alt="#"
+                                  />
                                 </div>
                               </div>
                               <label for="enable-push"
@@ -162,7 +167,10 @@
                                   id="enable-email-notification"
                                 />
                                 <div class="checkbox-mask">
-                                  <img src="~/assets/img/svg/check.svg" alt="#" />
+                                  <img
+                                    src="~/assets/img/svg/check.svg"
+                                    alt="#"
+                                  />
                                 </div>
                               </div>
                               <label for="enable-email-notification"
@@ -223,14 +231,18 @@
                     <ul>
                       <li>
                         <a class="tel" href="tel: +7 800 550 11 00">
-                          <img src="~/assets/img/svg/carbon_phone.svg" alt="#" />+7 800
-                          550 11 00
+                          <img
+                            src="~/assets/img/svg/carbon_phone.svg"
+                            alt="#"
+                          />+7 800 550 11 00
                         </a>
                       </li>
                       <li>
                         <a class="tel" href="tel: +7 800 550 11 00">
-                          <img src="~/assets/img/svg/carbon_phone.svg" alt="#" />+7 800
-                          550 11 00
+                          <img
+                            src="~/assets/img/svg/carbon_phone.svg"
+                            alt="#"
+                          />+7 800 550 11 00
                         </a>
                       </li>
                       <li>
@@ -328,7 +340,10 @@
                                   checked
                                 />
                                 <div class="checkbox-mask">
-                                  <img src="~/assets/img/svg/check.svg" alt="#" />
+                                  <img
+                                    src="~/assets/img/svg/check.svg"
+                                    alt="#"
+                                  />
                                 </div>
                               </div>
                               <label for="enable-push"
@@ -342,7 +357,10 @@
                                   id="enable-email-notification"
                                 />
                                 <div class="checkbox-mask">
-                                  <img src="~/assets/img/svg/check.svg" alt="#" />
+                                  <img
+                                    src="~/assets/img/svg/check.svg"
+                                    alt="#"
+                                  />
                                 </div>
                               </div>
                               <label for="enable-email-notification"
@@ -376,8 +394,8 @@
       </div>
     </div>
     <div class="bg-wrapper bt">
-      <HomeWorkSection></HomeWorkSection>
+      <HomeWorkSection />
     </div>
-    <HomeSearchSection></HomeSearchSection>
+    <HomeSearchSection />
   </main>
 </template>

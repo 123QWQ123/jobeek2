@@ -38,12 +38,7 @@ export const useResumeStore = defineStore("resume", {
       },
     };
   },
-  persist: {
-    storage: persistedState.cookiesWithOptions({
-      sameSite: "lax",
-      maxAge: 72000000,
-    }),
-  },
+  persist: true,
   getters: {
     top_10: (state) => {
       return state.resumes.slice(0, 10);

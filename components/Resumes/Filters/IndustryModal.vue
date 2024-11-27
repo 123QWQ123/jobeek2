@@ -23,13 +23,13 @@
         <div class="filter-tree-selector-popup">
           <div class="filter-tree-selector-popup-content" v-if="!isLoading">
             <VacanciesFiltersIndustryItem
-                v-for="item in items"
-                :item="item"
-                :key="item.id"
-                @add="addIds"
-                @remove="removeIds"
-                :checked="item.checked"
-                :is-open="isSearching"
+              v-for="item in items"
+              :item="item"
+              :key="item.id"
+              @add="addIds"
+              @remove="removeIds"
+              :checked="item.checked"
+              :is-open="isSearching"
             />
           </div>
           <div class="filter-tree-selector-popup-content" v-else>
@@ -140,21 +140,21 @@ const onSearch = (event) => {
   }
 
   items.value = props.items
-      .map((item) => {
-        let temp = { ...item };
-        temp.items = temp.items.filter((sub_item) => {
-          return sub_item.title.toLowerCase().includes(q.toLowerCase());
-        });
-        return temp;
-      })
-      .filter((item) => item.items.length > 0);
+    .map((item) => {
+      let temp = { ...item };
+      temp.items = temp.items.filter((sub_item) => {
+        return sub_item.title.toLowerCase().includes(q.toLowerCase());
+      });
+      return temp;
+    })
+    .filter((item) => item.items.length > 0);
 };
 const prepare = (newValues, is_first = false) => {
   let dynamicItems = [];
   if (isSearching.value) {
     dynamicItems = [
       ...newValues.map((item) => {
-        let temp = {...item}
+        let temp = { ...item };
         temp.items = item.items.filter((sub_item) =>
           sub_item.title
             .toLowerCase()
@@ -201,7 +201,7 @@ onMounted(() => {
 });
 
 const onClickOutside = (e) => {
-  if (e.target.classList.contains("filter-modal-container")) {
+  if (e.target.classList?.contains("filter-modal-container")) {
     close();
   }
 };

@@ -219,7 +219,7 @@ onMounted(() => {
 });
 
 const onClickOutside = (e) => {
-  if (e.target.classList.contains("filter-modal-container")) {
+  if (e.target.classList?.contains("filter-modal-container")) {
     close();
   }
 };

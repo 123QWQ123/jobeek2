@@ -50,7 +50,7 @@ export default defineNuxtConfig({
   ],
   components: ["~/components", "~/components/UI"],
   app: {
-    pageTransition: { name: "layout", mode: "out-in" },
+    pageTransition: { name: "page", mode: "out-in" },
     head: {
       link: [
         {
@@ -68,17 +68,26 @@ export default defineNuxtConfig({
     },
   },
   modules: [
-    "@pinia/nuxt",
+    [
+      "@pinia/nuxt",
+      {
+        autoImports: ["defineStore", "acceptHMRUpdate"],
+        storesDirs: ["./stores/**"],
+      },
+    ],
+    "pinia-plugin-persistedstate/nuxt",
     "@nuxt/devtools",
-    "nuxt-swiper",
     "@bg-dev/nuxt-fcm",
     "@vueuse/nuxt",
     "@vee-validate/nuxt",
     "nuxt-tiptap-editor",
-    "@pinia-plugin-persistedstate/nuxt",
   ],
-  pinia: {
-    autoImports: ["defineStore"],
+  piniaPluginPersistedstate: {
+    storage: "cookies",
+    cookieOptions: {
+      sameSite: "lax",
+      maxAge: 720000,
+    },
   },
   tiptap: {
     prefix: "Tiptap", //prefix for Tiptap imports, composables not included
@@ -103,5 +112,10 @@ export default defineNuxtConfig({
   },
   router: {
     middleware: ["auth"],
+  },
+  vite: {
+    optimizeDeps: {
+      exclude: ["firebase/analytics"],
+    },
   },
 });

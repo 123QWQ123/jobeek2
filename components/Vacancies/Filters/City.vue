@@ -117,15 +117,6 @@ watch(
     }
   },
 );
-watch(
-  () => getQueryParam("cities") ?? [],
-  (newValues, oldValues) => {
-    if (JSON.stringify(newValues) !== JSON.stringify(oldValues)) {
-      cities.value = newValues;
-      prepare(vacancyStore.cities_formatted);
-    }
-  },
-);
 const vacancyStore = useVacancyStore();
 
 const search = ref("");
@@ -173,6 +164,8 @@ const toggleRegion = (id) => {
     selected_ids = selected_ids.filter((item) => item !== id);
   }
   selected_ids = selected_ids.length === 0 ? undefined : selected_ids;
+  cities.value = selected_ids;
+  prepare(vacancyStore.cities_formatted);
   updateQueryParam("cities", selected_ids);
 };
 

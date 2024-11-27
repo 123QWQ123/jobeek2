@@ -2,66 +2,70 @@
 import useApi from "~/hooks/useApi";
 import { useAuthStore } from "~/store/auth.js";
 import { defineStore } from "pinia";
+import { ref } from "vue";
+import { parse, stringify } from "zipson/lib";
 
 export const useVacancyStore = defineStore("vacancy", {
-  state: () => {
-    return {
-      vacancies: [],
-      vacancies_in_my_city: [],
-      vacancies_in_moscow: [],
-      vacancies_in_top_companies: [],
-      vacancy: null,
-      my_vacancy: null,
-      total: 0,
-      my_total: 0,
-      my_draft_total: 0,
-      data: null,
-      current_page: 1,
-      my_draft_current_page: 1,
-      my_draft_last_page: 0,
-      my_vacancies: [],
-      my_drafts: [],
-      my_archived_vacancies: [],
-      my_archived_vacancies_current_page: 1,
-      my_archived_vacancies_last_page: 0,
-      my_archived_vacancies_total: 0,
-      my_favorite_vacancies: [],
-      specializations: [],
-      professional_roles: [],
-      industries: [],
-      areas: [],
-      countries: [],
-      regions: [],
-      cities: [],
-      work_types: [],
-      schedules: [],
-      experiences: [],
-      part_times: [],
-      metros: [],
-      driver_licenses: [],
-      genders: [],
-      place_of_works: [],
-      foreign_languages: [],
-      language_levels: [],
-      marital_statuses: [],
-      childrens: [],
-      vacancy_billing_types: [],
-      vacancy_types: [],
-      can_create_vacancy: null,
-      can_create_vacancy_count: 0,
-      provider_auth_urls: {
-        hh: null,
-        superjob: null,
-      },
-      providers: {
-        hh: null,
-        superjob: null,
-      },
-      employerMessage: "",
-    };
-  },
+  state: () => ({
+    vacancies: [],
+    vacancies_in_my_city: [],
+    vacancies_in_moscow: ref([]),
+    vacancies_in_top_companies: ref([]),
+    vacancy: null,
+    my_vacancy: null,
+    total: 0,
+    my_total: 0,
+    my_draft_total: 0,
+    data: null,
+    current_page: 1,
+    my_draft_current_page: 1,
+    my_draft_last_page: 0,
+    my_vacancies: [],
+    my_drafts: [],
+    my_archived_vacancies: [],
+    my_archived_vacancies_current_page: 1,
+    my_archived_vacancies_last_page: 0,
+    my_archived_vacancies_total: 0,
+    my_favorite_vacancies: [],
+    specializations: [],
+    professional_roles: [],
+    industries: [],
+    areas: [],
+    countries: [],
+    regions: [],
+    cities: [],
+    work_types: [],
+    schedules: [],
+    experiences: [],
+    part_times: [],
+    metros: [],
+    driver_licenses: [],
+    genders: [],
+    place_of_works: [],
+    foreign_languages: [],
+    language_levels: [],
+    marital_statuses: [],
+    childrens: [],
+    vacancy_billing_types: [],
+    vacancy_types: [],
+    can_create_vacancy: null,
+    can_create_vacancy_count: 0,
+    provider_auth_urls: {
+      hh: null,
+      superjob: null,
+    },
+    providers: {
+      hh: null,
+      superjob: null,
+    },
+    employerMessage: "",
+  }),
   persist: {
-    storage: persistedState.localStorage,
+    storage: piniaPluginPersistedstate.localStorage(),
+    serializer: {
+      deserialize: (serializer) => parse(decodeURIComponent(serializer)),
+      serialize: (state) => encodeURIComponent(stringify(state)),
+    },
   },
   getters: {
     top_10: (state) => {
@@ -127,13 +131,22 @@ export const useVacancyStore = defineStore("vacancy", {
       return state.vacancies_in_my_city.slice(0, 3);
     },
     regions_formatted: (state) => {
-      return state.regions.map((item) => ({ name: item.name, value: item.id }));
+      return state.regions.map((item) => ({
+        name: item.name,
+        value: item.id,
+      }));
     },
     cities_formatted: (state) => {
-      return state.cities.map((item) => ({ name: item.name, value: item.id }));
+      return state.cities.map((item) => ({
+        name: item.name,
+        value: item.id,
+      }));
     },
     metros_formatted: (state) => {
-      return state.metros.map((item) => ({ name: item.name, value: item.id }));
+      return state.metros.map((item) => ({
+        name: item.name,
+        value: item.id,
+      }));
     },
   },
   actions: {
@@ -155,24 +168,6 @@ export const useVacancyStore = defineStore("vacancy", {
         return this.providers;
       }
     },
-    async importVacancies() {
-      const payload = [];
-      // providers[]=superjob&providers[]=hh
-      if (this.providers.hh) {
-        payload.push("hh");
-      }
-      if (this.providers.superjob) {
-        payload.push("superjob");
-      }
-
-      const { data } = await useApi("employer/vacancies/import", {
-        method: "post",
-        payload: { providers: payload },
-      });
-
-      return data;
-    },
-
     async synVacancies() {
       const { data } = await useApi("employer/vacancies/sync", {
         method: "POST",
@@ -253,6 +248,9 @@ export const useVacancyStore = defineStore("vacancy", {
       return this.vacancies_in_moscow;
     },
     async getVacanciesInTopCompanies() {
+      if (this.vacancies_in_top_companies.length > 0) {
+        return this.vacancies_in_top_companies;
+      }
       const response = await useApi("getTopCompanies", { method: "get" });
       if (response.status === "success") {
         this.vacancies_in_top_companies = response.data;
@@ -466,12 +464,8 @@ export const useVacancyStore = defineStore("vacancy", {
       return data;
     },
     async getCities(payload = {}) {
-      if (!payload.search) {
-        return [];
-      }
       const { data } = await useApi("area/cities", {
         method: "get",
-        params: payload,
       });
       if (data && "data" in data) {
         this.cities = data.data ?? [];
@@ -500,10 +494,10 @@ export const useVacancyStore = defineStore("vacancy", {
         params: payload,
       });
       if (response && "data" in response) {
-        this.industries = response.data.data ?? [];
+        this.industries.push(...response.data.data);
         return this.industries;
       }
-      return response;
+      return this.industries;
     },
     async getProfessionalRoles(payload = {}) {
       if (this.professional_roles.length > 0) {

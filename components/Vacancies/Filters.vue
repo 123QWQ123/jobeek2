@@ -76,14 +76,13 @@ const initialValues = {
   cities: [],
 };
 const { getCurrentQueryParams } = useQueryParams();
-const currentParams = ref(getCurrentQueryParams(initialValues) ?? {});
 
 const { setValues } = useForm({
   initialValues,
 });
-setValues(currentParams.value);
+setValues(getCurrentQueryParams(initialValues) ?? {});
 
-const { clearVacancies, getVacancies } = vacancyStore;
+const { getVacancies } = vacancyStore;
 
 const resetFilters = () => {
   resetForm();

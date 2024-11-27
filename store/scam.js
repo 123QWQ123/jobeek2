@@ -12,6 +12,7 @@ export const useScamStore = defineStore("scam", {
       subscribed_items: [],
     };
   },
+  persist: true,
   actions: {
     async searchPhone(payload = {}) {
       const response = await useApi("scam/getPhoneInfo", {

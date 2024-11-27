@@ -79,6 +79,7 @@ const { getPartTimes } = dictionaryStore;
 onMounted(async () => {
   if (dictionaryStore.part_times.length === 0) {
     await getPartTimes();
+    prepare(null, dictionaryStore.part_times);
   } else {
     prepare(null, dictionaryStore.part_times);
   }

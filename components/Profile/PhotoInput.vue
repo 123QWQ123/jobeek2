@@ -45,15 +45,10 @@ const openFileBrowser = () => {
 };
 const { refreshEmployer, refreshSeeker } = useAuthStore();
 const clearPhotoUrl = async () => {
-  let url = "seeker/photo";
-  if (props.name === "logo") {
-    url = "employer/logo";
-  }
-  const resData = await useApi(url, { method: "DELETE" });
-  if (resData.status !== "success") {
-    toast.error(resData.message);
-    return;
-  }
+  const url = props.name === "logo" ? "employer/logo" : "seeker/photo";
+
+  await useApi(url, { method: "DELETE" });
+
   toast.success("Удалено успешно.");
   photo_url.value = undefined;
   photo.value = undefined;

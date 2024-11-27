@@ -9,7 +9,6 @@
             <input
               type="text"
               name="name"
-              id="keyword_wrap"
               placeholder="Какого специалиста вы ищете?"
               autocomplete="off"
               v-model="search"
@@ -83,9 +82,9 @@
 <script setup>
 import { useAuthStore } from "~/store/auth";
 import { useVacancyStore } from "~/store/vacancy";
-import { storeToRefs } from "pinia";
 import { useProfileStore } from "~/store/profile";
 import useQueryParams from "~/composables/useQueryParams.js";
+import { ref } from "vue";
 
 const props = defineProps({
   with_wrapper: {
@@ -103,6 +102,11 @@ const route = useRoute();
 
 const vacancyStore = useVacancyStore();
 const profileStore = useProfileStore();
+let cityOptions = ref([]);
+const isLoading = ref(false);
+const city = ref(null);
+const { searchCities } = profileStore;
+const { clearVacancies, getVacancies, getCities } = vacancyStore;
 
 const search = ref(route.query?.search ?? undefined);
 
@@ -112,7 +116,21 @@ const salary = ref({
   value: undefined,
 });
 salary.value = getQueryParam("salary");
-const city = ref(null);
+
+onBeforeMount(async () => {
+  let cities = getQueryParam("cities");
+  if (cities && cities.length > 0) {
+    let item = (await getCities()).find((item) => item.id === cities[0]);
+
+    cityOptions.value = [
+      {
+        value: item.id,
+        name: item.name,
+      },
+    ];
+    city.value = item.id;
+  }
+});
 
 watch(
   () => getQueryParam("salary"),
@@ -128,8 +146,6 @@ const onCityChange = (cityItem) => {
     city.value = cityItem.value;
   }
 };
-const { searchCities } = profileStore;
-const { getVacancies, getCities } = vacancyStore;
 
 const updateCityInput = async (newValue = "") => {
   const items = (await searchCities({ search: newValue })) ?? [];
@@ -139,29 +155,16 @@ const updateCityInput = async (newValue = "") => {
   }));
 };
 
-const cityOptions = ref([]);
-
-// const page = useRoute();
-//
-// const country = computed(() => {
-//   if (params.countries && params.countries.length === 1) {
-//     return params.countries[0];
-//   } else return 1;
-// });
-
-const isLoading = ref(false);
-
-const { clearVacancies } = vacancyStore;
 const onSubmit = async (e) => {
   isLoading.value = true;
-  clearVacancies();
+  await clearVacancies();
   const cities = city.value ? [city.value] : undefined;
   const queryParams = {
     cities: JSON.stringify(cities),
     salary: JSON.stringify(salary.value),
     search: search.value,
   };
-  router.push({
+  await router.push({
     name: "search-vacancies",
     query: queryParams,
   });
