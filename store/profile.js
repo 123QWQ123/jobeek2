@@ -23,6 +23,7 @@ export const useProfileStore = defineStore("profile", {
       my_resume_photo_artifact: [],
     };
   },
+  persist: true,
   getters: {
     countryOptions(state) {
       return state.countries.map((item) => {

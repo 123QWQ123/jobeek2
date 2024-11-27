@@ -38,6 +38,7 @@ export const useResumeStore = defineStore("resume", {
       },
     };
   },
+  persist: true,
   getters: {
     top_10: (state) => {
       return state.resumes.slice(0, 10);

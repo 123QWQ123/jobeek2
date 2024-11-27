@@ -3,6 +3,7 @@ import useApi from "~/hooks/useApi";
 import { useAuthStore } from "~/store/auth.js";
 import { defineStore } from "pinia";
 import { ref } from "vue";
+import { parse, stringify } from "zipson/lib";
 
 export const useVacancyStore = defineStore("vacancy", {
   state: () => ({
@@ -59,6 +60,13 @@ export const useVacancyStore = defineStore("vacancy", {
     },
     employerMessage: "",
   }),
+  persist: {
+    storage: piniaPluginPersistedstate.localStorage(),
+    serializer: {
+      deserialize: (serializer) => parse(decodeURIComponent(serializer)),
+      serialize: (state) => encodeURIComponent(stringify(state)),
+    },
+  },
   getters: {
     top_10: (state) => {
       return state.vacancies.slice(0, 10);
@@ -552,25 +560,6 @@ export const useVacancyStore = defineStore("vacancy", {
         content_type: "application/json",
         payload,
       });
-    },
-  },
-  persistedState: {
-    storage: {
-      getItem: async (key) => {
-        if (process.client) {
-          return window.localStorage.getItem(key);
-        }
-      },
-      setItem: async (key, value) => {
-        if (process.client) {
-          return localStorage.setItem(key, value);
-        }
-      },
-      removeItem: async (key) => {
-        if (process.client) {
-          return localStorage.removeItem(key);
-        }
-      },
     },
   },
 });

@@ -22,15 +22,12 @@ export const useAreaStore = defineStore("area", {
       }
       return data;
     },
-    async getLocation(payload) {
-      const { data } = await useApi("area/location", {
-        method: "get",
-        params: payload,
-      });
+    async getLocation() {
+      const { data } = await useApi("area/location", { method: "get" });
       if (data) {
-        this.location = data.data;
+        this.location = data;
       }
-      return data;
+      return this.location;
     },
   },
 });

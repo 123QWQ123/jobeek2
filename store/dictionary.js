@@ -46,6 +46,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       resume_language_levels: [],
     };
   },
+  persist: true,
   getters: {
     addresses_formatted() {
       return this.addresses.map((item) => ({

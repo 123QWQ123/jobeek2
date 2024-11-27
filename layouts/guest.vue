@@ -1,8 +1,6 @@
 <template>
   <div class="layout">
-    <client-only>
-      <HeaderTheGuestCabinetHeader v-if="isShow()" />
-    </client-only>
+    <HeaderTheGuestCabinetHeader v-if="isShow()" />
     <div>
       <slot />
     </div>

@@ -8,6 +8,7 @@ export const useRoute = defineStore("route", {
       params: {},
     };
   },
+  persist: true,
   actions: {
     numberFormat(value) {
       return vueNumberFormat(value, {});

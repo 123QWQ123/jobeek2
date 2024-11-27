@@ -34,6 +34,7 @@ export default {
 <script setup>
 import { isNullOrUndefined } from "@tinymce/tinymce-vue/lib/es2015/main/ts/Utils.js";
 import { ref } from "vue";
+import { defineEmits } from "vue";
 
 const props = defineProps({
   options: {
@@ -44,6 +45,7 @@ const props = defineProps({
   listStyles: {},
 });
 const isOpen = ref(false);
+const emit = defineEmits(["update:modelValue", "change"]);
 const options = computed(() => props.options);
 
 const label = computed(() => {

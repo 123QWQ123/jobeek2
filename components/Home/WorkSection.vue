@@ -54,13 +54,13 @@
   </section>
 </template>
 
-<script async setup>
+<script setup>
 import { useVacancyStore } from "~/store/vacancy";
 import { useAuthStore } from "~/store/auth";
 import VacancyTile from "~/components/VacancyTile.vue";
 
 const { getVacanciesInMoscow } = useVacancyStore();
-const { vacancies_in_moscow } = storeToRefs(useVacancyStore());
+const vacancies_in_moscow = ref([]);
 const isLoading = ref(false);
 const noVacancyFoundMessage = ref(null);
 const auth = computed(() => useAuthStore());
@@ -71,7 +71,7 @@ const vacancies = computed(() =>
 onMounted(async () => {
   try {
     isLoading.value = true;
-    await getVacanciesInMoscow();
+    vacancies_in_moscow.value = await getVacanciesInMoscow();
     isLoading.value = false;
   } catch (error) {
     isLoading.value = false;

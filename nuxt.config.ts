@@ -68,16 +68,26 @@ export default defineNuxtConfig({
     },
   },
   modules: [
-    "@pinia/nuxt",
+    [
+      "@pinia/nuxt",
+      {
+        autoImports: ["defineStore", "acceptHMRUpdate"],
+        storesDirs: ["./stores/**"],
+      },
+    ],
+    "pinia-plugin-persistedstate/nuxt",
     "@nuxt/devtools",
     "@bg-dev/nuxt-fcm",
     "@vueuse/nuxt",
     "@vee-validate/nuxt",
     "nuxt-tiptap-editor",
   ],
-  pinia: {
-    autoImports: ["defineStore"],
-    storesDirs: ["./stores/**"],
+  piniaPluginPersistedstate: {
+    storage: "cookies",
+    cookieOptions: {
+      sameSite: "lax",
+      maxAge: 720000,
+    },
   },
   tiptap: {
     prefix: "Tiptap", //prefix for Tiptap imports, composables not included
@@ -102,5 +112,10 @@ export default defineNuxtConfig({
   },
   router: {
     middleware: ["auth"],
+  },
+  vite: {
+    optimizeDeps: {
+      exclude: ["firebase/analytics"],
+    },
   },
 });
