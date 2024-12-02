@@ -1,7 +1,12 @@
 <template>
   <div class="filter-box" :class="{ open: filterClass }">
     <div class="filter-box-handle" @click="filterClass = !filterClass">
-      <strong>Регионы({{ total }})</strong>
+      <client-only>
+        <strong>Регионы({{ total }})</strong>
+        <template #fallback>
+          <strong>Регионы</strong>
+        </template>
+      </client-only>
       <img src="~/assets/img/svg/Arrow-Down.svg" alt="#" />
     </div>
     <div v-if="isMore" class="filter-box-body">
@@ -18,32 +23,36 @@
         class="check-block-list with_scroll mt-2"
         :class="{ 'all-visible': isMore }"
       >
-        <VacanciesCheckbox
-          class="check-block"
-          v-for="item in selectedItems"
-          :checked="true"
-          :class="{ is_header: item.is_header }"
-          @change="toggleRegion(item.value)"
-          :name="`selected_region_${item.value}`"
-          :key="`selected_region_${item.value}`"
-          :label="item.name"
-        />
+        <client-only>
+          <VacanciesCheckbox
+            class="check-block"
+            v-for="item in selectedItems"
+            :checked="true"
+            :class="{ is_header: item.is_header }"
+            @change="toggleRegion(item.value)"
+            :name="`selected_region_${item.value}`"
+            :key="`selected_region_${item.value}`"
+            :label="item.name"
+          />
+        </client-only>
       </div>
       <div
         class="check-block-list with_scroll mt-3"
         :class="{ 'all-visible': isMore }"
       >
-        <VacanciesCheckbox
-          class="check-block"
-          v-for="item in groupedFilterItems"
-          :checked="item.is_checked"
-          :class="{ is_header: item.is_header }"
-          @change="toggleRegion(item.value)"
-          :name="`unselected_region_${item.value}`"
-          :label="item.name"
-          :is_header="item.is_header"
-          :key="`unselected_region_${item.value}`"
-        />
+        <client-only>
+          <VacanciesCheckbox
+            class="check-block"
+            v-for="item in groupedFilterItems"
+            :checked="item.is_checked"
+            :class="{ is_header: item.is_header }"
+            @change="toggleRegion(item.value)"
+            :name="`unselected_region_${item.value}`"
+            :label="item.name"
+            :is_header="item.is_header"
+            :key="`unselected_region_${item.value}`"
+          />
+        </client-only>
       </div>
       <button
         class="more-filters"
@@ -56,15 +65,17 @@
     </div>
     <div v-else class="filter-box-body">
       <div class="check-block-list" v-if="selectedItems.length">
-        <VacanciesCheckbox
-          class="check-block"
-          v-for="item in selectedItems"
-          :checked="true"
-          @change="toggleRegion(item.value)"
-          :name="`selected_region_${item.value}`"
-          :label="item.name"
-          :key="`selected_region_${item.value}`"
-        />
+        <client-only>
+          <VacanciesCheckbox
+            class="check-block"
+            v-for="item in selectedItems"
+            :checked="true"
+            @change="toggleRegion(item.value)"
+            :name="`selected_region_${item.value}`"
+            :label="item.name"
+            :key="`selected_region_${item.value}`"
+          />
+        </client-only>
       </div>
 
       <div
@@ -72,25 +83,38 @@
         class="check-block-list with_scroll"
         :class="{ 'all-visible': isMore }"
       >
-        <VacanciesCheckbox
-          class="check-block"
-          v-for="item in firstXSelectedItems"
-          :checked="false"
-          @change="toggleRegion(item.value)"
-          :name="`region_${item.value}`"
-          :label="item.name"
-          :key="`region_${item.value}`"
-        />
+        <client-only>
+          <VacanciesCheckbox
+            class="check-block"
+            v-for="item in firstXSelectedItems"
+            :checked="false"
+            @change="toggleRegion(item.value)"
+            :name="`region_${item.value}`"
+            :label="item.name"
+            :key="`region_${item.value}`"
+          />
+        </client-only>
       </div>
-      <button
-        class="more-filters"
-        :data-default-text="`Еще ${total}`"
-        data-hide-text="Показат"
-        @click="toggleMore"
-        v-if="total > 0"
-      >
-        Еще {{ total }}
-      </button>
+      <client-only>
+        <button
+          class="more-filters"
+          :data-default-text="`Еще ${total}`"
+          data-hide-text="Показат"
+          @click="toggleMore"
+          v-if="total > 0"
+        >
+          Еще {{ total }}
+        </button>
+        <template #fallback>
+          <button
+            class="more-filters"
+            :data-default-text="`Еще`"
+            data-hide-text="Показат"
+          >
+            Еще
+          </button>
+        </template>
+      </client-only>
     </div>
   </div>
 </template>
@@ -134,7 +158,7 @@ const search = ref("");
 const total = computed(() => {
   return vacancyStore.regions.length > 5 ? vacancyStore.regions.length - 5 : 0;
 });
-const filterClass = ref(true);
+const filterClass = ref(false);
 const isMore = ref(false);
 const groupedFilterItems = ref([]);
 const selectedItems = ref([]);

@@ -12,21 +12,24 @@
   >
     <h4 class="tile-card-title">{{ vacancy.name }}</h4>
     <span class="tile-card-dop-info" v-if="vacancy.salary_to">
-      До {{ vueNumberFormat(vacancy.salary_to, {}) }} ₽ / месяц
+      До {{ $format_number(vacancy.salary_to, {}) }} ₽ / месяц
     </span>
     <span v-else class="tile-card-dop-info">
-      От {{ vueNumberFormat(vacancy.salary_from, {}) }} ₽ / месяц
+      От {{ $format_number(vacancy.salary_from, {}) }} ₽ / месяц
     </span>
   </NuxtLink>
 </template>
 
 <script setup>
+import { useNuxtApp } from "#app";
+
 const props = defineProps({
   vacancy: {
     type: Object,
     required: true,
   },
 });
+const { $format_number } = useNuxtApp();
 
 const getProfessionalRoles = (objectData) => {
   if (objectData) return Object.keys(objectData);

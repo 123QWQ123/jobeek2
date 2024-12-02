@@ -100,6 +100,7 @@ watch(
     selectedOption.value = options.value.find(
       (item) => String(item.value) === String(newValue),
     );
+    searchInput.value = selectedOption.value.name;
   },
 );
 
@@ -140,7 +141,7 @@ function onSelect(id) {
   if (selectedOptionItem) {
     selectedOption.value = selectedOptionItem;
     searchInput.value = selectedOptionItem.name;
-    emit("change", selectedOptionItem);
+    // emit("change", selectedOptionItem);
     emit("update:modelValue", id);
     isOpen.value = false;
   }

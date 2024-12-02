@@ -22,14 +22,6 @@
       </div>
 
       <div class="input-wrap has-icon">
-        <!--        <SelectWithSearch-->
-        <!--          :options="cityOptions"-->
-        <!--          v-model="city"-->
-        <!--          :listStyles="searchSelectStyles"-->
-        <!--          @change="onCityChange"-->
-        <!--          :placeholder="'Город'"-->
-        <!--          :listItemStyles="searchSelectItemStyles"-->
-        <!--        />-->
         <SelectWithSearch
           :options="cityOptions"
           v-model.number="city"
@@ -128,7 +120,7 @@ const onSubmit = async (e) => {
   clearVacancies();
   const cities = city.value ? [city.value] : undefined;
   const queryVacancy = {
-    cities: cities,
+    cities: JSON.stringify(cities),
     salary: JSON.stringify(salary.value),
     search: search.value,
   };

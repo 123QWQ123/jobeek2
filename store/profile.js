@@ -5,6 +5,7 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 import axios from "axios";
 import { useAuthStore } from "~/store/auth";
 import useApi from "~/hooks/useApi";
+import { parse, stringify } from "zipson/lib";
 
 export const useProfileStore = defineStore("profile", {
   state: () => {
@@ -23,7 +24,13 @@ export const useProfileStore = defineStore("profile", {
       my_resume_photo_artifact: [],
     };
   },
-  persist: true,
+  persist: {
+    storage: piniaPluginPersistedstate.localStorage(),
+    serializer: {
+      deserialize: (serializer) => parse(decodeURIComponent(serializer)),
+      serialize: (state) => encodeURIComponent(stringify(state)),
+    },
+  },
   getters: {
     countryOptions(state) {
       return state.countries.map((item) => {

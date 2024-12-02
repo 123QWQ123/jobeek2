@@ -2,13 +2,7 @@
   <div class="content">
     <div>
       <ul class="favorites-list">
-        <client-only>
-          <VacanciesItem
-            v-for="item in vacancies"
-            :key="item.id"
-            :item="item"
-          />
-        </client-only>
+        <VacanciesItem v-for="item in vacancies" :key="item.id" :item="item" />
       </ul>
 
       <button
@@ -41,23 +35,19 @@ import useQueryParams from "~/composables/useQueryParams.js";
 const vacancyStore = useVacancyStore();
 const { getVacancies } = vacancyStore;
 const { current_page } = storeToRefs(vacancyStore);
-
+const loadMoreButton = ref();
+const isLoading = ref(false);
+const isMore = ref(false);
 const { getCurrentQueryParams } = useQueryParams();
 const current_params = getCurrentQueryParams() ?? {};
-if (process.server) {
-  await getVacancies({ ...getCurrentQueryParams("back") });
-}
 const vacancies = ref(vacancyStore.vacancies ?? []);
+
 watch(
   () => vacancyStore.vacancies,
   () => {
     vacancies.value = vacancyStore.vacancies;
   },
 );
-
-const loadMoreButton = ref();
-const isLoading = ref(false);
-const isMore = ref(false);
 
 const params = ref(current_params);
 watch(
