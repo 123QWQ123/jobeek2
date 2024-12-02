@@ -45,9 +45,9 @@ const isMore = ref(false);
 // const current_params = getCurrentQueryParams("back") ?? {};
 const { getQueryParam, getCurrentQueryParams } = useQueryParams();
 const current_params = getCurrentQueryParams() ?? {};
-if (process.server) {
-  await getResumes({ ...getCurrentQueryParams("back") }, false, true);
-}
+
+await getResumes({ ...getCurrentQueryParams() }, false, true);
+
 const resumes = ref(resumeStore.resumes ?? []);
 watch(
   () => resumeStore.resumes,
