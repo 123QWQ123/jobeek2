@@ -1,13 +1,13 @@
 <template>
   <section
-    v-if="topVacancies.length > 0"
+    v-if="vacancies_in_top_companies.length > 0"
     class="companies-section section wrapper"
   >
     <div class="section-head">
       <h2 class="section-title">Работайте у лучших</h2>
     </div>
     <ul class="companies-list">
-      <li v-for="vacancy in topVacancies" :key="vacancy.id">
+      <li v-for="vacancy in vacancies_in_top_companies" :key="vacancy.id">
         <nuxt-link
           class="company company-card"
           :to="{
@@ -30,13 +30,5 @@
 <script setup>
 import { useVacancyStore } from "~/store/vacancy.js";
 
-const { getVacanciesInTopCompanies } = useVacancyStore();
-const topVacancies = ref([]);
-const isLoading = ref(false);
-
-onMounted(async () => {
-  isLoading.value = true;
-  topVacancies.value = await getVacanciesInTopCompanies();
-  isLoading.value = false;
-});
+const { vacancies_in_top_companies } = useVacancyStore();
 </script>

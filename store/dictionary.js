@@ -47,13 +47,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       resume_language_levels: [],
     };
   },
-  persist: {
-    storage: piniaPluginPersistedstate.localStorage(),
-    serializer: {
-      deserialize: (serializer) => parse(decodeURIComponent(serializer)),
-      serialize: (state) => encodeURIComponent(stringify(state)),
-    },
-  },
+  persist: false,
   getters: {
     addresses_formatted() {
       return this.addresses.map((item) => ({

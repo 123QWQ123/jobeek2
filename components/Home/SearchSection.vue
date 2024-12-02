@@ -5,28 +5,23 @@
         <div class="divided-box-title">
           <h3 class="section-title">Поиск по отраслям</h3>
         </div>
-        <div v-if="isLoading" class="position-relative">
-          <BlockLoader />
-        </div>
-        <div v-else>
+        <div>
           <div class="divided-box-content">
             <div
               class="labels-list-box"
               :class="{ expanded: isMoreIndustries }"
             >
               <ul class="labels-list">
-                <client-only>
-                  <li v-for="item in industries" :key="item.id">
-                    <NuxtLink
-                      :to="{
-                        name: 'search-vacancies',
-                        query: { industries: `[${item.id}]` },
-                      }"
-                      class="label"
-                      >{{ item.title }}
-                    </NuxtLink>
-                  </li>
-                </client-only>
+                <li v-for="item in top_20_industries" :key="item.id">
+                  <NuxtLink
+                    :to="{
+                      name: 'search-vacancies',
+                      query: { industries: `[${item.id}]` },
+                    }"
+                    class="label"
+                    >{{ item.title }}
+                  </NuxtLink>
+                </li>
               </ul>
             </div>
             <button
@@ -93,19 +88,17 @@
         <div class="divided-box-content">
           <div class="labels-list-box">
             <ul class="labels-list">
-              <client-only>
-                <li v-for="item in schedules">
-                  <NuxtLink
-                    class="label"
-                    :to="{
-                      name: 'search-vacancies',
-                      query: { schedules: `[${item.id}]` },
-                    }"
-                  >
-                    {{ item.name }}
-                  </NuxtLink>
-                </li>
-              </client-only>
+              <li v-for="item in schedules">
+                <NuxtLink
+                  class="label"
+                  :to="{
+                    name: 'search-vacancies',
+                    query: { schedules: `[${item.id}]` },
+                  }"
+                >
+                  {{ item.name }}
+                </NuxtLink>
+              </li>
             </ul>
           </div>
         </div>
@@ -115,34 +108,15 @@
 </template>
 
 <script setup>
-import { useVacancyStore } from "../../store/vacancy";
-import { useDictionaryStore } from "~/store/dictionary";
+import { useVacancyStore } from "~/store/vacancy.js";
+import { useDictionaryStore } from "~/store/dictionary.js";
 
-const vacancyStore = useVacancyStore();
-const dictionaryStore = useDictionaryStore();
-const { getSchedules } = dictionaryStore;
-
-const schedules = computed(() => dictionaryStore.schedules);
-
-onMounted(() => {
-  getSchedules();
-});
+const { top_20_industries } = useVacancyStore();
+const { schedules } = useDictionaryStore();
 
 const isMoreIndustries = ref(false);
-const industries = computed(() => {
-  return vacancyStore.top_20_industries;
-});
-const toggleIndustries = () => {
-  isMoreIndustries.value = !isMoreIndustries.value;
-};
-
-const { getIndustries } = useVacancyStore();
-const isLoading = ref(false);
-onMounted(async () => {
-  isLoading.value = true;
-  await getIndustries();
-  isLoading.value = false;
-});
+const toggleIndustries = () =>
+  (isMoreIndustries.value = !isMoreIndustries.value);
 </script>
 
 <style scoped>

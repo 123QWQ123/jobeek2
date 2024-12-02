@@ -5,7 +5,7 @@
       <NuxtLink
         class="more"
         :to="{
-          name: auth.isEmployer ? 'search-vacancies' : 'search-resumes',
+          name: isEmployer ? 'search-vacancies' : 'search-resumes',
           query: { countries: `[${1}]`, regions: `[${22}]` },
         }"
       >
@@ -35,19 +35,14 @@
       </NuxtLink>
     </div>
 
-    <div v-if="isLoading" class="position-relative">
-      <BlockLoader />
-    </div>
-    <div v-else>
+    <div>
       <div class="swiper cards-slider-row">
         <div class="cards-slider cards-grid">
-          <client-only>
-            <VacancyTile
-              v-for="item in vacancies"
-              :key="item.id"
-              :vacancy="item"
-            />
-          </client-only>
+          <VacancyTile
+            v-for="item in vacancies_in_moscow"
+            :key="item.id"
+            :vacancy="item"
+          />
         </div>
       </div>
     </div>
@@ -59,25 +54,8 @@ import { useVacancyStore } from "~/store/vacancy";
 import { useAuthStore } from "~/store/auth";
 import VacancyTile from "~/components/VacancyTile.vue";
 
-const { getVacanciesInMoscow } = useVacancyStore();
-const vacancies_in_moscow = ref([]);
-const isLoading = ref(false);
-const noVacancyFoundMessage = ref(null);
-const auth = computed(() => useAuthStore());
-const vacancies = computed(() =>
-  vacancies_in_moscow.value.sort((a, b) => a.name.localeCompare(b.name)),
-);
-
-onMounted(async () => {
-  try {
-    isLoading.value = true;
-    vacancies_in_moscow.value = await getVacanciesInMoscow();
-    isLoading.value = false;
-  } catch (error) {
-    isLoading.value = false;
-    noVacancyFoundMessage.value = "Ошибка при загрузке вакансий.";
-  }
-});
+const { vacancies_in_moscow } = useVacancyStore();
+const { isEmployer } = useAuthStore();
 </script>
 
 <style scoped>
