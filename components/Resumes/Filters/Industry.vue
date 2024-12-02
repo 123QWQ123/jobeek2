@@ -104,7 +104,7 @@ const prepare = (newItems, oldItems) => {
   for (let i = 0; i < 5; i++) {
     let item = newItems[i];
     let is_checked = false;
-    if (industry_ids.value.includes(item.id)) {
+    if (industry_ids && industry_ids.value.includes(item.id)) {
       is_checked = true;
     }
     arr.push({

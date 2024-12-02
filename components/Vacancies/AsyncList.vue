@@ -34,20 +34,12 @@ import useQueryParams from "~/composables/useQueryParams.js";
 
 const vacancyStore = useVacancyStore();
 const { getVacancies } = vacancyStore;
-const { current_page } = storeToRefs(vacancyStore);
+const { current_page, vacancies } = storeToRefs(vacancyStore);
 const loadMoreButton = ref();
 const isLoading = ref(false);
 const isMore = ref(false);
 const { getCurrentQueryParams } = useQueryParams();
 const current_params = getCurrentQueryParams() ?? {};
-const vacancies = ref(vacancyStore.vacancies ?? []);
-
-watch(
-  () => vacancyStore.vacancies,
-  () => {
-    vacancies.value = vacancyStore.vacancies;
-  },
-);
 
 const params = ref(current_params);
 watch(
