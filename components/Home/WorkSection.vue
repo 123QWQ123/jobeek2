@@ -52,7 +52,6 @@
 <script setup>
 import { useVacancyStore } from "~/store/vacancy";
 import { useAuthStore } from "~/store/auth";
-import VacancyTile from "~/components/VacancyTile.vue";
 
 const { vacancies_in_moscow } = storeToRefs(useVacancyStore());
 const auth = storeToRefs(useAuthStore());

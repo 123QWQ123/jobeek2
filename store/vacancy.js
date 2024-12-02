@@ -9,8 +9,8 @@ export const useVacancyStore = defineStore("vacancy", {
   state: () => ({
     vacancies: [],
     vacancies_in_my_city: [],
-    vacancies_in_moscow: ref([]),
-    vacancies_in_top_companies: ref([]),
+    vacancies_in_moscow: [],
+    vacancies_in_top_companies: [],
     vacancy: null,
     my_vacancy: null,
     total: 0,
