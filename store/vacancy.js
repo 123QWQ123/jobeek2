@@ -60,13 +60,7 @@ export const useVacancyStore = defineStore("vacancy", {
     },
     employerMessage: "",
   }),
-  persist: {
-    storage: piniaPluginPersistedstate.localStorage(),
-    serializer: {
-      deserialize: (serializer) => parse(decodeURIComponent(serializer)),
-      serialize: (state) => encodeURIComponent(stringify(state)),
-    },
-  },
+  persist: false,
   getters: {
     top_10: (state) => {
       return state.vacancies.slice(0, 10);
@@ -470,7 +464,7 @@ export const useVacancyStore = defineStore("vacancy", {
       if (data && "data" in data) {
         this.cities = data.data ?? [];
       }
-      return data;
+      return this.cities;
     },
     async getSpecializations(payload = URLSearchParams) {
       if (this.specializations.length > 0) {

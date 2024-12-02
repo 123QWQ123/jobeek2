@@ -1,6 +1,7 @@
 // no need to import defineStore and acceptHMRUpdate
 import { acceptHMRUpdate, defineStore } from "pinia";
 import useApi from "~/hooks/useApi";
+import { parse, stringify } from "zipson/lib";
 
 export const useAreaStore = defineStore("area", {
   state: () => {
@@ -10,6 +11,13 @@ export const useAreaStore = defineStore("area", {
       cities: [],
       location: {},
     };
+  },
+  persist: {
+    storage: piniaPluginPersistedstate.localStorage(),
+    serializer: {
+      deserialize: (serializer) => parse(decodeURIComponent(serializer)),
+      serialize: (state) => encodeURIComponent(stringify(state)),
+    },
   },
   actions: {
     async getRegions(payload) {

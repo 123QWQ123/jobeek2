@@ -3,22 +3,21 @@
     <div class="results-page-content">
       <div class="wrapper">
         <div class="search-head">
-          <client-only>
-            <div class="col">
-              <div class="search-item">{{ search_keyword }}</div>
-              <div class="found-count">
-                Найдено
-                {{ total }}
-                вакансий
-              </div>
+          <div class="col">
+            <div class="search-item">{{ search_keyword }}</div>
+            <div class="found-count">
+              Найдено
+              {{ $format_number(total) }}
+              вакансий
             </div>
-          </client-only>
+          </div>
         </div>
         <button class="mob-get-aside-btn" @click="toggle">
           <FilterIcon />
           Фильтры
         </button>
         <div class="aside-container">
+          <BlockLoader class="position-fixed" v-if="isLoading" />
           <VacanciesFilters></VacanciesFilters>
 
           <VacanciesList :key="$route.fullPath"></VacanciesList>
@@ -34,46 +33,35 @@ import { useVacancyForm } from "~/composables/useVacancyForm";
 import { useUIStore } from "~/store/ui";
 import { useNuxtApp } from "#app";
 import useQueryParams from "~/composables/useQueryParams.js";
-import { useResumeStore } from "~/store/resume.js";
 import FilterIcon from "~/components/Vacancies/FilterIcon.vue";
 
 const { $format_number } = useNuxtApp();
 const vacancyStore = useVacancyStore();
 const uiStore = useUIStore();
-const total = ref($format_number(vacancyStore.total) ?? 0);
-const { getMyResumes } = useResumeStore();
 const { getVacancies } = vacancyStore;
+const { total } = storeToRefs(vacancyStore);
 const { getCurrentQueryParams } = useQueryParams();
 const isLoading = ref(false);
-
-onBeforeMount(async () => {
-  isLoading.value = true;
-  await getMyResumes();
-  await getVacancies(getCurrentQueryParams());
-  total.value = $format_number(vacancyStore.total);
-  isLoading.value = false;
-});
-
 const { toggleSidebar } = uiStore;
-
 const toggle = () => {
   toggleSidebar();
 };
-
 const route = useRoute();
 const { name: search_keyword } = route.query;
-
 const form = ref(useVacancyForm());
+
+if (process.server) {
+  await getVacancies(getCurrentQueryParams());
+}
 
 watch(
   () => ({ ...getCurrentQueryParams() }),
-  async (newValues) => {
-    isLoading.value = true;
-
-    // currentParams.value = newValues;
-    await getVacancies(newValues);
-
-    isLoading.value = false;
+  async (newValues, oldValues) => {
+    if (JSON.stringify(newValues) !== JSON.stringify(oldValues)) {
+      isLoading.value = true;
+      await getVacancies(newValues);
+      isLoading.value = false;
+    }
   },
 );
 </script>

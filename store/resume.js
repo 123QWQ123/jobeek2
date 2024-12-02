@@ -2,6 +2,7 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import useApi from "~/hooks/useApi";
 import { useAuthStore } from "~/store/auth.js";
+import { parse, stringify } from "zipson/lib";
 
 export const useResumeStore = defineStore("resume", {
   state: () => {
@@ -38,7 +39,13 @@ export const useResumeStore = defineStore("resume", {
       },
     };
   },
-  persist: true,
+  persist: {
+    storage: piniaPluginPersistedstate.localStorage(),
+    serializer: {
+      deserialize: (serializer) => parse(decodeURIComponent(serializer)),
+      serialize: (state) => encodeURIComponent(stringify(state)),
+    },
+  },
   getters: {
     top_10: (state) => {
       return state.resumes.slice(0, 10);

@@ -2,6 +2,7 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import useApi from "~/hooks/useApi";
 import vueNumberFormat from "~/plugins/vueNumberFormat.js";
+import { parse, stringify } from "zipson/lib";
 
 export const useDictionaryStore = defineStore("dictionary", {
   state: () => {
@@ -46,7 +47,13 @@ export const useDictionaryStore = defineStore("dictionary", {
       resume_language_levels: [],
     };
   },
-  persist: true,
+  persist: {
+    storage: piniaPluginPersistedstate.localStorage(),
+    serializer: {
+      deserialize: (serializer) => parse(decodeURIComponent(serializer)),
+      serialize: (state) => encodeURIComponent(stringify(state)),
+    },
+  },
   getters: {
     addresses_formatted() {
       return this.addresses.map((item) => ({

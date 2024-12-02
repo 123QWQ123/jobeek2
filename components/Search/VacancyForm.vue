@@ -120,7 +120,7 @@ salary.value = getQueryParam("salary");
 onBeforeMount(async () => {
   let cities = getQueryParam("cities");
   if (cities && cities.length > 0) {
-    let item = (await getCities()).find((item) => item.id === cities[0]);
+    let item = (await getCities())?.find((item) => item.id === cities[0]);
 
     cityOptions.value = [
       {

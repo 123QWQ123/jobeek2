@@ -1,6 +1,7 @@
 // no need to import defineStore and acceptHMRUpdate
 import { acceptHMRUpdate, defineStore } from "pinia";
 import useApi from "~/hooks/useApi";
+import { parse, stringify } from "zipson/lib";
 
 export const useScamStore = defineStore("scam", {
   state: () => {
@@ -12,7 +13,13 @@ export const useScamStore = defineStore("scam", {
       subscribed_items: [],
     };
   },
-  persist: true,
+  persist: {
+    storage: piniaPluginPersistedstate.localStorage(),
+    serializer: {
+      deserialize: (serializer) => parse(decodeURIComponent(serializer)),
+      serialize: (state) => encodeURIComponent(stringify(state)),
+    },
+  },
   actions: {
     async searchPhone(payload = {}) {
       const response = await useApi("scam/getPhoneInfo", {

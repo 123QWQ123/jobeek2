@@ -20,7 +20,7 @@
                     <NuxtLink
                       :to="{
                         name: 'search-vacancies',
-                        query: { industries: [item.id] },
+                        query: { industries: `[${item.id}]` },
                       }"
                       class="label"
                       >{{ item.title }}
@@ -93,17 +93,19 @@
         <div class="divided-box-content">
           <div class="labels-list-box">
             <ul class="labels-list">
-              <li v-for="item in schedules">
-                <NuxtLink
-                  class="label"
-                  :to="{
-                    name: 'search-vacancies',
-                    query: { schedules: [item.id] },
-                  }"
-                >
-                  {{ item.name }}
-                </NuxtLink>
-              </li>
+              <client-only>
+                <li v-for="item in schedules">
+                  <NuxtLink
+                    class="label"
+                    :to="{
+                      name: 'search-vacancies',
+                      query: { schedules: `[${item.id}]` },
+                    }"
+                  >
+                    {{ item.name }}
+                  </NuxtLink>
+                </li>
+              </client-only>
             </ul>
           </div>
         </div>

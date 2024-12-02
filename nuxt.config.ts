@@ -36,7 +36,7 @@ export default defineNuxtConfig({
     },
   },
   ssr: true,
-  pages: true,
+  // pages: true,
   css: [
     "bootstrap/dist/css/bootstrap.min.css",
     "~/assets/styles/nice-select.css",
