@@ -50,9 +50,7 @@ const route = useRoute();
 const { name: search_keyword } = route.query;
 const form = ref(useVacancyForm());
 
-if (process.server) {
-  await getVacancies(getCurrentQueryParams());
-}
+await getVacancies(getCurrentQueryParams());
 
 watch(
   () => ({ ...getCurrentQueryParams() }),

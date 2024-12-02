@@ -32,9 +32,8 @@ import { useVacancyStore } from "~/store/vacancy";
 import Swal from "sweetalert2";
 import useQueryParams from "~/composables/useQueryParams.js";
 
-const vacancyStore = useVacancyStore();
-const { getVacancies } = vacancyStore;
-const { current_page, vacancies } = storeToRefs(vacancyStore);
+const { getVacancies } = useVacancyStore();
+const { current_page, vacancies } = storeToRefs(useVacancyStore());
 const loadMoreButton = ref();
 const isLoading = ref(false);
 const isMore = ref(false);

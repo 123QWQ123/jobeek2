@@ -25,11 +25,9 @@ const {
 } = useVacancyStore();
 const { getSchedules } = useDictionaryStore();
 
-if (process.server) {
-  await getVacanciesInMoscow();
-  await getVacanciesInTopCompanies();
-  await getCurrencyCityVacancies();
-  await getIndustries();
-  await getSchedules();
-}
+await getVacanciesInMoscow();
+await getVacanciesInTopCompanies();
+await getCurrencyCityVacancies();
+await getIndustries();
+await getSchedules();
 </script>
