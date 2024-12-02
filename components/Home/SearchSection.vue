@@ -111,8 +111,8 @@
 import { useVacancyStore } from "~/store/vacancy.js";
 import { useDictionaryStore } from "~/store/dictionary.js";
 
-const { top_20_industries } = useVacancyStore();
-const { schedules } = useDictionaryStore();
+const { top_20_industries } = storeToRefs(useVacancyStore());
+const { schedules } = storeToRefs(useDictionaryStore());
 
 const isMoreIndustries = ref(false);
 const toggleIndustries = () =>

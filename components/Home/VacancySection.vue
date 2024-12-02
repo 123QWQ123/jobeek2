@@ -6,7 +6,7 @@
       <NuxtLink
         class="more"
         :to="{
-          name: isEmployer ? 'search-vacancies' : 'search-resumes',
+          name: auth.isEmployer ? 'search-vacancies' : 'search-resumes',
           query: { countries: `[${1}]`, regions: `[${22}]` },
         }"
       >
@@ -87,10 +87,10 @@ import { useVacancyStore } from "~/store/vacancy";
 import { useNuxtApp } from "#app";
 import { useAuthStore } from "~/store/auth.js";
 
-const { isEmployer } = storeToRefs(useAuthStore());
+const auth = storeToRefs(useAuthStore());
 const { $format_number } = useNuxtApp();
 const vacancyStore = useVacancyStore();
-const { vacancies_in_my_city } = useVacancyStore();
+const { vacancies_in_my_city } = storeToRefs(useVacancyStore());
 /**
  * Get logo url
  * @param item Object

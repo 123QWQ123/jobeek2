@@ -6,7 +6,6 @@ useHead({
 });
 
 const authStore = useAuthStore();
-const isEmployer = computed(() => authStore.isEmployer);
 watch(
   () => authStore.isEmployer,
   (new_value) => {

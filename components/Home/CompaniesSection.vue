@@ -30,5 +30,5 @@
 <script setup>
 import { useVacancyStore } from "~/store/vacancy.js";
 
-const { vacancies_in_top_companies } = useVacancyStore();
+const { vacancies_in_top_companies } = storeToRefs(useVacancyStore());
 </script>

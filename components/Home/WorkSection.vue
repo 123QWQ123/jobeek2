@@ -5,7 +5,7 @@
       <NuxtLink
         class="more"
         :to="{
-          name: isEmployer ? 'search-vacancies' : 'search-resumes',
+          name: auth.isEmployer ? 'search-vacancies' : 'search-resumes',
           query: { countries: `[${1}]`, regions: `[${22}]` },
         }"
       >
@@ -54,8 +54,8 @@ import { useVacancyStore } from "~/store/vacancy";
 import { useAuthStore } from "~/store/auth";
 import VacancyTile from "~/components/VacancyTile.vue";
 
-const { vacancies_in_moscow } = useVacancyStore();
-const { isEmployer } = useAuthStore();
+const { vacancies_in_moscow } = storeToRefs(useVacancyStore());
+const auth = storeToRefs(useAuthStore());
 </script>
 
 <style scoped>

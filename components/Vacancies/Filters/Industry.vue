@@ -104,7 +104,7 @@ const prepare = (newItems, oldItems) => {
   for (let i = 0; i < 5; i++) {
     let item = newItems[i];
     let is_checked = false;
-    if (industry_ids.value.includes(item.id)) {
+    if (industry_ids && industry_ids.value.includes(item.id)) {
       is_checked = true;
     }
     arr.push({
@@ -119,7 +119,7 @@ const prepare = (newItems, oldItems) => {
 
 const getCheckedItems = (items, ids_from_url) => {
   return items.map((item) => {
-    if (ids_from_url.includes(item.id)) {
+    if (ids_from_url && ids_from_url.includes(item.id)) {
       item.checked = true;
       item.items = item.items.map((sub_item) => {
         sub_item.checked = true;
@@ -128,7 +128,7 @@ const getCheckedItems = (items, ids_from_url) => {
     } else {
       if (item.items.length > 0) {
         item.items = item.items.map((sub_item) => {
-          if (ids_from_url.includes(sub_item.id)) {
+          if (ids_from_url && ids_from_url.includes(sub_item.id)) {
             sub_item.checked = true;
           }
           return sub_item;

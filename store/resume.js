@@ -39,13 +39,7 @@ export const useResumeStore = defineStore("resume", {
       },
     };
   },
-  persist: {
-    storage: piniaPluginPersistedstate.localStorage(),
-    serializer: {
-      deserialize: (serializer) => parse(decodeURIComponent(serializer)),
-      serialize: (state) => encodeURIComponent(stringify(state)),
-    },
-  },
+  persist: false,
   getters: {
     top_10: (state) => {
       return state.resumes.slice(0, 10);
