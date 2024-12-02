@@ -74,7 +74,7 @@ const toggleSelect = (event, id) => {
   const dynItems = [...firstItems.value].map((item) => {
     if (item.id === id) {
       item.is_checked = checked;
-      if (checked && !selected_ids.includes(id)) {
+      if (checked.value && !selected_ids.includes(id)) {
         selected_ids.push(item.id);
         selected_ids.push(...item.items.map((sub) => sub.id));
       } else if (!checked) {
@@ -104,7 +104,7 @@ const prepare = (newItems, oldItems) => {
   for (let i = 0; i < 5; i++) {
     let item = newItems[i];
     let is_checked = false;
-    if (industry_ids && industry_ids.value.includes(item.id)) {
+    if (industry_ids.value && industry_ids.value.includes(item.id)) {
       is_checked = true;
     }
     arr.push({
