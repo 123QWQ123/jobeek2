@@ -37,6 +37,7 @@ export default defineNuxtConfig({
   },
   ssr: true,
   pages: true,
+  sourcemap: true,
   css: [
     "bootstrap/dist/css/bootstrap.min.css",
     "~/assets/styles/nice-select.css",
@@ -118,4 +119,31 @@ export default defineNuxtConfig({
       exclude: ["firebase/analytics"],
     },
   },
+  experimental: {
+    componentIslands: true,
+  },
+  // i18n: {
+  //   lazy: true,
+  //   langDir: "locales",
+  //   strategy: "no_prefix",
+  //   locales: [
+  //     {
+  //       code: "en",
+  //       iso: "en",
+  //       name: "English",
+  //       file: "en.json",
+  //     },
+  //     {
+  //       code: "nl-Nl",
+  //       iso: "nl-NL",
+  //       name: "Dutch",
+  //       file: "nl-NL.json",
+  //     },
+  //   ],
+  // },
+  // nitro: {
+  //   prerender: {
+  //     routes: [],
+  //   },
+  // },
 });
