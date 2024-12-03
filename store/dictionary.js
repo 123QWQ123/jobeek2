@@ -161,7 +161,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.work_types = data.data?.work_type ?? [];
       }
-      return data;
+      return this.work_types;
     },
     async getHHWorkTypes(payload) {
       if (this.hh_work_types.length > 0) {
@@ -177,7 +177,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.hh_work_types = data.data?.work_type ?? [];
       }
-      return [];
+      return this.hh_work_types;
     },
     async getSuperjobWorkTypes(payload) {
       if (this.superjob_work_types.length > 0) {
@@ -193,7 +193,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.superjob_work_types = data.data?.work_type ?? [];
       }
-      return [];
+      return this.superjob_work_types;
     },
     async getVacancyBillingTypes(payload) {
       if (this.vacancy_billing_types.length > 0) {
@@ -209,7 +209,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.vacancy_billing_types = data.data?.vacancy_billing_type ?? [];
       }
-      return data;
+      return this.vacancy_billing_types;
     },
     async getResumeAccessTypes(payload) {
       if (this.resume_access_types.length > 0) {
@@ -225,7 +225,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.resume_access_types = data.data?.resume_access_type_merge ?? [];
       }
-      return data;
+      return this.resume_access_types;
     },
     async getVacancyTypes(payload) {
       if (this.vacancy_types.length > 0) {
@@ -238,7 +238,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.vacancy_types = data.data?.vacancy_type ?? [];
       }
-      return data;
+      return this.vacancy_types;
     },
     async searchAddresses(payload) {
       if (this.addresses.length > 0) {
@@ -264,7 +264,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         return this.addresses;
       } else {
       }
-      return response;
+      return this.addresses;
     },
     async searchMetro(payload) {
       if (this.metro.length > 0) {
@@ -278,7 +278,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         this.metro = data.data ?? [];
         return this.metro;
       }
-      return data;
+      return this.metro;
     },
     async getGenders(payload, is_for_resume = false) {
       if (is_for_resume) {
@@ -292,7 +292,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         if (data && "data" in data) {
           this.resume_genders = data.data?.gender_resume ?? [];
         }
-        return data;
+        return this.resume_genders;
       } else {
         if (this.genders.length > 0) {
           return this.genders;
@@ -304,7 +304,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         if (data && "data" in data) {
           this.genders = data.data?.gender ?? [];
         }
-        return data;
+        return this.genders;
       }
     },
     async getChildren(payload) {
@@ -318,7 +318,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.children = data.data?.children ?? [];
       }
-      return data;
+      return this.children;
     },
     async getResumeChildren(payload) {
       if (this.resume_children.length > 0) {
@@ -331,7 +331,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.resume_children = data.data?.children_resume ?? [];
       }
-      return data;
+      return this.resume_children;
     },
     async getMaritalStatus(payload) {
       if (this.marital_statuses.length > 0) {
@@ -344,7 +344,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.marital_statuses = data.data?.marital_status ?? [];
       }
-      return data;
+      return this.marital_statuses;
     },
     async getMaritalStatusForResume(payload) {
       if (this.resume_marital_statuses.length > 0) {
@@ -360,7 +360,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.resume_marital_statuses = data.data?.marital_status_resume ?? [];
       }
-      return data;
+      return this.resume_marital_statuses;
     },
     async getTravelTimeOptions(payload) {
       if (this.travel_times.length > 0) {
@@ -373,7 +373,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.travel_times = data.data?.travel_time ?? [];
       }
-      return data;
+      return this.travel_times;
     },
     async getPlaceOfWorks(payload) {
       if (this.place_of_works.length > 0) {
@@ -386,7 +386,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.place_of_works = data.data?.place_of_work ?? [];
       }
-      return data;
+      return this.place_of_works;
     },
     async getForeignLanguages(payload) {
       if (this.foreign_languages.length > 0) {
@@ -399,7 +399,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.foreign_languages = data.data ?? [];
       }
-      return data;
+      return this.foreign_languages;
     },
     async getLanguageLevels(payload) {
       if (this.language_levels.length > 0) {
@@ -412,7 +412,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.language_levels = data.data?.language_level ?? [];
       }
-      return data;
+      return this.language_levels;
     },
     async getResumeLanguageLevels(payload) {
       if (this.resume_language_levels.length > 0) {
@@ -425,7 +425,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.resume_language_levels = data.data?.lang_level_resume ?? [];
       }
-      return data;
+      return this.resume_language_levels;
     },
     async getDriverLicenses(payload) {
       if (this.driver_licenses.length > 0) {
@@ -441,7 +441,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.driver_licenses = data.data?.driver_license_types ?? [];
       }
-      return data;
+      return this.driver_licenses;
     },
     async getSchedules(payload = {}) {
       if (this.schedules.length > 0) {
@@ -454,7 +454,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.schedules = data.data?.schedule ?? [];
       }
-      return data;
+      return this.schedules;
     },
     async getExperiences(payload = {}) {
       if (this.experiences.length > 0) {
@@ -467,7 +467,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.experiences = data.data?.experience ?? [];
       }
-      return data;
+      return this.experiences;
     },
     async getPartTimes(payload = {}) {
       if (this.part_times.length > 0) {
@@ -480,7 +480,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.part_times = data.data?.part_time ?? [];
       }
-      return data;
+      return this.part_times;
     },
     async getPaymentPeriodOptions(payload) {
       if (this.payment_period.length > 0) {
@@ -493,7 +493,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.payment_period = data.data?.payment_period ?? [];
       }
-      return data.data;
+      return this.payment_period;
     },
 
     async getWorkingDayOptions(payload) {
@@ -507,7 +507,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.working_days = data.data?.working_days ?? [];
       }
-      return data.data;
+      return this.working_days;
     },
     async getWorkingTimeIntervalsOptions(payload) {
       if (this.working_time_intervals.length > 0) {
@@ -523,7 +523,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.working_time_intervals = data.data?.working_time_intervals ?? [];
       }
-      return data.data;
+      return this.working_time_intervals;
     },
     async getWorkingTimeModesOptions(payload) {
       if (this.working_time_modes.length > 0) {
@@ -539,7 +539,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.working_time_modes = data.data?.working_time_modes ?? [];
       }
-      return data.data;
+      return this.working_time_modes;
     },
     async getExtendVacOptions(payload) {
       if (this.extend_vac.length > 0) {
@@ -552,7 +552,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.extend_vac = data.data?.extend_vac ?? [];
       }
-      return data.data;
+      return this.extend_vac;
     },
     async getCovidVacRequirements(payload) {
       const nullableOption = { id: null, name: "Не выбран" };
@@ -572,7 +572,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         this.covid_vaccination_requirement.unshift(nullableOption);
         return this.covid_vaccination_requirement;
       }
-      return data.data;
+      return this.covid_vaccination_requirement;
     },
 
     async getEducations(payload) {
@@ -586,7 +586,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.educations = data.data?.education ?? [];
       }
-      return data.data;
+      return this.educations;
     },
     async getResumeEducations(payload) {
       if (this.resume_educations.length > 0) {
@@ -602,7 +602,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.resume_educations = data.data?.education_type_resume ?? [];
       }
-      return data.data;
+      return this.resume_educations;
     },
     async getResumeEducationForms(payload) {
       if (this.resume_education_forms.length > 0) {
@@ -618,7 +618,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.resume_education_forms = data.data?.education_form_resume ?? [];
       }
-      return data.data;
+      return this.resume_education_forms;
     },
     async getSubscriptionKeywordsSrws(payload) {
       if (this.subscription_keywords_srws.length > 0) {
@@ -635,7 +635,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         this.subscription_keywords_srws =
           data.data?.subscriptionKeywords_srws ?? [];
       }
-      return data.data;
+      return this.subscription_keywords_srws;
     },
     async getSubscriptionKeywordsSkwc(payload) {
       if (this.subscription_keywords_skwc.length > 0) {
@@ -652,7 +652,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         this.subscription_keywords_skwc =
           data.data?.subscriptionKeywords_skwc ?? [];
       }
-      return data.data;
+      return this.subscription_keywords_skwc;
     },
     async getRelocationTypes(payload) {
       if (this.relocation_types.length > 0) {
@@ -665,7 +665,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.relocation_types = data.data?.relocation_type ?? [];
       }
-      return data.data;
+      return this.relocation_types;
     },
     async getBusinessTrips(payload) {
       if (this.business_trips.length > 0) {
@@ -678,7 +678,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.business_trips = data.data?.business_trip ?? [];
       }
-      return data.data;
+      return this.business_trips;
     },
     async getPreferredContactTypes(payload) {
       if (this.preferred_contact_types.length > 0) {
@@ -694,7 +694,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (data && "data" in data) {
         this.preferred_contact_types = data.data?.preferred_contact_type ?? [];
       }
-      return data.data;
+      return this.preferred_contact_types;
     },
   },
 });

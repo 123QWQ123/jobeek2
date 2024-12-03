@@ -221,9 +221,9 @@ export const useVacancyStore = defineStore("vacancy", {
           this.current_page = 1;
         }
         this.total = response.data.found;
-        return response;
+        return this.vacancies;
       }
-      return response;
+      return this.vacancies;
     },
     async getVacanciesInMoscow(payload, is_new = false) {
       if (this.vacancies_in_moscow.length > 0) {

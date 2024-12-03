@@ -9,9 +9,10 @@
   </div>
 </template>
 
-<script setup>
+<script async setup>
 import { useDictionaryStore } from "~/store/dictionary.js";
 import { useVacancyStore } from "~/store/vacancy.js";
+import { useAsyncData } from "#app";
 
 useHead({
   title: "Jobeek - все для вашего удобства",
@@ -25,9 +26,19 @@ const {
 } = useVacancyStore();
 const { getSchedules } = useDictionaryStore();
 
-await getVacanciesInMoscow();
-await getVacanciesInTopCompanies();
-await getCurrencyCityVacancies();
-await getIndustries();
-await getSchedules();
+useAsyncData("industries", async () => {
+  return await getIndustries();
+});
+useAsyncData("schedules", async () => {
+  return await getSchedules();
+});
+useAsyncData("currencyCityVacancies", async () => {
+  return await getCurrencyCityVacancies();
+});
+useAsyncData("vacanciesInTopCompanies", async () => {
+  return await getVacanciesInTopCompanies();
+});
+useAsyncData("vacanciesInMoscow", async () => {
+  return await getVacanciesInMoscow();
+});
 </script>
