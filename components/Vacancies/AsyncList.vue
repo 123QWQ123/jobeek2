@@ -50,7 +50,7 @@ watch(
   },
 );
 onMounted(() => {
-  if (vacancies.value.length > 0) {
+  if (vacancies.value && vacancies.value.length > 0) {
     isMore.value = true;
   }
 });
