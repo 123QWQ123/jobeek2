@@ -7,7 +7,6 @@ const useApi = async (method, options = {}) => {
   const { tokenAuth } = storeToRefs(useAuthStore());
 
   const url = `${CONFIG.public.base}api/${method}`;
-  const isServer = process.server;
 
   options.headers = {
     "Content-Type":
@@ -34,14 +33,14 @@ const useApi = async (method, options = {}) => {
     responseType: "json",
     transformRequest: [(data) => data],
     transformResponse: [(data) => handleResponse(data)],
-    ...(isServer
-      ? {
-          httpsAgent: new (await import("node:https")).Agent({
-            rejectUnauthorized: false,
-          }),
-        }
-      : {}),
   };
+
+  // Check if we are on the server side
+  if (typeof process !== "undefined" && process.server) {
+    // This block will only execute in the server environment
+    const https = await import("node:https");
+    axiosConfig.httpsAgent = new https.Agent({ rejectUnauthorized: false });
+  }
 
   try {
     const { data, statusText, status } = await axios.request(axiosConfig);
