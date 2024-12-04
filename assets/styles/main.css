@@ -211,6 +211,10 @@ img {
     color: #78757E;
 }
 
+.sign-in-btn.button-xs {
+    padding: 11px 18px 11px 18px;
+}
+
 .button-xs:hover {
     opacity: 1;
     background: #0A2540;
@@ -387,6 +391,7 @@ img {
     -webkit-transform: translateY(-50%);
     -ms-transform: translateY(-50%);
     transform: translateY(-50%);
+    max-width: 24px;
 }
 
 .section {
@@ -1253,7 +1258,7 @@ header.main-header .checker-box .v.active:after {
 }
 
 .header-actions .btn:not(:last-child) {
-    margin-right: 15px;
+    margin-right: 5px;
 }
 
 .profile-action {
@@ -1716,8 +1721,19 @@ header.main-header .checker-box .v.active:after {
     border-bottom: 1px solid #CBCBCB;
 }
 
+.header-wrapper .search-row .input-wrap {
+    height: 100%;
+    border-top: 0;
+    border-bottom: 0;
+}
+
 .search-row .input-wrap:first-child {
     border-left: 1px solid #CBCBCB;
+    border-radius: 10px 0 0 10px;
+}
+
+.header-wrapper .search-row .input-wrap:first-child {
+    border-left: 0;
     border-radius: 10px 0 0 10px;
 }
 
@@ -7375,6 +7391,10 @@ svg.progress {
     max-width: 1290px;
     width: 100%;
     margin-left: 133px;
+}
+
+.header-wrapper .search-form--widget {
+    margin-right: 40px;
 }
 
 .search-form--widget .search-row {
