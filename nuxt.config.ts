@@ -84,11 +84,7 @@ export default defineNuxtConfig({
     "nuxt-tiptap-editor",
   ],
   piniaPluginPersistedstate: {
-    storage: "cookies",
-    cookieOptions: {
-      sameSite: "lax",
-      maxAge: 720000,
-    },
+    storage: "localStorage",
   },
   tiptap: {
     prefix: "Tiptap", //prefix for Tiptap imports, composables not included
@@ -111,9 +107,9 @@ export default defineNuxtConfig({
     vapidKey:
       "BNhzs3ta5UD12WZIz6pP4ONTohrOsoMP3lyomaLsw2fRjsg4u0OzGKoOAFW7i0DK4GscckYJ5v0D99YJlFNhv3I",
   },
-  router: {
-    middleware: ["auth"],
-  },
+  // router: {
+  //   middleware: ["auth"],
+  // },
   vite: {
     optimizeDeps: {
       exclude: ["firebase/analytics"],
@@ -140,10 +136,5 @@ export default defineNuxtConfig({
   //       file: "nl-NL.json",
   //     },
   //   ],
-  // },
-  // nitro: {
-  //   prerender: {
-  //     routes: [],
-  //   },
   // },
 });
