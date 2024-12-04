@@ -1,5 +1,4 @@
 import axios from "axios";
-import https from "node:https";
 import { useAuthStore } from "~/store/auth";
 import { useSetFormErrors } from "vee-validate";
 
@@ -36,7 +35,11 @@ const useApi = async (method, options = {}) => {
     transformRequest: [(data) => data],
     transformResponse: [(data) => handleResponse(data)],
     ...(isServer
-      ? { httpsAgent: new https.Agent({ rejectUnauthorized: false }) }
+      ? {
+          httpsAgent: new (await import("node:https")).Agent({
+            rejectUnauthorized: false,
+          }),
+        }
       : {}),
   };
 
