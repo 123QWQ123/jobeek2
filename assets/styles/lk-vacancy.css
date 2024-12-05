@@ -92,6 +92,8 @@
 
 .custom-select.open .custom-options {
     display: block;
+    margin-top: -4px;
+    border-top: 1px solid #ccc;
 }
 
 .select-resume-row {
