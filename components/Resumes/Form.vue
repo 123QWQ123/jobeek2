@@ -3,7 +3,7 @@
     <div class="wrapper">
       <div class="search-row">
         <div class="input-wrap has-icon has-label">
-          <img class="icon" src="~/assets/img/svg/search.svg" alt="#" />
+          <img class="icon" src="~/assets/img/search.png" alt="#" />
           <label for="name">Название</label>
           <input
             v-model="search"
