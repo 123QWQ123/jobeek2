@@ -918,11 +918,7 @@ header.main-header .checker-box .v.active:after {
     }
 
     .cards-slider {
-        width: calc(100% + 30px);
-        margin-left: -15px;
-        margin-right: -15px;
-        padding-left: 15px;
-        padding-right: 15px;
+        width: 100%;
     }
 
     .cards-slider-row {
@@ -949,12 +945,12 @@ header.main-header .checker-box .v.active:after {
 
 @media (max-width: 768px) {
     .button-accent--ts-bigger {
-        font-size: 16px;
+        font-size: 14px;
     }
 
     .section-title {
-        font-size: 22px;
-        line-height: 30px;
+        font-size: 19px;
+        line-height: 25px;
     }
 
     .section-head {
@@ -1617,11 +1613,12 @@ header.main-header .checker-box .v.active:after {
         -webkit-box-direction: normal;
         -ms-flex-direction: column;
         flex-direction: column;
-        -webkit-box-align: start;
-        -ms-flex-align: start;
-        align-items: flex-start;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
         padding-top: 30px;
         padding-bottom: 30px;
+        text-align: center;
     }
 
     .footer-navigation {
@@ -1629,16 +1626,13 @@ header.main-header .checker-box .v.active:after {
         -webkit-box-direction: normal;
         -ms-flex-direction: column;
         flex-direction: column;
-        -webkit-box-align: start;
-        -ms-flex-align: start;
-        align-items: flex-start;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
         -webkit-box-pack: start;
         -ms-flex-pack: start;
         justify-content: flex-start;
-    }
-
-    .footer-navigation .col:not(:last-child) {
-        margin-bottom: 20px;
+        text-align: center;
     }
 }
 
@@ -1885,8 +1879,8 @@ body .main-section-mob {
     }
 
     .main-section-title .title {
-        font-size: 30px;
-        line-height: 36px;
+        font-size: 26px;
+        line-height: 30px;
     }
 
     .main-section-title span {
@@ -1895,11 +1889,11 @@ body .main-section-mob {
     }
 
     .main-section-title {
-        margin-bottom: 25px;
+        margin-bottom: 15px;
     }
 
     .search-form {
-        padding: 15px;
+        padding: 0;
     }
 
     .search-row .input-wrap.has-icon input::-webkit-input-placeholder {
@@ -2263,24 +2257,13 @@ body .main-section-mob {
 
 @media (max-width: 1025px) {
     .cards-grid {
-        display: -webkit-box !important;
-        display: -ms-flexbox !important;
-        display: flex !important;
-        grid-column-gap: 0;
-        grid-row-gap: 0;
-    }
-
-    .cards-grid {
-        -webkit-box-orient: horizontal !important;
-        -webkit-box-direction: normal !important;
-        -ms-flex-direction: row !important;
-        flex-direction: row !important;
+        display: block !important;
     }
 
     .cards-grid .swiper-slide {
         margin-top: 0 !important;
         margin-bottom: 20px !important;
-        max-width: 60%;
+        max-width: 100%;
     }
 
     .work-section {
@@ -2341,14 +2324,14 @@ body .main-section-mob {
 
 @media (max-width: 1025px) {
     .search-section {
-        padding-top: 50px;
-        padding-bottom: 50px;
+        padding-top: 20px;
+        padding-bottom: 20px;
     }
 
     .divided-box {
         grid-template-columns: 100%;
         grid-row-gap: 40px;
-        padding-bottom: 50px;
+        padding-bottom: 20px;
     }
 
     .divided-box + .divided-box {
@@ -2359,9 +2342,7 @@ body .main-section-mob {
         -webkit-transform: translateY(0);
         -ms-transform: translateY(0);
         transform: translateY(0);
-        width: calc(100% + 12px);
-        margin-left: -6px;
-        margin-right: -6px;
+        width: 100%;
     }
 }
 
@@ -2486,9 +2467,13 @@ body .main-section-mob {
     }
 
     .enter-page-content {
-        min-height: calc(var(--vh, 1vh) * 100 - 100px);
+        min-height: calc(var(--vh, 1vh) * 100 - 210px);
         height: auto;
     }
+}
+
+.nice-select.open .list {
+    z-index: 11;
 }
 
 @media (max-width: 768px) {
@@ -2497,9 +2482,9 @@ body .main-section-mob {
     }
 
     .enter-form h1 {
-        font-size: 28px;
-        line-height: 35px;
-        margin-bottom: 35px;
+        font-size: 26px;
+        line-height: 30px;
+        margin-bottom: 15px;
     }
 
     .enter-page-content {
@@ -2590,7 +2575,8 @@ body .main-section-mob {
 
     .f-prompt {
         font-weight: normal;
-        font-size: 16px;
+        font-size: 14px;
+        margin-top: 0px !important;
     }
 
     .note {
@@ -7579,8 +7565,8 @@ svg.progress {
     }
 
     .note p {
-        font-size: 14px;
-        line-height: 18px;
+        font-size: 12px !important;
+        line-height: 16px;
     }
 }
 
@@ -7671,6 +7657,135 @@ svg.progress {
 	.button-xs, .button-xl {
 	    padding: 9px 10px 10px;
 	}
+	
+    .footer-navigation .col:not(:last-child) {
+        margin-bottom: 0;
+    }
+    
+    .footer-navigation .col ul li a {
+        font-size: 13px;
+        line-height: 14px;
+    }
+    .footer-navigation .col ul li:not(:last-child) {
+        margin-bottom: 2px;
+    }
+    .footer-navigation .col .col-title {
+        font-size: 14px;
+        line-height: 16px;
+        margin-bottom: 5px;
+        margin-top: 20px;
+    }
+    .main-footer-content .logo {
+        margin-right: 0;
+        margin-bottom: 0;
+    }
+    .main-footer-bottom {
+        border-top: 0;
+        font-size: 13px;
+        line-height: 16px;
+        padding-bottom: 0;
+        padding-top: 0;
+    }
+    .checker-box .v {
+        font-size: 13px;
+    }
+    .sign-in-btn.button-xs {
+    	padding: 7px 10px 7px 10px;
+    	font-size: 14px;
+    	line-height: 18px;
+    }
+    .sign-up-btn.button-xl {
+        padding: 7px 10px 7px 10px;
+    	font-size: 14px;
+    	line-height: 18px;
+    }
+    .lk-header-main {
+    	max-height: 52px !important;
+    	min-height: 52px !important;
+    }
+    .main-section {
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+    .place-section {
+        padding-top: 20px;
+    }
+    .n-select .list li, .s-select .list li, .d-select .list li {
+        font-size: 14px;
+        line-height: 16px;
+        padding: 9px 10px;
+        min-height: 30px;
+    }
+    .nice-select .list {
+        margin-top: -1px;
+    }
+    .place-card {
+        padding: 15px 15px;
+    }
+    .place-card .place-card-descr {
+        font-size: 14px;
+        line-height: 18px;
+        margin-bottom: 20px;
+    }
+    .button-accent {
+        padding: 7px 10px 7px 10px;
+        font-size: 14px;
+        line-height: 18px;
+	}
+    .place-card .place-card-title {
+        font-size: 19px;
+        line-height: 25px;
+    }
+    .enter-form .btn {
+        margin-top: 30px;
+    }
+    .checker-box .v {
+        font-size: 13px;
+    }
+    .hamburger-box {
+        top: 2px;
+    }
+    .tile-card {
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    .vacancy-card .vacancy-card-title {
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+    .vacancy-card .vacancy-card-dop-info {
+        font-size: 14px;
+        line-height: 19px;
+    }
+    .company .company-name strong {
+        font-size: 14px;
+        line-height: 19px;
+    }
+    .company .company-name span.location {
+        font-size: 14px;
+        line-height: 19px;
+    }
+    .vacancy-card .company {
+        margin-bottom: 15px;
+    }
+    .tile-card-title {
+        font-size: 14px;
+        line-height: 19px;
+    }
+    .tile-card-dop-info {
+        font-size: 14px;
+        line-height: 19px;
+    }
+    .label {
+        padding: 7px 10px 7px 10px;
+        line-height: 18px;
+    }
+    .labels-list li {
+        padding: 3px;
+    }
+    .divided-box+.divided-box {
+        padding-top: 20px;
+    }
 }
 
 @media (max-width: 420px) {
