@@ -194,12 +194,6 @@ const onSubmit = async (e) => {
   display: block;
 }
 
-.main-section-mob {
-  margin-top: 1rem;
-  padding-top: 3rem;
-  margin-bottom: 3rem;
-}
-
 @media only screen and (max-width: 960px) {
   .search-form-mobile {
     display: none;

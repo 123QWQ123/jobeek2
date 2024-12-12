@@ -913,8 +913,8 @@ header.main-header .checker-box .v.active:after {
 
 @media (max-width: 1025px) {
     .section {
-        padding-top: 40px;
-        padding-bottom: 40px;
+        padding-top: 20px;
+        padding-bottom: 20px;
     }
 
     .cards-slider {
@@ -922,10 +922,8 @@ header.main-header .checker-box .v.active:after {
     }
 
     .cards-slider-row {
-        max-width: 95%;
-        width: calc(100% + 15px);
-        margin-left: -15px;
-        padding-left: 15px;
+        max-width: 100%;
+        width: 100%;
         overflow: visible;
     }
 
@@ -954,7 +952,7 @@ header.main-header .checker-box .v.active:after {
     }
 
     .section-head {
-        margin-bottom: 30px;
+        margin-bottom: 20px;
     }
 
     .section-head .more {
@@ -964,8 +962,8 @@ header.main-header .checker-box .v.active:after {
     }
 
     .section {
-        padding-top: 30px;
-        padding-bottom: 30px;
+        padding-top: 20px;
+        padding-bottom: 20px;
     }
 
     .label {
@@ -2267,7 +2265,7 @@ body .main-section-mob {
     }
 
     .work-section {
-        padding-bottom: 50px;
+        padding-bottom: 20px;
     }
 }
 
@@ -2330,7 +2328,7 @@ body .main-section-mob {
 
     .divided-box {
         grid-template-columns: 100%;
-        grid-row-gap: 40px;
+        grid-row-gap: 17px;
         padding-bottom: 20px;
     }
 
@@ -2508,7 +2506,8 @@ body .main-section-mob {
     }
 
     .check-block label {
-        font-size: 14px;
+        font-size: 13px;
+        line-height: 16px;
     }
 
     .search-row .input-wrap.has-label .nice-select input::-webkit-input-placeholder {
@@ -2532,12 +2531,14 @@ body .main-section-mob {
     }
     
     .help-box a {
-        font-size: 14px;
-	}
+        font-size: 13px;
+        line-height: 16px;
+    }
 	
 	.search-row input {
-	    font-size: 14px;
-	}
+	    font-size: 13px;
+        line-height: 16px;
+    }
 	
 	form.w-box-body .absolute_button {
 	    justify-content: center;
@@ -3885,7 +3886,7 @@ body .main-section-mob {
     }
 
     .notification .notification-text {
-        margin-right: 20px;
+        margin-right: 0;
     }
 
     .notification {
@@ -3912,10 +3913,10 @@ body .main-section-mob {
     }
 
     .create-button {
-        padding: 12.5px;
-        font-size: 16px;
-        line-height: 24px;
-        margin-top: 30px;
+        padding: 13px;
+        font-size: 14px;
+        line-height: 18px;
+        margin-top: 20px;
     }
 
     .subs-list-container {
@@ -3939,13 +3940,14 @@ body .main-section-mob {
     }
 
     .notification .notification-text .title {
-        font-size: 20px;
-        line-height: 26px;
+        font-size: 19px;
+        line-height: 25px;
         margin-bottom: 10px;
     }
 
     .notification .notification-text p {
         font-size: 14px;
+        line-height: 18px;
     }
 
     .notification {
@@ -5072,13 +5074,14 @@ body .main-section-mob {
 @media (max-width: 768px) {
     .premium-col {
         padding: 15px;
-        background-size: 140px;
+        background-size: 120px;
     }
 
     .premium-col .title {
-        font-size: 20px;
+        font-size: 19px;
         line-height: 25px;
         margin-bottom: 20px;
+        margin-right: 60px;
     }
 
     .premium-col .term strong {
@@ -7731,13 +7734,20 @@ svg.progress {
         padding: 7px 10px 7px 10px;
         font-size: 14px;
         line-height: 18px;
-	}
+    }
+    .vacancy-card .button-md {
+        padding: 7px 10px 7px 10px;
+        font-size: 14px;
+        line-height: 18px;
+    }
     .place-card .place-card-title {
         font-size: 19px;
         line-height: 25px;
     }
     .enter-form .btn {
-        margin-top: 30px;
+        margin-top: 20px;
+        padding-bottom: 15px;
+        padding-top: 15px;
     }
     .checker-box .v {
         font-size: 13px;
@@ -7748,6 +7758,13 @@ svg.progress {
     .tile-card {
         padding: 15px;
         margin-bottom: 20px;
+        min-height: auto;
+    }
+    .check-block {
+        align-items: center;
+    }
+    .tile-card:last-child {
+        margin-bottom: 0;
     }
     .vacancy-card .vacancy-card-title {
         font-size: 14px;
@@ -7785,6 +7802,57 @@ svg.progress {
     }
     .divided-box+.divided-box {
         padding-top: 20px;
+    }
+    .more svg {
+        margin-left: 0;
+    }
+    .company-card {
+        padding: 15px;
+    }
+    .divided-box-content .more {
+        margin: 10px auto 0;
+    }
+    .sign-up .enter-page-content {
+        min-height: calc(var(--vh, 1vh)* 100 - 362px);
+    }
+    .main-navigation ul li a span {
+        font-size: 14px;
+    }
+    .main-navigation ul li a:after {
+        height: 2px;
+    }
+    .main-navigation ul li a {
+        padding: 10px 0;
+    }
+    .profile-action .button-xs.sign-in-btn {
+        padding: 7px 10px;
+    }
+    .main-section-mob {
+        margin: 20px 15px;
+        padding-bottom: 0 !important;
+    }
+    .lk-page-title {
+        font-size: 19px;
+        line-height: 25px;
+    }
+    .main.cabinet .pt-4 {
+        padding-top: 15px !important;
+    }
+    .mb-4 {
+        margin-bottom: 20px !important;
+    }
+    .sync-card span {
+        font-size: 13px;
+    }
+    .list-of-providers {
+        padding: 20px;
+    }
+    .notification {
+        min-height: auto !important;
+        margin-bottom: 20px;
+    }
+    .has-sidebar {
+        grid-row-gap: 20px;
     }
 }
 
