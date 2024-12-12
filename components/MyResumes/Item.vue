@@ -3,9 +3,6 @@
     <div class="resume-card">
       <div class="resume-card-body">
         <div class="resume-card-body-col">
-          <!--          <div class="photo">-->
-          <!--            <img class="w-100" :src="employerLogo" alt="#" />-->
-          <!--          </div>-->
           <div class="resume-card-name">
             <nuxt-link
               :to="{ name: 'my-resume-id', params: { id: item.id } }"
@@ -13,8 +10,6 @@
             >
               {{ item.title }}
             </nuxt-link>
-            <!--            <span class="location">{{ cityAddress }} </span>-->
-
             <span>
               <client-only>
                 <span class="price">
@@ -28,11 +23,9 @@
         </div>
         <div class="resume-card-body-col">
           <div class="date">{{ createdDate }}</div>
-          <!--          <div class="date">с {{ published_date.format('D') }} {{ published_date.format('MMMM') }} по 24 марта</div>-->
         </div>
       </div>
       <div class="resume-card-options">
-        <!--        <span class="status">Обновлено в {{ moment(item.published_date).format('HH:mm') }}</span>-->
         <div class="option-group selector-group">
           <div class="option">
             <div class="custom-check-wrap">
@@ -220,229 +213,157 @@ const props = defineProps(["item", "id"]);
 const item = computed(() => props.item);
 
 const resumeStore = useResumeStore();
-const { updateResume, getMyResumes } = resumeStore;
+const { updateResume, getMyResumes, deleteResume } = resumeStore;
 
-const hhProviderConnected = computed(() => {
-  if (resumeStore.providers.hh) {
-    return true;
-  }
-  return false;
-});
-const superjobProviderConnected = computed(() => {
-  if (resumeStore.providers.superjob) {
-    return true;
-  }
-  return false;
-});
-const hhProviderEnabled = computed(() => {
-  if (item.value && item.value.providers) {
-    return !!item.value.providers.find((prov) => prov.name == "hh");
-  }
-  return false;
-});
+// Улучшенные вычисления для провайдеров
+const hhProviderConnected = computed(
+  () => !!resumeStore.providers.hh, // Упрощено
+);
+const superjobProviderConnected = computed(
+  () => !!resumeStore.providers.superjob, // Упрощено
+);
 
-const superjobProviderEnabled = computed(() => {
-  if (item.value && item.value.providers) {
-    return !!item.value.providers.find((prov) => prov.name == "superjob");
-  }
-  return false;
-});
+const hhProviderEnabled = computed(
+  () => !!item.value?.providers?.find((prov) => prov.name === "hh"),
+);
+const superjobProviderEnabled = computed(
+  () => !!item.value?.providers?.find((prov) => prov.name === "superjob"),
+);
+const canHHBeEnabled = computed(() => resumeStore.providers.hh);
+const canSuperjobBeEnabled = computed(() => resumeStore.providers.superjob);
 
-const canHHBeEnabled = computed(() => {
-  if (item.value) {
-    return resumeStore.providers.hh;
-  }
-  return false;
-});
+// Управление статусами уведомлений
 const pushStatus = ref(item.value?.push_notification ?? false);
 const emailStatus = ref(item.value?.email_notification ?? false);
+
 watch(
   () => item.value?.push_notification,
   (newValue) => {
-    pushStatus.value = newValue;
+    pushStatus.value = newValue ?? false;
   },
 );
 watch(
   () => item.value?.email_notification,
   (newValue) => {
-    emailStatus.value = newValue;
+    emailStatus.value = newValue ?? false;
   },
 );
-const onEmailToggle = async (e) => {
-  e.preventDefault();
-  const newValue = !emailStatus.value;
+
+const onNotificationToggle = async (type) => {
+  const newValue = type === "push" ? !pushStatus.value : !emailStatus.value;
   const resData = await updateResume(item.value.id, {
     form_data: "NOTIFICATION_DATA",
-    email_notification: newValue,
+    [`${type}_notification`]: newValue,
   });
-  if (resData.status !== "success") {
+  if (resData.status === "success") {
+    if (type === "push") pushStatus.value = newValue;
+    else emailStatus.value = newValue;
+  } else {
     toast.info(resData.message);
-    return;
   }
-  emailStatus.value = newValue;
-};
-const onPushToggle = async (e) => {
-  e.preventDefault();
-  const newValue = !pushStatus.value;
-  const resData = await updateResume(item.value.id, {
-    form_data: "NOTIFICATION_DATA",
-    push_notification: newValue,
-  });
-  if (resData.status !== "success") {
-    toast.info(resData.message);
-    return;
-  }
-  pushStatus.value = newValue;
 };
 
-const canSuperjobBeEnabled = computed(() => {
-  if (item.value) {
-    return resumeStore.providers.superjob;
-  }
-  return false;
+const onPushToggle = () => onNotificationToggle("push");
+const onEmailToggle = () => onNotificationToggle("email");
+
+// Улучшенный расчет зарплат
+const salaryAmount = computed(() => item.value?.salary ?? 0);
+const currency = computed(
+  () =>
+    item.value?.salary_currency
+      ? item.value.salary_currency === "RUB"
+        ? "₽"
+        : item.value.salary.currency
+      : "₽", // Стандартное значение
+);
+
+// Дата обработки с использованием moment.js
+const createdDate = computed(() => {
+  const date = $moment(item.value?.published_date).locale("ru");
+  return `в ${date.format("D")} ${date.format("MMMM")}`;
 });
 
-const salaryAmount = computed(() => {
-  if (props.item.salary) {
-    return props.item.salary;
-  }
-  return 0;
-});
-const currency = computed(() => {
-  if (props.item.salary) {
-    const options = useCurrencyOptions();
-    const found = options.find(
-      (item) => item.value === props.item.salary_currency,
-    );
-    if (found) return found.symbol;
-    return props.item.salary.currency;
-  }
-  return "RUB";
-});
-
-const cityAddress = computed(() => {
-  const itemData = item.value;
-  if (itemData.hasOwnProperty("city")) {
-    return itemData.city.name;
-  }
-  return "no city";
-});
-
+// Обработчик контекстного меню с проверкой
 const isContextMenuShown = ref(false);
 
 const toggleContextMenu = () => {
   isContextMenuShown.value = !isContextMenuShown.value;
 };
-
 const closeContextMenu = (e) => {
-  e.preventDefault();
-  isContextMenuShown.value = false;
-};
-const employerLogo = computed(() => {
-  if (item && item.logo) {
-    return item.logo;
-  } else return new URL("~/assets/img/logos/hh.svg", import.meta.url);
-});
-
-const published_date = computed(() =>
-  $moment(item.value?.published_date).locale("ru"),
-);
-
-const createdDate = computed(() => {
-  if (!item.value) return "";
-  let date = $moment(item.value.published_date);
-
-  date = "в " + date.format("D") + " " + date.format("MMMM");
-
-  return date;
-});
-
-const { deleteResume } = resumeStore;
-const onDelete = async (id) => {
-  const resData = await deleteResume(id);
-
-  if (resData.status !== "success") {
-    Swal.fire({
-      title: "Ошибка!",
-      text: resData.message,
-      icon: "error",
-      confirmButtonText: "ОК",
-    });
-    return;
-  }
-  toast.info("Успешно удалено!", { autoClose: 3000 });
-  await getMyResumes({ status: "active" });
+  if (!e.target.closest(".params-box")) isContextMenuShown.value = false;
 };
 
-const resetObject = computed(() => {
-  return {
-    superjob: superjobProviderEnabled.value,
-    hh: hhProviderEnabled.value,
-  };
-});
+// Упрощенные данные инициализации
+const resetObject = computed(() => ({
+  superjob: superjobProviderEnabled.value,
+  hh: hhProviderEnabled.value,
+}));
 
-const selectedProviders = ref(resetObject.value);
+const selectedProviders = reactive(resetObject.value);
 
+// Загрузка провайдеров
 const isSuperjobLoading = ref(false);
 const isHHLoading = ref(false);
-const toggle = async (provider) => {
-  if (provider === "hh") {
-    isHHLoading.value = true;
-  }
-  if (provider === "superjob") {
-    isSuperjobLoading.value = true;
-  }
-  selectedProviders.value[provider] = !selectedProviders.value[provider];
-  const providerParams = [];
 
-  if (selectedProviders.value.hh) {
-    if (!hhProviderConnected.value) {
-      toast.info("HH еще не подключен! ", { autoClose: 3000 });
-      selectedProviders.value[provider] = !selectedProviders.value[provider];
-      isSuperjobLoading.value = false;
-      isHHLoading.value = false;
+const toggleProvider = async (provider) => {
+  const isLoading = provider === "hh" ? isHHLoading : isSuperjobLoading;
+  isLoading.value = true;
 
-      return;
-    }
-    providerParams.push("hh");
-  }
+  selectedProviders[provider] = !selectedProviders[provider];
+  const providerParams = Object.keys(selectedProviders).filter(
+    (key) => selectedProviders[key],
+  );
 
-  if (selectedProviders.value.superjob) {
-    if (!superjobProviderConnected.value) {
-      toast.info("Superjob еще не подключен! ", { autoClose: 3000 });
-      selectedProviders.value[provider] = !selectedProviders.value[provider];
-      isSuperjobLoading.value = false;
-      isHHLoading.value = false;
-      return;
-    }
-    providerParams.push("superjob");
-  }
-
-  const data = {
-    providers: providerParams,
-  };
-  data.form_data = "PROVIDERS_DATA";
-  const resData = await updateResume(item.value.id, data);
-  if (resData.status !== "success") {
-    selectedProviders.value[provider] = !selectedProviders.value[provider];
-    toast.info(resData.message, { autoClose: 3000 });
-    isSuperjobLoading.value = false;
-    isHHLoading.value = false;
+  if (!providerParams.length) {
+    selectedProviders[provider] = false; // Возврат состояния при ошибке
+    toast.info(`${provider === "hh" ? "HH" : "SuperJob"} не подключен!`, {
+      autoClose: 3000,
+    });
+    isLoading.value = false;
     return;
   }
 
-  await getMyResumes();
-  isSuperjobLoading.value = false;
-  isHHLoading.value = false;
+  try {
+    const resData = await updateResume(item.value.id, {
+      form_data: "PROVIDERS_DATA",
+      providers: providerParams,
+    });
+
+    if (resData.status !== "success") {
+      selectedProviders[provider] = !selectedProviders[provider];
+      toast.info(resData.message, { autoClose: 3000 });
+    }
+  } catch (error) {
+    toast.error("Ошибка обновления провайдера.");
+  } finally {
+    await getMyResumes();
+    isLoading.value = false;
+  }
 };
-const openProviderAuthUrl = (url) => {
-  window.open(url);
+
+// Упрощенный функционал удаления резюме
+const onDelete = async (id) => {
+  try {
+    const resData = await deleteResume(id);
+    if (resData.status !== "success") {
+      Swal.fire({
+        title: "Ошибка!",
+        text: resData.message,
+        icon: "error",
+        confirmButtonText: "ОК",
+      });
+      return;
+    }
+    toast.info("Успешно удалено!", { autoClose: 3000 });
+    await getMyResumes({ status: "active" });
+  } catch (err) {
+    toast.error("Произошла ошибка при удалении.");
+  }
 };
 </script>
 
 <style scoped>
 .push_and_context_wrapper {
-  width: 100%;
   display: flex;
   justify-content: flex-end;
   align-items: center;
