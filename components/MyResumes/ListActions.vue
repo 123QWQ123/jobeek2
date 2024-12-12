@@ -36,41 +36,6 @@ const providers = ref({
   superjob: true,
 });
 
-const onFilterChange = (filter) => {
-  // navigateTo({name: 'my-vacancies', query: {status: filter}});
-};
-
-const hhFilters = ["active", "archived", "deleted"];
-const superjobFilters = [
-  "active",
-  "private",
-  "published",
-  "archived",
-  "declined",
-  "in_moderation",
-];
-
-// const onChangePerPage = async(per_page) => {
-//     isLoading.value = true;
-//     form.value.per_page = per_page;
-//     const params = useMyResumeForm(form.value, 'front');
-//     await getMyResumes(params);
-//     isLoading.value = false;
-//     form.value.page = 1;
-//     current_page.value = form.value.page;
-// }
-//
-// const onChangeSorting = async(sorting) => {
-//     isLoading.value = true;
-//     form.value.order_by = sorting;
-//     const params = useMyResumeForm(form.value, 'front');
-//     await getMyResumes(params);
-//     isLoading.value = false;
-//
-// }
-
-// const router = useRouter();
-
 const provider = ref(null);
 const onProviderChange = async (provider) => {
   if (provider === "*") {

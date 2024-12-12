@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="check-block" @click="toggle">
+    <div class="check-block" @click.prevent="toggle">
       <div class="checkbox">
         <input
           type="checkbox"
@@ -44,5 +44,8 @@ const checked = computed(() => {
 <style scoped>
 .checked .checkbox-mask img {
   opacity: 1;
+}
+.check-block .checkbox input[type="checkbox"] {
+  width: 0px;
 }
 </style>

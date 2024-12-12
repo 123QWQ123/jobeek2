@@ -93,109 +93,73 @@ import Swal from "sweetalert2";
 import PageLoader from "../UI/PageLoader";
 import { useAuthStore } from "~/store/auth";
 import { useCheckJSON } from "~/composables/useCheckJSON";
-import { navigateTo } from "#app";
-import useFormValidation from "~/composables/useFormValidation.js";
+import { navigateTo, useAsyncData } from "#app";
 import useResumeHooks from "~/hooks/useResumeHooks.js";
 import { toTypedSchema } from "@vee-validate/zod";
 import avatar from "~/assets/img/jobeek-avatar.png";
 import { zod } from "~/hooks/ru-zod.js";
-import { isNullOrUndefined } from "@tinymce/tinymce-vue/lib/es2015/main/ts/Utils.js";
 
 const profileStore = useProfileStore();
-const { getUser } = profileStore;
-
+const authStore = useAuthStore();
 const { refreshSeeker } = useAuthStore();
+const { getCountries, getCities, getUser, updateSeeker } = profileStore;
 const { getCityNameFromArea2 } = useResumeHooks();
 
-const { countryOptions } = storeToRefs(profileStore);
-
+const { countryOptions, cityOptions: cities } = storeToRefs(profileStore);
 const cityError = ref("");
 const countryError = ref("");
-const updateCountryInput = async (newValue = "") => {
-  if (newValue) {
-    if (!newValue.toLowerCase().match(/[а-я]/i)) {
-      countryError.value = "Используйте только алфавит кириллица";
-      return;
-    }
-  } else {
-    countryError.value = "";
-  }
-};
-const updateCityInput = async (newValue = "") => {
-  if (newValue) {
-    if (!newValue.toLowerCase().match(/[а-я]/i)) {
-      cityError.value = "Используйте только алфавит кириллица";
-      return;
-    }
-    await getCities(
-      {
-        country_ids: [country_id.value],
-        search: newValue,
-      },
-      true,
-    );
-  } else {
-    cityError.value = "";
-  }
-};
-const getFields = (newObject) => {
-  if (!newObject) return {};
-  return {
-    first_name: newObject.first_name,
-    last_name: newObject.last_name,
-    email: newObject.email,
-    email_to_verify: newObject.email_to_verify,
-    birth_date: newObject.birth_date,
-    city_id: newObject.city_id ?? undefined,
-    city_name: newObject.city_name,
-    photo: newObject.photo ?? null,
-    country_id: newObject.country_id ?? 1,
-    phone: newObject.phone,
-  };
-};
+const isLoading = ref(false);
+const errorMessage = ref(null);
+const cityOptions = ref(cities.value ?? []);
+const route = useRoute();
+const routeErrorMessage = computed(() =>
+  useCheckJSON(route.query.message)
+    ? JSON.parse(route.query.message).text
+    : route.query.message,
+);
+
 const schema = zod.object({
   first_name: zod.string(),
   last_name: zod.string(),
   birth_date: zod.string(),
   email: zod.string().email(),
-  city_id: zod.number().safe("Выберити город из списка"),
-  country_id: zod.number().safe("Выберити страну из списка"),
+  city_id: zod.number().safe("Выберите город из списка"),
+  country_id: zod.number().safe("Выберите страну из списка"),
   phone: zod.string(),
 });
 
-const authStore = useAuthStore();
+const getFields = (newObject) => ({
+  first_name: newObject?.first_name || "",
+  last_name: newObject?.last_name || "",
+  email: newObject?.email || "",
+  email_to_verify: newObject?.email_to_verify || "",
+  birth_date: newObject?.birth_date || "",
+  city_id: newObject?.city_id || undefined,
+  city_name: newObject?.city_name || "",
+  photo: newObject?.photo || null,
+  country_id: newObject?.country_id || 1,
+  phone: newObject?.phone || "",
+});
 
 const initialValues = getFields(authStore.seeker);
-
-const { values, errors, meta, setErrors, resetForm, validate } = useForm({
+const { values, errors, validate, setErrors } = useForm({
   initialValues,
   initialTouched: true,
   validationSchema: toTypedSchema(schema),
 });
 
-watch(
-  () => values.city_id,
-  () => {
-    cityError.value = "";
-  },
-);
-const { getCountries, getCities } = profileStore;
-await getCountries();
-
-await getCities({ city_id: values.city_id });
-
-const cityOptions = ref(profileStore.cityOptions ?? []);
-
 const { value: country_id, setValue: setCountryId } = useField("country_id");
 const { value: city_id, setValue: setCityId } = useField("city_id");
 
-setCityId(values.city_id ?? undefined);
+useAsyncData("getCountries", getCountries);
+useAsyncData("getCities", () =>
+  getCities({ city_id: values.city_id ?? undefined }),
+);
 
 watch(
   () => country_id.value,
   (new_value) => {
     if (new_value) {
-      countryError.value = "";
       countryError.value = "";
       cityError.value = "";
       getCities({ country_ids: [new_value] }, true);
@@ -205,7 +169,7 @@ watch(
 );
 
 watch(
-  () => profileStore.cities,
+  () => cities.value,
   (newItems) => {
     cityOptions.value = newItems.map((item) => ({
       value: item.id,
@@ -214,82 +178,66 @@ watch(
   },
 );
 
-const { errors: serverErrors, handleErrorResponse } = useFormValidation();
+const updateCountryInput = (newValue = "") => {
+  countryError.value =
+    !newValue || /[а-я]/i.test(newValue)
+      ? ""
+      : "Используйте только алфавит кириллица";
+};
 
-watch(
-  () => serverErrors.value,
-  (newErrors) => {
-    if (Object.keys(newErrors).length > 0) {
-      const backendErrors = {};
-      Object.keys(newErrors).map(
-        (item) => (backendErrors[item] = newErrors[item]),
+const updateCityInput = async (newValue = "") => {
+  if (!newValue || /[а-я]/i.test(newValue)) {
+    cityError.value = "";
+    if (newValue) {
+      await getCities(
+        { country_ids: [country_id.value], search: newValue },
+        true,
       );
-      setErrors(backendErrors);
     }
-  },
-);
-const errorMessage = ref(null);
-const isLoading = ref(false);
-const route = useRoute();
-const routeErrorMessage = computed(() => {
-  if (useCheckJSON(route.query.message)) {
-    return JSON.parse(route.query.message).text;
+  } else {
+    cityError.value = "Используйте только алфавит кириллица";
   }
-  return route.query.message;
-});
-const { updateSeeker } = profileStore;
+};
 
 function getFormData(object) {
   const formData = new FormData();
-  Object.keys(object).forEach((key) => formData.append(key, object[key]));
+  Object.entries(object).forEach(([key, value]) => {
+    formData.append(key, value instanceof File ? value : value || "");
+  });
   return formData;
 }
 
-const handleSubmit = async (e) => {
+const handleSubmit = async () => {
   isLoading.value = true;
-  validate();
-  setErrors({});
-  errorMessage.value = "";
-  const formData = getFormData(JSON.parse(JSON.stringify(values)));
-  if (values.hasOwnProperty("password")) {
-    if (values.password !== "") {
-      formData.append("password_confirmation", values.password);
-    } else {
-      formData.delete("password");
-    }
-  }
-  if (values.hasOwnProperty("photo") && values.photo instanceof File) {
-    formData.append("photo", values.photo);
-  } else {
-    formData.delete("photo");
-  }
 
-  formData.append("_method", "put");
-  const resData = await updateSeeker(formData);
-  isLoading.value = false;
-  if (resData.status !== "success") {
-    errorMessage.value = resData.message;
-    if (!isNullOrUndefined(resData.message)) {
-      setErrors({ password: resData.message });
-    }
-    if (resData.hasOwnProperty("errors") && resData.errors) {
-      setErrors(resData.errors);
-    }
+  await validate();
+
+  if (Object.keys(errors.value).length > 0) {
+    isLoading.value = false;
     return;
   }
+
+  const formData = getFormData(values);
+
+  if (values?.password) {
+    values.password
+      ? formData.append("password_confirmation", values.password)
+      : formData.delete("password");
+  }
+
+  const resData = await updateSeeker(formData);
+  isLoading.value = false;
+
+  if (resData.status !== "success") {
+    errorMessage.value = resData.message || "";
+    setErrors(resData.errors || {});
+    return;
+  }
+
   await getUser();
   await refreshSeeker();
-  await Swal.fire({
-    icon: "success",
-    text: "Успешно сохранено",
-    preConfirm: () => {
-      // navigateTo({ path: "/", query: {} });
-    },
-  });
-
-  if (routeErrorMessage.value) {
-    navigateTo({ name: "profile", query: {} });
-  }
+  await Swal.fire({ icon: "success", text: "Успешно сохранено" });
+  navigateTo({ name: "profile", query: {} });
 };
 </script>
 

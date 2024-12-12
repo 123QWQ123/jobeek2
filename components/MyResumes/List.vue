@@ -21,9 +21,7 @@
       >Создать резюме
     </NuxtLink>
     <div class="col d-flex justify-content-between mt-4">
-      <h1 ref="filterRef" class="lk-page-title mt-4">
-        Ваши резюме({{ total }})
-      </h1>
+      <h1 class="lk-page-title mt-4">Ваши резюме({{ total }})</h1>
     </div>
 
     <MyResumesListActions
@@ -50,44 +48,21 @@ useHead({
 const resumeStore = useResumeStore();
 const { getMyResumes, getAvailabilityCreate } = resumeStore;
 const { can_create_resume_count } = storeToRefs(resumeStore);
-
-await getAvailabilityCreate();
-const canCreateResume = computed(() => {
-  const { hh, superjob } = resumeStore.can_create_resume;
-  if (hh && superjob) {
-    return (
-      hh.is_creation_available === true ||
-      superjob.is_creation_available === true
-    );
-  }
-  return false;
-});
-
-//
-// const canCreateResumeCount = computed(() => {
-//   const { hh, superjob } = resumeStore.can_create_resume;
-//   if (hh && superjob) {
-//     return hh.remaining > superjob.remaining
-//       ? hh.remaining
-//       : superjob.remaining;
-//   }
-//   return false;
-// });
-
 const { my_resumes, current_page, my_total } = storeToRefs(resumeStore);
-
+const route = useRoute();
+const resumes = ref([]);
+const isLoading = ref(false);
 const form = useMyResumeForm();
-const isPrevDisabled = computed(() => {
-  return parseInt(current_page.value) === 1;
-});
-
 const total = computed(() => {
   return resumeStore.my_resumes.length;
 });
-const resumes = ref([]);
-const isLoading = ref(false);
 
-const route = useRoute();
+useAsyncData("getMyResumes", async () => await getMyResumes({}));
+useAsyncData(
+  "getAvailabilityCreate",
+  async () => await getAvailabilityCreate(),
+);
+
 watch(
   () => route.query,
   async (newQuery) => {
@@ -103,19 +78,4 @@ const onProviderChange = (newProvider) => {
     navigateTo({ name: "my-resumes", query: { my_provider: newProvider } });
   else navigateTo({ name: "my-resumes" });
 };
-onMounted(async () => {
-  isLoading.value = true;
-  await getMyResumes({});
-  isLoading.value = false;
-});
-
-const filterRef = ref();
-
-const listStyles = {
-  left: 0,
-  right: "unset",
-  width: "auto !important",
-};
 </script>
-
-<style scoped></style>
