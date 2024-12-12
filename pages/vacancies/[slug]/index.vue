@@ -21,6 +21,7 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useVacancyStore } from "~/store/vacancy";
+import { useAsyncData } from "#app";
 
 const isOpen = ref(true);
 const route = useRoute();
@@ -30,19 +31,17 @@ const { vacancy } = storeToRefs(vacancyStore);
 
 const { slug } = route.params;
 const { provider } = route.query;
-const vacancyData = await getVacancy(slug, { provider });
+const { data: vacancyData } = useAsyncData(
+  "getVacancy",
+  async () => await getVacancy(slug, { provider }),
+);
+
 let pageTitle = ref("Not found  - Jobeek");
 
-if (vacancyData && vacancyData[provider]?.name) {
-  pageTitle.value = vacancyData[provider]?.name + " - Jobeek";
+if (vacancyData.value && vacancyData.value[provider]?.name) {
+  pageTitle.value = vacancyData.value[provider]?.name + " - Jobeek";
 }
 
-// if (
-//   !vacancyData.hasOwnProperty("hh") &&
-//   !vacancyData.hasOwnProperty("superjob")
-// ) {
-//   navigateTo({ name: "404" });
-// }
 useHead({
   title: pageTitle.value ?? "Loading",
 });

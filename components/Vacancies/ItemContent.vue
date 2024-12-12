@@ -13,17 +13,15 @@
             {{ data.work_type }},
             {{ moment.unix(data.published_date).format("YYYY.MM.DD") }}
           </div>
-          <client-only>
-            <div class="salary" v-if="data.salary_to && data.salary_from">
-              {{ salary_from }} — {{ salary_to }} {{ data.currency }}/месяц
-            </div>
-            <div class="salary" v-else-if="data.value.salary_from">
-              от {{ salary_from }} {{ data.currency }}/месяц
-            </div>
-            <div class="salary" v-else-if="data.salary_to">
-              {{ salary_to }} {{ data.currency }}./месяц
-            </div>
-          </client-only>
+          <div class="salary" v-if="data.salary_to && data.salary_from">
+            {{ salary_from }} — {{ salary_to }} {{ data.currency }}/месяц
+          </div>
+          <div class="salary" v-else-if="data.salary_from">
+            от {{ salary_from }} {{ data.currency }}/месяц
+          </div>
+          <div class="salary" v-else-if="data.salary_to">
+            {{ salary_to }} {{ data.currency }}./месяц
+          </div>
         </div>
         <div class="vacancy-single-body" v-html="data.description"></div>
 
@@ -57,12 +55,8 @@ const props = defineProps({
 const { data } = storeToRefs(props);
 const { $format_number } = useNuxtApp();
 const isFavorite = ref(data?.value.is_favorite ?? false);
-const salary_from = computed(() => {
-  return $format_number(data.value.salary_from);
-});
-const salary_to = computed(() => {
-  return $format_number(data.value.salary_to);
-});
+const salary_from = ref($format_number(data.value.salary_from));
+const salary_to = ref($format_number(data.value.salary_to));
 
 const vacancyStore = useVacancyStore();
 const { addToFavorite, removeFromFavorite } = vacancyStore;
