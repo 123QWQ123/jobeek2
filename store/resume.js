@@ -167,7 +167,7 @@ export const useResumeStore = defineStore("resume", {
       const response = await this.getUserResumes(payload);
       if (response.hasOwnProperty("data") && "data" in response.data) {
         this.my_resumes = response.data.data;
-        this.my_total = response.data.found;
+        this.my_total = response.data.found || 0;
         this.current_page = response.data.current_page;
       }
       return response;
@@ -209,7 +209,6 @@ export const useResumeStore = defineStore("resume", {
       if (response.status === "success") {
         this.can_create_resume = response.data.data.available;
         this.can_create_resume_count = response.data.data.free ?? 0;
-        return;
       }
       return response;
     },

@@ -44,8 +44,8 @@ Build the application for production:
 
 ```bash
 # npm
-npm i
-npm run build
+yarn install
+yarn run build
 pm2 restart JobeekOnline
 ```
 
