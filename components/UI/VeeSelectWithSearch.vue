@@ -96,19 +96,15 @@ const { value, errorMessage } = useField(() => props.name);
 const isFirst = ref(false);
 const isOpen = ref(false);
 const options = ref(props.options);
-const placeholder = computed(() => props.placeholder);
-const searchInput = computed(() => {
-  return (
-    options.value.find((item) => String(item.value) === String(value.value))
-      ?.name || null
-  );
-});
-const selectedOption =
-  computed(() => {
-    return options.value.find(
-      (item) => String(item.value) === String(value.value),
-    );
-  }) || {};
+const placeholder = ref(props.placeholder);
+const searchInput = ref(
+  options.value.find((item) => String(item.value) === String(value.value))
+    ?.name || null,
+);
+const selectedOption = ref(
+  options.value.find((item) => String(item.value) === String(value.value)) ||
+    {},
+);
 
 watch(
   () => props.placeholder,
