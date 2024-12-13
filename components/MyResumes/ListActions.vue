@@ -63,8 +63,8 @@ const listStyles = {
 <style scoped>
 .provider_buttons {
   background-color: #fff;
-  border-radius: 1rem;
-  padding: 1rem 1.5rem 1rem 1.5rem;
+  border-radius: 12px;
+  padding: 15px;
 }
 
 .vacancy_tabs .nav-link {

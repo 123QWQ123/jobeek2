@@ -21,7 +21,7 @@
       >Создать резюме
     </NuxtLink>
     <div class="col d-flex justify-content-between mt-4">
-      <h1 class="lk-page-title mt-4">Ваши резюме({{ total }})</h1>
+      <h1 class="lk-page-title">Ваши резюме({{ total }})</h1>
     </div>
 
     <MyResumesListActions
