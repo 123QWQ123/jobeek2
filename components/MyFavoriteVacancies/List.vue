@@ -10,10 +10,21 @@
       ></VacanciesItem>
     </ul>
 
-    <!--    {{ my_favorite_vacancies }}-->
     <div class="footer mt-3" v-if="items.length">
-      <button class="btn btn-primary" @click="prevPage">Prev</button>
-      <button class="btn btn-primary ms-2" @click="nextPage">Next</button>
+      <button
+        class="btn btn-primary"
+        @click="changePage(-1)"
+        :disabled="current_page <= 1"
+      >
+        Prev
+      </button>
+      <button
+        class="btn btn-primary ms-2"
+        @click="changePage(1)"
+        :disabled="!isMore"
+      >
+        Next
+      </button>
     </div>
     <div class="notification no-ic-bg" v-else>
       <div class="notification-text">
@@ -23,65 +34,69 @@
       <nuxt-link
         class="notification-button button-accent"
         :to="{ name: 'search-vacancies' }"
-        >Найти вакансию
+      >
+        Найти вакансию
       </nuxt-link>
     </div>
-    <!--    <h3 >К сожалению ничего не нашли.</h3>-->
   </div>
 </template>
 
 <script setup>
+// Import required dependencies
 import { useVacancyStore } from "~/store/vacancy";
 import { storeToRefs } from "pinia";
-import { useVacancyForm } from "~/composables/useVacancyForm";
 import Swal from "sweetalert2";
+import { useResumeStore } from "~/store/resume.js";
 
+const { getMyResumes } = useResumeStore();
+// Create a reference to the vacancy store
 const vacancyStore = useVacancyStore();
 const { getMyFavoriteVacancies } = vacancyStore;
+// Destructure necessary states from the store
 const { my_favorite_vacancies, current_page } = storeToRefs(vacancyStore);
 
-const items = computed(() => my_favorite_vacancies.value);
+// Reactive reference for the list of vacancies
+const items = computed(() => my_favorite_vacancies.value); // Automatically watches for changes
+const isLoading = ref(false); // Tracks loading state
+const isMore = ref(true); // Flag for the availability of additional pages
 
-const isLoading = ref(false);
-const isMore = ref(false);
-
-const route = useRoute();
-const form = ref(useVacancyForm());
-watch(my_favorite_vacancies, (newValues) => {
-  items.value = newValues;
-  if (newValues.length > 0) {
-    isMore.value = true;
-  }
+useAsyncData("getMyFavoriteVacancies", async () => {
+  return await getMyFavoriteVacancies();
+});
+useAsyncData("getMyResumes", async () => {
+  return await getMyResumes();
 });
 
-onMounted(async () => {
-  await getMyFavoriteVacancies({});
-});
+// Function to load vacancies (loads the given page or the current page)
+const loadVacancies = async (page = current_page.value) => {
+  isLoading.value = true; // Enable the loading indicator
 
-const prevPage = async () => {
-  isLoading.value = true;
-  const res = await getMyFavoriteVacancies({
-    page: parseInt(current_page.value) - 1,
-  });
-  if (res.items.length < 1) {
-    Swal.fire({
-      title: "Больше вакансий не найдено!",
-      icon: "success",
-    });
+  try {
+    const res = await getMyFavoriteVacancies({ page }); // Fetch vacancies
+
+    // Check if there are no vacancies
+    if (!res.items?.length) {
+      isMore.value = false; // Disable the "next" button if no more pages
+      Swal.fire({
+        title: "Больше вакансий не найдено!",
+        icon: "info",
+      });
+    } else {
+      isMore.value = true; // Enable the "next" button if vacancies are available
+    }
+  } catch (error) {
+    console.error("Error while loading vacancies:", error); // Log the error
+  } finally {
+    isLoading.value = false; // Disable the loading indicator in all cases
   }
-  isLoading.value = false;
 };
-const nextPage = async () => {
-  isLoading.value = true;
-  const res = await getMyFavoriteVacancies({ page: current_page.value + 1 });
-  if (res.items.length < 1) {
-    isMore.value = false;
-    Swal.fire({
-      title: "Больше вакансий не найдено!",
-      icon: "success",
-    });
+
+// Common function for page switching (next or previous)
+const changePage = (direction) => {
+  const nextPage = current_page.value + direction; // Calculate the next page number
+  if (nextPage > 0 && isMore.value) {
+    loadVacancies(nextPage); // Load the requested page
   }
-  isLoading.value = false;
 };
 </script>
 

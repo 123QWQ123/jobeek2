@@ -23,15 +23,15 @@
       </div>
       <div class="favorites-card-body">
         <div class="time-location">
-          <span>{{ moment(item.published_date).format("hh:mm") }}</span
-          ><strong>{{ item.city }}</strong>
+          <span>{{ moment(item.published_date).format("hh:mm") }}</span>
+          <strong>{{ item.city }}</strong>
         </div>
         <p>{{ vacancyDescription }}</p>
       </div>
       <div class="favorites-card-footer">
         <div class="favorites-card-footer-row">
           <div class="group me-auto">
-            <div class="select-resume-row" v-if="useAuthStore().isAuthed">
+            <div class="select-resume-row" v-if="isAuthenticated">
               <div class="custom-select-wrapper">
                 <CustomSelectWithRadio
                   label="Выберите резюме"
@@ -88,39 +88,55 @@
 </template>
 
 <script setup>
+// Import core libraries and dependencies
 import moment from "moment";
 import { useVacancyStore } from "~/store/vacancy";
 import Swal from "sweetalert2";
 import { toast } from "vue3-toastify";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useResumeStore } from "~/store/resume.js";
 import { useAuthStore } from "~/store/auth.js";
 
+// Use the global formatting function from Nuxt context
 const { $format_number } = useNuxtApp();
+
+// Receive input property for the component
 const props = defineProps(["item"]);
 const { item } = props;
+
+// Compute the formatted salary text to be displayed
 const salaryText = computed(() => {
   if (item.salary_from && item.salary_to) {
-    return `${$format_number(item.salary_from)} - ${$format_number(item.salary_to)} ${item.currency}`;
-  } else if (item.salary_from && !item.salary_to) {
+    return `${$format_number(item.salary_from)} - ${$format_number(
+      item.salary_to,
+    )} ${item.currency}`;
+  } else if (item.salary_from) {
     return `От ${$format_number(item.salary_from)} ${item.currency}`;
-  } else if (!item.salary_from && item.salary_to) {
-    return `До ${$format_number(item.salary_from)} ${item.currency}`;
+  } else if (item.salary_to) {
+    return `До ${$format_number(item.salary_to)} ${item.currency}`;
   }
-  return "По договору";
+  return "По договору"; // Default text if no salary is defined
 });
-const isFavorite = ref(item.is_favorite ?? true);
 
+// Track whether the vacancy is marked as a favorite
+const isFavorite = ref(item.is_favorite ?? false);
+
+// Reference for storing the selected resume
 const selectedResume = ref(null);
 
+// Access the resume store and the current authentication state
 const resumeStore = useResumeStore();
-const myResumeOptions = computed(() => {
-  return resumeStore.my_resumes.map((item) => ({
-    name: item.title,
-    value: item.id,
-  }));
-});
+const isAuthenticated = computed(() => useAuthStore().isAuthed);
 
+// Generate resume options to be displayed in the dropdown
+const myResumeOptions = computed(() =>
+  resumeStore.my_resumes.map((res) => ({
+    name: res.title,
+    value: res.id,
+  })),
+);
+
+// Generate a concise description for the vacancy
 const vacancyDescription = computed(() => {
   if (item.description) {
     let text = item.description.slice(0, 150);
@@ -131,76 +147,68 @@ const vacancyDescription = computed(() => {
   }
   return item.description;
 });
+
+// Manage the error message for resume selection
 const selectedResumeError = ref(null);
-const onSubmit = async (e) => {
+
+// Handle the submission of a resume when applying for a vacancy
+const onSubmit = async () => {
   if (!selectedResume.value) {
-    selectedResumeError.value = "Выберите резюме чтобы откликатся";
-    return;
-  }
-  e.preventDefault();
-  if (resumeStore.my_resumes.length < 1) {
-    await getMyResumes();
-  }
-  if (resumeStore.my_resumes.length < 1) {
-    toast.info("Нет резюму чтобы откликатся.");
-    return;
-  }
-  if (data.value.response_letter_required) {
-    toast.info("Введите в полье письмо");
+    selectedResumeError.value = "Выберите резюме чтобы откликатся.";
     return;
   }
 
-  const response = await submitResume({
-    vacancy_id: data.value.id,
-    resume_id: selectedResume.value,
-    providers: ["hh"],
-  });
-
-  if (response.status === "success") {
-    isFavorite.value = !isFavorite.value;
-  } else {
-    Swal.fire({
-      title: "Ошибка!",
-      text: response.message,
-      icon: "error",
-      confirmButtonText: "ОК",
+  try {
+    const response = await submitResume({
+      vacancy_id: item.id,
+      resume_id: selectedResume.value,
+      providers: ["hh"],
     });
-  }
-};
 
-const vacancyStore = useVacancyStore();
-const { addToFavorite, getMyFavoriteVacancies, removeFromFavorite } =
-  vacancyStore;
-const toggleFavorite = async () => {
-  let response = {};
-  if (!isFavorite.value === true) {
-    response = await addToFavorite({
-      id: String(item.id),
-      provider: item.provider,
-    });
-  } else {
-    if (!item.favorite_id) {
-      isFavorite.value = false;
-      return;
+    if (response.status === "success") {
+      toast.success("Вы успешно откликнулись на вакансию.");
+    } else {
+      throw new Error(response.message);
     }
-    response = await removeFromFavorite(item.favorite_id);
-  }
-  if (response.status === "success") {
-    isFavorite.value = !isFavorite.value;
-  } else {
+  } catch (error) {
     Swal.fire({
       title: "Ошибка!",
-      text: response.message,
+      text: error.message,
       icon: "error",
-      confirmButtonText: "ОК",
+      confirmButtonText: "OK",
     });
   }
 };
-const employerLogo = computed(() => {
-  if (item && item.logo) {
-    return item.logo;
-  } else return new URL("/assets/img/logos/superjob.svg", import.meta.url);
-});
+
+// Toggle the favorite status of the vacancy
+const vacancyStore = useVacancyStore();
+const toggleFavorite = async () => {
+  try {
+    if (isFavorite.value) {
+      await vacancyStore.removeFromFavorite(item.favorite_id);
+    } else {
+      await vacancyStore.addToFavorite({
+        id: String(item.id),
+        provider: item.provider,
+      });
+    }
+    isFavorite.value = !isFavorite.value;
+  } catch (error) {
+    Swal.fire({
+      title: "Ошибка!",
+      text: error.message,
+      icon: "error",
+      confirmButtonText: "OK",
+    });
+  }
+};
+
+// Get the employer logo or default to a placeholder
+const employerLogo = computed(() =>
+  item.logo
+    ? item.logo
+    : new URL("/assets/img/logos/superjob.svg", import.meta.url),
+);
 </script>
 
 <style scoped></style>
