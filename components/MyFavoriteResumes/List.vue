@@ -12,7 +12,7 @@
     </ul>
 
     <div v-else>
-      <h3>К сожалению больше ничего не нашли.</h3>
+      <h3>К сожалению, больше ничего не нашли.</h3>
     </div>
 
     <div class="footer mt-3" v-if="my_favorite_resumes.length">

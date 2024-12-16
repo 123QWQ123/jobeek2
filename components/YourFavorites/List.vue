@@ -2,32 +2,30 @@
   <h2 class="lk-page-title">Избранные</h2>
   <PageLoader v-if="isLoading" />
   <div class="favorites-list-container">
-
     <ul class="favorites-list">
-      <VacanciesItem v-for="item in vacanciesItems" :key="item.id" :item="item"></VacanciesItem>
+      <VacanciesItem
+        v-for="item in vacanciesItems"
+        :key="item.id"
+        :item="item"
+      ></VacanciesItem>
     </ul>
-
-
 
     <div class="footer mt-3" v-if="vacanciesItems.length">
       <button class="btn btn-primary" @click="prevPage">Prev</button>
-      <button class="btn btn-primary ms-2 " @click="nextPage">Next</button>
+      <button class="btn btn-primary ms-2" @click="nextPage">Next</button>
     </div>
-    <h3 v-else>
-      К сожалению больше ничего не нашли!!!!
-    </h3>
+    <h3 v-else>К сожалению, больше ничего не нашли!!!!</h3>
   </div>
 </template>
 
 <script setup>
-
-import {useVacancyStore} from "../../store/vacancy";
-import {storeToRefs} from "pinia";
-import {useVacancyForm} from "../../composables/useVacancyForm";
+import { useVacancyStore } from "../../store/vacancy";
+import { storeToRefs } from "pinia";
+import { useVacancyForm } from "../../composables/useVacancyForm";
 import Swal from "sweetalert2";
 const vacancyStore = useVacancyStore();
-const {getMyFavoriteVacancies} = vacancyStore;
-const {my_favorite_vacancies, current_page} = storeToRefs(vacancyStore);
+const { getMyFavoriteVacancies } = vacancyStore;
+const { my_favorite_vacancies, current_page } = storeToRefs(vacancyStore);
 
 const vacanciesItems = ref([]);
 
@@ -38,7 +36,7 @@ const route = useRoute();
 const form = ref(useVacancyForm());
 watch(my_favorite_vacancies, (newValues) => {
   vacanciesItems.value = newValues;
-  if (newValues.length > 0){
+  if (newValues.length > 0) {
     isMore.value = true;
   }
 });
@@ -46,33 +44,33 @@ watch(my_favorite_vacancies, (newValues) => {
 onMounted(async () => {
   await getMyFavoriteVacancies({});
   isLoading.value = false;
-})
+});
 
-const prevPage = async() => {
+const prevPage = async () => {
   isLoading.value = true;
-  const res = await getMyFavoriteVacancies({page: parseInt(current_page.value) - 1});
-  if (res.items.length < 1){
+  const res = await getMyFavoriteVacancies({
+    page: parseInt(current_page.value) - 1,
+  });
+  if (res.items.length < 1) {
     Swal.fire({
-      title: 'Больше вакансий не найдено!',
+      title: "Больше вакансий не найдено!",
       icon: "success",
     });
   }
   isLoading.value = false;
-}
-const nextPage = async() => {
+};
+const nextPage = async () => {
   isLoading.value = true;
-  const res = await getMyFavoriteVacancies({page: current_page.value + 1});
-  if (res.items.length < 1){
+  const res = await getMyFavoriteVacancies({ page: current_page.value + 1 });
+  if (res.items.length < 1) {
     isMore.value = false;
     Swal.fire({
-      title: 'Больше вакансий не найдено!',
+      title: "Больше вакансий не найдено!",
       icon: "success",
     });
   }
   isLoading.value = false;
-}
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
