@@ -4,33 +4,31 @@
       <div class="resume-card-t2__head">
         <div class="resume-card-t2__head-info">
           <div class="status-list">
-            <span style="color: #0dc267">
-              Опубликовано
-              {{ moment(item.updated_at).format("hh:mm") }}
+            <span v-if="item.updated_at" style="color: #0dc267">
+              Опубликовано {{ formattedUpdatedAt }}
             </span>
             <span style="color: #0dc267">{{ viewedText }}</span>
           </div>
 
-          <a href="#" class="resume-title">
+          <a class="resume-title">
             <NuxtLink
               :to="{
                 name: 'resumes-slug',
                 params: { slug: item.id },
-                query: { provider: item.provider },
+                query: { provider: item.provider || 'unknown' },
               }"
             >
-              {{ item.title }}
+              {{ item.title || "Название не указано" }}
             </NuxtLink>
           </a>
+
           <client-only>
-            <div class="salary">
-              {{ salaryText }}
-            </div>
+            <div class="salary">{{ salaryText }}</div>
           </client-only>
         </div>
 
         <div class="resume-card-t2__head-img">
-          <img :src="photo" :alt="item.profession" />
+          <img :src="photo" :alt="item.profession || 'Нет профессии'" />
         </div>
       </div>
 
@@ -38,64 +36,29 @@
         <ul>
           <li>
             <div>Опыт работы</div>
-
             <div>{{ experienceText }}</div>
           </li>
-
           <li>
             <div>Последнее место работы</div>
-
+            <div>{{ lastWorkplace }}</div>
+          </li>
+          <li>
+            <div>Компания, профессия, даты</div>
             <div>
-              <div class="rrow">
-                {{ lastWorkplace }}
-                <!--                <strong></strong> • PHP-программист • Ноябрь 2018 — по настоящее-->
-                <!--                время-->
+              <div
+                v-for="exItem in experienceItems"
+                :key="exItem.dateText"
+                class="rrow"
+              >
+                <strong>{{ exItem.company }}</strong> •
+                {{ exItem.profession }} • {{ exItem.dateText }}
               </div>
             </div>
           </li>
-
-          <li>
-            <div>Названия компаний, в которых работал кандидат</div>
-
-            <div>
-              <div class="rrow" v-for="ex_item in experienceItems">
-                <strong>{{ ex_item.company }}</strong> •
-                {{ ex_item.profession }} •
-
-                {{ ex_item.dateText }}
-              </div>
-            </div>
-          </li>
-
-          <li>
-            <div>Специализации</div>
-
-            <div>Программист, разработчик</div>
-          </li>
-
-          <!--          <li>-->
-          <!--            <div>Регион и переезд</div>-->
-
-          <!--            <div>-->
-          <!--              Москва-->
-          <!--              <span class="m" style="background-color: #943e90"></span> м.-->
-          <!--              Полежаевская • Переезд невозможен-->
-          <!--            </div>-->
-          <!--          </li>-->
-
           <li>
             <div>Основное образование</div>
-
             <div>{{ educationLevelText }}</div>
           </li>
-
-          <!--          <li>-->
-          <!--            <div>Знание иностранных языков</div>-->
-
-          <!--            <div>-->
-          <!--              Родной язык — Русский • Английский, B2 — Средне-продвинутый-->
-          <!--            </div>-->
-          <!--          </li>-->
         </ul>
       </div>
 
@@ -128,130 +91,116 @@
 </template>
 
 <script setup>
+// Import assets and libraries
 import jobeekPhoto from "~/assets/img/jobeek-avatar.png";
-
-import moment from "moment";
 import Swal from "sweetalert2";
+import moment from "moment";
 import { useResumeStore } from "~/store/resume.js";
-import { useNuxtApp } from "#app";
 
-const props = defineProps(["item"]);
-const { item } = props;
-
-const {
-  $format_number,
-  $format_years,
-  $format_months,
-  $convert_month_to_text,
-} = useNuxtApp();
-
-const viewedText = computed(() => {
-  if (!item.date_view) return item.viewed ? "Просмотрено" : "";
-  return "Просмотрено" + moment(item.date_view).format("hh:mm");
-});
-const salaryText = computed(() => {
-  if (!item.agreement) {
-    return `От ${$format_number(item.salary)} ${item.currency}`;
-  }
-  return "По договору";
-});
-const educationLevelText = computed(() => {
-  const { education_level } = props.item.educations;
-  const { primary } = props.item.educations;
-  let level = "Среднее";
-  if (education_level) {
-    level = education_level.name;
-  }
-  let instituteText = undefined;
-  if (primary && primary.length > 0) {
-    const edu = primary[0];
-    const institute = edu.institute ? ", " + edu.institute : "";
-    const profession = edu.profession ? ", " + edu.profession : "";
-    const end_year = edu.end_year ? ", " + edu.end_year : "";
-    instituteText = `${institute}${profession}${end_year}`;
-  }
-
-  if (instituteText)
-    return level + `${instituteText ? ", " : ""} ${instituteText}`;
-  else return level;
+// Define props
+const props = defineProps({
+  item: {
+    type: Object,
+    required: true, // `item` must be provided as a prop
+    default: () => ({}), // Fallback to empty object if not provided
+  },
 });
 
-const experienceText = computed(() => {
-  if (item && item.experience_month_count) {
-    const years = $format_years(
-      parseInt($format_years(item.experience_month_count / 12)),
-    );
-    const months = $format_months(parseInt(item.experience_month_count % 12));
-
-    return `${years} ${months}`;
-  }
-  return "Нет опыт работы";
-});
-const formatEndDate = (end_year = null, end_month = null) => {
-  if (!end_year || !end_month) return "по настоящее";
-  return $convert_month_to_text(end_month) + " " + end_year;
-};
-const lastWorkplace = computed(() => {
-  if (item && item.experience) {
-    const lastExperience = item.experience[0];
-    if (lastExperience) {
-      const { company, profession, start_year, start_month } = lastExperience;
-      return (
-        `${company} * ${profession} | ${$convert_month_to_text(start_month)} ${start_year} - ` +
-        formatEndDate(lastExperience.end_year, lastExperience.end_month)
-      );
-    }
-  }
-  return "Нет опыт работы";
-});
-
-const experienceItems = ref([]);
-const prepareExperienceItems = (newExperience) => {
-  experienceItems.value = newExperience.map((ex_item) => {
-    let text =
-      `${$convert_month_to_text(ex_item.start_month)} ${ex_item.start_year}` +
-      " - " +
-      formatEndDate(ex_item.end_year, ex_item.end_month);
-    return { ...ex_item, dateText: text };
-  });
-};
-watch(() => props.item.experience, prepareExperienceItems);
-prepareExperienceItems(item.experience);
-
-const isFavorite = ref(item.is_favorite ?? false);
-
+// Access store methods
 const resumeStore = useResumeStore();
 const { addToFavorite, removeFromFavorite } = resumeStore;
-const toggleFavorite = async () => {
-  let response = {};
-  if (!isFavorite.value === true) {
-    response = await addToFavorite({
-      id: String(item.id),
-      provider: item.provider,
-    });
-  } else {
-    if (!item.favorite_id) {
-      isFavorite.value = false;
-      return;
-    }
-    response = await removeFromFavorite(item.favorite_id);
+
+// Computed property: Use fallback for missing photo
+const photo = computed(() => props.item?.photo || jobeekPhoto);
+
+// Computed property: Format the "viewed" text
+const viewedText = computed(() => {
+  if (!props.item.date_view) {
+    return props.item.viewed ? "Просмотрено" : "Не просмотрено"; // Fallback for viewed status
   }
-  if (response.status === "success") {
-    isFavorite.value = !isFavorite.value;
-  } else {
-    Swal.fire({
-      title: "Ошибка!",
-      text: response.message,
-      icon: "error",
-      confirmButtonText: "ОК",
-    });
+  return `Просмотрено ${moment(props.item.date_view).format("HH:mm")}`;
+});
+
+// Computed property: Format the update date
+const formattedUpdatedAt = computed(() => {
+  return props.item.updated_at
+    ? moment(props.item.updated_at).format("DD.MM.YYYY HH:mm")
+    : "Дата неизвестна"; // Fallback text for missing date
+});
+
+// Computed property: Salary text with fallback
+const salaryText = computed(() => {
+  if (props.item.agreement) {
+    return "По договору";
+  } else if (props.item.salary && props.item.currency) {
+    return `От ${props.item.salary} ${props.item.currency}`;
+  }
+  return "Зарплата не указана"; // Fallback for missing salary
+});
+
+// Computed property: Experience text format
+const experienceText = computed(() => {
+  if (
+    !props.item.experience_month_count ||
+    props.item.experience_month_count === 0
+  ) {
+    return "Нет опыта";
+  }
+  const years = Math.floor(props.item.experience_month_count / 12);
+  const months = props.item.experience_month_count % 12;
+  return `${years} год(а) ${months} месяц(а)`; // "3 года 2 месяца"
+});
+
+// Computed property: Education details text
+const educationLevelText = computed(() => {
+  return props.item?.educations?.education_level?.name || "Не указано"; // Default: "Среднее" if not available
+});
+
+// Computed property: Format list of work experience
+const experienceItems = computed(() => {
+  return (props.item.experience || []).map((ex) => ({
+    company: ex.company || "Неизвестная компания",
+    profession: ex.profession || "Неизвестная профессия",
+    dateText: `${ex.start_month && ex.start_year ? moment(`${ex.start_year}-${ex.start_month}-01`).format("MM/YYYY") : "неизвестно"} — ${
+      ex.end_month && ex.end_year
+        ? moment(`${ex.end_year}-${ex.end_month}-01`).format("MM/YYYY")
+        : "по настоящее время"
+    }`,
+  }));
+});
+
+// Computed property: Last workplace details (company, role, etc.)
+const lastWorkplace = computed(() => {
+  const experience = props.item?.experience?.[0];
+  if (!experience) {
+    return "Нет опыта";
+  }
+  return `${experience.company || "Компания не указана"} • ${
+    experience.profession || "Должность не указана"
+  }`;
+});
+
+// Reactive favorite status
+const isFavorite = ref(props.item.is_favorite || false);
+
+// Toggle favorite in the store
+const toggleFavorite = async () => {
+  try {
+    if (isFavorite.value) {
+      // Remove from favorite
+      if (props.item.favorite_id) {
+        await removeFromFavorite(props.item.favorite_id);
+      }
+    } else {
+      // Add to favorite
+      await addToFavorite({
+        id: String(props.item.id),
+        provider: props.item.provider || "unknown", // Default to "unknown" if provider is missing
+      });
+    }
+    isFavorite.value = !isFavorite.value; // Update the reactive status
+  } catch (error) {
+    await Swal.fire("Ошибка", "Не удалось обновить избранное", "error");
   }
 };
-const photo = computed(() => {
-  if (item.photo) {
-    return item.photo;
-  } else return jobeekPhoto;
-});
 </script>
-
-<style scoped></style>

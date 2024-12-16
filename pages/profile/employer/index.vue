@@ -7,29 +7,30 @@ useHead({
 });
 
 const authStore = useAuthStore();
+const { seeker, employer, isEmployer } = storeToRefs(authStore);
 
 const isCompleted = computed(() => {
-  if (!authStore.isEmployer) {
-    if (authStore.seeker) {
-      return authStore.seeker.is_completed;
+  if (!isEmployer.value) {
+    if (seeker.value) {
+      return seeker.value.is_completed;
     }
     return false;
   }
-  if (authStore.isEmployer) {
-    if (authStore.employer) {
-      return authStore.employer.is_completed;
+  if (isEmployer.value) {
+    if (employer.value) {
+      return employer.value.is_completed;
     }
     return false;
   }
   return false;
 });
 onMounted(() => {
-  if (!authStore.isEmployer) {
+  if (!isEmployer.value) {
     navigateTo({ name: "profile-seeker" });
   }
 });
 watch(
-  () => authStore.isEmployer,
+  () => isEmployer.value,
   (newValue) => {
     if (!newValue) {
       navigateTo({ name: "profile-seeker" });
@@ -46,7 +47,8 @@ watch(
       <div class="content">
         <div class="w-box bg-white" v-if="!isCompleted">
           <p class="text-danger p-3">
-            Перед использовании сервиса требуется заполнения вашего профиля и подтверждения email-а.
+            Перед использовании сервиса требуется заполнение вашего профиля и
+            подтверждения email-а.
           </p>
         </div>
 

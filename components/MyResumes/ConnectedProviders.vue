@@ -195,105 +195,97 @@
 import { toast } from "vue3-toastify";
 import { useResumeStore } from "~/store/resume";
 import moment from "moment";
+import { ref, computed } from "vue";
+import { useRoute } from "vue-router";
 
+// Resume store provides methods to work with resume-related features
 const resumeStore = useResumeStore();
-const { getSeekerProvidersAuthEndpoints, getConnectedSeekerProviders } =
-  resumeStore;
+const {
+  getSeekerProvidersAuthEndpoints,
+  getConnectedSeekerProviders,
+  syncResumes,
+  disconnectProviders,
+} = resumeStore;
 
+// Reactive state for providers and their connections
 const providers = ref({
-  hh: {
-    slug: "hh",
-    url: null,
-    is_connected: false,
-  },
-  superjob: {
-    slug: "superjob",
-    url: null,
-    is_connected: false,
-  },
+  hh: { slug: "hh", url: null, is_connected: false },
+  superjob: { slug: "superjob", url: null, is_connected: false },
 });
 
-const isSyncing = ref(false);
-const lastSyncedTime = computed(() => {
-  return moment().format("h:mm ч, DD.MM.Y");
-});
+// Reactive state for UI controls
+const isSyncing = ref(false); // Tracks if synchronization is in progress
+const lastSyncedTime = computed(() => moment().format("h:mm ч, DD.MM.Y")); // Displays the last synchronization time
 
-const { syncResumes } = resumeStore;
+// Get full URL for redirect
+const route = useRoute(); // Access the current route
+const redirect_url = useRequestURL(); // Nuxt-specific helper to get the full URL including domain
+
+// Computed states for provider connections
+const isSuperjobConnected = computed(
+  () => providers.value.superjob.is_connected,
+); // Is SuperJob connected
+const isHHConnected = computed(() => providers.value.hh.is_connected); // Is HH connected
+const isAnyProviderConnected = computed(
+  () => isHHConnected.value || isSuperjobConnected.value,
+); // Is any provider connected
+
+// Function to sync resumes
 const onSync = async () => {
-  isSyncing.value = true;
-  const resData = await syncResumes();
-  if (resData.hasOwnProperty("message")) {
-    toast.info(resData.message, { autoClose: 3000 });
+  try {
+    isSyncing.value = true; // Set syncing state to true
+    const resData = await syncResumes(); // Call sync function from the store
+    handleResponseMessage(resData, "info"); // Handle response (e.g., show a toast message)
+  } finally {
+    isSyncing.value = false; // Ensure syncing state is reset even if an error occurs
+    setTimeout(() => window.location.reload(), 1000); // Reload page after syncing
+    await updateProviderData(); // Update provider information post-sync
   }
-  isSyncing.value = false;
-  setTimeout(() => {
-    window.location.reload();
-  }, 1000);
-  await getSeekerProvidersAuthEndpoints();
 };
 
-const { disconnectProviders } = resumeStore;
-const onDisconnect = async (prov) => {
-  const resData = await disconnectProviders({ providers: [prov] });
-  if (resData.status !== "success") {
-    toast.error(resData.message, { autoClose: 3000 });
-    return;
+// Function to disconnect a specific provider
+const onDisconnect = async (providerSlug) => {
+  const resData = await disconnectProviders({ providers: [providerSlug] }); // Disconnect provider via API
+  // Show success or error message based on API response
+  handleResponseMessage(
+    resData,
+    resData.status === "success" ? "success" : "error",
+  );
+  await updateProviderData(); // Update provider information after disconnect
+};
+
+// Function to open a given URL (e.g., provider auth URL)
+const openProviderAuthUrl = (url) => window.open(url, "_blank"); // Simply opens a URL in a new tab
+
+// Helper function to handle API response messages
+// Accepts the response object and the type of toast (info, success, or error)
+const handleResponseMessage = (response, type) => {
+  if (response?.message) {
+    toast[type](response.message, { autoClose: 3000 }); // Use appropriate toast type
   }
-  toast.success(resData.message, { autoClose: 3000 });
-  await getConnectedSeekerProviders();
-  await getSeekerProvidersAuthEndpoints();
 };
 
-const onOpen = (url) => {
-  window.open(url);
-};
+// Function to update provider information (connected state and auth URLs)
+const updateProviderData = async () => {
+  // Fetch connected providers from the API
+  const connectedProviders = await getConnectedSeekerProviders();
+  if (connectedProviders.hh && connectedProviders.superjob) {
+    providers.value.hh.is_connected = connectedProviders.hh; // Update HH connection state
+    providers.value.superjob.is_connected = connectedProviders.superjob; // Update SuperJob connection state
+  }
 
-const isSuperjobConnected = computed(() => {
-  return resumeStore.providers.superjob;
-});
-const isHHConnected = computed(() => {
-  return resumeStore.providers.hh;
-});
-providers.value.hh.is_connected = resumeStore.providers.hh;
-providers.value.superjob.is_connected = resumeStore.providers.superjob;
-
-watch(
-  () => resumeStore.providers,
-  (newProviders) => {
-    providers.value.hh.is_connected = newProviders.hh;
-    providers.value.superjob.is_connected = newProviders.superjob;
-  },
-);
-
-const isAnyProviderConnected = computed(() => {
-  if (
-    resumeStore.providers.hh === true ||
-    resumeStore.providers.superjob === true
-  )
-    return true;
-  else return false;
-});
-const route = useRoute();
-const redirect_url = useRequestURL();
-onMounted(async () => {
-  const response = await getConnectedSeekerProviders();
-  // if (response.status !== "success") {
-  //   toast.info(response.message, { autoClose: 3000 });
-  //   return;
-  // }
+  // Fetch authentication URLs for disconnected providers
   if (!isSuperjobConnected.value || !isHHConnected.value) {
-    const authData = await getSeekerProvidersAuthEndpoints({}, redirect_url);
-    providers.value.hh.url = authData.hh;
-    providers.value.superjob.url = authData.superjob;
+    const authData = await getSeekerProvidersAuthEndpoints({}, redirect_url); // Get auth URLs with full redirect URL
+    providers.value.hh.url = authData.hh || null; // Set HH auth URL
+    providers.value.superjob.url = authData.superjob || null; // Set SuperJob auth URL
   }
-});
+  return true;
+};
 
-const openProviderAuthUrl = (url) => {
-  window.open(url);
-};
-const onIframeLoaded = (data) => {
-};
-const iframe = ref();
+useAsyncData("updateProviderData", async () => {
+  return await updateProviderData();
+});
 </script>
 
 <style scoped>

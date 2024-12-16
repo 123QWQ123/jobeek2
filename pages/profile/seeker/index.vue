@@ -46,7 +46,7 @@ watch(
       <div class="content" v-if="authStore.seeker">
         <div class="w-box bg-white" v-if="!isCompleted">
           <p class="text-danger p-3">
-            Перед использовании сервиса требуется заполнения вашего профиля.
+            Перед использовании сервиса требуется заполнение вашего профиля.
           </p>
         </div>
         <div class="w-box w-box--main">

@@ -1,77 +1,104 @@
 <template>
   <h2 class="lk-page-title mb-4">Избранные</h2>
   <PageLoader v-if="isLoading" />
+
   <div class="favorites-list-container">
-    <ul class="favorites-list">
+    <ul v-if="true" class="favorites-list">
       <ResumesItem
-        v-for="item in items"
+        v-for="item in my_favorite_resumes"
         :key="item.id"
         :item="item"
       ></ResumesItem>
     </ul>
 
-    <div class="footer mt-3" v-if="items.length">
-      <button class="btn btn-primary" @click="prevPage">Prev</button>
-      <button class="btn btn-primary ms-2" @click="nextPage">Next</button>
+    <div v-else>
+      <h3>К сожалению, больше ничего не нашли.</h3>
     </div>
-    <h3 v-else>К сожалению больше ничего не нашли.</h3>
+
+    <div class="footer mt-3" v-if="my_favorite_resumes.length">
+      <button
+        class="btn btn-primary"
+        @click="prevPage"
+        :disabled="!hasPreviousPage"
+      >
+        Prev
+      </button>
+      <button
+        class="btn btn-primary ms-2"
+        @click="nextPage"
+        :disabled="!hasNextPage"
+      >
+        Next
+      </button>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { storeToRefs } from "pinia";
-import { useVacancyForm } from "~/composables/useVacancyForm";
-import Swal from "sweetalert2";
 import { useResumeStore } from "~/store/resume";
+import Swal from "sweetalert2";
 
+/**
+ * Using Pinia store for managing favorite resumes
+ */
 const resumeStore = useResumeStore();
 const { getMyFavoriteResumes } = resumeStore;
 const { my_favorite_resumes, current_page } = storeToRefs(resumeStore);
 
-const items = ref([]);
-
+/**
+ * Reactive state
+ */
 const isLoading = ref(false);
-const isMore = ref(false);
+const hasPreviousPage = computed(() => current_page.value > 1);
+const hasNextPage = computed(() => my_favorite_resumes.value.length > 0);
 
-const route = useRoute();
-const form = ref(useVacancyForm());
-watch(my_favorite_resumes, (newValues) => {
-  items.value = newValues;
-  if (newValues.length > 0) {
-    isMore.value = true;
-  }
-});
+/**
+ * Fetch favorite resumes on component mount
+ */
+const { data: favoriteData, refresh: refreshFavorites } = useAsyncData(
+  "myFavoriteResumes",
+  async () => {
+    return await getMyFavoriteResumes({ page: current_page.value });
+  },
+);
 
-onMounted(async () => {
+/**
+ * Fetch function for favorite resumes
+ */
+const fetchFavorites = async (page = current_page.value) => {
   isLoading.value = true;
-  await getMyFavoriteResumes({});
-  isLoading.value = false;
-});
-
-const prevPage = async () => {
-  isLoading.value = true;
-  const res = await getMyFavoriteResumes({
-    page: parseInt(current_page.value) - 1,
-  });
-  if (res.items.length < 1) {
-    Swal.fire({
-      title: "Больше вакансий не найдено!",
-      icon: "success",
+  try {
+    return await getMyFavoriteResumes({ page });
+  } catch (error) {
+    console.error("Error fetching favorite resumes:", error);
+    await Swal.fire({
+      title: "Ошибка загрузки данных!",
+      icon: "error",
     });
+  } finally {
+    isLoading.value = false;
   }
-  isLoading.value = false;
 };
+
+/**
+ * Pagination handlers
+ */
+const prevPage = async () => {
+  if (!hasPreviousPage.value) return;
+  await fetchFavorites(current_page.value - 1);
+};
+
 const nextPage = async () => {
-  isLoading.value = true;
-  const res = await getMyFavoriteVacancies({ page: current_page.value + 1 });
-  if (res.items.length < 1) {
-    isMore.value = false;
+  if (!hasNextPage.value) return;
+  const res = await fetchFavorites(current_page.value + 1);
+  if (!res?.items?.length) {
     Swal.fire({
       title: "Больше вакансий не найдено!",
-      icon: "success",
+      icon: "info",
+      timer: 3000,
     });
   }
-  isLoading.value = false;
 };
 </script>
 

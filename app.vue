@@ -27,12 +27,15 @@ let nameLayout = computed(() => {
   return isAuthed.value ? "auth" : "guest";
 });
 
+if (isAuthed.value) {
+  useAsyncData("getConnectedEmployerProviders", async () => {
+    return await getConnectedEmployerProviders();
+  });
+  useAsyncData("getConnectedSeekerProviders", async () => {
+    return await getConnectedSeekerProviders();
+  });
+}
 onMounted(async () => {
-  if (isAuthed.value) {
-    await getConnectedEmployerProviders();
-    await getConnectedSeekerProviders();
-  }
-
   if (route.query.message) {
     handleAlert();
   }

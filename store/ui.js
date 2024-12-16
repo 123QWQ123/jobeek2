@@ -30,12 +30,6 @@ export const useUIStore = defineStore("ui", {
       }
     },
     async getFooterSettings() {
-      if (!process.server) {
-        if (this.footer) {
-          return this.footer;
-        }
-      }
-
       const url = useRequestURL();
       const hostname = url.hostname;
       const response = await useApi("getSettings", {

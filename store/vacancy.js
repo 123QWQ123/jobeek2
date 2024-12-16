@@ -145,12 +145,13 @@ export const useVacancyStore = defineStore("vacancy", {
   },
   actions: {
     async getConnectedEmployerProviders() {
-      const { isEmployer, isAuthenticated } = storeToRefs(useAuthStore());
-      if (this.providers.hh && this.providers.superjob) {
-        return this.providers;
-      }
-
-      if (isEmployer.value && isAuthenticated.value) {
+      const { isEmployer, isAuthenticated, employer } =
+        storeToRefs(useAuthStore());
+      if (
+        isEmployer.value &&
+        isAuthenticated.value &&
+        employer.value.is_completed
+      ) {
         const response = await useApi("employer/used_providers", {
           method: "get",
           params: {},
@@ -159,8 +160,8 @@ export const useVacancyStore = defineStore("vacancy", {
         if ("data" in response) {
           this.providers = response.data.data;
         }
-        return this.providers;
       }
+      return this.providers;
     },
     async synVacancies() {
       const { data } = await useApi("employer/vacancies/sync", {

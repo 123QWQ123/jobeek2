@@ -1,17 +1,7 @@
 <template>
-  <ProfileLoadingEmployerEditForm v-if="isServer" />
-  <Suspense>
-    <template #fallback>
-      <ProfileLoadingEmployerEditForm />
-    </template>
-    <template #default>
-      <ProfileEmployerEditForm />
-    </template>
-  </Suspense>
+  <ProfileEmployerEditForm />
 </template>
 
-<script setup>
-const isServer = computed(() => process.server);
-</script>
+<script setup></script>
 
 <style></style>
