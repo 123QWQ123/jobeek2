@@ -174,105 +174,116 @@
 </template>
 
 <script setup>
+import { ref, computed, watch } from "vue";
 import { toast } from "vue3-toastify";
 import moment from "moment";
 import { useVacancyStore } from "~/store/vacancy";
 
+/**
+ * Accessing the global store for vacancy-related actions.
+ */
 const vacancyStore = useVacancyStore();
-const { getEmployerProvidersAuthEndpoints, getConnectedEmployerProviders } =
-  vacancyStore;
-
-const providers = ref({
-  hh: {
-    slug: "hh",
-    url: null,
-    is_connected: false,
-  },
-  superjob: {
-    slug: "superjob",
-    url: null,
-    is_connected: false,
-  },
-});
-
-// const resData = await getConnectedEmployerProviders();
-
-const isSyncing = ref(false);
-const lastSyncedTime = computed(() => {
-  return moment().format("h:mm a, DD.MM.Y");
-});
-
 const { synVacancies, disconnectProviders } = vacancyStore;
-const onSync = async () => {
-  isSyncing.value = true;
-  const resData = await synVacancies();
-  if (resData.hasOwnProperty("message")) {
-    toast.info(resData.message, { autoClose: 3000 });
-  }
-  isSyncing.value = false;
-  await getEmployerProvidersAuthEndpoints();
-};
 
-const onDisconnect = async () => {
-  const resData = await disconnectProviders({ providers: [prov] });
-  if (resData.status !== "success") {
-    toast.error(resData.message, { autoClose: 3000 });
-    return;
-  }
-  toast.success(resData.message, { autoClose: 3000 });
-  await getConnectedEmployerProviders();
-  await getEmployerProvidersAuthEndpoints();
-};
-
-const onOpen = (url) => {
-  window.open(url);
-};
-
-const isSuperjobConnected = computed(() => {
-  return vacancyStore.providers.superjob;
+// Providers state management
+const providers = ref({
+  hh: { slug: "hh", url: null, is_connected: false },
+  superjob: { slug: "superjob", url: null, is_connected: false },
 });
-const isHHConnected = computed(() => {
-  return vacancyStore.providers.hh;
-});
-providers.value.hh.is_connected = vacancyStore.providers.hh;
-providers.value.superjob.is_connected = vacancyStore.providers.superjob;
 
-watch(
-  () => vacancyStore.providers,
-  (newProviders) => {
-    providers.value.hh.is_connected = newProviders.hh;
-    providers.value.superjob.is_connected = newProviders.superjob;
-  },
+const isSyncing = ref(false); // Is syncing in progress?
+const iframe = ref(null); // Iframe reference if needed
+
+// Get full URL for redirect
+const route = useRoute(); // Access the current route
+const redirect_url = useRequestURL(); // Nuxt-specific helper to get the full URL including domain
+
+// Last synced time formatted using `moment`
+const lastSyncedTime = computed(() => moment().format("h:mm a, DD.MM.Y"));
+
+// Computed properties for each provider's connection state
+const isSuperjobConnected = computed(
+  () => providers.value.superjob.is_connected,
+);
+const isHHConnected = computed(() => providers.value.hh.is_connected);
+const isAnyProviderConnected = computed(() =>
+  Object.values(providers.value).some((provider) => provider.is_connected),
 );
 
-const isAnyProviderConnected = computed(() => {
-  if (!vacancyStore.providers) return false;
-  if (
-    vacancyStore.providers.hh === true ||
-    vacancyStore.providers.superjob === true
-  )
-    return true;
-  else return false;
-});
-const route = useRoute();
-const redirect_url = useRequestURL();
-onMounted(async () => {
-  const response = await getConnectedEmployerProviders();
-  // if (response.status !== "success") {
-  //   toast.info(response.message, { autoClose: 3000 });
-  //   return;
-  // }
-  if (!isSuperjobConnected.value || !isHHConnected.value) {
-    const authData = await getEmployerProvidersAuthEndpoints({}, redirect_url);
-    providers.value.hh.url = authData.hh;
-    providers.value.superjob.url = authData.superjob;
-  }
-});
+/**
+ * Fetching connected providers' data and authorization endpoints using `useAsyncData`.
+ */
+const { data: connectedData, refresh: refreshConnectedProviders } =
+  useAsyncData("connectedProviders", () =>
+    vacancyStore.getConnectedEmployerProviders(),
+  );
 
-const openProviderAuthUrl = (url) => {
-  window.open(url);
+const { data: authEndpoints, refresh: refreshAuthEndpoints } = useAsyncData(
+  "authEndpoints",
+  () => vacancyStore.getEmployerProvidersAuthEndpoints({}, redirect_url),
+);
+
+// Watch for changes in the `connectedData` and `authEndpoints` to update the `providers` state
+watch(
+  [connectedData, authEndpoints],
+  ([connectedDataValue, authEndpointsValue]) => {
+    providers.value.hh = {
+      ...providers.value.hh,
+      url: authEndpointsValue?.hh || null,
+      is_connected: connectedDataValue?.hh || false,
+    };
+    providers.value.superjob = {
+      ...providers.value.superjob,
+      url: authEndpointsValue?.superjob || null,
+      is_connected: connectedDataValue?.superjob || false,
+    };
+  },
+  { immediate: true },
+);
+
+/**
+ * Handler to synchronize vacancies with connected providers.
+ */
+const onSync = async () => {
+  try {
+    isSyncing.value = true; // Start syncing state
+    const resData = await synVacancies();
+    if (resData.message) toast.info(resData.message, { autoClose: 3000 });
+
+    // Refresh provider data after successful sync
+    await Promise.all([refreshConnectedProviders(), refreshAuthEndpoints()]);
+  } catch (error) {
+    toast.error("Synchronization error", { autoClose: 3000 });
+  } finally {
+    isSyncing.value = false; // Stop syncing state
+  }
 };
-const iframe = ref();
+
+/**
+ * Disconnect a provider by its slug.
+ */
+const onDisconnect = async (providerSlug) => {
+  try {
+    const resData = await disconnectProviders({ providers: [providerSlug] });
+    if (resData.status !== "success") {
+      toast.error(resData.message, { autoClose: 3000 });
+      return;
+    }
+    toast.success(resData.message, { autoClose: 3000 });
+
+    // Refresh provider data after disconnecting
+    await Promise.all([refreshConnectedProviders(), refreshAuthEndpoints()]);
+  } catch (error) {
+    toast.error("Error disconnecting provider", { autoClose: 3000 });
+  }
+};
+
+/**
+ * Opens the specified provider URL.
+ */
+const onOpen = (url) => {
+  if (url) window.open(url, "_blank");
+};
 </script>
 
 <style scoped>
