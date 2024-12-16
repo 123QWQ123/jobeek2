@@ -321,6 +321,7 @@ export const useProfileStore = defineStore("profile", {
       });
       if (response.status === "success") {
         this.employer = response.data.data;
+        useAuthStore().setEmployer(response.data.data);
         this.user = response.data?.data;
       }
       return this.employer;

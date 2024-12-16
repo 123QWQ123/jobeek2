@@ -90,7 +90,9 @@ import { useAuthStore } from "~/store/auth";
 const { isAuthed } = storeToRefs(useAuthStore());
 const uiStore = useUIStore();
 const { getFooterSettings } = uiStore;
-await getFooterSettings();
+useAsyncData("getFooterSettings", async () => {
+  return await getFooterSettings();
+});
 </script>
 
 <style></style>

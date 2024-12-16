@@ -71,11 +71,7 @@
       <div class="input-row">
         <label for="password">Пароль<b>*</b></label>
         <div class="input-wrapper position-relative">
-          <VeeCustomTextInput
-            type="password"
-            name="password"
-            placeholder="********"
-          />
+          <VeeCustomTextInput name="password" placeholder="********" />
         </div>
       </div>
 
@@ -106,9 +102,9 @@ const authStore = useAuthStore();
 const user = await getUser();
 
 const schema = zod.object({
-  company_name: zod.string(),
-  company_url: zod.string().url(),
-  company_description: zod.string(),
+  company_name: zod.string().trim().min(1),
+  company_url: zod.string().url().trim().min(1),
+  company_description: zod.string().trim().min(1),
   email: zod.string().email(),
   phone: zod.string(),
 });
@@ -149,7 +145,7 @@ const isLoading = ref(false);
 const errorMessage = ref(null);
 const handleSubmit = async (e) => {
   isLoading.value = true;
-  validate();
+  await validate();
   setErrors({});
 
   errorMessage.value = "";

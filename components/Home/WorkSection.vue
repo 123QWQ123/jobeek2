@@ -52,9 +52,15 @@
 <script setup>
 import { useVacancyStore } from "~/store/vacancy";
 import { useAuthStore } from "~/store/auth";
+import { useAsyncData } from "#app";
 
+const { getVacanciesInMoscow } = useVacancyStore();
 const { vacancies_in_moscow } = storeToRefs(useVacancyStore());
 const auth = storeToRefs(useAuthStore());
+
+useAsyncData("vacanciesInMoscow", async () => {
+  return await getVacanciesInMoscow();
+});
 </script>
 
 <style scoped>

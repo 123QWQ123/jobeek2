@@ -64,20 +64,22 @@ export const useResumeStore = defineStore("resume", {
     },
 
     async getConnectedSeekerProviders(payload) {
-      const { isEmployer, isAuthenticated } = storeToRefs(useAuthStore());
-      let response = {};
-      if (this.providers.hh && this.providers.superjob) {
-        return this.providers;
-      }
-      if (!isEmployer.value && isAuthenticated.value) {
-        response = await useApi("seeker/used_providers", {
+      const { isEmployer, isAuthenticated, seeker } =
+        storeToRefs(useAuthStore());
+
+      if (
+        !isEmployer.value &&
+        isAuthenticated.value &&
+        seeker.value.is_completed
+      ) {
+        const response = await useApi("seeker/used_providers", {
           method: "get",
         });
+        if (response.status === "success") {
+          this.providers = response.data.data;
+        }
       }
 
-      if (response.status === "success") {
-        this.providers = response.data.data;
-      }
       return this.providers;
     },
 
@@ -108,13 +110,10 @@ export const useResumeStore = defineStore("resume", {
       if (this.provider_auth_urls.hh && this.provider_auth_urls.superjob) {
         return this.provider_auth_urls;
       }
-      const response = await useApi(
-        "services/auth/redirect-url?profile=seeker&redirect_to=" + redirect_to,
-        {
-          method: "get",
-          payload,
-        },
-      );
+      const response = await useApi("services/auth/redirect-url", {
+        method: "get",
+        params: { ...payload, redirect_to, profile: "seeker" },
+      });
       if (response.status === "success") {
         this.provider_auth_urls = response.data.data;
       }
@@ -274,13 +273,13 @@ export const useResumeStore = defineStore("resume", {
         method: "get",
         params: payload,
       });
-      if (response.status === "success") {
+      if (response.status === "success" && response.data.data.length > 0) {
         this.my_favorite_resumes = response.data.data;
         if (payload.page) {
           this.current_page = payload.page;
         }
       }
-      return response;
+      return this.my_favorite_resumes;
     },
     async getRegions(payload = {}) {
       const { data } = await useApi("area/regions", {

@@ -144,8 +144,7 @@ const route = useRoute();
 const resumeID = computed(() => route.params.id);
 
 const resumeStore = useResumeStore();
-const { getConnectedSeekerProviders, getSeekerProvidersAuthEndpoints } =
-  resumeStore;
+const { getConnectedSeekerProviders } = resumeStore;
 await getConnectedSeekerProviders();
 
 const { value, errorMessage } = useField(() => props.name);

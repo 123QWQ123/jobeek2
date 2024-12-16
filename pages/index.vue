@@ -18,27 +18,13 @@ useHead({
   title: "Jobeek - все для вашего удобства",
 });
 
-const {
-  getVacanciesInMoscow,
-  getVacanciesInTopCompanies,
-  getCurrencyCityVacancies,
-  getIndustries,
-} = useVacancyStore();
-const { getSchedules } = useDictionaryStore();
+const { getVacanciesInTopCompanies, getCurrencyCityVacancies } =
+  useVacancyStore();
 
-useAsyncData("industries", async () => {
-  return await getIndustries();
-});
-useAsyncData("schedules", async () => {
-  return await getSchedules();
-});
 useAsyncData("currencyCityVacancies", async () => {
   return await getCurrencyCityVacancies();
 });
 useAsyncData("vacanciesInTopCompanies", async () => {
   return await getVacanciesInTopCompanies();
-});
-useAsyncData("vacanciesInMoscow", async () => {
-  return await getVacanciesInMoscow();
 });
 </script>

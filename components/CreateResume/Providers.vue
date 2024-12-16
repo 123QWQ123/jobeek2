@@ -194,8 +194,6 @@ const reset = () => {
   selectedProviders.value = resetObject;
 };
 
-onMounted(() => {
-});
 const { updateResume } = resumeStore;
 // const providers = ref(resetObject);
 const isHHLoading = ref(false);

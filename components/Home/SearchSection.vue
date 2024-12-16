@@ -110,11 +110,20 @@
 <script setup>
 import { useVacancyStore } from "~/store/vacancy.js";
 import { useDictionaryStore } from "~/store/dictionary.js";
+import { useAsyncData } from "#app";
 
+const { getIndustries } = useVacancyStore();
+const { getSchedules } = useDictionaryStore();
 const { top_20_industries } = storeToRefs(useVacancyStore());
 const { schedules } = storeToRefs(useDictionaryStore());
-
 const isMoreIndustries = ref(false);
+
+useAsyncData("industries", async () => {
+  return await getIndustries();
+});
+useAsyncData("schedules", async () => {
+  return await getSchedules();
+});
 const toggleIndustries = () =>
   (isMoreIndustries.value = !isMoreIndustries.value);
 </script>

@@ -2,7 +2,7 @@
   <div class="subs-list-container">
     <ul class="subs-list">
       <YourSubscriptionsListItem
-        v-for="notification in notifications"
+        v-for="notification in notifications || []"
         :key="notification.id"
         :notification="notification"
       ></YourSubscriptionsListItem>
@@ -16,17 +16,14 @@
 <script setup>
 import useApi from "~/hooks/useApi.js";
 
-const notifications = ref([]);
-onBeforeMount(async () => {
+const { data: notifications } = useAsyncData("subscription", async () => {
   const {
     data: { data, status },
   } = await useApi("seeker/subscription", {
     method: "get",
   });
 
-  if (status === "success") {
-    notifications.value = data;
-  }
+  return data;
 });
 </script>
 
