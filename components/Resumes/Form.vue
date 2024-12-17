@@ -74,7 +74,7 @@ const onCityChange = (regionItem) => {
     form.value.cities = [regionItem.value];
   }
 };
-const { getResumes, getRegions, getCities } = resumeStore;
+const { getRegions, getCities } = resumeStore;
 
 const vacancies = computed(() => vacancyStore.vacancies);
 

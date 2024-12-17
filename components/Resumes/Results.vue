@@ -23,16 +23,17 @@
           <BlockLoader class="position-fixed" v-if="isLoading" />
           <ResumesFilters></ResumesFilters>
 
-          <ResumesList :key="$route.fullPath"></ResumesList>
+          <div class="content">
+            <ResumesAsyncList />
+          </div>
         </div>
       </div>
     </div>
   </main>
 </template>
 
-<script setup>
+<script async setup>
 import { useVacancyForm } from "~/composables/useVacancyForm";
-import { navigateTo } from "nuxt/app";
 import { useUIStore } from "~/store/ui";
 
 import { useNuxtApp } from "#app";
@@ -59,19 +60,16 @@ const isLoading = ref(false);
 
 const { getResumes } = resumeStore;
 const { getCurrentQueryParams } = useQueryParams();
-const currentParams = ref(getCurrentQueryParams());
-onMounted(async () => {
-  await getResumes(currentParams.value, false);
+
+await useAsyncData("getResumes", async () => {
+  return await getResumes({ ...getCurrentQueryParams() }, false);
 });
 watch(
   () => ({ ...getCurrentQueryParams() }),
   async (newValues, oldValues) => {
     if (JSON.stringify(newValues) !== JSON.stringify(oldValues)) {
       isLoading.value = true;
-
-      currentParams.value = newValues;
-      await getResumes(newValues, false, true);
-
+      await getResumes({ ...getCurrentQueryParams() }, false, true);
       isLoading.value = false;
     }
   },
