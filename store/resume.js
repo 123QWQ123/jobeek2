@@ -119,28 +119,20 @@ export const useResumeStore = defineStore("resume", {
       }
       return this.provider_auth_urls;
     },
-    async getResumes(payload, add = false, new_data = false) {
-      if (new_data !== true && this.resumes.length > 0) {
-        return {
-          status: "success",
-          data: this.resumes,
-        };
-      }
+    async getResumes(params, add = false, reset = false) {
+      if (reset) this.clearResumes(); // Сброс списка при необходимости
+
       const response = await useApi("resumes/search", {
         method: "get",
-        params: payload,
+        params: params,
       });
       if (response.status === "success") {
-        if (add) {
-          this.resumes = this.resumes.concat(response.data.items);
-          this.current_page++;
-        } else {
-          this.resumes = response.data.items;
-          this.current_page = 1;
-        }
+        this.resumes = add
+          ? [...this.resumes, ...response.data.items]
+          : response.data.items;
         this.total = response.data.found;
       }
-      return response;
+      return this.resumes;
     },
     async getMyNegotiations(payload) {
       const response = await useApi("seeker/negotiations", {
@@ -265,8 +257,9 @@ export const useResumeStore = defineStore("resume", {
       }
       return response;
     },
-    async clearResumes() {
+    clearResumes() {
       this.resumes = [];
+      this.total = 0;
     },
     async getMyFavoriteResumes(payload) {
       const response = await useApi("employer/resumes/favorites", {

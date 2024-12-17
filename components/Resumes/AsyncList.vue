@@ -35,28 +35,15 @@ import { useResumeStore } from "~/store/resume.js";
 const resumeStore = useResumeStore();
 const { getResumes } = resumeStore;
 
-const { current_page } = storeToRefs(resumeStore);
+const { current_page, resumes, total } = storeToRefs(resumeStore);
 
 const loadMoreButton = ref();
 const isLoading = ref(false);
 const isMore = ref(false);
 
-// const { getQueryParam, getCurrentQueryParams } = useQueryParams();
-// const current_params = getCurrentQueryParams("back") ?? {};
 const { getQueryParam, getCurrentQueryParams } = useQueryParams();
-const current_params = getCurrentQueryParams() ?? {};
 
-await getResumes({ ...getCurrentQueryParams() }, false, true);
-
-const resumes = ref(resumeStore.resumes ?? []);
-watch(
-  () => resumeStore.resumes,
-  () => {
-    resumes.value = resumeStore.resumes;
-  },
-);
-
-const params = ref(current_params);
+const params = ref(getCurrentQueryParams() ?? {});
 watch(
   () => getCurrentQueryParams(),
   (newParams) => {
@@ -72,9 +59,7 @@ onMounted(() => {
 watch(
   () => resumes.value,
   (newValues) => {
-    if (newValues.length > 0) {
-      isMore.value = true;
-    }
+    isMore.value = newValues.length > 0;
   },
 );
 const loadMore = async () => {
@@ -82,12 +67,12 @@ const loadMore = async () => {
   const res = await getResumes(
     { ...params.value, page: parseInt(current_page.value) + 1 },
     true,
-    true,
+    false,
   );
   isLoading.value = false;
-  if (res.status !== "success") {
+  if (res.length >= total - 1) {
     isMore.value = false;
-    Swal.fire({
+    await Swal.fire({
       title: "Больше резюме не найдено!",
       icon: "success",
     });

@@ -2,11 +2,13 @@ import axios from "axios";
 import { useAuthStore } from "~/store/auth";
 import { useSetFormErrors } from "vee-validate";
 
-const useApi = async (method, options = {}) => {
-  const CONFIG = useRuntimeConfig();
+const useApi = async (method, options = {}, nuxtInstance = null) => {
+  const { public: publicRuntimeConfig } = nuxtInstance
+    ? nuxtInstance.$config
+    : useRuntimeConfig(); // Безопасное использование `useRuntimeConfig`
   const { tokenAuth } = storeToRefs(useAuthStore());
 
-  const url = `${CONFIG.public.base}api/${method}`;
+  const url = `${publicRuntimeConfig.base}api/${method}`;
 
   options.headers = {
     "Content-Type":

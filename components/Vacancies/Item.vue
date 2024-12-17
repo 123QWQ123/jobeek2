@@ -87,7 +87,7 @@
   </li>
 </template>
 
-<script setup>
+<script async setup>
 // Import core libraries and dependencies
 import moment from "moment";
 import { useVacancyStore } from "~/store/vacancy";
@@ -159,7 +159,7 @@ const onSubmit = async () => {
   }
 
   try {
-    const response = await submitResume({
+    const response = await resumeStore.submitResume({
       vacancy_id: item.id,
       resume_id: selectedResume.value,
       providers: ["hh"],
@@ -171,7 +171,7 @@ const onSubmit = async () => {
       throw new Error(response.message);
     }
   } catch (error) {
-    Swal.fire({
+    await Swal.fire({
       title: "Ошибка!",
       text: error.message,
       icon: "error",
@@ -194,7 +194,7 @@ const toggleFavorite = async () => {
     }
     isFavorite.value = !isFavorite.value;
   } catch (error) {
-    Swal.fire({
+    await Swal.fire({
       title: "Ошибка!",
       text: error.message,
       icon: "error",

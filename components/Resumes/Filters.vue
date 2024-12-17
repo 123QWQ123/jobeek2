@@ -19,10 +19,6 @@
       <ResumesFiltersExperience />
       <ResumesFiltersWorkType />
       <ResumesFiltersSchedule />
-
-      <!--      <ClientOnly>-->
-      <!--        <VacanciesFiltersSpecialization />-->
-      <!--      </ClientOnly>-->
     </div>
     <button class="close-aside" @click="toggleSidebar">
       <svg

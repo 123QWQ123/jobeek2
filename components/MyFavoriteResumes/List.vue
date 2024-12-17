@@ -56,12 +56,9 @@ const hasNextPage = computed(() => my_favorite_resumes.value.length > 0);
 /**
  * Fetch favorite resumes on component mount
  */
-const { data: favoriteData, refresh: refreshFavorites } = useAsyncData(
-  "myFavoriteResumes",
-  async () => {
-    return await getMyFavoriteResumes({ page: current_page.value });
-  },
-);
+useAsyncData("myFavoriteResumes", async () => {
+  return await getMyFavoriteResumes({ page: current_page.value });
+});
 
 /**
  * Fetch function for favorite resumes
@@ -93,7 +90,7 @@ const nextPage = async () => {
   if (!hasNextPage.value) return;
   const res = await fetchFavorites(current_page.value + 1);
   if (!res?.items?.length) {
-    Swal.fire({
+    await Swal.fire({
       title: "Больше вакансий не найдено!",
       icon: "info",
       timer: 3000,

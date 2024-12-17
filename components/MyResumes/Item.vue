@@ -11,13 +11,11 @@
               {{ item.title }}
             </nuxt-link>
             <span>
-              <client-only>
-                <span class="price">
-                  От {{ vueNumberFormat(salaryAmount, {}) }}
-                  {{ props.item.currency }}</span
-                >
-                {{ currency }}
-              </client-only>
+              <span class="price">
+                От {{ vueNumberFormat(salaryAmount, {}) }}
+                {{ props.item.currency }}</span
+              >
+              {{ currency }}
             </span>
           </div>
         </div>
