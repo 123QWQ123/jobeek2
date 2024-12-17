@@ -3,7 +3,7 @@
     <div class="favorites-card resume-card-t2">
       <div class="resume-card-t2__head">
         <div class="resume-card-t2__head-info">
-          <!-- Список статусів -->
+          <!-- List of statuses -->
           <div class="status-list">
             <span v-if="item.updated_at" style="color: #0dc267">
               Опубликовано {{ formattedUpdatedAt }}
@@ -11,7 +11,7 @@
             <span style="color: #0dc267">{{ viewedText }}</span>
           </div>
 
-          <!-- Заголовок резюме -->
+          <!-- Resume title -->
           <NuxtLink
             class="resume-title"
             :to="{
@@ -23,32 +23,32 @@
             {{ item.title || "Название не указано" }}
           </NuxtLink>
 
-          <!-- Текст зарплати -->
-          <!--          <div class="salary">{{ salaryText }}</div>-->
+          <!-- Salary text -->
+          <div class="salary">{{ salaryText }}</div>
         </div>
 
-        <!-- Фото -->
+        <!-- Photo -->
         <div class="resume-card-t2__head-img">
           <img :src="photo" :alt="item.profession || 'Нет профессии'" />
         </div>
       </div>
 
-      <!-- Основне тіло резюме -->
+      <!-- Main body of the resume -->
       <div class="resume-card-t2__body">
         <ul>
-          <!-- Опыт работы -->
+          <!-- Work experience -->
           <li>
             <div>Опыт работы</div>
             <div>{{ experienceText }}</div>
           </li>
 
-          <!-- Последнее место работы -->
+          <!-- Last workplace -->
           <li>
             <div>Последнее место работы</div>
             <div>{{ lastWorkplace }}</div>
           </li>
 
-          <!-- Список опыта -->
+          <!-- Experience list -->
           <li>
             <div>Компания, профессия, даты</div>
             <div>
@@ -63,7 +63,7 @@
             </div>
           </li>
 
-          <!-- Основное образование -->
+          <!-- Main education -->
           <li>
             <div>Основное образование</div>
             <div>{{ educationLevelText }}</div>
@@ -71,7 +71,7 @@
         </ul>
       </div>
 
-      <!-- Футер -->
+      <!-- Footer -->
       <div class="favorites-card-footer">
         <div class="favorites-card-footer-row">
           <div class="group" style="margin-left: auto">
@@ -101,13 +101,13 @@
 </template>
 
 <script setup>
-// Импорт ресурсов и библиотек
+// Import resources and libraries
 import jobeekPhoto from "~/assets/img/jobeek-avatar.png";
 import Swal from "sweetalert2";
 import moment from "moment";
 import { useResumeStore } from "~/store/resume.js";
 
-// Определение props
+// Define props
 const props = defineProps({
   item: {
     type: Object,
@@ -116,14 +116,14 @@ const props = defineProps({
   },
 });
 
-// Методы сторе
+// Store methods
 const resumeStore = useResumeStore();
 const { addToFavorite, removeFromFavorite } = resumeStore;
 
-// Резервное фото
+// Fallback photo
 const photo = computed(() => props.item?.photo || jobeekPhoto);
 
-// Форматирование статуса "просмотрено"
+// Format "viewed" status
 const viewedText = computed(() => {
   if (!props.item.date_view) {
     return props.item.viewed ? "Просмотрено" : "Не просмотрено";
@@ -131,14 +131,14 @@ const viewedText = computed(() => {
   return `Просмотрено ${moment(props.item.date_view).format("HH:mm")}`;
 });
 
-// Форматирование "дата обновления"
+// Format "updated at" date
 const formattedUpdatedAt = computed(() => {
   return props.item.updated_at
     ? moment(props.item.updated_at).format("DD.MM.YYYY HH:mm")
     : "Дата неизвестна";
 });
 
-// Форматирование зарплаты
+// Format salary
 const salaryText = computed(() => {
   if (props.item.agreement) {
     return "По договору";
@@ -148,7 +148,7 @@ const salaryText = computed(() => {
   return "Зарплата не указана";
 });
 
-// Форматирование опыта работы
+// Format work experience
 const experienceText = computed(() => {
   if (
     !props.item.experience_month_count ||
@@ -161,12 +161,12 @@ const experienceText = computed(() => {
   return `${years > 0 ? `${years} год(а) ` : ""}${months} месяц(а)`;
 });
 
-// Детали уровня образования
+// Education level details
 const educationLevelText = computed(() => {
   return props.item?.educations?.education_level?.name || "Не указано";
 });
 
-// Форматирование списка опыта
+// Format experience list
 const experienceItems = computed(() => {
   return (props.item.experience || []).map((ex) => ({
     company: ex.company || "Неизвестная компания",
@@ -182,7 +182,7 @@ const experienceItems = computed(() => {
   }));
 });
 
-// Работа с последним местом работы
+// Handle last workplace
 const lastWorkplace = computed(() => {
   const experience = props.item?.experience?.[0];
   if (!experience) {
@@ -193,7 +193,7 @@ const lastWorkplace = computed(() => {
   }`;
 });
 
-// Работа с избранным
+// Handle favorites
 const isFavorite = ref(props.item.is_favorite || false);
 
 const toggleFavorite = async () => {
