@@ -90,7 +90,7 @@ export default defineNuxtConfig({
     prefix: "Tiptap", //prefix for Tiptap imports, composables not included
   },
   routeRules: {
-    "/": { prerender: true },
+    // "/": { prerender: true },
     // Static page generated on-demand, revalidates in background
     "/api/**": { cors: true },
   },
@@ -142,9 +142,9 @@ export default defineNuxtConfig({
     locales: ["ru"],
     defaultLocale: "ru",
   },
-  nitro: {
-    prerender: {
-      routes: ["/search/vacancies", "/"],
-    },
-  },
+  // nitro: {
+  //   prerender: {
+  //     routes: ["/search/vacancies", "/"],
+  //   },
+  // },
 });

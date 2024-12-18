@@ -15,7 +15,7 @@
                 <li v-for="item in top_20_industries" :key="item.id">
                   <NuxtLink
                     :to="{
-                      name: 'search-vacancies',
+                      name: isEmployer ? 'search-vacancies' : 'search-resumes',
                       query: { industries: `[${item.id}]` },
                     }"
                     class="label"
@@ -92,7 +92,7 @@
                 <NuxtLink
                   class="label"
                   :to="{
-                    name: 'search-vacancies',
+                    name: isEmployer ? 'search-vacancies' : 'search-resumes',
                     query: { schedules: `[${item.id}]` },
                   }"
                 >
@@ -110,12 +110,14 @@
 <script setup>
 import { useVacancyStore } from "~/store/vacancy.js";
 import { useDictionaryStore } from "~/store/dictionary.js";
+import { useAuthStore } from "~/store/auth.js";
 import { useAsyncData } from "#app";
 
 const { getIndustries } = useVacancyStore();
 const { getSchedules } = useDictionaryStore();
 const { top_20_industries } = storeToRefs(useVacancyStore());
 const { schedules } = storeToRefs(useDictionaryStore());
+const { isEmployer } = storeToRefs(useAuthStore());
 const isMoreIndustries = ref(false);
 
 useAsyncData("industries", async () => {
