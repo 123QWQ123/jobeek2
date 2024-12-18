@@ -36,7 +36,7 @@
             class="nav-link"
             :to="{ name: 'my-vacancies', query: { status: 'draft' } }"
             :class="{ active: form.status === 'draft' }"
-            >Черновек({{ totalDrafts }})</a
+            >Черновик ({{ totalDrafts }})</a
           >
         </li>
         <li
@@ -48,7 +48,7 @@
             class="nav-link"
             :to="{ name: 'my-vacancies', query: { status: 'active' } }"
             :class="{ active: form.status === 'active' }"
-            >Активные({{ totalActiveVacancies }})</a
+            >Активные ({{ totalActiveVacancies }})</a
           >
         </li>
         <li
@@ -60,7 +60,7 @@
             class="nav-link"
             :to="{ name: 'my-vacancies', query: { status: 'archived' } }"
             :class="{ active: form.status === 'archived' }"
-            >В архиве({{ totalArchivedVacancies }})</a
+            >В архиве ({{ totalArchivedVacancies }})</a
           >
         </li>
       </ul>
@@ -367,9 +367,6 @@ const onProviderChange = async (provider) => {
 </script>
 
 <style scoped>
-.vacancy_tabs .nav-link {
-  padding: 0.8rem 2rem 0.5rem 2rem;
-}
 
 .theme-checker input ~ .theme-checker-ui .circle.left {
   transform: translate(3px, -50%);

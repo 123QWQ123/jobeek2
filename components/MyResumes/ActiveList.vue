@@ -32,8 +32,4 @@ const my_vacancies = computed(() => props.items);
 .theme-checker input ~ .theme-checker-ui .circle.right{
   transform: translate(30px, -50%);
 }
-
-.sort .d-select{
-  background: #F5F8FA !important;
-}
 </style>
