@@ -7654,7 +7654,35 @@ ul.nav-tabs a.nav-link:hover:after, ul.nav-tabs a.nav-link.active:after {
     background: #5375FD;
 }
 
+.no-results {
+	display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: baseline;
+    -ms-flex-align: baseline;
+    align-items: baseline;
+    width: 100%;
+    padding: 22.5px;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 25px;
+    text-align: center;
+    color: #0A2540;
+    background: #fff;
+    border-radius: 12px;
+    margin-top: 0;
+}
+
 @media (max-width: 768px) {
+	.no-results {
+        padding: 12.5px;
+        font-size: 16px;
+        line-height: 24px;
+        margin-top: 30px;
+    }
     .pay-form-cards {
         grid-template-columns: 100%;
         row-gap: 50px;
