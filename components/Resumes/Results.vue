@@ -7,7 +7,7 @@
             <div class="search-item">{{ search_keyword }}</div>
             <div class="found-count">
               Найдено
-              {{ total }}
+              {{ totalFormated }}
               вакансий
             </div>
           </div>
@@ -24,7 +24,9 @@
           <ResumesFilters></ResumesFilters>
 
           <div class="content">
-          	<div class="no-results">Нет результатов</div>
+            <div v-if="!isLoading && total === 0" class="no-results">
+              Нет результатов
+            </div>
             <ResumesAsyncList v-if="!isLoading" />
             <ResumesLoadingList v-else />
           </div>
@@ -35,7 +37,6 @@
 </template>
 
 <script async setup>
-import { useVacancyForm } from "~/composables/useVacancyForm";
 import { useUIStore } from "~/store/ui";
 
 import { useNuxtApp } from "#app";
@@ -45,8 +46,9 @@ import FilterIcon from "~/components/Vacancies/FilterIcon.vue";
 
 const { $format_number } = useNuxtApp();
 const resumeStore = useResumeStore();
+const { total, resumes } = storeToRefs(resumeStore);
 const uiStore = useUIStore();
-const total = computed(() => $format_number(resumeStore.total));
+const totalFormated = computed(() => $format_number(total.value));
 const { toggleSidebar } = uiStore;
 
 const toggle = () => {
@@ -55,8 +57,6 @@ const toggle = () => {
 
 const route = useRoute();
 const { name: search_keyword } = route.query;
-
-const form = ref(useVacancyForm());
 
 const isLoading = ref(false);
 

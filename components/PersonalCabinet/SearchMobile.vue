@@ -87,59 +87,64 @@
 </template>
 
 <script setup>
+import { computed, ref, watch } from "vue";
 import { useAuthStore } from "~/store/auth";
 import { useVacancyStore } from "~/store/vacancy";
-import { storeToRefs } from "pinia";
 import { useProfileStore } from "~/store/profile";
+import { useRouter, useRoute } from "vue-router";
 import useQueryParams from "~/composables/useQueryParams.js";
 
+// Props
 const props = defineProps({
   with_wrapper: {
     default: false,
   },
 });
 
+// Stores
 const auth = useAuthStore();
-
-const isEmployer = computed(() => auth.isEmployer);
-const searchPlaceHolder = computed(() =>
-  auth.isEmployer ? "Какого специалиста вы ищете?" : "Какую вакансию вы ищете?",
-);
-const { getCurrentQueryParams, getQueryParam } = useQueryParams();
-const params = getCurrentQueryParams();
-
-const router = useRouter();
-const route = useRoute();
-
 const vacancyStore = useVacancyStore();
 const profileStore = useProfileStore();
 const { searchCities } = profileStore;
 
+// Router
+const router = useRouter();
+const route = useRoute();
+
+// Query parameters
+const { getCurrentQueryParams, getQueryParam } = useQueryParams();
+const params = getCurrentQueryParams();
+
+// Reactive state
 const search = ref(route.query?.search ?? undefined);
-
-const salary = ref({
-  from: undefined,
-  to: undefined,
-  id: undefined,
-});
-salary.value = getQueryParam("salary");
+const salary = ref(getQueryParam("salary") || {});
 const city = ref(null);
+const cityOptions = ref([]);
+const isLoading = ref(false);
 
+// Computed properties
+const isEmployer = computed(() => auth.isEmployer);
+const searchPlaceHolder = computed(() =>
+  isEmployer.value
+    ? "Какого специалиста вы ищете?"
+    : "Какую вакансию вы ищете?",
+);
+
+// Country logic (многократно используется в приложении)
+const country = computed(() => {
+  if (params.countries && params.countries.length === 1) {
+    return params.countries[0];
+  }
+  return 1;
+});
+
+// Watchers
 watch(
   () => getQueryParam("salary"),
   (newValue) => {
     salary.value = newValue;
   },
 );
-
-const onCityChange = (cityItem) => {
-  if (cityItem.value === null) {
-    city.value = undefined;
-  } else {
-    city.value = cityItem.value;
-  }
-};
-
 const updateCityInput = async (newValue = "") => {
   const items = (await searchCities({ search: newValue })) ?? [];
   cityOptions.value = items.map((item) => ({
@@ -148,44 +153,33 @@ const updateCityInput = async (newValue = "") => {
   }));
 };
 
-const { getVacancies, getCities } = vacancyStore;
-const vacancies = computed(() => vacancyStore.vacancies);
+const onCityChange = (cityItem) => {
+  city.value = cityItem.value || undefined;
+};
 
-const { cities } = storeToRefs(vacancyStore);
-const cityOptions = ref([]);
-
-const page = useRoute();
-
-const country = computed(() => {
-  if (params.countries && params.countries.length === 1) {
-    return params.countries[0];
-  } else return 1;
-});
-
-const isLoading = ref(false);
-
-const { clearVacancies } = vacancyStore;
-const onSubmit = async (e) => {
-  isLoading.value = true;
-  clearVacancies();
+const buildQueryParams = () => {
   const cities = city.value ? [city.value] : undefined;
-  const queryVacancy = {
+  return {
     cities: JSON.stringify(cities),
     salary: JSON.stringify(salary.value),
     search: search.value,
   };
-  if (isEmployer.value) {
-    router.push({
-      name: "search-resumes",
-      query: queryVacancy,
-    });
-  } else {
-    router.push({
-      name: "search-vacancies",
-      query: queryVacancy,
-    });
+};
+
+const navigateToSearch = async (query) => {
+  const routeName = isEmployer.value ? "search-resumes" : "search-vacancies";
+  await router.push({ name: routeName, query });
+};
+
+const onSubmit = async () => {
+  isLoading.value = true;
+  try {
+    await vacancyStore.clearVacancies();
+    const query = buildQueryParams();
+    await navigateToSearch(query);
+  } finally {
+    isLoading.value = false;
   }
-  isLoading.value = false;
 };
 </script>
 
