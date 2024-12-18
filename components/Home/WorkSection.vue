@@ -35,7 +35,40 @@
       </NuxtLink>
     </div>
 
-    <div>
+    <!--- skeleton place section-->
+    <div v-if="isLoading" class="skeleton-hover">
+      <div class="swiper cards-slider-row">
+        <div class="cards-slider cards-grid">
+          <div class="tile-card">
+            <h4 class="tile-card-title"><span class="pu-skeleton">‌</span></h4>
+            <span class="tile-card-dop-info"
+              ><span class="pu-skeleton">‌</span></span
+            >
+          </div>
+          <div class="tile-card">
+            <h4 class="tile-card-title"><span class="pu-skeleton">‌</span></h4>
+            <span class="tile-card-dop-info"
+              ><span class="pu-skeleton">‌</span></span
+            >
+          </div>
+          <div class="tile-card">
+            <h4 class="tile-card-title"><span class="pu-skeleton">‌</span></h4>
+            <span class="tile-card-dop-info"
+              ><span class="pu-skeleton">‌</span></span
+            >
+          </div>
+          <div class="tile-card">
+            <h4 class="tile-card-title"><span class="pu-skeleton">‌</span></h4>
+            <span class="tile-card-dop-info"
+              ><span class="pu-skeleton">‌</span></span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--- END skeleton place section-->
+
+    <div v-if="!isLoading">
       <div class="swiper cards-slider-row">
         <div class="cards-slider cards-grid">
           <VacancyTile
@@ -57,14 +90,21 @@ import { useAsyncData } from "#app";
 const { getVacanciesInMoscow } = useVacancyStore();
 const { vacancies_in_moscow } = storeToRefs(useVacancyStore());
 const auth = storeToRefs(useAuthStore());
+const isLoading = ref(false);
 
 useAsyncData("vacanciesInMoscow", async () => {
-  return await getVacanciesInMoscow();
+  isLoading.value = true;
+  const data = await getVacanciesInMoscow();
+  isLoading.value = false;
+  return data;
 });
 </script>
 
 <style scoped>
 .section-head .more {
   gap: 0.3rem;
+}
+.skeleton-hover .tile-card:hover {
+  border-color: #ececec !important;
 }
 </style>

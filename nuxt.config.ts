@@ -138,6 +138,10 @@ export default defineNuxtConfig({
   //     },
   //   ],
   // },
+  i18n: {
+    locales: ["ru"],
+    defaultLocale: "ru",
+  },
   nitro: {
     prerender: {
       routes: ["/search/vacancies", "/"],
