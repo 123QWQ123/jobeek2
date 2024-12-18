@@ -60,7 +60,7 @@
           <form class="search-form" action="#" role="form" autocomplete="off">
             <div class="search-row">
               <div class="input-wrap has-icon has-label">
-                <img class="icon" src="~/assets/img/svg/search.svg" alt="#" />
+                <img class="icon" src="~/assets/img/search.png" alt="#" />
                 <label for="name">Названии вакансии </label>
                 <input
                   type="text"

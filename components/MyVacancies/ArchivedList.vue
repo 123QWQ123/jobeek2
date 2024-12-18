@@ -173,8 +173,4 @@ onMounted(async () => {
 .theme-checker input ~ .theme-checker-ui .circle.right {
   transform: translate(30px, -50%);
 }
-
-.sort .d-select {
-  background: #f5f8fa !important;
-}
 </style>

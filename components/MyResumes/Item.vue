@@ -371,11 +371,6 @@ const onDelete = async (id) => {
   .option-group {
     justify-content: space-between;
     width: 100%;
-    flex-direction: row;
-  }
-
-  .selector-group .option + .option {
-    margin-top: unset;
   }
 }
 

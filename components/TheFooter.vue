@@ -1,9 +1,12 @@
 <template>
   <footer class="main-footer">
     <div class="main-footer-content wrapper">
-      <NuxtLink to="/" class="logo"
-        ><img src="~/assets/img/jobeek-dark.svg" alt="#"
-      /></NuxtLink>
+	  <div class="logo">
+        <NuxtLink to="/"
+          ><img src="~/assets/img/jobeek-dark.svg" alt="#"
+        /></NuxtLink>
+        <span class="copyright-text">© 2018–{{ new Date().getFullYear() }} Jobeek </span>
+      </div>
       <div class="footer-navigation navigation" role="navigation">
         <div class="col">
           <div v-if="isAuthed">
@@ -72,11 +75,6 @@
     </div>
     <div class="main-footer-bottom">
       <div class="wrapper">
-        <span>© 2018–{{ new Date().getFullYear() }} Jobeek </span>
-      </div>
-    </div>
-    <div class="main-footer-bottom">
-      <div class="wrapper">
         <div class="text-center" v-html="uiStore.footer"></div>
       </div>
     </div>
@@ -95,4 +93,11 @@ useAsyncData("getFooterSettings", async () => {
 });
 </script>
 
-<style></style>
+<style scoped>
+	.copyright-text {
+		margin-top: 8px;
+	    font-size: 12px;
+	    color: #78757e;
+	    display: block;
+	}
+</style>

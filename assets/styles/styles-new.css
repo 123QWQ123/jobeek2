@@ -58,8 +58,7 @@
 
 .scam-phone-page .search-row {
     background: #ffffff;
-    border: 1px solid #cbcbcb;
-    border-radius: 10px;
+    border-radius: 10px 0 10px 0;
     overflow: hidden;
     display: grid;
     grid-template-columns: 1fr 170px;
@@ -67,7 +66,7 @@
     width: 100%;
     height: 56px;
     position: relative;
-    border-rigth: 0;
+    border: 0 !important;
 }
 
 .search-button {
