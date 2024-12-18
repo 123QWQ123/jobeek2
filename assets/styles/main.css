@@ -2215,7 +2215,7 @@ body .main-section-mob {
     -ms-flex-direction: column;
     flex-direction: column;
     height: 100%;
-    padding: 20px 24px 15px;
+    padding: 20px 24px 20px;
     background: #FFFFFF;
     border: 1px solid #ECECEC;
     -webkit-box-sizing: border-box;

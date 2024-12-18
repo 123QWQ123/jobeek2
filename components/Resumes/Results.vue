@@ -24,7 +24,8 @@
           <ResumesFilters></ResumesFilters>
 
           <div class="content">
-            <ResumesAsyncList />
+            <ResumesAsyncList v-if="!isLoading" />
+            <ResumesLoadingList v-else />
           </div>
         </div>
       </div>

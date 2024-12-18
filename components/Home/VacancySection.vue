@@ -38,7 +38,69 @@
 
     <div>
       <div>
-        <div class="cards-slider">
+        <!--- skeleton place section-->
+        <div v-if="isLoading" class="vacancy-list skeleton-hover">
+          <div>
+            <div class="vacancy-card">
+              <div class="vacancy-card-body">
+                <div class="company">
+                  <div class="company-logo">
+                    <span class="pu-skeleton">‌</span>
+                  </div>
+                  <div class="company-name">
+                    <span class="pu-skeleton">‌</span>
+                  </div>
+                </div>
+                <span class="pu-skeleton">‌</span>
+                <span class="pu-skeleton">‌</span>
+              </div>
+              <div class="vacancy-card-footer">
+                <span class="pu-skeleton">‌</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="vacancy-card">
+              <div class="vacancy-card-body">
+                <div class="company">
+                  <div class="company-logo">
+                    <span class="pu-skeleton">‌</span>
+                  </div>
+                  <div class="company-name">
+                    <span class="pu-skeleton">‌</span>
+                  </div>
+                </div>
+                <span class="pu-skeleton">‌</span>
+                <span class="pu-skeleton">‌</span>
+              </div>
+              <div class="vacancy-card-footer">
+                <span class="pu-skeleton">‌</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="vacancy-card">
+              <div class="vacancy-card-body">
+                <div class="company">
+                  <div class="company-logo">
+                    <span class="pu-skeleton">‌</span>
+                  </div>
+                  <div class="company-name">
+                    <span class="pu-skeleton">‌</span>
+                  </div>
+                </div>
+                <span class="pu-skeleton">‌</span>
+                <span class="pu-skeleton">‌</span>
+              </div>
+              <div class="vacancy-card-footer">
+                <span class="pu-skeleton">‌</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--- END skeleton place section-->
+
+        <div v-else class="cards-slider">
           <div class="vacancy-list">
             <div v-for="item in vacancies_in_my_city">
               <div class="vacancy-card">
@@ -84,13 +146,22 @@
 </template>
 <script setup>
 import { useVacancyStore } from "~/store/vacancy";
-import { useNuxtApp } from "#app";
+import { useAsyncData, useNuxtApp } from "#app";
 import { useAuthStore } from "~/store/auth.js";
 
 const auth = storeToRefs(useAuthStore());
 const { $format_number } = useNuxtApp();
 const vacancyStore = useVacancyStore();
-const { vacancies_in_my_city } = storeToRefs(useVacancyStore());
+const { vacancies_in_my_city } = storeToRefs(vacancyStore);
+const { getCurrencyCityVacancies } = vacancyStore;
+const isLoading = ref(false);
+
+useAsyncData("currencyCityVacancies", async () => {
+  isLoading.value = true;
+  const data = await getCurrencyCityVacancies();
+  isLoading.value = false;
+  return data;
+});
 /**
  * Get logo url
  * @param item Object
@@ -100,3 +171,15 @@ const logo = (item) =>
   item.logo ||
   new URL(`/assets/img/logos/${item.provider}.svg`, import.meta.url);
 </script>
+
+<style scoped>
+.vacancy-list.skeleton-hover .company-logo .pu-skeleton {
+  height: 100% !important;
+}
+.vacancy-list.skeleton-hover .company-name {
+  width: 100% !important;
+}
+.vacancy-list.skeleton-hover .vacancy-card:hover {
+  border-color: #ececec !important;
+}
+</style>
