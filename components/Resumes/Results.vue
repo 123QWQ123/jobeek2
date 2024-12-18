@@ -24,7 +24,9 @@
           <ResumesFilters></ResumesFilters>
 
           <div class="content">
-          	<div class="no-results">Нет результатов</div>
+            <div v-if="!isLoading && total === 0" class="no-results">
+              Нет результатов
+            </div>
             <ResumesAsyncList v-if="!isLoading" />
             <ResumesLoadingList v-else />
           </div>
