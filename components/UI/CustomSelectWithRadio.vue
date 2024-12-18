@@ -140,4 +140,9 @@ function close() {
   transform: rotate(-135deg);
   -webkit-transform: rotate(-135deg);
 }
+@media (max-width: 768px) {
+	.custom-select__trigger {
+	    height: 34px;
+	}
+}
 </style>

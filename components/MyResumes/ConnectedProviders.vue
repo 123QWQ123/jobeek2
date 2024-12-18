@@ -292,7 +292,7 @@ useAsyncData("updateProviderData", async () => {
 .list-of-providers {
   display: inline-flex;
   max-height: 20rem;
-  padding: 20px;
+  padding: 12px;
 }
 
 .refresh-button_col {

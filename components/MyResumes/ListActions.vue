@@ -64,11 +64,7 @@ const listStyles = {
 .provider_buttons {
   background-color: #fff;
   border-radius: 12px;
-  padding: 15px;
-}
-
-.vacancy_tabs .nav-link {
-  padding: 0.8rem 2rem 0.5rem 2rem;
+  padding: 20px;
 }
 
 .theme-checker input ~ .theme-checker-ui .circle.left {
