@@ -1,7 +1,7 @@
 <template>
   <div class="input-row">
     <label for="income">Какой доход вы рассматриваете (₽)?</label>
-    <div class="row-container">
+    <div class="row-container d-flex-row">
       <label for="salary_from">От</label>
       <div class="c2">
         <div class="input-wrapper">

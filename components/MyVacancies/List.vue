@@ -25,7 +25,7 @@
     <div class="col d-flex justify-content-between mt-4">
       <h1 ref="filterRef" class="lk-page-title">Ваши вакансии</h1>
     </div>
-    <div class="col d-flex justify-content-between align-items-center py-4">
+    <div class="col d-flex justify-content-between align-items-center py-4 pt-0">
       <ul class="nav nav-tabs vacancy_tabs w-100">
         <li
           class="nav-item"

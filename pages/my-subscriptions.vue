@@ -7,7 +7,7 @@
     <PersonalCabinetSearchMobile />
     <div class="bg-wrapper pt-4">
       <div class="wrapper wrapper-1290">
-        <h1 class="lk-page-title mb-4">Ваши подписки</h1>
+        <h1 class="lk-page-title mb-4 margin-b-mob">Ваши подписки</h1>
         <div class="notification">
           <div class="ic">
             <img src="~/assets/img/svg/crown2.svg" alt="#" />
