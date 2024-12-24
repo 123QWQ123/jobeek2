@@ -7637,6 +7637,7 @@ ul.nav-tabs a.nav-link {
     position: relative;
     white-space: nowrap;
     background: none !important;
+    border-color: transparent !important;
 }
 
 ul.nav-tabs a.nav-link:after {
@@ -7674,6 +7675,16 @@ ul.nav-tabs a.nav-link:hover:after, ul.nav-tabs a.nav-link.active:after {
     background: #fff;
     border-radius: 12px;
     margin-top: 0;
+}
+
+.d-flex-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.d-flex-row label {
+    margin-right: 10px;
 }
 
 @media (max-width: 768px) {
@@ -7926,7 +7937,7 @@ ul.nav-tabs a.nav-link:hover:after, ul.nav-tabs a.nav-link.active:after {
         max-height: 34px;
         height: 34px;
         width: 34px;
-        margin: 0;
+        margin: 0 3px 0 0;
     }
     .profile-button svg {
         height: 34px !important;
@@ -7971,6 +7982,55 @@ ul.nav-tabs a.nav-link:hover:after, ul.nav-tabs a.nav-link.active:after {
         font-size: 14px;
         line-height: 18px;
         padding: 7px 10px;
+    }
+    .resume-counts .count strong {
+        text-align: left;
+    }
+    .pt-0 {
+        padding-top: 0 !important;
+    }
+    .mb-0 {
+        margin-top: 0 !important;
+    }
+    .margin-b-mob {
+        margin-bottom: 20px !important;
+    }
+    .create-subscribe-page {
+        padding-bottom: 20px;
+        padding-top: 20px;
+    }
+    .w-box--main {
+        margin-bottom: 20px;
+    }
+    .w-box-subscribe .w-box-body {
+        padding-bottom: 15px;
+    }
+    .w-box-body, .w-box-head {
+        padding: 15px;
+    }
+    .create-subscribe .w-box-body {
+        padding-top: 15px;
+    }
+    .search-button {
+        top: 24px;
+    }
+    .main-footer-content {
+        padding-bottom: 20px;
+        padding-top: 20px;
+    }
+    .scam-phone-page {
+        margin-bottom: 0;
+        padding-bottom: 20px;
+    }
+    .subscribes-grid-container {
+        margin-top: 20px;
+    }
+    .search-history-sidebar {
+        padding-top: 0;
+    }
+    .course-grid {
+        grid-template-columns: 100%;
+        grid-row-gap: 20px;
     }
 }
 

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="lk-page-title mb-4">Cервисы</h1>
+    <h1 class="lk-page-title mb-4 mb-0">Cервисы</h1>
     <div class="card mb-4 border-0 px-2 py-0" style="border-radius: 12px">
       <div class="row align-baseline justify-between">
         <div class="col-6 list-of-providers">
