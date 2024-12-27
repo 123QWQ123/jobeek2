@@ -82,8 +82,6 @@ const { setValues } = useForm({
 });
 setValues(getCurrentQueryParams(initialValues) ?? {});
 
-const { getVacancies } = vacancyStore;
-
 const resetFilters = () => {
   resetForm();
 };

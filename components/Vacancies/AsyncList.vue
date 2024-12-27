@@ -33,7 +33,7 @@ import Swal from "sweetalert2";
 import useQueryParams from "~/composables/useQueryParams.js";
 
 const { getVacancies } = useVacancyStore();
-const { current_page, vacancies } = storeToRefs(useVacancyStore());
+const { current_page, vacancies, total } = storeToRefs(useVacancyStore());
 const loadMoreButton = ref();
 const isLoading = ref(false);
 const isMore = ref(false);
@@ -67,9 +67,9 @@ const loadMore = async () => {
   );
   isLoading.value = false;
 
-  if (res.status !== "success") {
+  if (res.length >= total.value - 1) {
     isMore.value = false;
-    Swal.fire({
+    await Swal.fire({
       title: "Больше вакансий не найдено!",
       icon: "success",
     });

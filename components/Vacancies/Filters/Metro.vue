@@ -85,7 +85,7 @@
       <button
         class="more-filters"
         :data-default-text="`Еще ${total}`"
-        data-hide-text="Показат"
+        data-hide-text="Показать"
         @click="toggleMore"
         v-if="total > 0"
       >
@@ -226,8 +226,8 @@ const prepare = (items) => {
 
 const { getMetros } = vacancyStore;
 watch(() => vacancyStore.metros_formatted, prepare);
-onMounted(async () => {
-  await getMetros({ city_ids: cities.value });
+useAsyncData("metros", async () => {
+  return await getMetros({ region_ids: cities.value });
 });
 </script>
 

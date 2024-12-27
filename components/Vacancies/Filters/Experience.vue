@@ -27,7 +27,7 @@ import useQueryParams from "~/composables/useQueryParams.js";
 const emit = defineEmits(["onFormChange"]);
 const dictionaryStore = useDictionaryStore();
 const filterClass = ref(true);
-const filterItems = ref([]);
+const filterItems = ref(dictionaryStore.experiences);
 const { getQueryParam, updateQueryParam } = useQueryParams();
 const experiences = ref(getQueryParam("experiences") ?? []);
 watch(
@@ -52,27 +52,26 @@ const toggle = (id) => {
 const { sort } = useSort();
 
 const prepare = (items) => {
+  let temp = items;
   let selected_ids = [...experiences.value];
 
-  const sortedItems = sort(items, { by: "alpha" });
+  const sortedItems = sort(items.value, { by: "alpha" });
 
   if (sortedItems) {
-    items = sortedItems.map((item) => ({
+    temp = sortedItems.map((item) => ({
       ...item,
       is_checked: selected_ids.includes(item.id),
     }));
   }
-  filterItems.value = items;
+  filterItems.value = temp;
 };
 
-watch(() => dictionaryStore.experiences, prepare);
 const { getExperiences } = dictionaryStore;
-onMounted(async () => {
-  if (dictionaryStore.experiences.length === 0) {
-    await getExperiences();
-  } else {
-    prepare(null, dictionaryStore.experiences);
-  }
+
+useAsyncData("getExperiences", async () => {
+  const data = await getExperiences();
+  prepare(data);
+  return data;
 });
 </script>
 

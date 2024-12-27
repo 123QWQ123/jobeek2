@@ -33,7 +33,7 @@ const dictionaryStore = useDictionaryStore();
 const filterClass = ref(true);
 const isMore = ref(true);
 const search = ref("");
-const filterItems = ref([]);
+const filterItems = ref(dictionaryStore.part_times);
 
 const { getQueryParam, updateQueryParam } = useQueryParams();
 const part_times = ref(getQueryParam("part_times") ?? []);
@@ -76,13 +76,11 @@ const prepare = (items) => {
 
 watch(() => dictionaryStore.part_times, prepare);
 const { getPartTimes } = dictionaryStore;
-onMounted(async () => {
-  if (dictionaryStore.part_times.length === 0) {
-    await getPartTimes();
-    prepare(null, dictionaryStore.part_times);
-  } else {
-    prepare(null, dictionaryStore.part_times);
-  }
+
+useAsyncData("getPartTimes", async () => {
+  const data = await getPartTimes();
+  prepare(dictionaryStore.part_times);
+  return data;
 });
 </script>
 
