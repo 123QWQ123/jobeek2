@@ -6905,10 +6905,10 @@ svg.progress {
     display: none;
 }
 
-.check-block-list.all-visible .check-block:not(:nth-child(-n+5)) {
+.filter-box .check-block-list .check-block {
     display: -webkit-box;
     display: -ms-flexbox;
-    display: flex;
+    display: flex !important;
 }
 
 .results-page-content .favorites-list li:not(:last-child) {
