@@ -29,7 +29,7 @@ const emit = defineEmits(["onFormChange"]);
 const dictionaryStore = useDictionaryStore();
 const filterClass = ref(true);
 const isMore = ref(true);
-const filterItems = ref([]);
+const filterItems = ref(dictionaryStore.schedules);
 
 const { getQueryParam, updateQueryParam } = useQueryParams();
 const schedules = ref(getQueryParam("schedules") ?? []);
@@ -55,27 +55,26 @@ const toggle = (id) => {
 const { sort } = useSort();
 
 const prepare = (items) => {
+  let temp = items;
   let selected_ids = [...schedules.value];
 
-  const sortedItems = sort(items, { by: "alpha" });
+  const sortedItems = sort(items.value, { by: "alpha" });
 
   if (sortedItems) {
-    items = sortedItems.map((item) => ({
+    temp = sortedItems.map((item) => ({
       ...item,
       is_checked: selected_ids.includes(item.id),
     }));
   }
-  filterItems.value = items;
+  filterItems.value = temp;
 };
 
 watch(() => dictionaryStore.schedules, prepare);
 const { getSchedules } = dictionaryStore;
-onMounted(async () => {
-  if (dictionaryStore.schedules.length === 0) {
-    await getSchedules();
-  } else {
-    prepare(dictionaryStore.schedules);
-  }
+useAsyncData("getSchedules", async () => {
+  const data = await getSchedules();
+  prepare(dictionaryStore.schedules);
+  return data;
 });
 </script>
 

@@ -56,9 +56,7 @@ const prepare = (items) => {
   }));
   filterItems.value = items;
 };
-onMounted(async () => {
-  prepare([...salaryOptions.value]);
-});
+prepare([...salaryOptions.value]);
 </script>
 
 <style scoped></style>

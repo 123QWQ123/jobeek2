@@ -46,8 +46,9 @@ const emit = defineEmits(["onFormChange"]);
 const props = defineProps(["name", "isOpen"]);
 
 const vacancyStore = useVacancyStore();
+const { industries_formatted_for_filter } = storeToRefs(vacancyStore);
 const { updateQueryParam, getQueryParam } = useQueryParams();
-let items = vacancyStore.industries_formatted_for_filter;
+const items = ref(industries_formatted_for_filter);
 
 const { getIndustries } = vacancyStore;
 const { industries } = storeToRefs(vacancyStore);
@@ -58,7 +59,7 @@ watch(
   (newValues, oldValues) => {
     if (JSON.stringify(newValues) !== JSON.stringify(oldValues)) {
       industry_ids.value = newValues;
-      items = getCheckedItems(items, newValues);
+      items.value = getCheckedItems(items, newValues);
 
       prepare(items);
     }
@@ -140,11 +141,10 @@ const getCheckedItems = (items, ids_from_url) => {
 };
 
 const filterClass = ref(true);
-await getIndustries();
-onMounted(() => {
-  if (vacancyStore.industries_formatted_for_filter.length > 0) {
-    prepare(vacancyStore.industries_formatted_for_filter);
-  }
+useAsyncData("getIndustries", async () => {
+  const res = await getIndustries();
+  prepare(industries_formatted_for_filter);
+  return res;
 });
 </script>
 

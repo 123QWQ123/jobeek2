@@ -28,7 +28,7 @@ const dictionaryStore = useDictionaryStore();
 
 const filterClass = ref(true);
 const isMore = ref(true);
-const filterItems = ref([]);
+const filterItems = ref(dictionaryStore.work_types);
 
 const { getQueryParam, updateQueryParam } = useQueryParams();
 const work_types = ref(getQueryParam("work_types") ?? []);
@@ -71,12 +71,10 @@ const prepare = (items) => {
 
 watch(() => dictionaryStore.work_types, prepare);
 const { getWorkTypes } = dictionaryStore;
-onMounted(async () => {
-  if (dictionaryStore.work_types.length === 0) {
-    await getWorkTypes();
-  } else {
-    prepare(null, dictionaryStore.work_types);
-  }
+useAsyncData("getWorkTypes", async () => {
+  const data = await getWorkTypes();
+  prepare(dictionaryStore.work_types);
+  return data;
 });
 </script>
 

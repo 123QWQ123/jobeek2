@@ -106,14 +106,12 @@ watch(
 
 const selectedOption = ref({});
 
-onMounted(() => {
-  if (props.modelValue) {
-    selectedOption.value = options.value.find(
-      (item) => String(item.value) === String(props.modelValue),
-    );
-    searchInput.value = selectedOption.value.name;
-  }
-});
+if (props.modelValue) {
+  selectedOption.value = options.value.find(
+    (item) => String(item.value) === String(props.modelValue),
+  );
+  searchInput.value = selectedOption.value.name;
+}
 
 const placeholderClass = computed(() => {
   return isFirst.value || !selectedOption.value;

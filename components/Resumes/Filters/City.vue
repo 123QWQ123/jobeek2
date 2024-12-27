@@ -85,7 +85,7 @@
       <button
         class="more-filters"
         :data-default-text="`Еще ${total}`"
-        data-hide-text="Показат"
+        data-hide-text="Показать"
         @click="toggleMore"
         v-if="total > 0"
       >
