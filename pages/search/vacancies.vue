@@ -28,7 +28,7 @@ onMounted(async () => {
 </script>
 <template>
   <div>
-    <SearchVacancyForm with_wrapper="true" />
+    <SearchVacancyForm :withWrapper="true" />
 
     <VacanciesResults></VacanciesResults>
   </div>
