@@ -102,11 +102,15 @@ const route = useRoute();
 
 const vacancyStore = useVacancyStore();
 const profileStore = useProfileStore();
-let cityOptions = ref([]);
+const { clearVacancies, getCities } = vacancyStore;
+const { cities_formatted } = storeToRefs(vacancyStore);
+useAsyncData("cities", async () => {
+  return await getCities();
+});
+let cityOptions = ref(cities_formatted.value);
 const isLoading = ref(false);
 const city = ref(null);
 const { searchCities } = profileStore;
-const { clearVacancies, getVacancies, getCities } = vacancyStore;
 
 const search = ref(route.query?.search ?? undefined);
 
@@ -117,20 +121,14 @@ const salary = ref({
 });
 salary.value = getQueryParam("salary");
 
-onBeforeMount(async () => {
-  let cities = getQueryParam("cities");
-  if (cities && cities.length > 0) {
-    let item = (await getCities())?.find((item) => item.id === cities[0]);
-
-    cityOptions.value = [
-      {
-        value: item.id,
-        name: item.name,
-      },
-    ];
-    city.value = item.id;
-  }
-});
+const cities = getQueryParam("cities");
+if (cities && cities.length > 0) {
+  cityOptions.value = cities_formatted.value.find(
+    (item) => item.value === cities[0],
+  );
+  console.log(cityOptions.value);
+  // city.value = cityOptions.value[0].value;
+}
 
 watch(
   () => getQueryParam("salary"),

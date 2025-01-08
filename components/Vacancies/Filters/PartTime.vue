@@ -8,9 +8,10 @@
     <div class="filter-box-body">
       <div class="check-block-list" :class="{ 'all-visible': isMore }">
         <VacanciesCheckbox
-          class="check-block"
           v-for="item in filterItems"
-          :checked="item.is_checked"
+          :key="item.id"
+          class="check-block"
+          :checked="isChecked(item.id)"
           @change="toggle(item.id)"
           :name="`work_type_${item.id}`"
           :label="item.name"
@@ -22,65 +23,49 @@
 
 <script setup>
 import { useDictionaryStore } from "~/store/dictionary";
-import { useVacancyStore } from "~/store/vacancy";
 import useQueryParams from "~/composables/useQueryParams.js";
+import { computed, ref } from "vue";
 
-const emit = defineEmits(["onFormChange"]);
-
-const vacancyStore = useVacancyStore();
 const dictionaryStore = useDictionaryStore();
 
 const filterClass = ref(true);
 const isMore = ref(true);
-const search = ref("");
-const filterItems = ref(dictionaryStore.part_times);
 
 const { getQueryParam, updateQueryParam } = useQueryParams();
-const part_times = ref(getQueryParam("part_times") ?? []);
-watch(
-  () => getQueryParam("part_times") ?? [],
-  (newValues) => {
-    part_times.value = newValues;
-  },
-);
+const partTimes = ref(getQueryParam("part_times") ?? []);
 
-const selectedFilterItems = ref([]);
+const isChecked = computed(() => (id) => partTimes.value.includes(id));
 
 const toggle = (id) => {
-  let selected_ids = [...part_times.value];
-
-  if (!selected_ids.includes(id)) {
-    selected_ids.push(id);
+  // Use more efficient toggle logic with splice
+  const index = partTimes.value.indexOf(id);
+  if (index > -1) {
+    partTimes.value.splice(index, 1);
   } else {
-    selected_ids = selected_ids.filter((item) => item !== id);
+    partTimes.value.push(id);
   }
-  selected_ids = selected_ids.length === 0 ? undefined : selected_ids;
-  updateQueryParam("part_times", selected_ids);
+
+  updateQueryParam(
+    "part_times",
+    partTimes.value.length ? partTimes.value : undefined,
+  );
 };
 
 const { sort } = useSort();
 
-const prepare = (items) => {
-  let selected_ids = [...part_times.value];
+const prepareFilterItems = computed(() => {
+  return sort(dictionaryStore.part_times, { by: "alpha" }) || [];
+});
 
-  const sortedItems = sort(items, { by: "alpha" });
+const filterItems = computed(() => {
+  return prepareFilterItems.value.map((item) => ({
+    ...item,
+  }));
+});
 
-  if (sortedItems) {
-    items = sortedItems.map((item) => ({
-      ...item,
-      is_checked: selected_ids.includes(item.id),
-    }));
-  }
-  filterItems.value = items;
-};
-
-watch(() => dictionaryStore.part_times, prepare);
-const { getPartTimes } = dictionaryStore;
-
-useAsyncData("getPartTimes", async () => {
-  const data = await getPartTimes();
-  prepare(dictionaryStore.part_times);
-  return data;
+// Simplify data fetching. No need for prepare since we use computed properties
+const { data: partTimesData } = useAsyncData("getPartTimes", () => {
+  return dictionaryStore.getPartTimes();
 });
 </script>
 
