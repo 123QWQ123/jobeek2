@@ -24,15 +24,19 @@
       </div>
 
       <div class="check-block-list with_scroll mt-3">
-        <VacanciesCheckbox
-          v-for="(item, index) in filteredItems"
-          :key="item.value + '_' + index"
-          :checked="item.is_checked"
-          :class="{ is_header: item.is_header }"
-          :name="`unselected_city_${item.value}`"
-          :label="item.name"
-          @change="toggleCity(item.value)"
-        />
+        <div v-bind="containerProps" style="height: 300px">
+          <div v-bind="wrapperProps">
+            <VacanciesCheckbox
+              v-for="(item, index) in list"
+              :key="item.data.value + '_' + index"
+              :checked="item.data.is_checked"
+              :class="{ is_header: item.data.is_header }"
+              :name="`unselected_city_${index}`"
+              :label="item.data.name"
+              @change="toggleCity(item.data.value)"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -40,6 +44,7 @@
 
 <script setup>
 import useSort from "~/composables/useSort";
+import { useVirtualList } from "@vueuse/core";
 import { useVacancyStore } from "~/store/vacancy";
 import useQueryParams from "~/composables/useQueryParams.js";
 import { computed, ref, watch } from "vue";
@@ -88,6 +93,9 @@ const filteredItems = computed(() => {
   return groupedItems;
 });
 
+const { list, containerProps, wrapperProps } = useVirtualList(filteredItems, {
+  itemHeight: 25,
+});
 const toggleCity = (id) => {
   const index = cities.value.indexOf(id);
   if (index > -1) {
