@@ -1,28 +1,20 @@
 <template>
   <div class="filter-box" :class="{ open: filterClass }">
-    <!-- Filter section header with toggle functionality -->
     <div class="filter-box-handle" @click="filterClass = !filterClass">
-      <strong>Города ({{ total }})</strong>
+      <strong>Города ({{ filteredItems.length }})</strong>
       <img src="~/assets/img/svg/Arrow-Down.svg" alt="Toggle" />
     </div>
 
-    <div v-if="isMore" class="filter-box-body">
-      <!-- Search bar -->
+    <div v-if="filterClass" class="filter-box-body">
       <div class="search_area">
-        <input
-          type="search"
-          v-model="search"
-          @input="onSearch"
-          placeholder="Search cities"
-        />
+        <input type="search" v-model="search" placeholder="Поиск города" />
       </div>
 
-      <!-- Selected cities -->
       <span class="fw-bold is_header mb-2">Выбранные города</span>
       <div class="check-block-list with_scroll mt-2">
         <VacanciesCheckbox
           v-for="item in selectedItems"
-          :key="`selected_city_${item.value}`"
+          :key="item.value"
           :checked="true"
           :class="{ is_header: item.is_header }"
           :name="`selected_city_${item.value}`"
@@ -31,172 +23,97 @@
         />
       </div>
 
-      <!-- Cities available for selection -->
       <div class="check-block-list with_scroll mt-3">
-        <VacanciesCheckbox
-          v-for="item in groupedFilterItems"
-          :key="`unselected_city_${item.value}`"
-          :checked="item.is_checked"
-          :class="{ is_header: item.is_header }"
-          :name="`unselected_city_${item.value}`"
-          :label="item.name"
-          @change="toggleCity(item.value)"
-        />
+        <div v-bind="containerProps" style="height: 300px">
+          <div v-bind="wrapperProps">
+            <VacanciesCheckbox
+              v-for="(item, index) in list"
+              :key="item.data.value + '_' + index"
+              :checked="item.data.is_checked"
+              :class="{ is_header: item.data.is_header }"
+              :name="`unselected_city_${index}`"
+              :label="item.data.name"
+              @change="toggleCity(item.data.value)"
+            />
+          </div>
+        </div>
       </div>
-
-      <!-- More toggle button -->
-      <button class="more-filters" @click="toggleMore">
-        {{ isMore ? "Скрыть" : `Еще ${total}` }}
-      </button>
-    </div>
-
-    <!-- Simplified view if isMore is false -->
-    <div v-else class="filter-box-body">
-      <div class="check-block-list" v-if="selectedItems.length">
-        <VacanciesCheckbox
-          v-for="item in selectedItems"
-          :key="`selected_city_${item.value}`"
-          :checked="true"
-          :name="`selected_city_${item.value}`"
-          :label="item.name"
-          @change="toggleCity(item.value)"
-        />
-      </div>
-      <div v-else class="check-block-list with_scroll">
-        <VacanciesCheckbox
-          class="check-block"
-          v-for="item in firstXSelectedItems"
-          :key="`city_${item.value}`"
-          :checked="false"
-          :name="`city_${item.value}`"
-          :label="item.name"
-          @change="toggleCity(item.value)"
-        />
-      </div>
-      <button class="more-filters" v-if="total > 0" @click="toggleMore">
-        {{ isMore ? "Скрыть" : `Еще ${total}` }}
-      </button>
     </div>
   </div>
 </template>
 
 <script setup>
-// Import dependencies
 import useSort from "~/composables/useSort";
+import { useVirtualList } from "@vueuse/core";
 import { useVacancyStore } from "~/store/vacancy";
 import useQueryParams from "~/composables/useQueryParams.js";
-
-// Define props and emit events
-const props = defineProps(["name", "isOpen"]);
-const emit = defineEmits(["onFormChange"]);
+import { computed, ref, watch } from "vue";
 
 const vacancyStore = useVacancyStore();
 const { getCities } = vacancyStore;
 
-// Initialize query parameters
 const { updateQueryParam, getQueryParam } = useQueryParams();
-const cities = ref(getQueryParam("cities"));
-const regions = ref(getQueryParam("regions"));
+const cities = ref(getQueryParam("cities") ?? []);
+const regions = ref(getQueryParam("regions") ?? []);
 
-// Reactive variables and states
 const search = ref("");
 const filterClass = ref(true);
-const isMore = ref(false);
-const groupedFilterItems = ref(vacancyStore.cities_formatted);
 
-// Computed properties for selected and pre-selected items
-const selectedItems = computed(() =>
-  vacancyStore.cities_formatted.filter(({ value }) => {
-    return cities.value?.includes(value);
-  }),
-);
-const firstXSelectedItems = computed(() =>
-  vacancyStore.cities_formatted.slice(0, 5),
-);
-const total = computed(() =>
-  vacancyStore.cities_formatted.length > 5
-    ? vacancyStore.cities_formatted.length - 5
-    : 0,
-);
-
-// Fetch cities data using async data loading
-useAsyncData(
-  "cities",
-  async () => await getCities({ region_ids: getQueryParam("regions") }),
-);
-
-// Watch for region changes and update state accordingly
-watch(
-  () => getQueryParam("regions") ?? [],
-  (newValues, oldValues) => {
-    if (JSON.stringify(newValues) !== JSON.stringify(oldValues)) {
-      regions.value = newValues;
-      getCities({ region_ids: regions.value });
-      prepare(vacancyStore.cities_formatted);
-    }
-  },
-);
-
-// Toggles the "More" filter visibility
-const toggleMore = () => {
-  isMore.value = !isMore.value;
-};
-
-// Add or remove city from the selection
-const toggleCity = (id) => {
-  let selected = cities.value || [];
-
-  if (selected.includes(id)) {
-    selected = selected.filter((item) => item !== id);
-  } else {
-    selected.push(id);
-  }
-
-  cities.value = selected.length ? selected : undefined;
-  prepare(vacancyStore.cities_formatted);
-  updateQueryParam("cities", selected);
-};
-
-// Filter cities based on search input
-const onSearch = (e) => {
-  const query = e.target.value.toLowerCase();
-  groupedFilterItems.value = vacancyStore.cities_formatted.filter((city) =>
-    city.name.toLowerCase().includes(query),
-  );
-  prepare(groupedFilterItems.value);
-};
-
-// Prepare data for display (grouping by alphabet and sorting)
 const { sort } = useSort();
-const prepare = (items) => {
-  if (!items.length) {
-    groupedFilterItems.value = [];
-    return;
-  }
 
-  const selectedIds = cities.value || [];
-  const filteredItems = items
-    .filter((item) => !selectedIds.includes(item.value))
+const selectedItems = computed(() =>
+  vacancyStore.cities_formatted.filter((item) =>
+    cities.value.includes(item.value),
+  ),
+);
+
+const filteredItems = computed(() => {
+  const query = search.value.toLowerCase();
+  const availableItems = vacancyStore.cities_formatted.filter(
+    (item) => !cities.value.includes(item.value),
+  );
+
+  const searchFiltered = availableItems
+    .filter((city) => city.name.toLowerCase().includes(query))
     .sort((a, b) => a.name.localeCompare(b.name));
 
-  groupedFilterItems.value = [];
-  filteredItems.forEach((item, index) => {
+  let groupedItems = [];
+  searchFiltered.forEach((item, index) => {
     const firstLetter = item.name[0];
-    const previousItem = filteredItems[index - 1];
-
-    // Add alphabetical headers
-    if (!previousItem || firstLetter !== previousItem.name[0]) {
-      groupedFilterItems.value.push({
+    const prevItem = searchFiltered[index - 1];
+    if (index === 0 || firstLetter !== prevItem.name[0]) {
+      groupedItems.push({
         value: firstLetter,
         name: firstLetter,
         is_header: true,
       });
     }
-    groupedFilterItems.value.push(item);
+    groupedItems.push(item);
   });
+  return groupedItems;
+});
+
+const { list, containerProps, wrapperProps } = useVirtualList(filteredItems, {
+  itemHeight: 25,
+});
+const toggleCity = (id) => {
+  const index = cities.value.indexOf(id);
+  if (index > -1) {
+    cities.value.splice(index, 1);
+  } else {
+    cities.value.push(id);
+  }
+  updateQueryParam("cities", cities.value.length ? cities.value : undefined);
 };
 
-prepare(vacancyStore.cities_formatted);
+watch(regions, () => {
+  getCities({ region_ids: regions.value });
+});
+
+useAsyncData(
+  "cities",
+  async () => await getCities({ region_ids: regions.value }),
+);
 </script>
 
 <style scoped>

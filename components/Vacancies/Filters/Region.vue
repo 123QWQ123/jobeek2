@@ -66,7 +66,6 @@
           :key="`selected_region_${item.value}`"
         />
       </div>
-
       <div
         v-else
         class="check-block-list with_scroll"
@@ -96,17 +95,38 @@
 </template>
 
 <script setup>
+import { ref, computed, watch } from "vue";
 import useSort from "~/composables/useSort";
 import { useVacancyStore } from "~/store/vacancy";
 import useQueryParams from "~/composables/useQueryParams.js";
 
 const emit = defineEmits(["onFormChange"]);
 const props = defineProps(["name", "isOpen", "selectedCountry"]);
+
 const { updateQueryParam, getQueryParam } = useQueryParams();
 const countries = ref(getQueryParam("countries") ?? [1]);
+const vacancyStore = useVacancyStore();
+const regions = ref(getQueryParam("regions") ?? []);
+const search = ref("");
+
+const total = computed(() =>
+  vacancyStore.regions.length > 5 ? vacancyStore.regions.length - 5 : 0,
+);
+
+const filterClass = ref(true);
+const isMore = ref(false);
+const groupedFilterItems = ref([]);
+const selectedItems = computed(() =>
+  vacancyStore.regions_formatted.filter(({ value }) => {
+    return regions.value?.includes(value);
+  }),
+);
+const firstXSelectedItems = computed(() =>
+  vacancyStore.regions_formatted.slice(0, 5),
+);
 
 watch(
-  () => getQueryParam("countries") ?? [1], // default country is 1
+  () => getQueryParam("countries") ?? [1],
   async (newValues, oldValues) => {
     if (JSON.stringify(newValues) !== JSON.stringify(oldValues)) {
       countries.value = newValues;
@@ -115,8 +135,6 @@ watch(
     }
   },
 );
-
-const regions = ref(getQueryParam("regions") ?? []);
 
 watch(
   () => getQueryParam("regions") ?? [],
@@ -127,35 +145,17 @@ watch(
     }
   },
 );
-const vacancyStore = useVacancyStore();
-
-const search = ref("");
-
-const total = computed(() => {
-  return vacancyStore.regions.length > 5 ? vacancyStore.regions.length - 5 : 0;
-});
-const filterClass = ref(true);
-const isMore = ref(false);
-const groupedFilterItems = ref([]);
-const selectedItems = ref([]);
-
-const firstXSelectedItems = computed(() => {
-  return vacancyStore.regions_formatted.slice(0, 5);
-});
 
 const toggleMore = () => (isMore.value = !isMore.value);
+
 const onSearch = (e) => {
-  const search = e.target.value;
-  let items = [];
-  if (search !== "") {
-    items = vacancyStore.regions_formatted.filter((item, key) => {
-      return item.name.toLowerCase().includes(search.toLowerCase());
-    });
-  } else {
-    items = vacancyStore.regions_formatted.filter((item, key) => {
-      return item.name.toLowerCase().includes(search.toLowerCase());
-    });
-  }
+  const searchValue = e.target.value;
+  const items = searchValue
+    ? vacancyStore.regions_formatted.filter((item) =>
+        item.name.toLowerCase().includes(searchValue.toLowerCase()),
+      )
+    : vacancyStore.regions_formatted;
+
   groupedFilterItems.value = items;
   prepare(items);
 };
@@ -168,49 +168,35 @@ const toggleRegion = (id) => {
   } else {
     selected_ids = selected_ids.filter((item) => item !== id);
   }
-  selected_ids = selected_ids.length === 0 ? undefined : selected_ids;
-  updateQueryParam("regions", selected_ids);
+
+  updateQueryParam("regions", selected_ids.length ? selected_ids : undefined);
 };
 
 const { sort } = useSort();
 const prepare = (items) => {
-  let filterItems = items;
-  let selected_ids = [...regions.value];
-  if (filterItems.length < 1) {
+  if (!items.length) {
     groupedFilterItems.value = [];
     return;
   }
-  selectedItems.value = [...filterItems].filter((item) => {
-    return selected_ids.includes(item.value);
-  });
-  filterItems = filterItems.filter(
-    (item) => !selected_ids.includes(item.value),
-  );
+
+  const selected_ids = [...regions.value];
+  // selectedItems.value = items.filter((item) =>
+  //   selected_ids.includes(item.value),
+  // );
+
+  let filterItems = items.filter((item) => !selected_ids.includes(item.value));
   filterItems = sort(filterItems, { by: "alpha" });
 
   groupedFilterItems.value = [];
-  filterItems.map((item, key) => {
+  filterItems.forEach((item, index) => {
     const firstLetter = item.name.charAt(0);
-    if (key === 0) {
+    if (index === 0 || firstLetter !== filterItems[index - 1].name.charAt(0)) {
       groupedFilterItems.value.push({
         value: firstLetter,
         name: firstLetter,
         is_header: true,
       });
-    } else {
-      let prevFirstLetter;
-      if (filterItems[key - 1] !== undefined) {
-        prevFirstLetter = filterItems[key - 1].name.charAt(0);
-      }
-      if (firstLetter !== prevFirstLetter) {
-        groupedFilterItems.value.push({
-          value: firstLetter,
-          name: firstLetter,
-          is_header: true,
-        });
-      }
     }
-
     groupedFilterItems.value.push({
       value: item.value,
       name: item.name,
@@ -221,9 +207,11 @@ const prepare = (items) => {
 
 const { getRegions } = vacancyStore;
 watch(() => vacancyStore.regions_formatted, prepare);
-useAsyncData("regions", async () => {
-  return await getRegions({ country_ids: getQueryParam("countries") });
-});
+
+useAsyncData(
+  "regions",
+  async () => await getRegions({ country_ids: getQueryParam("countries") }),
+);
 </script>
 
 <style scoped>
