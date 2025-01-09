@@ -5,7 +5,7 @@
       <div class="descr">
         Получайте уведомления о новых по созданному запросу
       </div>
-      <span class="arrow"></span>
+      <!--      <span class="arrow"></span>-->
     </div>
 
     <div class="w-box-body" :class="{ disabled: isLoading }">

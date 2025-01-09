@@ -94,7 +94,7 @@ function close() {
   border: 1px solid #ccc;
   cursor: pointer;
   min-width: 180px;
-  border-radius: 6px;
+  border-radius: 8px;
   height: 43px;
   font-family: "Open Sans", sans-serif;
 }

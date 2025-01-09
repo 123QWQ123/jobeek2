@@ -280,8 +280,8 @@ watch(
 
 <style>
 .tiptap-toolbar {
-  background-color: #f6f6f6;
-  border-radius: 10%;
+  background-color: transparent;
+  border-radius: 0;
 }
 
 .tiptap-toolbar button.is-active {
