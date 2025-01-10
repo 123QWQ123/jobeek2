@@ -7,6 +7,7 @@ const authStore = useAuthStore();
 const resumeStore = useResumeStore();
 
 const isEmployer = computed(() => authStore.isEmployer);
+const isSubscribed = computed(() => authStore.isSubscribed);
 
 useAsyncData("myResumesData", () =>
   Promise.all([
@@ -39,12 +40,12 @@ const isCompleted = computed(() => {
         <aside class="sidebar">
           <div class="premium-col sticky-item">
             <div class="title">
-              {{ isEmployer ? "Премиум" : "Подключите Премиум подписку" }}
+              {{ isSubscribed ? "Премиум" : "Подключите Премиум подписку" }}
             </div>
-            <div v-if="isEmployer" class="term">
+            <div v-if="isSubscribed" class="term">
               <span>Действует до</span> <strong>24 августа 2024</strong>
             </div>
-            <a v-if="isEmployer" class="btn button-xs" href="#">Отключить</a>
+            <a v-if="isSubscribed" class="btn button-xs" href="#">Отключить</a>
             <a v-else class="notification-button button-accent" href="#"
               >Подключить</a
             >
