@@ -75,7 +75,7 @@ const loadMore = async () => {
     });
     return;
   }
-  loadMoreButton.value.scrollIntoView({ behavior: "smooth", block: "start" });
+  // loadMoreButton.value.scrollIntoView({ behavior: "smooth", block: "start" });
 };
 </script>
 
