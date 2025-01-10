@@ -15,7 +15,7 @@
                 <li v-for="item in top_20_industries" :key="item.id">
                   <NuxtLink
                     :to="{
-                      name: isEmployer ? 'search-vacancies' : 'search-resumes',
+                      name: 'search-vacancies',
                       query: { industries: `[${item.id}]` },
                     }"
                     class="label"
@@ -92,7 +92,7 @@
                 <NuxtLink
                   class="label"
                   :to="{
-                    name: isEmployer ? 'search-vacancies' : 'search-resumes',
+                    name: 'search-vacancies',
                     query: { schedules: `[${item.id}]` },
                   }"
                 >
