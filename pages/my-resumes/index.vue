@@ -1,28 +1,30 @@
 <script setup>
 import { useAuthStore } from "~/store/auth";
 import { useResumeStore } from "~/store/resume";
+import { useAsyncData, navigateTo } from "#app";
 
 const authStore = useAuthStore();
 const resumeStore = useResumeStore();
 
 const isEmployer = computed(() => authStore.isEmployer);
-const { getMyResumes, getAvailabilityCreate } = resumeStore;
+const isSubscribed = computed(() => authStore.isSubscribed);
 
-useAsyncData("getMyResumes", async () => await getMyResumes());
-useAsyncData(
-  "getAvailabilityCreate",
-  async () => await getAvailabilityCreate(),
+useAsyncData("myResumesData", () =>
+  Promise.all([
+    resumeStore.getMyResumes(),
+    resumeStore.getAvailabilityCreate(),
+  ]),
 );
 
-watch(isEmployer, (new_value) => {
-  if (new_value) {
+watch(isEmployer, (value) => {
+  if (value) {
     navigateTo({ name: "my-vacancies" });
   }
 });
 
 const isCompleted = computed(() => {
   const { hh, superjob } = resumeStore.providers;
-  return !!(hh && superjob); // Приведение к булевому значению.
+  return !!hh && !!superjob;
 });
 </script>
 
@@ -38,14 +40,15 @@ const isCompleted = computed(() => {
         <aside class="sidebar">
           <div class="premium-col sticky-item">
             <div class="title">
-              {{ isEmployer ? "Премиум" : "Подключите Премиум подписку" }}
+              {{ isSubscribed ? "Премиум" : "Подключите Премиум подписку" }}
             </div>
-            <div class="term" v-if="isEmployer">
-              <span>Действует до</span><strong>24 августа 2024</strong>
+            <div v-if="isSubscribed" class="term">
+              <span>Действует до</span> <strong>24 августа 2024</strong>
             </div>
-            <a class="btn button-xs" href="#" v-if="isEmployer">Отключить </a>
-            <!--            <a class="btn button-xs" href="#" v-else>Подключить</a>-->
-            <a class="notification-button button-accent" href="#">Подключить</a>
+            <a v-if="isSubscribed" class="btn button-xs" href="#">Отключить</a>
+            <a v-else class="notification-button button-accent" href="#"
+              >Подключить</a
+            >
           </div>
         </aside>
       </div>

@@ -25,14 +25,14 @@
         </div>
         <div class="vacancy-single-body" v-html="data.description"></div>
 
-        <div class="vacancy-single-footer">
-          <button
-            class="btn button-accent button-accent--ts-bigger"
-            @click.prevent="onSubmit"
-          >
-            Откликнуться
-          </button>
-        </div>
+        <!--        <div class="vacancy-single-footer">-->
+        <!--          <button-->
+        <!--            class="btn button-accent button-accent&#45;&#45;ts-bigger"-->
+        <!--            @click.prevent="onSubmit"-->
+        <!--          >-->
+        <!--            Откликнуться-->
+        <!--          </button>-->
+        <!--        </div>-->
       </div>
     </div>
     <aside class="sidebar">

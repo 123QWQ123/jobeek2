@@ -1,5 +1,6 @@
 <script setup>
-
+import { useAuthStore } from "~/store/auth.js";
+const authStore = useAuthStore();
 </script>
 
 <template>
@@ -8,7 +9,7 @@
     <div class="bg-wrapper pt-4">
       <div class="wrapper wrapper-1290">
         <h1 class="lk-page-title mb-4">Ваши подписки</h1>
-        <div class="notification">
+        <div class="notification" v-if="!authStore.isSubscribed">
           <div class="ic">
             <img src="~/assets/img/svg/crown2.svg" alt="#" />
           </div>
@@ -31,6 +32,4 @@
   </main>
 </template>
 
-
-<style scoped>
-</style>
+<style scoped></style>
