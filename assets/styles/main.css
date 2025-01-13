@@ -8109,3 +8109,44 @@ textarea.form-control::-webkit-input-placeholder::placeholder {
 	    padding-top: 0px;
 	}
 }
+
+.companies-list.skeleton-hover .company-logo .pu-skeleton {
+    height: 100% !important;
+}
+
+.companies-list.skeleton-hover .company-name {
+    width: 100% !important;
+}
+
+.companies-list.skeleton-hover .company-card:hover {
+    border-color: #ECECEC !important;
+}
+
+.vacancy-list.skeleton-hover .company-logo .pu-skeleton {
+    height: 100% !important;
+}
+
+.vacancy-list.skeleton-hover .company-name {
+    width: 100% !important;
+}
+
+.vacancy-list.skeleton-hover .vacancy-card:hover {
+    border-color: #ECECEC !important;
+}
+
+.skeleton-hover .tile-card:hover {
+    border-color: #ECECEC !important;
+}
+
+.skeleton-hover.favorites-list .company-logo .pu-skeleton {
+    height: 100% !important;
+}
+
+.skeleton-hover.favorites-list .company-name {
+    width: 200px !important;
+    max-width: 227px !important;
+}
+
+.skeleton-hover.favorites-list .salary {
+    min-width: 20% !important;
+}
