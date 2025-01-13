@@ -1,6 +1,6 @@
 <template>
   <div class="content">
-    <div>
+    <div v-if="vacancies.length > 0">
       <ul class="favorites-list">
         <VacanciesItem v-for="item in vacancies" :key="item.id" :item="item" />
       </ul>
@@ -23,6 +23,7 @@
         <img v-else src="~/assets/img/svg/Arrow-Down2.svg" alt="#" />
       </button>
     </div>
+    <VacanciesLoadingList v-else />
   </div>
 </template>
 
@@ -49,11 +50,9 @@ watch(
     params.value = newParams;
   },
 );
-onMounted(() => {
-  if (vacancies.value && vacancies.value.length > 0) {
-    isMore.value = true;
-  }
-});
+if (vacancies.value && vacancies.value.length > 0) {
+  isMore.value = true;
+}
 watch(vacancies, (newValues) => {
   if (newValues.length > 0) {
     isMore.value = true;
@@ -73,7 +72,6 @@ const loadMore = async () => {
       title: "Больше вакансий не найдено!",
       icon: "success",
     });
-    return;
   }
   // loadMoreButton.value.scrollIntoView({ behavior: "smooth", block: "start" });
 };
