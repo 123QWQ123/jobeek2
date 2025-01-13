@@ -20,11 +20,9 @@ watch(
     }
   },
 );
-onMounted(async () => {
-  if (isEmployer.value) {
-    navigateTo({ name: "search-resumes" });
-  }
-});
+if (isEmployer.value) {
+  navigateTo({ name: "search-resumes" });
+}
 </script>
 <template>
   <div>
