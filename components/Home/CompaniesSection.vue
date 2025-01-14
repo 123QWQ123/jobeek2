@@ -1,39 +1,11 @@
 <template>
-  <section
-    v-if="vacancies_in_top_companies.length > 0"
-    class="companies-section section wrapper"
-  >
+  <section class="companies-section section wrapper">
     <div class="section-head">
       <h2 class="section-title">Работайте у лучших</h2>
     </div>
 
     <!--- skeleton place section-->
-    <ul v-if="isLoading" class="companies-list skeleton-hover">
-      <li>
-        <div class="company company-card">
-          <div class="company-logo"><span class="pu-skeleton">‌</span></div>
-          <div class="company-name"><span class="pu-skeleton">‌</span></div>
-        </div>
-      </li>
-      <li>
-        <div class="company company-card">
-          <div class="company-logo"><span class="pu-skeleton">‌</span></div>
-          <div class="company-name"><span class="pu-skeleton">‌</span></div>
-        </div>
-      </li>
-      <li>
-        <div class="company company-card">
-          <div class="company-logo"><span class="pu-skeleton">‌</span></div>
-          <div class="company-name"><span class="pu-skeleton">‌</span></div>
-        </div>
-      </li>
-      <li>
-        <div class="company company-card">
-          <div class="company-logo"><span class="pu-skeleton">‌</span></div>
-          <div class="company-name"><span class="pu-skeleton">‌</span></div>
-        </div>
-      </li>
-    </ul>
+    <HomeSkeletonsCompanies v-if="isLoading" />
     <!--- END skeleton place section-->
 
     <ul v-else class="companies-list">

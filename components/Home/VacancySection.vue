@@ -39,65 +39,7 @@
     <div>
       <div>
         <!--- skeleton place section-->
-        <div v-if="isLoading" class="vacancy-list skeleton-hover">
-          <div>
-            <div class="vacancy-card">
-              <div class="vacancy-card-body">
-                <div class="company">
-                  <div class="company-logo">
-                    <span class="pu-skeleton">‌</span>
-                  </div>
-                  <div class="company-name">
-                    <span class="pu-skeleton">‌</span>
-                  </div>
-                </div>
-                <span class="pu-skeleton">‌</span>
-                <span class="pu-skeleton">‌</span>
-              </div>
-              <div class="vacancy-card-footer">
-                <span class="pu-skeleton">‌</span>
-              </div>
-            </div>
-          </div>
-          <div>
-            <div class="vacancy-card">
-              <div class="vacancy-card-body">
-                <div class="company">
-                  <div class="company-logo">
-                    <span class="pu-skeleton">‌</span>
-                  </div>
-                  <div class="company-name">
-                    <span class="pu-skeleton">‌</span>
-                  </div>
-                </div>
-                <span class="pu-skeleton">‌</span>
-                <span class="pu-skeleton">‌</span>
-              </div>
-              <div class="vacancy-card-footer">
-                <span class="pu-skeleton">‌</span>
-              </div>
-            </div>
-          </div>
-          <div>
-            <div class="vacancy-card">
-              <div class="vacancy-card-body">
-                <div class="company">
-                  <div class="company-logo">
-                    <span class="pu-skeleton">‌</span>
-                  </div>
-                  <div class="company-name">
-                    <span class="pu-skeleton">‌</span>
-                  </div>
-                </div>
-                <span class="pu-skeleton">‌</span>
-                <span class="pu-skeleton">‌</span>
-              </div>
-              <div class="vacancy-card-footer">
-                <span class="pu-skeleton">‌</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <HomeSkeletonsVacancy v-if="isLoading" />
         <!--- END skeleton place section-->
 
         <div v-else class="cards-slider">
