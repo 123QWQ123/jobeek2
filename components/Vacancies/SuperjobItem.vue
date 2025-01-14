@@ -20,10 +20,10 @@
           </div>
         </div>
         <div class="salary" v-if="item.salary_from">
-          От {{ vueNumberFormat(item.salary_from, {}) }} {{ item.currency }}
+          От {{ $formatNumber(item.salary_from, {}) }} {{ item.currency }}
         </div>
         <div class="salary" v-else>
-          До {{ vueNumberFormat(item.salary_to, {}) }} {{ item.currency }}
+          До {{ $formatNumber(item.salary_to, {}) }} {{ item.currency }}
         </div>
       </div>
       <div class="favorites-card-body">
@@ -73,6 +73,7 @@ import { toast } from "vue3-toastify";
 
 const props = defineProps(["item"]);
 const { item } = props;
+const { $formatNumber } = useNuxtApp();
 
 const isFavorite = ref(item.is_favorite ?? false);
 

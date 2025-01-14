@@ -70,16 +70,15 @@
             {{ moment.unix(item.published_date).format("YYYY.MM.DD") }}
           </div>
           <div class="salary" v-if="item.salary_to && item.salary_from">
-            {{ vueNumberFormat(item.salary_from, {}) }} —
-            {{ vueNumberFormat(item.salary_to, {}) }} {{ item.currency }}/месяц
+            {{ $formatNumber(item.salary_from, {}) }} —
+            {{ $formatNumber(item.salary_to, {}) }} {{ item.currency }}/месяц
           </div>
           <div class="salary" v-else-if="item.salary_from">
-            от {{ vueNumberFormat(item.salary_from, {}) }}
+            от {{ $formatNumber(item.salary_from, {}) }}
             {{ item.currency }}/месяц
           </div>
           <div class="salary" v-else-if="item.salary_to">
-            до {{ vueNumberFormat(item.salary_to, {}) }}
-            {{ item.currency }}/месяц
+            до {{ $formatNumber(item.salary_to, {}) }} {{ item.currency }}/месяц
           </div>
         </div>
         <div class="vacancy-single-body" v-html="item.description"></div>
@@ -114,6 +113,7 @@ const { item } = defineProps({
     required: true,
   },
 });
+const { $formatNumber } = useNuxtApp();
 
 const isFavorite = ref(item.is_favorite ?? false);
 
