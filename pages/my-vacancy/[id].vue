@@ -263,7 +263,7 @@ const canOnlyOnePublished = computed(() => {
 const phone = ref("");
 </script>
 <template>
-  <main class="main cabinet my-resumes-page" role="main">
+  <main class="main cabinet my-vacancy-page" role="main">
     <div class="bg-wrapper position-relative">
       <PersonalCabinetSearchMobile />
       <div class="wrapper wrapper-1290">

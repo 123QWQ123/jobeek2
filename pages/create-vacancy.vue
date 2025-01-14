@@ -39,7 +39,7 @@ onMounted(() => {
 });
 </script>
 <template>
-  <main class="main cabinet create-subscribe-page bg-wrapper" role="main">
+  <main class="main cabinet create-vacancy-page bg-wrapper" role="main">
     <Head>
       <Title>{{ pageTitle }} - Jobeek</Title>
     </Head>

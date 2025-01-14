@@ -218,7 +218,7 @@ const canOnlyOnePublished = computed(() => {
 });
 </script>
 <template>
-  <main class="main cabinet my-resumes-page" role="main">
+  <main class="main cabinet my-resume-page" role="main">
     <div class="bg-wrapper position-relative pb-5">
       <PersonalCabinetSearchMobile />
       <div class="wrapper wrapper-1290">

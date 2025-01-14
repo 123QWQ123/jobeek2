@@ -21,7 +21,7 @@ watch(
 );
 </script>
 <template>
-  <main class="main cabinet my-vacancies-page" role="main">
+  <main class="main cabinet my-favorite-vacancies-page" role="main">
     <PersonalCabinetSearchMobile />
 
     <div class="bg-wrapper position-relative pt-4">

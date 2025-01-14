@@ -4,7 +4,7 @@
       <h4 class="place-card-title">Работа</h4>
       <p class="place-card-descr">
         <strong>Jobeek</strong> — это лучшие предложения высокооплачиваемой
-        работы от российских и  зарубежных компаний.
+        работы от российских и зарубежных компаний.
       </p>
       <NuxtLink
         @click.prevent="navigateToResume"
@@ -16,8 +16,8 @@
     <div class="place-card place-card--resume">
       <h4 class="place-card-title">Сотрудники</h4>
       <p class="place-card-descr">
-        <strong>Jobeek</strong> — самая большая и качественная база резюме
-        лучших специалистов в России.
+        <strong>Jobeek</strong> — самая большая и качественная база резюме
+        лучших специалистов в России.
       </p>
       <NuxtLink
         @click.prevent="navigateToVacancy"

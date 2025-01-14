@@ -15,7 +15,7 @@ watch(
   () => isEmployer.value,
   (new_value) => {
     if (!new_value) {
-      navigateTo({ name: "my-vacancies-favorite" });
+      navigateTo({ name: "favorite-vacancies" });
     }
   },
 );
