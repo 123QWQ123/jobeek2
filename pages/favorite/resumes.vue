@@ -15,13 +15,13 @@ watch(
   () => isEmployer.value,
   (new_value) => {
     if (!new_value) {
-      navigateTo({ name: "my-vacancies-favorite" });
+      navigateTo({ name: "favorite-vacancies" });
     }
   },
 );
 </script>
 <template>
-  <main class="main cabinet my-vacancies-page" role="main">
+  <main class="main cabinet my-favorite-resumes-page" role="main">
     <PersonalCabinetSearchMobile />
 
     <div class="bg-wrapper position-relative pt-4">

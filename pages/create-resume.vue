@@ -4,8 +4,6 @@ import useAlert from "~/composables/useAlert";
 import { useResumeStore } from "~/store/resume";
 import { useAuthStore } from "~/store/auth.js";
 
-
-
 const route = useRoute();
 
 const vacancyStore = useVacancyStore();
@@ -72,7 +70,7 @@ const isLoading = ref(false);
 // groups[]=
 </script>
 <template>
-  <main class="main cabinet create-subscribe-page bg-wrapper" role="main">
+  <main class="main cabinet create-resume-page bg-wrapper" role="main">
     <Head>
       <Title>{{ pageTitle }} - Jobeek</Title>
     </Head>
