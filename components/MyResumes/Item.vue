@@ -12,7 +12,7 @@
             </nuxt-link>
             <span>
               <span class="price">
-                От {{ vueNumberFormat(salaryAmount, {}) }}
+                От {{ $formatNumber(salaryAmount, {}) }}
                 {{ props.item.currency }}</span
               >
               {{ currency }}
@@ -206,7 +206,7 @@ import Swal from "sweetalert2";
 import { toast } from "vue3-toastify";
 import { useResumeStore } from "~/store/resume";
 
-const { $moment } = useNuxtApp();
+const { $moment, $formatNumber } = useNuxtApp();
 const props = defineProps(["item", "id"]);
 const item = computed(() => props.item);
 
