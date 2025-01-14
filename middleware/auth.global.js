@@ -19,7 +19,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
       query: {
         message: JSON.stringify({
           type: "error",
-          text: "Пожалуйста, зайдите в профиль",
+          text: "Пожалуйста, войдите в профиль",
         }),
         redirect: to.name,
       },
