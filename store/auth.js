@@ -186,9 +186,9 @@ export const useAuthStore = defineStore("auth", {
         payload: { fcm_token: token },
       });
     },
-    logout() {
+    async logout() {
+      await navigateTo("/");
       this.$reset();
-      navigateTo("/");
     },
     async getLocation(payload = {}) {
       return await useApi("area/location", { method: "get", params: payload });

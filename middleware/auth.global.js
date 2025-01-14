@@ -17,10 +17,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
     return navigateTo({
       path: "/sign-in",
       query: {
-        message: JSON.stringify({
-          type: "error",
-          text: "Пожалуйста, войдите в профиль",
-        }),
         redirect: to.name,
       },
     });

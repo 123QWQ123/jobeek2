@@ -3,50 +3,22 @@ import { useAuthStore } from "~~/store/auth";
 import { search_exception_routes } from "~/config";
 
 const auth = useAuthStore();
-const { logout, toggleUserMode } = auth;
+const { logout, isEmployer } = auth;
 
 const route = useRoute();
 
-// const isAuthed = computed(() => auth.isAuthed);
-// const isEmployer = computed(() => auth.isEmployer);
-// const user = computed(() => auth.user);
-
-const searchOptions = [
-  { value: "vacancies", name: "Вакансии" },
-  { value: "resumes", name: "Резюме" },
-];
-
-const selectedType = computed(() =>
-  auth.isEmployer ? "resumes" : "vacancies",
+const isCabinetNavbarShown = computed(() =>
+  search_exception_routes.includes(route.name),
 );
 
-const form = ref({
-  type: selectedType,
-  keyword: "",
-  city: "",
-  country: "",
-  salary: "0",
-});
-
-watch(selectedType, (new_value) => {
-  form.value = { ...form.value, type: new_value };
-});
-
-const isCabinetNavbarShown = computed(() => {
-  return search_exception_routes.includes(route.name);
-});
-
 const onProfileClick = () => {
-  if (!auth.isEmployer) {
-    navigateTo({ name: "profile-seeker" });
-  } else {
-    navigateTo({ name: "profile-employer" });
-  }
+  navigateTo({ name: isEmployer ? "profile-employer" : "profile-seeker" });
 };
-const phone = computed(() => auth.user?.phone);
 
+const phone = computed(() => auth.user?.phone);
 const isPremium = computed(() => auth.isSubscribed);
 </script>
+
 <template>
   <div class="lk-header">
     <div class="lk-header-main">
@@ -61,7 +33,7 @@ const isPremium = computed(() => auth.isSubscribed);
           >
             {{ phone }}
           </a>
-          <button class="profile-button" type="button" v-if="isPremium">
+          <button v-if="isPremium" class="profile-button" type="button">
             <PremiumIcon />
           </button>
           <button class="exit-button" type="button" @click="logout">
@@ -70,7 +42,7 @@ const isPremium = computed(() => auth.isSubscribed);
         </div>
       </div>
     </div>
-    <HeaderCabinetNavbar></HeaderCabinetNavbar>
+    <HeaderCabinetNavbar />
   </div>
 </template>
 
