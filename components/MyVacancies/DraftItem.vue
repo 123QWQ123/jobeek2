@@ -20,7 +20,7 @@
             <!--            <span class="location">{{ cityAddress }} </span>-->
 
             <span class="price">
-              От {{ vueNumberFormat(salaryAmount, {}) }}
+              От {{ $formatNumber(salaryAmount, {}) }}
               {{ currency }}
             </span>
           </div>
@@ -217,6 +217,7 @@ import { useVacancyStore } from "~/store/vacancy.js";
 const { $moment } = useNuxtApp();
 const props = defineProps(["item", "id"]);
 const item = computed(() => props.item);
+const { $formatNumber } = useNuxtApp();
 
 const vacancyStore = useVacancyStore();
 const { updateDraft } = vacancyStore;

@@ -1,8 +1,6 @@
 // no need to import defineStore and acceptHMRUpdate
 import { acceptHMRUpdate, defineStore } from "pinia";
 import useApi from "~/hooks/useApi";
-import vueNumberFormat from "~/plugins/vueNumberFormat.js";
-import { parse, stringify } from "zipson/lib";
 
 export const useDictionaryStore = defineStore("dictionary", {
   state: () => {
@@ -148,7 +146,8 @@ export const useDictionaryStore = defineStore("dictionary", {
   },
   actions: {
     numberFormat(value) {
-      return vueNumberFormat(value, {});
+      const { $formatNumber } = useNuxtApp();
+      return $formatNumber(value, {});
     },
     async getWorkTypes(payload) {
       if (this.work_types.length > 0) {

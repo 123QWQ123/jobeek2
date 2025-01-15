@@ -16,18 +16,18 @@
             <span class="location">{{ cityAddress }} </span>
 
             <span v-if="salary_from && salary_to">
-              <span class="price">{{ vueNumberFormat(salary_from, {}) }}</span>
+              <span class="price">{{ $formatNumber(salary_from, {}) }}</span>
               -
               <span class="price"
-                >{{ vueNumberFormat(salary_to, {}) }} {{ currency }}</span
+                >{{ $formatNumber(salary_to, {}) }} {{ currency }}</span
               >
             </span>
             <span v-else>
               <span class="price" v-if="salary_from"
-                >От {{ vueNumberFormat(salary_from, {}) }} {{ currency }}</span
+                >От {{ $formatNumber(salary_from, {}) }} {{ currency }}</span
               >
               <span class="price" v-else-if="salary_to"
-                >От {{ vueNumberFormat(salary_to, {}) }} {{ currency }}</span
+                >От {{ $formatNumber(salary_to, {}) }} {{ currency }}</span
               >
             </span>
           </div>
@@ -214,6 +214,7 @@ import { toast } from "vue3-toastify";
 
 const props = defineProps(["item"]);
 const item = computed(() => props.item);
+const { $formatNumber } = useNuxtApp();
 
 const vacancyStore = useVacancyStore();
 const { getConnectedEmployerProviders, updateVacancy, getMyDrafts } =

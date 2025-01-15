@@ -1,5 +1,5 @@
 // no need to import defineStore and acceptHMRUpdate
-import vueNumberFormat from "~/plugins/vueNumberFormat.js";
+
 import { parse, stringify } from "zipson/lib";
 
 export const useRoute = defineStore("route", {
@@ -18,7 +18,8 @@ export const useRoute = defineStore("route", {
   },
   actions: {
     numberFormat(value) {
-      return vueNumberFormat(value, {});
+      const { $formatNumber } = useNuxtApp();
+      return $formatNumber(value, {});
     },
 
     async getPageQuery() {
