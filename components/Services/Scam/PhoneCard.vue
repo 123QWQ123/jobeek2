@@ -18,6 +18,7 @@ const props = defineProps({
   },
 });
 
+const showForm = ref(false);
 const { $format_phone } = useNuxtApp();
 const phone = computed(() => props.phone.number);
 const phone_id = computed(() => props.phone.id);
@@ -82,6 +83,13 @@ const form = ref({
   comment: null,
 });
 
+const clearForm = () => {
+  form.value.category_ids = [];
+  form.value.frequency_call = null;
+  form.value.rating = null;
+  form.value.comment = null;
+};
+
 const onSubmit = async () => {
   const data = form.value;
   data.category_ids = data.category_ids.map((item) => parseInt(item));
@@ -102,33 +110,26 @@ const onSubmit = async () => {
     <div class="favorites-card-head align-start">
       <div class="company">
         <div class="company-logo">
-          <img src="~/assets/img/logos/megafon.svg" alt="#" />
+          <img src="~/assets/img/logos/megafon.svg" alt="" />
         </div>
         <div class="company-name">
-          <span class="count">{{ operator }}</span>
+          <a :href="`tel:${phone}`">{{ format_phone }}</a>
+          <span class="count">{{ operator || "Неизвестный оператор" }}</span>
         </div>
 
         <div class="company-info">
           <p>
-            Тип телефона: <strong>{{ typePhone }}</strong>
+            Тип телефона: <strong>{{ typePhone || "Не указан" }}</strong>
           </p>
           <p>
-            Адрес: <strong>{{ address }}</strong>
-            <a class="show-on-map" :href="link_map">
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M22.428 4.17282L15.45 2.22095L8.45156 4.19232L1.94339 2.3461C1.80393 2.30654 1.6572 2.29985 1.51472 2.32656C1.37224 2.35328 1.23789 2.41268 1.12224 2.50008C1.00659 2.58748 0.91279 2.70052 0.8482 2.83029C0.783611 2.96007 0.749997 3.10306 0.75 3.24803V19.2136C0.750709 19.4583 0.830844 19.6961 0.97835 19.8913C1.12586 20.0865 1.33276 20.2285 1.56792 20.2959L8.44997 22.2483L15.4515 20.2761L22.06 22.1246C22.1994 22.1636 22.3458 22.1698 22.488 22.1427C22.6301 22.1156 22.764 22.056 22.8793 21.9686C22.9945 21.8811 23.0879 21.7681 23.1523 21.6385C23.2166 21.5089 23.25 21.3662 23.25 21.2215V5.25624C23.2494 5.01085 23.1688 4.77235 23.0205 4.57685C22.8722 4.38136 22.6642 4.23952 22.428 4.17282ZM7.64062 20.4593L2.25 18.93V3.99226L7.64062 5.52151V20.4593ZM14.7007 18.9289L9.14062 20.4951V5.55657L14.7007 3.99038V18.9289ZM21.75 20.4801L16.2007 18.928V3.98846L21.75 5.54054V20.4801Z"
-                  fill="#5375FD"
-                ></path>
-              </svg>
-              Показать на карте
-            </a>
+            Адрес: <strong>{{ address || "Не указан" }}</strong>
+            <a
+              v-if="address"
+              class="show-on-map"
+              :href="link_map"
+              target="_blank"
+              >Показать на карте</a
+            >
           </p>
         </div>
       </div>
@@ -143,29 +144,30 @@ const onSubmit = async () => {
         </button>
       </div>
     </div>
+
     <div class="favorites-card-body favorites-card-body--brd">
       <div class="call-cats-row">
         <span>Категория звонка:</span>
-
-        <div class="call-cats" v-if="categories.length > 0">
-          <div class="call-cat" v-for="category in categories">
+        <div class="call-cats" v-if="categories && categories.length">
+          <div v-for="category in categories" :key="category" class="call-cat">
             {{ category }}
           </div>
         </div>
-
         <strong v-else>Нет информации</strong>
       </div>
 
-      <div class="favorites-card-body__text" v-if="comments.length > 0">
-        <p>
+      <div class="favorites-card-body__text">
+        <p v-if="frequencyTitle">
           С телефона были
           <span
-            :class="{
-              'w-badge': true,
-              red: frequencyValue < 0,
-              gray: frequencyValue === 0,
-              green: frequencyValue > 0,
-            }"
+            :class="[
+              'w-badge',
+              frequencyValue < 0
+                ? 'red'
+                : frequencyValue > 0
+                  ? 'green'
+                  : 'gray',
+            ]"
           >
             <svg
               width="17"
@@ -175,42 +177,40 @@ const onSubmit = async () => {
               xmlns="http://www.w3.org/2000/svg"
             >
               <path
-                d="M10.7656 0.875C13.5414 1.18325 15.7344 3.37325 16.0456 6.149"
+                d="M10.7656 .875C13.5414 1.18325 15.7344 3.37325 16.0456 6.149"
                 stroke="white"
                 stroke-width="1.5"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-              />
+              ></path>
               <path
                 d="M10.7656 3.53223C12.0939 3.79023 13.1319 4.82898 13.3906 6.15723"
                 stroke="white"
                 stroke-width="1.5"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-              />
+              ></path>
               <path
                 fill-rule="evenodd"
                 clip-rule="evenodd"
-                d="M8.27364 8.35429C11.2654 11.3453 11.9441 7.88504 13.8489 9.78861C15.6854 11.6246 16.7417 11.9924 14.4141 14.3185C14.1227 14.5528 12.2709 17.3707 5.76335 10.8647C-0.745055 4.358 2.07117 2.50433 2.30546 2.21296C4.63782 -0.119616 5.00012 0.942037 6.83654 2.778C8.7406 4.68237 5.2819 5.36331 8.27364 8.35429Z"
+                d="M8.27364 8.35429C11.2654 11.3453 11.9441 7.88504 13.8489 9.78861C15.6854 11.6246 16.7417 11.9924 14.4141 14.3185C14.1227 14.5528 12.2709 17.3707 5.76335 10.8647C-.745055 4.358 2.07117 2.50433 2.30546 2.21296C4.63782 -.119616 5.00012 .942037 6.83654 2.778C8.7406 4.68237 5.2819 5.36331 8.27364 8.35429Z"
                 stroke="white"
                 stroke-width="1.5"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-              />
+              ></path>
             </svg>
+
             {{ frequencyTitle }}
           </span>
         </p>
-
-        <p>
+        <p v-if="ratingTitle">
           Оценки номера
           <span
-            :class="{
-              'w-badge': true,
-              red: ratingValue < 0,
-              gray: ratingValue === 0,
-              green: ratingValue > 0,
-            }"
+            :class="[
+              'w-badge',
+              ratingValue < 0 ? 'red' : ratingValue > 0 ? 'green' : 'gray',
+            ]"
           >
             <svg
               width="18"
@@ -229,20 +229,24 @@ const onSubmit = async () => {
             </svg>
             {{ ratingTitle }}
           </span>
-          Рекомендуем не брать трубку и не перезванивать.
+          <span v-if="ratingValue < 0"
+            >Рекомендуем не брать трубку и не перезванивать.</span
+          >
         </p>
 
-        <div class="favorites-card-body__text-list-container">
+        <div
+          v-if="comments && comments.length"
+          class="favorites-card-body__text-list-container"
+        >
           <strong
-            >О телефонном номере найдено {{ comments.length }} отзыва в
+            >О телефонном номере найдено {{ comments.length }} отзывов в
             сети.</strong
           >
           <p>
             Наш умный алгоритм их проанализировал и отобрал ключевые комментарии
           </p>
-
           <ul class="favorites-card-body__text-list">
-            <li v-for="comment in comments">
+            <li v-for="comment in comments" :key="comment">
               <svg
                 width="24"
                 height="24"
@@ -258,47 +262,48 @@ const onSubmit = async () => {
                   stroke-width="1.5"
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                />
+                ></path>
                 <path
                   d="M15.9408 12.4131H15.9498"
                   stroke="#FD595E"
                   stroke-width="2"
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                />
+                ></path>
                 <path
                   d="M11.9291 12.4131H11.9381"
                   stroke="#FD595E"
                   stroke-width="2"
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                />
+                ></path>
                 <path
                   d="M7.92128 12.4131H7.93028"
                   stroke="#FD595E"
                   stroke-width="2"
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                />
+                ></path>
               </svg>
               <span>{{ comment }}</span>
             </li>
           </ul>
         </div>
       </div>
-
-      <!--      <div v-else class="favorites-card-body__text">-->
-      <!--        <div class="favorites-card-body__text-list-container">-->
-      <!--          <strong-->
-      <!--          >О телефонном номере найдено 0 отзывов в сети.</strong-->
-      <!--          >-->
-      <!--        </div>-->
-      <!--      </div>-->
     </div>
     <div class="favorites-card-footer">
-      <strong>Добавить информацию и отзыв</strong>
+      <div class="add-comment-header">
+        <strong>Добавить информацию и отзыв</strong>
+        <button class="button-md" @click="showForm = !showForm">
+          {{ showForm ? "Скрыть форму" : "Добавить комментарий" }}
+        </button>
+      </div>
 
-      <form class="favorites-card-footer__add" @submit.prevent="onSubmit">
+      <form
+        v-if="showForm"
+        class="favorites-card-footer__add"
+        @submit.prevent="onSubmit"
+      >
         <div class="input-row">
           <label for="industry">Категория звонка</label>
           <div class="input-wrapper">
@@ -329,17 +334,19 @@ const onSubmit = async () => {
             />
           </div>
         </div>
-        <br />
-        <br />
-        <strong>Добавить комментарий</strong>
-        <p>Поделитесь своим опытом взаимодействия с этим номером</p>
 
-        <div class="input-wrap">
-          <textarea class="form-control" v-model="form.comment" name="comment">
-          </textarea>
+        <div class="comment-section">
+          <strong>Добавить комментарий</strong>
+          <p>Поделитесь своим опытом взаимодействия с этим номером</p>
+          <div class="input-wrap">
+            <textarea name="comment" v-model="form.comment"></textarea>
+          </div>
         </div>
 
-        <div class="favorites-card-footer__add-actions justify-content-end">
+        <div class="favorites-card-footer__add-actions">
+          <button class="button-md" type="button" @click="clearForm">
+            Очистить
+          </button>
           <button class="button-accent" type="submit">Сохранить</button>
         </div>
       </form>

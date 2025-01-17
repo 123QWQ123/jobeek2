@@ -9,3 +9,4 @@ if (!authStore.isEmployer) {
   navigateTo({ name: "profile-employer" });
 }
 </script>
+<template></template>

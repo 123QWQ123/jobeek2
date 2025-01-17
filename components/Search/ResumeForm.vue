@@ -153,14 +153,14 @@ const isLoading = ref(false);
 const { clearVacancies } = vacancyStore;
 const onSubmit = async (e) => {
   isLoading.value = true;
-  clearVacancies();
+  await clearVacancies();
   const cities = city.value ? [city.value] : undefined;
   const queryParams = {
     cities: JSON.stringify(cities),
     salary: JSON.stringify(salary.value),
     name: search.value,
   };
-  router.push({
+  await router.push({
     name: "search-resumes",
     query: queryParams,
   });

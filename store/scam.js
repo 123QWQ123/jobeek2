@@ -22,11 +22,10 @@ export const useScamStore = defineStore("scam", {
   },
   actions: {
     async searchPhone(payload = {}) {
-      const response = await useApi("scam/getPhoneInfo", {
+      return await useApi("scam/getPhoneInfo", {
         method: "get",
         params: payload,
       });
-      return response;
     },
 
     async getHistory(payload = {}) {
