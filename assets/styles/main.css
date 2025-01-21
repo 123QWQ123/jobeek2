@@ -7674,7 +7674,7 @@ ul.nav-tabs a.nav-link:hover:after, ul.nav-tabs a.nav-link.active:after {
     background: #fff;
     border-radius: 12px;
     margin-top: 0;
-    box-shadow: 0 0 20px rgba(28, 27, 98, .04)
+    box-shadow: 0 0 20px rgba(28, 27, 98, .04);
 }
 
 .d-flex-row {
