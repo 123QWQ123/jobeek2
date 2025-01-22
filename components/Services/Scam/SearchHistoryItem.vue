@@ -53,6 +53,7 @@ const toggleFavorite = async (is_favor) => {
 </script>
 
 <template>
+  <div class="no-results">Нет результатов</div>
   <div class="favorites-card favorites-card--min">
     <div class="favorites-card-head">
       <div class="company">
