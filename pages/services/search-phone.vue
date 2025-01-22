@@ -120,6 +120,8 @@ watch(
             :get-phones="getPhones"
             v-else
         />
+        
+        <div class="no-results">Нет результатов</div>
 
         <div class="search-history-sidebar">
           <ServicesScamSubscriptionList/>
