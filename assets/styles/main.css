@@ -2350,12 +2350,14 @@ body .main-section-mob {
     background-image: url("../img/sign-in.svg");
     background-position: right 40px bottom 52px;
     background-repeat: no-repeat;
+    padding: 20px 0;
 }
 
 .sign-up {
     background-image: url("../img/sign-up.svg");
     background-position: right 28px bottom 66px;
     background-repeat: no-repeat;
+    padding: 20px 0;
 }
 
 .enter-page-content {
