@@ -18,20 +18,15 @@ const props = defineProps({
 
 const scamStore = useScamStore();
 await scamStore.getHistory();
-
-const isEmpty = computed(() => scamStore.history_items.length === 0);
 </script>
 
 <template>
   <div class="subscribes-grid-container">
     <h3 class="subscribes-grid-container__title">История поиска</h3>
-    <div class="no-results">Нет результатов</div>
-    <div class="subscribes-grid">
-
-        <Blur v-if="isEmpty"></Blur>
-        <Blur v-if="isEmpty"></Blur>
-        <Blur v-if="isEmpty"></Blur>
-
+    <div v-if="scamStore.history_items.length === 0" class="no-results">
+      Нет результатов
+    </div>
+    <div v-else class="subscribes-grid">
       <ServicesScamSearchHistoryItem
         v-for="item in scamStore.history_items"
         :phone="item"

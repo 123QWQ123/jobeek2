@@ -13,20 +13,12 @@ export const useScamStore = defineStore("scam", {
       subscribed_items: [],
     };
   },
-  persist: {
-    storage: piniaPluginPersistedstate.localStorage(),
-    serializer: {
-      deserialize: (serializer) => parse(decodeURIComponent(serializer)),
-      serialize: (state) => encodeURIComponent(stringify(state)),
-    },
-  },
   actions: {
     async searchPhone(payload = {}) {
-      const response = await useApi("scam/getPhoneInfo", {
+      return await useApi("scam/getPhoneInfo", {
         method: "get",
         params: payload,
       });
-      return response;
     },
 
     async getHistory(payload = {}) {

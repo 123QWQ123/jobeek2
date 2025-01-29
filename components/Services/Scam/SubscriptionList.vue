@@ -1,18 +1,18 @@
 <script setup>
-import {useScamStore} from "~/store/scam";
+import { useScamStore } from "~/store/scam";
 
 const props = defineProps({
   phones: {
     default: [],
-    required: false
+    required: false,
   },
   comments: {
     default: [],
-    required: false
+    required: false,
   },
   categories: {
     default: [],
-    required: false
+    required: false,
   },
 });
 
@@ -26,17 +26,18 @@ const isEmpty = computed(() => scamStore.subscribed_items.length === 0);
     <h2 class="search-history-sidebar__title">Подписки</h2>
     <span v-if="isEmpty">
       <div class="favorites-card favorites-card--min">
-        <p class="no-favorites-txt">Вы еще не подписались ни на один из номеров</p>
+        <p class="no-favorites-txt">
+          Вы еще не подписались ни на один из номеров
+        </p>
       </div>
-      <Blur></Blur>
     </span>
-
   </div>
   <div>
-    <ServicesScamSubscriptionItem v-for="item in scamStore.subscribed_items" :phone="item"/>
+    <ServicesScamSubscriptionItem
+      v-for="item in scamStore.subscribed_items"
+      :phone="item"
+    />
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

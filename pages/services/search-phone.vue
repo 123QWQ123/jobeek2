@@ -1,68 +1,67 @@
 <script setup>
 import IMask from "imask";
 import { useScamStore } from "~/store/scam";
+import { useRoute, navigateTo } from "#app";
 
 const scamStore = useScamStore();
+const route = useRoute();
 
 const errorMessage = ref(null);
 const { searchPhone, getScamOptions } = scamStore;
 
-const route = useRoute();
 const phoneInputElement = ref();
 const phoneMask = ref(null);
 const isLoading = ref(false);
+const phones = ref([]);
+const getPhones = computed(() => phones.value);
 
-onMounted(async () => {
-  const optionsRequest = await getScamOptions();
+// Moved onMounted logic to a separate function for better readability and testability
+async function initializeComponent() {
+  await getScamOptions(); // No need to store the result if it's not used
 
   isLoading.value = true;
-  phoneMask.value = new IMask(phoneInputElement.value, {
-    mask: "+{7}(000)000-00-00",
+  // Initialize IMask after the component is mounted and the input element is available
+  phoneMask.value = IMask(phoneInputElement.value, {
+    mask: "+{7}(000) 000-00-00",
   });
 
-  if (route.query.hasOwnProperty("phone")) {
-    const resData = await searchPhone({ phone: route.query.phone });
-    isLoading.value = false;
-    phoneMask.value.value = route.query.phone;
-    if (resData.status !== "success") {
-      errorMessage.value = resData.message;
-      return;
-    }
-    phones.value = resData.data.data;
+  if (route.query.phone) {
+    await handlePhoneSearch(route.query.phone);
   } else {
     isLoading.value = false;
   }
-});
+}
 
-const phones = ref([]);
-const getPhones = async () => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(phones.value);
-    }, 1000);
-  });
-};
+// Function to handle phone search logic. This is now reusable within the component
+async function handlePhoneSearch(phone) {
+  isLoading.value = true;
+  const resData = await searchPhone({ phone });
+  isLoading.value = false;
+
+  if (resData.status !== "success") {
+    errorMessage.value = resData.message;
+    return;
+  }
+  phones.value = resData.data.data;
+}
+
+onMounted(initializeComponent);
+
 const onPhoneSearch = async () => {
   navigateTo({
     name: "services-search-phone",
+    // Use unmaskedValue directly in navigateTo parameter
     query: { phone: phoneMask.value.unmaskedValue },
   });
 };
-watch(
-  () => route.query.phone,
-  async (newPhone) => {
-    isLoading.value = true;
-    phoneMask.value.value = newPhone;
-    const resData = await searchPhone({ phone: newPhone });
-    isLoading.value = false;
 
-    if (resData.status !== "success") {
-      errorMessage.value = resData.message;
-      return;
-    }
-    phones.value = resData.data.data;
-  },
-);
+// Use watchEffect to combine the onMounted and watch logic since route.query.phone is being accessed in both.
+watchEffect(async () => {
+  // Check if phone query exists and handle accordingly
+  if (route.query.phone) {
+    await handlePhoneSearch(route.query.phone);
+  }
+});
 </script>
 <template>
   <main class="main bg-wrapper scam-phone-page" role="main">
@@ -114,20 +113,18 @@ watch(
 
     <div class="wrapper wrapper-1290">
       <div class="course-grid">
-        <ServicesScamLoadingList v-if="isLoading"/>
+        <ServicesScamLoadingList v-if="isLoading" />
         <ServicesScamAsyncList
-            :phones="phones"
-            :get-phones="getPhones"
-            v-else
+          :phones="phones"
+          :get-phones="getPhones"
+          v-else
         />
-        
-        <div class="no-results">Нет результатов</div>
 
         <div class="search-history-sidebar">
-          <ServicesScamSubscriptionList/>
+          <ServicesScamSubscriptionList />
         </div>
       </div>
-      <ServicesScamHistoryList/>
+      <ServicesScamHistoryList />
     </div>
   </main>
 </template>
