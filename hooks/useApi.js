@@ -58,6 +58,13 @@ const useApi = async (method, options = {}, nuxtInstance = null) => {
 
 const handleResponse = (data) => {
   const result = JSON.parse(data);
+  const { $reset } = useAuthStore();
+
+  if (result.code === 401) {
+    $reset();
+    return result;
+  }
+
   if (result.message) {
     if (result.status !== "success") {
       useNuxtApp().$toast.error(result.message, { autoClose: 10000 });

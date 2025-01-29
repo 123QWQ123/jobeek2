@@ -293,7 +293,7 @@ const onSubmit = async () => {
     </div>
     <div class="favorites-card-footer">
       <div class="add-comment-header">
-        <strong>Добавить информацию и отзыв</strong>
+        <strong>Добавить информацию</strong>
         <button class="button-md" @click="showForm = !showForm">
           {{ showForm ? "Скрыть форму" : "Добавить комментарий" }}
         </button>
