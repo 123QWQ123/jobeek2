@@ -155,11 +155,11 @@ export const useAuthStore = defineStore("auth", {
 
           return true;
         } catch (error) {
-          this.logout();
+          await this.logout();
           return false;
         }
       }
-      this.logout();
+      await this.logout();
       return false;
     },
     async signIn(payload) {

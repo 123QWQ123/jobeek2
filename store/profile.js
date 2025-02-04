@@ -126,9 +126,6 @@ export const useProfileStore = defineStore("profile", {
       return data;
     },
     async getCities(payload = {}, is_new = false) {
-      if (!payload.search || (this.cities && !is_new)) {
-        return this.cities;
-      }
       const response = await useApi("area/cities", {
         method: "get",
         params: payload,
@@ -297,7 +294,7 @@ export const useProfileStore = defineStore("profile", {
     async updateSeeker(payload) {
       const { setUser, setSeeker } = useAuthStore();
       const response = await useApi("seeker/profile", {
-        method: "post",
+        method: "put",
         content_type: "multipart/form-data",
         payload,
       });
