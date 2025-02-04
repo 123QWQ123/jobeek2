@@ -110,11 +110,7 @@ const countryError = ref("");
 const isLoading = ref(false);
 const errorMessage = ref(null);
 const route = useRoute();
-const routeErrorMessage = computed(() =>
-  useCheckJSON(route.query.message)
-    ? JSON.parse(route.query.message).text
-    : route.query.message,
-);
+
 await useAsyncData("getCountries", async () => await getCountries());
 await useAsyncData(
   "getCities",
@@ -208,12 +204,22 @@ const handleSubmit = async () => {
 
   const formData = getFormData(values);
 
-  if (values?.password) {
-    values.password
-      ? formData.append("password_confirmation", values.password)
-      : formData.delete("password");
+  if (values.hasOwnProperty("password")) {
+    if (values.password != null) {
+      formData.append("password_confirmation", values.password);
+    } else {
+      formData.delete("password");
+    }
+  }
+  if (values.hasOwnProperty("photo")) {
+    if (values.photo != null) {
+      formData.append("photo", values.photo);
+    } else {
+      formData.delete("photo");
+    }
   }
 
+  formData.append("_method", "put");
   const resData = await updateSeeker(formData);
   isLoading.value = false;
 

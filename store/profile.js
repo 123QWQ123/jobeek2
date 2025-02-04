@@ -294,7 +294,7 @@ export const useProfileStore = defineStore("profile", {
     async updateSeeker(payload) {
       const { setUser, setSeeker } = useAuthStore();
       const response = await useApi("seeker/profile", {
-        method: "put",
+        method: "post",
         content_type: "multipart/form-data",
         payload,
       });
