@@ -3,7 +3,7 @@
     <PageLoader v-if="isLoading" />
 
     <div class="input-row">
-      <label for="photo">Фото</label>
+      <label>Фото</label>
       <ProfilePhotoInput
         class="photo_radius"
         name="photo"
@@ -103,29 +103,29 @@ const profileStore = useProfileStore();
 const authStore = useAuthStore();
 const { refreshSeeker } = useAuthStore();
 const { getCountries, getCities, getUser, updateSeeker } = profileStore;
-const { getCityNameFromArea2 } = useResumeHooks();
 
-const { countryOptions, cityOptions: cities } = storeToRefs(profileStore);
+const { countryOptions, cityOptions } = storeToRefs(profileStore);
 const cityError = ref("");
 const countryError = ref("");
 const isLoading = ref(false);
 const errorMessage = ref(null);
-const cityOptions = ref(cities.value ?? []);
 const route = useRoute();
-const routeErrorMessage = computed(() =>
-  useCheckJSON(route.query.message)
-    ? JSON.parse(route.query.message).text
-    : route.query.message,
+
+await useAsyncData("getCountries", async () => await getCountries());
+await useAsyncData(
+  "getCities",
+  async () =>
+    await getCities({ city_id: authStore.seeker.city_id ?? undefined }),
 );
 
 const schema = zod.object({
-  first_name: zod.string(),
-  last_name: zod.string(),
-  birth_date: zod.string(),
+  first_name: zod.string().trim().min(3),
+  last_name: zod.string().trim().min(3),
+  birth_date: zod.string().trim().min(1),
   email: zod.string().email(),
-  city_id: zod.number().safe("Выберите город из списка"),
+  city_id: zod.number().min(1).safe("Выберите город из списка"),
   country_id: zod.number().safe("Выберите страну из списка"),
-  phone: zod.string(),
+  phone: zod.string().min(1).trim(),
 });
 
 const getFields = (newObject) => ({
@@ -151,11 +151,6 @@ const { values, errors, validate, setErrors } = useForm({
 const { value: country_id, setValue: setCountryId } = useField("country_id");
 const { value: city_id, setValue: setCityId } = useField("city_id");
 
-useAsyncData("getCountries", getCountries);
-useAsyncData("getCities", () =>
-  getCities({ city_id: values.city_id ?? undefined }),
-);
-
 watch(
   () => country_id.value,
   (new_value) => {
@@ -165,16 +160,6 @@ watch(
       getCities({ country_ids: [new_value] }, true);
       setCityId(null);
     }
-  },
-);
-
-watch(
-  () => cities.value,
-  (newItems) => {
-    cityOptions.value = newItems.map((item) => ({
-      value: item.id,
-      name: getCityNameFromArea2(item),
-    }));
   },
 );
 
@@ -219,12 +204,22 @@ const handleSubmit = async () => {
 
   const formData = getFormData(values);
 
-  if (values?.password) {
-    values.password
-      ? formData.append("password_confirmation", values.password)
-      : formData.delete("password");
+  if (values.hasOwnProperty("password")) {
+    if (values.password != null) {
+      formData.append("password_confirmation", values.password);
+    } else {
+      formData.delete("password");
+    }
+  }
+  if (values.hasOwnProperty("photo")) {
+    if (values.photo != null) {
+      formData.append("photo", values.photo);
+    } else {
+      formData.delete("photo");
+    }
   }
 
+  formData.append("_method", "put");
   const resData = await updateSeeker(formData);
   isLoading.value = false;
 

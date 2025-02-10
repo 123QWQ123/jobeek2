@@ -4,7 +4,7 @@
       <div class="favorites-card-head">
         <div class="company">
           <div class="company-logo">
-            <img src="~/assets/img/logos/megafon.svg" alt="#" />
+            <img src="/img/operators/megafon.svg" alt="#" />
           </div>
           <div class="company-name">
             <a href="#"> Продавец-консультант и рабоник зала</a
@@ -84,5 +84,4 @@
 const isFavoured = ref(true);
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

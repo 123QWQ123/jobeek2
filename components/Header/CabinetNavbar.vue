@@ -38,7 +38,7 @@
         </button>
         <ul @click="isMobileNavigationActive = false">
           <li>
-            <NuxtLink to="/"><span>Главная</span></NuxtLink>
+            <NuxtLink v-if="!isAuthed" to="/"><span>Главная</span></NuxtLink>
           </li>
           <!--          <li v-if="isEmployer">-->
           <!--            <NuxtLink :to="{ name: 'your-responses' }"-->
@@ -103,10 +103,8 @@
 import { useAuthStore } from "~/store/auth";
 
 const auth = useAuthStore();
-const isAuthed = computed(() => auth.isAuthed);
-const isEmployer = computed(() => auth.isEmployer);
+const { isAuthed, isEmployer, user } = storeToRefs(auth);
 
-const user = computed(() => auth.user);
 const isMobileNavigationActive = ref(false);
 
 const toggleMobileNavigation = () => {

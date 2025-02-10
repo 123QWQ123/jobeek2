@@ -74,7 +74,7 @@ const toggleFavorite = async (is_favor) => {
         </div>
       </div>
     </div>
-    <div class="favorites-card-body">
+    <div v-if="comment" class="favorites-card-body">
       <p>
         <svg
           width="24"

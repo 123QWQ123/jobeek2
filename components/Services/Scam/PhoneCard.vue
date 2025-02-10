@@ -58,20 +58,18 @@ const toggleFavorite = async (is_favor) => {
   if (!is_favor) {
     const resData = await addFavorite({ phone_id: phone_id.value });
     if (resData.status === "success") {
-      Swal.fire({
+      await Swal.fire({
         text: "Вы успешно подписались!",
         icon: "success",
       });
-      return;
     }
   } else {
     const resData = await removeFavorite({ phone_id: phone_id.value });
     if (resData.status === "success") {
-      Swal.fire({
+      await Swal.fire({
         text: "Вы успешно отписались!",
         icon: "success",
       });
-      return;
     }
   }
 };
@@ -96,11 +94,10 @@ const onSubmit = async () => {
   data.phone_id = phone_id.value;
   const resData = await saveComment(data);
   if (resData.status === "success") {
-    Swal.fire({
+    await Swal.fire({
       text: "Ваш коммент успешно добавлено!",
       icon: "success",
     });
-    return;
   }
 };
 </script>
@@ -110,7 +107,10 @@ const onSubmit = async () => {
     <div class="favorites-card-head align-start">
       <div class="company">
         <div class="company-logo">
-          <img src="~/assets/img/logos/megafon.svg" alt="" />
+          <img
+            :src="'/img/operators/' + operator?.toLowerCase() + '.svg'"
+            :alt="operator?.toLowerCase()"
+          />
         </div>
         <div class="company-name">
           <a :href="`tel:${phone}`">{{ format_phone }}</a>
