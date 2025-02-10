@@ -174,8 +174,8 @@
 
 .subscribe-min-box p {
     font-weight: 400;
-    font-size: 16px;
-    line-height: 22px;
+    font-size: 14px;
+    line-height: 19px;
     text-align: right;
 
     /* body */
@@ -210,16 +210,16 @@
     color: #0a2540;
 }
 
-.show-on-map {
-    display: flex;
-    align-items: center;
-    font-weight: 600;
-    font-size: 15px;
-    line-height: 20px;
-    color: #5375fd;
-    column-gap: 11px;
-    margin-left: 20px;
-    padding: 0;
+a.show-on-map {
+    display: flex !important;
+    align-items: center !important;
+    font-weight: 600 !important;
+    font-size: 15px !important;
+    line-height: 20px !important;
+    color: #5375fd !important;
+    column-gap: 11px !important;
+    margin-left: 20px !important;
+    padding: 0 !important;
 }
 
 .company-info p + p {

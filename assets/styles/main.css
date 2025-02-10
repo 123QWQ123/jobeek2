@@ -299,9 +299,10 @@ img {
     line-height: 22px;
     text-align: center;
     color: #FFFFFF;
+    -webkit-appearance: auto;
 }
 
-.scam-phone-page .button-accent {
+.scam-phone-page .search-row .button-accent {
     width: auto;
     border-radius: 0;
     -webkit-border-top-right-radius: 10px;
