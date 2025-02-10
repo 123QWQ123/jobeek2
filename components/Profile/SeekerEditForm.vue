@@ -3,7 +3,7 @@
     <PageLoader v-if="isLoading" />
 
     <div class="input-row">
-      <label for="photo">Фото</label>
+      <label>Фото</label>
       <ProfilePhotoInput
         class="photo_radius"
         name="photo"

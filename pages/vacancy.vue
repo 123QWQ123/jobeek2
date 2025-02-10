@@ -264,7 +264,7 @@
           <aside class="sidebar">
             <div class="company-col sticky-item">
               <div class="company-logo">
-                <img src="~/assets/img/logos/megafon.svg" alt="#" />
+                <img src="/img/operators/megafon.svg" alt="#" />
               </div>
               <h3 class="title">Мегафон</h3>
               <p>Клиент SuperJob с 2003 года</p>
@@ -315,7 +315,7 @@
                 <div class="favorites-card-head">
                   <div class="company">
                     <div class="company-logo">
-                      <img src="~/assets/img/logos/megafon.svg" alt="#" />
+                      <img src="/img/operators/megafon.svg" alt="#" />
                     </div>
                     <div class="company-name">
                       <a href="#"> Продавец-консультант и рабоник зала</a
@@ -505,7 +505,7 @@
                 <div class="favorites-card-head">
                   <div class="company">
                     <div class="company-logo">
-                      <img src="~/assets/img/logos/tele2.svg" alt="#" />
+                      <img src="/img/operators/tele2.svg" alt="#" />
                     </div>
                     <div class="company-name">
                       <a href="#"> Продавец-консультант и рабоник зала</a

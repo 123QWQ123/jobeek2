@@ -222,9 +222,6 @@ export const useProfileStore = defineStore("profile", {
       return response.data.data ?? [];
     },
     async getCountryCities(payload = {}) {
-      if (!payload.search) {
-        return [];
-      }
       const response = await useApi("area/cities", {
         method: "get",
         params: payload,

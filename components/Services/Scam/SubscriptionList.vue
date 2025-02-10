@@ -24,16 +24,11 @@ const isEmpty = computed(() => scamStore.subscribed_items.length === 0);
 <template>
   <div>
     <h2 class="search-history-sidebar__title">Подписки</h2>
-    <span v-if="isEmpty">
-      <div class="favorites-card favorites-card--min">
-        <p class="no-favorites-txt">
-          Вы еще не подписались ни на один из номеров
-        </p>
-      </div>
-    </span>
   </div>
   <div>
+    <div v-if="isEmpty" class="no-results">Нет результатов</div>
     <ServicesScamSubscriptionItem
+      v-else
       v-for="item in scamStore.subscribed_items"
       :phone="item"
     />
