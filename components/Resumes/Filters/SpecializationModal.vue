@@ -109,6 +109,7 @@ const props = defineProps({
 });
 
 const { items: professional_roles, title } = props;
+
 const emit = defineEmits({
   close: {
     required: true,
@@ -117,13 +118,16 @@ const emit = defineEmits({
     required: false,
   },
 });
+
 const { updateQueryParam } = useQueryParams();
+
 const selected_ids = ref(props.selected_ids);
-const options = ref(props.items ?? []);
+
 const selectedSpecs = ref(selected_ids.value ?? []);
 const items = ref([]);
+
 const isLoading = ref(false);
-const { uniq } = useFilter();
+
 const apply = () => {
   const ids = [...selectedSpecs.value].filter((item) => item);
   updateQueryParam(

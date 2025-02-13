@@ -83,25 +83,20 @@ async function onSubmit() {
     } catch (error) {
       state.error = error.message;
     }
-    isLoading.value = false;
     if (response.status !== "success") {
       return;
     }
     await setFcmToken();
 
-    if (auth.isEmployer) {
-      await refreshEmployer();
-    } else {
-      await refreshSeeker();
-    }
     const route_name = route.query.redirect;
-
+    isLoading.value = false;
     if (auth.isEmployer && auth.employer) {
       if (auth.employer.is_completed) {
         if (route_name) {
-          await navigateTo({ name: route_name, redirectCode: 301 });
+          await router.push(route_name);
         } else {
-          await navigateTo({ name: "my-vacancies", redirectCode: 301 });
+          await router.push("my-vacancies");
+          // await navigateTo({ name: "my-vacancies", redirectCode: 301 });
         }
       }
       return;
@@ -110,9 +105,11 @@ async function onSubmit() {
     if (!auth.isEmployer && auth.seeker) {
       if (auth.seeker.is_completed) {
         if (route_name) {
-          await navigateTo({ name: route_name, redirectCode: 301 });
+          await router.push(route_name);
+          // await navigateTo({ name: route_name, redirectCode: 301 });
         } else {
-          await navigateTo({ name: "my-resumes", redirectCode: 301 });
+          await router.push("my-resumes");
+          // await navigateTo({ name: "my-resumes", redirectCode: 301 });
         }
       }
       return;

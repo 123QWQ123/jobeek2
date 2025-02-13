@@ -15,22 +15,22 @@
       <h3>К сожалению, больше ничего не нашли.</h3>
     </div>
 
-    <div class="footer mt-3" v-if="my_favorite_resumes.length">
-      <button
-        class="btn btn-primary"
-        @click="prevPage"
-        :disabled="!hasPreviousPage"
-      >
-        Prev
-      </button>
-      <button
-        class="btn btn-primary ms-2"
-        @click="nextPage"
-        :disabled="!hasNextPage"
-      >
-        Next
-      </button>
-    </div>
+    <!--    <div class="footer mt-3" v-if="my_favorite_resumes.length">-->
+    <!--      <button-->
+    <!--        class="btn btn-primary"-->
+    <!--        @click="prevPage"-->
+    <!--        :disabled="!hasPreviousPage"-->
+    <!--      >-->
+    <!--        Prev-->
+    <!--      </button>-->
+    <!--      <button-->
+    <!--        class="btn btn-primary ms-2"-->
+    <!--        @click="nextPage"-->
+    <!--        :disabled="!hasNextPage"-->
+    <!--      >-->
+    <!--        Next-->
+    <!--      </button>-->
+    <!--    </div>-->
   </div>
 </template>
 

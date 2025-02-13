@@ -8,9 +8,10 @@
     <div class="filter-box-body">
       <div class="check-block-list" :class="{ 'all-visible': isMore }">
         <VacanciesCheckbox
-          class="check-block"
           v-for="item in filterItems"
-          :checked="item.is_checked"
+          :key="item.id"
+          class="check-block"
+          :checked="isChecked(item.id)"
           @change="toggle(item.id)"
           :name="`work_type_${item.id}`"
           :label="item.name"
@@ -22,61 +23,44 @@
 
 <script setup>
 import { useDictionaryStore } from "~/store/dictionary";
-import { useVacancyStore } from "~/store/vacancy";
 import useQueryParams from "~/composables/useQueryParams.js";
+import { computed, ref, watch } from "vue";
 
-const emit = defineEmits(["onFormChange"]);
 const dictionaryStore = useDictionaryStore();
+
 const filterClass = ref(true);
 const isMore = ref(true);
-const filterItems = ref([]);
 
 const { getQueryParam, updateQueryParam } = useQueryParams();
-const work_types = ref(getQueryParam("work_types") ?? []);
-watch(
-  () => getQueryParam("work_types") ?? [],
-  (newValues) => {
-    work_types.value = newValues;
-  },
-);
+const workTypes = ref(getQueryParam("work_types") ?? []);
+
+const isChecked = computed(() => (id) => workTypes.value.includes(id));
 
 const toggle = (id) => {
-  let selected_ids = [...work_types.value];
-
-  if (!selected_ids.includes(id)) {
-    selected_ids.push(id);
+  const index = workTypes.value.indexOf(id);
+  if (index > -1) {
+    workTypes.value.splice(index, 1);
   } else {
-    selected_ids = selected_ids.filter((item) => item !== id);
+    workTypes.value.push(id);
   }
-  selected_ids = selected_ids.length === 0 ? undefined : selected_ids;
-  updateQueryParam("work_types", selected_ids);
+  updateQueryParam(
+    "work_types",
+    workTypes.value.length ? workTypes.value : undefined,
+  );
 };
 
 const { sort } = useSort();
 
-const prepare = (items) => {
-  let selected_ids = [...work_types.value];
-
-  const sortedItems = sort(items, { by: "alpha" });
-
-  if (sortedItems) {
-    items = sortedItems.map((item) => ({
-      ...item,
-      is_checked: selected_ids.includes(item.id),
-    }));
-  }
-  filterItems.value = items;
-};
-
-watch(() => dictionaryStore.work_types, prepare);
-const { getWorkTypes } = dictionaryStore;
-onMounted(async () => {
-  if (dictionaryStore.work_types.length === 0) {
-    await getWorkTypes();
-  } else {
-    prepare(null, dictionaryStore.work_types);
-  }
+const preparedItems = computed(() => {
+  const sortedItems = sort(dictionaryStore.work_types, { by: "alpha" }) || [];
+  return sortedItems;
 });
+
+const filterItems = computed(() => preparedItems.value);
+
+const { data: workTypesData } = useAsyncData("getWorkTypes", () =>
+  dictionaryStore.getWorkTypes(),
+);
 </script>
 
 <style scoped>

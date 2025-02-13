@@ -8,9 +8,10 @@
     <div class="filter-box-body">
       <div class="check-block-list">
         <VacanciesCheckbox
-          class="check-block"
           v-for="item in filterItems"
-          :checked="item.is_checked"
+          :key="item.id"
+          class="check-block"
+          :checked="isChecked(item.id)"
           :name="`experience_${item.id}`"
           @change="toggle(item.id)"
           :label="item.name"
@@ -22,59 +23,41 @@
 
 <script setup>
 import { useDictionaryStore } from "~/store/dictionary";
-import { useVacancyStore } from "~/store/vacancy";
 import useQueryParams from "~/composables/useQueryParams.js";
+import { computed, ref, watch } from "vue";
 
-const emit = defineEmits(["onFormChange"]);
 const dictionaryStore = useDictionaryStore();
 const filterClass = ref(true);
-const filterItems = ref([]);
+
 const { getQueryParam, updateQueryParam } = useQueryParams();
 const experiences = ref(getQueryParam("experiences") ?? []);
-watch(
-  () => getQueryParam("experiences") ?? [],
-  (newValues) => {
-    experiences.value = newValues;
-  },
-);
+
+const isChecked = computed(() => (id) => experiences.value.includes(id));
 
 const toggle = (id) => {
-  let selected_ids = [...experiences.value];
-
-  if (!selected_ids.includes(id)) {
-    selected_ids.push(id);
+  const index = experiences.value.indexOf(id);
+  if (index > -1) {
+    experiences.value.splice(index, 1);
   } else {
-    selected_ids = selected_ids.filter((item) => item !== id);
+    experiences.value.push(id);
   }
-  selected_ids = selected_ids.length === 0 ? undefined : selected_ids;
-  updateQueryParam("experiences", selected_ids);
+  updateQueryParam(
+    "experiences",
+    experiences.value.length ? experiences.value : undefined,
+  );
 };
 
 const { sort } = useSort();
 
-const prepare = (items) => {
-  let selected_ids = [...experiences.value];
-
-  const sortedItems = sort(items, { by: "alpha" });
-
-  if (sortedItems) {
-    items = sortedItems.map((item) => ({
-      ...item,
-      is_checked: selected_ids.includes(item.id),
-    }));
-  }
-  filterItems.value = items;
-};
-
-watch(() => dictionaryStore.experiences, prepare);
-const { getExperiences } = dictionaryStore;
-onMounted(async () => {
-  if (dictionaryStore.experiences.length === 0) {
-    await getExperiences();
-  } else {
-    prepare(null, dictionaryStore.experiences);
-  }
+const preparedItems = computed(() => {
+  return sort(dictionaryStore.experiences, { by: "alpha" }) || [];
 });
+
+const filterItems = computed(() => preparedItems.value);
+
+const { data: experiencesData } = useAsyncData("getExperiences", () =>
+  dictionaryStore.getExperiences(),
+);
 </script>
 
 <style scoped>

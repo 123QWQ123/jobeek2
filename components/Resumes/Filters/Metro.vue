@@ -148,7 +148,7 @@ const firstXSelectedItems = computed(() => {
 const toggleMore = () => (isMore.value = !isMore.value);
 const onSearch = (e) => {
   const search = e.target.value;
-  let items = [...groupedFilterItems.value];
+  let items = [];
   if (search !== "") {
     items = vacancyStore.metros_formatted.filter((item, key) => {
       return item.name.toLowerCase().includes(search.toLowerCase());
@@ -162,6 +162,7 @@ const onSearch = (e) => {
   prepare(items);
 };
 
+const { values } = useVacancySearchParams();
 const toggleRegion = (id) => {
   let selected_ids = [...metros.value];
 
@@ -225,8 +226,8 @@ const prepare = (items) => {
 
 const { getMetros } = vacancyStore;
 watch(() => vacancyStore.metros_formatted, prepare);
-onMounted(async () => {
-  await getMetros({ city_ids: cities.value });
+useAsyncData("metros", async () => {
+  return await getMetros({ region_ids: cities.value });
 });
 </script>
 
