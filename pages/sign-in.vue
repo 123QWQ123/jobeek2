@@ -95,8 +95,7 @@ async function onSubmit() {
         if (route_name) {
           await router.push(route_name);
         } else {
-          await router.push("my-vacancies");
-          // await navigateTo({ name: "my-vacancies", redirectCode: 301 });
+          await navigateTo({ name: "my-vacancies", redirectCode: 301 });
         }
       }
       return;
@@ -106,10 +105,9 @@ async function onSubmit() {
       if (auth.seeker.is_completed) {
         if (route_name) {
           await router.push(route_name);
-          // await navigateTo({ name: route_name, redirectCode: 301 });
+          await navigateTo({ name: route_name, redirectCode: 301 });
         } else {
-          await router.push("my-resumes");
-          // await navigateTo({ name: "my-resumes", redirectCode: 301 });
+          await navigateTo({ name: "my-resumes", redirectCode: 301 });
         }
       }
       return;
