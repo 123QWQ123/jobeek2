@@ -10,23 +10,23 @@
       ></VacanciesItem>
     </ul>
 
-    <div class="footer mt-3" v-if="items.length">
-      <button
-        class="btn btn-primary"
-        @click="changePage(-1)"
-        :disabled="current_page <= 1"
-      >
-        Prev
-      </button>
-      <button
-        class="btn btn-primary ms-2"
-        @click="changePage(1)"
-        :disabled="!isMore"
-      >
-        Next
-      </button>
-    </div>
-    <div class="notification no-ic-bg" v-else>
+    <!--    <div class="footer mt-3" v-if="items.length">-->
+    <!--      <button-->
+    <!--        class="btn btn-primary"-->
+    <!--        @click="changePage(-1)"-->
+    <!--        :disabled="current_page <= 1"-->
+    <!--      >-->
+    <!--        Prev-->
+    <!--      </button>-->
+    <!--      <button-->
+    <!--        class="btn btn-primary ms-2"-->
+    <!--        @click="changePage(1)"-->
+    <!--        :disabled="!isMore"-->
+    <!--      >-->
+    <!--        Next-->
+    <!--      </button>-->
+    <!--    </div>-->
+    <div class="notification no-ic-bg" v-if="!items.length">
       <div class="notification-text">
         <strong class="title">У вас пока нет вакансий в избранном</strong>
         <p>Сохраняйте вакансии, нажимая на звёздочку</p>

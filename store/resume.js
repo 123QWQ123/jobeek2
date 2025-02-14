@@ -50,6 +50,12 @@ export const useResumeStore = defineStore("resume", {
     top_30: (state) => {
       return state.resumes.slice(0, 30);
     },
+    cities_formatted: (state) => {
+      return state.cities.map((item) => ({
+        name: item.name,
+        value: item.id,
+      }));
+    },
   },
   actions: {
     async getAreas(payload) {
@@ -285,17 +291,13 @@ export const useResumeStore = defineStore("resume", {
       return data;
     },
     async getCities(payload = {}) {
-      if (!payload.search) {
-        return [];
-      }
       const { data } = await useApi("area/cities", {
         method: "get",
-        params: payload,
       });
-      if (data) {
-        this.cities = data.data.cities;
+      if (data && "data" in data) {
+        this.cities = data.data ?? [];
       }
-      return data;
+      return this.cities;
     },
     async getSpecializations(payload) {
       const { data } = await useApi("specializations", {

@@ -1,7 +1,7 @@
 <template>
   <div class="filter-box" :class="{ open: filterClass }">
     <div class="filter-box-handle" @click="filterClass = !filterClass">
-      <strong>Специализации({{ industries?.length }})</strong>
+      <strong>Отрасль компании({{ industries?.length }})</strong>
       <img src="~/assets/img/svg/Arrow-Down.svg" alt="#" />
     </div>
     <div class="filter-box-body">
@@ -46,19 +46,20 @@ const emit = defineEmits(["onFormChange"]);
 const props = defineProps(["name", "isOpen"]);
 
 const vacancyStore = useVacancyStore();
+const { industries_formatted_for_filter } = storeToRefs(vacancyStore);
 const { updateQueryParam, getQueryParam } = useQueryParams();
+const items = ref(industries_formatted_for_filter);
 
 const { getIndustries } = vacancyStore;
 const { industries } = storeToRefs(vacancyStore);
-let items = vacancyStore.industries_formatted_for_filter;
 
 const industry_ids = ref(getQueryParam("industries") ?? []);
 watch(
-  () => getQueryParam("industries") ?? [],
+  () => getQueryParam("industries"),
   (newValues, oldValues) => {
     if (JSON.stringify(newValues) !== JSON.stringify(oldValues)) {
       industry_ids.value = newValues;
-      items = getCheckedItems(items, newValues);
+      items.value = getCheckedItems(items, newValues);
 
       prepare(items);
     }
@@ -74,7 +75,7 @@ const toggleSelect = (event, id) => {
   const dynItems = [...firstItems.value].map((item) => {
     if (item.id === id) {
       item.is_checked = checked;
-      if (checked.value && !selected_ids.includes(id)) {
+      if (checked && !selected_ids.includes(id)) {
         selected_ids.push(item.id);
         selected_ids.push(...item.items.map((sub) => sub.id));
       } else if (!checked) {
@@ -119,7 +120,7 @@ const prepare = (newItems, oldItems) => {
 
 const getCheckedItems = (items, ids_from_url) => {
   return items.map((item) => {
-    if (ids_from_url.includes(item.id)) {
+    if (ids_from_url && ids_from_url.includes(item.id)) {
       item.checked = true;
       item.items = item.items.map((sub_item) => {
         sub_item.checked = true;
@@ -128,7 +129,7 @@ const getCheckedItems = (items, ids_from_url) => {
     } else {
       if (item.items.length > 0) {
         item.items = item.items.map((sub_item) => {
-          if (ids_from_url.includes(sub_item.id)) {
+          if (ids_from_url && ids_from_url.includes(sub_item.id)) {
             sub_item.checked = true;
           }
           return sub_item;
@@ -140,11 +141,10 @@ const getCheckedItems = (items, ids_from_url) => {
 };
 
 const filterClass = ref(true);
-await getIndustries();
-onMounted(() => {
-  if (vacancyStore.industries_formatted_for_filter.length > 0) {
-    prepare(vacancyStore.industries_formatted_for_filter);
-  }
+useAsyncData("getIndustries", async () => {
+  const res = await getIndustries();
+  prepare(industries_formatted_for_filter);
+  return res;
 });
 </script>
 

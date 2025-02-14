@@ -21,7 +21,7 @@
           </svg>
           <div
             class="checkbox ms-1"
-            :title="item.checked + '-' + isHalfChecked"
+            :title="props.item.checked + '-' + isHalfChecked"
           >
             <input
               type="checkbox"
@@ -35,8 +35,9 @@
               <img src="~/assets/img/svg/dash.svg" alt="#" v-else />
             </div>
           </div>
-          <label :for="`industry_${item.id}`">{{ item.title }}</label
-          >
+          <label :for="`industry_${props.item.id}`">{{
+            props.item.title
+          }}</label>
         </div>
       </div>
     </div>

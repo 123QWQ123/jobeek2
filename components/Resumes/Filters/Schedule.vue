@@ -8,9 +8,10 @@
     <div class="filter-box-body">
       <div class="check-block-list" :class="{ 'all-visible': isMore }">
         <VacanciesCheckbox
-          class="check-block"
           v-for="item in filterItems"
-          :checked="item.is_checked"
+          :key="item.id"
+          class="check-block"
+          :checked="isChecked(item.id)"
           @change="toggle(item.id)"
           :name="`schedule_${item.id}`"
           :label="item.name"
@@ -22,61 +23,43 @@
 
 <script setup>
 import { useDictionaryStore } from "~/store/dictionary";
-import { useVacancyStore } from "~/store/vacancy";
 import useQueryParams from "~/composables/useQueryParams.js";
+import { computed, ref } from "vue";
 
-const emit = defineEmits(["onFormChange"]);
 const dictionaryStore = useDictionaryStore();
 const filterClass = ref(true);
 const isMore = ref(true);
-const filterItems = ref([]);
 
 const { getQueryParam, updateQueryParam } = useQueryParams();
 const schedules = ref(getQueryParam("schedules") ?? []);
-watch(
-  () => getQueryParam("schedules") ?? [],
-  (newValues) => {
-    schedules.value = newValues;
-  },
-);
+
+const isChecked = computed(() => (id) => schedules.value.includes(id));
 
 const toggle = (id) => {
-  let selected_ids = [...schedules.value];
-
-  if (!selected_ids.includes(id)) {
-    selected_ids.push(id);
+  const index = schedules.value.indexOf(id);
+  if (index > -1) {
+    schedules.value.splice(index, 1);
   } else {
-    selected_ids = selected_ids.filter((item) => item !== id);
+    schedules.value.push(id);
   }
-  selected_ids = selected_ids.length === 0 ? undefined : selected_ids;
-  updateQueryParam("schedules", selected_ids);
+  updateQueryParam(
+    "schedules",
+    schedules.value.length ? schedules.value : undefined,
+  );
 };
 
 const { sort } = useSort();
 
-const prepare = (items) => {
-  let selected_ids = [...schedules.value];
-
-  const sortedItems = sort(items, { by: "alpha" });
-
-  if (sortedItems) {
-    items = sortedItems.map((item) => ({
-      ...item,
-      is_checked: selected_ids.includes(item.id),
-    }));
-  }
-  filterItems.value = items;
-};
-
-watch(() => dictionaryStore.schedules, prepare);
-const { getSchedules } = dictionaryStore;
-onMounted(async () => {
-  if (dictionaryStore.schedules.length === 0) {
-    await getSchedules();
-  } else {
-    prepare(dictionaryStore.schedules);
-  }
+const preparedItems = computed(() => {
+  const sortedItems = sort(dictionaryStore.schedules, { by: "alpha" }) || [];
+  return sortedItems;
 });
+
+const filterItems = computed(() => preparedItems.value);
+
+const { data: schedulesData } = useAsyncData("getSchedules", () =>
+  dictionaryStore.getSchedules(),
+);
 </script>
 
 <style scoped>

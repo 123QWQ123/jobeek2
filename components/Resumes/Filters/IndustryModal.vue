@@ -103,12 +103,13 @@ const emit = defineEmits({
 });
 
 const { updateQueryParam, getQueryParam } = useQueryParams();
-
+// получить данные с урл стейта
 const industry_ids = ref(getQueryParam("industries") ?? []);
+// временное выбранное + данные из урл стейта
 const selectedSpecs = ref(industry_ids.value ?? []);
+// данные после обработки
 const items = ref([]);
 const isLoading = ref(false);
-
 const apply = () => {
   const ids = [...selectedSpecs.value].filter((item) => item);
   updateQueryParam("industries", JSON.stringify(Array.from(new Set(ids))));
@@ -149,8 +150,8 @@ const onSearch = (event) => {
     })
     .filter((item) => item.items.length > 0);
 };
-const prepare = (newValues, is_first = false) => {
-  let dynamicItems = [];
+const prepare = (newValues) => {
+  let dynamicItems = [...newValues];
   if (isSearching.value) {
     dynamicItems = [
       ...newValues.map((item) => {
@@ -197,7 +198,7 @@ watch(
 );
 
 onMounted(() => {
-  prepare(props.items, true);
+  prepare(props.items);
 });
 
 const onClickOutside = (e) => {

@@ -59,7 +59,7 @@ const regions = ref(getQueryParam("regions") ?? []);
 const search = ref("");
 const filterClass = ref(true);
 
-const { sort } = useSort();
+const { sortBubbleBySearch } = useSort();
 
 const selectedItems = computed(() =>
   vacancyStore.cities_formatted.filter((item) =>
@@ -73,24 +73,31 @@ const filteredItems = computed(() => {
     (item) => !cities.value.includes(item.value),
   );
 
-  const searchFiltered = availableItems
-    .filter((city) => city.name.toLowerCase().includes(query))
-    .sort((a, b) => a.name.localeCompare(b.name));
+  // Filtering items based on search query
+  let searchFiltered = availableItems;
+  if (query) {
+    searchFiltered = availableItems.filter((city) =>
+      city.name.toLowerCase().includes(query),
+    );
 
-  let groupedItems = [];
-  searchFiltered.forEach((item, index) => {
-    const firstLetter = item.name[0];
-    const prevItem = searchFiltered[index - 1];
-    if (index === 0 || firstLetter !== prevItem.name[0]) {
-      groupedItems.push({
-        value: firstLetter,
-        name: firstLetter,
-        is_header: true,
-      });
-    }
-    groupedItems.push(item);
-  });
-  return groupedItems;
+    return sortBubbleBySearch(searchFiltered, query);
+  } else {
+    // Grouping items by first letter
+    let groupedItems = [];
+    availableItems.forEach((item, index) => {
+      const firstLetter = item.name[0];
+      const prevItem = searchFiltered[index - 1];
+      if (index === 0 || firstLetter !== prevItem.name[0]) {
+        groupedItems.push({
+          value: firstLetter,
+          name: firstLetter,
+          is_header: true,
+        });
+      }
+      groupedItems.push(item);
+    });
+    return groupedItems;
+  }
 });
 
 const { list, containerProps, wrapperProps } = useVirtualList(filteredItems, {

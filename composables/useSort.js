@@ -43,6 +43,22 @@ export default function useSort(defaultOptions = null) {
     });
     return groups;
   };
+  const sortBubbleBySearch = (items, queryString) => {
+    return items.sort((a, b) => {
+      const aName = a.name.toLowerCase();
+      const bName = b.name.toLowerCase();
+      const sName = queryString.toLowerCase();
 
-  return { items, sort, groupByFirstChar };
+      const aStartsWith = aName.startsWith(sName);
+      const bStartsWith = bName.startsWith(sName);
+
+      if (aStartsWith && !bStartsWith) return -1;
+      if (!aStartsWith && bStartsWith) return 1;
+
+      // Если оба или ни один не начинаются с sName, сортируем по алфавиту
+      return aName.localeCompare(bName);
+    });
+  };
+
+  return { items, sort, groupByFirstChar, sortBubbleBySearch };
 }

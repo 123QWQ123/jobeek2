@@ -31,8 +31,8 @@
 import useSort from "~/composables/useSort";
 
 const emit = defineEmits(["onFormChange"]);
-import { useVacancyStore } from "../../../store/vacancy";
-import { useVacancyForm } from "../../../composables/useVacancyForm";
+import { useVacancyStore } from "~/store/vacancy.js";
+import { useVacancyForm } from "~/composables/useVacancyForm.js";
 
 const vacancyStore = useVacancyStore();
 
