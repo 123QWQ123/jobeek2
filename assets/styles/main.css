@@ -313,9 +313,15 @@ img {
     border-bottom-right-radius: 10px;
 }
 
+.scam-phone-page .search-button {
+    z-index: 1;
+}
+
 .scam-phone-page .search-phone-input {
     border: 1px solid #cbcbcb;
     border-radius: 10px 0 0 10px;
+    z-index: 2;
+    background: transparent;
 }
 
 .button-accent--ts-bigger {
@@ -5229,6 +5235,10 @@ body .main-section-mob {
     margin-bottom: 4px;
 }
 
+.favorites-card .company a.show-on-map {
+    margin-bottom: 0;
+}
+
 .favorites-card .company span {
     color: #78757E;
 }
@@ -5304,6 +5314,10 @@ body .main-section-mob {
 
     .favorites-card-footer .button-md {
         font-size: 16px;
+    }
+    
+    a.show-on-map {
+        margin-left: 0 !important;
     }
 }
 
