@@ -271,7 +271,7 @@ a.show-on-map {
     font-size: 16px;
     line-height: 22px;
     color: #78757e;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     column-gap: 12px;
     flex-wrap: wrap;
@@ -279,6 +279,14 @@ a.show-on-map {
 
 .favorites-card-body__text p + p {
     margin-top: 8px;
+}
+
+.comment-section.mt-20 {
+    padding-top: 25px;
+}
+
+.current {
+    margin-top: 0 !important;
 }
 
 .w-badge {
