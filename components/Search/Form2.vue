@@ -1,9 +1,9 @@
 <template>
   <div v-if="props.with_wrapper">
     <div class="wrapper">
-      <form class="search-form" role="form" autocomplete="off">
+      <form class="search-form form-mobile-search" role="form" autocomplete="off">
         <div class="search-row">
-          <div class="input-wrap has-icon has-label">
+          <div class="input-wrap has-icon has-label form-mobile-search__one">
             <img class="icon" src="~/assets/img/search.png" alt="#" />
             <label for="name">Поиск </label>
             <input
@@ -14,11 +14,11 @@
               v-model="search"
             />
           </div>
-          <div class="input-wrap has-label">
+          <div class="input-wrap has-label form-mobile-search__two">
             <label for="salary">Желаемая зарплата</label>
             <HeaderSalarySelectInForm v-model="salary" />
           </div>
-          <div class="input-wrap has-label">
+          <div class="input-wrap has-label form-mobile-search__three">
             <label for="city">Город</label>
             <SelectWithSearch
               :options="cityOptions"
