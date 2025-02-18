@@ -20,7 +20,7 @@
       :to="{ name: 'create-resume' }"
       >Создать резюме
     </NuxtLink>
-    <div class="col d-flex justify-content-between mt-4">
+    <div class="col d-flex justify-content-between mt-4 margin-bottom-mobile">
       <h1 class="lk-page-title mb-4">Ваши резюме ({{ total }})</h1>
     </div>
 

@@ -7709,6 +7709,17 @@ ul.nav-tabs a.nav-link:hover:after, ul.nav-tabs a.nav-link.active:after {
 	    border-radius: 10px 10px 0 0;
 	    border-bottom: 0;
 	}
+	.form-mobile-search__one {
+	    border-right: 1px solid #cbcbcb;
+	}
+	.form-mobile-search__two {
+	    border-left: 1px solid #cbcbcb;
+	    border-right: 1px solid #cbcbcb;
+	    border-bottom: 0;
+	}
+	.form-mobile-search__three {
+	    border-left: 1px solid #cbcbcb;
+	}
 	.search-row .input-wrap:nth-child(3) {
 	    border-right: 1px solid #cbcbcb !important;
 	}
@@ -7718,6 +7729,12 @@ ul.nav-tabs a.nav-link:hover:after, ul.nav-tabs a.nav-link.active:after {
 }
 
 @media (max-width: 768px) {
+	.lk-page-title.margin-top-mobile {
+		margin-top: 0 !important;
+	}
+	.margin-bottom-mobile {
+		margin-bottom: 20px !important;
+	}
 	.no-results {
         padding: 12.5px;
         font-size: 16px;
@@ -7948,7 +7965,7 @@ ul.nav-tabs a.nav-link:hover:after, ul.nav-tabs a.nav-link.active:after {
         margin-bottom: 10px;
     }
     .sticky-item {
-        margin-bottom: 0px;
+        margin-bottom: 20px;
     }
     .profile-button {
         max-height: 34px;
