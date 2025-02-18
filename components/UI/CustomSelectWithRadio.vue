@@ -90,23 +90,27 @@ function close() {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px;
-  border: 1px solid #ccc;
+  padding: 0 16px;
+  border: 1px solid #ececec;
   cursor: pointer;
   min-width: 180px;
   border-radius: 8px;
-  height: 43px;
+  height: 46px;
+  font-size: 14px;
   font-family: "Open Sans", sans-serif;
 }
 
 .radio_arrow {
-  margin-left: 10px;
-  border: solid black;
-  border-width: 0 2px 2px 0;
+  border: solid #78757e;
+  border-width: 0 1.5px 1.5px 0;
   display: inline-block;
-  padding: 3px;
+  margin-left: 10px;
+  padding: 4.5px;
   transform: rotate(45deg);
   -webkit-transform: rotate(45deg);
+  position: relative;
+  top: -1px;
+  right: 3px;
 }
 
 .custom-select.open .custom-options {
@@ -119,10 +123,15 @@ function close() {
   top: 100%;
   left: 0;
   right: 0;
-  border: 1px solid #ccc;
+  border: 0;
   border-top: none;
   background: #fff;
   z-index: 2;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(28, 27, 98, .1);
+  padding: 8px 4px;
+  margin-top: 3px;
+  cursor: pointer;
 }
 
 .custom-option {
@@ -139,6 +148,7 @@ function close() {
 .radio_arrow.open {
   transform: rotate(-135deg);
   -webkit-transform: rotate(-135deg);
+  top: 3px;
 }
 @media (max-width: 768px) {
 	.custom-select__trigger {

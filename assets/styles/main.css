@@ -354,7 +354,7 @@ img {
 
 .n-select .list li, .s-select .list li, .d-select .list li {
     font-weight: normal;
-    font-size: 16px;
+    font-size: 14px;
     line-height: 22px;
     color: #0A2540;
     padding: 12px 13px;
@@ -889,8 +889,8 @@ header.main-header .checker-box .v.active:after {
     border: none;
     padding: 0 16px;
     font-weight: 400 !important;
-    font-size: 16px;
-    line-height: 22px;
+    font-size: 14px;
+    line-height: 19px;
     color: #78757E;
     display: -webkit-box;
     display: -ms-flexbox;
