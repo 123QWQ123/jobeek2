@@ -1,6 +1,8 @@
 <template>
   <div class="subs-list-container">
-    <div class="no-results">Нет результатов</div>
+    <div v-if="!notifications || !notifications.length" class="no-results">
+      Нет результатов
+    </div>
     <ul class="subs-list">
       <YourSubscriptionsListItem
         v-for="notification in notifications || []"

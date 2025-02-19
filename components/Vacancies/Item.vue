@@ -10,7 +10,7 @@
             <NuxtLink
               :to="{
                 name: 'vacancies-slug',
-                params: { slug: item.id },
+                params: { slug: item.provider_vacancy_id || item.id },
                 query: { provider: 'hh' },
               }"
             >

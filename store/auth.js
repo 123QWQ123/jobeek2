@@ -181,7 +181,7 @@ export const useAuthStore = defineStore("auth", {
     },
     async setFcmToken() {
       const token = await useFcm().getToken();
-      await useApi("fcm/setToken", {
+      useApi("fcm/setToken", {
         method: "post",
         payload: { fcm_token: token },
       });
