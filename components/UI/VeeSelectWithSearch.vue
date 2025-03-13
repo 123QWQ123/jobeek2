@@ -15,7 +15,6 @@
         autocomplete="off"
         autofill="off"
         @focusin="onFocus"
-        @focusout="onFocusout"
         :class="{ placeholder: placeholderClass }"
       />
       <span class="select_arrow" @click="toggle"></span>
@@ -84,6 +83,7 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  value: false,
 });
 
 const customErrorMessage = ref(props.error);
@@ -92,18 +92,20 @@ const inputRef = ref();
 // The `name` is returned in a function because we want to make sure it stays reactive
 // If the name changes you want `useField` to be able to pick it up
 const { value, errorMessage } = useField(() => props.name);
+const inputValue = ref(value.value ?? props.value);
 
 const isFirst = ref(false);
 const isOpen = ref(false);
 const options = ref(props.options);
 const placeholder = ref(props.placeholder);
 const searchInput = ref(
-  options.value.find((item) => String(item.value) === String(value.value))
+  options.value.find((item) => String(item.value) === String(inputValue.value))
     ?.name || null,
 );
 const selectedOption = ref(
-  options.value.find((item) => String(item.value) === String(value.value)) ||
-    {},
+  options.value.find(
+    (item) => String(item.value) === String(inputValue.value),
+  ) || {},
 );
 
 watch(
@@ -111,20 +113,20 @@ watch(
   () => (placeholder.value = props.placeholder),
 );
 
-watch(
-  () => props.options,
-  (newOptions) => {
-    options.value = newOptions;
-    if (selectedOption.value && value.value !== selectedOption.value.value) {
-      const found = options.value.find(
-        (item) => String(item.value) === String(value.value),
-      );
-      if (!found) return;
-      searchInput.value = found.name;
-      selectedOption.value = found;
-    }
-  },
-);
+// watch(
+//   () => props.options,
+//   (newOptions) => {
+//     options.value = newOptions;
+//     if (selectedOption.value && value.value !== selectedOption.value.value) {
+//       const found = options.value.find(
+//         (item) => String(item.value) === String(value.value),
+//       );
+//       if (!found) return;
+//       searchInput.value = found.name;
+//       selectedOption.value = found;
+//     }
+//   },
+// );
 watch(
   () => value.value,
   (newValue) => {
@@ -135,7 +137,7 @@ watch(
     if (!found) {
       searchInput.value = "";
       selectedOption.value = {};
-      inputRef.value.focus();
+      // inputRef.value.focus();
       return;
     }
     selectedOption.value = found;
@@ -143,16 +145,21 @@ watch(
   },
 );
 
-onMounted(() => {
-  if (value.value) {
-    const found = options.value.find(
-      (item) => String(item.value) === String(value.value),
-    );
-    if (!found) return;
+if (inputValue.value) {
+  const found = props.options.find(
+    (item) => String(item.value) === String(inputValue.value),
+  );
+
+  if (found) {
+    options.value = [
+      {
+        ...found,
+      },
+    ];
     selectedOption.value = found;
     searchInput.value = found.name;
   }
-});
+}
 
 const input = ref("");
 
@@ -180,6 +187,11 @@ function onSelect(id) {
     (item) => String(item.value) === String(id),
   );
   if (selectedOptionItem) {
+    options.value = [
+      {
+        ...selectedOptionItem,
+      },
+    ];
     selectedOption.value = selectedOptionItem;
     searchInput.value = selectedOptionItem.name;
     value.value = id;
@@ -189,7 +201,7 @@ function onSelect(id) {
 
 const onChangeHandler = (e) => {
   isOpen.value = true;
-  const typedName = e.target.textContent.toLowerCase();
+  const typedName = e.target.value.toLowerCase();
   emit("input", searchInput.value);
   if (typedName === "") {
     options.value = props.options;

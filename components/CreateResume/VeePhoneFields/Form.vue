@@ -52,9 +52,7 @@ const addNew = () => {
 
 const { push, fields, remove } = useFieldArray(() => props.name);
 const { getPreferredContactTypes } = useDictionaryStore();
-onMounted(() => {
-  getPreferredContactTypes();
-});
+await getPreferredContactTypes();
 </script>
 
 <style scoped></style>

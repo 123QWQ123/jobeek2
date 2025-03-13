@@ -1,5 +1,5 @@
 <template>
-  <div class="w-box" v-click-outside="onSubmit">
+  <div class="w-box" v-click-outside="save">
     <div class="w-box-head">
       <h3 class="title">Личные данные</h3>
       <span
@@ -12,159 +12,181 @@
     <div class="text-danger d-block p-4" v-if="errors.message">
       {{ errors.message }}
     </div>
-    <transition>
-      <div
-        class="w-box-body"
-        :class="{ collapse: isCollapsed }"
-        @click="isFocused = true"
-      >
-        <div class="input-row">
-          <label for="name">Имя и фамилия <b>*</b></label>
-          <div class="input-wrapper">
-            <div class="c2">
-              <div class="input-wrapper">
-                <ResumeTextInput name="first_name" placeholder="Имя" />
-              </div>
-              <div class="input-wrapper">
-                <ResumeTextInput name="last_name" placeholder="Фамилия" />
-              </div>
+    <div
+      class="w-box-body"
+      :class="{ collapse: isCollapsed }"
+      @click="isFocused = true"
+    >
+      <div class="input-row">
+        <label for="name">Имя и фамилия <b>*</b></label>
+        <div class="input-wrapper">
+          <div class="c2">
+            <div class="input-wrapper">
+              <ResumeTextInput
+                name="first_name"
+                placeholder="Имя"
+                :value="my_resume?.first_name"
+              />
             </div>
-            <div class="c1 mt-1">
-              <ResumeTextInput name="middle_name" placeholder="Отчество" />
-            </div>
-          </div>
-        </div>
-
-        <div class="input-row">
-          <label>Дата рождения <b>*</b></label>
-          <div class="input-wrapper">
-            <div class="mb-1">
-              <VeeBirthDatePicker name="birth_date" />
+            <div class="input-wrapper">
+              <ResumeTextInput
+                name="last_name"
+                placeholder="Фамилия"
+                :value="my_resume?.last_name"
+              />
             </div>
           </div>
-        </div>
-
-        <div class="input-row">
-          <label for="resume_email"
-            >Электронная почта
-            <b v-if="isHHSelected">*</b>
-          </label>
-          <div class="input-wrapper">
-            <ResumeTextInput name="email" placeholder="Электронная почта" />
-
-            <ResumeCheckboxInput
-              v-if="!state.is_preferred_email.is_hidden"
-              class="mt-2"
-              name="is_preferred_email"
-              type="checkbox"
-              label="e-mail является ли предпочтительным способом связи"
-            />
-          </div>
-        </div>
-
-        <div class="input-row" v-if="!state.additional_information.is_hidden">
-          <label>Дополнительные сведения</label>
-          <div class="input-wrapper mt-2">
+          <div class="c1 mt-1">
             <ResumeTextInput
-              name="additional_information"
-              placeholder="Введите"
+              name="middle_name"
+              placeholder="Отчество"
+              :value="my_resume?.middle_name"
             />
           </div>
-        </div>
-
-        <div class="input-row">
-          <label>Дополнительные контакты</label>
-          <div class="input-wrapper mt-2">
-            <ResumeTextInput name="other_contacts" placeholder="Введите" />
-          </div>
-        </div>
-
-        <div class="input-row">
-          <label>Город проживания:<b>*</b></label>
-          <div class="input-wrapper mt-2">
-            <VeeSelectWithSearch
-              :options="cityOptions"
-              name="city_id"
-              placeholder="Выберите город"
-              @input="updateCityInput"
-            />
-          </div>
-        </div>
-
-        <div class="input-row">
-          <label>Релокация:<b>*</b></label>
-          <div class="input-wrapper mt-2">
-            <VeeCustomSelect
-              :options="relocationTypeOptions"
-              name="relocation_type_id"
-              :label="'Выберите'"
-            ></VeeCustomSelect>
-          </div>
-        </div>
-
-        <div class="input-row" v-if="canBeRelocated">
-          <label>Городов в которым готов переехать:</label>
-          <div class="input-wrapper mt-2">
-            <VeeMultiSelectWithSearch
-              name="move_able_cities"
-              :options="moveableCityOptions"
-              placeholder="Выберите"
-              @input="updateMoveableCityInput"
-            />
-          </div>
-        </div>
-
-        <div class="input-row">
-          <label>Готовность к командировкам:<b>*</b></label>
-          <div class="input-wrapper mt-2">
-            <LazyVeeCustomSelect
-              :options="businessTripOptions"
-              name="business_trip_id"
-              :label="'Выберите'"
-            />
-          </div>
-        </div>
-
-        <!--        <CreateResumePersonalFieldsMetroInput-->
-        <!--          v-if="isMetroEnabled"-->
-        <!--          v-model="state.metros.val"-->
-        <!--          :errors="errors.metro"-->
-        <!--          :providers="providers"-->
-        <!--        />-->
-
-        <div class="input-row">
-          <label>Поль:<b>*</b></label>
-          <div class="input-wrapper mt-2">
-            <LazyVeeCustomSelect
-              :options="genderOptions"
-              name="gender_id"
-              :label="'Выберите'"
-            />
-          </div>
-        </div>
-
-        <div class="input-row" v-if="!state.address.is_hidden">
-          <label>Адрес: </label>
-          <div class="input-wrapper mt-2">
-            <ResumeTextInput name="address" placeholder="Введите" />
-          </div>
-        </div>
-
-        <CreateResumeVeeSocialNetworksForm
-          v-show="!state.social_networks.is_hidden"
-          name="social_networks"
-        />
-
-        <CreateResumeVeePhoneFieldsForm
-          v-show="!state.phones.is_hidden"
-          name="phones"
-        />
-
-        <div class="text-danger d-block">
-          <ErrorMessage name="phones" />
         </div>
       </div>
-    </transition>
+
+      <div class="input-row">
+        <label>Дата рождения <b>*</b></label>
+        <div class="input-wrapper">
+          <div class="mb-1">
+            <VeeBirthDatePicker name="birth_date" />
+          </div>
+        </div>
+      </div>
+
+      <div class="input-row">
+        <label for="resume_email"
+          >Электронная почта
+          <b v-if="isHHSelected">*</b>
+        </label>
+        <div class="input-wrapper">
+          <ResumeTextInput
+            name="email"
+            placeholder="Электронная почта"
+            :value="my_resume?.email"
+          />
+
+          <ResumeCheckboxInput
+            v-if="!state.is_preferred_email.is_hidden"
+            class="mt-2"
+            name="is_preferred_email"
+            type="checkbox"
+            label="e-mail является ли предпочтительным способом связи"
+          />
+        </div>
+      </div>
+
+      <div class="input-row" v-if="!state.additional_information.is_hidden">
+        <label>Дополнительные сведения</label>
+        <div class="input-wrapper mt-2">
+          <ResumeTextInput
+            name="additional_information"
+            placeholder="Введите"
+            :value="my_resume?.additional_information"
+          />
+        </div>
+      </div>
+
+      <div class="input-row">
+        <label>Дополнительные контакты</label>
+        <div class="input-wrapper mt-2">
+          <ResumeTextInput
+            name="other_contacts"
+            placeholder="Введите"
+            :value="my_resume?.other_contacts"
+          />
+        </div>
+      </div>
+
+      <div class="input-row">
+        <label>Город проживания:<b>*</b></label>
+        <div class="input-wrapper mt-2">
+          <VeeSelectWithSearch
+            :options="cityOptions"
+            name="city_id"
+            placeholder="Выберите город"
+          />
+        </div>
+      </div>
+
+      <div class="input-row">
+        <label>Релокация:<b>*</b></label>
+        <div class="input-wrapper mt-2">
+          <VeeCustomSelect
+            :options="relocationTypeOptions"
+            name="relocation_type_id"
+            :label="'Выберите'"
+          ></VeeCustomSelect>
+        </div>
+      </div>
+
+      <div class="input-row" v-if="canBeRelocated">
+        <label>Городов в которым готов переехать:</label>
+        <div class="input-wrapper mt-2">
+          <VeeMultiSelectWithSearch
+            name="move_able_cities"
+            :options="moveableCityOptions"
+            placeholder="Выберите"
+            @input="updateMoveableCityInput"
+          />
+        </div>
+      </div>
+
+      <div class="input-row">
+        <label>Готовность к командировкам:<b>*</b></label>
+        <div class="input-wrapper mt-2">
+          <LazyVeeCustomSelect
+            :options="businessTripOptions"
+            name="business_trip_id"
+            :label="'Выберите'"
+          />
+        </div>
+      </div>
+
+      <!--        <CreateResumePersonalFieldsMetroInput-->
+      <!--          v-if="isMetroEnabled"-->
+      <!--          v-model="state.metros.val"-->
+      <!--          :errors="errors.metro"-->
+      <!--          :providers="providers"-->
+      <!--        />-->
+
+      <div class="input-row">
+        <label>Поль:<b>*</b></label>
+        <div class="input-wrapper mt-2">
+          <LazyVeeCustomSelect
+            :options="genderOptions"
+            name="gender_id"
+            :label="'Выберите'"
+          />
+        </div>
+      </div>
+
+      <div class="input-row" v-if="!state.address.is_hidden">
+        <label>Адрес: </label>
+        <div class="input-wrapper mt-2">
+          <ResumeTextInput
+            name="address"
+            placeholder="Введите"
+            :value="my_resume?.address"
+          />
+        </div>
+      </div>
+
+      <CreateResumeVeeSocialNetworksForm
+        v-show="!state.social_networks.is_hidden"
+        name="social_networks"
+      />
+
+      <CreateResumeVeePhoneFieldsForm
+        v-show="!state.phones.is_hidden"
+        name="phones"
+      />
+
+      <div class="text-danger d-block">
+        <ErrorMessage name="phones" />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -182,7 +204,7 @@ import { useI18n } from "vue-i18n";
 import { toTypedSchema } from "@vee-validate/zod";
 import { zod } from "~/hooks/ru-zod.js";
 import useProviders from "~/composables/useProviders.js";
-import { zodToJsonSchema } from "zod-to-json-schema";
+import { useAsyncData } from "#app";
 
 const props = defineProps({
   title: {
@@ -200,13 +222,46 @@ const resumeStore = useResumeStore();
 const { updateResume } = resumeStore;
 const my_resume = computed(() => resumeStore.my_resume);
 
+const { getCities } = profileStore;
+
 const isSaved = ref(false);
 const isChanged = ref(false);
 const isCollapsed = ref(false);
 const isUpdated = ref(false);
+const isFocused = ref(false);
+const isLoading = ref(false);
+const errorMessage = ref(null);
+const cityOptions = computed(() => profileStore.cityOptions);
 
 const { t } = useI18n();
 const { providers } = useProviders();
+
+const dictionaryStore = useDictionaryStore();
+
+const genderOptions = computed(() =>
+  dictionaryStore.resume_genders.map((item) => ({
+    name: item.name,
+    value: item.id,
+  })),
+);
+const relocationTypeOptions = computed(() =>
+  dictionaryStore.relocation_types.map((item) => ({
+    name: item.name,
+    value: item.id,
+  })),
+);
+const businessTripOptions = computed(() =>
+  dictionaryStore.business_trips.map((item) => ({
+    name: item.name,
+    value: item.id,
+  })),
+);
+
+await useAsyncData(
+  "getCities",
+  async () =>
+    await getCities({ city_id: my_resume.value?.city.id ?? undefined }),
+);
 
 watch(
   () => providers.value,
@@ -215,8 +270,7 @@ watch(
   },
 );
 const isHHSelected = computed(() => {
-  if (providers.value.hh === true) return true;
-  else return false;
+  return providers.value.hh;
 });
 
 const schema = computed(() => {
@@ -296,60 +350,50 @@ const schema = computed(() => {
   });
 });
 
-const jsonSchemaFixed = zodToJsonSchema(schema.value, { errorMessages: true });
-const jsonSchema = computed(() =>
-  zodToJsonSchema(schema.value, { errorMessages: true }),
-);
-
 const initialValues = ref({
-  first_name: null,
-  last_name: null,
-  middle_name: null,
-  email: null,
-  is_preferred_email: false,
-  birth_date: null,
-  city_id: null,
-  gender_id: null,
-  relocation_type_id: null,
-  move_able_cities: [],
-  social_networks: ["https://"],
-  phones: [],
-  business_trip_id: null,
-  address: null,
+  first_name: my_resume.value?.first_name,
+  last_name: my_resume.value?.last_name,
+  middle_name: my_resume.value?.middle_name,
+  email: my_resume.value?.email,
+  is_preferred_email: my_resume.value?.is_preferred_email,
+  birth_date: my_resume.value?.birth_date,
+  city_id: my_resume.value?.city.id,
+  city_name: my_resume.value?.city.name,
+  additional_information: my_resume.value?.additional_information,
+  other_contacts: my_resume.value?.other_contacts,
+  gender_id: my_resume.value?.gender?.id,
+  relocation_type_id: my_resume.value?.relocation_type?.id,
+  move_able_cities: my_resume.value?.move_able_cities,
+  social_networks: my_resume.value?.social_networks,
+  phones: my_resume.value?.phones.map((item, index) => ({
+    id: index,
+    type_id: item.type?.id,
+    phone: String(item.phone),
+    comment: item.comment,
+    is_preferred: item.is_preferred,
+    start_available_time_phone: item.start_available_time_phone,
+    end_available_time_phone: item.end_available_time_phone,
+  })),
+  business_trip_id: my_resume.value?.business_trip?.id,
+  metros: my_resume.value?.metros,
+  address: my_resume.value?.address,
+  is_relocatable: my_resume.value?.is_relocatable,
 });
-const { errors, values, setErrors, meta, resetForm, validate } = useForm({
+const {
+  errors,
+  values,
+  setErrors,
+  meta,
+  resetForm,
+  validate,
+  submitForm,
+  setValues,
+  setTouched,
+} = useForm({
   initialValues: initialValues,
   validationSchema: toTypedSchema(schema.value),
 });
-const dictionaryStore = useDictionaryStore();
-const { getGenders, getRelocationTypes, getBusinessTrips } = dictionaryStore;
 
-const genderOptions = computed(() => {
-  return dictionaryStore.resume_genders.map((item) => ({
-    name: item.name,
-    value: item.id,
-  }));
-});
-const relocationTypeOptions = computed(() => {
-  return dictionaryStore.relocation_types.map((item) => ({
-    name: item.name,
-    value: item.id,
-  }));
-});
-const businessTripOptions = computed(() => {
-  return dictionaryStore.business_trips.map((item) => ({
-    name: item.name,
-    value: item.id,
-  }));
-});
-
-onMounted(() => {
-  setTimeout(async () => {
-    await getGenders(null, true);
-    await getRelocationTypes();
-    await getBusinessTrips();
-  }, 500);
-});
 const state = reactive({
   first_name: {
     is_hidden: false,
@@ -449,10 +493,7 @@ const fields = ref({
 });
 
 const { walkThroughFields } = useProviderFields(state, fields);
-
-onMounted(() => {
-  walkThroughFields(providers.value);
-});
+walkThroughFields(providers.value);
 
 //todo сделать константы для этих магических чисел
 const canBeRelocated = computed(() => {
@@ -462,8 +503,6 @@ const canBeRelocated = computed(() => {
   );
 });
 
-const { getCityNameFromArea2 } = useResumeHooks();
-const cityOptions = ref([]);
 const selectedProviders = computed(() => {
   if (providers.value.hh === true && providers.value.superjob === false)
     return ["hh"];
@@ -471,21 +510,17 @@ const selectedProviders = computed(() => {
     return ["superjob"];
   return ["hh", "superjob"];
 });
-const updateCityInput = async (newValue = "") => {
-  if (newValue) {
-    const items = await searchCities({
-      search: newValue,
-      providers: selectedProviders.value,
-    });
-    cityOptions.value = items.map((item) => ({
-      value: item.id,
-      name: getCityNameFromArea2(item),
-    }));
-  }
-};
-const moveableCityOptions = ref([]);
+
+const moveableCityOptions = ref(
+  profileStore.cities.map((item) => ({
+    value: item.id,
+    name: item.name,
+  })),
+);
 const updateMoveableCityInput = async (newValue = "") => {
-  const items = (await searchCities({ search: newValue })) ?? [];
+  const items = profileStore.cities.filter((item) => {
+    return item.name.search(newValue);
+  });
   moveableCityOptions.value = items.map((item) => ({
     value: item.id,
     name: item.name,
@@ -493,63 +528,6 @@ const updateMoveableCityInput = async (newValue = "") => {
 };
 
 const sectionData = ref({});
-
-const getFields = (newObject) => {
-  return {
-    first_name: newObject.first_name,
-    last_name: newObject.last_name,
-    middle_name: newObject.middle_name,
-    email: newObject.email,
-    is_preferred_email: newObject.is_preferred_email,
-    birth_date: newObject.birth_date,
-    city_id: newObject.city?.id,
-    additional_information: newObject.additional_information,
-    other_contacts: newObject.other_contacts,
-    gender_id: newObject.gender?.id,
-    relocation_type_id: newObject.relocation_type?.id,
-    move_able_cities: newObject.move_able_cities,
-    metros: newObject.metros,
-    business_trip_id: newObject.business_trip?.id,
-    address: newObject.address,
-    social_networks: newObject.social_networks,
-    phones: newObject.phones.map((item, index) => ({
-      id: index,
-      type_id: item.type?.id,
-      phone: String(item.phone),
-      comment: item.comment,
-      is_preferred: item.is_preferred,
-      start_available_time_phone: item.start_available_time_phone,
-      end_available_time_phone: item.end_available_time_phone,
-    })),
-    is_relocatable: newObject.is_relocatable,
-  };
-};
-watch(
-  () => resumeStore.my_resume,
-  (newResume) => {
-    if (newResume) {
-      sectionData.value = getFields(newResume);
-
-      const city = newResume.city;
-      if (newResume.city.hasOwnProperty("country_id")) {
-        const city = newResume.city;
-        onSearchCitiesByCountryId(city.country_id, city.name);
-      }
-    }
-  },
-);
-
-onMounted(() => {
-  const newResume = resumeStore.my_resume;
-  if (newResume) {
-    sectionData.value = getFields(newResume);
-    const city = newResume.city;
-    if (newResume.city.hasOwnProperty("country_id")) {
-      const city = newResume.city;
-      onSearchCitiesByCountryId(city.country_id, city.name);
-    }
-  }
-});
 
 watch(
   () => sectionData.value,
@@ -560,16 +538,6 @@ watch(
     }
   },
 );
-
-const { searchCities } = profileStore;
-const onSearchCitiesByCountryId = async (country_id, name) => {
-  const items = await searchCities({ search: name });
-  cityOptions.value = items.map((item) => ({
-    value: item.id,
-    name: getCityNameFromArea2(item),
-  }));
-};
-
 const { errors: serverErrors } = useFormValidation();
 watch(
   () => serverErrors.value,
@@ -584,22 +552,17 @@ watch(
   },
 );
 
-const isFocused = ref(false);
-
-const onSubmit = () => {
-  save();
-};
-
-const isLoading = ref(false);
-const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
   isLoading.value = true;
   errorMessage.value = "";
-  validate();
+  await validate();
+
   if (!meta.value.dirty) {
+    isLoading.value = false;
     return true;
   }
   if (!meta.value.valid) {
+    isLoading.value = false;
     return false;
   }
   setErrors({});
@@ -613,7 +576,6 @@ const save = async (is_from_parent = false) => {
 
   let resData = await updateResume(resumeID.value, jsonData);
 
-  isUpdated.value = true;
   if (resData.status !== "success") {
     errorMessage.value = resData.message;
     if (resData.hasOwnProperty("errors")) {
@@ -624,7 +586,6 @@ const save = async (is_from_parent = false) => {
   }
   isChanged.value = false;
   isSaved.value = false;
-  isUpdated.value = false;
   setErrors({});
   resetForm({ values });
   if (is_from_parent) {
