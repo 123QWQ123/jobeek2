@@ -10,6 +10,7 @@
             :name="props.name"
             :providers="props.providers"
             :idx="idx"
+            :value="value[idx]"
           />
         </div>
         <button
@@ -37,7 +38,7 @@
 import { useDictionaryStore } from "~/store/dictionary.js";
 import { useFieldArray } from "vee-validate";
 
-const props = defineProps(["name", "providers"]);
+const props = defineProps(["name", "providers", "value"]);
 
 const addNew = () => {
   push({

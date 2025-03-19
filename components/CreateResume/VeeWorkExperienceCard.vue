@@ -18,7 +18,7 @@
         :class="{ collapse: isCollapsed }"
         @click="isFocused = true"
       >
-        <div class="form_content" v-if="isShown">
+        <div class="form_content">
           <div class="row">
             <CreateResumeVeeWorkExperienceForm
               name="experience"
@@ -27,12 +27,6 @@
           </div>
         </div>
 
-        <div class="empty-area" v-else>
-          <span>Здесь вы можете указать</span>
-          <button class="add" type="button" @click="isShown = !isShown">
-            Добавить
-          </button>
-        </div>
         <div class="text-danger">
           <ErrorMessage name="experience" />
         </div>
@@ -55,12 +49,13 @@ const route = useRoute();
 const resumeStore = useResumeStore();
 const resumeID = computed(() => route.params.id);
 
-const experience = ref(resumeStore.my_resume?.experience ?? []);
+const { my_resume } = storeToRefs(resumeStore);
+const experience = ref(my_resume.value?.experience ?? []);
 
 const isShown = ref(false);
 const isChanged = ref(false);
 const isSaved = ref(false);
-const isCollapsed = ref(true);
+const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
 const { providers } = useProviders();
@@ -130,7 +125,24 @@ const schema = computed(() => {
 });
 
 const initialValues = ref({
-  experience: [],
+  experience:
+    my_resume.value?.experience.map((item) => {
+      return {
+        industries: item.industries.map((sub_item) => sub_item.id) ?? [],
+        city_id: item.city?.id,
+        end_month: String(item.end_month).padStart(2, 0),
+        start_month: String(item.start_month).padStart(2, 0),
+        profession: item.profession,
+        company: item.company,
+        company_url: item.company_url,
+        company_scope: item.company_scope,
+        start_year: item.start_year,
+        end_year: item.end_year,
+        until_today: item.until_today,
+        responsibilities: item.responsibilities,
+        achievements: item.achievements,
+      };
+    }) ?? [],
 });
 const {
   values,
@@ -147,9 +159,6 @@ const {
   validationSchema: toTypedSchema(schema.value),
 });
 
-const sectionData = ref({
-  experience: [],
-});
 const getFields = (newObject) => {
   return {
     experience: newObject.experience.map((item) => {
@@ -171,32 +180,6 @@ const getFields = (newObject) => {
     }),
   };
 };
-watch(
-  () => sectionData.value,
-  (newData, oldData) => {
-    const diffData = useDiff(newData, oldData);
-    if (Object.keys(diffData).length) {
-      resetForm({ values: newData });
-      if (experience.value.length) {
-        isShown.value = true;
-      }
-    }
-  },
-);
-watch(
-  () => resumeStore.my_resume,
-  (newResume) => {
-    if (newResume) {
-      sectionData.value = getFields(newResume);
-    }
-  },
-);
-
-onMounted(() => {
-  if (resumeStore.my_resume) {
-    sectionData.value = getFields(resumeStore.my_resume);
-  }
-});
 
 watch(
   () => isCollapsed.value,
@@ -226,7 +209,7 @@ const isFocused = ref(false);
 const errorMessage = ref(null);
 const isLoading = ref(false);
 const save = async (is_from_parent = false) => {
-  validate();
+  console.log(await validate());
   if (!meta.value.dirty) {
     return true;
   }
@@ -252,6 +235,7 @@ const save = async (is_from_parent = false) => {
   isChanged.value = false;
   isSaved.value = false;
   isUpdated.value = true;
+  errorMessage.value = "";
   setErrors({});
   resetForm({ values });
   if (is_from_parent) {

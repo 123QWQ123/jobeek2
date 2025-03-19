@@ -43,12 +43,6 @@ const addNew = () => {
 };
 
 const { push, fields, remove } = useFieldArray(() => props.name);
-const { getPreferredContactTypes, getResumeEducationForms } =
-  useDictionaryStore();
-onMounted(() => {
-  getPreferredContactTypes();
-  getResumeEducationForms();
-});
 </script>
 
 <style scoped></style>

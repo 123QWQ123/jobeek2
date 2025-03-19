@@ -47,112 +47,123 @@
           </button>
         </div>
 
-        <transition>
-          <span
-            v-if="isSaved"
-            class="p-3 d-inline-flex justify-content-center align-items-center"
-            style="color: #0c0"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              class="me-2"
-            >
-              <path
-                fill="#0c0"
-                d="M10.041 17l-4.5-4.319 1.395-1.435 3.08 2.937 7.021-7.183 1.422 1.409-8.418 8.591zm5.959 7v-2h-8v2h8zm0-24v2h-8v-2h8zm2 0h1c2.762 0 5 2.239 5 5v1h-2v-1c0-1.654-1.346-3-3-3h-1v-2zm6 16h-2v-8h2v8zm-18 8h-1c-2.762 0-5-2.239-5-5v-1h2v1c0 1.654 1.346 3 3 3h1v2zm18-6v1c0 2.761-2.238 5-5 5h-1v-2h1c1.654 0 3-1.346 3-3v-1h2zm-24-12v-1c0-2.761 2.238-5 5-5h1v2h-1c-1.654 0-3 1.346-3 3v1h-2zm0 2h2v8h-2v-8z"
-              />
-            </svg>
-            Сохранен
-          </span>
-        </transition>
+        <!--        <transition>-->
+        <!--          <span-->
+        <!--            v-if="isSaved"-->
+        <!--            class="p-3 d-inline-flex justify-content-center align-items-center"-->
+        <!--            style="color: #0c0"-->
+        <!--          >-->
+        <!--            <svg-->
+        <!--              xmlns="http://www.w3.org/2000/svg"-->
+        <!--              width="24"-->
+        <!--              height="24"-->
+        <!--              viewBox="0 0 24 24"-->
+        <!--              class="me-2"-->
+        <!--            >-->
+        <!--              <path-->
+        <!--                fill="#0c0"-->
+        <!--                d="M10.041 17l-4.5-4.319 1.395-1.435 3.08 2.937 7.021-7.183 1.422 1.409-8.418 8.591zm5.959 7v-2h-8v2h8zm0-24v2h-8v-2h8zm2 0h1c2.762 0 5 2.239 5 5v1h-2v-1c0-1.654-1.346-3-3-3h-1v-2zm6 16h-2v-8h2v8zm-18 8h-1c-2.762 0-5-2.239-5-5v-1h2v1c0 1.654 1.346 3 3 3h1v2zm18-6v1c0 2.761-2.238 5-5 5h-1v-2h1c1.654 0 3-1.346 3-3v-1h2zm-24-12v-1c0-2.761 2.238-5 5-5h1v2h-1c-1.654 0-3 1.346-3 3v1h-2zm0 2h2v8h-2v-8z"-->
+        <!--              />-->
+        <!--            </svg>-->
+        <!--            Сохранен-->
+        <!--          </span>-->
+        <!--        </transition>-->
       </div>
     </transition>
   </div>
 </template>
 
 <script setup>
-import useProviderFields from "~/composables/useProviderFields";
-import useFormValidation from "~/composables/useFormValidation";
+import { ref, computed, reactive, watch, onMounted } from "vue";
 import { useResumeStore } from "~/store/resume";
-import { useDiff } from "~/composables/useDiff";
 import { useDictionaryStore } from "~/store/dictionary";
-import { zod } from "~/hooks/ru-zod.js";
-import { useForm } from "vee-validate";
-import useProviders from "~/composables/useProviders.js";
+import { useForm, useFieldArray } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
+import useProviders from "~/composables/useProviders.js";
+import useProviderFields from "~/composables/useProviderFields";
+import { zod } from "~/hooks/ru-zod.js";
+// import { useFormValidation } from "~/composables/useFormValidation";
+import { useDiff } from "~/composables/useDiff";
 
-const educationElement = ref(false);
-const route = useRoute();
+// Сторы
 const resumeStore = useResumeStore();
-const resumeID = computed(() => route.params.id);
 const dictionaryStore = useDictionaryStore();
 const { providers } = useProviders();
+const { my_resume } = storeToRefs(resumeStore);
+const { updateResume } = resumeStore;
+
+// Обращения к роутам
+const route = useRoute();
+const resumeID = computed(() => route.params.id);
+
+// Состояния компонентов интерфейса
+const isShown = ref(true);
+const isSaved = ref(false);
+const isCollapsed = ref(false);
+const isUpdated = ref(false);
+const isFocused = ref(false);
+const errorMessage = ref(null);
+const isLoading = ref(false);
+const educationElement = ref(false);
+
+// Options для selects
+const educationLevelOptions = computed(() =>
+  dictionaryStore.resume_educations.map((item) => ({
+    name: item.name,
+    value: item.id,
+  })),
+);
+
+// Cхема валидации
 const schema = computed(() => {
-  if (providers.value.hh === true && providers.value.superjob === false) {
-    const educationScheme = zod.object({
-      type_id: zod.number().nullable().optional(),
-      end_year: zod.number(),
-      institute: zod.string(),
-      profession: zod.string().nullable().optional(),
-      faculty: zod.string().nullish().optional(),
-      form_id: zod.number().nullable().optional(),
-    });
-    return zod.object({
-      education_level_id: zod.number().nullable(),
-      educations: zod.array(educationScheme).optional(),
-    });
-  }
-  if (providers.value.hh === false && providers.value.superjob === true) {
-    const educationScheme = zod.object({
-      type_id: zod.number(),
-      end_year: zod.number().nullish().optional(),
-      institute: zod.string().nullish().optional(),
-      profession: zod.string().nullable().optional(),
-      faculty: zod.string().nullish().optional(),
-      form_id: zod.number().nullable().optional(),
-    });
-    return zod.object({
-      education_level_id: zod.number().nullable(),
-      educations: zod.array(educationScheme).optional(),
-    });
-  }
-
-  const educationScheme = zod.object({
-    type_id: zod.number(),
-    profession: zod.string().nullable().optional(),
-    institute: zod.string(),
-    faculty: zod.string().nullish().optional(),
-    form_id: zod.number().nullable().optional(),
-    end_year: zod.number(),
-  });
-  return zod.object({
+  const baseScheme = {
     education_level_id: zod.number().nullable(),
-    educations: zod.array(educationScheme).optional(),
-  });
+    educations: zod.array().optional(),
+  };
+
+  const getAdditionalScheme = (isHH, isSuperjob) => {
+    const commonFields = {
+      type_id: isHH ? zod.number().nullable().optional() : zod.number(),
+      profession: zod.string().nullable().optional(),
+      institute: isSuperjob ? zod.string().nullish().optional() : zod.string(),
+      faculty: zod.string().nullish().optional(),
+      form_id: zod.number().nullable().optional(),
+      end_year: isHH ? zod.number() : zod.number().nullish().optional(),
+    };
+
+    return zod.object(commonFields);
+  };
+
+  const educationScheme = getAdditionalScheme(
+    providers.value.hh,
+    providers.value.superjob,
+  );
+  baseScheme.educations = zod.array(educationScheme).optional();
+
+  return zod.object(baseScheme);
 });
 
+// Начальные значения формы
 const initialValues = ref({
-  education_level_id: null,
-  educations: [],
+  education_level_id: my_resume.value?.educations?.education_level?.id,
+  educations: my_resume.value?.educations.primary.map((item) => ({
+    faculty: item.faculty,
+    institute: item.institute,
+    profession: item.profession,
+    end_year: item.end_year,
+    type_id: item.type?.id,
+    form_id: item.form?.id,
+  })),
 });
-const {
-  values,
-  errors,
-  meta,
-  resetForm,
-  setValues,
-  setErrors,
-  handleSubmit,
-  validate,
-} = useForm({
-  initialValues: initialValues,
+
+// Управление формой Vee-Validate
+const { values, errors, meta, resetForm, setErrors, validate } = useForm({
+  initialValues,
   initialTouched: true,
   validationSchema: toTypedSchema(schema.value),
 });
 
+// Состояние полей по провайдерам
 const fields = ref({
   hh: {
     education_level_id: true,
@@ -164,6 +175,7 @@ const fields = ref({
   },
 });
 
+// Реактивное состояние видимости полей
 const state = reactive({
   education_level_id: {
     is_hidden: false,
@@ -173,112 +185,35 @@ const state = reactive({
   },
 });
 
+// Инициализация логики отображения полей по провайдерам
 const { walkThroughFields } = useProviderFields(state, fields);
-
 watch(
   () => providers.value,
-  () => {
-    walkThroughFields(providers.value);
-  },
+  () => walkThroughFields(providers.value),
 );
-const isShown = ref(true);
-const isChanged = ref(false);
-const isSaved = ref(false);
-const isCollapsed = ref(true);
-const isUpdated = ref(false);
+walkThroughFields(providers.value);
 
-const educationLevelOptions = computed(() => {
-  return dictionaryStore.resume_educations.map((item) => ({
-    name: item.name,
-    value: item.id,
-  }));
-});
+// Формирование сообщения об ошибке с сервера
+// const { errors: serverErrors } = useFormValidation();
+// watch(
+//   () => serverErrors.value,
+//   (newErrors) => {
+//     if (Object.keys(newErrors).length > 0) {
+//       const backendErrors = {};
+//       Object.entries(newErrors).forEach(
+//         ([key, val]) => (backendErrors[key] = val),
+//       );
+//       setErrors(backendErrors);
+//     }
+//   },
+// );
 
-const { getResumeEducations } = dictionaryStore;
-onMounted(() => {
-  getResumeEducations();
-});
-const sectionData = ref({
-  educations: [],
-});
-watch(
-  () => sectionData.value,
-  (newData, oldData) => {
-    const diffData = useDiff(newData, oldData);
-    if (Object.keys(diffData).length) {
-      if (newData.educations?.length > 0) {
-        isShown.value = true;
-      }
-      resetForm({ values: newData });
-    }
-  },
-);
+// Логика сохранения формы
+const save = async () => {
+  await validate();
 
-const getFields = (newObject) => {
-  return {
-    educations: newObject?.educations?.primary.map((item) => ({
-      faculty: item.faculty,
-      institute: item.institute,
-      profession: item.profession,
-      end_year: item.end_year,
-      type_id: item.type?.id,
-      form_id: item.form?.id,
-    })),
-    education_level_id: newObject?.educations.education_level?.id,
-  };
-};
-watch(
-  () => resumeStore.my_resume,
-  (newResume) => {
-    if (newResume) {
-      sectionData.value = getFields(newResume);
-    }
-  },
-);
+  if (!meta.value.dirty || !meta.value.valid) return;
 
-onMounted(() => {
-  if (resumeStore.my_resume) {
-    sectionData.value = getFields(resumeStore.my_resume);
-  }
-  walkThroughFields(providers.value);
-});
-
-watch(
-  () => isCollapsed.value,
-  (newData) => {
-    if (!newData) {
-      isShown.value = true;
-    }
-  },
-);
-
-const { getResume, updateResume } = resumeStore;
-
-const { errors: serverErrors, handleErrorResponse } = useFormValidation();
-watch(
-  () => serverErrors.value,
-  (newErrors) => {
-    if (Object.keys(newErrors).length > 0) {
-      const backendErrors = {};
-      Object.keys(newErrors).map(
-        (item) => (backendErrors[item] = newErrors[item]),
-      );
-      setErrors(backendErrors);
-    }
-  },
-);
-const isFocused = ref(false);
-const isLoading = ref(false);
-const errorMessage = ref(null);
-const save = async (is_from_parent = false) => {
-  validate();
-  if (!meta.value.dirty) {
-    return true;
-  }
-  if (!meta.value.valid) {
-    return false;
-  }
-  setErrors({});
   const resData = await updateResume(resumeID.value, {
     form_data: "EDUCATION_DATA",
     educations: {
@@ -289,24 +224,21 @@ const save = async (is_from_parent = false) => {
 
   if (resData.status !== "success") {
     errorMessage.value = resData.message;
-    if (resData.hasOwnProperty("errors")) {
-      setErrors(resData.errors);
-      return;
-    }
+    if (resData.errors) setErrors(resData.errors);
     return;
   }
-  isChanged.value = false;
-  isSaved.value = false;
+
+  isSaved.value = true;
   isUpdated.value = true;
-  setErrors({});
+
   resetForm({ values });
 };
 
-const isCompleted = computed(() => {
-  return resumeStore.resume?.educations.primary?.length > 0;
-});
+// Вычисляемые свойства
+const isCompleted = computed(
+  () => my_resume.value?.educations.primary?.length > 0,
+);
 
-defineExpose({
-  save,
-});
+// Открываем метод для использования при необходимости
+defineExpose({ save });
 </script>

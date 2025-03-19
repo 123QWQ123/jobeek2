@@ -29,6 +29,7 @@
 <script setup>
 import { useDictionaryStore } from "~/store/dictionary.js";
 import { useFieldArray } from "vee-validate";
+import { useAsyncData } from "#app";
 
 const props = defineProps(["name"]);
 
@@ -40,11 +41,12 @@ const addNew = () => {
 };
 
 const { push, fields, remove } = useFieldArray(() => props.name);
-const { getForeignLanguages, getResumeLanguageLevels } = useDictionaryStore();
-onMounted(() => {
-  getForeignLanguages();
-  getResumeLanguageLevels();
-});
+const { getForeignLanguages } = useDictionaryStore();
+
+await useAsyncData(
+  "getForeignLanguages",
+  async () => await getForeignLanguages(),
+);
 </script>
 
 <style scoped></style>

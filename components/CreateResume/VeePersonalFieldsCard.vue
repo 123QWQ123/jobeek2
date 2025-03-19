@@ -181,6 +181,7 @@
       <CreateResumeVeePhoneFieldsForm
         v-show="!state.phones.is_hidden"
         name="phones"
+        :value="my_resume?.phones"
       />
 
       <div class="text-danger d-block">
@@ -379,20 +380,12 @@ const initialValues = ref({
   address: my_resume.value?.address,
   is_relocatable: my_resume.value?.is_relocatable,
 });
-const {
-  errors,
-  values,
-  setErrors,
-  meta,
-  resetForm,
-  validate,
-  submitForm,
-  setValues,
-  setTouched,
-} = useForm({
-  initialValues: initialValues,
-  validationSchema: toTypedSchema(schema.value),
-});
+
+const { errors, values, setErrors, meta, resetForm, validate, setValues } =
+  useForm({
+    initialValues: initialValues,
+    validationSchema: toTypedSchema(schema.value),
+  });
 
 const state = reactive({
   first_name: {
@@ -511,12 +504,7 @@ const selectedProviders = computed(() => {
   return ["hh", "superjob"];
 });
 
-const moveableCityOptions = ref(
-  profileStore.cities.map((item) => ({
-    value: item.id,
-    name: item.name,
-  })),
-);
+const moveableCityOptions = ref(profileStore.cityOptions);
 const updateMoveableCityInput = async (newValue = "") => {
   const items = profileStore.cities.filter((item) => {
     return item.name.search(newValue);
@@ -526,18 +514,6 @@ const updateMoveableCityInput = async (newValue = "") => {
     name: item.name,
   }));
 };
-
-const sectionData = ref({});
-
-watch(
-  () => sectionData.value,
-  (newData, oldData) => {
-    const diffData = useDiff(newData, oldData);
-    if (Object.keys(diffData).length) {
-      resetForm({ values: newData });
-    }
-  },
-);
 const { errors: serverErrors } = useFormValidation();
 watch(
   () => serverErrors.value,

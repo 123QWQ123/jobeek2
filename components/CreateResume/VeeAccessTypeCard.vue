@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isHidden" class="w-box" v-click-outside="save">
+  <div class="w-box" v-click-outside="save">
     <div class="w-box-head">
       <h3 class="title">Видимость</h3>
       <span
@@ -36,7 +36,6 @@
 <script setup>
 import { toTypedSchema } from "@vee-validate/zod";
 import { useProfileStore } from "~/store/profile";
-import { useRuntimeConfig } from "#app";
 import useFormValidation from "~/composables/useFormValidation";
 import { useDiff } from "~/composables/useDiff";
 import { useDictionaryStore } from "~/store/dictionary";
@@ -48,23 +47,19 @@ const props = defineProps(["title", "providers"]);
 
 const resumeStore = useResumeStore();
 const profileStore = useProfileStore();
-const CONFIG = useRuntimeConfig();
 const route = useRoute();
 
 const resumeID = computed(() => route.params.id);
-const { updateResume, getMyResume } = resumeStore;
+const { updateResume } = resumeStore;
+const { my_resume } = storeToRefs(resumeStore);
 
 const { employer } = profileStore;
-const my_resume = computed(() => resumeStore.my_resume);
 
-const isSaved = ref(false);
-const isChanged = ref(false);
-const isFirst = ref(true);
 const isCollapsed = ref(false);
-const isUpdated = ref(false);
 
 const { providers } = useProviders();
-const isHidden = ref(providers.value.hh ?? false);
+const isHidden = ref(false);
+
 watch(
   () => providers.value,
   (newProviders) => {
@@ -72,23 +67,13 @@ watch(
   },
 );
 const schema = computed(() => {
-  if (providers.value.hh === true && providers.value.superjob === false) {
-    return zod.object({
-      resume_access_type_id: zod.number(),
-    });
-  }
-  if (providers.value.hh === false && providers.value.superjob === true) {
-    return zod.object({
-      resume_access_type_id: zod.number().optional(),
-    });
-  }
   return zod.object({
     resume_access_type_id: zod.number(),
   });
 });
 
 const initialValues = ref({
-  resume_access_type_id: null,
+  resume_access_type_id: my_resume.value?.resume_access_type?.id,
 });
 const { errors, values, setErrors, meta, setValues, resetForm, validate } =
   useForm({
@@ -103,48 +88,13 @@ const state = reactive({
   },
   isFormValid: true,
   isNew: true,
-  isLoading: false,
   error: null,
   success: null,
 });
 
-const sectionData = ref({});
-watch(
-  () => sectionData.value,
-  (newData, oldData) => {
-    const diffData = useDiff(newData, oldData);
-    if (Object.keys(diffData).length) {
-      resetForm({ values: newData });
-    }
-  },
-);
-watch(
-  () => resumeStore.my_resume,
-  (newData) => {
-    if (newData) {
-      sectionData.value = {
-        resume_access_type_id: newData.resume_access_type?.id,
-      };
-    }
-  },
-);
-onMounted((newData) => {
-  if (resumeStore.my_resume) {
-    sectionData.value = {
-      resume_access_type_id: resumeStore.my_resume.resume_access_type?.id,
-    };
-  }
-});
-
-const dictionaryStore = useDictionaryStore();
-const { getResumeAccessTypes } = dictionaryStore;
-onMounted(() => {
-  setTimeout(async () => {
-    await getResumeAccessTypes();
-  }, 500);
-});
+const { resume_access_types } = storeToRefs(useDictionaryStore());
 const resumeAccessTypeOptions = computed(() => {
-  return dictionaryStore.resume_access_types.map((item) => ({
+  return resume_access_types.value.map((item) => ({
     name: item.name,
     value: item.id,
   }));
@@ -164,10 +114,9 @@ watch(
   },
 );
 const isFocused = ref(false);
-const isLoading = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  validate();
+  await validate();
   if (!meta.value.dirty) {
     return true;
   }
@@ -175,7 +124,6 @@ const save = async (is_from_parent = false) => {
     errorMessage.value = "Заполните все поля";
     return false;
   }
-  state.isLoading = true;
   setErrors({});
   state.errorMessage = "";
   let resData = {};
@@ -183,7 +131,6 @@ const save = async (is_from_parent = false) => {
     form_data: "ACCESS_DATA",
     ...values,
   });
-  isUpdated.value = true;
   if (resData.status !== "success") {
     errorMessage.value = resData.message;
     if (resData.hasOwnProperty("errors")) {
@@ -192,9 +139,6 @@ const save = async (is_from_parent = false) => {
     }
     return;
   }
-  isChanged.value = false;
-  isSaved.value = false;
-  isUpdated.value = false;
   isFocused.value = false;
   setErrors({});
   resetForm({ values });

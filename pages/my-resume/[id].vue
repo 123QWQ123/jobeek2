@@ -6,6 +6,7 @@ import { useResumeStore } from "~/store/resume";
 import useProviders from "~/composables/useProviders.js";
 import { useDictionaryStore } from "~/store/dictionary.js";
 import { useAsyncData } from "#app";
+import { useProfileStore } from "~/store/profile.js";
 
 const route = useRoute();
 
@@ -24,15 +25,25 @@ watch(
   },
 );
 
-const { getMyResume, publishResume } = resumeStore;
+const { getMyResume, publishResume, getIndustries } = resumeStore;
 const { my_resume } = storeToRefs(resumeStore);
 const resumeID = computed(() => route.params.id);
+
+const profileStore = useProfileStore();
+const {
+  searchProfessionalRoles,
+  searchHHProfessionalRoles,
+  searchSuperjobProfessionalRoles,
+} = profileStore;
 
 const dictionaryStore = useDictionaryStore();
 const { getDictionaries } = dictionaryStore;
 
 const resData = await useAsyncData("my_resume" + resumeID.value, async () => {
   return await getMyResume(resumeID.value);
+});
+await useAsyncData("getIndustries", async () => {
+  return await getIndustries();
 });
 
 const { data } = await useAsyncData("dictionaries", async () => {
@@ -49,7 +60,21 @@ const { data } = await useAsyncData("dictionaries", async () => {
     "gender",
     "relocation_type",
     "business_trip",
+    "lang_level_resume",
+    "marital_status_resume",
+    "travel_time",
+    "children_resume",
   ]);
+});
+
+await useAsyncData("searchProfessionalRoles", async () => {
+  return await searchProfessionalRoles();
+});
+await useAsyncData("searchHHProfessionalRoles", async () => {
+  return await searchHHProfessionalRoles();
+});
+await useAsyncData("searchSuperjobProfessionalRoles", async () => {
+  return await searchSuperjobProfessionalRoles();
 });
 
 const pageTitle = computed(() => {
@@ -238,6 +263,7 @@ const canOnlyOnePublished = computed(() => {
             :key="`personal_fields_el_key_${providers.hh + providers.superjob}`"
             ref="personal_fields_el"
             :providers="providers"
+            :dictionaries="data"
           />
           <CreateResumeVeeProfessionDetailsCard
             :key="`prof_fields_el_key_${providers.hh + providers.superjob}`"

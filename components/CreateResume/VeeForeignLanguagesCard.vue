@@ -9,9 +9,10 @@
       ></span>
     </div>
 
-    <div class="text-danger d-block">
+    <div v-if="errorMessage" class="text-danger">
       {{ errorMessage }}
     </div>
+
     <transition>
       <div
         class="w-box-body"
@@ -28,180 +29,86 @@
 </template>
 
 <script setup>
-import { useProfileStore } from "~/store/profile";
-import { useRuntimeConfig } from "#app";
-import useFormValidation from "~/composables/useFormValidation";
-import { useDiff } from "~/composables/useDiff";
-
-import { useResumeStore } from "~/store/resume";
-
+import { useRoute } from "vue-router";
+import { computed, ref, watch, onMounted } from "vue";
+import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
+import { useResumeStore } from "~/store/resume";
+import useFormValidation from "~/composables/useFormValidation";
 import { zod } from "~/hooks/ru-zod.js";
 
-const props = defineProps({
-  title: {
-    default: "-",
-    required: false,
-  },
-});
-
-const profileStore = useProfileStore();
-const CONFIG = useRuntimeConfig();
 const route = useRoute();
-
-const resumeID = computed(() => route.params.id);
-
 const resumeStore = useResumeStore();
 const { updateResume } = resumeStore;
+
+const resumeID = computed(() => route.params.id);
 const my_resume = computed(() => resumeStore.my_resume);
-
-const isSaved = ref(false);
-const isChanged = ref(false);
-const isFirst = ref(true);
-const isCollapsed = ref(true);
-const isUpdated = ref(false);
-
-const schema = computed(() => {
-  return toTypedSchema(
-    zod.object({
-      languages: zod.array(
-        zod.object({
-          language_id: zod.number(),
-          level_id: zod.number(),
-        }),
-      ),
-    }),
-  );
-});
-
-const initialValues = ref({
-  languages: [],
-});
-const {
-  errors,
-  values,
-  setErrors,
-  meta,
-  validate,
-  setValues,
-  resetForm,
-  resetField,
-} = useForm({
-  initialValues: initialValues,
-  validationSchema: schema.value,
-});
-
-const fields = ref({
-  hh: {
-    languages: true,
-  },
-  superjob: {
-    languages: true,
-  },
-});
-
-const sectionData = ref({});
-const getFields = (newObject) => {
-  return {
-    languages: newObject.languages.map((item) => ({
-      language_id: item.language.id,
-      level_id: item.level.id,
-    })),
-  };
-};
-watch(
-  () => resumeStore.my_resume,
-  (newResume) => {
-    if (newResume) {
-      sectionData.value = getFields(newResume);
-    }
-  },
-);
-onMounted(() => {
-  const newResume = resumeStore.my_resume;
-  if (newResume) {
-    sectionData.value = getFields(newResume);
-  }
-});
-
-watch(
-  () => sectionData.value,
-  (newData, oldData) => {
-    const diffData = useDiff(newData, oldData);
-    if (Object.keys(diffData).length) {
-      resetForm({ values: newData });
-    }
-  },
-);
-
-const { errors: serverErrors, handleErrorResponse } = useFormValidation();
-watch(
-  () => serverErrors.value,
-  (newErrors) => {
-    if (Object.keys(newErrors).length > 0) {
-      const backendErrors = {};
-      Object.keys(newErrors).map(
-        (item) => (backendErrors[item] = newErrors[item]),
-      );
-      setErrors(backendErrors);
-    }
-  },
-);
+const isCollapsed = ref(false);
 const isFocused = ref(false);
-const errorMessage = ref(null);
-const isLoading = ref(false);
-const save = async (is_from_parent = false) => {
-  validate();
+const errorMessage = ref("");
 
-  if (!meta.value.dirty) {
-    return true;
+const schema = toTypedSchema(
+  zod.object({
+    languages: zod.array(
+      zod.object({
+        language_id: zod.number(),
+        level_id: zod.number(),
+      }),
+    ),
+  }),
+);
+
+const initialValues = computed(() => ({
+  languages:
+    my_resume.value?.languages.map(({ language, level }) => ({
+      language_id: language.id,
+      level_id: level.id,
+    })) || [],
+}));
+
+const { values, meta, errors, validate, setErrors, resetForm } = useForm({
+  initialValues: initialValues.value,
+  validationSchema: schema,
+});
+
+watch(my_resume, (newResume) => {
+  resetForm({ values: initialValues.value });
+});
+
+const { errors: serverErrors } = useFormValidation();
+watch(serverErrors, (newErrors) => {
+  if (Object.keys(newErrors).length) {
+    setErrors(newErrors);
   }
-  if (!meta.value.valid) {
+});
+
+const save = async () => {
+  await validate();
+
+  if (!meta.value.dirty) return true;
+  if (!meta.value.valid) return false;
+
+  errorMessage.value = "";
+  const jsonData = { ...values, form_data: "LANGUAGES_DATA" };
+
+  const resData = await updateResume(resumeID.value, jsonData);
+
+  if (resData.status !== "success") {
+    errorMessage.value = resData.message || "Ошибка сервера";
+    if (resData.errors) setErrors(resData.errors);
     return false;
   }
-  isLoading.value = true;
-  setErrors({});
-  errorMessage.value = "";
-  let resData = {};
-  const jsonData = { ...values };
 
-  jsonData.form_data = "LANGUAGES_DATA";
-
-  resData = await updateResume(resumeID.value, jsonData);
-
-  isUpdated.value = true;
-  if (resData.status !== "success") {
-    errorMessage.value = resData.message;
-    if (resData.hasOwnProperty("errors")) {
-      setErrors(resData.errors);
-      return;
-    }
-    return;
-  }
-  isChanged.value = false;
-  isSaved.value = false;
-  isUpdated.value = false;
-  setErrors({});
   resetForm({ values });
-  if (is_from_parent) {
-    return new Promise((resolve, reject) => {
-      resolve(true);
-    });
-  }
   return true;
 };
 
 const isCompleted = computed(() => {
-  const myResume = my_resume.value;
-  if (myResume && !isCollapsed.value) {
-    return myResume.address && myResume.address.address;
-  }
-  return false;
+  const address = my_resume.value?.address;
+  return Boolean(address?.address && !isCollapsed.value);
 });
 
-defineExpose({
-  save,
-});
+defineExpose({ save });
 </script>
 
 <style></style>

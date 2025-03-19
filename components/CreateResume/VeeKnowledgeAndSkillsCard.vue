@@ -65,10 +65,11 @@ const resumeID = computed(() => route.params.id);
 const isShown = ref(false);
 const isChanged = ref(false);
 const isSaved = ref(false);
-const isCollapsed = ref(true);
+const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
 const { providers } = useProviders();
+const { my_resume } = storeToRefs(resumeStore);
 
 const schema = computed(() => {
   if (providers.value.hh === true && providers.value.superjob === false) {
@@ -90,8 +91,8 @@ const schema = computed(() => {
 });
 
 const initialValues = ref({
-  skills: [],
-  other_skills: null,
+  skills: Object.values(my_resume.value?.skills) ?? [],
+  other_skills: my_resume.value?.other_skills ?? null,
 });
 const { errors, values, setErrors, meta, setValues, resetForm, validate } =
   useForm({
@@ -110,35 +111,35 @@ const state = reactive({
 const sectionData = ref({
   skills: [],
 });
-watch(
-  () => sectionData.value,
-  (newData, oldData) => {
-    const diffData = useDiff(newData, oldData, []);
-    if (Object.keys(diffData).length) {
-      resetForm({ values: newData });
-    }
-  },
-);
+// watch(
+//   () => sectionData.value,
+//   (newData, oldData) => {
+//     const diffData = useDiff(newData, oldData, []);
+//     if (Object.keys(diffData).length) {
+//       resetForm({ values: newData });
+//     }
+//   },
+// );
 const getFields = (newObject) => {
   return {
     skills: Object.values(newObject?.skills),
     other_skills: newObject?.other_skills,
   };
 };
-watch(
-  () => resumeStore.my_resume,
-  (newData) => {
-    if (newData) {
-      sectionData.value = getFields(newData);
-    }
-  },
-);
-onMounted(() => {
-  const newData = resumeStore.my_resume;
-  if (newData) {
-    sectionData.value = getFields(newData);
-  }
-});
+// watch(
+//   () => resumeStore.my_resume,
+//   (newData) => {
+//     if (newData) {
+//       sectionData.value = getFields(newData);
+//     }
+//   },
+// );
+// onMounted(() => {
+//   const newData = resumeStore.my_resume;
+//   if (newData) {
+//     sectionData.value = getFields(newData);
+//   }
+// });
 
 watch(
   () => isCollapsed.value,
@@ -170,7 +171,7 @@ const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
   // myUndefinedFunction();
 
-  validate();
+  await validate();
   if (!meta.value.dirty) {
     return true;
   }
@@ -180,7 +181,7 @@ const save = async (is_from_parent = false) => {
 
   setErrors({});
   const resData = await updateResume(resumeID.value, {
-    ...JSON.parse(JSON.stringify(values)),
+    ...values,
     form_data: "KNOWLEDGE_AND_SKILLS_DATA",
   });
 

@@ -100,8 +100,8 @@ const yearOptions = computed(() =>
   useYearOptions(1950, new Date().getUTCFullYear() + 5),
 );
 
-const isMoreFields = computed(() => type_id.value != 115);
-const isSchoolGraduate = computed(() => type_id.value == 116);
+const isMoreFields = computed(() => type_id.value !== 115);
+const isSchoolGraduate = computed(() => type_id.value === 116);
 
 const dictionaryStore = useDictionaryStore();
 const educationLevelOptions = computed(() => {
@@ -167,9 +167,7 @@ watch(
   },
 );
 
-onMounted(() => {
-  walkThroughFields(providers.value);
-});
+walkThroughFields(providers.value);
 const remove = (id) => {
   emit("remove", id);
 };

@@ -1,5 +1,5 @@
 <template>
-  <div class="w-box" v-click-outside="save" @click="isFocused = true">
+  <div class="w-box" v-click-outside="save">
     <div class="w-box-head">
       <h3 class="title">Детали резюме</h3>
       <span
@@ -12,103 +12,102 @@
     <div class="text-danger d-block p-4">
       {{ errorMessage }}
     </div>
-    <transition>
-      <div
-        class="w-box-body"
-        :class="{ collapse: isCollapsed }"
-        @click="isFocused = true"
-      >
-        <form @submit.prevent="" @focusin="errorMessage = ''">
-          <div class="input-row">
-            <label for="name">Название вакансии<b>*</b></label>
-            <div class="input-wrapper">
-              <div class="c1 mt-1">
-                <ResumeTextInput name="title" />
-              </div>
+
+    <div
+      class="w-box-body"
+      :class="{ collapse: isCollapsed }"
+      @click="isFocused = true"
+    >
+      <form @submit.prevent="" @focusin="errorMessage = ''">
+        <div class="input-row">
+          <label for="name">Название вакансии<b>*</b></label>
+          <div class="input-wrapper">
+            <div class="c1 mt-1">
+              <ResumeTextInput name="title" :value="my_resume.title" />
             </div>
           </div>
+        </div>
 
-          <div class="input-row">
-            <label>Специализация:<b>*</b></label>
-            <div class="input-wrapper mt-2">
-              <CreateResumeVeeProfessionalDetailsProfessionalRoles
-                name="professional_roles"
-              />
-            </div>
+        <div class="input-row">
+          <label>Специализация:<b>*</b></label>
+          <div class="input-wrapper mt-2">
+            <CreateResumeVeeProfessionalDetailsProfessionalRoles
+              name="professional_roles"
+            />
           </div>
+        </div>
 
-          <div class="input-row" v-show="!state.place_of_work_id.is_hidden">
-            <label>Место работы:</label>
-            <div class="input-wrapper mt-2">
-              <VeeCustomSelect
-                name="place_of_work_id"
-                :options="placeOfWorkOptions"
-                :label="'Выберите'"
-              ></VeeCustomSelect>
-            </div>
+        <div class="input-row" v-show="!state.place_of_work_id.is_hidden">
+          <label>Место работы:</label>
+          <div class="input-wrapper mt-2">
+            <VeeCustomSelect
+              name="place_of_work_id"
+              :options="placeOfWorkOptions"
+              :label="'Выберите'"
+            ></VeeCustomSelect>
           </div>
+        </div>
 
-          <div class="input-row" v-show="!state.schedules.is_hidden">
-            <label>Графиков работы:<b>*</b></label>
-            <div class="input-wrapper mt-2">
-              <VeeMultiSelectWithSearch
-                :options="dictionaryStore.schedules_formatted"
-                name="schedules"
-                placeholder="Выберите"
-              />
-            </div>
+        <div class="input-row" v-show="!state.schedules.is_hidden">
+          <label>Графиков работы:<b>*</b></label>
+          <div class="input-wrapper mt-2">
+            <VeeMultiSelectWithSearch
+              :options="dictionaryStore.schedules_formatted"
+              name="schedules"
+              placeholder="Выберите"
+            />
           </div>
+        </div>
 
-          <div class="input-row">
-            <label>Тип работы:<b>*</b></label>
-            <div class="input-wrapper mt-2">
-              <CreateResumeVeeProfessionalDetailsWorkTypes name="work_types" />
-            </div>
+        <div class="input-row">
+          <label>Тип работы:<b>*</b></label>
+          <div class="input-wrapper mt-2">
+            <CreateResumeVeeProfessionalDetailsWorkTypes name="work_types" />
           </div>
+        </div>
 
-          <div class="input-row">
-            <label>Какой доход вы рассматриваете?</label>
-            <div class="row-container">
-              <div class="row">
-                <div class="col-8">
-                  <div
-                    class="mb-3"
-                    :class="{
-                      'input-wrapper': !state.currency.is_hidden,
-                      'input-group': state.currency.is_hidden,
-                    }"
-                  >
-                    <Field
-                      v-show="!state.salary.is_hidden"
-                      name="salary"
-                      :class="{ 'form-control': state.currency.is_hidden }"
-                      type="number"
-                      placeholder="Укажите сумму"
-                    />
-                    <span
-                      class="input-group-text"
-                      v-show="state.currency.is_hidden"
-                      >₽</span
-                    >
-                  </div>
-
-                  <div class="text-danger">
-                    <ErrorMessage name="salary" />
-                  </div>
-                </div>
-                <div class="col-4" v-show="!state.currency.is_hidden">
-                  <VeeCustomSelect
-                    name="currency"
-                    :label="'Валюта'"
-                    :options="currencyOptions"
+        <div class="input-row">
+          <label>Какой доход вы рассматриваете?</label>
+          <div class="row-container">
+            <div class="row">
+              <div class="col-8">
+                <div
+                  class="mb-3"
+                  :class="{
+                    'input-wrapper': !state.currency.is_hidden,
+                    'input-group': state.currency.is_hidden,
+                  }"
+                >
+                  <Field
+                    v-show="!state.salary.is_hidden"
+                    name="salary"
+                    :class="{ 'form-control': state.currency.is_hidden }"
+                    type="number"
+                    placeholder="Укажите сумму"
                   />
+                  <span
+                    class="input-group-text"
+                    v-show="state.currency.is_hidden"
+                    >₽</span
+                  >
                 </div>
+
+                <div class="text-danger">
+                  <ErrorMessage name="salary" />
+                </div>
+              </div>
+              <div class="col-4" v-show="!state.currency.is_hidden">
+                <VeeCustomSelect
+                  name="currency"
+                  :label="'Валюта'"
+                  :options="currencyOptions"
+                />
               </div>
             </div>
           </div>
-        </form>
-      </div>
-    </transition>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -148,47 +147,48 @@ const { providers } = useProviders();
 const currencyOptions = useCurrencyOptions();
 
 const schema = computed(() => {
-  if (providers.value.hh === true && providers.value.superjob === false) {
-    return zod.object({
-      title: zod.string().min(2),
-      salary: zod.number(),
-      currency: zod.string().nullable().optional(),
-      place_of_work_id: zod.number().nullable(),
-      professional_roles: zod.array(zod.number()).nonempty(),
-      work_types: zod.array(zod.number()).nonempty(),
-      schedules: zod.array(zod.number()).optional(),
-    });
-  }
-  if (providers.value.hh === false && providers.value.superjob === true) {
-    return zod.object({
-      title: zod.string().nullable().optional(),
-      salary: zod.number().min(2),
-      currency: zod.string().nullable().optional(),
-      place_of_work_id: zod.number().nullable(),
-      professional_roles: zod.array(zod.number()).nonempty(),
-      work_types: zod.array(zod.number()).nonempty(),
-      schedules: zod.array(zod.number()).optional(),
-    });
-  }
-  return zod.object({
-    title: zod.string().min(2),
+  const baseSchema = {
     professional_roles: zod.array(zod.number()).nonempty(),
     work_types: zod.array(zod.number()).nonempty(),
     schedules: zod.array(zod.number()).optional(),
-    salary: zod.number().nullable(),
-    currency: zod.string(),
     place_of_work_id: zod.number().nullable(),
+    salary: zod.number().nullable(),
+  };
+
+  if (providers.value.hh && !providers.value.superjob) {
+    return zod.object({
+      ...baseSchema,
+      title: zod.string().min(2),
+      currency: zod.string().nullable().optional(),
+    });
+  }
+
+  if (!providers.value.hh && providers.value.superjob) {
+    return zod.object({
+      ...baseSchema,
+      title: zod.string().nullable().optional(),
+      salary: zod.number().min(2),
+      currency: zod.string().nullable().optional(),
+    });
+  }
+
+  return zod.object({
+    ...baseSchema,
+    title: zod.string().min(2),
+    currency: zod.string(),
   });
 });
 
+// todo попросить Унана переделать формат ответа: work_types:{81: "Полная занятость", 82: "Частичная занятость", 83: "Временная работа", 88: "Проектная работа"}
 const initialValues = {
-  title: null,
-  professional_roles: [],
-  work_types: [],
-  schedules: [],
-  place_of_work_id: null,
-  salary: null,
-  currency: "RUB",
+  title: my_resume.value?.title ?? "",
+  professional_roles:
+    my_resume.value?.professional_roles.map((item) => item.id) ?? [],
+  work_types: Object.keys(my_resume.value?.work_types).map(Number) ?? [],
+  schedules: Object.keys(my_resume.value?.schedules).map(Number) ?? [],
+  place_of_work_id: my_resume.value?.place_of_work?.id ?? null,
+  salary: my_resume.value?.salary ?? null,
+  currency: my_resume.value?.currency ?? "RUB",
 };
 const { values, meta, resetForm, setErrors, validate, getErrors, errors } =
   useForm({
@@ -251,22 +251,20 @@ watch(
   },
 );
 
-onMounted(() => {
-  walkThroughFields(providers.value);
-});
+walkThroughFields(providers.value);
 
 const sectionData = ref({});
-const getFields = (newObject) => {
-  return {
-    title: newObject.title,
-    salary: newObject.salary,
-    currency: newObject.currency,
-    place_of_work_id: newObject.place_of_work?.id ?? null,
-    work_types: Object.keys(newObject.work_types).map((item) => parseInt(item)),
-    schedules: Object.keys(newObject.schedules).map((item) => parseInt(item)),
-    professional_roles: newObject.professional_roles.map((item) => item.id),
-  };
-};
+const getFields = (newObject) => ({
+  title: newObject.title,
+  salary: newObject.salary,
+  currency: newObject.currency,
+  place_of_work_id: newObject.place_of_work?.id ?? null,
+  work_types: Object.keys(newObject.work_types || {}).map(Number),
+  schedules: Object.keys(newObject.schedules || {}).map(Number),
+  professional_roles:
+    newObject.professional_roles?.map((item) => item.id) || [],
+});
+
 watch(
   () => resumeStore.my_resume,
   (newData) => {
@@ -275,12 +273,10 @@ watch(
     }
   },
 );
-onMounted(() => {
-  const newData = resumeStore.my_resume;
-  if (newData) {
-    sectionData.value = getFields(newData);
-  }
-});
+
+if (resumeStore.my_resume) {
+  sectionData.value = getFields(resumeStore.my_resume);
+}
 
 watch(
   () => sectionData.value,
@@ -294,24 +290,23 @@ watch(
 
 const { getPlaceOfWorks, getSchedules } = dictionaryStore;
 
-const placeOfWorkOptions = computed(() => {
-  return dictionaryStore.place_of_works.map((item) => ({
+const placeOfWorkOptions = computed(() =>
+  dictionaryStore.place_of_works.map((item) => ({
     name: item.name,
     value: item.id,
-  }));
-});
+  })),
+);
 
-const scheduleOptions = computed(() => {
-  return dictionaryStore.schedules.map((item) => ({
+const scheduleOptions = computed(() =>
+  dictionaryStore.schedules.map((item) => ({
     name: item.name,
     value: item.id,
-  }));
-});
+  })),
+);
 
-onMounted(() => {
-  getSchedules();
-  getPlaceOfWorks();
-});
+getSchedules();
+getPlaceOfWorks();
+
 const { errors: serverErrors, handleErrorResponse } = useFormValidation();
 watch(
   () => serverErrors.value,
@@ -330,50 +325,46 @@ const isFocused = ref(false);
 const isLoading = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  validate();
+  await validate();
   if (!meta.value.dirty) {
     return true;
   }
-
   if (!meta.value.valid) {
-    errorMessage.value = "Запольните все поля";
     return false;
   }
+
   isLoading.value = true;
   setErrors({});
   errorMessage.value = "";
 
-  let resData = await updateResume(resumeID.value, {
-    ...JSON.parse(JSON.stringify(values)),
-    form_data: "PROFESSION_DETAILS_DATA",
-  });
-
-  isUpdated.value = true;
-  if (resData.status !== "success") {
-    errorMessage.value = resData.message;
-    if (resData.hasOwnProperty("errors")) {
-      setErrors(resData.errors);
-      return;
-    }
-    return;
-  }
-  setErrors({});
-  resetForm({ values });
-  isSaved.value = false;
-  isUpdated.value = false;
-  if (is_from_parent) {
-    return new Promise((resolve, reject) => {
-      resolve(true);
+  try {
+    const resData = await updateResume(resumeID.value, {
+      ...values,
+      form_data: "PROFESSION_DETAILS_DATA",
     });
+
+    isUpdated.value = true;
+
+    if (resData.status !== "success") {
+      errorMessage.value = resData.message;
+      if (resData.errors) setErrors(resData.errors);
+      return false;
+    }
+
+    isSaved.value = false;
+    isUpdated.value = false;
+
+    return is_from_parent ? Promise.resolve(true) : true;
+  } catch (error) {
+    errorMessage.value = "Произошла ошибка при сохранении";
+    return false;
+  } finally {
+    isLoading.value = false;
   }
 };
 
 const isCompleted = computed(() => {
-  const myResume = my_resume.value;
-  if (myResume && !isCollapsed.value) {
-    return myResume.address && myResume.address.address;
-  }
-  return false;
+  return my_resume.value?.address?.address && !isCollapsed.value;
 });
 
 defineExpose({

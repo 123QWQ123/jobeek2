@@ -194,26 +194,34 @@ watch(
 );
 const dictionaryStore = useDictionaryStore();
 const vacancyStore = useVacancyStore();
+const resumeStore = useResumeStore();
 
-const { getIndustries } = vacancyStore;
+const { getIndustries } = resumeStore;
+const { industries } = resumeStore;
 const { value: until_today } = useField(
   () => `${props.name}[${props.idx}].until_today`,
 );
-const { value: industries } = useField(
-  () => `${props.name}[${props.idx}].industries`,
-);
+// const { value: industries } = useField(
+//   () => `${props.name}[${props.idx}].industries`,
+// );
 const updateIndustryInput = async (newValue = "") => {
-  let items = await getIndustries();
-  items = items.filter((item) => item.title.includes(newValue));
-  industryOptions.value = items.map((item) => ({
-    value: item.id,
-    name: item.title,
-  }));
+  industries.filter((item) => item.title.includes(newValue));
+  industryOptions.value = industries
+    .filter((item) => item.title.includes(newValue))
+    .map((item) => ({
+      value: item.id,
+      name: item.title,
+    }));
 };
 const profileStore = useProfileStore();
-const { getCityName, getCityNameFromArea2 } = useResumeHooks();
+const { getCityNameFromArea2 } = useResumeHooks();
 const { searchCities } = profileStore;
-const industryOptions = ref([]);
+const industryOptions = ref(
+  industries.map((item) => ({
+    value: item.id,
+    name: item.title,
+  })),
+);
 const cityOptions = ref([]);
 const updateCityInput = async (newValue = "") => {
   if (newValue.length < 2) {
@@ -233,19 +241,18 @@ const onSearchCitiesByCountryId = async (country_id, name) => {
     name: getCityNameFromArea2(item),
   }));
 };
-const resumeStore = useResumeStore();
-onMounted(() => {
-  const newResume = resumeStore.my_resume;
-  if (newResume) {
-    if (newResume.experience.length > 0) {
-      const city = newResume.experience[props.idx].city;
 
-      if (city && city.hasOwnProperty("country_id")) {
-        onSearchCitiesByCountryId(city.country_id, city.name);
-      }
-    }
+onMounted(() => {
+  walkThroughFields(providers.value);
+  updateIndustryInput();
+
+  const newResume = resumeStore.my_resume;
+  if (newResume?.experience?.length) {
+    const city = newResume.experience[props.idx].city;
+    if (city?.country_id) onSearchCitiesByCountryId(city.country_id, city.name);
   }
 });
+
 const isNew = ref(props.isNew);
 
 const deleteItem = (id = null) => {
@@ -342,15 +349,8 @@ watch(
   },
 );
 
-onMounted(() => {
-  walkThroughFields(providers.value);
-});
 const yearOptions = computed(() => useYearOptions());
 const monthOptions = computed(() => useMonthOptions());
-
-onMounted(() => {
-  updateIndustryInput();
-});
 
 const save = () => {
   emit("update", props.id, useFormData(state));

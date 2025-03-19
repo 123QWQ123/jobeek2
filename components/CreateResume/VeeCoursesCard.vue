@@ -18,7 +18,7 @@
         :class="{ collapse: isCollapsed }"
         @click="isFocused = true"
       >
-        <div class="" v-if="isShown">
+        <div>
           <div class="row">
             <div class="mt-3">
               <CreateResumeVeeCoursesForm
@@ -27,12 +27,6 @@
               />
             </div>
           </div>
-        </div>
-        <div class="empty-area" v-else>
-          <span>Здесь вы можете указать</span>
-          <button class="add" type="button" @click="isShown = !isShown">
-            Добавить
-          </button>
         </div>
 
         <transition>
@@ -65,12 +59,13 @@
 import useResumeHooks from "~/hooks/useResumeHooks";
 import useFormValidation from "~/composables/useFormValidation";
 import { useResumeStore } from "~/store/resume";
-import { useDiff } from "~/composables/useDiff";
 import { useDictionaryStore } from "~/store/dictionary";
-import { zod } from "~/hooks/ru-zod.js";
 import { useForm } from "vee-validate";
 import useProviders from "~/composables/useProviders.js";
 import { toTypedSchema } from "@vee-validate/zod";
+import { computed, ref, watch } from "vue";
+import { useRoute } from "vue-router";
+import { zod } from "~/hooks/ru-zod.js";
 
 const props = defineProps({
   title: {
@@ -79,60 +74,51 @@ const props = defineProps({
   },
 });
 
-const educationElement = ref(false);
 const route = useRoute();
 const resumeStore = useResumeStore();
-const resumeID = computed(() => route.params.id);
 const dictionaryStore = useDictionaryStore();
-const courses = ref(resumeStore.resume?.educations.courses ?? []);
-
+const educationElement = ref(null);
 const isShown = ref(false);
-const isChanged = ref(false);
 const isSaved = ref(false);
-const isCollapsed = ref(true);
-const isUpdated = ref(false);
+const isCollapsed = ref(false);
+const isFocused = ref(false);
+const errorMessage = ref(null);
 
+const resumeID = computed(() => route.params.id);
 const { providers } = useProviders();
-const schema = computed(() => {
-  if (providers.value.hh === true && providers.value.superjob === false) {
-    const coursesScheme = zod.object({
-      title: zod.string(),
-      organization: zod.string(),
-      end_year: zod.number(),
-      profession: zod.string().nullish().optional(),
-      certificate_url: zod.string().nullish().optional(),
-    });
-    return zod.object({
-      courses: zod.array(coursesScheme).optional(),
-    });
-  }
-  if (providers.value.hh === false && providers.value.superjob === true) {
-    const coursesScheme = zod.object({
-      title: zod.string().nullish().optional(),
-      organization: zod.string(),
-      end_year: zod.number(),
-      profession: zod.string().nullish().optional(),
-      certificate_url: zod.string().nullish().optional(),
-    });
-    return zod.object({
-      courses: zod.array(coursesScheme).optional(),
-    });
-  }
+const { my_resume } = storeToRefs(resumeStore);
 
-  const coursesScheme = zod.object({
-    title: zod.string(),
+const schema = computed(() => {
+  const baseScheme = {
     organization: zod.string(),
     end_year: zod.number(),
     profession: zod.string().nullish().optional(),
     certificate_url: zod.string().nullish().optional(),
-  });
+  };
+
   return zod.object({
-    courses: zod.array(coursesScheme).optional(),
+    courses: zod
+      .array(
+        zod.object({
+          ...baseScheme,
+          title:
+            providers.hh || (!providers.hh && !providers.superjob)
+              ? zod.string()
+              : zod.string().nullish().optional(),
+        }),
+      )
+      .optional(),
   });
 });
 
 const initialValues = ref({
-  courses: [],
+  courses: my_resume.value.educations?.courses.map((item) => ({
+    title: item.title,
+    organization: item.organization,
+    profession: item.profession,
+    end_year: item.end_year,
+    certificate_url: item.certificate_url,
+  })),
 });
 const {
   values,
@@ -149,48 +135,6 @@ const {
   validationSchema: toTypedSchema(schema.value),
 });
 
-const sectionData = ref({
-  courses: [],
-});
-watch(
-  () => sectionData.value,
-  (newData, oldData) => {
-    const diffData = useDiff(newData, oldData);
-    if (Object.keys(diffData).length) {
-      if (newData.courses?.length > 0) {
-        isShown.value = true;
-      }
-      resetForm({ values: newData });
-    }
-  },
-);
-
-const getFields = (newObject) => {
-  return {
-    courses: newObject?.educations?.courses.map((item) => ({
-      title: item.title,
-      organization: item.organization,
-      profession: item.profession,
-      end_year: item.end_year,
-      certificate_url: item.certificate_url,
-    })),
-  };
-};
-watch(
-  () => resumeStore.my_resume,
-  (newResume) => {
-    if (newResume) {
-      sectionData.value = getFields(newResume);
-    }
-  },
-);
-
-onMounted(() => {
-  if (resumeStore.my_resume) {
-    sectionData.value = getFields(resumeStore.my_resume);
-  }
-});
-
 watch(
   () => isCollapsed.value,
   (newData) => {
@@ -201,62 +145,38 @@ watch(
 );
 
 const { getSelectedProviders } = useResumeHooks();
-const { getResume, updateResume } = resumeStore;
+const { updateResume } = resumeStore;
 
-const { errors: serverErrors, handleErrorResponse } = useFormValidation();
-watch(
-  () => serverErrors.value,
-  (newErrors) => {
-    if (Object.keys(newErrors).length > 0) {
-      const backendErrors = {};
-      Object.keys(newErrors).map(
-        (item) => (backendErrors[item] = newErrors[item]),
-      );
-      setErrors(backendErrors);
-    }
-  },
-);
-const isFocused = ref(false);
-const isLoading = ref(false);
-const errorMessage = ref(null);
-const save = async (is_from_parent = false) => {
-  validate();
+const { errors: serverErrors } = useFormValidation();
+watch(serverErrors, (newErrors) => {
+  if (Object.keys(newErrors).length) setErrors({ ...newErrors });
+});
 
-  if (!meta.value.dirty) {
-    return true;
-  }
-  if (!meta.value.valid) {
-    return false;
-  }
-  setErrors({});
+const save = async () => {
+  await validate();
+  if (!meta.value.dirty) return true;
+  if (!meta.value.valid) return false;
+
   const resData = await updateResume(resumeID.value, {
     form_data: "EDUCATION_DATA",
-    educations: {
-      courses: values.courses,
-    },
+    educations: { courses: values.courses },
     providers: getSelectedProviders(providers.value),
   });
 
   if (resData.status !== "success") {
     errorMessage.value = resData.message;
-    if (resData.hasOwnProperty("errors")) {
-      setErrors(resData.errors);
-      return;
-    }
+    if (resData.errors) setErrors({ ...resData.errors });
     return;
   }
-  isChanged.value = false;
-  isSaved.value = false;
-  isUpdated.value = true;
-  setErrors({});
+
+  isSaved.value = true;
+  errorMessage.value = null;
   resetForm({ values });
 };
 
 const isCompleted = computed(() => {
-  return resumeStore.resume?.educations.primary?.length > 0;
+  return my_resume.value?.educations.primary?.length > 0;
 });
 
-defineExpose({
-  save,
-});
+defineExpose({ save });
 </script>
