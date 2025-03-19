@@ -113,11 +113,9 @@ const toggleButtonText = computed(() => {
 
 const my_resume = computed(() => resumeStore.my_resume);
 
-const isSaved = ref(false);
 const isChanged = ref(false);
 const isFirst = ref(true);
 const isCollapsed = ref(false);
-const isUpdated = ref(false);
 
 const providers = computed(() => props.providers);
 const isHidden = ref(props.providers.hh ?? false);
@@ -151,31 +149,6 @@ watch(
   },
 );
 
-const sectionData = ref({});
-watch(
-  () => sectionData.value,
-  (newData, oldData) => {
-    const diffData = useDiff(newData, oldData);
-    if (Object.keys(diffData).length) {
-      state.photo_id.val = newData.photo_id;
-    }
-  },
-);
-watch(
-  () => resumeStore.my_resume,
-  (newData) => {
-    if (isUpdated.value) {
-      isUpdated.value = false;
-      return;
-    }
-    if (newData) {
-      sectionData.value = {
-        photo_id: newData.photo?.id,
-      };
-    }
-  },
-);
-
 const dictionaryStore = useDictionaryStore();
 
 const { errors, handleErrorResponse } = useFormValidation();
@@ -186,7 +159,7 @@ const onDeleteArtifact = async (id) => {
   const resData = await deleteArtifact(id);
   if (resData.status === "success") {
     await getArtifacts({ type: 1 });
-    getMyResume(resumeID.value);
+    await getMyResume(resumeID.value);
   }
 };
 const onSelect = async (id) => {
@@ -212,14 +185,11 @@ const save = async (is_from_parent = false) => {
     const jsonData = useFormData(state);
     jsonData.form_data = "UPDATE_PHOTO_DATA";
     resData = await updateResume(resumeID.value, jsonData);
-    isUpdated.value = true;
     if (resData.status !== "success") {
       return handleErrorResponse(resData.data);
     }
 
     isChanged.value = false;
-    isSaved.value = false;
-    isUpdated.value = false;
     isFocused.value = false;
     if (is_from_parent) {
       return new Promise((resolve, reject) => {

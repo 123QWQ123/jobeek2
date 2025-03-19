@@ -52,11 +52,7 @@ const resumeID = computed(() => route.params.id);
 const { my_resume } = storeToRefs(resumeStore);
 const experience = ref(my_resume.value?.experience ?? []);
 
-const isShown = ref(false);
-const isChanged = ref(false);
-const isSaved = ref(false);
 const isCollapsed = ref(false);
-const isUpdated = ref(false);
 
 const { providers } = useProviders();
 const schema = computed(() => {
@@ -181,15 +177,6 @@ const getFields = (newObject) => {
   };
 };
 
-watch(
-  () => isCollapsed.value,
-  (newData) => {
-    if (!newData) {
-      isShown.value = true;
-    }
-  },
-);
-
 const { getResume, updateResume } = resumeStore;
 
 const { errors: serverErrors, handleErrorResponse } = useFormValidation();
@@ -232,9 +219,6 @@ const save = async (is_from_parent = false) => {
     }
     return;
   }
-  isChanged.value = false;
-  isSaved.value = false;
-  isUpdated.value = true;
   errorMessage.value = "";
   setErrors({});
   resetForm({ values });

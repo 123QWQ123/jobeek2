@@ -64,20 +64,15 @@ const { updateResume, getMyResume } = resumeStore;
 const { employer } = profileStore;
 const my_resume = computed(() => resumeStore.my_resume);
 
-const isSaved = ref(false);
-const isChanged = ref(false);
-const isFirst = ref(true);
 const isCollapsed = ref(false);
-const isUpdated = ref(false);
 
 const schema = computed(() => {
-  const s = toTypedSchema(
+  return toTypedSchema(
     zod.object({
       has_vehicle: zod.boolean().nullable(),
       driver_license_types: zod.number().array().optional(),
     }),
   );
-  return s;
 });
 
 const initialValues = ref({
@@ -129,14 +124,6 @@ watch(
   },
 );
 
-const getFields = (newObject) => {
-  return {
-    driver_license_types:
-      newObject.driver_license_types.map((item) => item.id) ?? [],
-    has_vehicle: newObject.has_vehicle ?? false,
-  };
-};
-
 walkThroughFields(providers.value);
 const { errors: serverErrors, handleErrorResponse } = useFormValidation();
 watch(
@@ -152,7 +139,6 @@ watch(
   },
 );
 const isFocused = ref(false);
-const isLoading = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
   await validate();
@@ -162,7 +148,6 @@ const save = async (is_from_parent = false) => {
   if (!meta.value.valid) {
     return false;
   }
-  isLoading.value = true;
   setErrors({});
   errorMessage.value = "";
 
@@ -181,8 +166,6 @@ const save = async (is_from_parent = false) => {
     resetForm({ values });
   } catch (err) {
     errorMessage.value = "Произошла непредвиденная ошибка";
-  } finally {
-    isLoading.value = false;
   }
 
   return is_from_parent ? Promise.resolve(true) : true;

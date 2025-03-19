@@ -216,14 +216,12 @@ watch(
   },
 );
 const isFocused = ref(false);
-const isLoading = ref(false);
 const errorMessage = ref(null);
 
 const save = async (is_from_parent = false) => {
   await validate();
   if (!meta.value.dirty || !meta.value.valid) return false;
 
-  isLoading.value = true;
   const resData = await updateResume(resumeID.value, {
     form_data: "CITIZENSHIP_AND_FAMILY_DATA",
     ...values,
@@ -232,12 +230,10 @@ const save = async (is_from_parent = false) => {
   if (resData.status !== "success") {
     errorMessage.value = resData.message;
     resData.errors && setErrors(resData.errors);
-    isLoading.value = false;
     return false;
   }
 
   resetForm({ values });
-  isLoading.value = false;
   return is_from_parent ? Promise.resolve(true) : true;
 };
 

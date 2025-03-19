@@ -98,12 +98,9 @@ const resumeID = computed(() => route.params.id);
 
 // Состояния компонентов интерфейса
 const isShown = ref(true);
-const isSaved = ref(false);
 const isCollapsed = ref(false);
-const isUpdated = ref(false);
 const isFocused = ref(false);
 const errorMessage = ref(null);
-const isLoading = ref(false);
 const educationElement = ref(false);
 
 // Options для selects
@@ -193,21 +190,6 @@ watch(
 );
 walkThroughFields(providers.value);
 
-// Формирование сообщения об ошибке с сервера
-// const { errors: serverErrors } = useFormValidation();
-// watch(
-//   () => serverErrors.value,
-//   (newErrors) => {
-//     if (Object.keys(newErrors).length > 0) {
-//       const backendErrors = {};
-//       Object.entries(newErrors).forEach(
-//         ([key, val]) => (backendErrors[key] = val),
-//       );
-//       setErrors(backendErrors);
-//     }
-//   },
-// );
-
 // Логика сохранения формы
 const save = async () => {
   await validate();
@@ -227,9 +209,6 @@ const save = async () => {
     if (resData.errors) setErrors(resData.errors);
     return;
   }
-
-  isSaved.value = true;
-  isUpdated.value = true;
 
   resetForm({ values });
 };

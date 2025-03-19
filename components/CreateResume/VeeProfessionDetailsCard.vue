@@ -140,9 +140,7 @@ const resumeID = computed(() => route.params.id);
 const resumeStore = useResumeStore();
 const { updateResume } = resumeStore;
 const my_resume = computed(() => resumeStore.my_resume);
-const isSaved = ref(false);
 const isCollapsed = ref(false);
-const isUpdated = ref(false);
 const { providers } = useProviders();
 const currencyOptions = useCurrencyOptions();
 
@@ -253,52 +251,10 @@ watch(
 
 walkThroughFields(providers.value);
 
-const sectionData = ref({});
-const getFields = (newObject) => ({
-  title: newObject.title,
-  salary: newObject.salary,
-  currency: newObject.currency,
-  place_of_work_id: newObject.place_of_work?.id ?? null,
-  work_types: Object.keys(newObject.work_types || {}).map(Number),
-  schedules: Object.keys(newObject.schedules || {}).map(Number),
-  professional_roles:
-    newObject.professional_roles?.map((item) => item.id) || [],
-});
-
-watch(
-  () => resumeStore.my_resume,
-  (newData) => {
-    if (newData) {
-      sectionData.value = getFields(newData);
-    }
-  },
-);
-
-if (resumeStore.my_resume) {
-  sectionData.value = getFields(resumeStore.my_resume);
-}
-
-watch(
-  () => sectionData.value,
-  (newData, oldData) => {
-    const diffData = useDiff(newData, oldData);
-    if (Object.keys(diffData).length) {
-      resetForm({ values: newData });
-    }
-  },
-);
-
 const { getPlaceOfWorks, getSchedules } = dictionaryStore;
 
 const placeOfWorkOptions = computed(() =>
   dictionaryStore.place_of_works.map((item) => ({
-    name: item.name,
-    value: item.id,
-  })),
-);
-
-const scheduleOptions = computed(() =>
-  dictionaryStore.schedules.map((item) => ({
     name: item.name,
     value: item.id,
   })),
@@ -322,7 +278,6 @@ watch(
 );
 
 const isFocused = ref(false);
-const isLoading = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
   await validate();
@@ -333,7 +288,6 @@ const save = async (is_from_parent = false) => {
     return false;
   }
 
-  isLoading.value = true;
   setErrors({});
   errorMessage.value = "";
 
@@ -343,23 +297,16 @@ const save = async (is_from_parent = false) => {
       form_data: "PROFESSION_DETAILS_DATA",
     });
 
-    isUpdated.value = true;
-
     if (resData.status !== "success") {
       errorMessage.value = resData.message;
       if (resData.errors) setErrors(resData.errors);
       return false;
     }
 
-    isSaved.value = false;
-    isUpdated.value = false;
-
     return is_from_parent ? Promise.resolve(true) : true;
   } catch (error) {
     errorMessage.value = "Произошла ошибка при сохранении";
     return false;
-  } finally {
-    isLoading.value = false;
   }
 };
 

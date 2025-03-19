@@ -89,15 +89,7 @@ const resumeStore = useResumeStore();
 const resumeID = computed(() => route.params.id);
 const dictionaryStore = useDictionaryStore();
 const { my_resume } = storeToRefs(resumeStore);
-const completed_test_or_exams = ref(
-  my_resume.value?.educations.completed_test_or_exams ?? [],
-);
-
-const isShown = ref(false);
-const isChanged = ref(false);
-const isSaved = ref(false);
 const isCollapsed = ref(false);
-const isUpdated = ref(false);
 
 const { providers } = useProviders();
 const schema = computed(() => {
@@ -154,35 +146,6 @@ const {
   validationSchema: toTypedSchema(schema.value),
 });
 
-const getFields = (newObject) => {
-  return {
-    completed_test_or_exams: newObject?.educations?.completed_test_or_exams.map(
-      (item) => ({
-        name: item.name,
-        organization: item.organization,
-        profession: item.profession,
-        year: item.year,
-      }),
-    ),
-  };
-};
-
-watch(
-  () => completed_test_or_exams.value,
-  (newData) => {
-    isChanged.value = true;
-  },
-);
-
-watch(
-  () => isCollapsed.value,
-  (newData) => {
-    if (!newData) {
-      isShown.value = true;
-    }
-  },
-);
-
 const { getSelectedProviders } = useResumeHooks();
 const { getResume, updateResume } = resumeStore;
 
@@ -202,7 +165,7 @@ watch(
 const isFocused = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  validate();
+  await validate();
 
   if (!meta.value.dirty) {
     return true;
@@ -227,9 +190,6 @@ const save = async (is_from_parent = false) => {
     }
     return;
   }
-  isChanged.value = false;
-  isSaved.value = false;
-  isUpdated.value = true;
   setErrors({});
   resetForm({ values });
 };

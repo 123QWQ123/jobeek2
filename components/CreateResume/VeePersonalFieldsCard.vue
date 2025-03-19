@@ -225,12 +225,8 @@ const my_resume = computed(() => resumeStore.my_resume);
 
 const { getCities } = profileStore;
 
-const isSaved = ref(false);
-const isChanged = ref(false);
 const isCollapsed = ref(false);
-const isUpdated = ref(false);
 const isFocused = ref(false);
-const isLoading = ref(false);
 const errorMessage = ref(null);
 const cityOptions = computed(() => profileStore.cityOptions);
 
@@ -529,16 +525,13 @@ watch(
 );
 
 const save = async (is_from_parent = false) => {
-  isLoading.value = true;
   errorMessage.value = "";
   await validate();
 
   if (!meta.value.dirty) {
-    isLoading.value = false;
     return true;
   }
   if (!meta.value.valid) {
-    isLoading.value = false;
     return false;
   }
   setErrors({});
@@ -560,8 +553,6 @@ const save = async (is_from_parent = false) => {
     }
     return;
   }
-  isChanged.value = false;
-  isSaved.value = false;
   setErrors({});
   resetForm({ values });
   if (is_from_parent) {
