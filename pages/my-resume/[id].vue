@@ -4,6 +4,8 @@ import Swal from "sweetalert2";
 import { toast } from "vue3-toastify";
 import { useResumeStore } from "~/store/resume";
 import useProviders from "~/composables/useProviders.js";
+import { useDictionaryStore } from "~/store/dictionary.js";
+import { useAsyncData } from "#app";
 
 const route = useRoute();
 
@@ -23,19 +25,36 @@ watch(
 );
 
 const { getMyResume, publishResume } = resumeStore;
+const { my_resume } = storeToRefs(resumeStore);
 const resumeID = computed(() => route.params.id);
 
-watch(
-  () => route.params.id,
-  (newDraftId) => {
-    if (newDraftId) {
-      getMyResume(resumeID.value);
-    }
-  },
-);
+const dictionaryStore = useDictionaryStore();
+const { getDictionaries } = dictionaryStore;
+
+const resData = await useAsyncData("my_resume" + resumeID.value, async () => {
+  return await getMyResume(resumeID.value);
+});
+
+const { data } = await useAsyncData("dictionaries", async () => {
+  return await getDictionaries([
+    "work_type",
+    "schedule",
+    "place_of_work",
+    "education_type_resume",
+    "preferred_contact_type",
+    "education_form_resume",
+    "driver_license_types",
+    "resume_access_type_merge",
+    "gender_resume",
+    "gender",
+    "relocation_type",
+    "business_trip",
+  ]);
+});
+
 const pageTitle = computed(() => {
   if (resumeID?.value) {
-    return "Jobeek - " + resumeStore.my_resume?.title;
+    return "Jobeek - " + my_resume.value?.title;
   }
   return "Мое резюме";
 });
@@ -43,48 +62,29 @@ useHead({
   title: pageTitle,
 });
 
-onMounted(async () => {
-  if (resumeID.value) {
-    const resData = await getMyResume(resumeID.value);
-    if (resData.status === "error") {
-      navigateTo({
-        name: "create-resume",
-        query: {
-          ...route.query,
-          message: JSON.stringify({
-            type: "error",
-            text: resData.message,
-            redirect: "create-resume",
-          }),
-        },
-      });
-    }
-  }
-  handleAlert();
-});
-
+if (resData.status === "error") {
+  navigateTo({
+    name: "create-resume",
+    query: {
+      ...route.query,
+      message: JSON.stringify({
+        type: "error",
+        text: resData.message,
+        redirect: "create-resume",
+      }),
+    },
+  });
+}
 const error = computed(() => {
   return route.query.message;
 });
-const { handleAlert } = useAlert();
-watch(() => route.query.message, handleAlert);
+// const { handleAlert } = useAlert();
+// watch(() => route.query.message, handleAlert);
 
 const saveAsDraft = (e) => {
   e.preventDefault();
 };
 
-const paramProviders = computed(() => {
-  if (providers.value.hh && providers.value.superjob) {
-    return ["hh", "superjob"];
-  }
-  if (providers.value.hh) {
-    return ["hh"];
-  }
-  if (providers.value.superjob) {
-    return ["superjob"];
-  }
-  return [];
-});
 const publishableProviders = computed(() => {
   const items = [];
   if (hhPublishable.value) {
@@ -126,37 +126,32 @@ watch(
   },
 );
 
-const photo_el = ref();
-const personal_fields_el = ref();
-const profession_fields_el = ref();
-const foreign_language_el = ref();
-const driver_licences_el = ref();
-const work_experience_el = ref();
-const education_el = ref();
-const courses_el = ref();
-const citizenship_el = ref();
-const knowledge_and_skills_el = ref();
-const access_el = ref();
-// citizenship_el.value.save(true),
+// Reactive refs for form sections
+const sectionsRefs = reactive({
+  photo: ref(),
+  personalFields: ref(),
+  professionFields: ref(),
+  foreignLanguage: ref(),
+  driverLicences: ref(),
+  workExperience: ref(),
+  education: ref(),
+  courses: ref(),
+  citizenship: ref(),
+  knowledgeAndSkills: ref(),
+  access: ref(),
+});
 
+// Save all sections
 const saveAllSections = async () => {
-  const promises = await Promise.all([
-    photo_el.value.save(true),
-    personal_fields_el.value.save(true),
-    profession_fields_el.value.save(true),
-    foreign_language_el.value.save(true),
-    driver_licences_el.value.save(true),
-    work_experience_el.value.save(true),
-    education_el.value.save(true),
-    courses_el.value.save(true),
-    knowledge_and_skills_el.value.save(true),
-    access_el.value.save(true),
-  ]);
-
-  const promisesResult = promises.every((item) => item === true);
-  return new Promise((resolve, reject) =>
-    promisesResult ? resolve(true) : reject(false),
+  const saveActions = Object.values(sectionsRefs).map((ref) =>
+    ref?.value?.save(true),
   );
+  try {
+    await Promise.all(saveActions);
+    toast("All sections saved successfully!", { type: "success" });
+  } catch (error) {
+    toast("Failed to save some sections.", { type: "error" });
+  }
 };
 
 const errorMessage = ref(null);
@@ -174,7 +169,7 @@ const saveAndPublishAll = async (event) => {
   isLoading.value = true;
   const resAll = await saveAllSections();
   if (!resAll) {
-    Swal.fire({
+    await Swal.fire({
       title: "Ошибка!",
       text: "не все обязательные поля заполнены верно!",
       icon: "error",
@@ -192,7 +187,7 @@ const saveAndPublishAll = async (event) => {
   const resData = await publishResume(resumeID.value, payload);
   isLoading.value = false;
   if (resData.hasOwnProperty("status") && resData.status !== "success") {
-    Swal.fire({
+    await Swal.fire({
       title: "Ошибка!",
       text: resData.message,
       icon: "error",
@@ -227,7 +222,11 @@ const canOnlyOnePublished = computed(() => {
             <!--            <h4>К сожалению возникли ошибки при создании Вакансии:</h4>-->
             <p class="alert alert-info" v-for="item in errors">{{ item }}</p>
           </div>
-          <CreateResumeProviders v-model="providers" />
+          <!--          ready-->
+          <CreateResumeProviders
+            v-model="providers"
+            :providers="resumeStore.my_resume"
+          />
 
           <CreateResumePhotoCard
             v-if="resumeID"

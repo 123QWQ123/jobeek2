@@ -4,7 +4,7 @@
       <div class="favorites-card-footer-row">
         <button
           class="group-action ic-btn fav-btn"
-          :class="{ active: isFavorite }"
+          :class="{ active: data.is_favorite }"
           @click="toggleFavorite"
         >
           <svg
@@ -26,37 +26,37 @@
         <img class="w-100" :src="employerLogo" :alt="data.company" />
       </div>
       <h3 class="title">{{ data.company }}</h3>
-      <p>Клиент SuperJob с 2003 года</p>
-      <p>{{ data.vacancy_count ?? 0 }} вакансии</p>
+      <!--      <p>Клиент SuperJob с 2003 года</p>-->
+      <p>{{ data.open_vacancies ?? 0 }} вакансии</p>
       <p v-html="data.company_activity" />
-      <div class="count">123 вакансии</div>
-      <div class="grade-box-container">
-        <div class="title">Оценки сотрудников</div>
-        <div class="grade-box">
-          <div class="grade-box-circle">
-            <svg class="progress" data-complete="0.75" viewBox="-1 -1 34 34">
-              <circle
-                cx="16"
-                cy="16"
-                r="15.9155"
-                class="progress-bar__background"
-              />
-              <circle
-                cx="16"
-                cy="16"
-                r="15.9155"
-                class="progress-bar__progress js-progress-bar"
-                style="stroke-dashoffset: 25px"
-              />
-            </svg>
-            <span>7.5</span>
-          </div>
-          <div class="grade-box-text">
-            <strong>Хорошо</strong><a href="#">12 отзывов</a>
-          </div>
-        </div>
-        <span class="txt">55% рекомендуют компанию</span>
-      </div>
+      <!--      <div class="count">123 вакансии</div>-->
+      <!--      <div class="grade-box-container">-->
+      <!--        <div class="title">Оценки сотрудников</div>-->
+      <!--        <div class="grade-box">-->
+      <!--          <div class="grade-box-circle">-->
+      <!--            <svg class="progress" data-complete="0.75" viewBox="-1 -1 34 34">-->
+      <!--              <circle-->
+      <!--                cx="16"-->
+      <!--                cy="16"-->
+      <!--                r="15.9155"-->
+      <!--                class="progress-bar__background"-->
+      <!--              />-->
+      <!--              <circle-->
+      <!--                cx="16"-->
+      <!--                cy="16"-->
+      <!--                r="15.9155"-->
+      <!--                class="progress-bar__progress js-progress-bar"-->
+      <!--                style="stroke-dashoffset: 25px"-->
+      <!--              />-->
+      <!--            </svg>-->
+      <!--            <span>7.5</span>-->
+      <!--          </div>-->
+      <!--          <div class="grade-box-text">-->
+      <!--            <strong>Хорошо</strong><a href="#">12 отзывов</a>-->
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--        <span class="txt">55% рекомендуют компанию</span>-->
+      <!--      </div>-->
     </div>
 
     <div class="company-col" v-if="isAuthed">
@@ -86,16 +86,21 @@
       />
     </div>
 
-    <div class="company-col" v-if="isAuthed">
-      <div
-        class="telephones-row telephones-row-handle"
-        :class="{ open: areContactsShown }"
-      >
-        <ul v-if="vacancyPhones.length">
-          <li v-for="phone in vacancyPhones" :key="phone">
+    <div class="company-col" v-if="isAuthed && isContactsShown">
+      <div :class="{ open: areContactsShown }">
+        <ul>
+          <li v-if="vacancyData.contacts.name">
+            {{ vacancyData.contacts.name }}
+          </li>
+          <li v-for="phone in vacancyData.contacts.phones" :key="phone">
             <a class="tel" :href="`tel:+${phone}`">
               <img src="~/assets/img/svg/carbon_phone.svg" alt="Phone" />
               {{ phone }}
+            </a>
+          </li>
+          <li v-if="vacancyData.contacts.email">
+            <a class="tel" :href="`email:${vacancyData.contacts.email}`">
+              {{ vacancyData.contacts.email }}
             </a>
           </li>
         </ul>
@@ -159,6 +164,13 @@ const requiredLetter = computed(
   () => vacancyData.value.response_letter_required ?? false,
 );
 const selectedResumeError = ref("");
+const isContactsShown = computed(() => {
+  return (
+    !!vacancyData.contacts?.name ||
+    !!vacancyData.contacts?.phones ||
+    !!vacancyData.contacts?.email
+  );
+});
 
 const onSubmit = async (e) => {
   e.preventDefault();
@@ -197,8 +209,6 @@ const myResumeOptions = computed(() =>
 const toggleContactsVisibility = () => {
   areContactsShown.value = !areContactsShown.value;
 };
-
-const vacancyPhones = computed(() => vacancyData.value.contacts.phones ?? []);
 
 const employerLogo = computed(
   () =>

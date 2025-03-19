@@ -279,6 +279,38 @@ export const useDictionaryStore = defineStore("dictionary", {
       }
       return this.metro;
     },
+    async getDictionaries(groups = []) {
+      const keys = {
+        work_type: "work_types",
+        schedule: "schedules",
+        place_of_work: "place_of_works",
+        education_type_resume: "resume_educations",
+        preferred_contact_type: "preferred_contact_types",
+        education_form_resume: "resume_education_forms",
+        driver_license_types: "driver_licenses",
+        resume_access_type_merge: "resume_access_types",
+        gender_resume: "resume_genders",
+        gender: "genders",
+        relocation_type: "relocation_types",
+        business_trip: "business_trips",
+      };
+      const { data } = await useApi("dictionaries", {
+        method: "get",
+        params: {
+          groups,
+        },
+      });
+      for (const group of groups) {
+        if (Object.hasOwn(this, keys[group])) {
+          this[keys[group]] = data.data[group] ?? [];
+        } else {
+          console.error(
+            `Dictionary group ${keys[group]} not found. Please check your request.`,
+          );
+        }
+      }
+      return data.data ?? [];
+    },
     async getGenders(payload, is_for_resume = false) {
       if (is_for_resume) {
         if (this.resume_genders.length > 0) {

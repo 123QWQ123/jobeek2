@@ -124,7 +124,7 @@ const photoUrl = computed(() => {
   } else if (my_artifact.value) {
     return my_artifact.value.url;
   } else {
-    return CONFIG.public.base + "/assets/images/avatar.png";
+    return CONFIG.public.base + "assets/images/avatar.png";
   }
 });
 const photoFileElement = ref();

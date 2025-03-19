@@ -41,10 +41,11 @@ watch(
     if (phone.value) {
       emit(
         "update:modelValue",
-        "+" + phoneElement.value.vueNumberUnformat(newValue)
+        "+" +
+          phoneElement.value.vueNumberUnformat(newValue, { isInteger: true }),
       );
     }
-  }
+  },
 );
 watch(
   () => props.modelValue,
@@ -52,7 +53,7 @@ watch(
     if (newValue) {
       phone.value = newValue;
     }
-  }
+  },
 );
 
 const focus = () => {

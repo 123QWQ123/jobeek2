@@ -33,7 +33,7 @@
               >
                 {{ toggleButtonText }}
               </button>
-              <div class="row mt-2" v-if="isPhotosShown">
+              <div class="row mt-2" v-show="isPhotosShown">
                 <div
                   v-if="artifacts.length > 0"
                   class="col-sm-4 mb-2 cursor-pointer"

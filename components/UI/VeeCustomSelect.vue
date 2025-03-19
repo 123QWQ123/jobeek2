@@ -40,7 +40,6 @@ const props = defineProps([
   "modelValue",
   "label",
   "name",
-  "vacancy",
   "listStyles",
   "class",
 ]);
@@ -73,9 +72,7 @@ const reApply = (newValue) => {
 watch(() => value.value, reApply);
 watch(() => props.options, reApply);
 
-onMounted(() => {
-  reApply();
-});
+reApply();
 
 function onSelect(id) {
   const selectedOptionItem = options.value.find(

@@ -8,10 +8,10 @@
       </div>
       <div class="wrapper wrapper-1290" v-if="vacancy">
         <VacanciesItemContent :data="vacancy[provider]" />
-        <h2 class="lk-page-title">Похожие вакансии</h2>
-        <div class="favorites-list-container">
-          <VacanciesSingleLikeList></VacanciesSingleLikeList>
-        </div>
+        <!--        <h2 class="lk-page-title">Похожие вакансии</h2>-->
+        <!--        <div class="favorites-list-container">-->
+        <!--          <VacanciesSingleLikeList></VacanciesSingleLikeList>-->
+        <!--        </div>-->
       </div>
       <!--      <VacanciesSingleResumeListSelectModal :open="isOpen" />-->
     </div>
