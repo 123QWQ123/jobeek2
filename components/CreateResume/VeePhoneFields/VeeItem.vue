@@ -69,7 +69,10 @@
     </div>
 
     <div class="input-wrapper mt-2" v-show="!state.comment.is_hidden">
-      <ResumeTextarea :name="`${props.name}[${idx}].comment`"></ResumeTextarea>
+      <ResumeTextarea
+        :name="`${props.name}[${idx}].comment`"
+        :value="comment"
+      ></ResumeTextarea>
     </div>
   </div>
 </template>
@@ -82,10 +85,11 @@ import PhoneInputWithCaptchaAndConfirmation from "./PhoneInputWithConfirmationAn
 import ResumeCheckboxInput from "~/components/CreateResume/ResumeCheckboxInput.vue";
 import ResumeTextarea from "~/components/CreateResume/ResumeTextarea.vue";
 
-const props = defineProps(["idx", "name"]);
+const props = defineProps(["idx", "name", "value"]);
 const { idx, name } = toRefs(props);
 const emit = defineEmits(["remove"]);
 
+const { comment, start_available_time_phone } = props.value;
 const { value, errorMessage } = useField(
   () => props.name + "[" + props.idx + "].phone",
 );
@@ -147,9 +151,7 @@ watch(
   },
 );
 
-onMounted(() => {
-  walkThroughFields(providers.value);
-});
+walkThroughFields(providers.value);
 const remove = (id) => {
   emit("remove", id);
 };

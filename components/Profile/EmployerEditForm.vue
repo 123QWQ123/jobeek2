@@ -132,7 +132,7 @@ watch(
     resetForm({ values: getFields(authStore.employer) });
   },
 );
-onBeforeUnmount(() => {});
+
 const { updateEmployer } = profileStore;
 
 function getFormData(object) {

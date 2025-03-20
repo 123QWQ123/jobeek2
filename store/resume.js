@@ -236,9 +236,9 @@ export const useResumeStore = defineStore("resume", {
         method: "PUT",
         payload,
       });
-      // if ('data' in response && response.data.status === 'success'){
-      //   this.resume = response.data;
-      // }
+      if ("data" in response && response.data.status === "success") {
+        this.my_resume = response.data.data;
+      }
       return response;
     },
     async publishResume(id, payload, content_type = "application/json") {

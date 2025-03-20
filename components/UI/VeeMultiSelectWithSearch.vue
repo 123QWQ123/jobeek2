@@ -91,29 +91,18 @@ const props = defineProps({
   },
 });
 
+const { value } = useField(() => props.name);
+
 const { remove, push, fields, replace } = useFieldArray(() => props.name);
 const isOpen = ref(false);
 const options = ref(props.options);
 const { sort } = useSort();
 
-watch(
-  () => props.options,
-  (newValue) => {
-    if (props.sort_by === "none") {
-      options.value = newValue;
-    } else {
-      options.value = sort(newValue, { by: "alpha" });
-    }
-  },
-);
-
 const selectedOptions = ref([]);
-onMounted(() => {
-  const selected_ids = [...fields.value.map((item) => item.value)];
-  selectedOptions.value = props.options.filter((item) =>
-    selected_ids.includes(item.value),
-  );
-});
+const selected_ids = [...fields.value.map((item) => item.value)];
+selectedOptions.value = props.options.filter((item) =>
+  selected_ids.includes(item.value),
+);
 
 watch(
   () => [...fields.value],
@@ -149,6 +138,8 @@ function onSelect(selectedOptionValue) {
   if (!fieldValues.includes(selectedOptionItem.value)) {
     push(selectedOptionItem.value);
   }
+  searchInput.value = "";
+  options.value = props.options;
 }
 
 const getCurrentFieldName = (newValue) => {
@@ -181,7 +172,7 @@ watch(
 );
 const onChangeHandler = (e) => {
   isOpen.value = true;
-  const typedName = e.target.textContent.toLowerCase();
+  const typedName = e.target.value.toLowerCase();
   emit("input", searchInput.value);
   if (typedName === "") {
     options.value = props.options;

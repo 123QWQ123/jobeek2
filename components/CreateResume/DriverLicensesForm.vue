@@ -26,16 +26,9 @@ const props = defineProps(["name", "parent_type_id", "providers"]);
 
 const { fields, replace } = useFieldArray(() => props.name);
 
-watch(
-  () => fields.value,
-  (newIds) => {
-    driving_license_item_options.value = dictionaryStore.driver_licenses;
-  },
-);
-
 const driver_licenses = ref([]);
 
-const driving_license_item_options = ref([]);
+const driving_license_item_options = ref(dictionaryStore.driver_licenses);
 
 watch(
   () => dictionaryStore.driver_licenses,
@@ -43,14 +36,6 @@ watch(
     driving_license_item_options.value = newValues;
   },
 );
-
-// const driver_licenses = ref(selectedItems.value ?? []);
-const { getDriverLicenses } = dictionaryStore;
-onMounted(() => {
-  setTimeout(async () => {
-    await getDriverLicenses();
-  });
-});
 
 const check = (id) => {
   const IDs = [...fields.value].map((item) => item.value);

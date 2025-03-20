@@ -6,6 +6,7 @@ import { useResumeStore } from "~/store/resume";
 import useProviders from "~/composables/useProviders.js";
 import { useDictionaryStore } from "~/store/dictionary.js";
 import { useAsyncData } from "#app";
+import { useProfileStore } from "~/store/profile.js";
 
 const route = useRoute();
 
@@ -24,15 +25,25 @@ watch(
   },
 );
 
-const { getMyResume, publishResume } = resumeStore;
+const { getMyResume, publishResume, getIndustries } = resumeStore;
 const { my_resume } = storeToRefs(resumeStore);
 const resumeID = computed(() => route.params.id);
+
+const profileStore = useProfileStore();
+const {
+  searchProfessionalRoles,
+  searchHHProfessionalRoles,
+  searchSuperjobProfessionalRoles,
+} = profileStore;
 
 const dictionaryStore = useDictionaryStore();
 const { getDictionaries } = dictionaryStore;
 
 const resData = await useAsyncData("my_resume" + resumeID.value, async () => {
   return await getMyResume(resumeID.value);
+});
+await useAsyncData("getIndustries", async () => {
+  return await getIndustries();
 });
 
 const { data } = await useAsyncData("dictionaries", async () => {
@@ -49,7 +60,21 @@ const { data } = await useAsyncData("dictionaries", async () => {
     "gender",
     "relocation_type",
     "business_trip",
+    "lang_level_resume",
+    "marital_status_resume",
+    "travel_time",
+    "children_resume",
   ]);
+});
+
+await useAsyncData("searchProfessionalRoles", async () => {
+  return await searchProfessionalRoles();
+});
+await useAsyncData("searchHHProfessionalRoles", async () => {
+  return await searchHHProfessionalRoles();
+});
+await useAsyncData("searchSuperjobProfessionalRoles", async () => {
+  return await searchSuperjobProfessionalRoles();
 });
 
 const pageTitle = computed(() => {
@@ -112,8 +137,10 @@ const publishableProviderName = computed(() => {
   }
   return null;
 });
-const hhPublishable = ref(false);
-const superjobPublishable = ref(false);
+const hhPublishable = ref(my_resume.value.can_published.hh ?? false);
+const superjobPublishable = ref(
+  my_resume.value.can_published.superjob ?? false,
+);
 
 watch(
   () => resumeStore.my_resume,
@@ -166,19 +193,19 @@ const saveAndPublishAll = async (event) => {
     return;
   }
 
-  isLoading.value = true;
-  const resAll = await saveAllSections();
-  if (!resAll) {
-    await Swal.fire({
-      title: "Ошибка!",
-      text: "не все обязательные поля заполнены верно!",
-      icon: "error",
-      confirmButtonText: "ОК",
-    });
-    isLoading.value = false;
-
-    return;
-  }
+  // isLoading.value = true;
+  // const resAll = await saveAllSections();
+  // if (!resAll) {
+  //   await Swal.fire({
+  //     title: "Ошибка!",
+  //     text: "не все обязательные поля заполнены верно!",
+  //     icon: "error",
+  //     confirmButtonText: "ОК",
+  //   });
+  //   isLoading.value = false;
+  //
+  //   return;
+  // }
 
   const payload = {
     providers: publishableProviders.value,
@@ -203,13 +230,7 @@ const saveAndPublishAll = async (event) => {
 };
 
 const canOnlyOnePublished = computed(() => {
-  if (
-    (hhPublishable.value === true || superjobPublishable.value === true) &&
-    (superjobPublishable.value === false || hhPublishable.value === false)
-  ) {
-    return true;
-  }
-  return false;
+  return hhPublishable.value === true || superjobPublishable.value === true;
 });
 </script>
 <template>
@@ -238,6 +259,7 @@ const canOnlyOnePublished = computed(() => {
             :key="`personal_fields_el_key_${providers.hh + providers.superjob}`"
             ref="personal_fields_el"
             :providers="providers"
+            :dictionaries="data"
           />
           <CreateResumeVeeProfessionDetailsCard
             :key="`prof_fields_el_key_${providers.hh + providers.superjob}`"

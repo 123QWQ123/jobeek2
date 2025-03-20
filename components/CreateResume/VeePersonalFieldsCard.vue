@@ -181,6 +181,7 @@
       <CreateResumeVeePhoneFieldsForm
         v-show="!state.phones.is_hidden"
         name="phones"
+        :value="my_resume?.phones"
       />
 
       <div class="text-danger d-block">
@@ -224,12 +225,8 @@ const my_resume = computed(() => resumeStore.my_resume);
 
 const { getCities } = profileStore;
 
-const isSaved = ref(false);
-const isChanged = ref(false);
 const isCollapsed = ref(false);
-const isUpdated = ref(false);
 const isFocused = ref(false);
-const isLoading = ref(false);
 const errorMessage = ref(null);
 const cityOptions = computed(() => profileStore.cityOptions);
 
@@ -379,20 +376,12 @@ const initialValues = ref({
   address: my_resume.value?.address,
   is_relocatable: my_resume.value?.is_relocatable,
 });
-const {
-  errors,
-  values,
-  setErrors,
-  meta,
-  resetForm,
-  validate,
-  submitForm,
-  setValues,
-  setTouched,
-} = useForm({
-  initialValues: initialValues,
-  validationSchema: toTypedSchema(schema.value),
-});
+
+const { errors, values, setErrors, meta, resetForm, validate, setValues } =
+  useForm({
+    initialValues: initialValues,
+    validationSchema: toTypedSchema(schema.value),
+  });
 
 const state = reactive({
   first_name: {
@@ -511,12 +500,7 @@ const selectedProviders = computed(() => {
   return ["hh", "superjob"];
 });
 
-const moveableCityOptions = ref(
-  profileStore.cities.map((item) => ({
-    value: item.id,
-    name: item.name,
-  })),
-);
+const moveableCityOptions = ref(profileStore.cityOptions);
 const updateMoveableCityInput = async (newValue = "") => {
   const items = profileStore.cities.filter((item) => {
     return item.name.search(newValue);
@@ -526,18 +510,6 @@ const updateMoveableCityInput = async (newValue = "") => {
     name: item.name,
   }));
 };
-
-const sectionData = ref({});
-
-watch(
-  () => sectionData.value,
-  (newData, oldData) => {
-    const diffData = useDiff(newData, oldData);
-    if (Object.keys(diffData).length) {
-      resetForm({ values: newData });
-    }
-  },
-);
 const { errors: serverErrors } = useFormValidation();
 watch(
   () => serverErrors.value,
@@ -553,16 +525,13 @@ watch(
 );
 
 const save = async (is_from_parent = false) => {
-  isLoading.value = true;
   errorMessage.value = "";
   await validate();
 
   if (!meta.value.dirty) {
-    isLoading.value = false;
     return true;
   }
   if (!meta.value.valid) {
-    isLoading.value = false;
     return false;
   }
   setErrors({});
@@ -584,8 +553,6 @@ const save = async (is_from_parent = false) => {
     }
     return;
   }
-  isChanged.value = false;
-  isSaved.value = false;
   setErrors({});
   resetForm({ values });
   if (is_from_parent) {

@@ -84,7 +84,6 @@ import { useResumeStore } from "~/store/resume";
 
 import { useProfileStore } from "~/store/profile";
 import useFormValidation from "~/composables/useFormValidation";
-import { useDiff } from "~/composables/useDiff";
 import { useDictionaryStore } from "~/store/dictionary";
 import { toTypedSchema } from "@vee-validate/zod";
 import { zod } from "~/hooks/ru-zod.js";
@@ -96,11 +95,6 @@ const profileStore = useProfileStore();
 
 const dictionaryStore = useDictionaryStore();
 
-const { getMaritalStatusForResume, getTravelTimeOptions, getResumeChildren } =
-  dictionaryStore;
-await getMaritalStatusForResume();
-await getTravelTimeOptions();
-await getResumeChildren();
 const { getCountries } = profileStore;
 await getCountries();
 const countryOptions = computed(() =>
@@ -126,21 +120,11 @@ const childrenOptions = computed(() =>
 );
 
 const route = useRoute();
-
 const resumeID = computed(() => route.params.id);
-
 const { seeker } = profileStore;
-const my_resume = computed(() => resumeStore.my_resume);
-
-const isShown = ref(false);
-const isSaved = ref(false);
-const isChanged = ref(false);
-const isFirst = ref(true);
-const isCollapsed = ref(true);
-const isUpdated = ref(false);
-
+const { my_resume } = storeToRefs(resumeStore);
+const isCollapsed = ref(false);
 const { providers } = useProviders();
-
 const state = reactive({
   citizenship: {
     is_hidden: false,
@@ -158,7 +142,6 @@ const state = reactive({
     is_hidden: false,
   },
 });
-
 const fields = ref({
   hh: {
     citizenship: true,
@@ -175,7 +158,6 @@ const fields = ref({
     marital_status_id: false,
   },
 });
-
 const { walkThroughFields } = useProviderFields(state, fields);
 
 watch(
@@ -185,43 +167,23 @@ watch(
   },
 );
 
-onMounted(() => {
-  walkThroughFields(providers.value);
-});
+walkThroughFields(providers.value);
 
 const schema = computed(() => {
-  if (providers.value.hh === true && providers.value.superjob === false) {
-    return zod.object({
-      citizenship: zod.array(zod.number()).nonempty(),
-      work_tickets: zod.number().array().nonempty(),
-      marital_status_id: zod.number().optional(),
-      travel_time_id: zod.number(),
-      children_id: zod.number().optional(),
-    });
-  }
-  if (providers.value.hh === false && providers.value.superjob === true) {
-    return zod.object({
-      citizenship: zod.array(zod.number()).nonempty(),
-      work_tickets: zod.number().array().nonempty().nullable().optional(),
-      marital_status_id: zod.number().optional().nullable(),
-      travel_time_id: zod.number().nullish().optional(),
-      children_id: zod.number().nullable().optional(),
-    });
-  }
   return zod.object({
     citizenship: zod.array(zod.number()).nonempty(),
     work_tickets: zod.number().array().nonempty(),
     marital_status_id: zod.number().optional(),
     travel_time_id: zod.number(),
-    children_id: zod.number().nullable(),
+    children_id: zod.number().nullable().optional(),
   });
 });
 const initialValues = ref({
-  citizenship: [],
-  work_tickets: [],
-  marital_status_id: null,
-  travel_time_id: null,
-  children_id: null,
+  citizenship: my_resume.value?.citizenship.map((item) => item.id),
+  work_tickets: my_resume.value?.work_tickets.map((item) => item.id),
+  children_id: my_resume.value?.children?.id ?? null,
+  marital_status_id: my_resume.value?.marital_status?.id ?? null,
+  travel_time_id: my_resume.value?.travel_time?.id,
 });
 const {
   values,
@@ -237,48 +199,6 @@ const {
   initialTouched: true,
   validationSchema: toTypedSchema(schema.value),
 });
-const sectionData = ref({});
-watch(
-  () => sectionData.value,
-  (newData, oldData) => {
-    const diffData = useDiff(newData, oldData);
-    if (Object.keys(diffData).length) {
-      resetForm({ values: newData });
-    }
-  },
-);
-const getFields = (newObject) => {
-  return {
-    citizenship: newObject?.citizenship.map((item) => item.id),
-    work_tickets: newObject?.work_tickets.map((item) => item.id),
-    children_id: newObject?.children?.id ?? null,
-    marital_status_id: newObject?.marital_status?.id ?? null,
-    travel_time_id: newObject?.travel_time?.id,
-  };
-};
-watch(
-  () => resumeStore.my_resume,
-  (newResume) => {
-    if (newResume) {
-      sectionData.value = getFields(newResume);
-    }
-  },
-);
-
-onMounted(() => {
-  if (resumeStore.my_resume) {
-    sectionData.value = getFields(resumeStore.my_resume);
-  }
-});
-
-watch(
-  () => isCollapsed.value,
-  (newData) => {
-    if (!newData) {
-      isShown.value = true;
-    }
-  },
-);
 
 const { updateResume } = resumeStore;
 
@@ -296,60 +216,35 @@ watch(
   },
 );
 const isFocused = ref(false);
-const isLoading = ref(false);
 const errorMessage = ref(null);
 
 const save = async (is_from_parent = false) => {
-  validate();
-  if (!meta.value.dirty) {
-    return true;
-  }
-  if (!meta.value.valid) {
-    return false;
-  }
-  isLoading.value = true;
-  setErrors({});
+  await validate();
+  if (!meta.value.dirty || !meta.value.valid) return false;
 
-  errorMessage.value = "";
-  let resData = {};
-
-  resData = await updateResume(resumeID.value, {
+  const resData = await updateResume(resumeID.value, {
     form_data: "CITIZENSHIP_AND_FAMILY_DATA",
-    ...JSON.parse(JSON.stringify(values)),
+    ...values,
   });
 
   if (resData.status !== "success") {
     errorMessage.value = resData.message;
-    if (resData.hasOwnProperty("errors")) {
-      setErrors(resData.errors);
-      return;
-    }
-    return;
+    resData.errors && setErrors(resData.errors);
+    return false;
   }
 
-  isChanged.value = false;
-  isSaved.value = false;
-  isUpdated.value = false;
-  setErrors({});
   resetForm({ values });
-  if (is_from_parent) {
-    return new Promise((resolve, reject) => {
-      resolve(true);
-    });
-  }
+  return is_from_parent ? Promise.resolve(true) : true;
 };
 
 const isCompleted = computed(() => {
   const myResume = my_resume.value;
-  if (myResume) {
-    return (
-      myResume.citizenship &&
-      myResume.about &&
-      myResume.has_children &&
-      myResume.marital_status_id
-    );
-  }
-  return false;
+  return Boolean(
+    myResume?.citizenship?.length &&
+      myResume.travel_time?.id &&
+      myResume.marital_status?.id &&
+      myResume.children?.id,
+  );
 });
 
 defineExpose({

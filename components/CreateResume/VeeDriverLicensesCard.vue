@@ -39,8 +39,6 @@ import { zod } from "~/hooks/ru-zod.js";
 import { useProfileStore } from "~/store/profile";
 import { useRuntimeConfig } from "#app";
 import useFormValidation from "~/composables/useFormValidation";
-import { useDiff } from "~/composables/useDiff";
-import { useDictionaryStore } from "~/store/dictionary";
 import { useResumeStore } from "~/store/resume";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
@@ -66,25 +64,21 @@ const { updateResume, getMyResume } = resumeStore;
 const { employer } = profileStore;
 const my_resume = computed(() => resumeStore.my_resume);
 
-const isSaved = ref(false);
-const isChanged = ref(false);
-const isFirst = ref(true);
-const isCollapsed = ref(true);
-const isUpdated = ref(false);
+const isCollapsed = ref(false);
 
 const schema = computed(() => {
-  const s = toTypedSchema(
+  return toTypedSchema(
     zod.object({
       has_vehicle: zod.boolean().nullable(),
       driver_license_types: zod.number().array().optional(),
     }),
   );
-  return s;
 });
 
 const initialValues = ref({
-  has_vehicle: false,
-  driver_license_types: [],
+  has_vehicle: my_resume.value?.has_vehicle ?? false,
+  driver_license_types:
+    my_resume.value?.driver_license_types.map((item) => item.id) ?? [],
 });
 const {
   values,
@@ -129,46 +123,8 @@ watch(
     walkThroughFields(providers.value);
   },
 );
-const sectionData = ref({});
-watch(
-  () => sectionData.value,
-  (newData, oldData) => {
-    const diffData = useDiff(newData, oldData);
-    if (Object.keys(diffData).length) {
-      resetForm({ values: newData });
-    }
-  },
-);
 
-const getFields = (newObject) => {
-  return {
-    driver_license_types:
-      newObject.driver_license_types.map((item) => item.id) ?? [],
-    has_vehicle: newObject.has_vehicle ?? false,
-  };
-};
-watch(
-  () => resumeStore.my_resume,
-  (newData) => {
-    if (newData) {
-      sectionData.value = getFields(newData);
-    }
-  },
-);
-onMounted(() => {
-  const newData = resumeStore.my_resume;
-  if (newData) {
-    sectionData.value = getFields(newData);
-  }
-  walkThroughFields(providers.value);
-});
-const dictionaryStore = useDictionaryStore();
-const { getDriverLicenses } = dictionaryStore;
-onMounted(() => {
-  setTimeout(async () => {
-    await getDriverLicenses();
-  }, 500);
-});
+walkThroughFields(providers.value);
 const { errors: serverErrors, handleErrorResponse } = useFormValidation();
 watch(
   () => serverErrors.value,
@@ -183,46 +139,36 @@ watch(
   },
 );
 const isFocused = ref(false);
-const isLoading = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  validate();
+  await validate();
   if (!meta.value.dirty) {
     return true;
   }
   if (!meta.value.valid) {
     return false;
   }
-  isLoading.value = true;
   setErrors({});
   errorMessage.value = "";
-  let resData = {};
 
-  resData = await updateResume(resumeID.value, {
-    form_data: "DRIVER_LICENSES_DATA",
-    ...JSON.parse(JSON.stringify(values)),
-  });
-
-  isUpdated.value = true;
-  if (resData.status !== "success") {
-    errorMessage.value = resData.message;
-    if (resData.hasOwnProperty("errors")) {
-      setErrors(resData.errors);
-      return;
-    }
-    return;
-  }
-
-  isChanged.value = false;
-  isSaved.value = false;
-  isUpdated.value = false;
-  setErrors({});
-  resetForm({ values });
-  if (is_from_parent) {
-    return new Promise((resolve, reject) => {
-      resolve(true);
+  try {
+    const resData = await updateResume(resumeID.value, {
+      form_data: "DRIVER_LICENSES_DATA",
+      ...values,
     });
+
+    if (resData.status !== "success") {
+      errorMessage.value = resData.message || "Ошибка при сохранении";
+      setErrors(resData.errors || {});
+      return false;
+    }
+
+    resetForm({ values });
+  } catch (err) {
+    errorMessage.value = "Произошла непредвиденная ошибка";
   }
+
+  return is_from_parent ? Promise.resolve(true) : true;
 };
 
 const isCompleted = computed(() => {

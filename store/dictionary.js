@@ -280,7 +280,13 @@ export const useDictionaryStore = defineStore("dictionary", {
       return this.metro;
     },
     async getDictionaries(groups = []) {
-      const keys = {
+      /**
+       * Mapping between API parameters and store state fields.
+       * Object keys are parameter/group names used in API requests,
+       * values are property names in the current store instance.
+       * @type {Record<string, string>}
+       */
+      const paramToStateMap = {
         work_type: "work_types",
         schedule: "schedules",
         place_of_work: "place_of_works",
@@ -293,6 +299,10 @@ export const useDictionaryStore = defineStore("dictionary", {
         gender: "genders",
         relocation_type: "relocation_types",
         business_trip: "business_trips",
+        lang_level_resume: "resume_language_levels",
+        marital_status_resume: "resume_marital_statuses",
+        travel_time: "travel_times",
+        children_resume: "resume_children",
       };
       const { data } = await useApi("dictionaries", {
         method: "get",
@@ -301,11 +311,11 @@ export const useDictionaryStore = defineStore("dictionary", {
         },
       });
       for (const group of groups) {
-        if (Object.hasOwn(this, keys[group])) {
-          this[keys[group]] = data.data[group] ?? [];
+        if (Object.hasOwn(this, paramToStateMap[group])) {
+          this[paramToStateMap[group]] = data.data[group] ?? [];
         } else {
           console.error(
-            `Dictionary group ${keys[group]} not found. Please check your request.`,
+            `Dictionary group ${paramToStateMap[group]} not found. Please check your request.`,
           );
         }
       }

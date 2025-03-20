@@ -113,20 +113,6 @@ watch(
   () => (placeholder.value = props.placeholder),
 );
 
-// watch(
-//   () => props.options,
-//   (newOptions) => {
-//     options.value = newOptions;
-//     if (selectedOption.value && value.value !== selectedOption.value.value) {
-//       const found = options.value.find(
-//         (item) => String(item.value) === String(value.value),
-//       );
-//       if (!found) return;
-//       searchInput.value = found.name;
-//       selectedOption.value = found;
-//     }
-//   },
-// );
 watch(
   () => value.value,
   (newValue) => {
