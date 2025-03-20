@@ -137,8 +137,10 @@ const publishableProviderName = computed(() => {
   }
   return null;
 });
-const hhPublishable = ref(false);
-const superjobPublishable = ref(false);
+const hhPublishable = ref(my_resume.value.can_published.hh ?? false);
+const superjobPublishable = ref(
+  my_resume.value.can_published.superjob ?? false,
+);
 
 watch(
   () => resumeStore.my_resume,
@@ -191,19 +193,19 @@ const saveAndPublishAll = async (event) => {
     return;
   }
 
-  isLoading.value = true;
-  const resAll = await saveAllSections();
-  if (!resAll) {
-    await Swal.fire({
-      title: "Ошибка!",
-      text: "не все обязательные поля заполнены верно!",
-      icon: "error",
-      confirmButtonText: "ОК",
-    });
-    isLoading.value = false;
-
-    return;
-  }
+  // isLoading.value = true;
+  // const resAll = await saveAllSections();
+  // if (!resAll) {
+  //   await Swal.fire({
+  //     title: "Ошибка!",
+  //     text: "не все обязательные поля заполнены верно!",
+  //     icon: "error",
+  //     confirmButtonText: "ОК",
+  //   });
+  //   isLoading.value = false;
+  //
+  //   return;
+  // }
 
   const payload = {
     providers: publishableProviders.value,
@@ -228,13 +230,7 @@ const saveAndPublishAll = async (event) => {
 };
 
 const canOnlyOnePublished = computed(() => {
-  if (
-    (hhPublishable.value === true || superjobPublishable.value === true) &&
-    (superjobPublishable.value === false || hhPublishable.value === false)
-  ) {
-    return true;
-  }
-  return false;
+  return hhPublishable.value === true || superjobPublishable.value === true;
 });
 </script>
 <template>

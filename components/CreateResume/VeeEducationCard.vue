@@ -82,8 +82,6 @@ import { toTypedSchema } from "@vee-validate/zod";
 import useProviders from "~/composables/useProviders.js";
 import useProviderFields from "~/composables/useProviderFields";
 import { zod } from "~/hooks/ru-zod.js";
-// import { useFormValidation } from "~/composables/useFormValidation";
-import { useDiff } from "~/composables/useDiff";
 
 // Сторы
 const resumeStore = useResumeStore();
