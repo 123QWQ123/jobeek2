@@ -13,14 +13,13 @@ useHead({
 const auth = useAuthStore();
 const vacancyStore = useVacancyStore();
 const resumeStore = useResumeStore();
-const { refreshSeeker, refreshEmployer } = auth;
-const isAuthed = computed(() => auth.isAuthed);
+const { isAuthed, isEmployer } = storeToRefs(auth);
 const { signIn, setFcmToken } = auth;
 const router = useRouter();
 
 onBeforeMount(() => {
   if (isAuthed.value) {
-    if (!auth.isEmployer) {
+    if (!isEmployer.value) {
       navigateTo({ name: "profile-seeker" });
     } else {
       navigateTo({ name: "profile-employer" });
