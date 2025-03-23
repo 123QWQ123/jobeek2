@@ -11,7 +11,7 @@ export const useUIStore = defineStore("ui", {
       footer_settings: {},
     };
   },
-  persist: true,
+  persist: false,
   actions: {
     async toggleSidebar() {
       this.isSidebarOpen = !this.isSidebarOpen;

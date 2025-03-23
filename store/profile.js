@@ -85,6 +85,15 @@ export const useProfileStore = defineStore("profile", {
     },
   },
   actions: {
+    setEmployer(payload) {
+      this.employer = payload;
+    },
+    setUser(payload) {
+      this.user = payload;
+    },
+    setSeeker(payload) {
+      this.seeker = payload;
+    },
     async getCountries(payload = {}, is_new = false) {
       if (this.countries.length > 0 && !is_new) {
         return this.countries;

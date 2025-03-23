@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 import axios from "axios";
 import useApi from "~/hooks/useApi";
 import { parse, stringify } from "zipson/lib";
+import { useProfileStore } from "~/store/profile.js";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
@@ -170,8 +171,12 @@ export const useAuthStore = defineStore("auth", {
         });
 
         if (response.data.status === "success") {
+          const { setEmployer, setUser, setSeeker } = useProfileStore();
           const { token, token_type, expires_at, user } = response.data.data;
           this.updateAuthState(token, token_type, expires_at, user);
+          setUser(user);
+          setEmployer(user.employer);
+          setSeeker(user.seeker);
         }
 
         return response.data;

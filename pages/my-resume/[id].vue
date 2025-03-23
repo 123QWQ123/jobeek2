@@ -259,7 +259,6 @@ const canOnlyOnePublished = computed(() => {
             :key="`personal_fields_el_key_${providers.hh + providers.superjob}`"
             ref="personal_fields_el"
             :providers="providers"
-            :dictionaries="data"
           />
           <CreateResumeVeeProfessionDetailsCard
             :key="`prof_fields_el_key_${providers.hh + providers.superjob}`"
