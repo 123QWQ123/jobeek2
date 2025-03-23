@@ -21,10 +21,9 @@ const props = defineProps({
     default: false,
   },
 });
-import pkg from "vue3-tel-input";
+import { VueTelInput } from "vue3-tel-input";
 import "vue3-tel-input/dist/vue3-tel-input.css";
 
-const { VueTelInput } = pkg;
 const phone = ref(props.modelValue);
 const phoneElement = ref();
 const onInput = (phoneInput, phoneObject, input) => {
