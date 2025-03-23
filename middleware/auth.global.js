@@ -14,6 +14,9 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   // Check if the user is authenticated
   if (!isAuthed) {
+    console.log(
+      "Redirecting to sign-in page because user is not authenticated",
+    );
     return navigateTo({
       path: "/sign-in",
       query: {
