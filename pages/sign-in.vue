@@ -85,7 +85,7 @@ async function onSubmit() {
     if (response.status !== "success") {
       return;
     }
-    setFcmToken();
+    await setFcmToken();
 
     const route_name = route.query.redirect;
     isLoading.value = false;

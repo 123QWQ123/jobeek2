@@ -173,7 +173,13 @@ export const useAuthStore = defineStore("auth", {
         if (response.data.status === "success") {
           const { setEmployer, setUser, setSeeker } = useProfileStore();
           const { token, token_type, expires_at, user } = response.data.data;
-          this.updateAuthState(token, token_type, expires_at, user);
+          this.tokenAuth = token;
+          this.tokenType = token_type;
+          this.expiresAt = expires_at;
+          this.user = user;
+          this.seeker = user.seeker;
+          this.employer = user.employer;
+          this.isAuthed = true;
           setUser(user);
           setEmployer(user.employer);
           setSeeker(user.seeker);
@@ -186,7 +192,7 @@ export const useAuthStore = defineStore("auth", {
     },
     async setFcmToken() {
       const token = await useFcm().getToken();
-      useApi("fcm/setToken", {
+      await useApi("fcm/setToken", {
         method: "post",
         payload: { fcm_token: token },
       });
@@ -239,15 +245,6 @@ export const useAuthStore = defineStore("auth", {
       this.user = { ...employerData };
       this.seeker = { ...seekerData };
       this.employer = { ...employerData };
-    },
-    updateAuthState(token, token_type, expires_at, user) {
-      this.tokenAuth = token;
-      this.tokenType = token_type;
-      this.expiresAt = expires_at;
-      this.user = user;
-      this.seeker = user.seeker;
-      this.employer = user.employer;
-      this.isAuthed = true;
     },
     handleError(error) {
       if (error.response?.data) {
