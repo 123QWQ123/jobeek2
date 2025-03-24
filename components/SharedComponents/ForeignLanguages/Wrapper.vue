@@ -123,7 +123,7 @@ onMounted(() => {
         @update="updateItem"
         @delete="deleteItem" />
   </div>
-  <button type="button" class="btn btn-primary mt-2" v-else-if="selectedItems.length === 0" @click="reset">Добавить</button>
-  <button type="button" class="btn btn-primary mt-2" v-if="selectedItems.length !== 0" @click="create">Добавить еще</button>
+  <button type="button" class="btn btn-primary mt-2 btn-sm" v-else-if="selectedItems.length === 0" @click="reset">Добавить</button>
+  <button type="button" class="btn btn-primary mt-2 btn-sm" v-if="selectedItems.length !== 0" @click="create">Добавить еще</button>
 </div>
 </template>

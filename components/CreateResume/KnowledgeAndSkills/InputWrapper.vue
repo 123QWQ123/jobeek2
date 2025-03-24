@@ -9,7 +9,7 @@
       />
 
       <button
-        class="btn btn-primary mt-2"
+        class="btn btn-primary mt-2 btn-sm"
         v-if="props.isNew"
         type="button"
         @click="onSubmit"
@@ -17,7 +17,7 @@
         Добавить
       </button>
       <button
-        class="btn btn-primary mt-2"
+        class="btn btn-primary mt-2 btn-sm"
         v-else
         type="button"
         @click="onSubmit"

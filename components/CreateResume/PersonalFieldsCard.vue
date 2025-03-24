@@ -21,7 +21,7 @@
         <div class="input-row">
           <label for="name">Имя и фамилия <b>*</b></label>
           <div class="input-wrapper">
-            <div class="c2">
+            <div class="c2 mb2">
               <div class="input-wrapper">
                 <input
                   type="text"

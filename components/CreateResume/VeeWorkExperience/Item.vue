@@ -132,12 +132,10 @@
               </div>
             </div>
             <div class="check-block mt-2" v-show="!state.until_today.is_hidden">
-              <div class="checkbox">
                 <ResumeCheckboxInput
                   label="Работаю по настоящее время"
                   :name="`${props.name}[${props.idx}].until_today`"
                 />
-              </div>
             </div>
           </div>
         </div>
