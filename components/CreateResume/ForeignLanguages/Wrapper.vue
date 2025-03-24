@@ -132,7 +132,7 @@ onMounted(() => {
     </div>
     <button
       type="button"
-      class="btn btn-primary mt-2"
+      class="btn btn-primary mt-2 btn-sm"
       v-else-if="selectedItems.length === 0"
       @click="reset"
     >
@@ -140,7 +140,7 @@ onMounted(() => {
     </button>
     <button
       type="button"
-      class="btn btn-primary mt-2"
+      class="btn btn-primary mt-2 btn-sm"
       v-if="selectedItems.length !== 0"
       @click="create"
     >

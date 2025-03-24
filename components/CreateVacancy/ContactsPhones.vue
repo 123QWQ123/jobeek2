@@ -23,7 +23,7 @@
           {{ errors.phone_comment }}
         </div>
         <button
-          class="btn btn-primary mt-2"
+          class="btn btn-primary mt-2 btn-sm"
           v-if="!isAdditionalPhoneShown"
           @click.prevent="isAdditionalPhoneShown = true"
         >
@@ -62,7 +62,7 @@
             {{ errors.additional_phone_comment }}
           </div>
           <button
-            class="btn btn-primary mt-2"
+            class="btn btn-primary mt-2 btn-sm"
             v-if="isAdditionalPhoneShown"
             @click.prevent="isAdditionalPhoneShown = false"
           >

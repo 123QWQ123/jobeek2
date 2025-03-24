@@ -25,8 +25,8 @@ if (isEmployer.value) {
 }
 </script>
 <template>
-  <div>
-    <SearchVacancyForm :withWrapper="true" />
+  <div class="main cabinet profile-page bg-wrapper">
+    <SearchVacancyForm :withWrapper="false" />
 
     <VacanciesResults></VacanciesResults>
   </div>

@@ -854,35 +854,35 @@ header.main-header .checker-box .v.active:after {
 }
 
 .input-wrapper input::-webkit-input-placeholder {
-    font-weight: 400 !important;
+    font-weight: 600 !important;
     font-size: 16px;
     line-height: 22px;
     color: #78757E;
 }
 
 .input-wrapper input::-moz-placeholder {
-    font-weight: 400 !important;
+    font-weight: 600 !important;
     font-size: 16px;
     line-height: 22px;
     color: #78757E;
 }
 
 .input-wrapper input:-ms-input-placeholder {
-    font-weight: 400 !important;
+    font-weight: 600 !important;
     font-size: 16px;
     line-height: 22px;
     color: #78757E;
 }
 
 .input-wrapper input::-ms-input-placeholder {
-    font-weight: 400 !important;
+    font-weight: 600 !important;
     font-size: 16px;
     line-height: 22px;
     color: #78757E;
 }
 
 .input-wrapper input::placeholder {
-    font-weight: 400 !important;
+    font-weight: 600 !important;
     font-size: 16px;
     line-height: 22px;
     color: #78757E;
@@ -3095,7 +3095,6 @@ body .main-section-mob {
 
 .w-box-head {
     padding: 24px 32px;
-    border-bottom: 1px solid #ECECEC;
 }
 
 .w-box-head .title {
@@ -3117,6 +3116,7 @@ body .main-section-mob {
 
 .w-box-body {
     padding: 23px 29px 23px 32px;
+    border-top: 1px solid #ECECEC;
 }
 
 .empty-area {
@@ -3135,7 +3135,7 @@ body .main-section-mob {
 }
 
 .empty-area span {
-    font-weight: normal;
+    font-weight: 600;
     font-size: 14px;
     line-height: 19px;
     color: #78757E;
@@ -3406,7 +3406,7 @@ body .main-section-mob {
 }
 
 .input-wrapper input {
-    font-weight: 600;
+    font-weight: 600 !important;
     font-size: 16px;
     line-height: 22px;
     color: #0A2540;
@@ -5067,7 +5067,7 @@ body .main-section-mob {
     background-image: url("../img/svg/crown-bg.svg");
     background-position: right 0 bottom 0;
     background-repeat: no-repeat;
-    background-size: 35%;
+    background-size: 30%;
 }
 
 .premium-col .title {
@@ -5075,7 +5075,6 @@ body .main-section-mob {
     font-size: 24px;
     line-height: 33px;
     color: #0A2540;
-    margin-bottom: 24px;
 }
 
 .premium-col .term span {
@@ -8124,37 +8123,42 @@ textarea.form-control::-webkit-input-placeholder::-webkit-input-placeholder {
     font-size: 14px;
     line-height: 18px;
     color: #1d1d1f;
+    font-weight: 600;
 }
 
 textarea.form-control::-webkit-input-placeholder::-moz-placeholder {
     font-size: 14px;
     line-height: 18px;
     color: #1d1d1f;
+    font-weight: 600;
 }
 
 textarea.form-control::-webkit-input-placeholder:-ms-input-placeholder {
     font-size: 14px;
     line-height: 18px;
     color: #1d1d1f;
+    font-weight: 600;
 }
 
 textarea.form-control::-webkit-input-placeholder::-ms-input-placeholder {
     font-size: 14px;
     line-height: 18px;
     color: #1d1d1f;
+    font-weight: 600;
 }
 
 textarea.form-control::-webkit-input-placeholder::placeholder {
     font-size: 14px;
     line-height: 18px;
     color: #1d1d1f;
+    font-weight: 600;
 }
 
-.textarea.form-control {
-    font-size: 14px !important;
-    border: 1px solid #ccc !important;
+textarea.form-control {
     margin-top: 10px !important;
     padding: 9px !important;
+    background: #f5f8fa;
+    border: none;
 }
 
 .form-control:focus {
@@ -8210,25 +8214,49 @@ textarea.form-control::-webkit-input-placeholder::placeholder {
 }
 
 .absoluted_icon{
-    position: absolute;
-    left: -2rem;
-    top: 0.5rem;
-    font-size: 1rem;
-    z-index: 1;
     cursor: pointer;
+    font-size: 1rem;
+    right: -30px;
     max-width: 3rem;
+    position: absolute;
+    top: 11px;
+    z-index: 1;
 }
 
-.absoluted_icon svg{
-    width: 24px;
+.absoluted_icon:hover {
+    opacity: 0.8;
+}
+
+.absoluted_icon svg {
     height: 24px;
+    width: 24px;
+    fill: #dc3545;
 }
 
 .w-box .arrow:after {
 	content: none !important;
 }
 
-.w-box .arrow.is-completed {
+.w-box .arrow {
 	-webkit-transform: rotate(225deg);
 	transform: rotate(225deg);
+}
+
+.w-box .arrow.up {
+	-webkit-transform: rotate(45deg);
+	transform: rotate(45deg);
+}
+
+.nice-select input.current {
+	padding: 0 !important;
+}
+
+.c2.mb2 {
+	margin-bottom: 30px;
+}
+
+@media (max-width: 1280px) {
+	.profile-page {
+	    padding-top: 0;
+	}
 }

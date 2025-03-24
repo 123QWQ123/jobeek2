@@ -12,7 +12,7 @@
       <div class="input-wrapper mt-2">
         <CreateVacancyTextarea name="contacts.phones.phone_comment" />
         <button
-          class="btn btn-primary mt-2"
+          class="btn btn-primary mt-2 btn-sm"
           v-if="!isAdditionalPhoneShown"
           @click.prevent="isAdditionalPhoneShown = true"
         >
@@ -36,7 +36,7 @@
             name="contacts.phones.additional_phone_comment"
           />
           <button
-            class="btn btn-primary mt-2"
+            class="btn btn-primary mt-2 btn-sm"
             v-if="isAdditionalPhoneShown"
             @click.prevent="isAdditionalPhoneShown = false"
           >
