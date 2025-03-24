@@ -313,19 +313,17 @@ export const useProfileStore = defineStore("profile", {
       return this.seeker;
     },
     async updateEmployer(payload) {
-      var object = {};
-      payload.forEach(function (value, key) {
-        object[key] = value;
-      });
+      const { setUser, setEmployer } = useAuthStore();
       const response = await useApi("employer/profile", {
         method: "post",
         content_type: "multipart/form-data",
         payload,
       });
       if (response.status === "success") {
-        this.employer = response.data.data;
-        useAuthStore().setEmployer(response.data.data);
-        this.user = response.data?.data;
+        // setUser(response.data.data);
+        setEmployer(response.data.data);
+        this.setEmployer(response.data.data);
+        this.setUser(response.data.data);
       }
       return this.employer;
     },
