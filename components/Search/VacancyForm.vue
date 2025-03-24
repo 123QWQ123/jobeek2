@@ -1,6 +1,6 @@
 <template>
   <form class="search-form" role="form" autocomplete="off">
-    <div class="search-row">
+    <div class="search-row" :class="{ wrapper: props.withWrapper }">
       <div class="input-wrap has-icon has-label">
         <img class="icon" src="~/assets/img/search.png" alt="#" />
         <label for="name">Поиск</label>

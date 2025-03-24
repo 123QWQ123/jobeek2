@@ -22,7 +22,7 @@ onMounted(() => {
 </script>
 <template>
   <div class="main cabinet profile-page bg-wrapper">
-    <SearchResumeForm :withWrapper="true" />
+    <SearchResumeForm :withWrapper="false" />
     <ResumesResults />
   </div>
 </template>
