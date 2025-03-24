@@ -8218,7 +8218,17 @@ textarea.form-control::-webkit-input-placeholder::placeholder {
     cursor: pointer;
     max-width: 3rem;
 }
+
 .absoluted_icon svg{
     width: 24px;
     height: 24px;
+}
+
+.w-box .arrow:after {
+	content: none !important;
+}
+
+.w-box .arrow.is-completed {
+	-webkit-transform: rotate(225deg);
+	transform: rotate(225deg);
 }
