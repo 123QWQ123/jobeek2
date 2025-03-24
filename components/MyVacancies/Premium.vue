@@ -1,11 +1,8 @@
 <template>
   <div class="lk-page-title mb-4 mb-0 margin-top-mobile">Премиум</div>
   <div class="premium-col sticky-item">
-    <div class="title" v-if="authStore.isSubscribed">Премиум</div>
+    <div class="title" v-if="authStore.isSubscribed"><span>Действует до</span><strong>24 августа 2025</strong></div>
     <div class="title" v-else>Подключите премиум подписку</div>
-    <!--    <div class="term" v-if="authStore.isSubscribed">-->
-    <!--      <span>Действует до</span><strong>24 августа 2024</strong>-->
-    <!--    </div>-->
     <a class="btn button-xs" href="#" v-if="authStore.isSubscribed"
       >Отключить
     </a>

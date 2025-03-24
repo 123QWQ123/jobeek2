@@ -76,8 +76,5 @@ onMounted(() => {
 .input-wrapper {
 }
 
-.absoluted_icon svg {
-  width: 24px;
-  height: 24px;
-}
+
 </style>
