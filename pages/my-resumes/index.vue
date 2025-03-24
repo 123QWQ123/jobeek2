@@ -38,9 +38,10 @@ const isCompleted = computed(() => {
           <MyResumesList />
         </div>
         <aside class="sidebar">
+          <div class="lk-page-title mb-4 mb-0 margin-top-mobile">Премиум</div>
           <div class="premium-col sticky-item">
             <div class="title">
-              {{ isSubscribed ? "Премиум" : "Подключите Премиум подписку" }}
+              {{ isSubscribed ? "" : "Подключите Премиум подписку" }}
             </div>
             <div v-if="isSubscribed" class="term">
               <span>Действует до</span> <strong>24 августа 2024</strong>

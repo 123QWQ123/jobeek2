@@ -160,14 +160,7 @@ const remove = (id) => {
 <style></style>
 
 <style scoped>
-.absoluted_icon {
-  left: -1.5rem;
-  top: 1rem;
-  font-size: 2rem;
-  z-index: 1;
-  cursor: pointer;
-  max-width: 3rem;
-}
+
 
 .start-to-end {
   display: inline-flex;

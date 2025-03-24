@@ -59,19 +59,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.absoluted_icon{
-    position: absolute;
-    left: -2rem;
-    top: .5rem;
-    font-size: 1rem;
-    z-index: 1;
-    cursor: pointer;
-    max-width: 3rem;
-}
-.absoluted_icon svg{
-    width: 24px;
-    height: 24px;
-}
+
 @media (max-width: 576px) {
   .flex-sm-column-reverse{
     flex-direction: column;
