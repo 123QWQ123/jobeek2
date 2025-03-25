@@ -70,7 +70,7 @@ const route = useRoute();
 const isLoading = ref(false);
 
 async function onSubmit() {
-  validateForm();
+  await validateForm();
   if (state.isFormValid) {
     isLoading.value = true;
     let response;
@@ -85,7 +85,7 @@ async function onSubmit() {
     if (response.status !== "success") {
       return;
     }
-    await setFcmToken();
+    setFcmToken();
 
     const route_name = route.query.redirect;
     isLoading.value = false;

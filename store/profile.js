@@ -26,10 +26,6 @@ export const useProfileStore = defineStore("profile", {
   },
   persist: {
     storage: piniaPluginPersistedstate.localStorage(),
-    serializer: {
-      deserialize: (serializer) => parse(decodeURIComponent(serializer)),
-      serialize: (state) => encodeURIComponent(stringify(state)),
-    },
   },
   getters: {
     countryOptions(state) {

@@ -25,8 +25,8 @@ export const useAuthStore = defineStore("auth", {
       maxAge: 720000,
     }),
     serializer: {
-      deserialize: (serializer) => parse(decodeURIComponent(serializer)),
-      serialize: (state) => encodeURIComponent(stringify(state)),
+      deserialize: (serializer) => parse(serializer),
+      serialize: (state) => stringify(state),
     },
   },
   getters: {
@@ -115,7 +115,7 @@ export const useAuthStore = defineStore("auth", {
       const response = await useApi(url, { method: "get" });
       if (response.status === "success") {
         this.setSeeker(response.data.data);
-        this.user = { phone: this.seeker?.phone };
+        // this.user = { phone: this.seeker?.phone };
       }
       return this.seeker;
     },
@@ -123,7 +123,7 @@ export const useAuthStore = defineStore("auth", {
       const response = await useApi(url, { method: "get" });
       if (response?.data?.data) {
         this.setEmployer(response.data.data);
-        this.user = { phone: this.employer?.phone };
+        // this.user = { phone: this.employer?.phone };
       }
       return this.employer;
     },
@@ -169,17 +169,10 @@ export const useAuthStore = defineStore("auth", {
           method: "post",
           payload,
         });
-
         if (response.data.status === "success") {
           const { setEmployer, setUser, setSeeker } = useProfileStore();
           const { token, token_type, expires_at, user } = response.data.data;
-          this.tokenAuth = token;
-          this.tokenType = token_type;
-          this.expiresAt = expires_at;
-          this.user = user;
-          this.seeker = user.seeker;
-          this.employer = user.employer;
-          this.isAuthed = true;
+          this.updateAuthState(token, token_type, expires_at, user);
           setUser(user);
           setEmployer(user.employer);
           setSeeker(user.seeker);
@@ -245,6 +238,15 @@ export const useAuthStore = defineStore("auth", {
       this.user = { ...employerData };
       this.seeker = { ...seekerData };
       this.employer = { ...employerData };
+    },
+    updateAuthState(token, token_type, expires_at, user) {
+      this.tokenAuth = token;
+      this.tokenType = token_type;
+      this.expiresAt = expires_at;
+      this.user = user;
+      this.seeker = user.seeker;
+      this.employer = user.employer;
+      this.isAuthed = true;
     },
     handleError(error) {
       if (error.response?.data) {
