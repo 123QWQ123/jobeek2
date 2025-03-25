@@ -9,7 +9,7 @@
       ></span>
     </div>
 
-    <div class="text-danger d-block p-4">
+    <div class="text-danger d-block">
       {{ errorMessage }}
     </div>
 

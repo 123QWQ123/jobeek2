@@ -9,7 +9,7 @@
       ></span>
     </div>
 
-    <div class="text-danger d-block p-4" v-if="errors.message">
+    <div class="text-danger d-block" v-if="errors.message">
       {{ errors.message }}
     </div>
     <transition>

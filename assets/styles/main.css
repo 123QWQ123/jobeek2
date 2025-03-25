@@ -3136,9 +3136,32 @@ body .main-section-mob {
 
 .empty-area span {
     font-weight: 600;
-    font-size: 14px;
-    line-height: 19px;
+    font-size: 16px;
+    line-height: 22px;
     color: #78757E;
+}
+
+.form_content textarea.form-control {
+    padding: 16px !important;
+    font-weight: 600;
+}
+
+.form_content textarea.form-control:focus {
+    border: none !important;
+    box-shadow: none !important;
+    background: #f5f8fa !important;
+    padding: 16px !important;
+}
+
+.w-box-body input.current {
+    font-weight: 600;
+}
+
+.w-box .w-box-body label {
+    color: #0a2540;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 19px;
 }
 
 .w-box:not(.w-box--main) {
@@ -8245,6 +8268,7 @@ textarea.form-control {
 .w-box .arrow.up {
 	-webkit-transform: rotate(45deg);
 	transform: rotate(45deg);
+	top: 29%;
 }
 
 .nice-select input.current {
@@ -8255,8 +8279,68 @@ textarea.form-control {
 	margin-bottom: 30px;
 }
 
+.profile-page.margin-top-none {
+	margin-top: 0;
+}
+
+.w-box .arrow.up {
+    transform: rotate(45deg);
+}
+
+.d-select:after {
+    border-color: #78757e;
+    border-width: 2px;
+}
+
 @media (max-width: 1280px) {
-	.profile-page {
-	    padding-top: 0;
+	.profile-page.margin-top-none {
+		padding-top: 38px;
+	}
+}
+
+@media (max-width: 960px) {
+	.arrow {
+	    height: 15px;
+	    right: 20px;
+	    top: 44%;
+	    width: 15px;
+	}
+	.profile-page.margin-top-none {
+		padding-top: 0;
+	}
+	.profile-page.margin-top-none form.search-form {
+		padding-top: 25px;
+	}
+	.empty-area span {
+	    font-weight: 600;
+	    font-size: 14px;
+	    line-height: 16px;
+	}
+	.form_content textarea.form-control {
+	    padding: 14px !important;
+	    font-weight: 600;
+	}
+	.w-box-body input.current {
+	    font-weight: 600;
+	}
+
+	.w-box .w-box-body label {
+	    font-size: 14px;
+	    font-weight: 600;
+	    line-height: 16px;
+	}
+	.d-select:after {
+	    right: 10px;
+	}
+	.select_arrow {
+	    right: 10px !important;
+	}
+	.absoluted_icon {
+	    right: -10px;
+	    top: 26px;
+	}
+	.position-delete-icon.absoluted_icon {
+		right: -32px;
+    	top: -4px;
 	}
 }
