@@ -36,7 +36,7 @@
                 <ResumeTextInput name="last_name" placeholder="Фамилия" />
               </div>
             </div>
-            <div class="c1 mt-1">
+            <div class="c1 mt-3">
               <ResumeTextInput name="middle_name" placeholder="Отчество" />
             </div>
           </div>

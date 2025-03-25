@@ -47,7 +47,7 @@
                 </div>
               </div>
             </div>
-            <div class="c1 mt-1">
+            <div class="c1 mt-3">
               <input
                 type="text"
                 placeholder="Отчество"

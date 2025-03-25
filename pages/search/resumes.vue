@@ -21,7 +21,7 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div class="main cabinet profile-page bg-wrapper">
+  <div class="main cabinet profile-page bg-wrapper margin-top-none">
     <SearchResumeForm :withWrapper="false" />
     <ResumesResults />
   </div>

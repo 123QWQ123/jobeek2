@@ -36,7 +36,7 @@
 
         <button
           type="button"
-          class="btn btn-primary btn-sm mt-1"
+          class="btn btn-primary btn-sm mt-3"
           v-if="fields.length === 0"
           @click="push('https://')"
         >
@@ -44,7 +44,7 @@
         </button>
         <button
           type="button"
-          class="btn btn-primary mt-1 btn-sm"
+          class="btn btn-primary mt-3 btn-sm"
           v-if="fields.length > 0"
           @click="push('https://')"
         >
