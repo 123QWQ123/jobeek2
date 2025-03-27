@@ -1,5 +1,11 @@
 <template>
-  <div class="w-box" v-click-outside="save">
+  <div
+    class="w-box"
+    v-click-outside="{
+      handler: save,
+      detectIFrame: true,
+    }"
+  >
     <div class="w-box-head">
       <h3 class="title">Видимость</h3>
       <span
@@ -78,6 +84,7 @@ const initialValues = ref({
 const { errors, values, setErrors, meta, setValues, resetForm, validate } =
   useForm({
     initialValues: initialValues,
+    initialTouched: true,
     validationSchema: toTypedSchema(schema.value),
   });
 
@@ -117,7 +124,7 @@ const isFocused = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
   await validate();
-  if (!meta.value.dirty) {
+  if (!isFocused.value || !meta.value.dirty) {
     return true;
   }
   if (!meta.value.valid) {
@@ -126,8 +133,7 @@ const save = async (is_from_parent = false) => {
   }
   setErrors({});
   state.errorMessage = "";
-  let resData = {};
-  resData = await updateResume(resumeID.value, {
+  const resData = await updateResume(resumeID.value, {
     form_data: "ACCESS_DATA",
     ...values,
   });

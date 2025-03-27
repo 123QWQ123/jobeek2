@@ -1,5 +1,11 @@
 <template>
-  <div class="w-box" v-click-outside="save">
+  <div
+    class="w-box"
+    v-click-outside="{
+      handler: save,
+      detectIFrame: true,
+    }"
+  >
     <div class="w-box-head">
       <h3 class="title">Знания и навыки</h3>
       <span
@@ -50,7 +56,6 @@
 <script setup>
 import useFormValidation from "~/composables/useFormValidation";
 import { useResumeStore } from "~/store/resume";
-import { useDiff } from "~/composables/useDiff";
 import { useDictionaryStore } from "~/store/dictionary";
 import { zod } from "~/hooks/ru-zod.js";
 import { toTypedSchema } from "@vee-validate/zod";
@@ -134,7 +139,7 @@ const isFocused = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
   await validate();
-  if (!meta.value.dirty) {
+  if (!isFocused.value || !meta.value.dirty) {
     return true;
   }
   if (!meta.value.valid) {
@@ -146,7 +151,7 @@ const save = async (is_from_parent = false) => {
     ...values,
     form_data: "KNOWLEDGE_AND_SKILLS_DATA",
   });
-
+  isFocused.value = false;
   if (resData.status !== "success") {
     errorMessage.value = resData.message;
     if (resData.hasOwnProperty("errors")) {
@@ -161,9 +166,5 @@ const save = async (is_from_parent = false) => {
 
 const isCompleted = computed(() => {
   return resumeStore.resume?.skills?.length > 0;
-});
-
-defineExpose({
-  save,
 });
 </script>

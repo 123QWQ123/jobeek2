@@ -1,5 +1,13 @@
 <template>
-  <div class="w-box" v-click-outside="save">
+  <div
+    class="w-box"
+    v-click-outside="{
+      handler: save,
+      detectIFrame: true,
+      exclude: ['.update-resume'],
+    }"
+    @click="isFocused = true"
+  >
     <div class="w-box-head">
       <h3 class="title">Личные данные</h3>
       <span
@@ -12,11 +20,7 @@
     <div class="text-danger d-block p-4" v-if="errors.message">
       {{ errors.message }}
     </div>
-    <div
-      class="w-box-body"
-      :class="{ collapse: isCollapsed }"
-      @click="isFocused = true"
-    >
+    <div class="w-box-body" :class="{ collapse: isCollapsed }">
       <div class="input-row">
         <label for="name">Имя и фамилия <b>*</b></label>
         <div class="input-wrapper">
@@ -205,7 +209,6 @@ import { useI18n } from "vue-i18n";
 import { toTypedSchema } from "@vee-validate/zod";
 import { zod } from "~/hooks/ru-zod.js";
 import useProviders from "~/composables/useProviders.js";
-import { useAsyncData } from "#app";
 
 const props = defineProps({
   title: {
@@ -222,8 +225,6 @@ const resumeID = computed(() => route.params.id);
 const resumeStore = useResumeStore();
 const { updateResume } = resumeStore;
 const my_resume = computed(() => resumeStore.my_resume);
-
-const { getCities } = profileStore;
 
 const isCollapsed = ref(false);
 const isFocused = ref(false);
@@ -252,12 +253,6 @@ const businessTripOptions = computed(() =>
     name: item.name,
     value: item.id,
   })),
-);
-
-await useAsyncData(
-  "getCities",
-  async () =>
-    await getCities({ city_id: my_resume.value?.city.id ?? undefined }),
 );
 
 watch(
@@ -528,13 +523,11 @@ const save = async (is_from_parent = false) => {
   errorMessage.value = "";
   await validate();
 
-  if (!meta.value.dirty) {
-    return true;
-  }
-  if (!meta.value.valid) {
+  if (!isFocused.value || !meta.value.dirty || !meta.value.valid) {
     return false;
   }
   setErrors({});
+  isFocused.value = false;
   const jsonData = { ...JSON.parse(JSON.stringify(values)) };
 
   jsonData.form_data = "PERSONAL_DATA";
@@ -569,9 +562,5 @@ const isCompleted = computed(() => {
     return myResume.address && myResume.address.address;
   }
   return false;
-});
-
-defineExpose({
-  save,
 });
 </script>

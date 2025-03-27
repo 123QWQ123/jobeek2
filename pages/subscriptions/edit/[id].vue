@@ -87,10 +87,6 @@ const { values, meta, setValues, errors } = useForm({
   validationSchema: toTypedSchema(schema),
 });
 const save = async () => {
-  console.log(values);
-  console.log("meta.value.dirty", meta.value.dirty);
-  console.log("meta.value.valid", meta.value.valid);
-  console.log("errors", errors);
   if (meta.value.dirty && meta.value.valid) {
     await useApi("seeker/subscription/" + subscribeId, {
       method: "PUT",

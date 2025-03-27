@@ -1,5 +1,11 @@
 <template>
-  <div class="w-box" v-click-outside="save">
+  <div
+    class="w-box"
+    v-click-outside="{
+      handler: save,
+      detectIFrame: true,
+    }"
+  >
     <div class="w-box-head">
       <h3 class="title">Тестов или экзаменов</h3>
       <span
@@ -167,7 +173,7 @@ const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
   await validate();
 
-  if (!meta.value.dirty) {
+  if (!isFocused.value || !meta.value.dirty) {
     return true;
   }
   if (!meta.value.valid) {
@@ -182,6 +188,7 @@ const save = async (is_from_parent = false) => {
     providers: getSelectedProviders(props.providers),
   });
 
+  isFocused.value = false;
   if (resData.status !== "success") {
     errorMessage.value = resData.message;
     if (resData.hasOwnProperty("errors")) {
@@ -196,9 +203,5 @@ const save = async (is_from_parent = false) => {
 
 const isCompleted = computed(() => {
   return resumeStore.resume?.educations.primary?.length > 0;
-});
-
-defineExpose({
-  save,
 });
 </script>

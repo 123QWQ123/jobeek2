@@ -93,6 +93,7 @@ const initialValues = ref({
 const { errors, values, setErrors, meta, setValues, resetForm, validate } =
   useForm({
     initialValues: initialValues,
+    initialTouched: true,
     validationSchema: toTypedSchema(schema.value),
   });
 
@@ -167,8 +168,9 @@ const isFocused = ref(false);
 const isLoading = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  validate();
-  if (!meta.value.dirty) {
+  await validate();
+
+  if (!isFocused.value || !meta.value.dirty) {
     return true;
   }
   if (!meta.value.valid) {
