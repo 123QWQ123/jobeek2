@@ -1,5 +1,11 @@
 <template>
-  <div class="w-box" v-click-outside="save">
+  <div
+    class="w-box"
+    v-click-outside="{
+      handler: save,
+      detectIFrame: true,
+    }"
+  >
     <div class="w-box-head">
       <h3 class="title">Детали резюме</h3>
       <span
@@ -188,12 +194,11 @@ const initialValues = {
   salary: my_resume.value?.salary ?? null,
   currency: my_resume.value?.currency ?? "RUB",
 };
-const { values, meta, resetForm, setErrors, validate, getErrors, errors } =
-  useForm({
-    initialValues: initialValues,
-    initialTouched: true,
-    validationSchema: toTypedSchema(schema.value),
-  });
+const { values, meta, resetForm, setErrors, validate, errors } = useForm({
+  initialValues: initialValues,
+  initialTouched: true,
+  validationSchema: toTypedSchema(schema.value),
+});
 
 const state = reactive({
   title: {
@@ -251,17 +256,12 @@ watch(
 
 walkThroughFields(providers.value);
 
-const { getPlaceOfWorks, getSchedules } = dictionaryStore;
-
 const placeOfWorkOptions = computed(() =>
   dictionaryStore.place_of_works.map((item) => ({
     name: item.name,
     value: item.id,
   })),
 );
-
-getSchedules();
-getPlaceOfWorks();
 
 const { errors: serverErrors, handleErrorResponse } = useFormValidation();
 watch(
@@ -281,22 +281,20 @@ const isFocused = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
   await validate();
-  if (!meta.value.dirty) {
-    return true;
-  }
-  if (!meta.value.valid) {
+  if (!isFocused.value || !meta.value.dirty || !meta.value.valid) {
     return false;
   }
 
   setErrors({});
   errorMessage.value = "";
+  isFocused.value = false;
 
   try {
     const resData = await updateResume(resumeID.value, {
       ...values,
       form_data: "PROFESSION_DETAILS_DATA",
     });
-
+    resetForm({ values });
     if (resData.status !== "success") {
       errorMessage.value = resData.message;
       if (resData.errors) setErrors(resData.errors);
@@ -312,9 +310,5 @@ const save = async (is_from_parent = false) => {
 
 const isCompleted = computed(() => {
   return my_resume.value?.address?.address && !isCollapsed.value;
-});
-
-defineExpose({
-  save,
 });
 </script>

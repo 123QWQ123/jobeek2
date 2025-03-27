@@ -1,5 +1,11 @@
 <template>
-  <div class="w-box" v-click-outside="save">
+  <div
+    class="w-box"
+    v-click-outside="{
+      handler: save,
+      detectIFrame: true,
+    }"
+  >
     <div class="w-box-head">
       <h3 class="title">Языки</h3>
       <span
@@ -84,7 +90,9 @@ watch(serverErrors, (newErrors) => {
 
 const save = async () => {
   await validate();
-
+  if (!isFocused.value) {
+    return;
+  }
   if (!meta.value.dirty) return true;
   if (!meta.value.valid) return false;
 
@@ -92,7 +100,7 @@ const save = async () => {
   const jsonData = { ...values, form_data: "LANGUAGES_DATA" };
 
   const resData = await updateResume(resumeID.value, jsonData);
-
+  isFocused.value = false;
   if (resData.status !== "success") {
     errorMessage.value = resData.message || "Ошибка сервера";
     if (resData.errors) setErrors(resData.errors);
@@ -107,8 +115,6 @@ const isCompleted = computed(() => {
   const address = my_resume.value?.address;
   return Boolean(address?.address && !isCollapsed.value);
 });
-
-defineExpose({ save });
 </script>
 
 <style></style>

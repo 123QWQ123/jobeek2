@@ -225,18 +225,21 @@ const updateCityInput = async (newValue = "") => {
   if (newValue.length < 2) {
     return;
   }
-  const items = (await searchCities({ search: newValue })) ?? [];
+  const items = profileStore.cities.filter((item) => {
+    return item.name.search(newValue);
+  });
   cityOptions.value = items.map((item) => ({
     value: item.id,
-    name: getCityNameFromArea2(item),
+    name: item.name,
   }));
 };
 const onSearchCitiesByCountryId = async (country_id, name) => {
-  const items = await searchCities({ search: name });
-
+  const items = profileStore.cities.filter((item) => {
+    return item.name.search(name);
+  });
   cityOptions.value = items.map((item) => ({
     value: item.id,
-    name: getCityNameFromArea2(item),
+    name: item.name,
   }));
 };
 

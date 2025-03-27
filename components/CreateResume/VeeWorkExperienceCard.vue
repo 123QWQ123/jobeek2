@@ -1,5 +1,11 @@
 <template>
-  <div class="w-box" v-click-outside="save">
+  <div
+    class="w-box"
+    v-click-outside="{
+      handler: save,
+      detectIFrame: true,
+    }"
+  >
     <div class="w-box-head">
       <h3 class="title">Опыт работы</h3>
       <span
@@ -155,29 +161,7 @@ const {
   validationSchema: toTypedSchema(schema.value),
 });
 
-const getFields = (newObject) => {
-  return {
-    experience: newObject.experience.map((item) => {
-      return {
-        industries: item.industries.map((sub_item) => sub_item.id) ?? [],
-        city_id: item.city?.id,
-        end_month: String(item.end_month).padStart(2, 0),
-        start_month: String(item.start_month).padStart(2, 0),
-        profession: item.profession,
-        company: item.company,
-        company_url: item.company_url,
-        company_scope: item.company_scope,
-        start_year: item.start_year,
-        end_year: item.end_year,
-        until_today: item.until_today,
-        responsibilities: item.responsibilities,
-        achievements: item.achievements,
-      };
-    }),
-  };
-};
-
-const { getResume, updateResume } = resumeStore;
+const { updateResume } = resumeStore;
 
 const { errors: serverErrors, handleErrorResponse } = useFormValidation();
 watch(
@@ -196,8 +180,8 @@ const isFocused = ref(false);
 const errorMessage = ref(null);
 const isLoading = ref(false);
 const save = async (is_from_parent = false) => {
-  console.log(await validate());
-  if (!meta.value.dirty) {
+  await validate();
+  if (!isFocused.value || !meta.value.dirty) {
     return true;
   }
   if (!meta.value.valid) {
@@ -210,7 +194,7 @@ const save = async (is_from_parent = false) => {
     ...values,
   };
   const resData = await updateResume(resumeID.value, payload);
-
+  isFocused.value = false;
   if (resData.status !== "success") {
     errorMessage.value = resData.message;
     if (resData.hasOwnProperty("errors")) {
@@ -231,10 +215,6 @@ const save = async (is_from_parent = false) => {
 
 const isCompleted = computed(() => {
   return resumeStore.resume?.work_histories?.length > 0;
-});
-
-defineExpose({
-  save,
 });
 </script>
 

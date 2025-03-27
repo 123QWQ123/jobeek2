@@ -1,5 +1,11 @@
 <template>
-  <div class="w-box" v-click-outside="save">
+  <div
+    class="w-box"
+    v-click-outside="{
+      handler: save,
+      detectIFrame: true,
+    }"
+  >
     <div class="w-box-head">
       <h3 class="title">Курсы</h3>
       <span
@@ -143,6 +149,9 @@ watch(serverErrors, (newErrors) => {
 
 const save = async () => {
   await validate();
+  if (!isFocused.value) {
+    return;
+  }
   if (!meta.value.dirty) return true;
   if (!meta.value.valid) return false;
 
@@ -151,7 +160,7 @@ const save = async () => {
     educations: { courses: values.courses },
     providers: getSelectedProviders(providers.value),
   });
-
+  isFocused.value = false;
   if (resData.status !== "success") {
     errorMessage.value = resData.message;
     if (resData.errors) setErrors({ ...resData.errors });
@@ -165,6 +174,4 @@ const save = async () => {
 const isCompleted = computed(() => {
   return my_resume.value?.educations.primary?.length > 0;
 });
-
-defineExpose({ save });
 </script>

@@ -34,19 +34,20 @@ const {
   searchProfessionalRoles,
   searchHHProfessionalRoles,
   searchSuperjobProfessionalRoles,
+  getCities,
 } = profileStore;
 
 const dictionaryStore = useDictionaryStore();
 const { getDictionaries } = dictionaryStore;
 
-const resData = await useAsyncData("my_resume" + resumeID.value, async () => {
+await useAsyncData("my_resume" + resumeID.value, async () => {
   return await getMyResume(resumeID.value);
 });
-await useAsyncData("getIndustries", async () => {
+await useLazyAsyncData("getIndustries", async () => {
   return await getIndustries();
 });
 
-const { data } = await useAsyncData("dictionaries", async () => {
+await useLazyAsyncData("dictionaries_options_", async () => {
   return await getDictionaries([
     "work_type",
     "schedule",
@@ -67,15 +68,16 @@ const { data } = await useAsyncData("dictionaries", async () => {
   ]);
 });
 
-await useAsyncData("searchProfessionalRoles", async () => {
+useLazyAsyncData("searchProfessionalRoles", async () => {
   return await searchProfessionalRoles();
 });
-await useAsyncData("searchHHProfessionalRoles", async () => {
+useLazyAsyncData("searchHHProfessionalRoles", async () => {
   return await searchHHProfessionalRoles();
 });
-await useAsyncData("searchSuperjobProfessionalRoles", async () => {
+useLazyAsyncData("searchSuperjobProfessionalRoles", async () => {
   return await searchSuperjobProfessionalRoles();
 });
+useLazyAsyncData("getCities", async () => await getCities());
 
 const pageTitle = computed(() => {
   if (resumeID?.value) {
@@ -86,25 +88,9 @@ const pageTitle = computed(() => {
 useHead({
   title: pageTitle,
 });
-
-if (resData.status === "error") {
-  navigateTo({
-    name: "create-resume",
-    query: {
-      ...route.query,
-      message: JSON.stringify({
-        type: "error",
-        text: resData.message,
-        redirect: "create-resume",
-      }),
-    },
-  });
-}
 const error = computed(() => {
   return route.query.message;
 });
-// const { handleAlert } = useAlert();
-// watch(() => route.query.message, handleAlert);
 
 const saveAsDraft = (e) => {
   e.preventDefault();
@@ -122,8 +108,7 @@ const publishableProviders = computed(() => {
 });
 
 const canBePublished = computed(() => {
-  if (hhPublishable.value || superjobPublishable.value) return true;
-  return false;
+  return !!(hhPublishable.value || superjobPublishable.value);
 });
 
 const publishableProviderName = computed(() => {
@@ -153,34 +138,6 @@ watch(
   },
 );
 
-// Reactive refs for form sections
-const sectionsRefs = reactive({
-  photo: ref(),
-  personalFields: ref(),
-  professionFields: ref(),
-  foreignLanguage: ref(),
-  driverLicences: ref(),
-  workExperience: ref(),
-  education: ref(),
-  courses: ref(),
-  citizenship: ref(),
-  knowledgeAndSkills: ref(),
-  access: ref(),
-});
-
-// Save all sections
-const saveAllSections = async () => {
-  const saveActions = Object.values(sectionsRefs).map((ref) =>
-    ref?.value?.save(true),
-  );
-  try {
-    await Promise.all(saveActions);
-    toast("All sections saved successfully!", { type: "success" });
-  } catch (error) {
-    toast("Failed to save some sections.", { type: "error" });
-  }
-};
-
 const errorMessage = ref(null);
 const errors = ref([]);
 const isLoading = ref(false);
@@ -192,20 +149,6 @@ const saveAndPublishAll = async (event) => {
     });
     return;
   }
-
-  // isLoading.value = true;
-  // const resAll = await saveAllSections();
-  // if (!resAll) {
-  //   await Swal.fire({
-  //     title: "Ошибка!",
-  //     text: "не все обязательные поля заполнены верно!",
-  //     icon: "error",
-  //     confirmButtonText: "ОК",
-  //   });
-  //   isLoading.value = false;
-  //
-  //   return;
-  // }
 
   const payload = {
     providers: publishableProviders.value,
@@ -326,9 +269,9 @@ const canOnlyOnePublished = computed(() => {
 
           <p class="text-lg-end">
             При создании резюме вы соглашаетесь с
-            <a target="_blank" href="https://reg.jobeek.me/rules.pdf"
-              >правилами работы сервиса</a
-            >
+            <a target="_blank" href="https://reg.jobeek.me/rules.pdf">
+              правилами работы сервиса
+            </a>
             и даете согласие на обработку персональных данных, разрешенных для
             распространения
           </p>

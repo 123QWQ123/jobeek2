@@ -473,18 +473,16 @@ const isMetroEnabled = computed(() => {
   return true;
 });
 
-const { getCityNameFromArea, getCityNameFromArea2 } = useResumeHooks();
-const { getCountryCities } = profileStore;
 const cityOptions = ref([]);
 
 const updateCityInput = async (newValue = "") => {
-  if (newValue) {
-    const items = await searchCities({ search: newValue });
-    cityOptions.value = items.map((item) => ({
-      value: item.id,
-      name: getCityNameFromArea2(item),
-    }));
-  }
+  const items = profileStore.cities.filter((item) => {
+    return item.name.search(newValue);
+  });
+  cityOptions.value = items.map((item) => ({
+    value: item.id,
+    name: item.name,
+  }));
 };
 
 watch(

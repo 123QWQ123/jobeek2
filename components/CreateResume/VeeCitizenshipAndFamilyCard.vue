@@ -1,5 +1,11 @@
 <template>
-  <div class="w-box" v-click-outside="save">
+  <div
+    class="w-box"
+    v-click-outside="{
+      handler: save,
+      detectIFrame: true,
+    }"
+  >
     <div class="w-box-head">
       <h3 class="title">Гражданство и Семья</h3>
       <span
@@ -220,13 +226,16 @@ const errorMessage = ref(null);
 
 const save = async (is_from_parent = false) => {
   await validate();
+  if (!isFocused.value) {
+    return;
+  }
   if (!meta.value.dirty || !meta.value.valid) return false;
 
   const resData = await updateResume(resumeID.value, {
     form_data: "CITIZENSHIP_AND_FAMILY_DATA",
     ...values,
   });
-
+  isFocused.value = false;
   if (resData.status !== "success") {
     errorMessage.value = resData.message;
     resData.errors && setErrors(resData.errors);
@@ -245,9 +254,5 @@ const isCompleted = computed(() => {
       myResume.marital_status?.id &&
       myResume.children?.id,
   );
-});
-
-defineExpose({
-  save,
 });
 </script>

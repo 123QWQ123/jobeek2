@@ -1,5 +1,11 @@
 <template>
-  <div class="w-box" v-click-outside="save">
+  <div
+    class="w-box"
+    v-click-outside="{
+      handler: save,
+      detectIFrame: true,
+    }"
+  >
     <div class="w-box-head">
       <h3 class="title">Образование</h3>
       <span
@@ -192,6 +198,9 @@ walkThroughFields(providers.value);
 const save = async () => {
   await validate();
 
+  if (!isFocused.value) {
+    return;
+  }
   if (!meta.value.dirty || !meta.value.valid) return;
 
   const resData = await updateResume(resumeID.value, {
@@ -201,7 +210,7 @@ const save = async () => {
       education_level_id: values.education_level_id,
     },
   });
-
+  isFocused.value = false;
   if (resData.status !== "success") {
     errorMessage.value = resData.message;
     if (resData.errors) setErrors(resData.errors);
@@ -215,7 +224,4 @@ const save = async () => {
 const isCompleted = computed(
   () => my_resume.value?.educations.primary?.length > 0,
 );
-
-// Открываем метод для использования при необходимости
-defineExpose({ save });
 </script>

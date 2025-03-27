@@ -1,5 +1,11 @@
 <template>
-  <div class="w-box" v-click-outside="save">
+  <div
+    class="w-box"
+    v-click-outside="{
+      handler: save,
+      detectIFrame: true,
+    }"
+  >
     <div class="w-box-head">
       <h3 class="title">Водительские права</h3>
       <span
@@ -142,6 +148,10 @@ const isFocused = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
   await validate();
+  if (!isFocused.value) {
+    return;
+  }
+
   if (!meta.value.dirty) {
     return true;
   }
@@ -156,7 +166,7 @@ const save = async (is_from_parent = false) => {
       form_data: "DRIVER_LICENSES_DATA",
       ...values,
     });
-
+    isFocused.value = false;
     if (resData.status !== "success") {
       errorMessage.value = resData.message || "Ошибка при сохранении";
       setErrors(resData.errors || {});
@@ -177,9 +187,5 @@ const isCompleted = computed(() => {
     return myResume.driver_license_types.length > 0;
   }
   return false;
-});
-
-defineExpose({
-  save,
 });
 </script>
