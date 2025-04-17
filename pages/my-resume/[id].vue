@@ -85,7 +85,7 @@ if (profileStore.cities.length === 0) {
 useAsyncData("connectedSeekerProviders", () => {
   return getConnectedSeekerProviders();
 });
-useAsyncData("my_resume" + resumeID.value, () => {
+await useAsyncData("my_resume" + resumeID.value, () => {
   return getMyResume(resumeID.value);
 });
 const pageTitle = computed(() => {
