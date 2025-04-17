@@ -212,7 +212,6 @@ const updateIndustryInput = async (newValue = "") => {
     }));
 };
 const profileStore = useProfileStore();
-const { getCityNameFromArea2 } = useResumeHooks();
 const { searchCities } = profileStore;
 const industryOptions = ref(
   industries.map((item) => ({
@@ -220,7 +219,12 @@ const industryOptions = ref(
     name: item.title,
   })),
 );
-const cityOptions = ref([]);
+const cityOptions = ref(
+  profileStore.cities.map((item) => ({
+    value: item.id,
+    name: item.name,
+  })),
+);
 const updateCityInput = async (newValue = "") => {
   if (newValue.length < 2) {
     return;
@@ -245,7 +249,6 @@ const onSearchCitiesByCountryId = async (country_id, name) => {
 
 onMounted(() => {
   walkThroughFields(providers.value);
-  updateIndustryInput();
 
   const newResume = resumeStore.my_resume;
   if (newResume?.experience?.length) {

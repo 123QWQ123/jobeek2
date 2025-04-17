@@ -25,7 +25,12 @@ watch(
   },
 );
 
-const { getMyResume, publishResume, getIndustries } = resumeStore;
+const {
+  getMyResume,
+  publishResume,
+  getIndustries,
+  getConnectedSeekerProviders,
+} = resumeStore;
 const { my_resume } = storeToRefs(resumeStore);
 const resumeID = computed(() => route.params.id);
 
@@ -40,15 +45,12 @@ const {
 const dictionaryStore = useDictionaryStore();
 const { getDictionaries } = dictionaryStore;
 
-await useAsyncData("my_resume" + resumeID.value, async () => {
-  return await getMyResume(resumeID.value);
-});
-await useLazyAsyncData("getIndustries", async () => {
-  return await getIndustries();
+useAsyncData("getIndustries", () => {
+  return getIndustries();
 });
 
-await useLazyAsyncData("dictionaries_options_", async () => {
-  return await getDictionaries([
+useAsyncData("dictionaries_options_resume", () => {
+  return getDictionaries([
     "work_type",
     "schedule",
     "place_of_work",
@@ -68,17 +70,24 @@ await useLazyAsyncData("dictionaries_options_", async () => {
   ]);
 });
 
-useLazyAsyncData("searchProfessionalRoles", async () => {
-  return await searchProfessionalRoles();
+useAsyncData("searchProfessionalRoles", () => {
+  return searchProfessionalRoles();
 });
-useLazyAsyncData("searchHHProfessionalRoles", async () => {
-  return await searchHHProfessionalRoles();
+useAsyncData("searchHHProfessionalRoles", () => {
+  return searchHHProfessionalRoles();
 });
-useLazyAsyncData("searchSuperjobProfessionalRoles", async () => {
-  return await searchSuperjobProfessionalRoles();
+useAsyncData("searchSuperjobProfessionalRoles", () => {
+  return searchSuperjobProfessionalRoles();
 });
-useLazyAsyncData("getCities", async () => await getCities());
-
+if (profileStore.cities.length === 0) {
+  useAsyncData("getCities", () => getCities());
+}
+useAsyncData("connectedSeekerProviders", () => {
+  return getConnectedSeekerProviders();
+});
+useAsyncData("my_resume" + resumeID.value, () => {
+  return getMyResume(resumeID.value);
+});
 const pageTitle = computed(() => {
   if (resumeID?.value) {
     return "Jobeek - " + my_resume.value?.title;
@@ -122,9 +131,9 @@ const publishableProviderName = computed(() => {
   }
   return null;
 });
-const hhPublishable = ref(my_resume.value.can_published.hh ?? false);
+const hhPublishable = ref(my_resume.value?.can_published.hh ?? false);
 const superjobPublishable = ref(
-  my_resume.value.can_published.superjob ?? false,
+  my_resume.value?.can_published?.superjob ?? false,
 );
 
 watch(
@@ -192,11 +201,11 @@ const canOnlyOnePublished = computed(() => {
             :providers="resumeStore.my_resume"
           />
 
-          <CreateResumePhotoCard
-            v-if="resumeID"
-            ref="photo_el"
-            :providers="providers"
-          />
+          <!--          <CreateResumePhotoCard-->
+          <!--            v-if="resumeID"-->
+          <!--            ref="photo_el"-->
+          <!--            :providers="providers"-->
+          <!--          />-->
           <CreateResumeVeePersonalFieldsCard
             v-if="resumeID"
             :key="`personal_fields_el_key_${providers.hh + providers.superjob}`"

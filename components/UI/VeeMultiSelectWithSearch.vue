@@ -96,7 +96,7 @@ const { value } = useField(() => props.name);
 const { remove, push, fields, replace } = useFieldArray(() => props.name);
 const isOpen = ref(false);
 const options = ref(props.options);
-const { sort } = useSort();
+const { sort, sortBubbleBySearch } = useSort();
 
 const selectedOptions = ref([]);
 const selected_ids = [...fields.value.map((item) => item.value)];
@@ -177,8 +177,11 @@ const onChangeHandler = (e) => {
   if (typedName === "") {
     options.value = props.options;
   } else {
-    options.value = props.options.filter((item) =>
-      String(item.name).toLowerCase().includes(typedName),
+    options.value = sortBubbleBySearch(
+      props.options.filter((item) =>
+        String(item.name).toLowerCase().includes(typedName),
+      ),
+      typedName,
     );
   }
 };

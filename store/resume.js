@@ -113,9 +113,9 @@ export const useResumeStore = defineStore("resume", {
       payload,
       redirect_to = "/profile/service-verify",
     ) {
-      if (this.provider_auth_urls.hh && this.provider_auth_urls.superjob) {
-        return this.provider_auth_urls;
-      }
+      // if (this.provider_auth_urls.hh && this.provider_auth_urls.superjob) {
+      //   return this.provider_auth_urls;
+      // }
       const response = await useApi("services/auth/redirect-url", {
         method: "get",
         params: { ...payload, redirect_to, profile: "seeker" },
@@ -176,7 +176,7 @@ export const useResumeStore = defineStore("resume", {
       if (response.hasOwnProperty("data") && "data" in response.data) {
         this.my_resume = response.data.data;
       }
-      return response;
+      return this.my_resume;
     },
 
     async deleteResume(id) {
@@ -350,6 +350,9 @@ export const useResumeStore = defineStore("resume", {
       return data;
     },
     async getIndustries(payload) {
+      // if (this.industries.length > 0 && payload.force !== true) {
+      //   return this.industries;
+      // }
       const { data } = await useApi("industries", {
         method: "get",
         payload,

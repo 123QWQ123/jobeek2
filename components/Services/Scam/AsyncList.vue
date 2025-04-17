@@ -22,7 +22,6 @@ const props = defineProps({
 
 const phones = computed(() => props.phones);
 const isEmpty = phones.value.length === 0;
-const loadMoreButton = ref();
 const isLoading = ref(false);
 const isMore = ref(false);
 

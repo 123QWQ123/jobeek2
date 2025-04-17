@@ -178,7 +178,7 @@
                   />
                 </svg>
               </button>
-              <span v-if="true" class="">в {{ lastSyncedTime }} </span>
+              <span class="">в {{ lastSyncedTime }} </span>
             </div>
           </div>
         </div>
@@ -234,42 +234,28 @@ const isAnyProviderConnected = computed(
 const onSync = async () => {
   try {
     isSyncing.value = true; // Set syncing state to true
-    const resData = await syncResumes(); // Call sync function from the store
-    handleResponseMessage(resData, "info"); // Handle response (e.g., show a toast message)
+    await syncResumes(); // Call sync function from the store
   } finally {
     isSyncing.value = false; // Ensure syncing state is reset even if an error occurs
-    setTimeout(() => window.location.reload(), 1000); // Reload page after syncing
     await updateProviderData(); // Update provider information post-sync
   }
 };
 
 // Function to disconnect a specific provider
 const onDisconnect = async (providerSlug) => {
-  const resData = await disconnectProviders({ providers: [providerSlug] }); // Disconnect provider via API
-  // Show success or error message based on API response
-  handleResponseMessage(
-    resData,
-    resData.status === "success" ? "success" : "error",
-  );
+  await disconnectProviders({ providers: [providerSlug] }); // Disconnect provider via API
+
   await updateProviderData(); // Update provider information after disconnect
 };
 
 // Function to open a given URL (e.g., provider auth URL)
 const openProviderAuthUrl = (url) => window.open(url, "_blank"); // Simply opens a URL in a new tab
 
-// Helper function to handle API response messages
-// Accepts the response object and the type of toast (info, success, or error)
-const handleResponseMessage = (response, type) => {
-  if (response?.message) {
-    toast[type](response.message, { autoClose: 3000 }); // Use appropriate toast type
-  }
-};
-
 // Function to update provider information (connected state and auth URLs)
 const updateProviderData = async () => {
   // Fetch connected providers from the API
   const connectedProviders = await getConnectedSeekerProviders();
-  if (connectedProviders.hh && connectedProviders.superjob) {
+  if (connectedProviders.hh || connectedProviders.superjob) {
     providers.value.hh.is_connected = connectedProviders.hh; // Update HH connection state
     providers.value.superjob.is_connected = connectedProviders.superjob; // Update SuperJob connection state
   }

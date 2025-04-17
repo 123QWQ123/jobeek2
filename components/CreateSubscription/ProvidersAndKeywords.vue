@@ -5,6 +5,7 @@
       <div class="custom-check-wrap">
         <div class="theme-checker theme-checker--blue">
           <input
+            name="providers"
             type="checkbox"
             value="hh"
             v-model="providersValues"
@@ -23,6 +24,7 @@
       <div class="custom-check-wrap">
         <div class="theme-checker theme-checker--blue">
           <input
+            name="providers"
             type="checkbox"
             value="sj"
             v-model="providersValues"
@@ -92,13 +94,19 @@ let { providers } = defineProps({
 const setFormValues = useSetFormValues();
 const providersValues = useFieldValue("providers");
 const excludeWordsInput = (event) => {
-  // setFormValues({ exclude_words: event.target.value });
+  setFormValues({ exclude_words: event.target.value });
 };
 const searchWordsInput = (event) => {
   setFormValues({ text: event.target.value });
 };
 
-const changeProviders = () => {
+const changeProviders = (event) => {
+  if (event.target.checked) {
+    providers.push(event.target.value);
+  } else {
+    const index = providers.indexOf(event.target.value);
+    providers.splice(index, 1);
+  }
   setFormValues({ providers: providers });
 };
 </script>

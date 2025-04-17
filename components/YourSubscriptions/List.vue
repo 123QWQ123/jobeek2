@@ -8,6 +8,7 @@
         v-for="notification in notifications || []"
         :key="notification.id"
         :notification="notification"
+        @remove="remove"
       ></YourSubscriptionsListItem>
     </ul>
     <NuxtLink class="create-button" :to="{ name: 'subscriptions-create' }"
@@ -28,6 +29,16 @@ const { data: notifications } = useAsyncData("subscription", async () => {
 
   return data;
 });
+
+const remove = (id) => {
+  useApi("seeker/subscription/" + id, {
+    method: "delete",
+  }).then(() => {
+    notifications.value = notifications.value.filter(
+      (notification) => notification.id !== id,
+    );
+  });
+};
 </script>
 
 <style scoped></style>
