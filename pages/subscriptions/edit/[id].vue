@@ -3,39 +3,45 @@ import { zod } from "~/hooks/ru-zod.js";
 import { useAuthStore } from "~/store/auth.js";
 import { toTypedSchema } from "@vee-validate/zod";
 import useApi from "~/hooks/useApi.js";
+import { useAsyncData } from "#app";
+import { useProfileStore } from "~/store/profile.js";
+import { useDictionaryStore } from "~/store/dictionary.js";
 
 useHead({
   title: "Создание подписку",
 });
 
+const profileStore = useProfileStore();
+const { getCities, searchProfessionalRoles } = profileStore;
+const { getWorkTypes, work_types_formatted } = useDictionaryStore();
+
 const subscribeId = useRoute().params.id;
 const providers = ref(null);
-onBeforeMount(async () => {
-  const {
-    data: { data, status },
-  } = await useApi(`seeker/subscription/${subscribeId}`, {
+const authStore = useAuthStore();
+
+if (profileStore.cities.length === 0) {
+  useAsyncData("getCities", () => getCities());
+}
+if (profileStore.professional_roles.length === 0) {
+  useAsyncData("searchProfessionalRoles", () => searchProfessionalRoles());
+}
+
+if (work_types_formatted.length === 0) {
+  useAsyncData("getWorkTypes", () => getWorkTypes());
+}
+
+const {
+  data: {
+    value: {
+      data: { data, status },
+    },
+  },
+} = await useAsyncData(`subscription_${subscribeId}`, async () => {
+  return useApi(`seeker/subscription/${subscribeId}`, {
     method: "get",
   });
-
-  if (status === "success") {
-    providers.value = data.providers;
-    setValues({
-      text: data.params.text,
-      providers: data.providers,
-      work_types: data.params.work_types?.map((item) => parseInt(item)), //
-      push_notification: data.push_notification,
-      email_notification: data.email_notification,
-      cities: data.params.cities?.map((item) => parseInt(item)),
-      professional_roles: data.params.professional_roles?.map((item) =>
-        parseInt(item),
-      ),
-      salary: {
-        from: parseInt(data.params.salary.from),
-        to: parseInt(data.params.salary.to),
-      },
-    });
-  }
 });
+
 const getFields = (newObject) => {
   if (!newObject) return {};
   return {
@@ -52,6 +58,8 @@ const getFields = (newObject) => {
     },
   };
 };
+const initialValues = getFields(authStore.seeker);
+
 const schema = zod
   .object({
     text: zod.string().nullish(),
@@ -78,14 +86,31 @@ const schema = zod
     return value.push_notification || value.email_notification;
   });
 
-const authStore = useAuthStore();
-const initialValues = getFields(authStore.seeker);
-
 const { values, meta, setValues, errors } = useForm({
   initialValues,
   initialTouched: true,
   validationSchema: toTypedSchema(schema),
 });
+
+if (status === "success") {
+  providers.value = data.providers;
+  setValues({
+    text: data.params?.text,
+    providers: data.providers,
+    work_types: data.params?.work_types?.map((item) => parseInt(item)), //
+    push_notification: data.push_notification,
+    email_notification: data.email_notification,
+    cities: data.params?.cities?.map((item) => parseInt(item)),
+    professional_roles: data.params?.professional_roles?.map((item) =>
+      parseInt(item),
+    ),
+    salary: {
+      from: parseInt(data.params?.salary.from),
+      to: parseInt(data.params?.salary.to),
+    },
+  });
+}
+
 const save = async () => {
   if (meta.value.dirty && meta.value.valid) {
     await useApi("seeker/subscription/" + subscribeId, {

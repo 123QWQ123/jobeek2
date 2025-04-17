@@ -593,7 +593,7 @@ const save = async (is_from_parent = false) => {
     jsonData.social_networks = jsonData.social_networks.map(
       (item) => item.item,
     );
-    jsonData.phones = jsonData.phones.map((item) => ({
+    jsonData.phones = jsonData.phones?.map((item) => ({
       ...item,
       phone: item.phone.substring(1),
     }));

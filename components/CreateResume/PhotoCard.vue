@@ -100,7 +100,7 @@ const { updateResume, getMyResume } = resumeStore;
 
 const { employer } = profileStore;
 const { getArtifacts } = profileStore;
-await getArtifacts({ type: 1 });
+useAsyncData("getArtifacts", () => getArtifacts({ type: 1 }));
 const artifacts = computed(() => profileStore.artifacts);
 const isPhotosShown = ref(false);
 const toggleButtonText = computed(() => {

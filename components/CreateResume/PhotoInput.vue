@@ -163,7 +163,7 @@ const save = async () => {
     toast.info(resData.message, { autoClose: 3000 });
     return;
   }
-  await getArtifacts({ type: 1 });
+  useAsyncData("getArtifacts", () => getArtifacts({ type: 1 }));
 
   emit("update:modelValue", resData.data.data.id);
 };

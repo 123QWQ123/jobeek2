@@ -280,6 +280,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       return this.metro;
     },
     async getDictionaries(groups = []) {
+      let groups_to_fetch = [];
       /**
        * Mapping between API parameters and store state fields.
        * Object keys are parameter/group names used in API requests,
@@ -304,13 +305,27 @@ export const useDictionaryStore = defineStore("dictionary", {
         travel_time: "travel_times",
         children_resume: "resume_children",
       };
+
+      for (const group of groups) {
+        if (
+          Object.hasOwn(this, paramToStateMap[group]) &&
+          this[paramToStateMap[group]].length === 0
+        ) {
+          groups_to_fetch.push(group);
+        }
+      }
+
+      if (groups_to_fetch.length === 0) {
+        return [];
+      }
+
       const { data } = await useApi("dictionaries", {
         method: "get",
         params: {
-          groups,
+          groups: groups_to_fetch,
         },
       });
-      for (const group of groups) {
+      for (const group of groups_to_fetch) {
         if (Object.hasOwn(this, paramToStateMap[group])) {
           this[paramToStateMap[group]] = data.data[group] ?? [];
         } else {

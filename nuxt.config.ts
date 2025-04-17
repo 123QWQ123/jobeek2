@@ -118,6 +118,7 @@ export default defineNuxtConfig({
   },
   experimental: {
     componentIslands: true,
+    payloadExtraction: true,
   },
   // i18n: {
   //   lazy: true,

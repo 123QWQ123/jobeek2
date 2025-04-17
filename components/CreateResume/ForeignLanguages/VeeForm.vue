@@ -43,10 +43,7 @@ const addNew = () => {
 const { push, fields, remove } = useFieldArray(() => props.name);
 const { getForeignLanguages } = useDictionaryStore();
 
-await useAsyncData(
-  "getForeignLanguages",
-  async () => await getForeignLanguages(),
-);
+useAsyncData("getForeignLanguages", () => getForeignLanguages());
 </script>
 
 <style scoped></style>

@@ -161,7 +161,7 @@ function onSelect(e) {
   if (e.target.classList.contains("option")) {
     isOpen.value = false;
     const selectedOptionValue = e.target.dataset.value;
-    const selectedOptionItem = options.value.find(
+    const selectedOptionItem = options.value?.find(
       (item) => String(item.value) === String(selectedOptionValue),
     );
     if (!selectedOptionItem) {
@@ -179,7 +179,7 @@ function onSelect(e) {
 }
 
 const getCurrentFieldName = (newValue) => {
-  const found = options.value.find(
+  const found = options.value?.find(
     (item) => String(item.value) === String(newValue),
   );
   if (!found) return;
@@ -188,7 +188,7 @@ const getCurrentFieldName = (newValue) => {
 
 function onUnselect(deleteId, oldValue) {
   const selectedOptionValue = String(oldValue);
-  const selectedOptionItem = selectedOptions.value.find(
+  const selectedOptionItem = selectedOptions.value?.find(
     (item) => String(item.value) === selectedOptionValue,
   );
   if (!selectedOptionItem) {

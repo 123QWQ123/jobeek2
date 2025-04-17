@@ -3,8 +3,10 @@
     <div class="subs-card">
       <div class="subs-card-body">
         <div class="subs-card-name">
-          <strong class="title">{{ notification.name || "Empty title" }}</strong
-          ><span class="location">Омск</span>
+          <strong class="title">{{
+            notification.name || "Empty title"
+          }}</strong>
+          <!--          <span class="location">Омск</span>-->
         </div>
         <div class="subs-card-actions">
           <nuxt-link
@@ -38,7 +40,7 @@
               </svg>
             </button>
           </nuxt-link>
-          <button class="card-action">
+          <button @click="remove" class="card-action">
             <svg
               width="25"
               height="25"
@@ -60,6 +62,7 @@
             <div class="custom-check-wrap">
               <div class="theme-checker theme-checker--blue">
                 <input
+                  disabled
                   type="checkbox"
                   value="hh"
                   id="hh"
@@ -80,6 +83,7 @@
             <div class="custom-check-wrap">
               <div class="theme-checker theme-checker--blue">
                 <input
+                  disabled
                   type="checkbox"
                   value="sj"
                   id="sj"
@@ -144,6 +148,10 @@ const { notification } = defineProps({
     required: true,
   },
 });
+const emit = defineEmits(["remove"]);
+const remove = async () => {
+  emit("remove", notification.id);
+};
 </script>
 
 <style scoped></style>

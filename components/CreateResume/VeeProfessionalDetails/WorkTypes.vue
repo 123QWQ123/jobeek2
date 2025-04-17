@@ -1,7 +1,7 @@
 <script setup>
 import { useDictionaryStore } from "~/store/dictionary.js";
 
-const { work_types_formatted } = useDictionaryStore();
+const { work_types_formatted } = storeToRefs(useDictionaryStore());
 </script>
 
 <template>
