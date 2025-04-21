@@ -10,7 +10,7 @@
             :name="props.name"
             :providers="props.providers"
             :idx="idx"
-            :value="value[idx]"
+            :value="props.value[idx]"
           />
         </div>
         <button
