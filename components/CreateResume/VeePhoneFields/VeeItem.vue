@@ -27,13 +27,13 @@
 
     <PhoneInputWithCaptchaAndConfirmation
       v-show="!state.phone.is_hidden"
-      :name="`${props.name}[${idx}].phone`"
+      :name="`${name}[${idx}].phone`"
       :required="providers.hh"
     />
 
     <div class="row" v-show="!state.is_preferred.is_hidden">
       <ResumeCheckboxInput
-        :name="`${props.name}[${idx}].is_preferred`"
+        :name="`${name}[${idx}].is_preferred`"
         label="предпочтительным является"
       />
     </div>
@@ -54,14 +54,14 @@
         >
           <VeeCustomSelect
             :options="useHourOptions()"
-            :name="`${props.name}[${idx}].start_available_time_phone`"
+            :name="`${name}[${idx}].start_available_time_phone`"
             :label="'От'"
           />
         </div>
         <div class="hour_c2" v-show="!state.end_available_time_phone.is_hidden">
           <VeeCustomSelect
             :options="useHourOptions()"
-            :name="`${props.name}[${idx}].end_available_time_phone`"
+            :name="`${name}[${idx}].end_available_time_phone`"
             :label="'До'"
           />
         </div>
@@ -70,7 +70,7 @@
 
     <div class="input-wrapper mt-2" v-show="!state.comment.is_hidden">
       <ResumeTextarea
-        :name="`${props.name}[${idx}].comment`"
+        :name="`${name}[${idx}].comment`"
         :value="comment"
       ></ResumeTextarea>
     </div>
@@ -85,14 +85,12 @@ import PhoneInputWithCaptchaAndConfirmation from "./PhoneInputWithConfirmationAn
 import ResumeCheckboxInput from "~/components/CreateResume/ResumeCheckboxInput.vue";
 import ResumeTextarea from "~/components/CreateResume/ResumeTextarea.vue";
 
-const props = defineProps(["idx", "name", "value"]);
-const { idx, name } = toRefs(props);
+const { idx, name, value } = defineProps(["idx", "name", "value"]);
+
 const emit = defineEmits(["remove"]);
 
-const { comment, start_available_time_phone } = props.value;
-const { value, errorMessage } = useField(
-  () => props.name + "[" + props.idx + "].phone",
-);
+const { comment, start_available_time_phone } = value;
+
 const dictionaryStore = useDictionaryStore();
 const preferredContactTypeOptions = computed(() => {
   return dictionaryStore.preferred_contact_types.map((item) => ({
@@ -160,8 +158,6 @@ const remove = (id) => {
 <style></style>
 
 <style scoped>
-
-
 .start-to-end {
   display: inline-flex;
   flex: 1 1;
