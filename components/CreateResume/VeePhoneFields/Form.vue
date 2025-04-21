@@ -10,7 +10,7 @@
             :name="props.name"
             :providers="props.providers"
             :idx="idx"
-            :value="props.value[idx]"
+            :value="field.value"
           />
         </div>
         <button
@@ -44,7 +44,7 @@ const addNew = () => {
   push({
     type_id: 150,
     phone: null,
-    comment: null,
+    comment: [],
     start_available_time_phone: null,
     end_available_time_phone: null,
     is_preferred: false,
