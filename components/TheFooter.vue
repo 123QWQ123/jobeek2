@@ -9,48 +9,6 @@
       </div>
       <div class="footer-navigation navigation" role="navigation">
         <div class="col">
-          <div v-if="isAuthed">
-            <h5 class="col-title">Работодателям</h5>
-            <ul>
-              <li>
-                <NuxtLink :to="{ name: 'create-vacancy' }"
-                  >Создать вакансию
-                </NuxtLink>
-              </li>
-              <li>
-                <NuxtLink :to="{ name: 'search-resumes' }"
-                  >Поиск соотрудников
-                </NuxtLink>
-              </li>
-              <li>
-                <NuxtLink :to="{ name: 'advice' }">Советы</NuxtLink>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="col">
-          <div v-if="isAuthed">
-            <h5 class="col-title">Соискателям</h5>
-            <ul>
-              <li>
-                <NuxtLink :to="{ name: 'create-vacancy' }"
-                  >Создать резюме
-                </NuxtLink>
-              </li>
-              <li>
-                <NuxtLink :to="{ name: 'search-vacancies' }"
-                  >Поиск работы
-                </NuxtLink>
-              </li>
-              <li>
-                <NuxtLink :to="{ name: 'advice' }">Советы</NuxtLink>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="col">
           <h5 class="col-title">Информация</h5>
           <ul>
             <li v-if="isAuthed">
