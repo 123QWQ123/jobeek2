@@ -502,7 +502,6 @@ img {
     width: 54px;
     min-width: 54px;
     height: 54px;
-    border: 1px solid #ECECEC;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     border-radius: 13px;
@@ -1554,6 +1553,7 @@ header.main-header .checker-box .v.active:after {
 
 .main-footer {
     background: #FFFFFF;
+    padding-top: 4rem;
 }
 
 .main-footer-content {
@@ -8319,6 +8319,10 @@ textarea.form-control {
 	.profile-page.margin-top-none {
 		padding-top: 38px;
 	}
+}
+
+div.parsed_content {
+	word-break: break-all;
 }
 
 @media (max-width: 960px) {
