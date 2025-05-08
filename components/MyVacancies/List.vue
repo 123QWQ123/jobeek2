@@ -1,7 +1,7 @@
 <template>
   <PageLoader v-if="isLoading" />
   <div class="">
-    <div class="notification mt-0">
+    <!--<div class="notification mt-0">
       <div class="ic">
         <img src="~/assets/img/svg/crown2.svg" alt="#" />
       </div>
@@ -13,7 +13,7 @@
           количество вакансий, подключите премиум-подписку
         </p>
       </div>
-    </div>
+    </div>-->
     <NuxtLink
       v-if="can_create_vacancy_count"
       class="create-button"
