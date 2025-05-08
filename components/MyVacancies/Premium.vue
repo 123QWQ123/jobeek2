@@ -14,7 +14,7 @@
   </div>
   <!-- END NEW block -->
   
-  <div class="premium-col sticky-item">
+  <!-- <div class="premium-col sticky-item">
     <div class="term" v-if="authStore.isSubscribed"><span>Действует до</span><strong>24 августа 2025</strong></div>
     <div class="title" v-else>Подключите премиум подписку</div>
     <a class="btn button-xs" href="#" v-if="authStore.isSubscribed"
@@ -26,7 +26,7 @@
       @click.prevent="onClickConnect"
       >Подключить
     </a>
-  </div>
+  </div>-->
 </template>
 
 <script setup>

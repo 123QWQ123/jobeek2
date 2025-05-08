@@ -54,7 +54,7 @@ const isCompleted = computed(() => {
             <!-- END NEW block -->
   
   
-          <div class="premium-col sticky-item">
+          <!--<div class="premium-col sticky-item">
             <div class="title">
               {{ isSubscribed ? "" : "Подключите Премиум подписку" }}
             </div>
@@ -65,7 +65,7 @@ const isCompleted = computed(() => {
             <a v-else class="notification-button button-accent" href="#"
               >Подключить</a
             >
-          </div>
+          </div>-->
         </aside>
       </div>
     </div>
