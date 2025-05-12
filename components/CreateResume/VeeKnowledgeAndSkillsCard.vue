@@ -92,7 +92,7 @@ const schema = computed(() => {
 });
 
 const initialValues = ref({
-  skills: Object.values(my_resume.value?.skills) ?? [],
+  skills: Object.values(my_resume.value?.skills || {}) ?? [],
   other_skills: my_resume.value?.other_skills ?? null,
 });
 const { errors, values, setErrors, meta, setValues, resetForm, validate } =
@@ -112,13 +112,6 @@ const state = reactive({
 const sectionData = ref({
   skills: [],
 });
-
-const getFields = (newObject) => {
-  return {
-    skills: Object.values(newObject?.skills),
-    other_skills: newObject?.other_skills,
-  };
-};
 
 const { getResume, updateResume } = resumeStore;
 const { errors: serverErrors, handleErrorResponse } = useFormValidation();

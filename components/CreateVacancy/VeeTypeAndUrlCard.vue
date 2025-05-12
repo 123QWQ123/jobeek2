@@ -1,7 +1,7 @@
 <template>
   <div class="w-box" v-click-outside="save" @click="isFocused = true">
     <div class="w-box-head">
-      <h3 class="title">Тип вакансии({{ isChanged }})</h3>
+      <h3 class="title">Тип вакансии</h3>
       <span
         class="arrow"
         :class="{ up: isCollapsed, 'is-completed': isCompleted }"
@@ -118,7 +118,9 @@ const schema = computed(() => {
 });
 
 const initialValues = {
-  type_id: null,
+  type_id: my_vacancy.value.type?.id,
+  custom_employer_name: my_vacancy.value.custom_employer_name,
+  response_url: my_vacancy.value.response_url,
 };
 const {
   values,
@@ -163,10 +165,6 @@ const fields = ref({
 const { walkThroughFields } = useProviderFields(state, fields);
 walkThroughFields(providers.value);
 
-onMounted(() => {
-  walkThroughFields(providers.value);
-});
-
 const sectionData = ref({});
 const getFields = (newObject) => {
   return {
@@ -175,29 +173,16 @@ const getFields = (newObject) => {
     response_url: newObject.response_url,
   };
 };
-watch(
-  () => vacancyStore.my_vacancy,
-  (newData) => {
-    if (newData) {
-      sectionData.value = getFields(newData);
-    }
-  },
-);
 
 const dictionaryStore = useDictionaryStore();
 
 const { getVacancyTypes } = dictionaryStore;
-onMounted(() => {
-  setTimeout(async () => {
-    await getVacancyTypes();
-  }, 500);
-});
-onMounted(() => {
-  const newData = vacancyStore.my_vacancy;
-  if (newData) {
-    sectionData.value = getFields(newData);
-  }
-});
+await getVacancyTypes();
+
+const newData = vacancyStore.my_vacancy;
+if (newData) {
+  sectionData.value = getFields(newData);
+}
 
 watch(
   () => sectionData.value,
@@ -213,7 +198,7 @@ const isFocused = ref(false);
 const isLoading = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  validate();
+  await validate();
   if (!meta.value.dirty) {
     return true;
   }

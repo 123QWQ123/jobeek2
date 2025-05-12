@@ -98,29 +98,9 @@ const isOpen = ref(false);
 const options = ref(props.options);
 const { sort, sortBubbleBySearch } = useSort();
 
-const selectedOptions = ref([]);
 const selected_ids = [...fields.value.map((item) => item.value)];
-selectedOptions.value = props.options.filter((item) =>
-  selected_ids.includes(item.value),
-);
-
-watch(
-  () => [...fields.value],
-  () => {
-    const selected_ids = fields.value.map((item) => item.value);
-    selectedOptions.value = props.options.filter((item) =>
-      selected_ids.includes(item.value),
-    );
-  },
-);
-watch(
-  () => options.value,
-  () => {
-    const selected_ids = [...fields.value.map((item) => item.value)];
-    selectedOptions.value = props.options.filter((item) =>
-      selected_ids.includes(item.value),
-    );
-  },
+const selectedOptions = ref(
+  props.options.filter((item) => selected_ids.includes(item.value)),
 );
 
 const disabled = ref(props.disabled ?? false);
@@ -137,6 +117,7 @@ function onSelect(selectedOptionValue) {
   const fieldValues = fields.value.map((item) => item.value);
   if (!fieldValues.includes(selectedOptionItem.value)) {
     push(selectedOptionItem.value);
+    selectedOptions.value.push(selectedOptionItem);
   }
   searchInput.value = "";
   options.value = props.options;
@@ -152,7 +133,7 @@ const getCurrentFieldName = (newValue) => {
 
 function onUnselect(deleteId, oldValue) {
   const selectedOptionValue = String(oldValue);
-  const selectedOptionItem = props.options.find(
+  const selectedOptionItem = selectedOptions.value.find(
     (item) => String(item.value) === String(selectedOptionValue),
   );
   if (!selectedOptionItem) {
@@ -161,6 +142,7 @@ function onUnselect(deleteId, oldValue) {
   const fieldValues = fields.value.map((item) => item.value);
   if (fieldValues.includes(oldValue)) {
     remove(deleteId);
+    selectedOptions.value.splice(deleteId, 1);
   }
 }
 

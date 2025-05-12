@@ -1,7 +1,7 @@
 <template>
   <div class="w-box" v-click-outside="save" @click="isFocused = true">
     <div class="w-box-head">
-      <h3 class="title">Контакты({{ isChanged }})</h3>
+      <h3 class="title">Контакты</h3>
       <span
         class="arrow"
         :class="{ up: isCollapsed, 'is-completed': isCompleted }"
@@ -77,15 +77,6 @@
         </div>
 
         <CreateVacancyVeeContactsPhones />
-
-        <!--        {{ errors }}-->
-        <!--        <br />-->
-        <!--        <br />-->
-        <!--        {{ meta }}-->
-        <!--        <br />-->
-        <!--        <br />-->
-
-        {{ values }}
       </div>
     </transition>
   </div>
@@ -146,13 +137,17 @@ const schema = computed(() => {
 
 const initialValues = {
   contacts: {
-    name: null,
-    phones: {},
-    email: null,
-    company_name: null,
-    company_url: null,
-    company_logo: null,
-    company_description: null,
+    ...my_vacancy.value.contacts,
+    phones: {
+      ...{
+        ...my_vacancy.value.contacts.phones,
+        additional_phone:
+          my_vacancy.value.contacts.phones.additional_phone ?? undefined,
+        additional_phone_comment:
+          my_vacancy.value.contacts.phones.additional_phone_comment ??
+          undefined,
+      },
+    },
   },
 };
 const {
@@ -208,58 +203,11 @@ const fields = ref({
 const { walkThroughFields } = useProviderFields(state, fields);
 walkThroughFields(providers.value);
 
-onMounted(() => {
-  walkThroughFields(providers.value);
-});
-
-const sectionData = ref({});
-const getFields = (newObject) => {
-  return {
-    contacts: {
-      ...newObject.contacts,
-      phones: {
-        ...{
-          ...newObject.contacts.phones,
-          additional_phone:
-            newObject.contacts.phones.additional_phone ?? undefined,
-          additional_phone_comment:
-            newObject.contacts.phones.additional_phone_comment ?? undefined,
-        },
-      },
-    },
-  };
-};
-watch(
-  () => vacancyStore.my_vacancy,
-  (newData) => {
-    if (newData) {
-      sectionData.value = getFields(newData);
-    }
-  },
-);
-
-onMounted(() => {
-  const newData = vacancyStore.my_vacancy;
-  if (newData) {
-    sectionData.value = getFields(newData);
-  }
-});
-
-watch(
-  () => sectionData.value,
-  (newData, oldData) => {
-    const diffData = useDiff(newData, oldData);
-    if (Object.keys(diffData).length) {
-      resetForm({ values: { ...newData } });
-    }
-  },
-);
-
 const isFocused = ref(false);
 const isLoading = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  validate();
+  await validate();
   if (!meta.value.dirty) {
     return true;
   }

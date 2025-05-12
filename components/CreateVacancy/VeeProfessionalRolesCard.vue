@@ -1,7 +1,7 @@
 <template>
   <div class="w-box" v-click-outside="save" @click="isFocused = true">
     <div class="w-box-head">
-      <h3 class="title">Сфера деятельности({{ isChanged }})</h3>
+      <h3 class="title">Сфера деятельности</h3>
       <span
         class="arrow"
         :class="{ up: isCollapsed, 'is-completed': isCompleted }"
@@ -66,7 +66,9 @@ const schema = computed(() => {
 });
 
 const initialValues = {
-  cities: [],
+  professional_roles: my_vacancy.value?.professional_roles.map(
+    (item) => item.id,
+  ),
 };
 const {
   values,

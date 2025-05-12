@@ -5,28 +5,22 @@
       <div class="descr">
         Получайте уведомления о новых по созданному запросу
       </div>
-      <!--      <span class="arrow"></span>-->
     </div>
 
     <div class="w-box-body" :class="{ disabled: isLoading }">
-      <div>
-        <div class="text-danger d-block" v-if="errors.message">
-          {{ errors.message }}
-        </div>
-        <div class="text-danger d-block" ref="errorMessageElement">
-          {{ errorMessage }}
-        </div>
+      <div v-if="errors.message || errorMessage" class="text-danger mb-3">
+        {{ errors.message || errorMessage }}
       </div>
+
       <CreateVacancyProvidersInput name="providers" v-model="providers" />
 
       <div class="input-row">
         <label for="name">Название вакансии<b>*</b></label>
         <div class="input-wrapper">
-          <div class="c1 mt-1">
-            <CreateVacancyTextInput name="name" placeholder="Введите" />
-          </div>
+          <CreateVacancyTextInput name="name" placeholder="Введите" />
         </div>
       </div>
+
       <div class="input-row">
         <label>Список городов:<b>*</b></label>
         <div class="input-wrapper mt-2">
@@ -48,6 +42,7 @@
         </div>
       </div>
 
+      <!-- Секция зарплаты -->
       <div class="input-row">
         <label>Зарплата:</label>
         <div class="row-container">
@@ -103,44 +98,38 @@
 
 <script setup>
 import { useDictionaryStore } from "~/store/dictionary";
-
-import { useProfileStore } from "~/store/profile";
-import { useRuntimeConfig } from "#app";
-import useFormValidation from "~/composables/useFormValidation";
-import { storeToRefs } from "pinia";
-import { zod } from "~/hooks/ru-zod.js";
-import { useForm } from "vee-validate";
-import { toTypedSchema } from "@vee-validate/zod";
 import { useVacancyStore } from "~/store/vacancy.js";
+import useFormValidation from "~/composables/useFormValidation";
 import useProviders from "~/composables/useProviders.js";
+import { zod } from "~/hooks/ru-zod.js";
+import { toTypedSchema } from "@vee-validate/zod";
+import { useCurrencyOptions } from "~/composables/useCurrencyOptions.js";
 
-const props = defineProps(["title"]);
-const { providers } = useProviders();
-
-const vacancyStore = useVacancyStore();
-const dictionaryStore = useDictionaryStore();
-const profileStore = useProfileStore();
-const CONFIG = useRuntimeConfig();
-const route = useRoute();
-
-const { employer } = profileStore;
-const { my_vacancy } = storeToRefs(vacancyStore);
-const formTitle = computed(() => props.title);
-
-const isSaved = ref(false);
-const isChanged = ref(false);
-const isFirst = ref(true);
-const isCollapsed = ref(false);
-const isUpdated = ref(false);
-const { getPaymentPeriodOptions } = dictionaryStore;
-onMounted(() => {
-  setTimeout(async () => {
-    await getPaymentPeriodOptions();
-  });
+// Определение пропсов и состояний
+const props = defineProps({
+  title: {
+    type: String,
+    required: true,
+  },
 });
+
+// Константы и хуки
+const route = useRoute();
+const dictionaryStore = useDictionaryStore();
+const vacancyStore = useVacancyStore();
+const { providers } = useProviders();
+const { createDraft } = vacancyStore;
+
+// Вычисляемые свойства
+const formTitle = computed(() => props.title);
 const currencyOptions = ref(useCurrencyOptions());
 
-const schema = zod.object({
+// Состояния компонента
+const isLoading = ref(false);
+const errorMessage = ref(null);
+
+// Схема валидации формы
+const validationSchema = zod.object({
   providers: zod.array(zod.string()).nonempty("Выберите хотя бы 1 сервис"),
   name: zod.string(),
   cities: zod.array(zod.number()).nonempty("Выберите хотя бы 1"),
@@ -154,130 +143,93 @@ const schema = zod.object({
     period: zod.number(),
   }),
 });
-const initialValues = {
-  providers: [],
-  name: null,
-  cities: [],
-  professional_roles: [],
-  salary: {
-    currency: "RUB",
-    from: null,
-    to: null,
-    gross: false,
-    period: null,
+
+// Инициализация формы
+const { values, errors, meta, setErrors, validate } = useForm({
+  initialValues: {
+    providers: [],
+    name: null,
+    cities: [],
+    professional_roles: [],
+    salary: {
+      currency: "RUB",
+      from: null,
+      to: null,
+      gross: false,
+      period: null,
+    },
   },
-};
-const { values, errors, meta, setErrors, handleSubmit, validate } = useForm({
-  initialValues,
   initialTouched: true,
-  validationSchema: toTypedSchema(schema),
+  validationSchema: toTypedSchema(validationSchema),
 });
 
-const { createDraft } = vacancyStore;
-
-const state = reactive({
-  name: {
-    is_hidden: false,
-  },
-  cities: {
-    is_hidden: false,
-  },
-  professional_roles: {
-    is_hidden: false,
-  },
-  description: {
-    is_hidden: false,
-  },
-  salary: {
-    currency: {
-      is_hidden: false,
-    },
-    from: {
-      is_hidden: false,
-    },
-    to: {
-      is_hidden: false,
-    },
-    gross: {
-      is_hidden: false,
-    },
-    period: {
-      is_hidden: false,
-    },
-    is_hidden: true,
-  },
+// Загрузка периодов оплаты
+onMounted(async () => {
+  if (!dictionaryStore.payment_period_formatted.length) {
+    await dictionaryStore.getPaymentPeriodOptions();
+  }
 });
 
-const { errors: serverErrors, handleErrorResponse } = useFormValidation(state);
-
+// Обработка ошибок с сервера
+const { errors: serverErrors } = useFormValidation();
 watch(
   () => serverErrors.value,
   (newErrors) => {
-    if (Object.keys(newErrors).length > 0) {
+    if (newErrors && Object.keys(newErrors).length > 0) {
       const backendErrors = {};
-      Object.keys(newErrors).map(
-        (item) => (backendErrors[item] = newErrors[item]),
-      );
+      Object.keys(newErrors).forEach((key) => {
+        backendErrors[key] = newErrors[key];
+      });
       setErrors(backendErrors);
     }
   },
 );
-const isLoading = ref(false);
 
-const errorMessageElement = ref();
-const errorMessage = ref(null);
-const scrollTop = () => {
-  window.scrollTo(0, 0);
-};
-const onSubmit = handleSubmit((submittedValues) => {
-  save();
-});
+// Функция сохранения черновика
 const save = async (is_from_parent = false) => {
-  validate();
+  await validate();
+
   if (!meta.value.valid) {
-    errorMessage.value = "Вам необходимо заполнить";
-    scrollTop();
-    errorMessageElement.value.scrollIntoView({ behavior: "smooth" });
-    return;
+    errorMessage.value = "Пожалуйста, заполните все обязательные поля";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return false;
   }
-  setErrors({});
-  errorMessage.value = "";
-  isLoading.value = true;
 
-  let resData = await createDraft(unref(values));
+  try {
+    setErrors({});
+    errorMessage.value = "";
+    isLoading.value = true;
 
-  if (resData.status !== "success") {
-    errorMessage.value = resData.message;
-    isLoading.value = false;
-    return;
-  }
-  isLoading.value = false;
-  if (is_from_parent) {
-    return new Promise((resolve, reject) => {
-      resolve(true);
-    });
-  }
-  const vacancy_id = resData.data.data.id;
-  setTimeout(() => {
+    const resData = await createDraft(unref(values));
+
+    if (resData.status !== "success") {
+      errorMessage.value = resData.message;
+      return false;
+    }
+
+    if (is_from_parent) {
+      return true;
+    }
+
+    const vacancy_id = resData.data.data.id;
     navigateTo({
       name: "my-vacancy-id",
       params: { id: vacancy_id },
       query: { type: "draft" },
     });
-  }, 100);
-  isLoading.value = false;
-  if (resData.data.hasOwnProperty("errors")) {
-    setErrors(resData.data.errors);
-    return;
+
+    return true;
+  } catch (error) {
+    errorMessage.value = "Произошла ошибка при сохранении";
+    console.error("Ошибка сохранения:", error);
+    return false;
+  } finally {
+    isLoading.value = false;
   }
-  isChanged.value = false;
-  isSaved.value = false;
-  isUpdated.value = false;
 };
-defineExpose({
-  onSubmit,
-  save,
-});
+
+// Экспорт API компонента
+defineExpose({ save });
 </script>
 
 <style>
@@ -286,13 +238,14 @@ defineExpose({
 }
 
 .w-box-body.disabled:before {
+  content: "";
+  position: absolute;
   left: 0;
   top: 0;
   z-index: 999;
-  position: absolute;
-  content: "";
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
+  pointer-events: all;
 }
 </style>

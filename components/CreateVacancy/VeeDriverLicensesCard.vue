@@ -1,7 +1,7 @@
 <template>
   <div class="w-box" v-click-outside="save" @click="isFocused = true">
     <div class="w-box-head">
-      <h3 class="title">Водительские права({{ isChanged }})</h3>
+      <h3 class="title">Водительские права</h3>
       <span
         class="arrow"
         :class="{ up: isCollapsed, 'is-completed': isCompleted }"
@@ -50,7 +50,7 @@ const my_vacancy = computed(() => vacancyStore.my_vacancy);
 const isSaved = ref(false);
 const isChanged = ref(false);
 const isFirst = ref(true);
-const isCollapsed = ref(true);
+const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
 const schema = computed(() => {
@@ -60,7 +60,9 @@ const schema = computed(() => {
 });
 
 const initialValues = {
-  driver_license_types: [],
+  driver_license_types: my_vacancy.value.driver_license_types.map(
+    (item) => item.id,
+  ),
 };
 const {
   values,

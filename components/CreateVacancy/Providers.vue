@@ -101,8 +101,6 @@
       </div>
     </div>
   </div>
-  {{ selectedProviders }}
-  <!--  {{ enabledProviders }}-->
 </template>
 
 <script setup>
@@ -133,28 +131,8 @@ const {
   getMyVacancy,
 } = vacancyStore;
 
-// watch(vacancyProviders.value, (newValues) => {
-//   console.log(newValues);
-//   const providersNewValues = {...resetObject};
-//
-//   if (newValues.includes('hh')){
-//     providersNewValues.hh = true;
-//   }else{
-//     providersNewValues.superjob = false;
-//   }
-//   if (newValues.includes('superjob')){
-//     providersNewValues.superjob = true;
-//   }else{
-//     providersNewValues.superjob = false;
-//   }
-//   console.log(providersNewValues);
-//   selectedProviders.value = providersNewValues;
-// });
-
-onMounted(async () => {
-  await getConnectedEmployerProviders();
-});
-
+await getConnectedEmployerProviders();
+const my_vacancy = computed(() => vacancyStore.my_vacancy);
 const enabledProviders = ref(vacancyStore.providers);
 watch(
   () => vacancyStore.providers,
@@ -169,8 +147,8 @@ const isSuperjobEnabled = computed(
 );
 
 const resetObject = {
-  superjob: false,
-  hh: false,
+  superjob: my_vacancy.value.can_publish?.superjob || false,
+  hh: my_vacancy.value.can_publish?.hh || false,
 };
 const vacancyProviders = computed(() => {
   let selectedProvidersValue = [];

@@ -1,157 +1,125 @@
 <script setup>
-import useAlert from "~/composables/useAlert";
 import Swal from "sweetalert2";
 import { toast } from "vue3-toastify";
 import { useResumeStore } from "~/store/resume";
 import useProviders from "~/composables/useProviders.js";
 import { useDictionaryStore } from "~/store/dictionary.js";
-import { useAsyncData } from "#app";
 import { useProfileStore } from "~/store/profile.js";
 
 const route = useRoute();
-
 const resumeStore = useResumeStore();
+const profileStore = useProfileStore();
+const dictionaryStore = useDictionaryStore();
 
+// Основные настройки и состояния
+const resumeID = computed(() => route.params.id);
+const { my_resume } = storeToRefs(resumeStore);
+const isLoading = ref(false);
+const errorMessage = ref(null);
+const errors = ref([]);
+
+// Инициализация поставщиков
 const providers = ref({
   superjob: false,
   hh: false,
 });
-
 const { setProviders } = useProviders();
+watch(() => providers.value, setProviders);
+
+// Объединение загрузки всех словарей и данных
+const loadInitialData = async () => {
+  // Загрузка основных словарей одним запросом
+  await Promise.all([
+    dictionaryStore.getDictionaries([
+      "work_type",
+      "schedule",
+      "place_of_work",
+      "education_type_resume",
+      "preferred_contact_type",
+      "education_form_resume",
+      "driver_license_types",
+      "resume_access_type_merge",
+      "gender_resume",
+      "gender",
+      "relocation_type",
+      "business_trip",
+      "lang_level_resume",
+      "marital_status_resume",
+      "travel_time",
+      "children_resume",
+    ]),
+    resumeStore.getIndustries(),
+    resumeStore.getConnectedSeekerProviders(),
+    profileStore.searchProfessionalRoles(),
+    profileStore.searchHHProfessionalRoles(),
+    profileStore.searchSuperjobProfessionalRoles(),
+    // Загрузка резюме
+    resumeStore.getMyResume(resumeID.value),
+  ]);
+
+  // Загрузка городов, если необходимо
+  if (profileStore.cities.length === 0) {
+    await profileStore.getCities();
+  }
+};
+
+// Загрузка данных при монтировании
+useAsyncData("initialDataLoad", loadInitialData);
+
+// Компьютеды для заголовка страницы
+const pageTitle = computed(() => {
+  return resumeID?.value && my_resume.value?.title
+    ? "Jobeek - " + my_resume.value.title
+    : "Мое резюме";
+});
+
+// Установка заголовка страницы
+useHead({ title: pageTitle });
+
+// Компьютеды для публикации
+const hhPublishable = ref(false);
+const superjobPublishable = ref(false);
+
+// Обновление состояния возможности публикации при изменении резюме
 watch(
-  () => providers.value,
-  (newValues) => {
-    setProviders(newValues);
+  () => resumeStore.my_resume,
+  (newResume) => {
+    if (newResume?.can_published) {
+      hhPublishable.value = newResume.can_published.hh ?? false;
+      superjobPublishable.value = newResume.can_published.superjob ?? false;
+    }
   },
+  { immediate: true },
 );
 
-const {
-  getMyResume,
-  publishResume,
-  getIndustries,
-  getConnectedSeekerProviders,
-} = resumeStore;
-const { my_resume } = storeToRefs(resumeStore);
-const resumeID = computed(() => route.params.id);
-
-const profileStore = useProfileStore();
-const {
-  searchProfessionalRoles,
-  searchHHProfessionalRoles,
-  searchSuperjobProfessionalRoles,
-  getCities,
-} = profileStore;
-
-const dictionaryStore = useDictionaryStore();
-const { getDictionaries } = dictionaryStore;
-
-useAsyncData("getIndustries", () => {
-  return getIndustries();
+// Мемоизированные компьютеды для публикации
+const publishableProviders = computed(() => {
+  const items = [];
+  if (hhPublishable.value) items.push("hh");
+  if (superjobPublishable.value) items.push("superjob");
+  return items;
 });
 
-useAsyncData("dictionaries_options_resume", () => {
-  return getDictionaries([
-    "work_type",
-    "schedule",
-    "place_of_work",
-    "education_type_resume",
-    "preferred_contact_type",
-    "education_form_resume",
-    "driver_license_types",
-    "resume_access_type_merge",
-    "gender_resume",
-    "gender",
-    "relocation_type",
-    "business_trip",
-    "lang_level_resume",
-    "marital_status_resume",
-    "travel_time",
-    "children_resume",
-  ]);
+const canBePublished = computed(() => !!publishableProviders.value.length);
+
+const publishableProviderName = computed(() => {
+  if (hhPublishable.value) return "hh";
+  if (superjobPublishable.value) return "superjob";
+  return null;
 });
 
-useAsyncData("searchProfessionalRoles", () => {
-  return searchProfessionalRoles();
-});
-useAsyncData("searchHHProfessionalRoles", () => {
-  return searchHHProfessionalRoles();
-});
-useAsyncData("searchSuperjobProfessionalRoles", () => {
-  return searchSuperjobProfessionalRoles();
-});
-if (profileStore.cities.length === 0) {
-  useAsyncData("getCities", () => getCities());
-}
-useAsyncData("connectedSeekerProviders", () => {
-  return getConnectedSeekerProviders();
-});
-await useAsyncData("my_resume" + resumeID.value, () => {
-  return getMyResume(resumeID.value);
-});
-const pageTitle = computed(() => {
-  if (resumeID?.value) {
-    return "Jobeek - " + my_resume.value?.title;
-  }
-  return "Мое резюме";
-});
-useHead({
-  title: pageTitle,
-});
-const error = computed(() => {
-  return route.query.message;
-});
+const canOnlyOnePublished = computed(
+  () => hhPublishable.value || superjobPublishable.value,
+);
 
+// Обработчики для кнопок
 const saveAsDraft = (e) => {
   e.preventDefault();
 };
 
-const publishableProviders = computed(() => {
-  const items = [];
-  if (hhPublishable.value) {
-    items.push("hh");
-  }
-  if (superjobPublishable.value) {
-    items.push("superjob");
-  }
-  return items;
-});
-
-const canBePublished = computed(() => {
-  return !!(hhPublishable.value || superjobPublishable.value);
-});
-
-const publishableProviderName = computed(() => {
-  if (hhPublishable.value === true || superjobPublishable.value === true) {
-    if (hhPublishable.value) {
-      return "hh";
-    }
-    if (superjobPublishable.value) {
-      return "superjob";
-    }
-  }
-  return null;
-});
-const hhPublishable = ref(my_resume.value?.can_published.hh ?? false);
-const superjobPublishable = ref(
-  my_resume.value?.can_published?.superjob ?? false,
-);
-
-watch(
-  () => resumeStore.my_resume,
-  (newResume) => {
-    const { can_published } = newResume;
-    if (can_published) {
-      hhPublishable.value = can_published.hh ?? false;
-      superjobPublishable.value = can_published.superjob ?? false;
-    }
-  },
-);
-
-const errorMessage = ref(null);
-const errors = ref([]);
-const isLoading = ref(false);
 const saveAndPublishAll = async (event) => {
   event.preventDefault();
+
   if (!canOnlyOnePublished.value) {
     toast.info("Пока вы не можете опубликовать если не заполняйте все поля!", {
       autoClose: 3000,
@@ -159,32 +127,32 @@ const saveAndPublishAll = async (event) => {
     return;
   }
 
-  const payload = {
-    providers: publishableProviders.value,
-  };
+  isLoading.value = true;
+  try {
+    const payload = { providers: publishableProviders.value };
+    const resData = await resumeStore.publishResume(resumeID.value, payload);
 
-  const resData = await publishResume(resumeID.value, payload);
-  isLoading.value = false;
-  if (resData.hasOwnProperty("status") && resData.status !== "success") {
-    await Swal.fire({
-      title: "Ошибка!",
-      text: resData.message,
-      icon: "error",
-      confirmButtonText: "ОК",
-    });
-    errorMessage.value = resData.message;
-    return;
+    if (resData.status !== "success") {
+      await Swal.fire({
+        title: "Ошибка!",
+        text: resData.message,
+        icon: "error",
+        confirmButtonText: "ОК",
+      });
+      errorMessage.value = resData.message;
+      return;
+    }
+
+    toast.info(resData.data.message, { autoClose: 3000 });
+    navigateTo({ name: "my-resumes" });
+  } catch (error) {
+    errorMessage.value = error.message || "Произошла ошибка";
+  } finally {
+    isLoading.value = false;
   }
-
-  toast.info(resData.data.message, { autoClose: 3000 });
-
-  navigateTo({ name: "my-resumes" });
 };
-
-const canOnlyOnePublished = computed(() => {
-  return hhPublishable.value === true || superjobPublishable.value === true;
-});
 </script>
+
 <template>
   <main class="main cabinet my-resume-page" role="main">
     <div class="bg-wrapper position-relative pb-5">
@@ -192,44 +160,41 @@ const canOnlyOnePublished = computed(() => {
       <div class="wrapper wrapper-1290">
         <div class="update-resume">
           <div class="errors" v-if="errors.length">
-            <!--            <h4>К сожалению возникли ошибки при создании Вакансии:</h4>-->
             <p class="alert alert-info" v-for="item in errors">{{ item }}</p>
           </div>
-          <!--          ready-->
           <CreateResumeProviders
             v-model="providers"
             :providers="resumeStore.my_resume"
           />
 
-          <!--          <CreateResumePhotoCard-->
-          <!--            v-if="resumeID"-->
-          <!--            ref="photo_el"-->
-          <!--            :providers="providers"-->
-          <!--          />-->
           <CreateResumeVeePersonalFieldsCard
             v-if="resumeID"
             :key="`personal_fields_el_key_${providers.hh + providers.superjob}`"
             ref="personal_fields_el"
             :providers="providers"
           />
+
           <CreateResumeVeeProfessionDetailsCard
             :key="`prof_fields_el_key_${providers.hh + providers.superjob}`"
             v-if="resumeID"
             ref="profession_fields_el"
             :providers="providers"
           />
+
           <CreateResumeVeeForeignLanguagesCard
             v-if="resumeID"
             :key="`languages_el_key_${providers.hh + providers.superjob}`"
             ref="foreign_language_el"
             :providers="providers"
           />
+
           <CreateResumeVeeDriverLicensesCard
             v-if="resumeID"
             :key="`driver_licenses_el_${providers.hh + providers.superjob}`"
             ref="driver_licences_el"
             :providers="providers"
           />
+
           <CreateResumeVeeKnowledgeAndSkillsCard
             v-if="resumeID"
             :key="`knowledge_and_skills_el_${providers.hh + providers.superjob}`"
@@ -257,18 +222,21 @@ const canOnlyOnePublished = computed(() => {
             ref="courses_el"
             :providers="providers"
           />
+
           <LazyCreateResumeVeeWorkExperienceCard
             v-if="resumeID"
             :key="`experience_el_${providers.hh + providers.superjob}`"
             ref="work_experience_el"
             :providers="providers"
           />
+
           <CreateResumeVeeCitizenshipAndFamilyCard
             v-if="resumeID"
             :key="`citizenship_el_${providers.hh + providers.superjob}`"
             ref="citizenship_el"
             :providers="providers"
           />
+
           <CreateResumeVeeAccessTypeCard
             :key="`access_el_${providers.hh + providers.superjob}`"
             v-if="resumeID"
@@ -284,6 +252,7 @@ const canOnlyOnePublished = computed(() => {
             и даете согласие на обработку персональных данных, разрешенных для
             распространения
           </p>
+
           <div class="form-submit-container mt-2">
             <button
               class="btn btn-outline-primary"
@@ -307,9 +276,10 @@ const canOnlyOnePublished = computed(() => {
               Сохранить и опубликовать
             </button>
           </div>
+
           <p
             class="float-end text-primary-secondary mt-2"
-            v-if="canOnlyOnePublished"
+            v-if="canOnlyOnePublished && publishableProviderName"
           >
             Будет опубликовано только на
             <span class="text-primary">{{

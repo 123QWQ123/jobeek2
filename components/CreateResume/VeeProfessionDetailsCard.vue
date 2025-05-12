@@ -29,7 +29,7 @@
           <label for="name">Название вакансии<b>*</b></label>
           <div class="input-wrapper">
             <div class="c1 mt-1">
-              <ResumeTextInput name="title" :value="my_resume.title" />
+              <ResumeTextInput name="title" :value="my_resume?.title || ''" />
             </div>
           </div>
         </div>
@@ -188,8 +188,13 @@ const initialValues = {
   title: my_resume.value?.title ?? "",
   professional_roles:
     my_resume.value?.professional_roles.map((item) => item.id) ?? [],
-  work_types: Object.keys(my_resume.value?.work_types).map(Number) ?? [],
-  schedules: Object.keys(my_resume.value?.schedules).map(Number) ?? [],
+  work_types: my_resume.value?.work_types
+    ? Object.keys(my_resume.value.work_types).map(Number)
+    : [],
+  schedules: my_resume.value?.schedules
+    ? Object.keys(my_resume.value.schedules).map(Number)
+    : [],
+
   place_of_work_id: my_resume.value?.place_of_work?.id ?? null,
   salary: my_resume.value?.salary ?? null,
   currency: my_resume.value?.currency ?? "RUB",
@@ -253,8 +258,6 @@ watch(
     walkThroughFields(providers.value);
   },
 );
-
-walkThroughFields(providers.value);
 
 const placeOfWorkOptions = computed(() =>
   dictionaryStore.place_of_works.map((item) => ({

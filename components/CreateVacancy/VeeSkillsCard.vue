@@ -1,7 +1,7 @@
 <template>
   <div class="w-box" v-click-outside="save" @click="isFocused = true">
     <div class="w-box-head">
-      <h3 class="title">Навыки({{ isChanged }})</h3>
+      <h3 class="title">Навыки</h3>
       <span
         class="arrow"
         :class="{ up: isCollapsed, 'is-completed': isCompleted }"
@@ -56,7 +56,7 @@ const my_vacancy = computed(() => vacancyStore.my_vacancy);
 const isSaved = ref(false);
 const isChanged = ref(false);
 const isFirst = ref(true);
-const isCollapsed = ref(true);
+const isCollapsed = ref(false);
 const isUpdated = ref(false);
 const dictionaryStore = useDictionaryStore();
 
@@ -81,7 +81,7 @@ const schema = computed(() => {
 });
 
 const initialValues = {
-  key_skills: [],
+  key_skills: my_vacancy.value.key_skills.map((item) => item.name),
 };
 const {
   values,
@@ -116,47 +116,11 @@ const fields = ref({
 const { walkThroughFields } = useProviderFields(state, fields);
 walkThroughFields(providers.value);
 
-onMounted(() => {
-  walkThroughFields(providers.value);
-});
-
-const sectionData = ref({});
-const getFields = (newObject) => {
-  return {
-    key_skills: newObject.key_skills,
-  };
-};
-watch(
-  () => vacancyStore.my_vacancy,
-  (newData) => {
-    if (newData) {
-      sectionData.value = getFields(newData);
-    }
-  },
-);
-
-onMounted(() => {
-  const newData = vacancyStore.my_vacancy;
-  if (newData) {
-    sectionData.value = getFields(newData);
-  }
-});
-
-watch(
-  () => sectionData.value,
-  (newData, oldData) => {
-    const diffData = useDiff(newData, oldData);
-    if (Object.keys(diffData).length) {
-      resetForm({ values: newData });
-    }
-  },
-);
-
 const isFocused = ref(false);
 const isLoading = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  validate();
+  await validate();
   if (!meta.value.dirty) {
     return true;
   }
@@ -170,7 +134,7 @@ const save = async (is_from_parent = false) => {
   let jsonData = { ...values };
   let resData = {};
 
-  jsonData.action = "UpdateType";
+  jsonData.action = "UpdateKeySkills";
   if (type.value === "draft") {
     resData = await updateDraft(ID.value, jsonData);
   } else {
