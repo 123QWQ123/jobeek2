@@ -116,13 +116,7 @@ const schema = computed(() => {
 });
 
 const initialValues = ref({
-  courses: my_resume.value.educations?.courses.map((item) => ({
-    title: item.title,
-    organization: item.organization,
-    profession: item.profession,
-    end_year: item.end_year,
-    certificate_url: item.certificate_url,
-  })),
+  courses: my_resume.value?.educations?.courses,
 });
 const {
   values,

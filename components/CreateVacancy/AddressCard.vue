@@ -1,7 +1,7 @@
 <template>
   <div class="w-box" v-click-outside="save">
     <div class="w-box-head">
-      <h3 class="title">Адрес({{ isChanged }})</h3>
+      <h3 class="title">Адрес</h3>
       <span
         class="arrow"
         :class="{ up: isCollapsed, 'is-completed': isCompleted }"
@@ -106,7 +106,7 @@ const my_vacancy = computed(() => vacancyStore.my_vacancy);
 const isSaved = ref(false);
 const isChanged = ref(false);
 const isFirst = ref(true);
-const isCollapsed = ref(true);
+const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
 const state = reactive({
@@ -144,10 +144,7 @@ const fields = ref({
 
 const { walkThroughFields } = useProviderFields(state, fields);
 watch(() => props.providers, walkThroughFields);
-
-onMounted(() => {
-  walkThroughFields(props.providers);
-});
+walkThroughFields(props.providers);
 
 watch(
   () => useWatchStateValues(state, true, true),
@@ -191,11 +188,9 @@ watch(
 
 const dictionaryStore = useDictionaryStore();
 const { getVacancyTypes } = dictionaryStore;
-onMounted(() => {
-  setTimeout(async () => {
-    await getVacancyTypes();
-  }, 500);
-});
+await getVacancyTypes();
+
+const { searchAddresses } = dictionaryStore;
 const addressOptions = computed(() => {
   return dictionaryStore.addresses?.map((item) => ({
     name: item.raw,
@@ -203,20 +198,14 @@ const addressOptions = computed(() => {
   }));
 });
 
-const { searchAddresses } = dictionaryStore;
 const addressErrorMessage = ref(null);
-onMounted(() => {
-  setTimeout(async () => {
-    if (props.providers.hh) {
-      const resData = await searchAddresses();
-      if (resData.hasOwnProperty("message")) {
-        addressErrorMessage.value = resData.message;
-      }
-    }
-  }, 500);
-});
+if (props.providers.hh) {
+  const resData = await searchAddresses();
+  if (resData.hasOwnProperty("message")) {
+    addressErrorMessage.value = resData.message;
+  }
+}
 
-const onAddressSearch = async (newString) => {};
 const { errors, handleErrorResponse } = useFormValidation();
 const isFocused = ref(false);
 const save = async (is_from_parent = false) => {

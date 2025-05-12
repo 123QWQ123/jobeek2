@@ -1,7 +1,13 @@
 <template>
-  <div class="w-box" v-click-outside="save" @click="isFocused = true">
+  <div
+    class="w-box"
+    v-click-outside="{
+      handler: save,
+      detectIFrame: true,
+    }"
+  >
     <div class="w-box-head">
-      <h3 class="title">Детали вакансии({{ isChanged }})</h3>
+      <h3 class="title">Детали вакансии</h3>
       <span
         class="arrow"
         :class="{ up: isCollapsed, 'is-completed': isCompleted }"
@@ -9,12 +15,13 @@
       ></span>
     </div>
 
-    <!--    <div class="text-danger d-block p-4">-->
-    <!--      {{ errors }}-->
-    <!--    </div>-->
     <transition>
-      <div class="w-box-body" :class="{ collapse: isCollapsed }">
-        <div class="input-row" v-if="!state.name.is_hidden">
+      <div
+        class="w-box-body"
+        @click="isFocused = true"
+        :class="{ collapse: isCollapsed }"
+      >
+        <div class="input-row">
           <label>Название:<b>*</b></label>
           <div class="input-wrapper mt-2">
             <CreateVacancyTextInput name="name" placeholder="Введите" />
@@ -22,12 +29,6 @@
         </div>
 
         <div class="input-row">
-          <label for="description">Описание:<b>*</b></label>
-          <div class="input-wrapper">
-            <VeeTipTapRichEditor name="description" />
-          </div>
-        </div>
-        <div class="input-row" v-if="!state.work_type_id.is_hidden">
           <label>Тип работы:</label>
           <div class="input-wrapper mt-2">
             <VeeCustomSelect
@@ -37,7 +38,7 @@
             />
           </div>
         </div>
-        <div class="input-row" v-if="!state.experience_id.is_hidden">
+        <div class="input-row">
           <label>Опыт:</label>
           <div class="input-wrapper mt-2">
             <VeeCustomSelect
@@ -47,7 +48,7 @@
             />
           </div>
         </div>
-        <div class="input-row" v-if="!state.accept_kids.is_hidden">
+        <div class="input-row">
           <label>Соискатель старше 14 лет:</label>
           <div class="input-wrapper mt-2">
             <CreateVacancyCheckboxInput
@@ -56,7 +57,7 @@
             />
           </div>
         </div>
-        <div class="input-row" v-if="!state.accept_temporary.is_hidden">
+        <div class="input-row">
           <label>Временное трудоустройство:</label>
           <div class="input-wrapper mt-2">
             <CreateVacancyCheckboxInput
@@ -65,10 +66,7 @@
             />
           </div>
         </div>
-        <div
-          class="input-row"
-          v-if="!state.accept_incomplete_resumes.is_hidden"
-        >
+        <div class="input-row">
           <label>Неполное резюме:</label>
           <div class="input-wrapper mt-2">
             <CreateVacancyCheckboxInput
@@ -77,7 +75,7 @@
             />
           </div>
         </div>
-        <div class="input-row" v-if="!state.accept_handicapped.is_hidden">
+        <div class="input-row">
           <label>Соискатель с инвалидностью:</label>
           <div class="input-wrapper mt-2">
             <CreateVacancyCheckboxInput
@@ -86,7 +84,7 @@
             />
           </div>
         </div>
-        <div class="input-row" v-if="!state.accept_handicapped.is_hidden">
+        <div class="input-row">
           <label>Сопроводительное письмо:</label>
           <div class="input-wrapper mt-2">
             <CreateVacancyCheckboxInput
@@ -95,7 +93,7 @@
             />
           </div>
         </div>
-        <div class="input-row" v-if="!state.accept_handicapped.is_hidden">
+        <div class="input-row">
           <label>Разрешение сообщений:</label>
           <div class="input-wrapper mt-2">
             <CreateVacancyCheckboxInput
@@ -104,7 +102,7 @@
             />
           </div>
         </div>
-        <div class="input-row" v-if="!state.accept_handicapped.is_hidden">
+        <div class="input-row">
           <label>Уведомлять ли менеджера:</label>
           <div class="input-wrapper mt-2">
             <CreateVacancyCheckboxInput
@@ -113,7 +111,7 @@
             />
           </div>
         </div>
-        <div class="input-row" v-if="!state.schedule_id.is_hidden">
+        <div class="input-row">
           <label>график работы:</label>
           <div class="input-wrapper mt-2">
             <VeeCustomSelect
@@ -123,7 +121,7 @@
             />
           </div>
         </div>
-        <div class="input-row" v-if="!state.working_days_id.is_hidden">
+        <div class="input-row">
           <label>рабочие дни:</label>
           <div class="input-wrapper mt-2">
             <VeeCustomSelect
@@ -133,7 +131,7 @@
             />
           </div>
         </div>
-        <div class="input-row" v-if="!state.with_zp.is_hidden">
+        <div class="input-row">
           <label>Зарплата.ру:</label>
           <div class="input-wrapper mt-2">
             <CreateVacancyCheckboxInput
@@ -142,10 +140,7 @@
             />
           </div>
         </div>
-        <div
-          class="input-row"
-          v-if="!state.working_time_intervals_id.is_hidden"
-        >
+        <div class="input-row">
           <label>временной интервал работы из справочника:</label>
           <div class="input-wrapper mt-2">
             <VeeCustomSelect
@@ -155,7 +150,7 @@
             />
           </div>
         </div>
-        <div class="input-row" v-if="!state.working_time_modes_id.is_hidden">
+        <div class="input-row">
           <label>режимы времени работы из справочника:</label>
           <div class="input-wrapper mt-2">
             <VeeCustomSelect
@@ -165,7 +160,7 @@
             />
           </div>
         </div>
-        <div class="input-row" v-if="!state.refresh_vac.is_hidden">
+        <div class="input-row">
           <label>Обновлять автоматически:</label>
           <div class="input-wrapper mt-2">
             <CreateVacancyCheckboxInput
@@ -174,7 +169,7 @@
             />
           </div>
         </div>
-        <div class="input-row" v-if="!state.extend_vac_id.is_hidden">
+        <div class="input-row">
           <label>Продлевать ли вакансию:</label>
           <div class="input-wrapper mt-2">
             <VeeCustomSelect
@@ -184,10 +179,7 @@
             />
           </div>
         </div>
-        <div
-          class="input-row"
-          v-if="!state.resume_subscription_status.is_hidden"
-        >
+        <div class="input-row">
           <label>подписку на резюме:</label>
           <div class="input-wrapper mt-2">
             <CreateVacancyCheckboxInput
@@ -202,7 +194,7 @@
         <!--          :errors="errors"-->
         <!--        />-->
 
-        <div class="input-row" v-if="!state.place_of_work_id.is_hidden">
+        <div class="input-row">
           <label>Место работы:</label>
           <div class="input-wrapper mt-2">
             <VeeCustomSelect
@@ -212,7 +204,7 @@
             />
           </div>
         </div>
-        <div class="input-row" v-if="!state.education_id.is_hidden">
+        <div class="input-row">
           <label>Образование:</label>
           <div class="input-wrapper mt-2">
             <VeeCustomSelect
@@ -222,7 +214,7 @@
             />
           </div>
         </div>
-        <div class="input-row" v-if="!state.marital_status_id.is_hidden">
+        <div class="input-row">
           <label>Семейное положение:</label>
           <div class="input-wrapper mt-2">
             <VeeCustomSelect
@@ -233,7 +225,7 @@
           </div>
         </div>
 
-        <div class="input-row" v-if="!state.children_id.is_hidden">
+        <div class="input-row">
           <label>Наличие детей:</label>
           <div class="input-wrapper mt-2">
             <VeeCustomSelect
@@ -244,7 +236,7 @@
           </div>
         </div>
 
-        <div class="input-row" v-if="!state.gender_id.is_hidden">
+        <div class="input-row">
           <label>Пол:</label>
           <div class="input-wrapper mt-2">
             <VeeCustomSelect
@@ -255,10 +247,7 @@
           </div>
         </div>
 
-        <div
-          class="input-row"
-          v-if="!state.covid_vaccination_requirement_id.is_hidden"
-        >
+        <div class="input-row">
           <label>COVID-19:</label>
           <div class="input-wrapper mt-2">
             <VeeCustomSelect
@@ -269,7 +258,7 @@
           </div>
         </div>
 
-        <div class="input-row" v-if="!state.move_able.is_hidden">
+        <div class="input-row">
           <label>Релокация:</label>
           <div class="input-wrapper mt-2">
             <CreateVacancyCheckboxInput
@@ -279,7 +268,7 @@
           </div>
         </div>
 
-        <div class="input-row" v-if="!state.video_url.is_hidden">
+        <div class="input-row">
           <label>Ссылка на видеовакансию :</label>
           <div class="input-wrapper mt-2">
             <CreateVacancyTextInput name="video_url" placeholder="URL" />
@@ -289,28 +278,34 @@
           </div>
           <!--          <youtube-iframe v-if="state.video_url.val" :video-id="videoUrlID" />-->
         </div>
-        <div
-          class="input-row"
-          v-if="!state.age_from.is_hidden && !state.age_to.is_hidden"
-        >
-          <label for="remote-work">Возрасть</label>
+        <div class="input-row">
+          <label for="remote-work">Возраст</label>
           <div class="input-wrapper">
             <div class="c2">
               <div>
                 <CreateVacancyTextInput
-                  v-if="!state.age_from.is_hidden"
                   name="age_from"
+                  type="number"
                   placeholder="От"
                 />
               </div>
               <div>
                 <CreateVacancyTextInput
-                  v-if="!state.age_to.is_hidden"
                   name="age_to"
+                  type="number"
                   placeholder="До"
                 />
               </div>
             </div>
+          </div>
+        </div>
+        <div class="input-row">
+          <label for="description">Описание:<b>*</b></label>
+          <div class="input-wrapper">
+            <VeeTipTapRichEditor
+              name="description"
+              :value="my_vacancy?.description"
+            />
           </div>
         </div>
       </div>
@@ -364,13 +359,13 @@ function YouTubeGetID(url) {
   return url[2] !== undefined ? url[2].split(/[^0-9a-z_\-]/i)[0] : url[0];
 }
 
-const videoUrlID = computed(() => {
-  return YouTubeGetID(state.video_url.val);
-});
+// const videoUrlID = computed(() => {
+//   return YouTubeGetID(state.video_url.val);
+// });
 const isSaved = ref(false);
 const isChanged = ref(false);
 const isFirst = ref(true);
-const isCollapsed = ref(true);
+const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
 const schema = computed(() => {
@@ -439,43 +434,38 @@ const schema = computed(() => {
 });
 
 const initialValues = {
-  name: null,
-  description: null,
-  work_type_id: null,
-  experience_id: null,
-  accept_kids: false,
-  accept_temporary: false,
-  accept_incomplete_resumes: false,
-  accept_handicapped: false,
-  allow_messages: false,
-  schedule_id: null,
-  response_notifications: false,
-  working_days_id: null,
-  with_zp: false,
-  response_letter_required: false,
-  working_time_intervals_id: null,
-  working_time_modes_id: null,
-  refresh_vac: false,
-  extend_vac_id: null,
-  resume_subscription_status: false,
-  // subscriptionKeywords: [
-  //   {
-  //     keyword: null,
-  //     srws: null,
-  //     skwc: null,
-  //     is_hidden: false,
-  //   },
-  // ],
-  place_of_work_id: null,
-  education_id: null,
-  marital_status_id: null,
-  children_id: null,
-  gender_id: null,
-  covid_vaccination_requirement_id: null,
-  move_able: null,
-  video_url: null,
-  age_from: null,
-  age_to: null,
+  name: my_vacancy.value.name,
+  description: my_vacancy.value.description,
+  accept_kids: my_vacancy.value.accept_kids ?? false,
+  with_zp: my_vacancy.value.with_zp ?? false,
+  accept_handicapped: my_vacancy.value.accept_handicapped ?? false,
+  accept_incomplete_resumes:
+    my_vacancy.value.accept_incomplete_resumes ?? false,
+  response_letter_required: my_vacancy.value.response_letter_required ?? false,
+  allow_messages: my_vacancy.value.allow_messages ?? false,
+  response_notifications: my_vacancy.value.response_notifications ?? false,
+  work_type_id: my_vacancy.value.work_type?.id,
+  experience_id: my_vacancy.value.experience?.id,
+  accept_temporary: my_vacancy.value.accept_temporary ?? false,
+  schedule_id: my_vacancy.value.schedule?.id,
+  working_days_id: my_vacancy.value.working_days?.id,
+  working_time_intervals_id: my_vacancy.value.working_time_intervals?.id,
+  working_time_modes_id: my_vacancy.value.working_time_modes?.id,
+  refresh_vac: my_vacancy.value.refresh_vac ?? false,
+  extend_vac_id: my_vacancy.value.extend_vac?.id,
+  resume_subscription_status:
+    my_vacancy.value.resume_subscription_status ?? false,
+  place_of_work_id: my_vacancy.value.place_of_work?.id,
+  education_id: my_vacancy.value.education?.id,
+  marital_status_id: my_vacancy.value.marital_status?.id,
+  children_id: my_vacancy.value.children?.id,
+  gender_id: my_vacancy.value.gender?.id,
+  covid_vaccination_requirement_id:
+    my_vacancy.value.covid_vaccination_requirement?.id,
+  move_able: my_vacancy.value.move_able ?? false,
+  video_url: my_vacancy.value.video_url ?? undefined,
+  age_from: my_vacancy.value.age_from ?? undefined,
+  age_to: my_vacancy.value.age_to ?? undefined,
 };
 const {
   values,
@@ -490,194 +480,6 @@ const {
   initialValues: initialValues,
   initialTouched: true,
   validationSchema: toTypedSchema(schema.value),
-});
-
-const state = reactive({
-  name: {
-    is_hidden: false,
-  },
-  description: {
-    is_hidden: false,
-  },
-  work_type_id: {
-    is_hidden: false,
-  },
-  experience_id: {
-    is_hidden: false,
-  },
-  accept_kids: {
-    is_hidden: false,
-  },
-  accept_temporary: {
-    is_hidden: false,
-  },
-  accept_incomplete_resumes: {
-    is_hidden: false,
-  },
-  accept_handicapped: {
-    is_hidden: false,
-  },
-  allow_messages: {
-    is_hidden: false,
-  },
-  schedule_id: {
-    is_hidden: false,
-  },
-  response_notifications: {
-    is_hidden: false,
-  },
-  working_days_id: {
-    is_hidden: false,
-  },
-  with_zp: {
-    is_hidden: false,
-  },
-  response_letter_required: {
-    is_hidden: false,
-  },
-  working_time_intervals_id: {
-    is_hidden: false,
-  },
-  working_time_modes_id: {
-    is_hidden: false,
-  },
-  refresh_vac: {
-    is_hidden: false,
-  },
-  extend_vac_id: {
-    is_hidden: false,
-  },
-  resume_subscription_status: {
-    is_hidden: false,
-  },
-  subscriptionKeywords: {
-    keyword: {
-      is_hidden: false,
-    },
-    srws: {
-      is_hidden: false,
-    },
-    skwc: {
-      is_hidden: false,
-    },
-    is_hidden: false,
-  },
-  place_of_work_id: {
-    is_hidden: false,
-  },
-  education_id: {
-    is_hidden: false,
-  },
-  marital_status_id: {
-    is_hidden: false,
-  },
-  children_id: {
-    is_hidden: false,
-  },
-  gender_id: {
-    is_hidden: false,
-  },
-  covid_vaccination_requirement_id: {
-    is_hidden: false,
-  },
-  move_able: {
-    is_hidden: false,
-  },
-  video_url: {
-    is_hidden: false,
-  },
-  age_from: {
-    is_hidden: false,
-  },
-  age_to: {
-    is_hidden: false,
-  },
-});
-
-const fields = ref({
-  hh: {
-    name: true,
-    description: true,
-    work_type_id: false,
-    experience_id: false,
-    accept_kids: false,
-    accept_temporary: false,
-    accept_incomplete_resumes: false,
-    allow_applicant_without_resume: null,
-    accept_handicapped: false,
-    allow_messages: false,
-    schedule_id: false,
-    response_notifications: false,
-    working_days_id: false,
-    with_zp: false,
-    response_letter_required: false,
-    working_time_intervals_id: false,
-    working_time_modes_id: false,
-    refresh_vac: null,
-    extend_vac_id: null,
-    resume_subscription_status: null,
-    subscriptionKeywords: {
-      keyword: null,
-      srws: null,
-      skwc: null,
-      is_hidden: false,
-    },
-    place_of_work_id: null,
-    education_id: null,
-    marital_status_id: null,
-    children_id: null,
-    gender_id: null,
-    covid_vaccination_requirement_id: null,
-    move_able: null,
-    video_url: null,
-    age_from: null,
-    age_to: null,
-  },
-  superjob: {
-    name: true,
-    description: true,
-    work_type_id: false,
-    experience_id: false,
-    accept_kids: null,
-    accept_temporary: null,
-    accept_incomplete_resumes: null,
-    allow_applicant_without_resume: null,
-    accept_handicapped: null,
-    allow_messages: null,
-    schedule_id: false,
-    response_notifications: null,
-    working_days_id: null,
-    with_zp: null,
-    response_letter_required: null,
-    working_time_intervals_id: null,
-    working_time_modes_id: null,
-    refresh_vac: false,
-    extend_vac_id: false,
-    resume_subscription_status: false,
-    subscriptionKeywords: {
-      keyword: true,
-      srws: true,
-      skwc: true,
-      is_hidden: true,
-    },
-    place_of_work_id: false,
-    education_id: false,
-    marital_status_id: false,
-    children_id: false,
-    gender_id: false,
-    covid_vaccination_requirement_id: true,
-    move_able: false,
-    video_url: false,
-    age_from: false,
-    age_to: false,
-  },
-});
-
-const { walkThroughFields } = useProviderFields(state, fields);
-walkThroughFields(providers.value);
-
-onMounted(() => {
-  walkThroughFields(providers.value);
 });
 
 const sectionData = ref({});
@@ -740,47 +542,16 @@ watch(
   },
 );
 const dictionaryStore = useDictionaryStore();
-const {
-  getWorkTypes,
-  getExperiences,
-  getSchedules,
-  getWorkingDayOptions,
-  getWorkingTimeIntervalsOptions,
-  getWorkingTimeModesOptions,
-  getExtendVacOptions,
-  getPlaceOfWorks,
-  getEducations,
-  getMaritalStatus,
-  getChildren,
-  getGenders,
-  getCovidVacRequirements,
-} = dictionaryStore;
 
-onMounted(() => {
-  setTimeout(async () => {
-    await getWorkTypes();
-    await getExperiences();
-    await getSchedules();
-    await getWorkingDayOptions();
-    await getWorkingTimeIntervalsOptions();
-    await getWorkingTimeModesOptions();
-    await getExtendVacOptions();
-    await getPlaceOfWorks();
-    await getEducations();
-    await getMaritalStatus();
-    await getChildren();
-    await getGenders();
-    await getCovidVacRequirements();
-  }, 500);
-});
 const { handleErrorResponse } = useFormValidation();
 const isFocused = ref(false);
 const isLoading = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  validate();
+  await validate();
+  console.log(meta.value);
   if (!meta.value.dirty) {
-    return true;
+    return false;
   }
   if (!meta.value.valid) {
     errorMessage.value = "Запольните все поля";

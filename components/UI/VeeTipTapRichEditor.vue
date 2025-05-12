@@ -11,12 +11,16 @@ const props = defineProps({
     type: String,
     default: "content",
   },
+  value: {
+    required: false,
+  },
 });
 
 const { value: content, setValue, errorMessage } = useField(() => props.name);
+
 const editor = ref(
   useEditor({
-    content: content.value,
+    content: props.value || content.value,
     extensions: [TiptapStarterKit],
     onUpdate: () => {
       setValue(editor.value?.getHTML());
@@ -36,10 +40,10 @@ watch(
 
 const emit = defineEmits(["update:modelValue"]);
 
-onBeforeUnmount(() => {
-  editor.value?.destroy();
-  editor.value = null;
-});
+// onBeforeMount(() => {
+//   editor.value?.destroy();
+//   editor.value = null;
+// });
 </script>
 
 <template>

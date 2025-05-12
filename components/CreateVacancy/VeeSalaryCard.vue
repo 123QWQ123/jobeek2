@@ -1,7 +1,7 @@
 <template>
   <div class="w-box" v-click-outside="save" @click="isFocused = true">
     <div class="w-box-head">
-      <h3 class="title">Зарплата({{ isChanged }})</h3>
+      <h3 class="title">Зарплата</h3>
       <span
         class="arrow"
         :class="{ up: isCollapsed, 'is-completed': isCompleted }"
@@ -104,11 +104,8 @@ const isUpdated = ref(false);
 const dictionaryStore = useDictionaryStore();
 
 const { getPaymentPeriodOptions } = dictionaryStore;
-onMounted(() => {
-  setTimeout(async () => {
-    await getPaymentPeriodOptions();
-  });
-});
+await getPaymentPeriodOptions();
+
 const currencyOptions = ref(useCurrencyOptions());
 const periodOptions = computed(() => {
   return dictionaryStore.payment_period.map((item) => ({
@@ -118,30 +115,6 @@ const periodOptions = computed(() => {
 });
 
 const schema = computed(() => {
-  // if (providers.value.hh === true && providers.value.superjob === false) {
-  //   return z
-  //     .object({
-  //       type_id: z.number(),
-  //       custom_employer_name: z.string().nullable(),
-  //       response_url: z.string().nullable(),
-  //     })
-  //     .refine((data) => data.type_id === 48, {
-  //       message: "custom_employer_name field is required",
-  //       path: ["custom_employer_name"], // Pointing out which field is invalid
-  //     });
-  // }
-  // if (providers.value.hh === false && providers.value.superjob === true) {
-  //   return z
-  //     .object({
-  //       type_id: z.number(),
-  //       custom_employer_name: z.string().optional(),
-  //       response_url: z.string().optional(),
-  //     })
-  //     .refine((data) => data.type_id === 48, {
-  //       message: "custom_employer_name field is required",
-  //       path: ["custom_employer_name"], // Pointing out which field is invalid
-  //     });
-  // }
   return zod.object({
     salary: zod.object({
       currency: zod.string(),
@@ -154,11 +127,10 @@ const schema = computed(() => {
 });
 
 const initialValues = {
-  currency: "RUB",
-  from: null,
-  to: null,
-  gross: null,
-  period: null,
+  salary: {
+    ...my_vacancy.value.salary,
+    period: my_vacancy.value.salary.period?.id,
+  },
 };
 const {
   values,
@@ -219,47 +191,11 @@ const fields = ref({
 const { walkThroughFields } = useProviderFields(state, fields);
 walkThroughFields(providers.value);
 
-onMounted(() => {
-  walkThroughFields(providers.value);
-});
-
-const sectionData = ref({});
-const getFields = (newObject) => {
-  return {
-    salary: { ...newObject.salary, period: newObject.salary.period?.id },
-  };
-};
-watch(
-  () => vacancyStore.my_vacancy,
-  (newData) => {
-    if (newData) {
-      sectionData.value = getFields(newData);
-    }
-  },
-);
-
-onMounted(() => {
-  const newData = vacancyStore.my_vacancy;
-  if (newData) {
-    sectionData.value = getFields(newData);
-  }
-});
-
-watch(
-  () => sectionData.value,
-  (newData, oldData) => {
-    const diffData = useDiff(newData, oldData);
-    if (Object.keys(diffData).length) {
-      resetForm({ values: newData });
-    }
-  },
-);
-
 const isFocused = ref(false);
 const isLoading = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  validate();
+  await validate();
   if (!meta.value.dirty) {
     return true;
   }

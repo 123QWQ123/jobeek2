@@ -304,6 +304,15 @@ export const useDictionaryStore = defineStore("dictionary", {
         marital_status_resume: "resume_marital_statuses",
         travel_time: "travel_times",
         children_resume: "resume_children",
+        experience: "experiences",
+        working_days: "working_days",
+        working_time_intervals: "working_time_intervals",
+        working_time_modes: "working_time_modes",
+        extend_vac: "extend_vac",
+        education: "educations",
+        marital_status: "marital_statuses",
+        children: "children",
+        covid_vaccination_requirement: "covid_vaccination_requirement",
       };
 
       for (const group of groups) {

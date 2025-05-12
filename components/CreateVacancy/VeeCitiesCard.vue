@@ -1,7 +1,7 @@
 <template>
   <div class="w-box" v-click-outside="save" @click="isFocused = true">
     <div class="w-box-head">
-      <h3 class="title">Где публиковать?({{ isChanged }})</h3>
+      <h3 class="title">Где публиковать?</h3>
       <span
         class="arrow"
         :class="{ up: isCollapsed, 'is-completed': isCompleted }"
@@ -60,7 +60,9 @@ const isChanged = ref(false);
 const isFirst = ref(true);
 const isCollapsed = ref(false);
 const isUpdated = ref(false);
-const selectedCityOptions = ref([]);
+const selectedCityOptions = ref(
+  my_vacancy.value.cities.map((item) => ({ name: item.name, value: item.id })),
+);
 
 const schema = computed(() => {
   return zod.object({
@@ -69,7 +71,7 @@ const schema = computed(() => {
 });
 
 const initialValues = {
-  cities: [],
+  cities: my_vacancy.value.cities.map((item) => item.id),
 };
 const {
   values,

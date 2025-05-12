@@ -21,20 +21,20 @@ const { providers, getProviderAsArray } = useProviders();
 
 const selectedProviders = computed(() => getProviderAsArray());
 
-const isHHSelected = computed(() => selectedProviders.value.includes("hh"));
-const isSuperjobSelected = computed(() =>
-  selectedProviders.value.includes("superjob"),
+const cities = ref([]);
+const vacancyStore = useVacancyStore();
+const { searchCities } = profileStore;
+const cityOptions = ref(
+  vacancyStore.my_vacancy?.cities.map((item) => ({
+    name: item.name,
+    value: item.id,
+  })),
 );
 
-const cities = ref([]);
-
-const { searchCities, searchProfessionalRoles } = profileStore;
-const cityOptions = ref([]);
 const selectedCityOptions = ref(props.selected_options ?? []);
 
 const ID = computed(() => route.params.id);
 const type = computed(() => route.query.type);
-const vacancyStore = useVacancyStore();
 
 watch(
   () => props.selected_options,
@@ -68,7 +68,7 @@ const { value: city_ids } = useField(() => props.name);
 watch(
   () => city_ids.value,
   async () => {
-    let items = vacancyStore.my_vacancy.cities.map((item) => ({
+    let items = vacancyStore.my_vacancy?.cities.map((item) => ({
       name: item.name,
       value: item.id,
     }));
@@ -86,18 +86,12 @@ watch(
 const onUpdateSelectedOptions = async (newItems) => {
   selectedCityOptions.value = newItems;
 };
-
-onMounted(() => {
-  updateCityInput();
-});
 </script>
 
 <template>
   <div>
-    <VeeMultiSelectWithSearchWithSelectedOptions
+    <VeeMultiSelectWithSearch
       :options="cityOptions"
-      :selected_options="selectedCityOptions"
-      @updateSelectedOptions="onUpdateSelectedOptions"
       :name="props.name"
       placeholder="Выберите город"
       @input="updateCityInput"
