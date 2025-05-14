@@ -15,7 +15,6 @@
         <CustomSelect
           v-model="per_page"
           :options="perPageOptions"
-          @change="onChangePerPage"
           class="bg-white w-auto"
           :listStyles="listStyles"
         ></CustomSelect>
@@ -25,7 +24,6 @@
         <CustomSelect
           v-model="order_by"
           :options="sortingOptions"
-          @change="onChangeSorting"
           class="bg-white w-auto"
           :listStyles="listStyles"
         ></CustomSelect>
@@ -83,9 +81,10 @@ const props = defineProps({
     default: [],
   },
 });
+const route = useRoute();
 const my_vacancies = computed(() => props.items);
 const vacancyStore = useVacancyStore();
-const current_page = ref(vacancyStore.my_archived_vacancies_current_page ?? 1);
+const current_page = ref(route.query.page ?? 1);
 const total_page = computed(() => vacancyStore.my_archived_vacancies_last_page);
 const isPrevDisabled = computed(() => {
   if (parseInt(current_page.value) <= 1) return true;
@@ -97,47 +96,11 @@ const isNextDisabled = computed(
 const isPaginationVisible = computed(
   () => vacancyStore.my_archived_vacancies_last_page !== 1,
 );
-const route = useRoute();
-watch(
-  () => route.query.page,
-  () => {
-    current_page.value = route.query.page ?? 1;
-  },
-);
-
-watch(
-  () => current_page.value,
-  async (newPage) => {
-    await getArchivedVacancies({
-      page: newPage,
-    });
-    isLoading.value = false;
-  },
-);
 
 const per_page = ref(10);
 const order_by = ref(null);
 const sortingOptions = ref(useMyVacancySortingOptions());
 const perPageOptions = ref(useMyVacancyPerPageOptions());
-const { getArchivedVacancies } = vacancyStore;
-
-const onChangePerPage = async (per_page) => {
-  isLoading.value = true;
-  // form.value.per_page = per_page;
-  // const params = useMyVacancyForm(form.value, "front");
-  // await getArchivedVacancies(params);
-  // form.value.page = 1;
-  // current_page.value = form.value.page;
-  isLoading.value = false;
-};
-
-const onChangeSorting = async (sorting) => {
-  isLoading.value = true;
-  // form.value.order_by = sorting;
-  // const params = useMyVacancyForm(form.value, "front");
-  // await getArchivedVacancies(params);
-  isLoading.value = false;
-};
 
 const listStyles = {
   left: 0,
@@ -151,18 +114,18 @@ const { updateQueryParam } = useQueryParams();
 const prevPage = async (e) => {
   e.preventDefault();
   isLoading.value = true;
-  updateQueryParam("page", parseInt(current_page.value) - 1);
+  --current_page.value;
+  updateQueryParam("page", current_page.value);
+  isLoading.value = false;
 };
 
 const nextPage = async (e) => {
   e.preventDefault();
   isLoading.value = true;
-  updateQueryParam("page", parseInt(current_page.value) + 1);
+  ++current_page.value;
+  updateQueryParam("page", current_page.value);
+  isLoading.value = false;
 };
-
-onMounted(async () => {
-  await getArchivedVacancies({});
-});
 </script>
 
 <style scoped>

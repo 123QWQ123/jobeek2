@@ -185,6 +185,14 @@ import { useVacancyStore } from "~/store/vacancy";
 const vacancyStore = useVacancyStore();
 const { synVacancies, disconnectProviders } = vacancyStore;
 
+/**
+ * Fetching connected providers' data and authorization endpoints using `useAsyncData`.
+ */
+const { data: connectedData, refresh: refreshConnectedProviders } =
+  await useAsyncData("connectedProviders", () =>
+    vacancyStore.getConnectedEmployerProviders(),
+  );
+
 // Providers state management
 const providers = ref({
   hh: { slug: "hh", url: null, is_connected: false },
@@ -192,7 +200,6 @@ const providers = ref({
 });
 
 const isSyncing = ref(false); // Is syncing in progress?
-const iframe = ref(null); // Iframe reference if needed
 
 // Get full URL for redirect
 const route = useRoute(); // Access the current route
@@ -209,14 +216,6 @@ const isHHConnected = computed(() => providers.value.hh.is_connected);
 const isAnyProviderConnected = computed(() =>
   Object.values(providers.value).some((provider) => provider.is_connected),
 );
-
-/**
- * Fetching connected providers' data and authorization endpoints using `useAsyncData`.
- */
-const { data: connectedData, refresh: refreshConnectedProviders } =
-  useAsyncData("connectedProviders", () =>
-    vacancyStore.getConnectedEmployerProviders(),
-  );
 
 const { data: authEndpoints, refresh: refreshAuthEndpoints } = useAsyncData(
   "authEndpoints",

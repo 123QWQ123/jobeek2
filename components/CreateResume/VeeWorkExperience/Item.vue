@@ -132,10 +132,10 @@
               </div>
             </div>
             <div class="check-block mt-2" v-show="!state.until_today.is_hidden">
-                <ResumeCheckboxInput
-                  label="Работаю по настоящее время"
-                  :name="`${props.name}[${props.idx}].until_today`"
-                />
+              <ResumeCheckboxInput
+                label="Работаю по настоящее время"
+                :name="`${props.name}[${props.idx}].until_today`"
+              />
             </div>
           </div>
         </div>
@@ -172,7 +172,6 @@ import ResumeTextarea from "~/components/CreateResume/ResumeTextarea.vue";
 import ResumeCheckboxInput from "~/components/CreateResume/ResumeCheckboxInput.vue";
 import useProviderFields from "~/composables/useProviderFields.js";
 import useProviders from "~/composables/useProviders.js";
-import useResumeHooks from "~/hooks/useResumeHooks.js";
 import { useProfileStore } from "~/store/profile.js";
 import { useResumeStore } from "~/store/resume.js";
 
@@ -199,9 +198,7 @@ const { industries } = resumeStore;
 const { value: until_today } = useField(
   () => `${props.name}[${props.idx}].until_today`,
 );
-// const { value: industries } = useField(
-//   () => `${props.name}[${props.idx}].industries`,
-// );
+
 const updateIndustryInput = async (newValue = "") => {
   industries.filter((item) => item.title.includes(newValue));
   industryOptions.value = industries
@@ -252,7 +249,7 @@ onMounted(() => {
 
   const newResume = resumeStore.my_resume;
   if (newResume?.experience?.length) {
-    const city = newResume.experience[props.idx].city;
+    const city = newResume.experience[props.idx]?.city;
     if (city?.country_id) onSearchCitiesByCountryId(city.country_id, city.name);
   }
 });
@@ -362,7 +359,4 @@ const save = () => {
 watch(() => useWatchStateValues(state), save);
 </script>
 
-<style scoped>
-
-
-</style>
+<style scoped></style>

@@ -111,7 +111,7 @@ watch(
   () => getQueryParam("cities") ?? [],
   (newValues, oldValues) => {
     if (JSON.stringify(newValues) !== JSON.stringify(oldValues)) {
-      getMetros({ region_ids: newValues });
+      getMetros({ city_ids: newValues });
       prepare(vacancyStore.metros_formatted);
     }
   },
