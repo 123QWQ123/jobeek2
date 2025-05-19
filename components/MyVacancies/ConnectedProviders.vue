@@ -46,7 +46,7 @@
 	   </div>
 	   <!-- Reload END-->
 	</div>
-    
+    <!-- 
     <div class="card mb-4 border-0 px-2 py-0" style="border-radius: 12px">
       <div class="row align-baseline justify-between">
         <div class="col-6 list-of-providers">
@@ -190,6 +190,7 @@
         Не один сервис не подключен!
       </div>
     </div>
+    -->
   </div>
 </template>
 
