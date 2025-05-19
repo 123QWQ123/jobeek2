@@ -39,7 +39,22 @@ const isCompleted = computed(() => {
         </div>
         <aside class="sidebar">
           <div class="lk-page-title mb-4 mb-0 margin-top-mobile">Премиум</div>
-          <div class="premium-col sticky-item">
+          
+            <!-- NEW block -->
+            <div class="sticky-item sidebar-premium">
+            	<div class="notification mt-0">
+            		<div class="ic"><img src="~/assets/img/svg/crown2.svg" alt="#" /></div>
+            		<div class="notification-text">
+            			<strong class="title">Подключите премиум</strong>
+            			<p> У вас есть лимит на создание резюме: 1 шт. Чтобы создавать неограниченное количество резюме, подключите премиум-подписку. </p>
+            			<a class="btn btn-primary mt-3" href="#">Подключить</a>
+            		</div>
+            	</div>
+            </div>
+            <!-- END NEW block -->
+  
+  
+          <!--<div class="premium-col sticky-item">
             <div class="title">
               {{ isSubscribed ? "" : "Подключите Премиум подписку" }}
             </div>
@@ -50,7 +65,7 @@ const isCompleted = computed(() => {
             <a v-else class="notification-button button-accent" href="#"
               >Подключить</a
             >
-          </div>
+          </div>-->
         </aside>
       </div>
     </div>
