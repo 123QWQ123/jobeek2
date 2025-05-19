@@ -1,6 +1,52 @@
 <template>
   <div>
     <h1 class="lk-page-title mb-4 mb-0 margin-top-mobile">Cервисы</h1>
+
+	<div class="services-grid-load import-grid">
+	   <!-- HeadHunters START-->
+	    <a class="provider-item grid-provider-mob" :href="providers.hh.url" target="_blank" :class="{ navigated: isHHConnected }">
+		    <div class="import-box is-connected">
+		      <div class="import-box-dvnld">
+		         <div class="logo">
+		            <img src="~/assets/img/svg/hh-big.svg" alt="#">
+		            <div class="check"><img src="~/assets/img/svg/complete.svg" alt="#"></div>
+		         </div>
+		         <span>HeadHunters.ru</span>
+		      </div>
+		   </div>
+	   </a>
+	   <!-- HeadHunters END-->
+	   
+	   <!-- Superjob START-->
+	   <a class="provider-item grid-provider-mob" :href="providers.superjob.url" target="_blank" :class="{ navigated: isSuperjobConnected }">
+		   <div class="import-box is-connected">
+		      <div class="import-box-dvnld">
+		         <div class="logo">
+		            <img src="https://jobeek.online/_nuxt/sb.DLBzSeco.svg" alt="#">
+		            <div class="check"><img src="~/assets/img/svg/complete.svg" alt="#"></div>
+		         </div>
+		         <span>Superjob.ru </span>
+		      </div>
+		   </div>
+	   </a>
+	   <!-- Superjob END-->
+	   
+	   <!-- Reload START-->
+	   <div class="import-box is-connected grid-provider-mob">
+	      <div class="import-box-dvnld sync-card d-flex pe-4">
+	         <button class="logo sync-button" :class="{ rotating: isSyncing }" @click="onSync">
+	            <svg xmlns="http://www.w3.org/2000/svg" width="51" height="51" fill="#5375FD" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
+	               <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"></path>
+	               <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"></path>
+	            </svg>
+	            <div class="check"><span>11:05</span></div>
+	         </button>
+	         <span class="load-date">19.05.2025</span>
+	      </div>
+	   </div>
+	   <!-- Reload END-->
+	</div>
+    <!-- 
     <div class="card mb-4 border-0 px-2 py-0" style="border-radius: 12px">
       <div class="row align-baseline justify-between">
         <div class="col-6 list-of-providers">
@@ -10,8 +56,6 @@
             target="_blank"
             :class="{ navigated: isHHConnected }"
           >
-            <!--                  <span class="remove-text">Отключить</span>-->
-
             <span class="provider-label success">
               <svg
                 v-if="isHHConnected"
@@ -55,27 +99,6 @@
                 />
               </svg>
             </span>
-            <!--            <span class="provider-label reload">-->
-            <!--              <svg-->
-            <!--                xmlns="http://www.w3.org/2000/svg"-->
-            <!--                width="22"-->
-            <!--                height="22"-->
-            <!--                fill="#5375FD"-->
-            <!--                class="bi bi-arrow-repeat"-->
-            <!--                viewBox="0 0 16 16"-->
-            <!--                data-v-03b4701d=""-->
-            <!--              >-->
-            <!--                <path-->
-            <!--                  d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"-->
-            <!--                  data-v-03b4701d=""-->
-            <!--                ></path>-->
-            <!--                <path-->
-            <!--                  fill-rule="evenodd"-->
-            <!--                  d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"-->
-            <!--                  data-v-03b4701d=""-->
-            <!--                ></path>-->
-            <!--              </svg>-->
-            <!--            </span>-->
             <img src="~/assets/img/logos/min-hh-red.png" class="w-100" />
           </a>
           <a
@@ -84,7 +107,6 @@
             target="_blank"
             :class="{ navigated: isSuperjobConnected }"
           >
-            <!--                <span class="remove-text">Отключить</span>-->
 
             <span class="provider-label success">
               <svg
@@ -129,27 +151,6 @@
                 />
               </svg>
             </span>
-            <!--            <span class="provider-label reload">-->
-            <!--              <svg-->
-            <!--                xmlns="http://www.w3.org/2000/svg"-->
-            <!--                width="22"-->
-            <!--                height="22"-->
-            <!--                fill="#5375FD"-->
-            <!--                class="bi bi-arrow-repeat"-->
-            <!--                viewBox="0 0 16 16"-->
-            <!--                data-v-03b4701d=""-->
-            <!--              >-->
-            <!--                <path-->
-            <!--                  d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"-->
-            <!--                  data-v-03b4701d=""-->
-            <!--                ></path>-->
-            <!--                <path-->
-            <!--                  fill-rule="evenodd"-->
-            <!--                  d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"-->
-            <!--                  data-v-03b4701d=""-->
-            <!--                ></path>-->
-            <!--              </svg>-->
-            <!--            </span>-->
             <img src="~/assets/img/logos/superjob.svg" class="w-100" />
           </a>
         </div>
@@ -188,6 +189,7 @@
         Не один сервис не подключен!
       </div>
     </div>
+    -->
   </div>
 </template>
 
@@ -359,5 +361,64 @@ useAsyncData("updateProviderData", async () => {
 
 .rotating {
   animation: rotation 2s infinite linear;
+}
+
+.services-grid-load.import-grid {
+  grid-template-columns: 1fr 1fr 180px;
+}
+
+.services-grid-load.import-grid .check img {
+  background: #fff; 
+  border-radius: 110%;
+}
+
+.services-grid-load.import-grid .import-box-dvnld {
+  display: flex; 
+  padding-left: 5px;
+}
+
+.services-grid-load.import-grid .import-box-dvnld .sync-button {
+  margin-left: 5px; 
+  margin-right: 16px;
+}
+
+.services-grid-load.import-grid .import-box-dvnld .check span {
+  text-align: center; 
+  font-size: 12px; 
+  background: #00aa87; 
+  padding: 1px 5px 3px 5px; 
+  color: #fff; 
+  border-radius: 15px; 
+  font-weight: normal;
+}
+
+.services-grid-load.import-grid .import-box-dvnld .load-date {
+  text-align: center; 
+  font-size: 18px; 
+  font-weight: 600; 
+  line-height: 25px;
+}
+
+@media (max-width: 767px) {
+  .services-grid-load.import-grid {
+    display: block;
+  }	
+  .services-grid-load.import-grid .grid-provider-mob {
+  	margin: 10px 0;
+    display: block;
+  }
+  .services-grid-load.import-grid .import-box-dvnld span, .services-grid-load.import-grid .import-complete span {
+    font-size: 15px;
+    line-height: 20px;
+  }
+  .services-grid-load.import-grid .import-box-dvnld .sync-button {
+    margin-right: 0;
+  }  
+  .services-grid-load.import-grid .import-box-dvnld .sync-button svg {
+    height: 40px;
+    margin-right: 14px;
+    min-width: 40px;
+    width: 40px;
+  }
 }
 </style>
