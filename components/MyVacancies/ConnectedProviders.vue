@@ -4,7 +4,7 @@
     
 	<div class="services-grid-load import-grid">
 	   <!-- HeadHunters START-->
-	    <a class="provider-item grid-provider-mob" :href="providers.hh.url" target="_blank" :class="{ navigated: isHHConnected }">
+	    <div class="provider-item grid-provider-mob" target="_blank" :class="{ navigated: isHHConnected }">
 		    <div class="import-box is-connected">
 		      <div class="import-box-dvnld">
 		         <div class="logo">
@@ -14,11 +14,11 @@
 		         <span>HeadHunters.ru</span>
 		      </div>
 		   </div>
-	   </a>
+	   </div>
 	   <!-- HeadHunters END-->
 	   
 	   <!-- Superjob START-->
-	   <a class="provider-item grid-provider-mob" :href="providers.superjob.url" target="_blank" :class="{ navigated: isSuperjobConnected }">
+	   <div class="provider-item grid-provider-mob" target="_blank" :class="{ navigated: isSuperjobConnected }">
 		   <div class="import-box is-connected">
 		      <div class="import-box-dvnld">
 		         <div class="logo">
@@ -26,13 +26,16 @@
 		            <div class="check"><img src="~/assets/img/svg/complete.svg" alt="#"></div>
 		         </div>
 		         <span>Superjob.ru </span>
+		         <button class="close" type="button">
+		         	<svg width="24" height="24" viewBox="0 0 24 24" fill="#5375fd" xmlns="http://www.w3.org/2000/svg" data-v-3e4ab60c=""><path d="M18.9951 4.99512L5.00586 18.9843" stroke="#5375fd" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-v-3e4ab60c=""></path><path d="M19.0009 18.9928L5 4.98901" stroke="#5375fd" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-v-3e4ab60c=""></path></svg>
+		         </button>
 		      </div>
 		   </div>
-	   </a>
+	   </div>
 	   <!-- Superjob END-->
 	   
 	   <!-- Reload START-->
-	   <div class="import-box is-connected grid-provider-mob">
+	   <div class="import-box import-is-complete is-connected grid-provider-mob">
 	      <div class="import-box-dvnld sync-card d-flex pe-4">
 	         <button class="logo sync-button" :class="{ rotating: isSyncing }" @click="onSync">
 	            <svg xmlns="http://www.w3.org/2000/svg" width="51" height="51" fill="#5375FD" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
@@ -428,6 +431,41 @@ const onOpen = (url) => {
   font-size: 18px; 
   font-weight: 600; 
   line-height: 25px;
+}
+
+.services-grid-load.import-grid .import-box-dvnld .close {
+  margin-left: auto;
+  display: none;
+}
+
+.services-grid-load.import-grid .import-box-dvnld:hover .close {
+  margin-left: auto;
+  display: block;
+}
+
+.services-grid-load.import-grid .provider-item {
+  cursor: pointer;
+}
+
+.services-grid-load.import-grid .provider-item .import-box.disabled {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0 20px #0000000a;
+}
+
+.services-grid-load.import-grid .provider-item .import-box.disabled .import-box-dvnld {
+  border-radius: 12px;
+  box-shadow: 0 0 20px #0000000a;
+  border: 1px dashed #8c8c8c;
+  color: #8c8c8c;
+}
+
+.services-grid-load.import-grid .provider-item .import-box.disabled .logo {
+  filter: grayscale(100%);
+}
+
+.services-grid-load.import-grid .provider-item .import-box.disabled span {
+  color: #8c8c8c;
 }
 
 @media (max-width: 767px) {
