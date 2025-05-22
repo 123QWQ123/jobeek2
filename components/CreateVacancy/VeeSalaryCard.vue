@@ -118,7 +118,7 @@ const schema = computed(() => {
   return zod.object({
     salary: zod.object({
       currency: zod.string(),
-      gross: zod.boolean(),
+      gross: zod.boolean().nullable(),
       from: zod.number(),
       to: zod.number(),
       period: zod.number(),
@@ -129,6 +129,7 @@ const schema = computed(() => {
 const initialValues = {
   salary: {
     ...my_vacancy.value.salary,
+    gross: my_vacancy.value.salary.gross ?? false,
     period: my_vacancy.value.salary.period?.id,
   },
 };

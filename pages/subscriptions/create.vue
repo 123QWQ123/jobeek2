@@ -3,9 +3,16 @@ import { zod } from "~/hooks/ru-zod.js";
 import { useAuthStore } from "~/store/auth.js";
 import { toTypedSchema } from "@vee-validate/zod";
 import useApi from "~/hooks/useApi.js";
+import { useDictionaryStore } from "~/store/dictionary.js";
 
 useHead({
   title: "Создание подписку",
+});
+
+const dictionaryStore = useDictionaryStore();
+// Грузим справочники SSR-совместимо
+useAsyncData("dictionaries", async () => {
+  await dictionaryStore.getDictionaries(["work_type"]);
 });
 const getFields = (newObject) => {
   if (!newObject) return {};
@@ -61,15 +68,18 @@ const initialValues = getFields(authStore.seeker);
 
 const { values, meta } = useForm({
   initialValues,
-  initialTouched: true,
   validationSchema: toTypedSchema(schema),
 });
 const save = async () => {
   if (meta.value.dirty && meta.value.valid) {
-    await useApi("seeker/subscription", {
+    const data = await useApi("seeker/subscription", {
       method: "POST",
       payload: values,
     });
+
+    if (data.status === "success") {
+      navigateTo({ name: "subscriptions" });
+    }
   }
 };
 </script>
@@ -91,19 +101,19 @@ const save = async () => {
               </div>
             </div>
             <div class="w-box-body">
-              <CreateSubscriptionProvidersAndKeywords></CreateSubscriptionProvidersAndKeywords>
+              <CreateSubscriptionProvidersAndKeywords />
               <div class="sep"></div>
-              <CreateSubscriptionFieldsAndAreas></CreateSubscriptionFieldsAndAreas>
+              <CreateSubscriptionFieldsAndAreas />
               <!--          <div class="sep"></div>-->
               <!--          <CreateSubscriptionVaccination></CreateSubscriptionVaccination>-->
               <div class="sep"></div>
-              <CreateSubscriptionJobSalaryAndCompany></CreateSubscriptionJobSalaryAndCompany>
+              <CreateSubscriptionJobSalaryAndCompany />
               <div class="sep"></div>
-              <CreateSubscriptionJobEmploymentAndLicense></CreateSubscriptionJobEmploymentAndLicense>
+              <CreateSubscriptionJobEmploymentAndLicense />
               <!--              <div class="sep"></div>-->
               <!--              <CreateSubscriptionForeignLanguages></CreateSubscriptionForeignLanguages>-->
               <div class="sep"></div>
-              <CreateSubscriptionNotifications></CreateSubscriptionNotifications>
+              <CreateSubscriptionNotifications />
             </div>
           </div>
           <div class="form-submit-container">

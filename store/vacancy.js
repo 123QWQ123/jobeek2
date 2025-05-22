@@ -55,8 +55,8 @@ export const useVacancyStore = defineStore("vacancy", {
       superjob: null,
     },
     providers: {
-      hh: null,
-      superjob: null,
+      hh: false,
+      superjob: false,
     },
     employerMessage: "",
   }),

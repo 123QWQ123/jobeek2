@@ -34,8 +34,8 @@ export const useResumeStore = defineStore("resume", {
         superjob: null,
       },
       providers: {
-        hh: null,
-        superjob: null,
+        hh: false,
+        superjob: false,
       },
     };
   },

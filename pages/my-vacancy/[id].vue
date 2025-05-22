@@ -14,7 +14,10 @@ const router = useRouter();
 const vacancyStore = useVacancyStore();
 const dictionaryStore = useDictionaryStore();
 
-const providers = ref({ superjob: false, hh: false });
+const providers = ref({
+  superjob: vacancyStore.providers.superjob,
+  hh: vacancyStore.providers.hh,
+});
 const { setProviders } = useProviders();
 const { handleAlert } = useAlert();
 
@@ -107,13 +110,6 @@ const saveAsDraft = (e) => {
   // toast.info("Черновик сохранён (реализуйте логику).", { autoClose: 2000 });
 };
 
-const paramProviders = computed(() => {
-  if (providers.value.hh && providers.value.superjob) return ["hh", "superjob"];
-  if (providers.value.hh) return ["hh"];
-  if (providers.value.superjob) return ["superjob"];
-  return [];
-});
-
 const hhPublishable = computed(
   () => my_vacancy.value?.can_publish?.hh ?? false,
 );
@@ -141,12 +137,23 @@ const saveAndPublishAll = async (e) => {
     });
     return;
   }
+  if (!providers.value.hh && !providers.value.superjob) {
+    toast.error("Выберите провайдера для публикации!", {
+      autoClose: 3000,
+    });
+    return;
+  }
 
   isLoading.value = true;
   errorMessage.value = null;
 
   try {
-    const payload = { providers: paramProviders.value };
+    const payload = {
+      providers: [
+        providers.value.hh ? "hh" : null,
+        providers.value.superjob ? "superjob" : null,
+      ].filter((item) => item),
+    };
     const resData = await publishDraft(vacancyID.value, payload);
 
     if (resData?.status !== "success") {

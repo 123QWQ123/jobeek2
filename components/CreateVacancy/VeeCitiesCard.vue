@@ -36,9 +36,7 @@ import { useDiff } from "~/composables/useDiff";
 import { zod } from "~/hooks/ru-zod.js";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
-import useProviderFields from "~/composables/useProviderFields.js";
 import { useDictionaryStore } from "~/store/dictionary.js";
-import useProviders from "~/composables/useProviders.js";
 
 const props = defineProps(["title"]);
 
@@ -46,8 +44,6 @@ const vacancyStore = useVacancyStore();
 const profileStore = useProfileStore();
 const CONFIG = useRuntimeConfig();
 const route = useRoute();
-
-const { providers } = useProviders();
 const ID = computed(() => route.params.id);
 const type = computed(() => route.query.type);
 const { updateVacancy, updateDraft, getMyVacancy, getMyDraft } = vacancyStore;
@@ -103,13 +99,6 @@ const fields = ref({
   },
 });
 
-const { walkThroughFields } = useProviderFields(state, fields);
-walkThroughFields(providers.value);
-
-onMounted(() => {
-  walkThroughFields(providers.value);
-});
-
 const sectionData = ref({});
 const getFields = (newObject) => {
   return {
@@ -146,7 +135,7 @@ const isFocused = ref(false);
 const isLoading = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  validate();
+  await validate();
   if (!meta.value.dirty) {
     return true;
   }
