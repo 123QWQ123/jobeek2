@@ -23,9 +23,11 @@
     </NuxtLink>
     <div v-else></div>
     <div class="col d-flex justify-content-between mt-4">
-      <h1 ref="filterRef" class="lk-page-title">Ваши вакансии</h1>
+      <h1 class="lk-page-title">Ваши вакансии</h1>
     </div>
-    <div class="col d-flex justify-content-between align-items-center py-4 pt-0">
+    <div
+      class="col d-flex justify-content-between align-items-center py-4 pt-0"
+    >
       <ul class="nav nav-tabs vacancy_tabs w-100">
         <li
           class="nav-item"
@@ -99,13 +101,10 @@
 </template>
 
 <script setup>
-import Swal from "sweetalert2";
 import { useVacancyStore } from "~/store/vacancy";
 import { storeToRefs } from "pinia";
 import PageLoader from "~/components/UI/PageLoader.vue";
 import { useMyVacancyForm } from "~/composables/useMyVacancyForm";
-import { useMyVacancySortingOptions } from "~/composables/useMyVacancySortingOptions";
-import { useMyVacancyPerPageOptions } from "~/composables/useMyVacancyPerPageOptions";
 import { useMyVacanciesFilterOptions } from "~/composables/useMyVacanciesFilterOptions";
 
 const vacancyStore = useVacancyStore();
@@ -116,14 +115,17 @@ const {
   getCreateAvailability,
 } = vacancyStore;
 
-const sortingOptions = ref(useMyVacancySortingOptions());
-const perPageOptions = ref(useMyVacancyPerPageOptions());
 const filterOptions = ref(useMyVacanciesFilterOptions());
-const providerOptions = ref([
-  { value: "*", name: "Все" },
-  { value: "hh", name: "HeadHunter" },
-  { value: "superjob", name: "Superjob" },
-]);
+
+// Загрузка данных при монтировании
+await useAsyncData("initialDataLoad", async () => {
+  return await Promise.all([
+    getMyDrafts({ status: "draft" }),
+    getMyVacancies({ status: "active" }),
+    getArchivedVacancies({ status: "archived" }),
+    getCreateAvailability(),
+  ]);
+});
 
 const { can_create_vacancy_count, current_page } = storeToRefs(vacancyStore);
 
@@ -147,13 +149,9 @@ const providers = ref({
   superjob: true,
 });
 
-const onProviderToggle = (provider) => {
-  providers.value[provider] = !providers.value[provider];
-};
-
 const vacancies = ref([]);
 const my_drafts = ref([]);
-const isLoading = ref(true);
+const isLoading = ref(false);
 
 const route = useRoute();
 watch(
@@ -166,52 +164,22 @@ watch(
       newStatus = route.query.status;
     }
     form.value.status = newStatus;
+    isLoading.value = true;
     const params = { status: newStatus };
     if (newStatus === "draft") {
       await getMyDrafts(params);
     } else if (newStatus === "active") {
       await getMyVacancies(params);
     } else {
-      await getArchivedVacancies(params);
+      await getArchivedVacancies(route.query);
     }
+    isLoading.value = false;
   },
 );
-await getCreateAvailability();
-const canCreateVacancy = computed(() => {
-  return vacancyStore.can_create_vacancy ?? false;
-});
 
 const onFilterChange = (filter) => {
   navigateTo({ name: "my-vacancies", query: { status: filter } });
 };
-onMounted(async () => {
-  // let newStatus = "draft";
-  // if (
-  //   filterOptions.value.map((item) => item.value).includes(route.query.status)
-  // ) {
-  //   newStatus = route.query.status;
-  // }
-  // form.value.status = newStatus;
-  // const params = { status: newStatus };
-  // if (newStatus === "draft") {
-  //   await getMyDrafts(params);
-  // } else if (newStatus === "active") {
-  //   await getMyVacancies(params);
-  // } else {
-  //   await getArchivedVacancies(params);
-  // }
-  // navigateTo({
-  //   query: { status: form.value.status },
-  // });
-  // isLoading.value = false;
-  // // const params = useMyVacancyForm(form.value, 'backend');
-  setTimeout(() => {
-    getMyDrafts({ status: "draft" });
-    getMyVacancies({ status: "active" });
-    getArchivedVacancies({ status: "archived" });
-  }, 0);
-  isLoading.value = false;
-});
 
 watch(
   () => vacancyStore.my_vacancies,
@@ -284,90 +252,9 @@ watch(filterOptions, (newFilterOptions) => {
     }
   }
 });
-
-const filterRef = ref();
-
-const onInput = async (page) => {
-  isLoading.value = true;
-  const params = useMyVacancyForm(form.value, "backend");
-  await getMyVacancies({ ...params });
-  isLoading.value = false;
-};
-
-const prevPage = async (page) => {
-  isLoading.value = true;
-  const params = useMyVacancyForm(form.value, "backend");
-  let page_number = parseInt(current_page.value);
-  if (page_number > 1) {
-    form.value.page = form.value.page - 1;
-  }
-  await getMyVacancies(params);
-  current_page.value = form.value.page;
-  isLoading.value = false;
-  filterRef.value.scrollIntoView({ behavior: "smooth", block: "start" });
-};
-
-const nextPage = async (page) => {
-  isLoading.value = true;
-  isLoading.value = true;
-  form.value.page = form.value.page + 1;
-  current_page.value = form.value.page;
-  const params = useMyVacancyForm(form.value, "front");
-  const response = await getMyVacancies(params);
-  if (response?.data?.items.length === 0) {
-    Swal.fire({
-      title: "Больше нет вакансий",
-      text: response.message,
-      icon: "success",
-      confirmButtonText: "ОК",
-    });
-  }
-  isLoading.value = false;
-  filterRef.value.scrollIntoView({ behavior: "smooth", block: "start" });
-};
-
-const onChangePerPage = async (per_page) => {
-  isLoading.value = true;
-  form.value.per_page = per_page;
-  const params = useMyVacancyForm(form.value, "front");
-  await getMyVacancies(params);
-  isLoading.value = false;
-  form.value.page = 1;
-  current_page.value = form.value.page;
-};
-
-const onChangeSorting = async (sorting) => {
-  isLoading.value = true;
-  form.value.order_by = sorting;
-  const params = useMyVacancyForm(form.value, "front");
-  await getMyVacancies(params);
-  isLoading.value = false;
-};
-
-// const router = useRouter();
-
-const onProviderChange = async (provider) => {
-  form.value.provider = provider;
-  if (provider === "*") {
-    providers.value.hh = true;
-    providers.value.superjob = true;
-  }
-  if (provider === "hh") {
-    providers.value.hh = true;
-    providers.value.superjob = false;
-  }
-  if (provider === "superjob") {
-    providers.value.hh = false;
-    providers.value.superjob = true;
-  }
-  // const params = useMyVacancyForm(form.value, 'front');
-  // await getMyVacancies(params);
-  // isLoading.value = false;
-};
 </script>
 
 <style scoped>
-
 .theme-checker input ~ .theme-checker-ui .circle.left {
   transform: translate(3px, -50%);
 }

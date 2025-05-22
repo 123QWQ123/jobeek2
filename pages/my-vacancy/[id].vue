@@ -1,4 +1,6 @@
-<script setup>
+<script setup async>
+import { ref, computed, watch } from "vue";
+import { useRoute, useRouter, useAsyncData, useHead } from "#imports";
 import useAlert from "~/composables/useAlert";
 import Swal from "sweetalert2";
 import { toast } from "vue3-toastify";
@@ -7,236 +9,173 @@ import { useVacancyStore } from "~/store/vacancy.js";
 import { useDictionaryStore } from "~/store/dictionary.js";
 
 const route = useRoute();
+const router = useRouter();
 
 const vacancyStore = useVacancyStore();
 const dictionaryStore = useDictionaryStore();
 
 const providers = ref({
-  superjob: false,
-  hh: false,
+  superjob: vacancyStore.providers.superjob,
+  hh: vacancyStore.providers.hh,
 });
-
 const { setProviders } = useProviders();
-watch(
-  () => providers.value,
-  (newValues) => {
-    setProviders(newValues);
-  },
-);
-const { getMyVacancy, publishDraft, getMyDraft } = vacancyStore;
-const my_vacancy = computed(() => vacancyStore.my_vacancy);
+const { handleAlert } = useAlert();
 
 const vacancyID = computed(() => route.params.id);
 const type = computed(() => route.query.type);
-if (vacancyID.value) {
-  let resData;
-  if (type.value === "draft") {
-    resData = await getMyDraft(vacancyID.value);
-  }
-  if (type.value === "active") {
-    resData = await getMyVacancy(vacancyID.value);
-  }
 
-  if (resData?.status === "error") {
-    navigateTo({
-      name: "create-vacancy",
-      query: {
-        ...route.query,
-        message: JSON.stringify({
-          type: "error",
-          text: resData.message,
-          redirect: "create-vacancy",
-        }),
-      },
-    });
-  }
-}
+// Грузим справочники SSR-совместимо
+useAsyncData("dictionaries", async () => {
+  await dictionaryStore.getDictionaries([
+    "payment_period",
+    "experience",
+    "vacancy_type",
+    "vacancy_billing_type",
+    "schedule",
+    "working_days",
+    "working_time_intervals",
+    "working_time_modes",
+    "extend_vac",
+    "place_of_work",
+    "education",
+    "marital_status",
+    "children",
+    "gender",
+    "covid_vaccination_requirement",
+    "work_type",
+    "marital_statuses",
+    "lang_level_resume",
+    "driver_license_types",
+  ]);
+});
 
+// Грузим вакансию SSR-совместимо
+const { getMyVacancy, publishDraft, getMyDraft } = vacancyStore;
+const { my_vacancy } = storeToRefs(vacancyStore);
+
+const { error: vacancyLoadError } = await useAsyncData(
+  "my-vacancy",
+  async () => {
+    let resData;
+    if (vacancyID.value) {
+      resData =
+        type.value === "draft"
+          ? await getMyDraft(vacancyID.value)
+          : await getMyVacancy(vacancyID.value);
+
+      if (resData && resData.status === "error") {
+        await router.replace({
+          name: "create-vacancy",
+          query: {
+            ...route.query,
+            message: JSON.stringify({
+              type: "error",
+              text: resData.message,
+              redirect: "create-vacancy",
+            }),
+          },
+        });
+      }
+    }
+  },
+);
+
+// Слежение за провайдерами
 watch(
-  () => vacancyStore.my_vacancy,
+  () => providers.value,
+  (newValues) => setProviders(newValues),
+);
+watch(
+  () => my_vacancy.value,
   (newDraft) => {
-    if (newDraft) {
+    if (newDraft && newDraft.providers) {
       setProviders(newDraft.providers);
     }
   },
 );
+
+// Заголовок страницы
 const pageTitle = computed(() => {
-  if (my_vacancy.value) {
+  if (my_vacancy.value?.name) {
     return "Jobeek - " + my_vacancy.value.name;
   }
   return "Jobeek - ";
 });
-useHead({
-  title: pageTitle,
-});
+useHead({ title: pageTitle });
 
-const loadInitialData = async () => {
-  // Загрузка основных словарей одним запросом
-  return await Promise.all([
-    dictionaryStore.getDictionaries([
-      "payment_period",
-      "experience",
-      "vacancy_type",
-      "vacancy_billing_type",
-      "schedule",
-      "working_days",
-      "working_time_intervals",
-      "working_time_modes",
-      "extend_vac",
-      "place_of_work",
-      "education",
-      "marital_status",
-      "children",
-      "gender",
-      "covid_vaccination_requirement",
-      "work_type",
-      "marital_statuses",
-      "lang_level_resume",
-      "driver_license_types",
-    ]),
-  ]);
-};
-
-// Загрузка данных при монтировании
-useAsyncData("initialDataLoad", loadInitialData);
-onMounted(async () => {
-  handleAlert();
-});
-
-const error = computed(() => {
-  return route.query.message;
-});
-const { handleAlert } = useAlert();
 watch(() => route.query.message, handleAlert);
 
 const saveAsDraft = (e) => {
-  e.preventDefault();
+  if (e) e.preventDefault();
+  // toast.info("Черновик сохранён (реализуйте логику).", { autoClose: 2000 });
 };
 
-const paramProviders = computed(() => {
-  if (providers.value.hh && providers.value.superjob) {
-    return ["hh", "superjob"];
-  }
-  if (providers.value.hh) {
-    return ["hh"];
-  }
-  if (providers.value.superjob) {
-    return ["superjob"];
-  }
-  return [];
-});
-
-// const canBePublished = computed(() => {
-//   return !!(hhPublishable.value && superjobPublishable.value);
-// });
-
-const publishableProviderName = computed(() => {
-  if (hhPublishable.value === true || superjobPublishable.value === true) {
-    if (hhPublishable.value) {
-      return "hh";
-    }
-    if (superjobPublishable.value) {
-      return "superjob";
-    }
-  }
-  return null;
-});
-const hhPublishable = ref(false);
-const superjobPublishable = ref(false);
-
-watch(
-  () => vacancyStore.my_vacancy,
-  (newObject) => {
-    const { can_publish } = newObject;
-    if (can_publish) {
-      hhPublishable.value = can_publish.hh ?? false;
-      superjobPublishable.value = can_publish.superjob ?? false;
-    }
-  },
+const hhPublishable = computed(
+  () => my_vacancy.value?.can_publish?.hh ?? false,
+);
+const superjobPublishable = computed(
+  () => my_vacancy.value?.can_publish?.superjob ?? false,
+);
+const canOnlyOnePublished = computed(
+  () => hhPublishable.value || superjobPublishable.value,
 );
 
-const advanced_fields_el = ref();
-const cities_el = ref();
-const prof_roles_el = ref();
-const driver_licences_el = ref();
+const publishableProviderName = computed(() => {
+  if (hhPublishable.value) return "hh";
+  if (superjobPublishable.value) return "superjob";
+  return "";
+});
 
-const saveAllSections = async () => {
-  const promises = await Promise.all([
-    // photo_el.value.save(true),
-    // personal_fields_el.value.save(true),
-    // profession_fields_el.value.save(true),
-    // foreign_language_el.value.save(true),
-    // driver_licences_el.value.save(true),
-    // work_experience_el.value.save(true),
-    // education_el.value.save(true),
-    // courses_el.value.save(true),
-    // knowledge_and_skills_el.value.save(true),
-    // access_el.value.save(true),
-  ]);
-
-  const promisesResult = promises.every((item) => item === true);
-
-  return new Promise((resolve, reject) =>
-    promisesResult ? resolve(true) : reject(false),
-  );
-};
-
-const errorMessage = ref(null);
-const errors = ref([]);
 const isLoading = ref(false);
+const errorMessage = ref(null);
+
 const saveAndPublishAll = async (e) => {
   e.preventDefault();
   if (!canOnlyOnePublished.value) {
-    toast.info("Пока вы не можете опубликовать если не заполняйте все поля!", {
+    toast.info("Пока вы не можете опубликовать, если не заполнены все поля!", {
+      autoClose: 3000,
+    });
+    return;
+  }
+  if (!providers.value.hh && !providers.value.superjob) {
+    toast.error("Выберите провайдера для публикации!", {
       autoClose: 3000,
     });
     return;
   }
 
   isLoading.value = true;
-  const resAll = await saveAllSections();
-  if (!resAll) {
-    Swal.fire({
-      title: "Ошибка!",
-      text: "не все обязательные поля заполнены верно!",
-      icon: "error",
-      confirmButtonText: "ОК",
-    });
+  errorMessage.value = null;
+
+  try {
+    const payload = {
+      providers: [
+        providers.value.hh ? "hh" : null,
+        providers.value.superjob ? "superjob" : null,
+      ].filter((item) => item),
+    };
+    const resData = await publishDraft(vacancyID.value, payload);
+
+    if (resData?.status !== "success") {
+      await Swal.fire({
+        title: "Ошибка!",
+        text: resData.message || "Ошибка при публикации",
+        icon: "error",
+        confirmButtonText: "ОК",
+      });
+      errorMessage.value = resData.message;
+      return;
+    }
+    toast.info(resData.data.message, { autoClose: 3000 });
+    router.push({ name: "my-vacancies" });
+  } catch (error) {
+    errorMessage.value = error.message || "Произошла ошибка";
+  } finally {
     isLoading.value = false;
-    return;
   }
-
-  const payload = {
-    providers: paramProviders.value,
-  };
-
-  const resData = await publishDraft(vacancyID.value, payload);
-  if (resData.hasOwnProperty("status") && resData.status !== "success") {
-    Swal.fire({
-      title: "Ошибка!",
-      text: resData.message,
-      icon: "error",
-      confirmButtonText: "ОК",
-    });
-    isLoading.value = false;
-    errorMessage.value = resData.message;
-    return;
-  }
-
-  toast.info(resData.data.message, { autoClose: 3000 });
-
-  setTimeout(() => {
-    navigateTo({ name: "my-vacancies" });
-  }, 500);
 };
-
-const canOnlyOnePublished = computed(() => {
-  return (
-    (hhPublishable.value === true || superjobPublishable.value === true) &&
-    (superjobPublishable.value === false || hhPublishable.value === false)
-  );
-});
 </script>
+
 <template>
   <main class="main cabinet my-vacancy-page" role="main">
     <div class="bg-wrapper position-relative">
@@ -268,11 +207,13 @@ const canOnlyOnePublished = computed(() => {
             :key="`prof_roles_el_key_${providers.hh + providers.superjob}`"
             :providers="providers"
           />
+
           <CreateVacancyVeeTypeAndUrlCard
             ref="type_el"
             :key="`type_el_key_${providers.hh + providers.superjob}`"
             :providers="providers"
           />
+
           <CreateVacancyVeeSalaryCard
             ref="salary_el"
             :providers="providers"
@@ -302,11 +243,13 @@ const canOnlyOnePublished = computed(() => {
             ref="contacts_el"
             :providers="providers"
           />
+
           <CreateVacancyVeeLanguagesCard
             :key="`languages_el_${providers.hh + providers.superjob}`"
             ref="languages_el"
             :providers="providers"
           />
+
           <CreateVacancyVeeBillingTypeCard
             :key="`billing_el_${providers.hh + providers.superjob}`"
             ref="billing_el"
@@ -342,6 +285,7 @@ const canOnlyOnePublished = computed(() => {
               Сохранить и опубликовать
             </button>
           </div>
+
           <p
             class="float-end text-primary-secondary mt-2"
             v-if="canOnlyOnePublished"
@@ -351,57 +295,7 @@ const canOnlyOnePublished = computed(() => {
               publishableProviderName.toUpperCase()
             }}</span>
           </p>
-          <!--          <div class="form-submit-container mt-2">-->
-          <!--            <button-->
-          <!--              class="btn btn-outline-primary"-->
-          <!--              type="button"-->
-          <!--              @click="saveAsDraft"-->
-          <!--            >-->
-          <!--              Сохранить как черновик-->
-          <!--            </button>-->
-
-          <!--            <button-->
-          <!--              class="button-accent"-->
-          <!--              type="submit"-->
-          <!--              v-if="canOnlyOnePublished"-->
-          <!--              @click.prevent="-->
-          <!--                saveAndPublishProvider(-->
-          <!--                  publishableProviderName.toLocaleLowerCase(),-->
-          <!--                )-->
-          <!--              "-->
-          <!--            >-->
-          <!--              <span-->
-          <!--                v-if="isLoading"-->
-          <!--                class="spinner-border spinner-border-sm"-->
-          <!--                role="status"-->
-          <!--                aria-hidden="true"-->
-          <!--              ></span>-->
-          <!--              Опубликовать на {{ publishableProviderName }}-->
-          <!--            </button>-->
-          <!--            <button-->
-          <!--              class="button-accent"-->
-          <!--              :class="{ disabled: !canBePublished }"-->
-          <!--              type="submit"-->
-          <!--              @click.prevent="saveAndPublishAll"-->
-          <!--            >-->
-          <!--              <span-->
-          <!--                v-if="isLoading"-->
-          <!--                class="spinner-border spinner-border-sm"-->
-          <!--                role="status"-->
-          <!--                aria-hidden="true"-->
-          <!--              ></span>-->
-          <!--              Сохранить и опубликовать-->
-          <!--            </button>-->
-          <!--          </div>-->
-          <!--          <p-->
-          <!--            class="float-end text-primary-secondary mt-2"-->
-          <!--            v-if="canOnlyOnePublished"-->
-          <!--          >-->
-          <!--            Будет опубликовано только на-->
-          <!--            <span class="text-primary">{{-->
-          <!--              publishableProviderName.toUpperCase()-->
-          <!--            }}</span>-->
-          <!--          </p>-->
+          <p v-if="errorMessage" class="text-danger mt-3">{{ errorMessage }}</p>
         </form>
       </div>
     </div>

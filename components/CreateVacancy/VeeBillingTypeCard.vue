@@ -133,9 +133,10 @@ const { getVacancyBillingTypes } = dictionaryStore;
 
 onMounted(() => {
   walkThroughFields(providers.value);
-  setTimeout(async () => {
-    await getVacancyBillingTypes();
-  }, 500);
+  const newData = vacancyStore.my_vacancy;
+  if (newData) {
+    sectionData.value = getFields(newData);
+  }
 });
 
 const sectionData = ref({});
@@ -153,13 +154,6 @@ watch(
   },
 );
 
-onMounted(() => {
-  const newData = vacancyStore.my_vacancy;
-  if (newData) {
-    sectionData.value = getFields(newData);
-  }
-});
-
 watch(
   () => sectionData.value,
   (newData, oldData) => {
@@ -174,7 +168,7 @@ const isFocused = ref(false);
 const isLoading = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  validate();
+  await validate();
   if (!meta.value.dirty) {
     return true;
   }

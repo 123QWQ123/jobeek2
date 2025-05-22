@@ -84,12 +84,18 @@
           <div class="option">
             <div class="custom-check-wrap">
               <div class="theme-checker theme-checker--blue">
-                <input type="checkbox" id="sj" :checked="item.can_publish.hh" />
+                <input
+                  type="checkbox"
+                  id="hh"
+                  :checked="
+                    item.providers.filter((p) => p.name === 'hh').length > 0
+                  "
+                />
                 <div class="theme-checker-ui">
                   <div class="circle"></div>
                 </div>
               </div>
-              <label for="sj">
+              <label for="hh">
                 <img src="~/assets/img/logos/hhmini.svg" alt="#" />
                 <span>HH</span>
               </label>
@@ -101,7 +107,10 @@
                 <input
                   type="checkbox"
                   id="sj"
-                  :checked="item.can_publish.superjob"
+                  :checked="
+                    item.providers.filter((p) => p.name === 'superjob').length >
+                    0
+                  "
                 />
                 <div class="theme-checker-ui">
                   <div class="circle"></div>
@@ -120,7 +129,11 @@
           >
             <div class="check-block mb-2 mb-md-1 mb-lg-0 me-lg-3">
               <div class="checkbox">
-                <input type="checkbox" id="enable-push" />
+                <input
+                  type="checkbox"
+                  id="enable-push"
+                  :checked="item.push_notification"
+                />
                 <div class="checkbox-mask">
                   <img src="~/assets/img/svg/check.svg" alt="#" />
                 </div>
@@ -129,7 +142,11 @@
             </div>
             <div class="check-block">
               <div class="checkbox">
-                <input type="checkbox" id="enable-email-notification" />
+                <input
+                  type="checkbox"
+                  id="enable-email-notification"
+                  :checked="item.email_notification"
+                />
                 <div class="checkbox-mask">
                   <img src="~/assets/img/svg/check.svg" alt="#" />
                 </div>
@@ -191,7 +208,7 @@
                   <!--                  </nuxt-link>-->
                 </span>
               </button>
-              <button class="b-action" @click="onArchive(item.id)">
+              <button class="b-action" @click="onArchive(item)">
                 <div class="card-action">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -221,8 +238,6 @@
 import moment from "moment";
 import "moment/locale/ru";
 import { useVacancyStore } from "~/store/vacancy";
-import Swal from "sweetalert2";
-import { toast } from "vue3-toastify";
 
 const props = defineProps(["item"]);
 const { item } = props;
@@ -326,37 +341,21 @@ const {
   createDraftFromActiveVacancy,
 } = useVacancyStore();
 
-const onArchive = async (id) => {
-  const resData = await archiveActiveVacancy(id, {
-    providers: ["hh", "superjob"],
+const onArchive = async (item) => {
+  const resData = await archiveActiveVacancy(item.id, {
+    providers: item.providers.map((item) => item.name),
   });
   if (resData.status !== "success") {
-    Swal.fire({
-      title: "Ошибка!",
-      text: resData.message,
-      icon: "error",
-      confirmButtonText: "ОК",
-    });
     return;
   }
-
-  toast.info("Успешно архивировано!", { autoClose: 3000 });
   await getMyVacancies({ status: "active" });
 };
 
 const onCreateFromVacancy = async (id) => {
   const resData = await createDraftFromActiveVacancy(id);
   if (resData.status !== "success") {
-    Swal.fire({
-      title: "Ошибка!",
-      text: resData.message,
-      icon: "error",
-      confirmButtonText: "ОК",
-    });
     return;
   }
-
-  toast.info("Успешно создано!", { autoClose: 3000 });
 
   navigateTo({ name: "my-vacancies", query: { status: "draft" } });
 };

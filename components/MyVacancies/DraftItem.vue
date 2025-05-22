@@ -149,38 +149,27 @@
               :style="{ display: isContextMenuShown ? 'block' : 'none' }"
             >
               <div class="group">
-                <button class="b-action">
+                <button class="b-action" @click="onCreateFromVacancy(item.id)">
                   <div class="card-action">
                     <svg
-                      width="28"
-                      height="28"
-                      viewBox="0 0 28 28"
-                      fill="none"
                       xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      class="bi bi-copy"
+                      viewBox="0 0 16 16"
                     >
                       <path
-                        d="M4.02539 23.9749H23.9754"
                         stroke="#5375FD"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M14.2462 7.15927L19.7324 12.6455M14.2462 7.15927L17.3806 4.0249L22.8668 9.51115L19.7324 12.6455L14.2462 7.15927ZM14.2462 7.15927L8.03177 13.3737C7.82391 13.5815 7.70709 13.8634 7.70703 14.1573V19.1847H12.7344C13.0284 19.1846 13.3102 19.0678 13.518 18.8599L19.7324 12.6455L14.2462 7.15927Z"
-                        stroke="#5375FD"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        fill-rule="evenodd"
+                        d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2Zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6ZM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1H2Z"
                       />
                     </svg>
                   </div>
                   <span>
-                    <nuxt-link
-                      :to="{ name: 'my-resume-id', params: { id: item.id } }"
-                      class="title"
-                    >
-                      Редактировать
-                    </nuxt-link>
+                    <!--                  <nuxt-link :to="{name: 'create-vacancy', query: {draft_id: item.id}}" class="title">-->
+                    Создать копию
+                    <!--                  </nuxt-link>-->
                   </span>
                 </button>
                 <button class="b-action" @click="onDelete(item.id)">
@@ -236,14 +225,14 @@ const superjobProviderConnected = computed(() => {
 });
 const hhProviderEnabled = computed(() => {
   if (item.value && item.value.providers) {
-    return !!item.value.providers.find((prov) => prov.name == "hh");
+    return !!item.value.providers.find((prov) => prov.name === "hh");
   }
   return false;
 });
 
 const superjobProviderEnabled = computed(() => {
   if (item.value && item.value.providers) {
-    return !!item.value.providers.find((prov) => prov.name == "superjob");
+    return !!item.value.providers.find((prov) => prov.name === "superjob");
   }
   return false;
 });
@@ -357,12 +346,13 @@ const createdDate = computed(() => {
   return date;
 });
 
-const { deleteDraft, getMyDrafts } = vacancyStore;
+const { deleteDraft, getMyDrafts, createDraftFromActiveVacancy } = vacancyStore;
+
 const onDelete = async (id) => {
   const resData = await deleteDraft(id);
 
   if (resData.status !== "success") {
-    Swal.fire({
+    await Swal.fire({
       title: "Ошибка!",
       text: resData.message,
       icon: "error",
@@ -435,8 +425,13 @@ const toggle = async (provider) => {
   isSuperjobLoading.value = false;
   isHHLoading.value = false;
 };
-const openProviderAuthUrl = (url) => {
-  window.open(url);
+const onCreateFromVacancy = async (id) => {
+  const resData = await createDraftFromActiveVacancy(id);
+  if (resData.status !== "success") {
+    return;
+  }
+
+  navigateTo({ name: "my-vacancies", query: { status: "draft" } });
 };
 </script>
 

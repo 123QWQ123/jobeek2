@@ -86,13 +86,10 @@
 import { useVacancyStore } from "~/store/vacancy";
 import { useProfileStore } from "~/store/profile";
 import { useRuntimeConfig } from "#app";
-import { useDiff } from "~/composables/useDiff";
 import { zod } from "~/hooks/ru-zod.js";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
-import useProviderFields from "~/composables/useProviderFields.js";
 import { useDictionaryStore } from "~/store/dictionary.js";
-import useProviders from "~/composables/useProviders.js";
 
 const props = defineProps(["title"]);
 
@@ -101,7 +98,6 @@ const profileStore = useProfileStore();
 const CONFIG = useRuntimeConfig();
 const route = useRoute();
 
-const { providers } = useProviders();
 const ID = computed(() => route.params.id);
 const type = computed(() => route.query.type);
 const { updateVacancy, updateDraft, getMyVacancy, getMyDraft } = vacancyStore;
@@ -118,20 +114,23 @@ const dictionaryStore = useDictionaryStore();
 
 const schema = computed(() => {
   return zod.object({
-    contacts: zod.object({
-      name: zod.string(),
-      email: zod.string(),
-      company_name: zod.string(),
-      company_description: zod.string(),
-      company_url: zod.string(),
-      company_logo: zod.string(),
-      phones: zod.object({
-        phone: zod.string(),
-        phone_comment: zod.string().optional().nullish(),
-        additional_phone: zod.string().optional().nullish(),
-        additional_phone_comment: zod.string().optional().nullish(),
-      }),
-    }),
+    contacts: zod
+      .object({
+        name: zod.string(),
+        email: zod.string(),
+        company_name: zod.string(),
+        company_description: zod.string(),
+        company_url: zod.string(),
+        company_logo: zod.string(),
+        phones: zod.object({
+          phone: zod.string(),
+          phone_comment: zod.string().optional().nullish(),
+          additional_phone: zod.string().optional().nullish(),
+          additional_phone_comment: zod.string().optional().nullish(),
+        }),
+      })
+      .optional()
+      .nullish(),
   });
 });
 
@@ -140,11 +139,11 @@ const initialValues = {
     ...my_vacancy.value.contacts,
     phones: {
       ...{
-        ...my_vacancy.value.contacts.phones,
+        ...my_vacancy.value.contacts?.phones,
         additional_phone:
-          my_vacancy.value.contacts.phones.additional_phone ?? undefined,
+          my_vacancy.value.contacts?.phones.additional_phone ?? undefined,
         additional_phone_comment:
-          my_vacancy.value.contacts.phones.additional_phone_comment ??
+          my_vacancy.value.contacts?.phones.additional_phone_comment ??
           undefined,
       },
     },
@@ -199,9 +198,6 @@ const fields = ref({
     contacts: true,
   },
 });
-
-const { walkThroughFields } = useProviderFields(state, fields);
-walkThroughFields(providers.value);
 
 const isFocused = ref(false);
 const isLoading = ref(false);

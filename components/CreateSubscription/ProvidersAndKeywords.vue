@@ -87,7 +87,10 @@ import { useSetFormValues } from "vee-validate";
 let { providers } = defineProps({
   providers: {
     required: false,
-    default: null,
+    default: {
+      hh: false,
+      sj: false,
+    },
   },
 });
 
