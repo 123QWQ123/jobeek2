@@ -62,7 +62,7 @@ const emit = defineEmits(["change", "update:modelValue", "input", "unselect"]);
 const props = defineProps({
   options: {
     required: true,
-    default: [],
+    default: [{ name: "Нет данных", value: null }],
   },
   placeholder: {
     required: false,
@@ -165,6 +165,10 @@ const onChangeHandler = (e) => {
       ),
       typedName,
     );
+  }
+
+  if (options.value.length === 0) {
+    options.value = [{ name: "Нет данных", value: null }];
   }
 };
 const onFocus = (e) => {
