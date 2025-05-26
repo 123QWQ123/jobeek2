@@ -18,6 +18,7 @@ export const useProfileStore = defineStore("profile", {
       regions: [],
       cities: [],
       professional_roles: [],
+      professional_roles_list: [],
       hh_professional_roles: [],
       superjob_professional_roles: [],
       artifacts: [],
@@ -35,6 +36,11 @@ export const useProfileStore = defineStore("profile", {
     },
     cityOptions: (state) => {
       return state.cities.map((item) => {
+        return { name: item.name, value: item.id };
+      });
+    },
+    professionalRolesListOption: (state) => {
+      return state.professional_roles_list.map((item) => {
         return { name: item.name, value: item.id };
       });
     },
@@ -187,6 +193,14 @@ export const useProfileStore = defineStore("profile", {
 
       this.professional_roles = response.data.data ?? [];
       return response.data.data ?? [];
+    },
+    async getProfessionalRolesList() {
+      const response = await useApi("professional_roles/list", {
+        method: "get",
+      });
+
+      this.professional_roles_list = response.data.data ?? [];
+      return this.professional_roles_list;
     },
     async searchHHProfessionalRoles(payload = {}) {
       if (this.professional_roles.length > 0) {

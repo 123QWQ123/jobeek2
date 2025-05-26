@@ -14,8 +14,7 @@
 <script setup>
 import { useProfileStore } from "~/store/profile.js";
 
-const profileStore = useProfileStore();
-const cityOptions = ref(profileStore.cityOptions);
+const { cityOptions } = storeToRefs(useProfileStore());
 </script>
 
 <style></style>

@@ -8,7 +8,6 @@
             name="providers"
             type="checkbox"
             value="hh"
-            v-model="providersValues"
             @change="changeProviders"
           />
           <div class="theme-checker-ui">
@@ -27,7 +26,6 @@
             name="providers"
             type="checkbox"
             value="sj"
-            v-model="providersValues"
             @change="changeProviders"
           />
           <div class="theme-checker-ui">

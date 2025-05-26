@@ -1,20 +1,19 @@
 <script setup>
 import { useProfileStore } from "~/store/profile.js";
 
-const { professional_roles_without_parent } = storeToRefs(useProfileStore());
-const professionalRoleOptions = computed(() =>
-  professional_roles_without_parent.value.map((item) => ({
-    name: item.name,
-    value: item.id,
-  })),
-);
+const profileStore = useProfileStore();
+await useAsyncData("profileStore ", async () => {
+  await profileStore.getProfessionalRolesList();
+});
+
+const { professionalRolesListOption } = storeToRefs(profileStore);
 </script>
 
 <template>
   <VeeMultiSelectWithSearch
     name="professional_roles"
     sort_by="none"
-    :options="professionalRoleOptions"
+    :options="professionalRolesListOption"
     :placeholder="'Выберите'"
   />
 </template>

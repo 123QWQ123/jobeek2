@@ -4,21 +4,27 @@ import { useAuthStore } from "~/store/auth.js";
 import { toTypedSchema } from "@vee-validate/zod";
 import useApi from "~/hooks/useApi.js";
 import { useDictionaryStore } from "~/store/dictionary.js";
+import { useProfileStore } from "~/store/profile.js";
 
 useHead({
   title: "Создание подписку",
 });
+const providers = ref([]);
 
 const dictionaryStore = useDictionaryStore();
+const profileStore = useProfileStore();
 // Грузим справочники SSR-совместимо
 useAsyncData("dictionaries", async () => {
   await dictionaryStore.getDictionaries(["work_type"]);
+});
+await useAsyncData("profileStore ", async () => {
+  await profileStore.getCities();
 });
 const getFields = (newObject) => {
   if (!newObject) return {};
   return {
     text: "",
-    providers: null,
+    providers: [],
     work_types: [], //
     push_notification: false,
     email_notification: false,
@@ -101,7 +107,7 @@ const save = async () => {
               </div>
             </div>
             <div class="w-box-body">
-              <CreateSubscriptionProvidersAndKeywords />
+              <CreateSubscriptionProvidersAndKeywords :providers="providers" />
               <div class="sep"></div>
               <CreateSubscriptionFieldsAndAreas />
               <!--          <div class="sep"></div>-->
