@@ -111,6 +111,10 @@ function onSelect(selectedOptionValue) {
   const selectedOptionItem = props.options.find(
     (item) => String(item.value) === String(selectedOptionValue),
   );
+
+  searchInput.value = "";
+  options.value = props.options;
+
   if (!selectedOptionItem) {
     return;
   }
@@ -119,8 +123,6 @@ function onSelect(selectedOptionValue) {
     push(selectedOptionItem.value);
     selectedOptions.value.push(selectedOptionItem);
   }
-  searchInput.value = "";
-  options.value = props.options;
 }
 
 const getCurrentFieldName = (newValue) => {
