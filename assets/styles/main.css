@@ -1108,7 +1108,7 @@ header.main-header .checker-box .v.active:after {
     height: 22px;
     border-radius: 6px;
     position: relative;
-    margin-right: 16px;
+    margin-right: 5px;
     padding: 0;
 }
 
@@ -8323,6 +8323,28 @@ textarea.form-control {
 
 div.parsed_content {
 	word-break: break-all;
+}
+
+.main.search-page {
+    background-image: url("../img/bg.svg");
+    background-position: top 0 center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.main.search-page .wrapper-mb {
+    margin-bottom: 40px;
+}
+
+.main.search-page .wrapper-mb .main-section-title {
+	margin-bottom: 0;
+    text-align: left;
+    align-items: baseline;
+}
+
+.main.search-page .wrapper-mb .main-section-title h1 {
+    font-size: 28px;
+    line-height: 38px;
 }
 
 @media (max-width: 960px) {

@@ -1,4 +1,6 @@
 <template>
+<div class="wrapper wrapper-mb">
+<div class="main-section-title"><h1 class="title">Поиск вакансий</h1></div>
   <form class="search-form" role="form" autocomplete="off">
     <div class="search-row" :class="{ wrapper: props.withWrapper }">
       <div class="input-wrap has-icon has-label">
@@ -35,8 +37,8 @@
       </button>
     </div>
   </form>
+</div>
 </template>
-
 <script setup>
 import { useAuthStore } from "~/store/auth";
 import { useVacancyStore } from "~/store/vacancy";
