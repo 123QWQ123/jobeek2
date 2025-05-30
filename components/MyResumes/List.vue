@@ -32,8 +32,8 @@
     <ul class="resume-list mt-4" v-if="my_resumes.length > 0">
       <MyResumesItem v-for="item in my_resumes" :key="item.id" :item="item" />
     </ul>
-    <div class="d-flex mt-4 pb-4 justify-content-center" v-else>
-      <p>Ничего не найдено!</p>
+    <div class="provider_buttons d-flex mt-4 pb-4 justify-content-center" v-else>
+      <p>У Вас нет резюме.</p>
     </div>
   </div>
 </template>
@@ -79,3 +79,12 @@ const onProviderChange = (newProvider) => {
   else navigateTo({ name: "my-resumes" });
 };
 </script>
+
+<style scoped>
+.provider_buttons {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  font-weight: bold;
+}
+</style>

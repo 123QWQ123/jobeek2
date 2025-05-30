@@ -1,6 +1,7 @@
 <template>
-  <div v-if="props.with_wrapper">
-    <div class="wrapper">
+  <div class="wrapper wrapper-mb">
+  <div class="main-section-title"><h1 class="title">Поиск резюме</h1></div>
+  	<div v-if="props.with_wrapper">
       <form class="search-form" role="form" autocomplete="off">
         <div class="search-row">
           <div class="input-wrap has-icon has-label">
@@ -38,7 +39,6 @@
         </div>
       </form>
     </div>
-  </div>
 
   <form v-else class="search-form" role="form" autocomplete="off">
     <div class="search-row">
@@ -77,6 +77,7 @@
       </button>
     </div>
   </form>
+  </div>
 </template>
 
 <script setup>
