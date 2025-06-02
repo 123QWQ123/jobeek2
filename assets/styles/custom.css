@@ -117,9 +117,13 @@
 
 
 .sign-in-btn {
+    align-items: center;
     display: inline-flex;
     justify-content: center;
-    align-items: center;
+    font-weight: 700;
+    font-size: 16px;
+    color: #fff;
+    margin-right: 15px;
 }
 
 .profile-btn {
