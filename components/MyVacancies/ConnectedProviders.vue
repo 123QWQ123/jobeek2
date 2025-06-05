@@ -367,7 +367,7 @@ const onOpen = (provider) => {
 }
 
 .rotating {
-  animation: rotation 2s infinite linear;
+  /*animation: rotation 2s infinite linear;*/
 }
 
 .services-grid-load.import-grid {

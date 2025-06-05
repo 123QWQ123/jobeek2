@@ -117,12 +117,27 @@
 
 
 .sign-in-btn {
+    align-items: center;
     display: inline-flex;
     justify-content: center;
-    align-items: center;
+    font-weight: 700;
+    font-size: 16px;
+    color: #78757E;
+    margin-right: 15px;
+}
+
+.profile-action .sign-in-btn {
+    color: #fff !important;
 }
 
 .profile-btn {
     min-width: 140px;
     min-height: 44px;
+}
+
+li.option .rub {
+	font-family: Open Sans, sans-serif !important;
+	font-size: 14px;
+    font-style: normal;
+    line-height: 14px;
 }

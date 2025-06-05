@@ -33,7 +33,7 @@
       />
     </ul>
     <div class="d-flex mt-4 pb-4 justify-content-center" v-else>
-      <p>Ничего не найдено!</p>
+      <p>У Вас нет вакансий.</p>
     </div>
 
     <div class="d-flex mt-4 justify-content-between" v-if="isPaginationVisible">
@@ -149,6 +149,13 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.provider_buttons {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  font-weight: bold;
+}
+
 .theme-checker input ~ .theme-checker-ui .circle.left {
   transform: translate(3px, -50%);
 }

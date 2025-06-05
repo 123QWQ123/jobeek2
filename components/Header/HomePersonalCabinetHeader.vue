@@ -50,7 +50,7 @@ const isPremium = computed(() => auth.isSubscribed);
             <Logo />
             <div class="profile-action" v-if="auth.isAuthed">
               <a
-                class="btn button-xs sign-in-btn ms-4"
+                class="sign-in-btn ms-4"
                 @click="onProfileClick"
                 role="link"
               >
