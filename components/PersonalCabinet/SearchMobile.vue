@@ -1,5 +1,5 @@
 <template>
-  <div v-if="props.with_wrapper" class="main-section-mob">
+  <div v-if="with_wrapper" class="main-section-mob">
     <div class="wrapper">
       <form class="search-form" role="form" autocomplete="off">
         <div class="search-row">
@@ -86,43 +86,35 @@
   </form>
 </template>
 
-<script setup>
-import { computed, ref, watch } from "vue";
+<script setup lang="ts">
+import { ref, computed, watch, defineProps } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "~/store/auth";
 import { useVacancyStore } from "~/store/vacancy";
 import { useProfileStore } from "~/store/profile";
-import { useRouter, useRoute } from "vue-router";
 import useQueryParams from "~/composables/useQueryParams.js";
 
-// Props
 const props = defineProps({
   with_wrapper: {
     default: false,
   },
 });
 
-// Stores
 const auth = useAuthStore();
 const vacancyStore = useVacancyStore();
 const profileStore = useProfileStore();
 const { searchCities } = profileStore;
 
-// Router
 const router = useRouter();
 const route = useRoute();
 
-// Query parameters
-const { getCurrentQueryParams, getQueryParam } = useQueryParams();
-const params = getCurrentQueryParams();
+const { getQueryParam } = useQueryParams();
 
-// Reactive state
-const search = ref(route.query?.search ?? undefined);
-const salary = ref(getQueryParam("salary") || {});
-const city = ref(null);
+const search = ref(route.query?.search ?? "");
+const salary = ref(getQueryParam("salary") ?? "");
+const city = ref(route.query?.cities ? +route.query.cities : null);
 const cityOptions = ref([]);
-const isLoading = ref(false);
 
-// Computed properties
 const isEmployer = computed(() => auth.isEmployer);
 const searchPlaceHolder = computed(() =>
   isEmployer.value
@@ -130,57 +122,55 @@ const searchPlaceHolder = computed(() =>
     : "Какую вакансию вы ищете?",
 );
 
-// Country logic (многократно используется в приложении)
-const country = computed(() => {
-  if (params.countries && params.countries.length === 1) {
-    return params.countries[0];
-  }
-  return 1;
-});
-
-// Watchers
-watch(
-  () => getQueryParam("salary"),
-  (newValue) => {
-    salary.value = newValue;
-  },
-);
-const updateCityInput = async (newValue = "") => {
-  const items = (await searchCities({ search: newValue })) ?? [];
+// Сразу подгружаем города (можно заменить на useAsyncData).
+const fetchCities = async (query: string = "") => {
+  const items = (await searchCities({ search: query })) ?? [];
   cityOptions.value = items.map((item) => ({
     value: item.id,
     name: item.name,
   }));
 };
 
-const onCityChange = (cityItem) => {
-  city.value = cityItem.value || undefined;
+// При изменении, снова получаем опции (supports search-as-you-type)
+const updateCityInput = async (newValue = "") => {
+  await fetchCities(newValue);
+};
+
+const onCityChange = (cityItem: any) => {
+  city.value = cityItem?.value || null;
 };
 
 const buildQueryParams = () => {
-  const cities = city.value ? [city.value] : undefined;
   return {
-    cities: JSON.stringify(cities),
-    salary: JSON.stringify(salary.value),
-    search: search.value,
+    cities: city.value ? String(city.value) : undefined, // только id, не массив
+    salary: salary.value
+      ? typeof salary.value === "object"
+        ? JSON.stringify(salary.value)
+        : salary.value
+      : undefined,
+    search: search.value || undefined,
   };
 };
 
-const navigateToSearch = async (query) => {
+const onSubmit = async () => {
+  await vacancyStore.clearVacancies();
+  const query = buildQueryParams();
   const routeName = isEmployer.value ? "search-resumes" : "search-vacancies";
   await router.push({ name: routeName, query });
 };
 
-const onSubmit = async () => {
-  isLoading.value = true;
-  try {
-    await vacancyStore.clearVacancies();
-    const query = buildQueryParams();
-    await navigateToSearch(query);
-  } finally {
-    isLoading.value = false;
-  }
-};
+// Подгружаем города при открытии
+fetchCities();
+
+watch(
+  () => route.query.cities,
+  (newVal) => {
+    if (newVal) {
+      city.value = +newVal;
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <style scoped>

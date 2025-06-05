@@ -114,13 +114,10 @@ const toggleCity = (id) => {
 };
 
 watch(regions, () => {
-  getCities({ region_ids: regions.value });
+  getCities();
 });
 
-useAsyncData(
-  "cities",
-  async () => await getCities({ region_ids: regions.value }),
-);
+useAsyncData("cities", async () => await getCities());
 </script>
 
 <style scoped>

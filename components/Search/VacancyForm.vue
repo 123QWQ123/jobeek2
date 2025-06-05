@@ -19,13 +19,13 @@
         <HeaderSalarySelectInForm v-model="salary" />
       </div>
       <div class="input-wrap has-label">
-        <label for="salary">Город</label>
+        <label for="city">Город</label>
         <SelectWithSearch
           :options="cityOptions"
           v-model="city"
-          placeholder="Город"
-          @update:modelValue="onCityChange"
+          :placeholder="'Город'"
           @input="updateCityInput"
+          @change="onCityChange"
         />
       </div>
       <button
@@ -39,18 +39,15 @@
   </form>
 </div>
 </template>
-<script setup>
-import { useAuthStore } from "~/store/auth";
+<script setup lang="ts">
+import { ref, watch, computed } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { useVacancyStore } from "~/store/vacancy";
 import { useProfileStore } from "~/store/profile";
 import useQueryParams from "~/composables/useQueryParams.js";
-import { ref, computed, onMounted, watch } from "vue";
 
 const props = defineProps({
-  withWrapper: {
-    type: Boolean,
-    default: false,
-  },
+  withWrapper: { type: Boolean, default: false },
 });
 
 const placeholder = computed(() =>
@@ -59,34 +56,65 @@ const placeholder = computed(() =>
     : "Какую вакансию вы ищете?",
 );
 
-const auth = useAuthStore();
 const router = useRouter();
 const route = useRoute();
-
 const vacancyStore = useVacancyStore();
 const profileStore = useProfileStore();
 const { searchCities } = profileStore;
-const { clearVacancies, getVacancies, getCities } = vacancyStore;
-
+const { clearVacancies } = vacancyStore;
 const { getQueryParam } = useQueryParams();
 
 const search = ref(route.query?.search ?? "");
-const salary = ref(getQueryParam("salary"));
-const city = ref(null);
-const cityOptions = ref([]);
+const salary = ref(getQueryParam("salary") ?? "");
+const cityOptions = ref<{ value: number; name: string }[]>([]);
+const city = ref<number | null>(extractCityIdFromQuery(route.query));
 
-onMounted(async () => {
-  const citiesFromQuery = getQueryParam("cities");
-  if (citiesFromQuery && citiesFromQuery.length > 0) {
-    const cityFromAPI = (await getCities())?.find(
-      (item) => item.id === citiesFromQuery[0],
-    );
-    if (cityFromAPI) {
-      cityOptions.value = [{ value: cityFromAPI.id, name: cityFromAPI.name }];
-      city.value = cityFromAPI.id;
+// Специальная функция для извлечения id города из query-параметра
+function extractCityIdFromQuery(query): number | null {
+  const raw = query?.cities;
+  if (!raw) return null;
+  try {
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? Number(arr[0]) : Number(arr);
+  } catch {
+    return Number(raw);
+  }
+}
+
+// При инициализации — если в query есть город, добавляем его в cityOptions
+await useAsyncData("city-from-query", async () => {
+  if (city.value) {
+    const arr = JSON.parse(city.value);
+    const allCities = await vacancyStore.getCities({
+      city_ids: Array.isArray(arr) ? arr : [Number(arr)],
+    });
+    const found = allCities?.find((item) => item.id === city.value);
+    if (found) {
+      cityOptions.value = [{ value: found.id, name: found.name }];
     }
   }
 });
+
+watch(
+  () => route.query?.cities,
+  async (newCities) => {
+    const id = extractCityIdFromQuery({ cities: newCities });
+    if (id) {
+      const arr = JSON.parse(city.value);
+      const allCities = await vacancyStore.getCities({
+        city_ids: Array.isArray(arr) ? arr : [Number(arr)],
+      });
+      const found = allCities?.find((item) => item.id === id);
+      if (found) {
+        cityOptions.value = [{ value: found.id, name: found.name }];
+        city.value = found.id;
+      }
+    } else {
+      city.value = null;
+      cityOptions.value = [];
+    }
+  },
+);
 
 watch(
   () => getQueryParam("salary"),
@@ -95,8 +123,8 @@ watch(
   },
 );
 
-const onCityChange = (cityItem) => {
-  city.value = cityItem?.value ?? undefined; // Simplify city value update
+const onCityChange = (cityId) => {
+  city.value = cityId ?? null;
 };
 
 const updateCityInput = async (newValue = "") => {
@@ -109,14 +137,17 @@ const updateCityInput = async (newValue = "") => {
 
 const onSubmit = async () => {
   await clearVacancies();
-  const cities = city.value ? [city.value] : undefined;
-
   await router.push({
     name: "search-vacancies",
     query: {
-      cities: JSON.stringify(cities),
-      salary: JSON.stringify(salary.value),
-      search: search.value,
+      // Упаковываем id в строку-массив, так как роутер формирует такой формат
+      cities: city.value ? JSON.stringify([city.value]) : undefined,
+      salary: salary.value
+        ? typeof salary.value === "object"
+          ? JSON.stringify(salary.value)
+          : salary.value
+        : undefined,
+      search: search.value || undefined,
     },
   });
 };

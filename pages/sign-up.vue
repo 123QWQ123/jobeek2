@@ -177,12 +177,12 @@ const onSMSSubmit = async () => {
     code: state.code.val,
     preset: phoneDisabled.value,
   });
-  if (response.status !== "success") {
+  if (response.data.status !== "success") {
     let message = "Неизвестная ошибка!";
-    if (response && response.hasOwnProperty("message")) {
-      message = response.message;
+    if (response && response.data.hasOwnProperty("message")) {
+      message = response.data.message;
     }
-    Swal.fire({
+    await Swal.fire({
       title: "Ошибка!",
       text: message,
       icon: "error",
@@ -197,7 +197,7 @@ const onSMSSubmit = async () => {
   const tryLoginData = await tryLogin(response.data.token);
   if (!tryLoginData) {
     let message = "Неизвестная ошибка!";
-    Swal.fire({
+    await Swal.fire({
       title: "Ошибка!",
       text: message,
       icon: "error",

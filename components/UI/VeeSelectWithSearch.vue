@@ -3,14 +3,14 @@
     <div
       class="nice-select n-select d-select"
       :class="{ open: isOpen }"
-      v-click-outside="() => (isOpen = false)"
+      v-click-outside="close"
       tabindex="0"
     >
       <input
         class="current"
         ref="inputRef"
         v-model="searchInput"
-        @input="onChangeHandler"
+        @input="onInput"
         role="spinbutton"
         autocomplete="off"
         autofill="off"
@@ -18,18 +18,18 @@
         :class="{ placeholder: placeholderClass }"
       />
       <span class="select_arrow" @click="toggle"></span>
-      <ul class="list" :style="listStyles" v-if="isOpen">
+      <ul class="list" :style="props.listStyles" v-if="isOpen">
         <li
-          v-for="item in options"
+          v-for="item in filteredOptions"
           :key="item.value"
           :data-value="item.value"
           class="option"
           @click="onSelect(item.value)"
-          :style="listItemStyles"
+          :style="props.listItemStyles"
         >
           {{ item.name }}
         </li>
-        <li v-if="options.length === 0">
+        <li v-if="filteredOptions.length === 0">
           {{ props.not_found }}
         </li>
       </ul>
@@ -43,171 +43,113 @@
     </div>
   </div>
 </template>
-<script>
-export default {
-  name: "SelectWithSearch",
-};
-</script>
 
 <script setup>
+import { ref, computed, watch, nextTick } from "vue";
+import { useField } from "vee-validate";
+
+// Props and events
 const emit = defineEmits(["change", "update:modelValue", "input"]);
 const props = defineProps({
-  options: {
-    required: true,
-  },
-  label: {
-    required: false,
-  },
-  name: {
-    required: false,
-  },
-  placeholder: {
-    required: false,
-  },
-  listStyles: {
-    required: false,
-  },
-  listItemStyles: {
-    required: false,
-  },
-  selected: {
-    required: false,
-  },
-  not_found: {
-    required: false,
-    type: String,
-    default: "Не найдено",
-  },
-  error: {
-    required: false,
-    type: String,
-    default: "",
-  },
-  value: false,
+  options: { type: Array, required: true },
+  label: String,
+  name: String,
+  placeholder: String,
+  listStyles: Object,
+  listItemStyles: Object,
+  selected: [String, Number, Object],
+  not_found: { type: String, default: "Не найдено" },
+  error: { type: String, default: "" },
+  value: [String, Number, Object],
 });
 
-const customErrorMessage = ref(props.error);
+// Component state
 const inputRef = ref();
-
-// The `name` is returned in a function because we want to make sure it stays reactive
-// If the name changes you want `useField` to be able to pick it up
-const { value, errorMessage } = useField(() => props.name);
-const inputValue = ref(value.value ?? props.value);
-
-const isFirst = ref(false);
 const isOpen = ref(false);
-const options = ref(props.options);
-const placeholder = ref(props.placeholder);
-const searchInput = ref(
-  options.value.find((item) => String(item.value) === String(inputValue.value))
-    ?.name || null,
-);
-const selectedOption = ref(
-  options.value.find(
-    (item) => String(item.value) === String(inputValue.value),
-  ) || {},
+const searchInput = ref("");
+
+// vee-validate
+const { value, errorMessage } = useField(() => props.name);
+
+// Find the selected item
+const selectedOption = computed(() =>
+  props.options.find((item) => String(item.value) === String(value.value)),
 );
 
-watch(
-  () => props.placeholder,
-  () => (placeholder.value = props.placeholder),
-);
+// Show placeholder if there is no selected item
+const placeholderClass = computed(() => !selectedOption.value);
 
+// Filtered list of options
+const filteredOptions = computed(() => {
+  if (!searchInput.value) return props.options;
+  const q = searchInput.value.toLowerCase();
+  return props.options.filter((item) =>
+    String(item.name).toLowerCase().includes(q),
+  );
+});
+
+// On value change -> update the input field (searchInput)
 watch(
   () => value.value,
-  (newValue) => {
-    const found = options.value.find(
-      (item) => String(item.value) === String(newValue),
+  (val) => {
+    const found = props.options.find(
+      (item) => String(item.value) === String(val),
     );
+    searchInput.value = found ? found.name : "";
+  },
+  { immediate: true },
+);
 
-    if (!found) {
+// On options change — reset selected value if not actual anymore
+watch(
+  () => props.options,
+  (options) => {
+    if (!options.find((opt) => String(opt.value) === String(value.value))) {
+      value.value = "";
       searchInput.value = "";
-      selectedOption.value = {};
-      // inputRef.value.focus();
-      return;
     }
-    selectedOption.value = found;
-    searchInput.value = found.name;
   },
 );
 
-if (inputValue.value) {
-  const found = props.options.find(
-    (item) => String(item.value) === String(inputValue.value),
-  );
-
-  if (found) {
-    options.value = [
-      {
-        ...found,
-      },
-    ];
-    selectedOption.value = found;
-    searchInput.value = found.name;
-  }
-}
-
-const input = ref("");
-
-const placeholderClass = computed(() => {
-  return isFirst.value || !selectedOption.value;
-});
-
+// Open/close select
 function toggle() {
   isOpen.value = !isOpen.value;
+  if (isOpen.value) {
+    nextTick(() => inputRef.value?.focus());
+  }
 }
 
-watch(
-  () => isOpen.value,
-  (newOpen) => {
-    if (!newOpen) {
-      if (searchInput.value === "") {
-        searchInput.value = props.placeholder;
-      }
-    }
-  },
-);
+function close() {
+  isOpen.value = false;
+}
 
-function onSelect(id) {
-  const selectedOptionItem = options.value.find(
-    (item) => String(item.value) === String(id),
+// Handle selection
+function onSelect(val) {
+  const found = props.options.find(
+    (item) => String(item.value) === String(val),
   );
-  if (selectedOptionItem) {
-    options.value = [
-      {
-        ...selectedOptionItem,
-      },
-    ];
-    selectedOption.value = selectedOptionItem;
-    searchInput.value = selectedOptionItem.name;
-    value.value = id;
-    isOpen.value = false;
+  if (found) {
+    value.value = found.value;
+    searchInput.value = found.name;
+    emit("update:modelValue", found.value);
+    emit("change", found.value);
+    close();
   }
 }
 
-const onChangeHandler = (e) => {
+// When typing in the field
+function onInput(e) {
   isOpen.value = true;
-  const typedName = e.target.value.toLowerCase();
   emit("input", searchInput.value);
-  if (typedName === "") {
-    options.value = props.options;
-  } else {
-    options.value = props.options.filter((item) =>
-      String(item.name).toLowerCase().includes(typedName),
-    );
-  }
-};
+}
 
-const onFocus = (e) => {
-  if (props.placeholder === searchInput.value) {
+// On field focus (clear placeholder if needed)
+function onFocus() {
+  if (props.placeholder && searchInput.value === props.placeholder) {
     searchInput.value = "";
   }
   isOpen.value = true;
   emit("input", searchInput.value);
-};
-
-function close() {
-  isOpen.value = false;
 }
 </script>
 

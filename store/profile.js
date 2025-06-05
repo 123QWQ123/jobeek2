@@ -97,9 +97,6 @@ export const useProfileStore = defineStore("profile", {
       this.seeker = payload;
     },
     async getCountries(payload = {}, is_new = false) {
-      if (this.countries.length > 0 && !is_new) {
-        return this.countries;
-      }
       const response = await useApi("area/countries", {
         method: "get",
         payload,
