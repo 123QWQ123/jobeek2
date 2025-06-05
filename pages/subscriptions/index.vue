@@ -21,9 +21,9 @@ const authStore = useAuthStore();
   	              <div class="premium-notification-icon"></div>
   	              <strong class="title">Премиум</strong>
                   <div class="plash">Не подключен</div>
-                  <div class="theme-checker">
+                  <div class="premium-checker">
                     <input type="checkbox" id="employer">
-                    <div class="theme-checker-ui">
+                    <div class="premium-checker-ui">
                       <div class="circle left"></div>
                     </div>
                   </div>
@@ -35,9 +35,9 @@ const authStore = useAuthStore();
   	              <div class="premium-notification-icon"></div>
   	              <strong class="title">Премиум</strong>
                   <div class="plash">Подключен</div>
-                  <div class="theme-checker">
+                  <div class="premium-checker">
                     <input type="checkbox" id="employer">
-                    <div class="theme-checker-ui">
+                    <div class="premium-checker-ui">
                       <div class="circle left"></div>
                     </div>
                   </div>

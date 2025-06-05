@@ -18,7 +18,7 @@
           class="option"
           @click="updateValue(item.value)"
         >
-          {{ item.name }} <span v-if="!isNullOrUndefined(item.min)">₽</span>
+          {{ item.name }} <span v-if="!isNullOrUndefined(item.min)" class="rub">₽</span>
         </li>
       </ul>
     </transition>
