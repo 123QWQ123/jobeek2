@@ -908,11 +908,11 @@ header.main-header .checker-box .v.active:after {
 }
 
 .d-select:after {
-    width: 9px;
-    height: 9px;
+    width: 10px;
+    height: 10px;
     top: 44%;
     right: 24px;
-    border-width: 1.5px;
+    border-width: 1px;
     border-color: #78757E;
 }
 
@@ -3700,6 +3700,7 @@ body .main-section-mob {
     width: 38px;
     height: 37px;
     display: block;
+    min-width: 38px;
 }
 
 .notification.active .premium-notification-icon {
@@ -3763,6 +3764,7 @@ body .main-section-mob {
     font-weight: 700;
     line-height: 100%;
     margin-left: 10px;
+    margin-top: 4px;
 }
 
 .notification.active .notification-text .plash {
@@ -3775,7 +3777,7 @@ body .main-section-mob {
     font-size: 20px;
     line-height: 33px;
     color: #fff;
-    margin-left: 15px;
+    margin-left: 12px;
 }
 
 .notification.active .notification-text .title {
@@ -8300,7 +8302,15 @@ textarea.form-control {
 
 .d-select:after {
     border-color: #78757e;
-    border-width: 2px;
+    border-width: 1px;
+}
+
+.comment-section textarea {
+    padding: 16px;
+}
+
+.input-wrapper ul.list li.option::first-letter {
+    text-transform: uppercase;
 }
 
 @media (max-width: 1280px) {

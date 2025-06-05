@@ -27,7 +27,7 @@ const isPremium = computed(() => auth.isSubscribed);
         <CabinetHeaderSearchForm v-if="!isCabinetNavbarShown" class="mr-2" />
         <div class="profile-action">
           <a
-            class="btn button-xs sign-in-btn ms-4"
+            class="sign-in-btn ms-4"
             @click="onProfileClick"
             role="link"
           >
