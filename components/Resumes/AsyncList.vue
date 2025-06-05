@@ -76,7 +76,6 @@ const loadMore = async () => {
       title: "Больше резюме не найдено!",
       icon: "success",
     });
-    return;
   }
   // loadMoreButton.value.scrollIntoView({ behavior: "smooth", block: "start" });
 };

@@ -9,15 +9,12 @@
         <div class="ms-2 spinner-grow spinner-grow-sm" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
-        <img src="~/assets/img/svg/Arrow-Down2.svg" alt="#">
+        <img src="~/assets/img/svg/Arrow-Down2.svg" alt="#" />
       </button>
     </div>
   </div>
 </template>
 
-<script setup>
-</script>
+<script setup></script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

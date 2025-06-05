@@ -1,4 +1,5 @@
-<script setup>
+<script setup lang="ts">
+import { storeToRefs } from "pinia";
 import { useAuthStore } from "~/store/auth";
 import Premium from "~/components/MyVacancies/Premium.vue";
 
@@ -10,32 +11,24 @@ const authStore = useAuthStore();
 const { seeker, employer, isEmployer } = storeToRefs(authStore);
 
 const isCompleted = computed(() => {
-  if (!isEmployer.value) {
-    if (seeker.value) {
-      return seeker.value.is_completed;
-    }
-    return false;
-  }
-  if (isEmployer.value) {
-    if (employer.value) {
-      return employer.value.is_completed;
-    }
-    return false;
-  }
-  return false;
+  if (!isEmployer.value) return seeker.value?.is_completed ?? false;
+  return employer.value?.is_completed ?? false;
 });
-onMounted(() => {
-  if (!isEmployer.value) {
-    navigateTo({ name: "profile-seeker" });
-  }
-});
+
+const router = useRouter();
+
+if (!isEmployer.value) {
+  router.push({ name: "profile-seeker" });
+}
+
 watch(
-  () => isEmployer.value,
+  isEmployer,
   (newValue) => {
     if (!newValue) {
-      navigateTo({ name: "profile-seeker" });
+      router.push({ name: "profile-seeker" });
     }
   },
+  { immediate: true },
 );
 </script>
 

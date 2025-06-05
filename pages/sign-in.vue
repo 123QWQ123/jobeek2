@@ -81,6 +81,8 @@ async function onSubmit() {
       });
     } catch (error) {
       state.error = error.message;
+    } finally {
+      isLoading.value = false;
     }
     if (response.status !== "success") {
       return;

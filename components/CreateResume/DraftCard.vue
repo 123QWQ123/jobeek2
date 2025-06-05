@@ -133,7 +133,7 @@
           <div class="input-wrapper mt-2">
             <VeeMultiSelectWithSearch
               name="work_types"
-              :options="dictionaryStore.work_types_formatted"
+              :options="work_types_formatted"
               placeholder="Выберите"
             />
           </div>
@@ -148,10 +148,8 @@ import { useDictionaryStore } from "~/store/dictionary";
 import { useResumeStore } from "~/store/resume";
 
 import { useProfileStore } from "~/store/profile";
-import { useRuntimeConfig } from "#app";
 import useFormValidation from "~/composables/useFormValidation";
 import { storeToRefs } from "pinia";
-import useResumeHooks from "~/hooks/useResumeHooks";
 import ResumeCheckboxInput from "~/components/CreateResume/ResumeCheckboxInput.vue";
 import ResumeTextInput from "~/components/CreateResume/ResumeTextInput.vue";
 import { zod } from "~/hooks/ru-zod.js";
@@ -166,6 +164,22 @@ const formTitle = computed(() => props.title);
 const isSaved = ref(false);
 const isChanged = ref(false);
 const isUpdated = ref(false);
+
+const dictionaryStore = useDictionaryStore();
+const { getGenders, getBusinessTrips, getWorkTypes, getRelocationTypes } =
+  dictionaryStore;
+useAsyncData(
+  "dictionary",
+  async () => {
+    await getGenders();
+    await getBusinessTrips();
+    await getWorkTypes();
+    await getRelocationTypes();
+  },
+  {
+    immediate: true,
+  },
+);
 
 const schema = zod.object({
   providers: zod.array(zod.string()).nonempty("Выберите хотя бы 1 сервис"),
@@ -264,10 +278,9 @@ const isMovableCitiesEnabled = computed(() => {
 
 const { searchCities } = profileStore;
 
-const dictionaryStore = useDictionaryStore();
 const cityOptions = ref([]);
 const moveableCityOptions = ref([]);
-
+const { work_types_formatted } = storeToRefs(dictionaryStore);
 const genderOptions = computed(() => {
   return dictionaryStore.resume_genders.map((item) => ({
     name: item.name,
@@ -286,16 +299,7 @@ const relocationTypeOptions = computed(() => {
     value: item.id,
   }));
 });
-const { getGenders, getBusinessTrips, getWorkTypes, getRelocationTypes } =
-  dictionaryStore;
-onMounted(() => {
-  getGenders({}, true);
-  getBusinessTrips();
-  getWorkTypes();
-  getRelocationTypes();
-});
 
-const { getCityName, getCityNameFromArea2 } = useResumeHooks();
 const updateCityInput = async (newValue = "") => {
   if (newValue.length < 2) {
     return;
@@ -303,7 +307,7 @@ const updateCityInput = async (newValue = "") => {
   const items = (await searchCities({ search: newValue })) ?? [];
   cityOptions.value = items.map((item) => ({
     value: item.id,
-    name: getCityNameFromArea2(item),
+    name: item.name,
   }));
 };
 
@@ -341,7 +345,7 @@ const onSubmit = handleSubmit((submittedValues) => {
   save();
 });
 const save = async (is_from_parent = false) => {
-  validate();
+  await validate();
   if (!meta.value.valid) {
     errorMessage.value = "Вам необходимо заполнить";
     scrollTop();

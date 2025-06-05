@@ -10,13 +10,13 @@
       :value="searchInput"
       @input="onChangeHandler"
       @focusin="onFocus"
-      :placeholder="props.placeholder"
+      :placeholder="placeholder"
       :class="{ placeholder: placeholderClass }"
     />
     <span class="select_arrow" @click="toggle"></span>
     <ul class="list" :style="listStyles" v-if="isOpen">
       <li
-        v-for="item in options"
+        v-for="item in filteredOptions"
         :key="item.value"
         :data-value="item.value"
         class="option"
@@ -25,124 +25,77 @@
       >
         {{ item.name }}
       </li>
-
-      <li v-if="options.length === 0">
-        <span v-if="isFirstOpen">{{ props.hint }}</span>
-        <span v-else>{{ props.not_found }}</span>
+      <li v-if="filteredOptions.length === 0">
+        <span v-if="isFirstOpen">{{ hint }}</span>
+        <span v-else>{{ not_found }}</span>
       </li>
     </ul>
   </div>
 </template>
-<script>
-export default {
-  name: "SelectWithSearch",
-};
-</script>
 
 <script setup>
+import { ref, computed, watch } from "vue";
+
 const emit = defineEmits(["change", "update:modelValue", "input"]);
 const props = defineProps({
-  options: {
-    required: true,
-  },
-  label: {
-    required: false,
-  },
-  placeholder: {
-    required: false,
-  },
-  listStyles: {
-    required: false,
-  },
-  listItemStyles: {
-    required: false,
-  },
-  modelValue: {
-    required: true,
-    default: null,
-  },
-  selected: {
-    required: false,
-  },
-  not_found: {
-    required: false,
-    type: String,
-    default: "Не найдено",
-  },
-  hint: {
-    required: false,
-    type: String,
-    default: "Введите...",
-  },
+  options: { required: true },
+  label: { required: false },
+  placeholder: { type: String, default: "Выберите..." },
+  listStyles: { required: false },
+  listItemStyles: { required: false },
+  modelValue: { required: true, default: null },
+  selected: { required: false },
+  not_found: { type: String, default: "Не найдено" },
+  hint: { type: String, default: "Введите..." },
 });
 
 const isFirst = ref(false);
 const isFirstOpen = ref(true);
 const isOpen = ref(false);
 
-const options = ref(props.options);
-const searchInput = ref("");
+const selectedOption = computed(() =>
+  props.options.find((item) => String(item.value) === String(props.modelValue)),
+);
+
+// searchInput управляется вручную и инициализируется через watch для синхронизации с выбранным значением
+const searchInput = ref(selectedOption.value?.name ?? props.placeholder);
 
 watch(
-  () => props.options,
-  (newOptions) => {
-    options.value = newOptions;
-    if (props.modelValue) {
-      selectedOption.value = options.value.find(
-        (item) => String(item.value) === String(props.modelValue),
-      );
-    }
-  },
-);
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    selectedOption.value = options.value.find(
-      (item) => String(item.value) === String(newValue),
-    );
-    searchInput.value = selectedOption.value.name;
+  () => selectedOption.value,
+  (val) => {
+    searchInput.value = val ? val.name : "";
   },
 );
 
-const selectedOption = ref({});
-
-if (props.modelValue) {
-  selectedOption.value = options.value.find(
-    (item) => String(item.value) === String(props.modelValue),
+const filteredOptions = computed(() => {
+  if (!searchInput.value) return props.options;
+  const search = searchInput.value.toLowerCase();
+  return props.options.filter((item) =>
+    String(item.name).toLowerCase().includes(search),
   );
-  searchInput.value = selectedOption.value.name;
-}
+});
 
 const placeholderClass = computed(() => {
-  return isFirst.value || !selectedOption.value;
+  return !selectedOption.value;
 });
 
 function toggle() {
   isOpen.value = !isOpen.value;
 }
 
+// Когда выпадашка закрывается — если строка пуста, показываем плейсхолдер
 watch(
   () => isOpen.value,
   (newOpen) => {
-    if (!newOpen) {
-      if (searchInput.value === "") {
-        searchInput.value = props.placeholder;
-      }
+    if (!newOpen && searchInput.value === "") {
+      searchInput.value = props.placeholder;
     }
   },
 );
 
 function onSelect(id) {
-  const selectedOptionItem = options.value.find(
-    (item) => String(item.value) === String(id),
-  );
-  if (selectedOptionItem) {
-    selectedOption.value = selectedOptionItem;
-    searchInput.value = selectedOptionItem.name;
-    // emit("change", selectedOptionItem);
-    emit("update:modelValue", id);
-    isOpen.value = false;
-  }
+  emit("update:modelValue", id);
+  isOpen.value = false;
 }
 
 const onChangeHandler = (e) => {
@@ -150,28 +103,16 @@ const onChangeHandler = (e) => {
   searchInput.value = e.target.value;
   const typedName = e.target.value.toLowerCase();
   if (typedName.length > 0) isFirstOpen.value = false;
-
   emit("input", typedName);
-  if (typedName === "") {
-    options.value = props.options;
-  } else {
-    options.value = props.options.filter((item) =>
-      String(item.name).toLowerCase().includes(typedName),
-    );
-  }
 };
 
-const onFocus = (e) => {
+const onFocus = () => {
   if (props.placeholder === searchInput.value) {
     searchInput.value = "";
   }
   isOpen.value = true;
   emit("input", searchInput.value);
 };
-
-function close() {
-  isOpen.value = false;
-}
 </script>
 
 <style>

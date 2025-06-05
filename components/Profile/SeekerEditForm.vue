@@ -96,26 +96,29 @@ import { navigateTo, useAsyncData } from "#app";
 import { toTypedSchema } from "@vee-validate/zod";
 import avatar from "~/assets/img/jobeek-avatar.png";
 import { zod } from "~/hooks/ru-zod.js";
+import { ref, watch } from "vue";
 
+// Stores и основные данные
 const profileStore = useProfileStore();
 const authStore = useAuthStore();
 const { refreshSeeker } = useAuthStore();
 const { getCountries, getCities, getUser, updateSeeker } = profileStore;
-
 const { countryOptions, cityOptions } = storeToRefs(profileStore);
+
+// Вспомогательные реактивные переменные
 const cityError = ref("");
 const countryError = ref("");
 const isLoading = ref(false);
 const errorMessage = ref(null);
 const route = useRoute();
 
-await useAsyncData("getCountries", async () => await getCountries());
-await useAsyncData(
-  "getCities",
-  async () =>
-    await getCities({ city_id: authStore.seeker.city_id ?? undefined }),
+// Загрузка списков при инициализации
+useAsyncData("getCountries", () => getCountries());
+await useAsyncData("getCities", () =>
+  getCities({ city_id: authStore.seeker.city_id ?? undefined }),
 );
 
+// Валидация схемы
 const schema = zod.object({
   first_name: zod.string().trim().min(3),
   last_name: zod.string().trim().min(3),
@@ -125,50 +128,44 @@ const schema = zod.object({
   country_id: zod.number().safe("Выберите страну из списка"),
   phone: zod.string().min(1).trim(),
 });
-
 const getFields = (newObject) => ({
   first_name: newObject?.first_name || "",
   last_name: newObject?.last_name || "",
   email: newObject?.email || "",
   email_to_verify: newObject?.email_to_verify || "",
   birth_date: newObject?.birth_date || "",
-  city_id: newObject?.city_id || undefined,
+  city_id: newObject?.city_id,
   city_name: newObject?.city_name || "",
   photo: newObject?.photo || null,
   country_id: newObject?.country_id || 1,
   phone: newObject?.phone || "",
 });
-
 const initialValues = getFields(authStore.seeker);
+
 const { values, errors, validate, setErrors } = useForm({
   initialValues,
   initialTouched: true,
   validationSchema: toTypedSchema(schema),
 });
-
 const { value: country_id, setValue: setCountryId } = useField("country_id");
 const { value: city_id, setValue: setCityId } = useField("city_id");
 
-watch(
-  () => country_id.value,
-  (new_value) => {
-    if (new_value) {
-      countryError.value = "";
-      cityError.value = "";
-      getCities({ country_ids: [new_value] }, true);
-      setCityId(null);
-    }
-  },
-);
+watch(country_id, async (val) => {
+  if (!val) return;
+  countryError.value = "";
+  cityError.value = "";
+  await getCities({ country_ids: [val] });
+  setCityId(null);
+});
 
-const updateCountryInput = (newValue = "") => {
+function updateCountryInput(newValue = "") {
   countryError.value =
     !newValue || /[а-я]/i.test(newValue)
       ? ""
       : "Используйте только алфавит кириллица";
-};
+}
 
-const updateCityInput = async (newValue = "") => {
+async function updateCityInput(newValue = "") {
   if (!newValue || /[а-я]/i.test(newValue)) {
     cityError.value = "";
     if (newValue) {
@@ -177,47 +174,41 @@ const updateCityInput = async (newValue = "") => {
         true,
       );
     }
-  } else {
-    cityError.value = "Используйте только алфавит кириллица";
-  }
-};
+  } else cityError.value = "Используйте только алфавит кириллица";
+}
 
+// Универсальная подготовка данных формы
 function getFormData(object) {
   const formData = new FormData();
-  Object.entries(object).forEach(([key, value]) => {
+  for (const [key, value] of Object.entries(object)) {
     formData.append(key, value instanceof File ? value : value || "");
-  });
+  }
   return formData;
 }
 
+// Основной submit
 const handleSubmit = async () => {
   isLoading.value = true;
-
   await validate();
-
   if (Object.keys(errors.value).length > 0) {
     isLoading.value = false;
     return;
   }
-
   const formData = getFormData(values);
 
-  if (values.hasOwnProperty("password")) {
-    if (values.password != null) {
-      formData.append("password_confirmation", values.password);
-    } else {
-      formData.delete("password");
-    }
+  // Проверки для пароля и фото
+  if ("password" in values) {
+    values.password != null
+      ? formData.append("password_confirmation", values.password)
+      : formData.delete("password");
   }
-  if (values.hasOwnProperty("photo")) {
-    if (values.photo != null) {
-      formData.append("photo", values.photo);
-    } else {
-      formData.delete("photo");
-    }
+  if ("photo" in values) {
+    values.photo != null
+      ? formData.append("photo", values.photo)
+      : formData.delete("photo");
   }
-
   formData.append("_method", "put");
+
   const resData = await updateSeeker(formData);
   isLoading.value = false;
 
@@ -226,11 +217,10 @@ const handleSubmit = async () => {
     setErrors(resData.errors || {});
     return;
   }
-
   await getUser();
   await refreshSeeker();
   await Swal.fire({ icon: "success", text: "Успешно сохранено" });
-  navigateTo({ name: "profile", query: {} });
+  navigateTo({ name: "profile" });
 };
 </script>
 
