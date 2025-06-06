@@ -3,7 +3,7 @@ import { useNuxtApp } from "#app";
 import { useScamStore } from "~/store/scam";
 import Swal from "sweetalert2";
 
-const props = defineProps({
+const { phone } = defineProps({
   phone: {
     default: {},
     required: false,
@@ -20,28 +20,28 @@ const props = defineProps({
 
 const showForm = ref(false);
 const { $format_phone } = useNuxtApp();
-const phone = computed(() => props.phone.number);
-const phone_id = computed(() => props.phone.id);
-const address = computed(() => props.phone.address ?? "нет адреса");
-const operator = computed(() => props.phone.operator);
-const typePhone = computed(() => props.phone.type_phone);
+const phoneNumber = computed(() => phone.number);
+const phone_id = computed(() => phone.id);
+const address = computed(() => phone.address ?? "нет адреса");
+const operator = computed(() => phone.operator);
+const typePhone = computed(() => phone.type_phone);
 const link_map = computed(
-  () => `https://www.google.ru/maps/search/` + props.phone.address,
+  () => `https://www.google.ru/maps/search/` + phone.address,
 );
-const comments = computed(() => props.phone.comments ?? []);
-const categories = computed(() => props.phone.categories);
-const frequencyValue = computed(() => props.phone.frequencyCall.cost);
-const frequencyTitle = computed(() => props.phone.frequencyCall.title);
-const ratingValue = computed(() => props.phone.rating.cost);
-const ratingTitle = computed(() => props.phone.rating.title);
-const isFavoured = computed(() => props.phone?.is_favored);
+const comments = computed(() => phone.comments ?? []);
+const categories = computed(() => phone.categories);
+const frequencyValue = computed(() => phone.frequencyCall.cost);
+const frequencyTitle = computed(() => phone.frequencyCall.title);
+const ratingValue = computed(() => phone.rating.cost);
+const ratingTitle = computed(() => phone.rating.title);
+const isFavoured = ref(phone?.is_favored);
 const scamStore = useScamStore();
 const categoryOptions = computed(() =>
   scamStore.categories.map((item) => {
     return { name: item.name, value: item.id };
   }),
 );
-const format_phone = computed(() => $format_phone(phone.value));
+const format_phone = computed(() => $format_phone(phoneNumber.value));
 const rateOptions = computed(() =>
   scamStore.rate_options.map((item) => {
     return { name: item.title, value: item.key };
@@ -57,6 +57,7 @@ const { addFavorite, removeFavorite, saveComment } = useScamStore();
 const toggleFavorite = async (is_favor) => {
   if (!is_favor) {
     const resData = await addFavorite({ phone_id: phone_id.value });
+    isFavoured.value = true;
     if (resData.status === "success") {
       await Swal.fire({
         text: "Вы успешно подписались!",
@@ -65,6 +66,7 @@ const toggleFavorite = async (is_favor) => {
     }
   } else {
     const resData = await removeFavorite({ phone_id: phone_id.value });
+    isFavoured.value = false;
     if (resData.status === "success") {
       await Swal.fire({
         text: "Вы успешно отписались!",
@@ -128,7 +130,19 @@ const onSubmit = async () => {
               class="show-on-map"
               :href="link_map"
               target="_blank"
-              ><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.428 4.17282L15.45 2.22095L8.45156 4.19232L1.94339 2.3461C1.80393 2.30654 1.6572 2.29985 1.51472 2.32656C1.37224 2.35328 1.23789 2.41268 1.12224 2.50008C1.00659 2.58748 0.91279 2.70052 0.8482 2.83029C0.783611 2.96007 0.749997 3.10306 0.75 3.24803V19.2136C0.750709 19.4583 0.830844 19.6961 0.97835 19.8913C1.12586 20.0865 1.33276 20.2285 1.56792 20.2959L8.44997 22.2483L15.4515 20.2761L22.06 22.1246C22.1994 22.1636 22.3458 22.1698 22.488 22.1427C22.6301 22.1156 22.764 22.056 22.8793 21.9686C22.9945 21.8811 23.0879 21.7681 23.1523 21.6385C23.2166 21.5089 23.25 21.3662 23.25 21.2215V5.25624C23.2494 5.01085 23.1688 4.77235 23.0205 4.57685C22.8722 4.38136 22.6642 4.23952 22.428 4.17282ZM7.64062 20.4593L2.25 18.93V3.99226L7.64062 5.52151V20.4593ZM14.7007 18.9289L9.14062 20.4951V5.55657L14.7007 3.99038V18.9289ZM21.75 20.4801L16.2007 18.928V3.98846L21.75 5.54054V20.4801Z" fill="#5375FD"></path></svg> Показать на карте</a
+              ><svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M22.428 4.17282L15.45 2.22095L8.45156 4.19232L1.94339 2.3461C1.80393 2.30654 1.6572 2.29985 1.51472 2.32656C1.37224 2.35328 1.23789 2.41268 1.12224 2.50008C1.00659 2.58748 0.91279 2.70052 0.8482 2.83029C0.783611 2.96007 0.749997 3.10306 0.75 3.24803V19.2136C0.750709 19.4583 0.830844 19.6961 0.97835 19.8913C1.12586 20.0865 1.33276 20.2285 1.56792 20.2959L8.44997 22.2483L15.4515 20.2761L22.06 22.1246C22.1994 22.1636 22.3458 22.1698 22.488 22.1427C22.6301 22.1156 22.764 22.056 22.8793 21.9686C22.9945 21.8811 23.0879 21.7681 23.1523 21.6385C23.2166 21.5089 23.25 21.3662 23.25 21.2215V5.25624C23.2494 5.01085 23.1688 4.77235 23.0205 4.57685C22.8722 4.38136 22.6642 4.23952 22.428 4.17282ZM7.64062 20.4593L2.25 18.93V3.99226L7.64062 5.52151V20.4593ZM14.7007 18.9289L9.14062 20.4951V5.55657L14.7007 3.99038V18.9289ZM21.75 20.4801L16.2007 18.928V3.98846L21.75 5.54054V20.4801Z"
+                  fill="#5375FD"
+                ></path>
+              </svg>
+              Показать на карте</a
             >
           </p>
         </div>
@@ -354,11 +368,11 @@ const onSubmit = async () => {
 </template>
 
 <style scoped>
-  .company-info {
-    display: flex;
-    flex-direction: column;
-  }
-  .comment-section.mt-25 {
-    margin-top: 25px;
-  }
+.company-info {
+  display: flex;
+  flex-direction: column;
+}
+.comment-section.mt-25 {
+  margin-top: 25px;
+}
 </style>

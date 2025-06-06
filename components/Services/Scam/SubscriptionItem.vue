@@ -27,8 +27,8 @@ const isFavoured = computed(() => props.phone?.is_favorite);
 
 const operatorLogo = computed(() => {
   if (props.phone?.operator) {
-    return props.phone?.operator;
-  } else return new URL("/assets/img/logos/megafon.svg", import.meta.url);
+    return `/img/operators/${props.phone?.operator.toLowerCase()}.svg`;
+  } else return "/img/operators/undefined.svg";
 });
 const { addFavorite, removeFavorite } = useScamStore();
 const toggleFavorite = async (is_favor) => {
@@ -39,7 +39,6 @@ const toggleFavorite = async (is_favor) => {
         text: "Вы успешно подписались!",
         icon: "success",
       });
-      return;
     }
   } else {
     const resData = await removeFavorite({ phone_id: phone_id.value });
@@ -48,7 +47,6 @@ const toggleFavorite = async (is_favor) => {
         text: "Вы успешно отписались!",
         icon: "success",
       });
-      return;
     }
   }
 };

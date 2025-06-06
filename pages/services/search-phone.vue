@@ -9,7 +9,6 @@ const route = useRoute();
 const errorMessage = ref(null);
 const { searchPhone, getScamOptions } = scamStore;
 
-const phoneInputElement = ref(route.query.phone);
 const phoneMask = ref(null);
 const isLoading = ref(false);
 const phones = ref([]);
@@ -20,7 +19,7 @@ async function initializeComponent() {
   await getScamOptions(); // No need to store the result if it's not used
 
   // Initialize IMask after the component is mounted and the input element is available
-  phoneMask.value = IMask(phoneInputElement.value, {
+  phoneMask.value = IMask(route.query.phone, {
     mask: "+{7}(000) 000-00-00",
   });
 
@@ -41,8 +40,6 @@ async function handlePhoneSearch(phone) {
   }
   phones.value = resData.data.data;
 }
-
-onMounted(initializeComponent);
 
 const onPhoneSearch = async () => {
   navigateTo({
@@ -95,7 +92,7 @@ watchEffect(async () => {
           </button>
           <input
             class="search-phone-input"
-            v-model="phoneInputElement"
+            v-model="route.query.phone"
             type="text"
             placeholder="+7"
           />
