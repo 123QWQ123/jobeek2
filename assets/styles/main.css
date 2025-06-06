@@ -3780,10 +3780,6 @@ body .main-section-mob {
     margin-left: 12px;
 }
 
-.notification.active .notification-text .title {
-	color: #0A2540;
-}
-
 .notification .notification-text p {
     font-size: 16px;
     line-height: 140%;
@@ -7479,6 +7475,7 @@ svg.progress {
     justify-content: space-between;
     padding-top: 8px;
     padding-bottom: 8px;
+    min-height: 62px;
 }
 
 .search-form--widget .search-row {
@@ -8377,10 +8374,6 @@ div.parsed_content {
     width: 100%;
 }
 
-.premium-checker input:checked~.premium-checker-ui, .premium-checker--blue .premium-checker-ui .circle, .premium-checker--blue input:checked~.premium-checker-ui {
-    background: #5375fd;
-}
-
 .premium-checker .premium-checker-ui .circle {
     background: #ffc955;
     border-radius: 50%;
@@ -8394,6 +8387,37 @@ div.parsed_content {
 
 .premium-checker input:checked~.premium-checker-ui .circle {
     transform: translate(30px, -50%);
+    background: #ffc955;
+}
+
+.services-block-group {
+    display: flex;
+}
+
+.services-block-group+.services-block-group {
+    margin-left: auto;
+}
+
+.services-block-time {
+	color: #7F8B99;
+    text-align: right;
+    font-size: 12px;
+}
+
+.services-block-reload button {
+	color: #5375FD;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+}
+
+.services-block-group.services-block-all {
+	padding: 18px 0;
+    align-items: center;
+}
+
+.services-block-reload button svg {
+	margin-right: 5px;
 }
 
 @media (max-width: 960px) {
