@@ -8,7 +8,7 @@
         class="photo_radius"
         name="photo"
         name_url="photo_url"
-        :preview="authStore.seeker.photo_url"
+        :preview="seeker?.photo_url"
         :avatar="avatar"
       />
     </div>
@@ -20,12 +20,12 @@
           <VeeCustomTextInput
             name="first_name"
             placeholder="Имя"
-            :value="authStore.seeker.first_name"
+            :value="seeker?.first_name"
           />
           <VeeCustomTextInput
             name="last_name"
             placeholder="Фамилия"
-            :value="authStore.seeker.last_name"
+            :value="seeker?.last_name"
           />
         </div>
       </div>
@@ -63,7 +63,7 @@
     <div class="input-row">
       <label for="phone">Телефон</label>
       <div class="input-wrapper">
-        <ProfilePhoneDisabledInput v-if="authStore.seeker.phone" name="phone" />
+        <ProfilePhoneDisabledInput v-if="seeker?.phone" name="phone" />
       </div>
     </div>
     <div class="input-row">
@@ -101,6 +101,7 @@ import { ref, watch } from "vue";
 // Stores и основные данные
 const profileStore = useProfileStore();
 const authStore = useAuthStore();
+const { seeker } = storeToRefs(authStore);
 const { refreshSeeker } = useAuthStore();
 const { getCountries, getCities, getUser, updateSeeker } = profileStore;
 const { countryOptions, cityOptions } = storeToRefs(profileStore);
@@ -115,7 +116,7 @@ const route = useRoute();
 // Загрузка списков при инициализации
 useAsyncData("getCountries", () => getCountries());
 await useAsyncData("getCities", () =>
-  getCities({ city_id: authStore.seeker.city_id ?? undefined }),
+  getCities({ city_id: seeker?.city_id ?? undefined }),
 );
 
 // Валидация схемы
@@ -140,7 +141,7 @@ const getFields = (newObject) => ({
   country_id: newObject?.country_id || 1,
   phone: newObject?.phone || "",
 });
-const initialValues = getFields(authStore.seeker);
+const initialValues = getFields(seeker);
 
 const { values, errors, validate, setErrors } = useForm({
   initialValues,
