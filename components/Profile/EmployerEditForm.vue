@@ -97,8 +97,9 @@ import { useAuthStore } from "~/store/auth.js";
 const profileStore = useProfileStore();
 
 const { getUser } = profileStore;
-const { refreshEmployer } = useAuthStore();
 const authStore = useAuthStore();
+const { refreshEmployer } = authStore;
+const { employer } = storeToRefs(authStore);
 
 const schema = zod.object({
   company_name: zod.string().trim().min(1),
@@ -119,7 +120,7 @@ const getFields = (newObject) => {
     phone: newObject.phone,
   };
 };
-const initialValues = getFields(authStore.employer);
+const initialValues = getFields(employer.value);
 const { values, errors, meta, setErrors, resetForm, validate } = useForm({
   initialValues,
   initialTouched: true,
