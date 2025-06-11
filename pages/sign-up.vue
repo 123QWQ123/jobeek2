@@ -226,7 +226,7 @@ function close() {
           </button>
         </form>
         <form
-          class="enter-form"
+          class="enter-form phone-register"
           @submit.prevent="onSMSSubmit"
           v-show="isConfirmTab"
         >
@@ -289,5 +289,8 @@ function close() {
 <style scoped>
 input:disabled {
   background-color: #e5e5e5;
+}
+.phone-register .note {
+  margin-bottom: 16px;
 }
 </style>

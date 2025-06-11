@@ -26,7 +26,7 @@ watch(
   <main class="main cabinet profile-page bg-wrapper" role="main">
     <PersonalCabinetSearchMobile />
     <div class="has-sidebar has-sidebar--v2 wrapper wrapper-1290">
-      <div class="content" v-if="authStore.seeker">
+      <div class="content">
         <div class="w-box bg-white" v-if="!isCompleted">
           <p class="text-danger p-3">
             Перед использованием сервиса требуется заполнение вашего профиля.
@@ -41,7 +41,6 @@ watch(
           </div>
         </div>
       </div>
-      <div class="content" v-else></div>
       <aside class="sidebar">
         <Premium />
       </aside>

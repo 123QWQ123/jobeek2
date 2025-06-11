@@ -97,9 +97,8 @@ import { useAuthStore } from "~/store/auth.js";
 const profileStore = useProfileStore();
 
 const { getUser } = profileStore;
+const { refreshEmployer } = useAuthStore();
 const authStore = useAuthStore();
-
-const user = await getUser();
 
 const schema = zod.object({
   company_name: zod.string().trim().min(1),
@@ -167,16 +166,8 @@ const handleSubmit = async (e) => {
   formData.append("_method", "put");
   const resData = await updateEmployer(formData);
   if (resData.status === "success") {
-    await getUser();
-
-    Swal.fire({
-      text: "Успешно сохранено",
-      icon: "success",
-      confirmButtonText: "ОК",
-      preConfirm: () => {
-        // navigateTo({ path: "/", query: {} });
-      },
-    });
+    getUser();
+    await refreshEmployer();
     isLoading.value = false;
   } else {
     errorMessage.value = resData.message;
