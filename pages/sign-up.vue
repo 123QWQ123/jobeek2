@@ -1,278 +1,185 @@
 <script setup>
-import Swal from "sweetalert2";
 import IMask from "imask";
 import { useAuthStore } from "~~/store/auth";
-import { ref } from "vue";
+import { ref, computed, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useForm, useField } from "vee-validate";
+import { toTypedSchema } from "@vee-validate/zod";
+import { z } from "zod";
 
-useHead({
-  title: "Регистрация",
-});
+useHead({ title: "Регистрация" });
 
 const authStore = useAuthStore();
-
-const { signUp, confirmPhoneCode, tryLogin } = authStore;
-
-const isAuthed = computed(() => authStore.isAuthed);
-
-const phoneDisabled = ref(false);
-const isFormValid = ref(true);
-const isLoading = ref(false);
-const registerButtonDisabled = ref(false);
-const error = ref(null);
-
-const route = useRoute();
-onBeforeMount(() => {
-  const newPhone = route.query.phone;
-  let localPhone = localStorage.getItem("preset_phone");
-
-  if (newPhone) {
-    localStorage.setItem("preset_phone", newPhone);
-    state.phone.val = route.query.phone;
-  } else {
-    if (localPhone) {
-      state.phone.val = localPhone;
-      localStorage.setItem("preset_phone", route.query.phone);
-    }
-  }
-
-  if (isAuthed.value === true) {
-    if (!authStore.isEmployer) {
-      navigateTo({ name: "profile-seeker" });
-    } else {
-      navigateTo({ name: "profile-employer" });
-    }
-  }
-});
-const state = reactive({
-  disabled: {
-    val: "",
-    isValid: true,
-  },
-  phone: {
-    val: "",
-    isValid: true,
-  },
-  i_agree: {
-    val: false,
-    isValid: true,
-  },
-  code: {
-    val: null,
-    isValid: true,
-  },
-  session: null,
-  isFormValid: true,
-  error: null,
-  success: null,
-});
-
-function clearValidity(input) {
-  state[input].isValid = true;
-  state.isFormValid = true;
-}
-
-function validateForm() {
-  if (state.phone.val === "") {
-    state.phone.isValid = false;
-    state.isFormValid = false;
-  }
-  if (state.i_agree.val !== true) {
-    state.i_agree.isValid = false;
-    state.isFormValid = false;
-  }
-
-  if (state.phone.val !== null && state.i_agree.val === true) {
-    state.i_agree.isValid = true;
-    state.isFormValid = true;
-  }
-}
+const { signUp, confirmPhoneCode, signIn } = authStore;
 
 const router = useRouter();
+const route = useRoute();
 
+const phoneInputElement = ref(null);
+const phoneMask = ref(null);
+
+const phoneDisabled = ref(false);
 const isRegisterTab = ref(true);
 const isConfirmTab = ref(false);
 const isFirstTimeCodeSent = ref(true);
+const isLoading = ref(false);
+const session = ref(null);
+const localSuccess = ref(null);
 
-const onSubmit = async () => {
-  state.phone.val = phoneMask.value.unmaskedValue;
-  validateForm();
-  if (state.isFormValid) {
-    isLoading.value = true;
-
-    const response = await signUp({
-      phone: state.phone.val,
-    });
-
-    if (response.status !== "success") {
-      let responseMessage = "Unknown error";
-      if (response) {
-        if (
-          response.data &&
-          "errors" in response.data &&
-          response.data.message
-        ) {
-          responseMessage = response.data.message;
-          state.error = response.data.errors.phone[0];
-        } else {
-          responseMessage = response.message;
-        }
-      }
-
-      Swal.fire({
-        title: "Ошибка!",
-        text: responseMessage,
-        icon: "error",
-        confirmButtonText: "ОК",
-      });
-      isLoading.value = false;
-
-      return;
-    }
-    isConfirmTab.value = true;
-    isRegisterTab.value = false;
-    state.session = response.data.data.session;
-    isLoading.value = false;
-  }
-};
-
-watch(
-  () => state.code.val,
-  (newValue) => {
-    if (newValue && String(newValue).length !== 4) {
-      state.code.isValid = false;
-      return;
-    }
-    state.code.isValid = true;
-  },
-);
-const isConfirmSMSButton = computed(() => {
-  if (isLoading.value) return false;
-  if (state.code.val) {
-    return String(state.code.val).length === 4;
-  }
-  return false;
+const zodSchema = z.object({
+  phone: z
+    .string()
+    .length(11, "Введите полностью 11 цифр номера")
+    .regex(/^\d+$/, "Некорректный формат номера"),
+  i_agree: z.literal(true, {
+    errorMap: () => ({ message: "Подтвердите согласие" }),
+  }),
+  code: z
+    .optional(z.string().length(4, "Код должен содержать 4 цифры"))
+    .nullable(),
+  session: z.optional(z.string()),
 });
-const isRegisterButton = computed(() => {
-  if (isLoading.value) return false;
-  if (state.phone.val) {
-    return String(state.phone.val).length === 11;
-  }
-  return false;
-});
-const onChangePhone = () => {
-  isConfirmTab.value = false;
-  isRegisterTab.value = true;
-};
-const onSendOneMoreTime = () => {
-  isFirstTimeCodeSent.value = false;
-  onSubmit();
-};
 
-const onSMSSubmit = async () => {
-  isLoading.value = true;
-
-  const response = await confirmPhoneCode({
-    phone: state.phone.val,
-    session: state.session,
-    code: state.code.val,
-    preset: phoneDisabled.value,
+const { validate, errors, setFieldValue, setErrors, values, resetForm } =
+  useForm({
+    validationSchema: toTypedSchema(zodSchema),
+    initialTouched: false,
+    initialValues: {
+      phone: "",
+      i_agree: false,
+      code: "",
+    },
   });
-  if (response.data.status !== "success") {
-    let message = "Неизвестная ошибка!";
-    if (response && response.data.hasOwnProperty("message")) {
-      message = response.data.message;
-    }
-    await Swal.fire({
-      title: "Ошибка!",
-      text: message,
-      icon: "error",
-      confirmButtonText: "ОК",
-    });
-    isLoading.value = false;
-    return;
-  }
-  isLoading.value = false;
-  await localStorage.removeItem("preset_phone");
 
-  const tryLoginData = await tryLogin(response.data.token);
-  if (!tryLoginData) {
-    let message = "Неизвестная ошибка!";
-    await Swal.fire({
-      title: "Ошибка!",
-      text: message,
-      icon: "error",
-      confirmButtonText: "ОК",
-    });
-    return navigateTo({ name: "sign-in" });
-  }
+const { value: phone } = useField("phone");
+const { value: i_agree } = useField("i_agree");
+const { value: code } = useField("code");
 
-  if (!authStore.isEmployer) {
-    navigateTo({ name: "profile-seeker" });
-  } else {
-    navigateTo({ name: "profile-employer" });
-  }
-};
-
-function close() {
-  state.error = null;
-}
-
-const phoneInputElement = ref();
-
-function validatePhoneNumber(phoneNumber) {
-  const phoneNumberPattern = /^\+7\(\d{3}\)\d{3}-\d{2}-\d{2}$/;
-  return phoneNumberPattern.test(phoneNumber);
-}
-
-onUpdated(() => {
-  if (phoneInputElement.value) {
-    phoneMask.value = new IMask(phoneInputElement.value, {
-      mask: "+{7}(000)000-00-00",
-    });
-    phoneInputElement.value.addEventListener("input", () => {
-      state.phone.val = phoneMask.value.unmaskedValue;
-    });
-    phoneMask.value.unmaskedValue = state.phone.val;
-  }
-});
-const phoneMask = ref(null);
+// Маска
 onMounted(() => {
+  if (authStore.isAuthed) {
+    router.push({
+      name: authStore.isEmployer ? "profile-employer" : "profile-seeker",
+    });
+  }
+
+  // Восстановление preset_phone
+  const newPhone = route.query.phone;
+  const localPhone = localStorage.getItem("preset_phone");
+  if (newPhone) {
+    localStorage.setItem("preset_phone", newPhone);
+    setFieldValue("phone", newPhone.replace(/\D/g, ""));
+  } else if (localPhone) {
+    setFieldValue("phone", localPhone.replace(/\D/g, ""));
+  }
   phoneMask.value = new IMask(phoneInputElement.value, {
     mask: "+{7}(000)000-00-00",
   });
   phoneInputElement.value.addEventListener("input", () => {
-    state.phone.val = phoneMask.value.unmaskedValue;
+    setFieldValue("phone", phoneMask.value.unmaskedValue);
   });
-  if (state.phone.val) {
+
+  // Если поле уже заполнено
+  if (phone.value) {
     phoneDisabled.value = true;
-    phoneMask.value.unmaskedValue = state.phone.val;
+    phoneMask.value.unmaskedValue = phone.value;
   }
 });
+
+const isRegisterButton = computed(
+  () =>
+    !isLoading.value &&
+    phone.value &&
+    String(phone.value).length === 11 &&
+    !errors.value.phone &&
+    i_agree.value === true,
+);
+const isConfirmSMSButton = computed(
+  () =>
+    !isLoading.value &&
+    code.value &&
+    String(code.value).length === 4 &&
+    !errors.value.code,
+);
+
+const onSubmit = async () => {
+  await validate();
+  isLoading.value = true;
+  const response = await signUp({ phone: values.phone }, (result) => {
+    if (result.status === "failed") {
+      setErrors(result.errors);
+    }
+  });
+  isLoading.value = false;
+
+  if (response.status !== "success") {
+    return;
+  }
+  isRegisterTab.value = false;
+  isConfirmTab.value = true;
+  session.value = response.data.data.session;
+};
+
+const onSMSSubmit = async () => {
+  isLoading.value = true;
+  const response = await confirmPhoneCode(
+    {
+      phone: values.phone,
+      session: session.value,
+      code: values.code,
+      preset: phoneDisabled.value,
+    },
+    (result) => {
+      if (result.status === "failed") {
+        setErrors(result.errors);
+      }
+    },
+  );
+  isLoading.value = false;
+  console.log("onSMSSubmit", response);
+  if (response.status !== "success") {
+    return;
+  }
+  if (response.data.status !== "success") {
+    return;
+  }
+  localStorage.removeItem("preset_phone");
+  await signIn({
+    password: values.code,
+    phone: values.phone,
+  });
+  router.push({
+    name: authStore.isEmployer ? "profile-employer" : "profile-seeker",
+  });
+};
+
+function onChangePhone() {
+  isConfirmTab.value = false;
+  isRegisterTab.value = true;
+  setFieldValue("code", "");
+}
+
+function onSendOneMoreTime() {
+  isFirstTimeCodeSent.value = false;
+  onSubmit();
+}
+
+function close() {
+  localSuccess.value = null;
+}
 </script>
 
 <template>
   <div>
-    <base-modal
-      :show="!!state.error"
-      title="Error occured"
-      :type="'error'"
-      @close="close"
-    >
-      <p>{{ state.error }}</p>
-    </base-modal>
-
-    <base-modal :show="!!state.success" title="Success" @close="close">
-      <p>{{ state.success }}</p>
-    </base-modal>
     <main class="main enter-page sign-up" role="main">
       <div class="enter-page-content">
         <NuxtLink to="/" class="logo">
-          <img src="~/assets/img/jobeek-dark.svg" alt="#"
-        /></NuxtLink>
+          <img src="~/assets/img/jobeek-dark.svg" alt="#" />
+        </NuxtLink>
         <form
           class="enter-form"
           @submit.prevent="onSubmit"
-          v-if="isRegisterTab"
+          v-show="isRegisterTab"
         >
           <h1>Регистрация</h1>
           <div class="i-wrap">
@@ -282,31 +189,31 @@ onMounted(() => {
               name="tel"
               ref="phoneInputElement"
               placeholder="Номер телефона"
-              @focusout="clearValidity('phone')"
-              autofocus
             />
           </div>
+          <span class="error-message" v-if="errors.phone">
+            {{ errors.phone }}</span
+          >
           <div class="help-box">
             <div
               class="check-block"
-              :class="{ 'border-bottom border-danger': !state.i_agree.isValid }"
+              :class="{ 'border-bottom border-danger': errors.i_agree }"
             >
               <div class="checkbox">
                 <input
                   type="checkbox"
-                  id="agree"
-                  v-model="state.i_agree.val"
-                  @focusout="clearValidity('i_agree')"
-                  autofocus
+                  id="i_agree"
+                  name="i_agree"
+                  v-model="i_agree"
                 />
                 <div class="checkbox-mask">
                   <img src="~/assets/img/svg/check.svg" alt="#" />
                 </div>
               </div>
-              <label for="agree"
+              <label for="i_agree"
                 >Согласен с
-                <a href="#">правилами обработки персональных данных</a></label
-              >
+                <a href="#">правилами обработки персональных данных</a>
+              </label>
             </div>
           </div>
           <button
@@ -322,42 +229,35 @@ onMounted(() => {
           v-if="isConfirmTab"
           class="enter-form phone-register"
           @submit.prevent="onSMSSubmit"
+          v-show="isConfirmTab"
         >
-          <h1>Потверждения телефона</h1>
-          <div class="i-wrap">
-            <div class="note">
-              <img src="~/assets/img/svg/i.svg" alt="#" />
-              <p class="">
-                <span v-if="isFirstTimeCodeSent">
-                  Мы вам отправили код потверждения на телефон
-                </span>
-                <span v-else>
-                  Мы вам еще раз отправили код потверждения на телефон
-                </span>
-                <span class="text-success">{{ state.phone.val }}.</span>
-                <a href="#" class="fw-medium" @click.prevent="onChangePhone">
-                  Изменить номер
-                </a>
-              </p>
-            </div>
-            <input
-              class="mt-2"
-              type="number"
-              name="code"
-              v-model="state.code.val"
-              placeholder="Код потверждения"
-              @focusout="clearValidity('code')"
-              autofocus
-            />
-            <span v-if="!state.code.isValid" class="text text-danger">
-              Введите 4 значный код подтверждения
-            </span>
-            <span class="col-auto px-3" type="button" disabled>
-              Не получили код?
-              <a class="link link-primary" @click="onSendOneMoreTime">
-                Отправить еще раз
+          <h1>Подтвердите телефон</h1>
+          <div class="note">
+            <img src="~/assets/img/svg/i.svg" alt="#" />
+            <p class="">
+              <span v-if="isFirstTimeCodeSent">
+                Мы вам отправили код подтверждения на телефон
+              </span>
+              <span v-else>
+                Мы вам еще раз отправили код подтверждения на телефон
+              </span>
+              <span class="text-success">{{ phone.val }}.</span>
+              <a href="#" class="fw-medium" @click.prevent="onChangePhone">
+                Изменить номер
               </a>
-            </span>
+            </p>
+          </div>
+          <div class="i-wrap">
+            <input
+              type="text"
+              name="code"
+              maxlength="4"
+              placeholder="SMS-код"
+              v-model="code"
+            />
+            <span class="error-message" v-if="errors.code">
+              {{ errors.code }}</span
+            >
           </div>
           <button
             class="btn button-accent mt-4"
@@ -367,6 +267,16 @@ onMounted(() => {
             Подтвердить
             <Loader class="text-light spinner-border-sm" v-if="isLoading" />
           </button>
+          <span class="col-auto px-3" type="button" disabled>
+            Не получили код?
+            <a
+              class="link link-primary"
+              @click.prevent="onSendOneMoreTime"
+              v-if="!isFirstTimeCodeSent"
+            >
+              Отправить еще раз
+            </a>
+          </span>
         </form>
         <div class="f-prompt">
           Уже есть аккаунт?

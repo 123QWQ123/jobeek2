@@ -1,6 +1,5 @@
 import axios from "axios";
 import { useAuthStore } from "~/store/auth";
-import { useSetFormErrors } from "vee-validate";
 
 const useApi = async (method, options = {}, nuxtInstance = null) => {
   const { public: publicRuntimeConfig } = nuxtInstance
@@ -34,7 +33,7 @@ const useApi = async (method, options = {}, nuxtInstance = null) => {
     ...options,
     responseType: "json",
     transformRequest: [(data) => data],
-    transformResponse: [(data) => handleResponse(data)],
+    transformResponse: [(data) => handleResponse(data, options.cb)],
   };
 
   // Check if we are on the server side
@@ -56,23 +55,27 @@ const useApi = async (method, options = {}, nuxtInstance = null) => {
   }
 };
 
-const handleResponse = (data) => {
+const handleResponse = (data, cb) => {
   const result = JSON.parse(data);
   const { $reset } = useAuthStore();
 
   if (result.code === 401) {
     $reset();
-    return result;
   }
 
   if (result.message) {
     if (result.status !== "success") {
-      useNuxtApp().$toast.error(result.message, { autoClose: 10000 });
-      if (result.errors) {
-        useSetFormErrors()(result.errors);
+      if (cb) {
+        cb(result);
+      } else {
+        useNuxtApp().$toast.error(result.message, { autoClose: 10000 });
       }
     } else {
-      useNuxtApp().$toast.info(result.message, { autoClose: 10000 });
+      if (cb) {
+        cb(result);
+      } else {
+        useNuxtApp().$toast.info(result.message, { autoClose: 5000 });
+      }
     }
   }
   return result;

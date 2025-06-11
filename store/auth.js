@@ -51,16 +51,18 @@ export const useAuthStore = defineStore("auth", {
     setEmployer(payload) {
       this.employer = payload;
     },
-    async signUp(payload) {
+    async signUp(payload, cb = null) {
       return await useApi("auth/register", {
         method: "post",
         payload,
+        cb,
       });
     },
-    async confirmPhoneCode(payload) {
+    async confirmPhoneCode(payload, cb = null) {
       const response = await useApi("auth/register/confirm", {
         method: "post",
         payload,
+        cb,
       });
       if (response?.data?.data?.token) {
         this.tokenAuth = response.data.data.token;
