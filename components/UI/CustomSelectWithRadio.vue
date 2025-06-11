@@ -6,6 +6,7 @@
     </div>
     <div class="custom-options">
       <div
+        v-if="options.length"
         class="custom-option"
         v-for="item in options"
         @click.prevent="onSelect(item.value)"
@@ -19,6 +20,11 @@
         />
         <label :for="item.value">
           {{ item.name }}
+        </label>
+      </div>
+      <div v-else class="custom-option">
+        <label>
+          {{ "Нет данных" }}
         </label>
       </div>
     </div>
@@ -128,7 +134,7 @@ function close() {
   background: #fff;
   z-index: 2;
   border-radius: 12px;
-  box-shadow: 0 0 20px rgba(28, 27, 98, .1);
+  box-shadow: 0 0 20px rgba(28, 27, 98, 0.1);
   padding: 8px 4px;
   margin-top: 3px;
   cursor: pointer;
@@ -151,8 +157,8 @@ function close() {
   top: 3px;
 }
 @media (max-width: 768px) {
-	.custom-select__trigger {
-	    height: 34px;
-	}
+  .custom-select__trigger {
+    height: 34px;
+  }
 }
 </style>
