@@ -61,12 +61,22 @@
             </NuxtLink>
           </li>
           <li v-if="!isEmployer">
-            <NuxtLink :to="{ name: 'favorite-vacancies' }">
+            <NuxtLink
+              :to="{ name: 'favorite-vacancies' }"
+              :class="{
+                'router-link-active': $route.path.startsWith('/vacancies'),
+              }"
+            >
               <span>Избранные</span>
             </NuxtLink>
           </li>
           <li v-else>
-            <NuxtLink :to="{ name: 'favorite-resumes' }">
+            <NuxtLink
+              :to="{ name: 'favorite-resumes' }"
+              :class="{
+                'router-link-active': $route.path.startsWith('/resumes'),
+              }"
+            >
               <span>Избранные</span>
             </NuxtLink>
           </li>
