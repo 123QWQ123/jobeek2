@@ -115,7 +115,7 @@ const route = useRoute();
 
 // Загрузка списков при инициализации
 useAsyncData("getCountries", () => getCountries());
-await useAsyncData("getCities", () =>
+useAsyncData("getCities", () =>
   getCities({ city_id: seeker?.city_id ?? undefined }),
 );
 
@@ -141,9 +141,9 @@ const getFields = (newObject) => ({
   country_id: newObject?.country_id || 1,
   phone: newObject?.phone || "",
 });
-const initialValues = getFields(seeker);
+const initialValues = getFields(seeker.value);
 
-const { values, errors, validate, setErrors } = useForm({
+const { values, errors, validate, setErrors, meta } = useForm({
   initialValues,
   initialTouched: true,
   validationSchema: toTypedSchema(schema),
@@ -191,7 +191,7 @@ function getFormData(object) {
 const handleSubmit = async () => {
   isLoading.value = true;
   await validate();
-  if (Object.keys(errors.value).length > 0) {
+  if (!meta.value.valid) {
     isLoading.value = false;
     return;
   }

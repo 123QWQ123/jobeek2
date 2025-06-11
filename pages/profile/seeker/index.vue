@@ -9,8 +9,8 @@ const authStore = useAuthStore();
 
 const isCompleted = computed(() =>
   authStore.isEmployer
-    ? authStore.employer?.is_completed || false
-    : authStore.seeker?.is_completed || false,
+    ? !!authStore.employer?.is_completed
+    : !!authStore.seeker?.is_completed,
 );
 
 watch(
