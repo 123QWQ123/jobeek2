@@ -320,7 +320,7 @@ onMounted(() => {
         </form>
         <form
           v-if="isConfirmTab"
-          class="enter-form"
+          class="enter-form phone-register"
           @submit.prevent="onSMSSubmit"
         >
           <h1>Потверждения телефона</h1>
@@ -380,5 +380,8 @@ onMounted(() => {
 <style scoped>
 input:disabled {
   background-color: #e5e5e5;
+}
+.phone-register .note {
+  margin-bottom: 16px;
 }
 </style>
