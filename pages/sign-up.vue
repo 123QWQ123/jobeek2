@@ -226,7 +226,8 @@ function close() {
           </button>
         </form>
         <form
-          class="enter-form"
+          v-if="isConfirmTab"
+          class="enter-form phone-register"
           @submit.prevent="onSMSSubmit"
           v-show="isConfirmTab"
         >
