@@ -177,7 +177,7 @@ function close() {
           <img src="~/assets/img/jobeek-dark.svg" alt="#" />
         </NuxtLink>
         <form
-          class="enter-form"
+          class="enter-form phone-register"
           @submit.prevent="onSubmit"
           v-show="isRegisterTab"
         >
@@ -289,5 +289,8 @@ function close() {
 <style scoped>
 input:disabled {
   background-color: #e5e5e5;
+}
+.phone-register .note {
+  margin-bottom: 16px;
 }
 </style>
