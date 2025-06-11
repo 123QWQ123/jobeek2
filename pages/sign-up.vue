@@ -177,7 +177,7 @@ function close() {
           <img src="~/assets/img/jobeek-dark.svg" alt="#" />
         </NuxtLink>
         <form
-          class="enter-form phone-register"
+          class="enter-form"
           @submit.prevent="onSubmit"
           v-show="isRegisterTab"
         >
@@ -226,7 +226,6 @@ function close() {
           </button>
         </form>
         <form
-          v-if="isConfirmTab"
           class="enter-form phone-register"
           @submit.prevent="onSMSSubmit"
           v-show="isConfirmTab"
