@@ -14,6 +14,8 @@ const isLoading = ref(false);
 const phones = ref([]);
 const getPhones = computed(() => phones.value);
 
+useAsyncData("getScamOptions", () => getScamOptions());
+
 // Moved onMounted logic to a separate function for better readability and testability
 async function initializeComponent() {
   await getScamOptions(); // No need to store the result if it's not used
