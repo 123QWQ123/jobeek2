@@ -3782,7 +3782,7 @@ body .main-section-mob {
 }
 
 .notification.active .notification-text .title {
-	background: #0A2540;
+	color: #0A2540;
 }
 
 .notification .notification-text p {
@@ -7442,7 +7442,7 @@ svg.progress {
     padding: 0;
     max-width: 1290px;
     width: 100%;
-    margin-left: 133px;
+    margin-left: 151px;
 }
 
 .header-wrapper .search-form--widget {
