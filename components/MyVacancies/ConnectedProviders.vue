@@ -2,156 +2,59 @@
   <div>
     <h1 class="lk-page-title mb-4 mb-0 margin-top-mobile">Cервисы</h1>
 
-    <div class="services-grid-load import-grid">
-      <!-- HeadHunters START-->
-      <div
-        class="provider-item grid-provider-mob"
-        :class="{ navigated: isHHConnected }"
-        @click.prevent="onOpen('hh')"
-      >
-        <div
-          class="import-box is-connected"
-          :class="{
-            disabled: !isHHConnected,
-            'import-is-complete': isHHConnected,
-          }"
-        >
-          <div class="import-box-dvnld">
-            <div class="logo">
-              <img src="~/assets/img/svg/hh-big.svg" alt="#" />
-              <div class="check">
-                <img src="~/assets/img/svg/complete.svg" alt="#" />
-              </div>
-            </div>
-            <span>HeadHunters.ru</span>
-            <button
-              v-show="isHHConnected"
-              class="close"
-              type="button"
-              @click="onDisconnect('hh')"
-            >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="#5375fd"
-                xmlns="http://www.w3.org/2000/svg"
-                data-v-3e4ab60c=""
-              >
-                <path
-                  d="M18.9951 4.99512L5.00586 18.9843"
-                  stroke="#5375fd"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  data-v-3e4ab60c=""
-                ></path>
-                <path
-                  d="M19.0009 18.9928L5 4.98901"
-                  stroke="#5375fd"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  data-v-3e4ab60c=""
-                ></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-      <!-- HeadHunters END-->
-
-      <!-- Superjob START-->
-      <div
-        class="provider-item grid-provider-mob"
-        :class="{ navigated: isSuperjobConnected }"
-        @click.prevent="onOpen('superjob')"
-      >
-        <div
-          class="import-box is-connected"
-          :class="{
-            disabled: !isSuperjobConnected,
-            'import-is-complete': isSuperjobConnected,
-          }"
-        >
-          <div class="import-box-dvnld">
-            <div class="logo">
-              <img src="https://jobeek.online/_nuxt/sb.DLBzSeco.svg" alt="#" />
-              <div class="check">
-                <img src="~/assets/img/svg/complete.svg" alt="#" />
-              </div>
-            </div>
-            <span>Superjob.ru </span>
-            <button
-              v-show="isSuperjobConnected"
-              class="close"
-              type="button"
-              @click="onDisconnect('superjob')"
-            >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="#5375fd"
-                xmlns="http://www.w3.org/2000/svg"
-                data-v-3e4ab60c=""
-              >
-                <path
-                  d="M18.9951 4.99512L5.00586 18.9843"
-                  stroke="#5375fd"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  data-v-3e4ab60c=""
-                ></path>
-                <path
-                  d="M19.0009 18.9928L5 4.98901"
-                  stroke="#5375fd"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  data-v-3e4ab60c=""
-                ></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-      <!-- Superjob END-->
-
-      <!-- Reload START-->
-      <div class="import-box import-is-complete is-connected grid-provider-mob">
-        <div class="import-box-dvnld sync-card d-flex pe-4">
-          <button
-            class="logo sync-button"
-            :class="{ rotating: isSyncing }"
-            @click="onSync"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="51"
-              height="51"
-              fill="#5375FD"
-              class="bi bi-arrow-repeat"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"
-              ></path>
-              <path
-                fill-rule="evenodd"
-                d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"
-              ></path>
-            </svg>
-            <div class="check">
-              <span>{{ lastSyncedTime.time }}</span>
-            </div>
-          </button>
-          <span class="load-date">{{ lastSyncedTime.date }}</span>
-        </div>
-      </div>
-      <!-- Reload END-->
-    </div>
+	<div class="card mb-4 border-0 px-2 py-0" style="border-radius: 12px">
+	   <div class="subs-card-options services-margin">
+	      <div class="services-block-group services-block-all">
+	         <div class="option">
+	            <div class="custom-check-wrap">
+	               <div class="theme-checker theme-checker--blue">
+	                  <input disabled="" type="checkbox" id="hh" value="hh" checked="">
+	                  <div class="theme-checker-ui">
+	                     <div class="circle"></div>
+	                  </div>
+	               </div>
+	               <label for="hh"><img src="~/assets/img/logos/hhmini.svg" alt="#" /><span>Hh.ru</span></label>
+	            </div>
+	         </div>
+	         <div class="option">
+	            <div class="custom-check-wrap">
+	               <div class="theme-checker theme-checker--blue">
+	                  <input disabled="" type="checkbox" id="sj" value="sj">
+	                  <div class="theme-checker-ui">
+	                     <div class="circle"></div>
+	                  </div>
+	               </div>
+	               <label for="sj"><img src="~/assets/img/logos/sj.svg" alt="#" /><span>Superjob.ru </span></label>
+	            </div>
+	         </div>
+	      </div>
+	      <div class="services-block-group reload-block-btn">
+	         <div class="services-block-time">{{ lastSyncedTime.date }} {{ lastSyncedTime.time }}</div>
+	         <div class="services-block-reload"><button
+	            class="logo sync-button"
+	            :class="{ rotating: isSyncing }"
+	            @click="onSync"
+	          >
+	            <svg
+	              xmlns="http://www.w3.org/2000/svg"
+	              width="24"
+	              height="24"
+	              fill="#5375FD"
+	              class="bi bi-arrow-repeat"
+	              viewBox="0 0 16 16"
+	            >
+	              <path
+	                d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"
+	              ></path>
+	              <path
+	                fill-rule="evenodd"
+	                d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"
+	              ></path>
+	            </svg>  Обновить данные
+	          </button></div>
+	      </div>
+	   </div>
+	</div>
   </div>
 </template>
 
