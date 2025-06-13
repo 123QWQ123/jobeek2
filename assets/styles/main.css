@@ -734,6 +734,7 @@ header.main-header .checker-box .v.active:after {
 
 .bg-wrapper {
     background: #f5f8fa;
+    min-height: calc(100vh - 300px);
 }
 
 .cabinet .search-section {
@@ -3780,6 +3781,10 @@ body .main-section-mob {
     margin-left: 12px;
 }
 
+.notification.active .notification-text .title {
+	background: #0A2540;
+}
+
 .notification .notification-text p {
     font-size: 16px;
     line-height: 140%;
@@ -3933,7 +3938,7 @@ body .main-section-mob {
     color: #5375FD;
     background: rgba(83, 117, 253, 0.1);
     border-radius: 12px;
-    margin-top: 40px;
+    margin-top: 20px;
 }
 
 .create-button img {
@@ -8385,6 +8390,10 @@ div.parsed_content {
     width: 22px;
 }
 
+.subs-card-options.services-margin {
+	padding: 15px 0;
+}
+
 .premium-checker input:checked~.premium-checker-ui .circle {
     transform: translate(30px, -50%);
     background: #ffc955;
@@ -8398,6 +8407,11 @@ div.parsed_content {
     margin-left: auto;
 }
 
+.services-block-group.reload-block-btn {
+    display: grid;
+    align-items: center;
+}
+
 .services-block-time {
 	color: #7F8B99;
     text-align: right;
@@ -8408,7 +8422,7 @@ div.parsed_content {
 	color: #5375FD;
     font-size: 16px;
     display: flex;
-    align-items: center;
+    align-items: center !important;
 }
 
 .services-block-group.services-block-all {

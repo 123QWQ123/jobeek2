@@ -3,7 +3,7 @@
     <h1 class="lk-page-title mb-4 mb-0 margin-top-mobile">Cервисы</h1>
       
 	<div class="card mb-4 border-0 px-2 py-0" style="border-radius: 12px">
-	   <div class="subs-card-options ">
+	   <div class="subs-card-options services-margin">
 	      <div class="services-block-group services-block-all">
 	         <div class="option">
 	            <div class="custom-check-wrap">
@@ -28,7 +28,7 @@
 	            </div>
 	         </div>
 	      </div>
-	      <div class="services-block-group">
+	      <div class="services-block-group reload-block-btn">
 	         <div class="services-block-time">{{ lastSyncedTime.date }} {{ lastSyncedTime.time }}</div>
 	         <div class="services-block-reload"><button
 	            class="logo sync-button"
@@ -255,7 +255,6 @@ const onOpen = (provider) => {
 
 .sync-button {
   justify-content: flex-end;
-  align-items: baseline;
 }
 
 @keyframes rotation {

@@ -1,5 +1,5 @@
 <template>
-  <h2 class="lk-page-title">Мои Избранные вакансии</h2>
+  <h2 class="lk-page-title">Мои избранные вакансии</h2>
   <PageLoader v-if="isLoading" />
   <div class="favorites-list-container">
     <ul class="favorites-list">
@@ -26,18 +26,15 @@
     <!--        Next-->
     <!--      </button>-->
     <!--    </div>-->
-    <div class="notification no-ic-bg" v-if="!items.length">
-      <div class="notification-text">
-        <strong class="title">У вас пока нет вакансий в избранном</strong>
-        <p>Сохраняйте вакансии, нажимая на звёздочку</p>
-      </div>
-      <nuxt-link
-        class="notification-button button-accent"
-        :to="{ name: 'search-vacancies' }"
-      >
-        Найти вакансию
-      </nuxt-link>
+    
+    <div v-if="!items.length" class="no-results no-results-mt-20">
+      <p>У вас пока нет вакансий в избранном<br>
+      <span style="font-weight: normal">Сохраняйте вакансии, нажимая на звёздочку</span></p>
     </div>
+    <NuxtLink v-if="!items.length" class="create-button" :to="{ name: 'search-vacancies' }"
+      >Найти вакансию</NuxtLink
+    >
+    
   </div>
 </template>
 
@@ -100,4 +97,8 @@ const changePage = (direction) => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+	.no-results-mt-20 {
+		margin-top: 20px;
+	}
+</style>
