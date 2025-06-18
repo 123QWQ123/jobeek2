@@ -5,19 +5,21 @@
         <MyResumesCheckbox
           name="all"
           label="Подключить все уведомления"
-          @change="onChange"
+          @change="handleNotificationChange"
         />
       </div>
       <div class="check-block mb-2 mb-md-1 mb-lg-0 me-lg-3">
         <MyResumesCheckbox
           name="notifications.push_notification"
           label="Push"
+          @change="handleNotificationChange"
         />
       </div>
       <div class="check-block">
         <MyResumesCheckbox
           name="notifications.email_notification"
           label="E-mail"
+          @change="handleNotificationChange"
         />
       </div>
     </div>
@@ -42,19 +44,44 @@ const { values, setValues, resetForm } = useForm({
   },
 });
 const { value: all, setValue } = useField("all");
-const onChange = async (event) => {
-  const notifications = {
-    push_notification: all.value,
-    email_notification: all.value,
-  };
+// Объект для обработки изменений
+const handleNotificationChange = async (event) => {
+  const type = event.target.name.split(".").pop();
+  const checked = event.target.checked;
+  let notifications = { ...values.notifications };
+  console.log(type, notifications);
+  if (type === "all") {
+    notifications = {
+      push_notification: checked,
+      email_notification: checked,
+    };
+  } else {
+    notifications[type] = checked;
+  }
+
   const resData = await modifyNotifications(notifications);
   if (resData.status === "success") {
     setValues({
-      all: all.value,
+      all: notifications.push_notification && notifications.email_notification,
       notifications,
     });
   } else {
-    setValue(!all.value);
+    if (type === "all") {
+      setValues({
+        all: !checked,
+        notifications: {
+          push_notification: !checked,
+          email_notification: !checked,
+        },
+      });
+    } else {
+      notifications[type] = !checked;
+      setValues({
+        all:
+          notifications.push_notification && notifications.email_notification,
+        notifications,
+      });
+    }
   }
 };
 const { modifyNotifications, getMyResumes } = useResumeStore();

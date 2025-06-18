@@ -1,18 +1,20 @@
 <template>
   <div>
-    <div class="check-block" @click.prevent="toggle">
-      <div class="checkbox">
-        <input
-          type="checkbox"
-          :name="props.name"
-          :id="props.name"
-          :checked="value"
-        />
-        <div class="checkbox-mask" :class="{ checked }">
-          <img src="~/assets/img/svg/check.svg" alt="#" />
-        </div>
-      </div>
+    <div class="check-block">
       <label :for="props.name" class="fs-14">
+        <div class="checkbox">
+          <input
+            type="checkbox"
+            :name="props.name"
+            :id="props.name"
+            :checked="value"
+            @change="toggle"
+          />
+          <div class="checkbox-mask" :class="{ checked }">
+            <img src="~/assets/img/svg/check.svg" alt="#" />
+          </div>
+        </div>
+
         {{ props.label }}
       </label>
     </div>
@@ -32,9 +34,9 @@ const emit = defineEmits(["change"]);
 // If the name changes you want `useField` to be able to pick it up
 const { value, setValue, errorMessage } = useField(() => props.name);
 
-const toggle = () => {
+const toggle = (e) => {
   setValue(!value.value);
-  emit("change", !value.value);
+  emit("change", e);
 };
 const checked = computed(() => {
   return !!value.value;
