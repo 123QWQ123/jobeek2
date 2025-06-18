@@ -42,45 +42,23 @@ const { values, setValues, resetForm } = useForm({
   },
 });
 const { value: all, setValue } = useField("all");
-const onChange = (newValue) => {
-  if (all.value) {
+const onChange = async (event) => {
+  const notifications = {
+    push_notification: all.value,
+    email_notification: all.value,
+  };
+  const resData = await modifyNotifications(notifications);
+  if (resData.status === "success") {
     setValues({
-      all: true,
-      notifications: { push_notification: true, email_notification: true },
+      all: all.value,
+      notifications,
     });
   } else {
-    setValues({
-      all: false,
-      notifications: { push_notification: false, email_notification: false },
-    });
+    setValue(!all.value);
   }
 };
 const { modifyNotifications, getMyResumes } = useResumeStore();
 const isFirst = ref(true);
-
-watch(
-  () => ({ ...values.notifications }),
-  async (newValue, oldValue) => {
-    if (!isFirst.value) {
-      const resData = await modifyNotifications(newValue);
-      if (resData.status !== "success") {
-        setValues({ ...values, notifications: oldValue });
-        return;
-      }
-      setValues({
-        all: newValue.push_notification && newValue.email_notification,
-        notifications: newValue,
-      });
-      await getMyResumes();
-    } else {
-      setValues({
-        all: newValue.push_notification && newValue.email_notification,
-        notifications: newValue,
-      });
-      isFirst.value = false;
-    }
-  },
-);
 
 const reformat = () => {
   if (resumeStore.my_resumes.length < 1) {

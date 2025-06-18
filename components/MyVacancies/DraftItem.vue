@@ -265,7 +265,6 @@ const onEmailToggle = async (e) => {
     email_notification: newValue,
   });
   if (resData.status !== "success") {
-    toast.info(resData.message);
     return;
   }
   emailStatus.value = newValue;
@@ -278,7 +277,6 @@ const onPushToggle = async (e) => {
     push_notification: newValue,
   });
   if (resData.status !== "success") {
-    toast.info(resData.message);
     return;
   }
   pushStatus.value = newValue;
@@ -352,12 +350,6 @@ const onDelete = async (id) => {
   const resData = await deleteDraft(id);
 
   if (resData.status !== "success") {
-    await Swal.fire({
-      title: "Ошибка!",
-      text: resData.message,
-      icon: "error",
-      confirmButtonText: "ОК",
-    });
     return;
   }
   toast.info("Успешно удалено!", { autoClose: 3000 });
@@ -415,7 +407,6 @@ const toggle = async (provider) => {
   const resData = await updateDraft(item.value.id, data);
   if (resData.status !== "success") {
     selectedProviders.value[provider] = !selectedProviders.value[provider];
-    toast.info(resData.message, { autoClose: 3000 });
     isSuperjobLoading.value = false;
     isHHLoading.value = false;
     return;

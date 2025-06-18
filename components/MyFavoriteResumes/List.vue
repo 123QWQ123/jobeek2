@@ -3,17 +3,13 @@
   <PageLoader v-if="isLoading" />
 
   <div class="favorites-list-container">
-    <ul v-if="true" class="favorites-list">
+    <ul class="favorites-list">
       <ResumesItem
         v-for="item in my_favorite_resumes"
         :key="item.id"
         :item="item"
       ></ResumesItem>
     </ul>
-
-    <div v-else>
-      <h3>К сожалению, больше ничего не нашли.</h3>
-    </div>
 
     <!--    <div class="footer mt-3" v-if="my_favorite_resumes.length">-->
     <!--      <button-->
