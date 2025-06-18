@@ -2,6 +2,7 @@
 import IMask from "imask";
 import { useScamStore } from "~/store/scam";
 import { useRoute, navigateTo } from "#app";
+import { ref } from "vue";
 
 const scamStore = useScamStore();
 const route = useRoute();
@@ -9,11 +10,22 @@ const route = useRoute();
 const errorMessage = ref(null);
 const { searchPhone, getScamOptions } = scamStore;
 
-const phoneMask = ref(null);
 const isLoading = ref(false);
 const phones = ref([]);
 const getPhones = computed(() => phones.value);
 
+const phoneInputElement = ref();
+const phoneMask = ref(null);
+onMounted(() => {
+  phoneMask.value = new IMask(phoneInputElement.value, {
+    mask: "+{7}(000)000-00-00",
+  });
+  phoneInputElement.value.addEventListener("input", (e) => {
+    e.target.value;
+  });
+  phoneInputElement.value.value = route.query.phone;
+  phoneMask.value.value = route.query.phone;
+});
 useAsyncData("getScamOptions", () => getScamOptions());
 
 // Moved onMounted logic to a separate function for better readability and testability
@@ -21,7 +33,7 @@ async function initializeComponent() {
   await getScamOptions(); // No need to store the result if it's not used
 
   // Initialize IMask after the component is mounted and the input element is available
-  phoneMask.value = IMask(route.query.phone, {
+  phoneMask.value = new IMask(route.query.phone, {
     mask: "+{7}(000) 000-00-00",
   });
 
@@ -93,9 +105,10 @@ watchEffect(async () => {
             </svg>
           </button>
           <input
+            ref="phoneInputElement"
             class="search-phone-input"
-            v-model="route.query.phone"
-            type="text"
+            name="tel"
+            type="tel"
             placeholder="+7"
           />
           <button class="button-accent">Поиск</button>
