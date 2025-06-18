@@ -199,7 +199,6 @@
 </template>
 
 <script setup>
-import Swal from "sweetalert2";
 import { toast } from "vue3-toastify";
 import { useVacancyStore } from "~/store/vacancy.js";
 
