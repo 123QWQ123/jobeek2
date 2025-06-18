@@ -14,10 +14,6 @@ const authStore = useAuthStore();
         </div>
       </div>
     </div>
-    <div class="bg-wrapper bt">
-      <HomeWorkSection />
-    </div>
-    <HomeSearchSection />
   </main>
 </template>
 
