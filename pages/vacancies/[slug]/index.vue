@@ -31,9 +31,8 @@ const { vacancy } = storeToRefs(vacancyStore);
 
 const { slug } = route.params;
 const { provider } = route.query;
-const { data: vacancyData } = useAsyncData(
-  "getVacancy",
-  async () => await getVacancy(slug, { provider }),
+const { data: vacancyData } = await useAsyncData("getVacancy", async () =>
+  getVacancy(slug, { provider }),
 );
 
 let pageTitle = ref("Not found  - Jobeek");
