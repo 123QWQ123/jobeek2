@@ -35,6 +35,10 @@ const { data: vacancyData } = await useAsyncData("getVacancy", async () =>
   getVacancy(slug, { provider }),
 );
 
+if (!vacancyData.value) {
+  navigateTo({ name: "favorite-vacancies", params: { slug, provider } });
+}
+
 let pageTitle = ref("Not found  - Jobeek");
 
 if (vacancyData.value && vacancyData.value[provider]?.name) {
