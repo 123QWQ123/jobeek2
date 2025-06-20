@@ -23,8 +23,10 @@ onMounted(() => {
   phoneInputElement.value.addEventListener("input", (e) => {
     e.target.value;
   });
-  phoneInputElement.value.value = route.query.phone;
-  phoneMask.value.value = route.query.phone;
+  if (route.query.phone) {
+    phoneInputElement.value.value = route.query.phone;
+    phoneMask.value.value = route.query.phone;
+  }
 });
 useAsyncData("getScamOptions", () => getScamOptions());
 
