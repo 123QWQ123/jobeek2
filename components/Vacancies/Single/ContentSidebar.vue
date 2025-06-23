@@ -4,7 +4,7 @@
       <div class="favorites-card-footer-row">
         <button
           class="group-action ic-btn fav-btn"
-          :class="{ active: data.is_favorite }"
+          :class="{ active: isFavorite }"
           @click="toggleFavorite"
         >
           <svg
@@ -23,12 +23,12 @@
       </div>
 
       <div class="company-logo">
-        <img class="w-100" :src="employerLogo" :alt="data.company" />
+        <img class="w-100" :src="employerLogo" :alt="vacancyData.company" />
       </div>
-      <h3 class="title">{{ data.company }}</h3>
+      <h3 class="title">{{ vacancyData.company }}</h3>
       <!--      <p>Клиент SuperJob с 2003 года</p>-->
-      <p>{{ data.open_vacancies ?? 0 }} вакансии</p>
-      <p v-html="data.company_activity" />
+      <p>{{ vacancyData.open_vacancies ?? 0 }} вакансии</p>
+      <p v-html="vacancyData.company_activity" />
       <!--      <div class="count">123 вакансии</div>-->
       <!--      <div class="grade-box-container">-->
       <!--        <div class="title">Оценки сотрудников</div>-->
@@ -139,7 +139,8 @@ const { isAuthed } = storeToRefs(authStore);
 
 const toggleFavorite = async () => {
   const action = isFavorite.value ? removeFromFavorite : addToFavorite;
-  const response = await action(vacancyData.value.id, {
+  const response = await action({
+    id: vacancyData.value.id,
     provider: vacancyData.value.provider,
   });
 

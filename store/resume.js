@@ -386,9 +386,8 @@ export const useResumeStore = defineStore("resume", {
       });
       if (response.status === "success") {
         this.resumes = this.resumes.map((resume) => {
-          if (String(resume.id) === payload.resume_id) {
-            resume.is_favorite = false;
-            resume.favorite_id = response.data.data.id;
+          if (String(resume.id) === payload.id) {
+            resume.is_favorite = true;
           }
           return resume;
         });
@@ -420,10 +419,14 @@ export const useResumeStore = defineStore("resume", {
       return response;
     },
 
-    async removeFromFavorite(id) {
-      const response = await useApi("employer/resumes/favorites/" + id, {
-        method: "delete",
-      });
+    async removeFromFavorite(payload) {
+      const response = await useApi(
+        "employer/resumes/favorites/" + payload.id,
+        {
+          method: "delete",
+          params: payload,
+        },
+      );
       if (response.status === "success") {
         this.resumes = this.resumes.map((resume) => {
           if (resume.id === id) {

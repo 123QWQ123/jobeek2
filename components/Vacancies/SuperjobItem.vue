@@ -81,7 +81,10 @@ const vacancyStore = useVacancyStore();
 const { getMyFavoriteVacancies, removeFromFavorite } = vacancyStore;
 const removeFavorite = async () => {
   let response = {};
-  response = await removeFromFavorite(props.item.id, { provider: "superjob" });
+  response = await removeFromFavorite({
+    id: props.item.id,
+    provider: props.item.provider,
+  });
   if (response.status !== "success") {
     Swal.fire({
       title: "Ошибка!",
