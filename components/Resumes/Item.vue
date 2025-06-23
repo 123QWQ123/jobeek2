@@ -199,8 +199,11 @@ const isFavorite = ref(props.item.is_favorite || false);
 const toggleFavorite = async () => {
   try {
     if (isFavorite.value) {
-      if (props.item.favorite_id) {
-        await removeFromFavorite(props.item.favorite_id);
+      if (props.item.id) {
+        await removeFromFavorite({
+          id: String(props.item.id),
+          provider: props.item.provider,
+        });
       }
     } else {
       await addToFavorite({

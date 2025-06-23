@@ -185,7 +185,10 @@ const vacancyStore = useVacancyStore();
 const toggleFavorite = async () => {
   try {
     if (isFavorite.value) {
-      await vacancyStore.removeFromFavorite(item.favorite_id);
+      await vacancyStore.removeFromFavorite({
+        id: item.id,
+        provider: item.provider,
+      });
     } else {
       await vacancyStore.addToFavorite({
         id: String(item.id),

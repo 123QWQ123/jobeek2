@@ -68,7 +68,8 @@ const toggleFavorite = async () => {
       provider: data.value.provider,
     });
   } else {
-    response = await removeFromFavorite(item.id, {
+    response = await removeFromFavorite({
+      id: data.value.id,
       provider: data.value.provider,
     });
   }

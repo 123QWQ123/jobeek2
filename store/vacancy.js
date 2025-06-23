@@ -534,10 +534,10 @@ export const useVacancyStore = defineStore("vacancy", {
       });
     },
 
-    async removeFromFavorite(id, payload) {
-      return await useApi("seeker/vacancies/favorites/" + id, {
+    async removeFromFavorite(payload) {
+      return await useApi("seeker/vacancies/favorites/" + payload.id, {
         method: "delete",
-        data: JSON.stringify(payload),
+        params: payload,
       });
     },
 
