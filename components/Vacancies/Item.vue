@@ -66,6 +66,7 @@
               class="group-action ic-btn fav-btn"
               :class="{ active: isFavorite }"
               @click="toggleFavorite"
+              :disabled="disabled"
             >
               <svg
                 width="23"
@@ -103,6 +104,7 @@ const { $format_number } = useNuxtApp();
 // Receive input property for the component
 const props = defineProps(["item"]);
 const { item } = props;
+const disabled = ref(false);
 
 // Compute the formatted salary text to be displayed
 const salaryText = computed(() => {
@@ -183,6 +185,10 @@ const onSubmit = async () => {
 // Toggle the favorite status of the vacancy
 const vacancyStore = useVacancyStore();
 const toggleFavorite = async () => {
+  if (disabled.value === true) {
+    return;
+  }
+  disabled.value = true;
   try {
     if (isFavorite.value) {
       await vacancyStore.removeFromFavorite({
@@ -197,13 +203,13 @@ const toggleFavorite = async () => {
     }
     isFavorite.value = !isFavorite.value;
   } catch (error) {
-    await Swal.fire({
-      title: "Ошибка!",
-      text: error.message,
-      icon: "error",
-      confirmButtonText: "OK",
-    });
+    console.error("Exception during toggleFavorite:", error);
+    // можно добавить уведомление для пользователя
+  } finally {
+    disabled.value = false; // сброс в любом случае
   }
+
+  disabled.value = false;
 };
 
 // Get the employer logo or default to a placeholder
