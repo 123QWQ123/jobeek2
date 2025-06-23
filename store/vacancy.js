@@ -528,10 +528,19 @@ export const useVacancyStore = defineStore("vacancy", {
     },
 
     async addToFavorite(payload = URLSearchParams) {
-      return await useApi("seeker/vacancies/favorites", {
+      const response = await useApi("seeker/vacancies/favorites", {
         method: "post",
         payload,
       });
+      if (response.status === "success") {
+        this.vacancies = this.vacancies.map((vacancy) => {
+          if (String(vacancy.id) === payload.id) {
+            vacancy.is_favorite = true;
+          }
+          return vacancy;
+        });
+      }
+      return response;
     },
 
     async removeFromFavorite(payload) {
@@ -548,6 +557,14 @@ export const useVacancyStore = defineStore("vacancy", {
           method: "delete",
         },
       );
+      if (response.status === "success") {
+        this.vacancies = this.vacancies.map((vacancy) => {
+          if (vacancy.id === id) {
+            vacancy.is_favorite = false;
+          }
+          return vacancy;
+        });
+      }
       return response;
     },
     async deleteDraft(id) {
