@@ -6,6 +6,7 @@
           class="group-action ic-btn fav-btn"
           :class="{ active: isFavorite }"
           @click="toggleFavorite"
+          :disabled="disabled"
         >
           <svg
             width="23"
@@ -118,7 +119,6 @@
 <script setup>
 import { useVacancyStore } from "~/store/vacancy";
 import { useAuthStore } from "~/store/auth";
-import Swal from "sweetalert2";
 import { useResumeStore } from "~/store/resume.js";
 import { toast } from "vue3-toastify";
 import { ref, computed, onMounted } from "vue";
@@ -130,6 +130,7 @@ const props = defineProps({
 });
 const { data: vacancyData } = storeToRefs(props);
 const isFavorite = ref(vacancyData.value.is_favorite ?? false);
+const disabled = ref(false);
 
 const vacancyStore = useVacancyStore();
 const { addToFavorite, removeFromFavorite } = vacancyStore;
@@ -138,18 +139,30 @@ const authStore = useAuthStore();
 const { isAuthed } = storeToRefs(authStore);
 
 const toggleFavorite = async () => {
-  const action = isFavorite.value ? removeFromFavorite : addToFavorite;
-  const response = await action({
-    id: vacancyData.value.id,
-    provider: vacancyData.value.provider,
-  });
-
-  if (response.status === "success") {
-    isFavorite.value = !isFavorite.value;
-  } else {
-    // todo
-    console.error("Error toggling favorite:", response.message);
+  if (disabled.value === true) {
+    return;
   }
+  disabled.value = true;
+  try {
+    const action = isFavorite.value ? removeFromFavorite : addToFavorite;
+    const response = await action({
+      id: vacancyData.value.id,
+      provider: vacancyData.value.provider,
+    });
+    if (response.status === "success") {
+      isFavorite.value = !isFavorite.value;
+    } else {
+      // тут можно добавить уведомление для пользователя о ошибке
+      console.error("Error toggling favorite:", response.message);
+    }
+  } catch (error) {
+    console.error("Exception during toggleFavorite:", error);
+    // можно добавить уведомление для пользователя
+  } finally {
+    disabled.value = false; // сброс в любом случае
+  }
+
+  disabled.value = false;
 };
 
 const resumeStore = useResumeStore();
