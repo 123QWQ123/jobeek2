@@ -1092,8 +1092,8 @@ header.main-header .checker-box .v.active:after {
 
 .note p {
     font-weight: normal;
-    font-size: 16px;
-    line-height: 22px;
+    font-size: 14px;
+    line-height: 18px;
     color: #5375FD;
 }
 
@@ -1505,6 +1505,7 @@ header.main-header .checker-box .v.active:after {
         -o-transition: transform .1s ease-in;
         transition: transform .1s ease-in;
         transition: transform .1s ease-in, -webkit-transform .1s ease-in;
+        max-width: 300px;
     }
 
     .main-navigation.active {
@@ -1855,12 +1856,23 @@ body .main-section-mob {
         display: block;
     }
     .search-form {
-        padding: 0;
+        padding: 40px 20px 20px;
     }
     .main-section-mob {
         margin: 39px 15px 20px 15px;
         padding-bottom: 0 !important;
     }
+    .results-page-content {
+	    padding-bottom: 20px;
+	    padding-top: 15px;
+	}
+	.profile-page {
+	    padding-bottom: 0;
+	}
+	.search-head {
+	    margin-bottom: 20px;
+	    padding-bottom: 15px;
+	}
 }
 
 @media (max-width: 1025px) {
@@ -7442,7 +7454,7 @@ svg.progress {
     padding: 0;
     max-width: 1290px;
     width: 100%;
-    margin-left: 151px;
+    margin-left: 101px;
 }
 
 .header-wrapper .search-form--widget {

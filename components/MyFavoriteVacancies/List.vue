@@ -29,7 +29,7 @@
     
     <div v-if="!items.length" class="no-results no-results-mt-20">
       <p>У вас пока нет вакансий в избранном<br>
-      <span style="font-weight: normal">Сохраняйте вакансии, нажимая на звёздочку</span></p>
+      <span style="font-weight: normal; font-size: 14px;">Сохраняйте вакансии, нажимая на звёздочку</span></p>
     </div>
     <NuxtLink v-if="!items.length" class="create-button" :to="{ name: 'search-vacancies' }"
       >Найти вакансию</NuxtLink

@@ -254,9 +254,12 @@ function close() {
               placeholder="SMS-код"
               v-model="code"
             />
-            <span class="error-message" v-if="errors.code">
-              {{ errors.code }}</span
-            >
+            <div class="note error-message" v-if="errors.code">
+              <img src="~/assets/img/svg/i.svg" alt="#" />
+              <p>
+              {{ errors.code }}
+              </p>
+            </div>
           </div>
           <button
             class="btn button-accent mt-4"

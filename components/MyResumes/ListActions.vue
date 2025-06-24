@@ -1,6 +1,6 @@
 <template>
   <div
-    class="provider_buttons d-lg-flex justify-content-between align-items-center"
+    class="provider_buttons plansh-width d-lg-flex justify-content-between align-items-center"
   >
     <div class="d-inline-flex">
       <div class="sort mx-2 ms-auto">
@@ -73,5 +73,23 @@ const listStyles = {
 
 .theme-checker input ~ .theme-checker-ui .circle.right {
   transform: translate(30px, -50%);
+}
+
+.check-block label {
+    display: flex;
+}
+
+@media (max-width: 1280px) {
+	.plansh-width {
+		display: flex;
+	}
+	.plansh-width .flex-column {
+		display: flex !important;
+    	flex-direction: row !important;
+	}
+	.plansh-width .check-block {
+	    display: flex;
+	    margin: 0 5px;
+	}
 }
 </style>
