@@ -512,6 +512,12 @@ img {
     align-items: center;
 }
 
+.company .company-logo img {
+    display: block;
+    max-width: 100%;
+    height: 100%;
+}
+
 .company .company-name strong {
     display: block;
     font-weight: normal;
@@ -1194,6 +1200,10 @@ header.main-header .checker-box .v.active:after {
     line-height: 22px;
     color: #0A2540;
     cursor: pointer;
+}
+
+.provider_buttons .check-block label {
+    display: flex;
 }
 
 .help-box {
@@ -2797,12 +2807,12 @@ body .main-section-mob {
     padding-bottom: 23px;
     padding-left: 24px;
     padding-right: 27px;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
+    display: grid;
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: center;
+    grid-template-columns: 29px auto;
+    gap: 20px;
 }
 
 .message-item .col-wrap {
@@ -7454,7 +7464,7 @@ svg.progress {
     padding: 0;
     max-width: 1290px;
     width: 100%;
-    margin-left: 101px;
+    margin-left: 151px;
 }
 
 .header-wrapper .search-form--widget {
@@ -8331,6 +8341,14 @@ textarea.form-control {
 	.profile-page.margin-top-none {
 		padding-top: 38px;
 	}
+	.plansh-width .flex-column {
+		display: flex !important;
+		flex-direction: row !important;
+	}
+	.plansh-width .check-block {
+	    display: flex;
+	    margin: 0 5px;
+	}
 }
 
 div.parsed_content {
@@ -8491,4 +8509,14 @@ div.parsed_content {
 		right: -32px;
     	top: -4px;
 	}
+}
+@media (max-width: 560px) {
+	.services-block-group.services-block-all {
+	    align-items: baseline;
+	    padding: 18px 0;
+	    flex-direction: column;
+	}
+	.plansh-width {
+        flex-direction: column;
+    }
 }
