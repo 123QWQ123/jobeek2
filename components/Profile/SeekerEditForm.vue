@@ -121,8 +121,8 @@ useAsyncData("getCities", () =>
 
 // Валидация схемы
 const schema = zod.object({
-  first_name: zod.string().trim().min(3),
-  last_name: zod.string().trim().min(3),
+  first_name: zod.string().trim().min(2, "Введите имя"),
+  last_name: zod.string().trim().min(3, "Введите фамилию"),
   birth_date: zod.string().trim().min(1),
   email: zod.string().email(),
   city_id: zod.number().min(1).safe("Выберите город из списка"),

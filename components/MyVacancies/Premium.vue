@@ -1,28 +1,25 @@
 <template>
   <div class="lk-page-title mb-4 mb-0 margin-top-mobile">Премиум</div>
-  
+
   <!-- NEW block -->
   <div class="sticky-item sidebar-premium">
-  	<div class="notification mt-0">
-  	  <div class="notification-text">
-  	    <div class="premium-notification-icon"></div>
-  	    <strong class="title">Премиум</strong>
-        <div class="plash">Не подключен</div>
+    <div
+      class="notification mt-0"
+      :class="{ active: isSubscribed }"
+      @click.prevent="onClickConnect"
+    >
+      <div class="notification-text">
+        <div class="premium-notification-icon"></div>
+        <strong class="title">Премиум</strong>
+        <div v-if="isSubscribed" class="plash">Подключен</div>
+        <div v-else class="plash">Не подключен</div>
         <div class="premium-checker">
-          <input type="checkbox" id="employer">
-          <div class="premium-checker-ui">
-            <div class="circle left"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  	<div class="notification mt-0 active">
-  	  <div class="notification-text">
-  	    <div class="premium-notification-icon"></div>
-  	    <strong class="title">Премиум</strong>
-        <div class="plash">Подключен</div>
-        <div class="premium-checker">
-          <input type="checkbox" id="employer">
+          <input
+            type="checkbox"
+            id="employer"
+            :checked="isSubscribed"
+            disabled
+          />
           <div class="premium-checker-ui">
             <div class="circle left"></div>
           </div>
@@ -30,35 +27,26 @@
       </div>
     </div>
   </div>
-  <!-- END NEW block -->
-  
-  <!-- <div class="premium-col sticky-item">
-    <div class="term" v-if="authStore.isSubscribed"><span>Действует до</span><strong>24 августа 2025</strong></div>
-    <div class="title" v-else>Подключите премиум подписку</div>
-    <a class="btn button-xs" href="#" v-if="authStore.isSubscribed"
-      >Отключить
-    </a>
-    <a
-      v-else
-      class="notification-button button-accent"
-      @click.prevent="onClickConnect"
-      >Подключить
-    </a>
-  </div>-->
 </template>
 
 <script setup>
 import { useAuthStore } from "~/store/auth.js";
 
 const authStore = useAuthStore();
-const { getPremium, getPremiumUrl } = authStore;
+const { getSubPremiumUrl, getUnsubPremiumUrl } = authStore;
+const { sub_premium_url, unsub_premium_url, isSubscribed } =
+  storeToRefs(authStore);
 
-onMounted(async () => {
-  const premium = await getPremium();
-  const premiumUrl = await getPremiumUrl();
+useAsyncData("premiumUrl", async () => {
+  await getSubPremiumUrl();
+  await getUnsubPremiumUrl();
 });
 
 const onClickConnect = () => {
-  window.open(authStore.premium_url);
+  if (!isSubscribed.value) {
+    window.open(sub_premium_url.value, "_blank");
+  } else {
+    window.open(unsub_premium_url.value, "_blank");
+  }
 };
 </script>

@@ -13,7 +13,8 @@ export const useAuthStore = defineStore("auth", {
     isAuthed: false,
     isEmployerMode: false,
     isSubscribed: false,
-    premium_url: null,
+    sub_premium_url: null,
+    unsub_premium_url: null,
     tokenAuth: null,
     tokenType: null,
     expiresAt: null,
@@ -212,8 +213,8 @@ export const useAuthStore = defineStore("auth", {
 
       return this.isSubscribed;
     },
-    async getPremiumUrl() {
-      if (this.premium_url) return this.premium_url;
+    async getSubPremiumUrl() {
+      if (this.sub_premium_url) return this.sub_premium_url;
 
       const { hostname } = useRequestURL();
       const response = await useApi("getSettings", {
@@ -222,10 +223,25 @@ export const useAuthStore = defineStore("auth", {
       });
 
       if (response.status === "success") {
-        this.premium_url = response.data.data;
+        this.sub_premium_url = response.data.data;
       }
 
-      return this.premium_url;
+      return this.sub_premium_url;
+    },
+    async getUnsubPremiumUrl() {
+      if (this.unsub_premium_url) return this.unsub_premium_url;
+
+      const { hostname } = useRequestURL();
+      const response = await useApi("getSettings", {
+        method: "get",
+        params: { setting_key: "unsub_url", host: hostname },
+      });
+
+      if (response.status === "success") {
+        this.unsub_premium_url = response.data.data;
+      }
+
+      return this.unsub_premium_url;
     },
     createAuthHeaders(token) {
       return {
