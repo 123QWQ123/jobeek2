@@ -7,14 +7,6 @@ const authStore = useAuthStore();
 const resumeStore = useResumeStore();
 
 const isEmployer = computed(() => authStore.isEmployer);
-const isSubscribed = computed(() => authStore.isSubscribed);
-
-useAsyncData("myResumesData", () =>
-  Promise.all([
-    resumeStore.getMyResumes(),
-    resumeStore.getAvailabilityCreate(),
-  ]),
-);
 
 watch(isEmployer, (value) => {
   if (value) {
@@ -22,10 +14,12 @@ watch(isEmployer, (value) => {
   }
 });
 
-const isCompleted = computed(() => {
-  const { hh, superjob } = resumeStore.providers;
-  return !!hh && !!superjob;
-});
+useAsyncData("myResumesData", () =>
+  Promise.all([
+    resumeStore.getMyResumes(),
+    resumeStore.getAvailabilityCreate(),
+  ]),
+);
 </script>
 
 <template>
