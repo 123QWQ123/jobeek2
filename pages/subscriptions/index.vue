@@ -8,7 +8,7 @@ const authStore = useAuthStore();
     <PersonalCabinetSearchMobile />
     <div class="bg-wrapper pt-4">
       <div class="wrapper wrapper-1290">
-        <div class="content mb-4">
+        <div class="content">
           <h1 class="lk-page-title mb-4">Ваши подписки</h1>
           <YourSubscriptionsList></YourSubscriptionsList>
         </div>

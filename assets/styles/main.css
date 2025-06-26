@@ -734,6 +734,7 @@ header.main-header .checker-box .v.active:after {
 
 .bg-wrapper {
     background: #f5f8fa;
+    min-height: calc(100vh - 300px);
 }
 
 .cabinet .search-section {
@@ -1091,8 +1092,8 @@ header.main-header .checker-box .v.active:after {
 
 .note p {
     font-weight: normal;
-    font-size: 16px;
-    line-height: 22px;
+    font-size: 14px;
+    line-height: 18px;
     color: #5375FD;
 }
 
@@ -1504,6 +1505,7 @@ header.main-header .checker-box .v.active:after {
         -o-transition: transform .1s ease-in;
         transition: transform .1s ease-in;
         transition: transform .1s ease-in, -webkit-transform .1s ease-in;
+        max-width: 300px;
     }
 
     .main-navigation.active {
@@ -1854,12 +1856,23 @@ body .main-section-mob {
         display: block;
     }
     .search-form {
-        padding: 0;
+        padding: 40px 20px 20px;
     }
     .main-section-mob {
         margin: 39px 15px 20px 15px;
         padding-bottom: 0 !important;
     }
+    .results-page-content {
+	    padding-bottom: 20px;
+	    padding-top: 15px;
+	}
+	.profile-page {
+	    padding-bottom: 0;
+	}
+	.search-head {
+	    margin-bottom: 20px;
+	    padding-bottom: 15px;
+	}
 }
 
 @media (max-width: 1025px) {
@@ -3780,6 +3793,10 @@ body .main-section-mob {
     margin-left: 12px;
 }
 
+.notification.active .notification-text .title {
+	color: #0A2540;
+}
+
 .notification .notification-text p {
     font-size: 16px;
     line-height: 140%;
@@ -3933,7 +3950,7 @@ body .main-section-mob {
     color: #5375FD;
     background: rgba(83, 117, 253, 0.1);
     border-radius: 12px;
-    margin-top: 40px;
+    margin-top: 20px;
 }
 
 .create-button img {
@@ -7437,7 +7454,7 @@ svg.progress {
     padding: 0;
     max-width: 1290px;
     width: 100%;
-    margin-left: 133px;
+    margin-left: 101px;
 }
 
 .header-wrapper .search-form--widget {
@@ -8385,6 +8402,10 @@ div.parsed_content {
     width: 22px;
 }
 
+.subs-card-options.services-margin {
+	padding: 15px 0;
+}
+
 .premium-checker input:checked~.premium-checker-ui .circle {
     transform: translate(30px, -50%);
     background: #ffc955;
@@ -8398,6 +8419,11 @@ div.parsed_content {
     margin-left: auto;
 }
 
+.services-block-group.reload-block-btn {
+    display: grid;
+    align-items: center;
+}
+
 .services-block-time {
 	color: #7F8B99;
     text-align: right;
@@ -8408,7 +8434,7 @@ div.parsed_content {
 	color: #5375FD;
     font-size: 16px;
     display: flex;
-    align-items: center;
+    align-items: center !important;
 }
 
 .services-block-group.services-block-all {

@@ -230,7 +230,7 @@ function close() {
 
 <style scoped>
 .note p {
-  font-size: 15px;
+  font-size: 14px;
 }
 
 @media only screen and (max-width: 768px) {
