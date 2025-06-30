@@ -2,6 +2,7 @@
 import { ref, computed, watch, onMounted } from "vue";
 import { useField } from "vee-validate";
 import { useAuthStore } from "~/store/auth.js";
+import { useProfileStore } from "~/store/profile.js";
 
 const props = defineProps({
   name: {
@@ -16,6 +17,7 @@ const props = defineProps({
 });
 
 const authStore = useAuthStore();
+const profileStore = useProfileStore();
 const { value, setValue, errorMessage, setErrors } = useField(props.name);
 
 const currentValue = ref(null);
@@ -30,7 +32,7 @@ const is_email_to_verify_sent = ref(false);
 
 const is_sent_and_verified = computed(() => {
   const user = props.type === "seeker" ? authStore.seeker : authStore.employer;
-  return user?.email_to_verify ? true : false;
+  return !!user?.email_to_verify;
 });
 
 const updateEmails = (user) => {
@@ -59,7 +61,7 @@ const onEmailConfirm = async (e) => {
   e.preventDefault();
   isLoading.value = true;
   const inputEmailValue = email_to_verify.value || email.value;
-  const resData = await authStore.confirmEmail({ email: inputEmailValue });
+  const resData = await profileStore.confirmEmail({ email: inputEmailValue });
 
   if (resData.status !== "success") {
     setErrors(resData.errors?.email || resData.message);

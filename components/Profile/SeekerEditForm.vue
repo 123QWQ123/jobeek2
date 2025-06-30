@@ -121,24 +121,24 @@ useAsyncData("getCities", () =>
 
 // Валидация схемы
 const schema = zod.object({
-  first_name: zod.string().trim().min(2, "Введите имя"),
-  last_name: zod.string().trim().min(3, "Введите фамилию"),
-  birth_date: zod.string().trim().min(1),
-  email: zod.string().email(),
-  city_id: zod.number().min(1).safe("Выберите город из списка"),
-  country_id: zod.number().safe("Выберите страну из списка"),
-  phone: zod.string().min(1).trim(),
+  first_name: zod.string().trim().min(1, "Введите имя"),
+  last_name: zod.string().trim().min(1, "Введите фамилию"),
+  birth_date: zod.string().trim().min(1, "Дата рождения должна быть заполнена"),
+  email: zod.string().email("Введите ваш E-mail"),
+  city_id: zod.number({ message: "Выберите город из списка" }),
+  country_id: zod.number({ message: "Выберите страну из списка" }),
+  phone: zod.string().trim().min(1),
 });
 const getFields = (newObject) => ({
-  first_name: newObject?.first_name || "",
-  last_name: newObject?.last_name || "",
-  email: newObject?.email || "",
+  first_name: String(newObject?.first_name) || "",
+  last_name: String(newObject?.last_name) || "",
+  email: String(newObject?.email) || "",
   email_to_verify: newObject?.email_to_verify || "",
   birth_date: newObject?.birth_date || "",
-  city_id: newObject?.city_id,
+  city_id: Number(newObject?.city_id),
   city_name: newObject?.city_name || "",
   photo: newObject?.photo || null,
-  country_id: newObject?.country_id || 1,
+  country_id: Number(newObject?.country_id || 1),
   phone: newObject?.phone || "",
 });
 const initialValues = getFields(seeker.value);
@@ -148,7 +148,7 @@ const { values, errors, validate, setErrors, meta } = useForm({
   initialTouched: true,
   validationSchema: toTypedSchema(schema),
 });
-const { value: country_id, setValue: setCountryId } = useField("country_id");
+const { value: country_id } = useField("country_id");
 const { value: city_id, setValue: setCityId } = useField("city_id");
 
 watch(country_id, async (val) => {

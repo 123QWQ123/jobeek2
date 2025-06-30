@@ -45,7 +45,7 @@ watch(
           </p>
         </div>
 
-        <ProfileParentEmployerProfile />
+        <ProfileEmployerEditForm />
       </div>
       <aside class="sidebar">
         <Premium />

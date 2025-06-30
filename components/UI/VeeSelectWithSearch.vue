@@ -13,7 +13,6 @@
         @input="onInput"
         role="spinbutton"
         autocomplete="off"
-        autofill="off"
         @focusin="onFocus"
         :class="{ placeholder: placeholderClass }"
       />
@@ -95,20 +94,9 @@ watch(
     const found = props.options.find(
       (item) => String(item.value) === String(val),
     );
-    searchInput.value = found ? found.name : "";
+    searchInput.value = found ? found.name : searchInput.value;
   },
   { immediate: true },
-);
-
-// On options change — reset selected value if not actual anymore
-watch(
-  () => props.options,
-  (options) => {
-    if (!options.find((opt) => String(opt.value) === String(value.value))) {
-      value.value = "";
-      searchInput.value = "";
-    }
-  },
 );
 
 // Open/close select
@@ -140,6 +128,7 @@ function onSelect(val) {
 // When typing in the field
 function onInput(e) {
   isOpen.value = true;
+  value.value = null;
   emit("input", searchInput.value);
 }
 
