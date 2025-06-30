@@ -156,7 +156,7 @@
       <!--        />-->
 
       <div class="input-row">
-        <label>Поль:<b>*</b></label>
+        <label>Пол:<b>*</b></label>
         <div class="input-wrapper mt-2">
           <LazyVeeCustomSelect
             :options="genderOptions"

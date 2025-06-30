@@ -201,7 +201,7 @@ const save = async (is_from_parent = false) => {
     return true;
   }
   if (!meta.value.valid) {
-    errorMessage.value = "Запольните все поля";
+    errorMessage.value = "Заполните все поля";
     return false;
   }
   isLoading.value = true;
