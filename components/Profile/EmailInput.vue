@@ -67,6 +67,11 @@ const onEmailConfirm = async (e) => {
     setErrors(resData.errors?.email || resData.message);
     isLoading.value = false;
   } else {
+    if (props.type === "seeker") {
+      authStore.seeker.email = inputEmailValue;
+    } else {
+      authStore.employer.email = inputEmailValue;
+    }
     isConfirmButton.value = false;
     isConfirmationSent.value = true;
     is_email_to_verify_sent.value = true;
