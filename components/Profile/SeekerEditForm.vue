@@ -130,15 +130,15 @@ const schema = zod.object({
   phone: zod.string().trim().min(1),
 });
 const getFields = (newObject) => ({
-  first_name: String(newObject?.first_name) || "",
-  last_name: String(newObject?.last_name) || "",
-  email: String(newObject?.email) || "",
+  first_name: newObject?.first_name || "",
+  last_name: newObject?.last_name || "",
+  email: newObject?.email || "",
   email_to_verify: newObject?.email_to_verify || "",
   birth_date: newObject?.birth_date || "",
-  city_id: Number(newObject?.city_id),
+  city_id: newObject?.city_id,
   city_name: newObject?.city_name || "",
   photo: newObject?.photo || null,
-  country_id: Number(newObject?.country_id || 1),
+  country_id: newObject?.country_id || 1,
   phone: newObject?.phone || "",
 });
 const initialValues = getFields(seeker.value);
