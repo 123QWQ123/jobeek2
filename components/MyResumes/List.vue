@@ -32,8 +32,10 @@
     <ul class="resume-list mt-4" v-if="my_resumes.length > 0">
       <MyResumesItem v-for="item in my_resumes" :key="item.id" :item="item" />
     </ul>
-    <div class="provider_buttons d-flex mt-4 pb-4 justify-content-center" v-else>
-      <p>У Вас нет резюме.</p>
+    <div class="mt-4 pb-4 justify-content-center" v-else>
+      <div class="provider_buttons d-flex mt-4 pb-4 justify-content-center">
+        <p>У Вас нет резюме.</p>
+      </div>
     </div>
   </div>
 </template>
@@ -86,5 +88,6 @@ const onProviderChange = (newProvider) => {
   border-radius: 12px;
   padding: 20px;
   font-weight: bold;
+  margin-bottom: 40px;
 }
 </style>

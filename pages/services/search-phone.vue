@@ -77,7 +77,7 @@ watchEffect(async () => {
   <main class="main bg-wrapper scam-phone-page" role="main">
     <div class="head-w-section">
       <div class="wrapper wrapper-1290">
-        <h1 class="head-w-section__title">Поиск по номеру телефона</h1>
+        <h1 class="head-w-section__title">Введите номер телефона для проверки на мошенничество</h1>
 
         <form class="search-row" @submit.prevent="onPhoneSearch">
           <button class="search-button">

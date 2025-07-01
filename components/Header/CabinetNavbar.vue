@@ -87,7 +87,7 @@
           </li>
           <li>
             <NuxtLink :to="{ name: 'services-search-phone' }">
-              <span>Scam checker</span></NuxtLink
+              <span>Кто звонит?</span></NuxtLink
             >
           </li>
           <li v-if="false">
