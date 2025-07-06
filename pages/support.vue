@@ -12,6 +12,10 @@ useHead({
 import { useAuthStore } from "~~/store/auth";
 import IMask from "imask";
 import { useProfileStore } from "../store/profile";
+import { useField, useForm } from "vee-validate";
+import { toTypedSchema } from "@vee-validate/zod";
+import { z } from "zod";
+import { zod } from "~/hooks/ru-zod.js";
 
 const auth = useAuthStore();
 const isAuthed = computed(() => auth.isAuthed);
@@ -37,10 +41,29 @@ const initialState = {
 };
 const state = reactive(initialState);
 
-function clearValidity(input) {
-  state[input].isValid = true;
-  state.isFormValid = true;
-}
+const zodSchema = z.object({
+  phone: z
+    .string()
+    .length(11, "Введите полностью 11 цифр номера")
+    .regex(/^\d+$/, "Некорректный формат номера"),
+  email: zod.string().email(),
+  message: z.string(),
+});
+
+const { validate, errors, setFieldValue, meta, setErrors, values, resetForm } =
+  useForm({
+    validationSchema: toTypedSchema(zodSchema),
+    initialTouched: false,
+    initialValues: {
+      phone: "",
+      email: "",
+      message: "",
+    },
+  });
+
+const { value: phone } = useField("phone");
+const { value: email } = useField("email");
+const { value: message } = useField("message");
 
 function validateForm() {
   if (state.email.val === "") {
@@ -57,54 +80,19 @@ function validateForm() {
   }
 }
 
-function resetForm() {
-  for (const [key, value] of Object.entries(state)) {
-    if (value && value.val) state[key] = value.val;
-    else state[key] = value;
-  }
-
-  phoneMask.value.unmaskedValue = "";
-}
-
 const route = useRoute();
 
 const profileStore = useProfileStore();
 const { sendMessage } = profileStore;
 async function onSubmit() {
-  validateForm();
-  if (state.isFormValid) {
-    const response = await sendMessage({
-      email: state.email.val,
-      phone: phoneMask.value.unmaskedValue,
-      message: state.message.val,
-    });
-    if (response.status === "success") {
-      Swal.fire({
-        title: "Успешно!",
-        text: response.message,
-        icon: "success",
-        confirmButtonText: "ОК",
-      });
-      resetForm();
-    } else {
-      Swal.fire({
-        title: "Ошибка!",
-        text: response.message,
-        icon: "error",
-        confirmButtonText: "ОК",
-      });
-      return;
-    }
+  await validate();
 
-    if (response.status === "error" && response.message) {
-      Swal.fire({
-        title: "Ошибка!",
-        text: response.message,
-        icon: "error",
-        confirmButtonText: "ОК",
-      });
-      return;
-    }
+  if (meta.value.valid) {
+    await sendMessage({
+      email: email.value,
+      phone: phoneMask.value.unmaskedValue,
+      message: message.value,
+    });
   }
 }
 
@@ -114,10 +102,9 @@ onMounted(() => {
   phoneMask.value = new IMask(phoneInputElement.value, {
     mask: "+{7}(000)000-00-00",
   });
-  phoneInputElement.value.addEventListener(
-    "input",
-    (e) => (state.phone.val = e.target.value),
-  );
+  phoneInputElement.value.addEventListener("input", () => {
+    setFieldValue("phone", phoneMask.value.unmaskedValue);
+  });
 });
 function close() {
   state.error = null;
@@ -153,10 +140,13 @@ function close() {
               <input
                 type="text"
                 name="email"
-                v-model="state.email.val"
+                v-model="email"
                 placeholder="Email"
               />
             </div>
+            <span class="error-message" v-if="errors.email">
+              {{ errors.email }}</span
+            >
             <div class="note">
               <img src="~/assets/img/svg/i.svg" alt="#" />
               <p>Нужен для того что-бы мы смогли ответить вам.</p>
@@ -169,13 +159,19 @@ function close() {
                 placeholder="Номер телефона"
               />
             </div>
+            <span class="error-message" v-if="errors.phone">
+              {{ errors.phone }}</span
+            >
             <div class="i-wrap">
               <textarea
-                name="problem"
-                v-model="state.message.val"
+                name="message"
+                v-model="message"
                 placeholder="Опишите суть проблемы:"
               ></textarea>
             </div>
+            <span class="error-message" v-if="errors.message">
+              {{ errors.message }}</span
+            >
             <button class="btn button-accent" type="submit">Отправить</button>
           </form>
         </div>
