@@ -327,7 +327,6 @@ export const useProfileStore = defineStore("profile", {
         payload,
       });
       if (response.status === "success") {
-        // setUser(response.data.data);
         setEmployer(response.data.data);
         this.setEmployer(response.data.data);
         this.setUser(response.data.data);
