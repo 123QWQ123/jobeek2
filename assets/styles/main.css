@@ -2945,6 +2945,45 @@ body .main-section-mob {
     stroke: #5375FD;
 }
 
+.message-list-item .message-content {
+	display: none;
+	padding: 10px 27px 23px 24px;
+	flex-direction: column;
+}
+
+.message-list-item.active .message-content {
+	display: flex;
+}
+
+.message-content .input-wrapper.position-relative {
+	display: grid;
+    grid-template-columns: 300px auto;
+    gap: 20px;
+}
+
+.message-content .message-txt-item {
+	padding: 16px;
+    border: 1px dashed #00a82d;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 107px;
+    margin-top: 20px;
+}
+
+.message-txt-item .button-accent {
+	min-width: 191px;
+    min-height: 46px;
+}
+
+.message-txt-item strong {
+    display: block;
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
 @media (max-width: 1180px) {
     .message-item .col-name {
         width: 140px;
