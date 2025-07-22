@@ -11,7 +11,9 @@ export const useUIStore = defineStore("ui", {
       footer_settings: {},
     };
   },
-  persist: false,
+  persist: {
+    storage: piniaPluginPersistedstate.localStorage(),
+  },
   actions: {
     async toggleSidebar() {
       this.isSidebarOpen = !this.isSidebarOpen;
@@ -30,6 +32,10 @@ export const useUIStore = defineStore("ui", {
       }
     },
     async getFooterSettings() {
+      if (this.footer) {
+        return this.footer;
+      }
+
       const url = useRequestURL();
       const hostname = url.hostname;
       const response = await useApi("getSettings", {
@@ -39,9 +45,11 @@ export const useUIStore = defineStore("ui", {
           host: hostname,
         },
       });
+
       if (response.status === "success") {
         this.footer = response.data.data;
       }
+
       return this.footer;
     },
   },
