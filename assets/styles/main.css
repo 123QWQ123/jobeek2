@@ -2781,13 +2781,12 @@ body .main-section-mob {
 
 .message-box-head {
     padding: 22px 24px;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
+    display: grid;
     -webkit-box-pack: justify;
     -ms-flex-pack: justify;
     justify-content: space-between;
     border-bottom: 1px solid #ECECEC;
+    grid-template-columns: 300px auto;
 }
 
 .message-box-head .title {
@@ -2955,7 +2954,7 @@ body .main-section-mob {
 	display: flex;
 }
 
-.message-content .input-wrapper.position-relative {
+.message-box-head .input-wrapper.position-relative {
 	display: grid;
     grid-template-columns: 300px auto;
     gap: 20px;
@@ -2968,7 +2967,7 @@ body .main-section-mob {
     display: flex;
     align-items: center;
     gap: 107px;
-    margin-top: 20px;
+    margin-top: 0;
 }
 
 .message-txt-item .button-accent {

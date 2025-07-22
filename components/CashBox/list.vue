@@ -2,6 +2,10 @@
   <div class="message-box">
     <div class="message-box-head">
       <h1 class="title">Внутреняя почта</h1>
+      <div class="input-wrapper position-relative">
+        <input type="text" id="email" name="email" value="Oleg222@yandex.ru">
+        <button class="button-accent" type="submit">Изменить почту</button>
+      </div>
     </div>
     <div class="message-box-body">
       <ul class="messages-list">
@@ -37,12 +41,6 @@
           </div>
           
           <div class="message-content">
-            <div class="message-head-row">
-              <div class="input-wrapper position-relative">
-                <input type="text" id="email" name="email" value="Oleg222@yandex.ru">
-                <button class="button-accent" type="submit">Изменить почту</button>
-              </div>
-            </div>
             <div class="message-txt">
               <div class="message-txt-item">
                 <div class="message-txt-item__content">
