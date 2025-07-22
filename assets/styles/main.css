@@ -2970,8 +2970,12 @@ body .main-section-mob {
     margin-top: 0;
 }
 
+.message-list-item.error .message-txt-item {
+    border: 1px dashed red;
+}
+
 .message-txt-item .button-accent {
-	min-width: 191px;
+    min-width: 191px;
     min-height: 46px;
 }
 
