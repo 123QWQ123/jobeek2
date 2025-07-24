@@ -42,6 +42,7 @@
             <div class="col-wrap">
               <div class="col col-body">
                 <h3 class="title">Кассовый чек от {{ receipt.date }}</h3>
+                <span class="message-arrow"></span>
               </div>
             </div>
           </div>
