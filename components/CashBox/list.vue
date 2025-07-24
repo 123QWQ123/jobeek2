@@ -3,13 +3,15 @@
     <div class="message-box-head">
       <h1 class="title">Внутреняя почта</h1>
       <div class="input-wrapper position-relative">
-        <input
-          type="text"
-          id="email"
+        <VeeCustomTextInput
+          type="email"
           name="email"
-          placeholder="Oleg222@yandex.ru"
+          :placeholder="user.email || seeker.email || employer.email"
+          :value="user.email"
         />
-        <button class="button-accent" type="submit">Изменить почту</button>
+        <button @click="addEmail" class="button-accent" type="submit">
+          Изменить почту
+        </button>
       </div>
     </div>
     <div class="message-box-body">
@@ -82,24 +84,38 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { useCashBoxStore } from "~/store/cashbox";
 import { useAuthStore } from "~/store/auth";
+import { toTypedSchema } from "@vee-validate/zod";
+import { zod } from "~/hooks/ru-zod.js";
 
-const { isEmployer, employer, seeker } = storeToRefs(useAuthStore());
-const phone = computed(() => {
-  return isEmployer.value ? employer.value.phone : seeker.value.phone;
-});
-const { getReceipts } = useCashBoxStore();
+const { isEmployer, user } = storeToRefs(useAuthStore());
+
+const { getReceipts, setEmail } = useCashBoxStore();
 const { receipts } = storeToRefs(useCashBoxStore());
 const activeReceipts = ref([]); // Массив для хранения индексов выбранных элементов
 
-useAsyncData("getReceipts", async () => {
+await useAsyncData("getReceipts", async () => {
+  const url = useRequestURL();
+  const hostname = url.hostname;
+  // return await getReceipts(user.value.phone, hostname);
   // testData
   return await getReceipts("79293088886", "checkyour.name");
 });
 
-const toggleActive = (index: number, type: string = "") => {
+// Валидация схемы
+const schema = zod.object({
+  email: zod.string().email("Введите ваш E-mail"),
+});
+
+const { values, errors, validate, setErrors, meta } = useForm({
+  initialValues: { email: user.value.email },
+  initialTouched: true,
+  validationSchema: toTypedSchema(schema),
+});
+const { value: email } = useField("email");
+const toggleActive = (index, type = "") => {
   const pos = activeReceipts.value.indexOf(index);
   if (pos === -1) {
     // Элемент ещё не активен, добавляем
@@ -112,8 +128,14 @@ const toggleActive = (index: number, type: string = "") => {
   }
 };
 
-const openCheck = (url: string) => {
+const openCheck = (url) => {
   window.open(url, "_blank");
+};
+const addEmail = async () => {
+  const url = useRequestURL();
+  const hostname = url.hostname;
+
+  await setEmail(user.value.phone, user.value.email, hostname);
 };
 </script>
 

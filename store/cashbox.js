@@ -7,7 +7,7 @@ export const useCashBoxStore = defineStore("cashbox", {
     };
   },
   persist: {
-    storage: piniaPluginPersistedstate.localStorage(),
+    storage: piniaPluginPersistedstate.sessionStorage(),
   },
   actions: {
     async getReceipts(phone, host = null) {
