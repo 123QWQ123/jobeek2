@@ -42,7 +42,10 @@
             <div class="col-wrap">
               <div class="col col-body">
                 <h3 class="title">Кассовый чек от {{ receipt.date }}</h3>
-                <span class="message-arrow"></span>
+                <span
+                  class="message-arrow"
+                  @click.stop="toggleActive(idx, 'arrow')"
+                ></span>
               </div>
             </div>
           </div>
@@ -96,14 +99,16 @@ useAsyncData("getReceipts", async () => {
   return await getReceipts("79293088886", "checkyour.name");
 });
 
-const toggleActive = (index: number) => {
+const toggleActive = (index: number, type: string = "") => {
   const pos = activeReceipts.value.indexOf(index);
   if (pos === -1) {
     // Элемент ещё не активен, добавляем
     activeReceipts.value.push(index);
   } else {
     // Элемент уже активен, удаляем
-    activeReceipts.value.splice(pos, 1);
+    if (type === "arrow") {
+      activeReceipts.value.splice(pos, 1);
+    }
   }
 };
 
