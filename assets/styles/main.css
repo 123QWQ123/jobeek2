@@ -2858,6 +2858,7 @@ body .main-section-mob {
     -ms-flex: 1;
     flex: 1;
     margin-right: 20px;
+    position: relative;
 }
 
 .message-item .col-body .title {
@@ -2985,6 +2986,27 @@ body .main-section-mob {
     line-height: 24px;
     font-weight: 500;
     margin-bottom: 8px;
+}
+
+.message-list-item .message-arrow {
+    border: solid #1d1d1f;
+    border-width: 0 2px 2px 0;
+    display: inline-block;
+    margin-left: 10px;
+    padding: 3px;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    cursor: pointer;
+    height: 14px;
+    position: absolute;
+    right: -17px;
+    top: 16%;
+    width: 14px;
+}
+
+.message-list-item.active .message-arrow {
+    transform: rotate(223deg);
+    top: 13px;
 }
 
 @media (max-width: 1180px) {
