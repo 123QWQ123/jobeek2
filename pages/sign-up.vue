@@ -235,13 +235,13 @@ function close() {
             <img src="~/assets/img/svg/i.svg" alt="#" />
             <p class="">
               <span v-if="isFirstTimeCodeSent">
-                Мы вам отправили код подтверждения на телефон
+                Мы вам отправили код подтверждения на телефон.
               </span>
               <span v-else>
-                Мы вам еще раз отправили код подтверждения на телефон
+                Мы вам еще раз отправили код подтверждения на телефон.
               </span>
-              <span class="text-success">{{ phone.val }}.</span>
-              <a href="#" class="fw-medium" @click.prevent="onChangePhone">
+              <span class="text-success">{{ phone.val }}</span>
+              <a href="#" class="fw-medium phone-edit-btn" @click.prevent="onChangePhone">
                 Изменить номер
               </a>
             </p>
@@ -269,7 +269,7 @@ function close() {
             Подтвердить
             <Loader class="text-light spinner-border-sm" v-if="isLoading" />
           </button>
-          <span class="col-auto px-3" type="button" disabled>
+          <span class="col-auto px-3 btn-code-send" type="button" disabled>
             Не получили код?
             <a
               class="link link-primary"
@@ -295,5 +295,16 @@ input:disabled {
 }
 .phone-register .note {
   margin-bottom: 16px;
+}
+.phone-edit-btn {
+  color: #00b858;
+}
+.btn-code-send {
+  color: #5375fd;
+  font-size: 12px;
+  margin-top: 10px;
+}
+.enter-form .btn {
+  margin-top: 0 !important;
 }
 </style>
