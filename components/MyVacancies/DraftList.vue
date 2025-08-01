@@ -73,8 +73,7 @@ const my_drafts = computed(() => props.items);
 const vacancyStore = useVacancyStore();
 const current_page = ref(vacancyStore.my_draft_current_page ?? 1);
 const isPrevDisabled = computed(() => {
-  if (parseInt(current_page.value) === 1) return true;
-  return false;
+  return parseInt(current_page.value) === 1;
 });
 const isNextDisabled = computed(
   () => vacancyStore.my_draft_last_page === vacancyStore.my_draft_current_page,

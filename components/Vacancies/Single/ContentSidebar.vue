@@ -24,12 +24,12 @@
       </div>
 
       <div class="company-logo">
-        <img class="w-100" :src="employerLogo" :alt="vacancyData.company" />
+        <img class="w-100" :src="employerLogo" :alt="data.company" />
       </div>
-      <h3 class="title">{{ vacancyData.company }}</h3>
+      <h3 class="title">{{ data.company }}</h3>
       <!--      <p>Клиент SuperJob с 2003 года</p>-->
-      <p>{{ vacancyData.open_vacancies ?? 0 }} вакансии</p>
-      <p v-html="vacancyData.company_activity" />
+      <p>{{ data.open_vacancies ?? 0 }} вакансии</p>
+      <p v-html="data.company_activity" />
       <!--      <div class="count">123 вакансии</div>-->
       <!--      <div class="grade-box-container">-->
       <!--        <div class="title">Оценки сотрудников</div>-->
@@ -60,7 +60,7 @@
       <!--      </div>-->
     </div>
 
-    <div class="company-col" v-if="isAuthed">
+    <div class="company-col" v-if="isAuthed && provider">
       <span class="select-resume-title title">Мои резюме</span>
       <div class="select-resume-row">
         <div class="custom-select-wrapper">
@@ -90,18 +90,30 @@
     <div class="company-col" v-if="isAuthed && isContactsShown">
       <div :class="{ open: areContactsShown }">
         <ul>
-          <li v-if="vacancyData.contacts.name">
-            {{ vacancyData.contacts.name }}
+          <li v-if="data.contacts.name">
+            {{ data.contacts.name }}
           </li>
-          <li v-for="phone in vacancyData.contacts.phones" :key="phone">
-            <a class="tel" :href="`tel:+${phone}`">
+          <li v-if="data.contacts.company_description">
+            {{ data.contacts.company_description }}
+          </li>
+          <li v-if="data.contacts?.phones?.phone">
+            <a class="tel" :href="`tel:+${data.contacts.phones.phone}`">
               <img src="~/assets/img/svg/carbon_phone.svg" alt="Phone" />
-              {{ phone }}
+              {{ data.contacts.phones.phone_comment }}
             </a>
           </li>
-          <li v-if="vacancyData.contacts.email">
-            <a class="tel" :href="`email:${vacancyData.contacts.email}`">
-              {{ vacancyData.contacts.email }}
+          <li v-if="data.contacts?.phones?.additional_phone">
+            <a
+              class="tel"
+              :href="`tel:+${data.contacts.phones.additional_phone}`"
+            >
+              <img src="~/assets/img/svg/carbon_phone.svg" alt="Phone" />
+              {{ data.contacts.phones.additional_phone_comment }}
+            </a>
+          </li>
+          <li v-if="data.contacts.email">
+            <a class="tel" :href="`email:${data.contacts.email}`">
+              {{ data.contacts.email }}
             </a>
           </li>
         </ul>
@@ -123,13 +135,13 @@ import { useResumeStore } from "~/store/resume.js";
 import { toast } from "vue3-toastify";
 import { ref, computed, onMounted } from "vue";
 
-const props = defineProps({
+const { data } = defineProps({
   data: {
     required: true,
   },
 });
-const { data: vacancyData } = storeToRefs(props);
-const isFavorite = ref(vacancyData.value.is_favorite ?? false);
+
+const isFavorite = ref(data.is_favorite ?? false);
 const disabled = ref(false);
 
 const vacancyStore = useVacancyStore();
@@ -137,6 +149,9 @@ const { addToFavorite, removeFromFavorite } = vacancyStore;
 
 const authStore = useAuthStore();
 const { isAuthed } = storeToRefs(authStore);
+
+const route = useRoute();
+const { provider } = route.query;
 
 const toggleFavorite = async () => {
   if (disabled.value === true) {
@@ -146,8 +161,8 @@ const toggleFavorite = async () => {
   try {
     const action = isFavorite.value ? removeFromFavorite : addToFavorite;
     const response = await action({
-      id: vacancyData.value.id,
-      provider: vacancyData.value.provider,
+      id: data.id,
+      provider: data.provider,
     });
     if (response.status === "success") {
       isFavorite.value = !isFavorite.value;
@@ -174,15 +189,11 @@ onMounted(getMyResumes);
 const areContactsShown = ref(false);
 const selectedResume = ref(null);
 const responseLetter = ref(null);
-const requiredLetter = computed(
-  () => vacancyData.value.response_letter_required ?? false,
-);
+const requiredLetter = computed(() => data.response_letter_required ?? false);
 const selectedResumeError = ref("");
 const isContactsShown = computed(() => {
   return (
-    !!vacancyData.contacts?.name ||
-    !!vacancyData.contacts?.phones ||
-    !!vacancyData.contacts?.email
+    !!data.contacts?.name || !!data.contacts?.phones || !!data.contacts?.email
   );
 });
 
@@ -205,7 +216,7 @@ const onSubmit = async (e) => {
   }
 
   const response = await submitResume({
-    vacancy_id: vacancyData.value.id,
+    vacancy_id: data.id,
     resume_id: selectedResume.value,
     providers: ["hh"],
   });
@@ -225,9 +236,7 @@ const toggleContactsVisibility = () => {
 };
 
 const employerLogo = computed(
-  () =>
-    vacancyData.value.logo ??
-    new URL("/assets/img/logos/superjob.svg", import.meta.url),
+  () => data.logo ?? new URL("/assets/img/logos/superjob.svg", import.meta.url),
 );
 </script>
 

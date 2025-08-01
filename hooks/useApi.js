@@ -68,7 +68,7 @@ const handleResponse = (data, cb) => {
       if (cb) {
         cb(result);
       } else {
-        useNuxtApp().$toast.error(result.message, { autoClose: 10000 });
+        useNuxtApp().$toast.error(result.message, { autoClose: 5000 });
       }
     } else {
       if (cb) {

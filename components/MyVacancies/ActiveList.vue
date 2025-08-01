@@ -82,6 +82,7 @@ const isNextDisabled = computed(
 );
 const isPaginationVisible = computed(() => vacancyStore.my_last_page !== 1);
 const route = useRoute();
+const { getMyVacancies, getMyDrafts } = vacancyStore;
 watch(
   () => route.query.page,
   () => {
@@ -102,7 +103,6 @@ const per_page = ref(10);
 const order_by = ref(null);
 const sortingOptions = ref(useMyVacancySortingOptions());
 const perPageOptions = ref(useMyVacancyPerPageOptions());
-const { getMyVacancies } = vacancyStore;
 
 const onChangePerPage = async (per_page) => {
   isLoading.value = true;

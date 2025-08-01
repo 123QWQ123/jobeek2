@@ -31,7 +31,7 @@
     </div>
 
     <ul class="resume-list mt-4" v-if="my_vacancies.length > 0">
-      <MyVacanciesDraftItem
+      <MyVacanciesArchivedItem
         v-for="item in my_vacancies"
         :key="item.id"
         :item="item"
