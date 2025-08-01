@@ -31,7 +31,9 @@
         </div>
       </div>
       <div class="resume-card-options">
-        <!--        <span class="status">Обновлено в {{ moment(item.published_date).format('HH:mm') }}</span>-->
+        <span class="status"
+          >Обновлено в {{ $moment(item.updated_at).format("HH:mm") }}</span
+        >
         <div class="option-group selector-group">
           <div class="option">
             <div class="custom-check-wrap">
@@ -211,16 +213,10 @@ const vacancyStore = useVacancyStore();
 const { updateDraft } = vacancyStore;
 
 const hhProviderConnected = computed(() => {
-  if (vacancyStore.providers && vacancyStore.providers.hh === true) {
-    return true;
-  }
-  return false;
+  return vacancyStore.providers && vacancyStore.providers.hh === true;
 });
 const superjobProviderConnected = computed(() => {
-  if (vacancyStore.providers.superjob) {
-    return true;
-  }
-  return false;
+  return vacancyStore.providers.superjob;
 });
 const hhProviderEnabled = computed(() => {
   if (item.value && item.value.providers) {

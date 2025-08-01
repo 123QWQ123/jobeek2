@@ -6,14 +6,16 @@
           <SearchForm></SearchForm>
         </div>
       </div>
-      <div class="wrapper wrapper-1290" v-if="vacancy">
-        <VacanciesItemContent :data="vacancy[provider]" />
-        <!--        <h2 class="lk-page-title">Похожие вакансии</h2>-->
-        <!--        <div class="favorites-list-container">-->
-        <!--          <VacanciesSingleLikeList></VacanciesSingleLikeList>-->
-        <!--        </div>-->
+      <div
+        class="wrapper wrapper-1290"
+        v-if="provider && vacancyData && vacancyData[provider]"
+      >
+        <VacanciesItemSearchContent :data="vacancyData[provider]" />
       </div>
-      <!--      <VacanciesSingleResumeListSelectModal :open="isOpen" />-->
+      <div class="wrapper wrapper-1290" v-else-if="!provider && vacancyData">
+        <VacanciesItemContent :data="vacancyData" />
+      </div>
+      <div class="wrapper wrapper-1290" v-else>Not Found</div>
     </div>
   </main>
 </template>
@@ -26,14 +28,18 @@ import { useAsyncData } from "#app";
 const isOpen = ref(true);
 const route = useRoute();
 const vacancyStore = useVacancyStore();
-const { getVacancy } = vacancyStore;
+const { getVacancy, getMyVacancy } = vacancyStore;
 const { vacancy } = storeToRefs(vacancyStore);
 
 const { slug } = route.params;
 const { provider } = route.query;
-const { data: vacancyData } = await useAsyncData("getVacancy", async () =>
-  getVacancy(slug, { provider }),
-);
+const { data: vacancyData } = await useAsyncData("getVacancy", async () => {
+  if (provider) {
+    return getVacancy(slug, { provider });
+  } else {
+    return getMyVacancy(slug);
+  }
+});
 
 if (!vacancyData.value) {
   navigateTo({ name: "favorite-vacancies", params: { slug, provider } });
@@ -41,8 +47,13 @@ if (!vacancyData.value) {
 
 let pageTitle = ref("Not found  - Jobeek");
 
-if (vacancyData.value && vacancyData.value[provider]?.name) {
-  pageTitle.value = vacancyData.value[provider]?.name + " - Jobeek";
+if (
+  (vacancyData.value && vacancyData.value[provider]?.name) ||
+  vacancyData.value?.name
+) {
+  pageTitle.value =
+    (vacancyData.value[provider]?.name || vacancyData.value?.name) +
+    " - Jobeek";
 }
 
 useHead({

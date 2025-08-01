@@ -277,7 +277,6 @@ export const useVacancyStore = defineStore("vacancy", {
         return response.data;
       } else {
         this.vacancy = [];
-        useNuxtApp().$toast.info(response.message, { autoClose: 3000 });
       }
     },
     async clearVacancies() {
@@ -432,6 +431,7 @@ export const useVacancyStore = defineStore("vacancy", {
         "data" in response.data
       ) {
         this.my_vacancy = response.data.data;
+        return response.data.data;
       }
       return response;
     },
