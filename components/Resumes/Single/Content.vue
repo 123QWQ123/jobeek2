@@ -49,7 +49,7 @@
               v-for="citizenship in item.citizenship"
               >{{ citizenship.name }}</span
             >
-            <span>Нет информации</span>
+            <span v-else>Нет информации</span>
           </div>
         </div>
 
