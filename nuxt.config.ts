@@ -47,6 +47,7 @@ export default defineNuxtConfig({
     "~/assets/styles/styles-new.css",
     "~/assets/styles/lk-vacancy.css",
     "~/assets/styles/resume.css",
+    "~/assets/styles/resume-new.css",
     "~/assets/styles/custom.css",
   ],
   components: ["~/components", "~/components/UI"],

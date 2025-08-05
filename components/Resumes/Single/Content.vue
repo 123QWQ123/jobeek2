@@ -1,102 +1,196 @@
 <template>
-  <div class="favorites-card favorites-card--footer-only">
-    <div class="favorites-card-footer">
-      <div
-        class="favorites-card-footer-row telephones-row"
-        :style="{ display: isContactsShown }"
-      >
-        <ul v-if="vacancyPhones.length > 0">
-          <li v-for="phone in vacancyPhones">
-            <a class="tel" :href="getPhoneHref(phone)">
-              <img src="~/assets/img/svg/carbon_phone.svg" alt="#" />+7
-              {{ phone }}
-            </a>
-          </li>
-        </ul>
-        <p v-else>Нет контактов</p>
-      </div>
-      <div class="favorites-card-footer-row">
-        <div class="group">
-          <button class="group-action btn button-md">Откликнуться</button>
-          <button
-            v-if="isContactsShown === 'none'"
-            @click="toggleContactsVisibility"
-            class="group-action btn button-md js-show-contacts"
-          >
-            Показать контакты
-          </button>
-          <button
-            v-if="isContactsShown !== 'none'"
-            @click="toggleContactsVisibility"
-            class="group-action btn button-md js-show-contacts"
-          >
-            Скрыть контакты
-          </button>
-        </div>
-        <div class="group">
-          <button
-            class="group-action ic-btn fav-btn"
-            :class="{ active: isFavorite }"
-            @click="toggleFavorite"
-          >
-            <svg
-              width="23"
-              height="21"
-              viewBox="0 0 23 21"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M11.0641 0.796788C11.2552 0.45665 11.7448 0.456649 11.9359 0.796789L14.7993 5.89364C15.0135 6.27499 15.3835 6.54383 15.8124 6.62973L21.5446 7.77794C21.9272 7.85457 22.0785 8.32027 21.8141 8.60711L17.8515 12.9053C17.555 13.2269 17.4137 13.6619 17.4645 14.0964L18.1439 19.9029C18.1892 20.2903 17.793 20.5782 17.4385 20.4153L12.1262 17.9749C11.7287 17.7923 11.2713 17.7923 10.8738 17.9749L5.56148 20.4153C5.20696 20.5782 4.81081 20.2903 4.85614 19.9029L5.53549 14.0964C5.58632 13.6619 5.44498 13.2269 5.1485 12.9053L1.18593 8.60711C0.921493 8.32027 1.07281 7.85457 1.45535 7.77794L7.18757 6.62973C7.61645 6.54383 7.98648 6.27499 8.20072 5.89364L11.0641 0.796788Z"
-                stroke="#C8C8C8"
-              ></path>
-            </svg>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
   <div class="has-sidebar has-sidebar--v3">
     <div class="content">
-      <div class="vacancy-single">
-        <div class="vacancy-single-head">
-          <h1 class="title">{{ item?.name }}</h1>
-          <div class="adress">
-            <span>{{ item.address }}</span>
+      <div class="resume-single">
+        <div class="resume-photoblock">
+          <div class="resume-photoblock__left">
+            <img src="/img/avatar_medium.jpg" alt="Превью фото" />
           </div>
-          <div class="requirements">
-            {{ item.experience && item.experience + "," }}
-            {{ item.education && item.education + "," }} {{ item.work_type }},
-            {{ moment.unix(item.published_date).format("YYYY.MM.DD") }}
-          </div>
-          <div class="salary">
-            {{ salaryText }}
+          <div class="resume-phblock__right">
+            <div class="resume-phblock__right-all">
+              <div class="resume-phblock__right-block-position">
+                <div class="resume-phblock__right-name">
+                  <h1 class="resume-phblock__right-h1">{{ item.title }}</h1>
+                  <span class="resume-phblock__right-time">
+                    <span>{{ formattedUpdatedAt }}</span>
+                  </span>
+                </div>
+                <span class="resume-phblock__right-price">{{
+                  salaryText
+                }}</span>
+              </div>
+              <div class="resume-phblock__right-txt">
+                <span class="d-inline resume-phblock__right-year"
+                  >Дата рождения: {{ item.birth_date }}</span
+                >
+                <span class="d-block">{{ item.area.name }}</span>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="vacancy-single-body" v-html="item.description"></div>
-        <div class="vacancy-single-footer">
-          <button class="btn button-accent button-accent--ts-bigger">
-            Откликнуться
-          </button>
+
+        <div class="resume-photoblock__sub">
+          <div class="resume-photoblock__sub__left">Занятость</div>
+          <div class="resume-photoblock__sub__right">полная занятость</div>
+        </div>
+
+        <div class="resume-photoblock__sub">
+          <div class="resume-photoblock__sub__left">Гражданство</div>
+          <div class="resume-photoblock__sub__right">
+            <span v-for="citizenship in item.citizenship">{{
+              citizenship.name
+            }}</span>
+          </div>
+        </div>
+
+        <div class="resume-photoblock__sub">
+          <div class="resume-photoblock__sub__left">
+            Профессиональные навыки
+          </div>
+          <div class="resume-photoblock__sub__right">
+            <ul class="resume-photoblock-skills">
+              <li>PHP 7, SQL, HTML, CSS, Python, Git, Javascript</li>
+              <li>Битрикс</li>
+              <li>Docker</li>
+              <li>YII</li>
+              <li>C++</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="resume-content">
+        <div class="resume-text-box">
+          <h2>Опыт работы {{ experienceText }}</h2>
+          <div
+            v-for="experience in item.experience"
+            class="resume-content__sub"
+          >
+            <div class="resume-content__sub__left">
+              {{ formatDate(experience) }}
+            </div>
+            <div class="resume-content__sub__right">
+              <div class="resume-content__history">
+                <h3>{{ experience.profession }}</h3>
+                <div class="resume-content__sub__right_company">
+                  <div>
+                    <div>
+                      <span class="resume-content__company-name"
+                        >{{ experience.company }},
+                        {{ experience.area.name }}</span
+                      >
+                    </div>
+                    <div v-if="experience.company_url">
+                      <a
+                        class="resume-content__company-link"
+                        rel="nofollow"
+                        target="_blank"
+                        :href="experience.company_url"
+                        >{{ experience.company_url }}</a
+                      >
+                    </div>
+                    <div class="resume-content__company-txt">
+                      {{ experience.achievements }}
+                    </div>
+                  </div>
+                </div>
+                <div class="resume-content__sub__right_text">
+                  <p><strong>Обязанности:</strong></p>
+                  <p>{{ experience.responsibilities }}</p>
+                  <!--                  <p><strong>Достижения:</strong></p>-->
+                  <!--                  <p>-->
+                  <!--                    Написал телеграмм бота для продажи конфигов на вебхуке с-->
+                  <!--                    mvc-структурой. Выполнена интеграция с панелями 3xui на-->
+                  <!--                    удаленных серверах и настроено автоматическое создание-->
+                  <!--                    конфигов и выдача их по оплате.-->
+                  <!--                  </p>-->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="resume-content">
+        <div class="resume-text-box">
+          <h2>Образование</h2>
+          <div
+            v-for="education in item.educations?.primary"
+            class="resume-content__sub"
+          >
+            <div class="resume-content__sub__left">
+              {{ education.type?.name }}<br />{{ education.form?.name }}<br />
+              {{ education.end_year }}
+            </div>
+            <div class="resume-content__sub__right">
+              <div class="resume-content__education">
+                <a href="" class="resume-content__education-link">{{
+                  education.institute
+                }}</a>
+                <div class="resume-content__sub__right_education">
+                  <div>
+                    <div>
+                      <span class="resume-content__education-txt"
+                        >Факультет: <a href="">{{ education.faculty }}</a></span
+                      >
+                      <span class="resume-content__education-txt">
+                        Специальность:
+                        <a href="">{{ education.profession }}</a>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="item.additional_information" class="resume-content">
+        <div class="resume-text-box">
+          <h2>Обо мне</h2>
+          <p><strong>Дополнительные сведения:</strong></p>
+          {{ item.additional_information }}
+        </div>
+      </div>
+
+      <div v-if="item.languages.length > 0" class="resume-content">
+        <div class="resume-text-box">
+          <h2>Иностранные языки</h2>
+          <p v-for="language in item.languages">{{ language.name }}</p>
         </div>
       </div>
     </div>
     <aside class="sidebar">
-      <div class="company-col sticky-item">
-        <div class="company-logo">
-          <img class="w-100" :src="employerLogo" :alt="item.company" />
+      <div v-if="item.phones.length > 0" class="company-col">
+        <div
+          :class="{ open: isContactsShown }"
+          class="telephones-row telephones-row-handle"
+        >
+          <ul>
+            <li v-for="phone in item.phones">
+              <a class="tel" href="tel: +7 800 550 11 00">
+                <img src="/img/svg/carbon_phone.svg" alt="#" /> {{ phone }}
+              </a>
+            </li>
+          </ul>
         </div>
-        <h3 class="title">{{ item.company }}</h3>
-        <div class="count">{{ item.open_vacancies ?? 0 }} вакансии</div>
+        <button
+          class="group-action btn button-md js-show-contacts"
+          data-default-txt="Показать контакты"
+          data-replacement-text="Скрыть контакты"
+          @click="toggleContactsVisibility"
+        >
+          {{ isContactsShown ? "Скрыть контакты" : "Показать контакты" }}
+        </button>
       </div>
     </aside>
   </div>
 </template>
 
 <script setup>
-import moment from "moment";
-import Swal from "sweetalert2";
 import { useResumeStore } from "~/store/resume.js";
+import moment from "moment";
 
 const { item } = defineProps({
   item: {
@@ -104,7 +198,7 @@ const { item } = defineProps({
   },
 });
 
-const isFavorite = ref(item.is_favorite ?? false);
+const isFavorite = ref(item.is_favorite || false);
 
 const resumeStore = useResumeStore();
 const { addToFavorite, removeFromFavorite } = resumeStore;
@@ -120,13 +214,6 @@ const toggleFavorite = async () => {
   }
   if (response.status === "success") {
     isFavorite.value = !isFavorite.value;
-  } else {
-    Swal.fire({
-      title: "Ошибка!",
-      text: response.message,
-      icon: "error",
-      confirmButtonText: "ОК",
-    });
   }
 };
 const { $format_number } = useNuxtApp();
@@ -137,16 +224,12 @@ const salaryText = computed(() => {
   return "По договору";
 });
 
-const isContactsShown = ref("none");
+const isContactsShown = ref(false);
 const toggleContactsVisibility = () => {
-  if (isContactsShown.value === "block") {
-    isContactsShown.value = "none";
-  } else {
-    isContactsShown.value = "block";
-  }
+  isContactsShown.value = !isContactsShown.value;
 };
 const vacancyPhones = computed(() => {
-  return item.contacts.phones;
+  return item.contacts?.phones || [];
 });
 const getPhoneHref = (phone) => {
   return "href: +" + phone;
@@ -156,6 +239,39 @@ const employerLogo = computed(() => {
   if (item && item.logo) {
     return item.logo;
   } else return new URL("/assets/img/logos/superjob.svg", import.meta.url);
+});
+
+const formatDate = (ex) => {
+  return (
+    (ex.start_month && ex.start_year
+      ? moment(`${ex.start_year}-${ex.start_month}-01`)
+          .locale("ru")
+          .format("MMMM YYYY")
+      : "неизвестно") +
+    " — " +
+    (ex.end_month && ex.end_year
+      ? moment(`${ex.end_year}-${ex.end_month}-01`)
+          .locale("ru")
+          .format("MMMM YYYY")
+      : "по настоящее время")
+  );
+};
+
+// Format work experience
+const experienceText = computed(() => {
+  if (!item.experience_month_count || item.experience_month_count === 0) {
+    return "Нет опыта";
+  }
+  const years = Math.floor(item.experience_month_count / 12);
+  const months = item.experience_month_count % 12;
+  return `${years > 0 ? `${years} год(а) ` : ""}${months} месяц(а)`;
+});
+
+// Format "updated at" date
+const formattedUpdatedAt = computed(() => {
+  return item.updated_at
+    ? moment(item.updated_at).format("DD.MM.YYYY HH:mm")
+    : "Дата неизвестна";
 });
 </script>
 

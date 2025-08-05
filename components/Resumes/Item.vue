@@ -55,7 +55,7 @@
               <div
                 v-for="exItem in experienceItems"
                 :key="exItem.dateText"
-                class="rrow"
+                class="row"
               >
                 <strong>{{ exItem.company }}</strong> •
                 {{ exItem.profession }} • {{ exItem.dateText }}

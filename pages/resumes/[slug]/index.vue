@@ -6,12 +6,8 @@
           <SearchForm></SearchForm>
         </div>
       </div>
-      <div class="wrapper wrapper-1290" v-if="resume">
-        <ResumesSingleContent :data="resume[provider]" />
-        <h2 class="lk-page-title">Похожие резюме</h2>
-        <div class="favorites-list-container">
-          <VacanciesSingleLikeList></VacanciesSingleLikeList>
-        </div>
+      <div class="wrapper wrapper-1290" v-if="resumeData">
+        <ResumesSingleContent :item="resumeData" />
       </div>
       <!--      <VacanciesSingleResumeListSelectModal :open="isOpen" />-->
     </div>
@@ -22,21 +18,22 @@
 import { useResumeStore } from "~/store/resume.js";
 import { storeToRefs } from "pinia";
 
-const pageTitle = computed(() => resume[provider]?.name + " - Jobeek");
-
-useHead({
-  title: pageTitle.value ?? "Loading",
-});
-
 const route = useRoute();
 const resumeStore = useResumeStore();
-const { getResume } = resumeStore;
+const { getSingleResume } = resumeStore;
 const { resume } = storeToRefs(resumeStore);
 
 const { slug } = route.params;
 const { provider } = route.query;
-onMounted(async () => {
-  const resumeData = await getResume(slug, { provider });
+const { data: resumeData } = useAsyncData(
+  "resumeData",
+  async () => await getSingleResume(slug, { provider }),
+);
+const pageTitle = computed(() => resume[provider]?.name + " - Jobeek");
+console.log(resume.value, "resume.value");
+console.log(resumeData.value, "resumeData.value");
+useHead({
+  title: pageTitle.value ?? "Loading",
 });
 // if (
 //   !vacancyData.hasOwnProperty("hh") &&
