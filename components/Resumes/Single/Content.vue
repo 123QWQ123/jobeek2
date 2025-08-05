@@ -31,15 +31,25 @@
 
         <div class="resume-photoblock__sub">
           <div class="resume-photoblock__sub__left">Занятость</div>
-          <div class="resume-photoblock__sub__right">полная занятость</div>
+          <div class="resume-photoblock__sub__right">
+            <span
+              v-if="item.work_types.length > 0"
+              v-for="work_type in item.work_types"
+              >{{ work_type }}</span
+            >
+            <span v-else>Нет информации</span>
+          </div>
         </div>
 
         <div class="resume-photoblock__sub">
           <div class="resume-photoblock__sub__left">Гражданство</div>
           <div class="resume-photoblock__sub__right">
-            <span v-for="citizenship in item.citizenship">{{
-              citizenship.name
-            }}</span>
+            <span
+              v-if="item.citizenship.length > 0"
+              v-for="citizenship in item.citizenship"
+              >{{ citizenship.name }}</span
+            >
+            <span>Нет информации</span>
           </div>
         </div>
 
@@ -157,7 +167,9 @@
       <div v-if="item.languages.length > 0" class="resume-content">
         <div class="resume-text-box">
           <h2>Иностранные языки</h2>
-          <p v-for="language in item.languages">{{ language.name }}</p>
+          <p v-for="language in item.languages">
+            {{ language.language.name }} - {{ language.level.name }}
+          </p>
         </div>
       </div>
     </div>
