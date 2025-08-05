@@ -1,0 +1,245 @@
+.resume-single {
+    padding: 24px;
+    background: #FFFFFF;
+    -webkit-box-shadow: 0px 0px 20px rgba(28, 27, 98, 0.04);
+    box-shadow: 0px 0px 20px rgba(28, 27, 98, 0.04);
+    border-radius: 12px;
+}
+
+.resume-photoblock {
+  display: grid;
+  grid-template-columns: 173px 1fr;
+  gap: 20px;
+}
+
+.resume-photoblock__left img {
+	width:100%;
+	max-width: 130px;
+}
+
+.resume-phblock__right-all {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+    gap: 25px;
+}
+
+.resume-phblock__right-name {
+	-webkit-box-orient: horizontal;
+	-webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+        -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+        display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+.resume-phblock__right-name h1 {
+	    font-size: 1.8125rem;
+    font-weight: 500;
+    line-height: 2rem;
+}
+
+.resume-phblock__right-time {
+	    padding-left: 16px;
+}
+
+.resume-phblock__right-time > span {
+	align-items: baseline;
+    display: inline-flex;
+    color: #0A2540;
+    font-size: .8125rem;
+    line-height: 1rem;
+    white-space: nowrap;
+    display: inline-block;
+}
+
+.resume-phblock__right-price {
+	font-size: 1.8125rem;
+    font-weight: 500;
+    line-height: 2rem;
+    display: block;
+    -webkit-font-smoothing: antialiased;
+}
+
+.d-inline {
+	display: inline-block;
+}
+
+.d-block {
+	display: block;
+}
+
+.resume-phblock__right-year {
+	padding-top: 4px;
+}
+
+.resume-photoblock__sub {
+  display: grid;
+  grid-template-columns: 173px 1fr;
+  gap: 20px;
+  margin: 15px 0;
+}
+
+.resume-photoblock__sub__left {
+	color: #5E6278;
+}
+
+.resume-photoblock__sub__right {
+	color: #0A2540;
+}
+
+.resume-photoblock-skills li {    
+    display: inline-block;
+    background: #f2f4f4;
+    border: 1px solid #f2f4f4;
+    border-radius: 4px;
+    cursor: default;
+    padding: 8px;
+    margin: 2px 4px 2px 0px;
+}
+
+.resume-content {
+    padding-top: 32px;
+}
+
+.resume-text-box {
+    padding: 24px;
+    background: #FFFFFF;
+    -webkit-box-shadow: 0px 0px 20px rgba(28, 27, 98, 0.04);
+    box-shadow: 0px 0px 20px rgba(28, 27, 98, 0.04);
+    border-radius: 12px;
+}
+
+.resume-text-box h2 {
+	    font-weight: 600;
+    font-size: 24px;
+    line-height: 33px;
+    color: #0A2540;
+    margin-bottom: 10px;
+}
+
+
+.resume-text-box strong {
+	font-weight: bold;
+}
+
+.resume-text-box p {
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 19px;
+    padding: 8px 0;
+    color: #0A2540;
+}
+
+
+
+.resume-content__sub {
+  display: grid;
+  grid-template-columns: 173px 1fr;
+  gap: 20px;
+  margin: 15px 0 20px 0;
+}
+
+.resume-content__sub__left {
+	color: #5E6278;
+}
+
+.resume-content__sub__right {
+	color: #0A2540;
+}
+
+.resume-content__sub__right h3 {
+	font-weight: 600;
+    font-size: 19px;
+    line-height: 24px;
+    color: #0A2540;
+    margin-bottom: 10px;
+}
+
+.resume-content__sub__right_company {
+	margin-bottom: 15px;
+}
+
+.resume-content__company-name {
+	color: #5E6278;
+    font-size: 12px;
+    line-height: 18px;
+}
+
+.resume-content__company-link {
+	color: #5375FD;
+    font-size: 12px;
+    line-height: 18px;
+    text-decoration: none;
+}
+
+.resume-content__company-txt {
+	padding-top: 10px;
+}
+
+.resume-content__education-link {
+	font-weight: 600;
+    font-size: 19px;
+    line-height: 24px;
+    color: #0A2540;
+    margin-bottom: 10px;
+    text-decoration: underline;
+    display: block;
+}
+
+.resume-content__education-link:hover {
+    text-decoration: none;
+}
+
+.resume-content__education-txt {
+	color: #5E6278;
+    font-size: 12px;
+    line-height: 18px;
+    display: block;
+}
+
+.resume-content__education-txt a {
+	color: #5E6278;
+    font-size: 12px;
+    line-height: 18px;
+    color: #0A2540;
+    text-decoration: underline;
+}
+
+.resume-content__education-txt a:hover {
+    text-decoration: none;
+}
+
+
+
+@media (max-width: 767px) {
+	.resume-photoblock, .resume-photoblock__sub, .resume-content__sub {
+	    grid-template-columns: 1fr;
+	}
+	.resume-phblock__right-time > span {
+		display: none;
+	}
+	.resume-phblock__right-name {
+	    display: block;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
