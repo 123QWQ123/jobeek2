@@ -30,8 +30,7 @@ const { data: resumeData } = useAsyncData(
   async () => await getSingleResume(slug, { provider }),
 );
 const pageTitle = computed(() => resume[provider]?.name + " - Jobeek");
-console.log(resume.value, "resume.value");
-console.log(resumeData.value, "resumeData.value");
+
 useHead({
   title: pageTitle.value ?? "Loading",
 });
