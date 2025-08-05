@@ -4,7 +4,7 @@
       <div class="resume-single">
         <div class="resume-photoblock">
           <div class="resume-photoblock__left">
-            <img src="/img/avatar_medium.jpg" alt="Превью фото" />
+            <img src="~/assets/img/avatar_medium.jpg" alt="Превью фото" />
           </div>
           <div class="resume-phblock__right">
             <div class="resume-phblock__right-all">
@@ -170,15 +170,14 @@
           <ul>
             <li v-for="phone in item.phones">
               <a class="tel" href="tel: +7 800 550 11 00">
-                <img src="/img/svg/carbon_phone.svg" alt="#" /> {{ phone }}
+                <img src="~/assets/img/svg/carbon_phone.svg" alt="#" />
+                {{ phone }}
               </a>
             </li>
           </ul>
         </div>
         <button
           class="group-action btn button-md js-show-contacts"
-          data-default-txt="Показать контакты"
-          data-replacement-text="Скрыть контакты"
           @click="toggleContactsVisibility"
         >
           {{ isContactsShown ? "Скрыть контакты" : "Показать контакты" }}
