@@ -33,7 +33,7 @@
           <div class="resume-photoblock__sub__left">Занятость</div>
           <div class="resume-photoblock__sub__right">
             <span
-              v-if="item.work_types.length > 0"
+              v-if="!Array.isArray(item.work_types)"
               v-for="work_type in item.work_types"
               >{{ work_type }}</span
             >
