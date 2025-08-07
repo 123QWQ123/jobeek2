@@ -29,10 +29,12 @@ const { data: resumeData } = useAsyncData(
   "resumeData",
   async () => await getSingleResume(slug, { provider }),
 );
-const pageTitle = computed(() => resumeData.value?.title + " - Jobeek");
+const pageTitle = computed(
+  () => resumeData.value?.title || "Loading" + " - Jobeek",
+);
 
 useHead({
-  title: pageTitle.value ?? "Loading",
+  title: pageTitle.value,
 });
 // if (
 //   !vacancyData.hasOwnProperty("hh") &&
