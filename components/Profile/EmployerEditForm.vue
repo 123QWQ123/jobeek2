@@ -115,7 +115,7 @@ const getFields = (newObject) => {
     logo: newObject.logo ?? null,
     company_name: newObject.company_name,
     company_description: newObject.company_description,
-    email: newObject.email,
+    email: newObject.email || newObject.email_to_verify || null,
     company_url: newObject.company_url,
     phone: newObject.phone,
   };
@@ -167,7 +167,7 @@ const handleSubmit = async (e) => {
   formData.append("_method", "put");
   const resData = await updateEmployer(formData);
   if (resData.status === "success") {
-    getUser();
+    await getUser();
     await refreshEmployer();
     isLoading.value = false;
   } else {

@@ -20,14 +20,17 @@ const authStore = useAuthStore();
 const profileStore = useProfileStore();
 const { value, setValue, errorMessage, setErrors } = useField(props.name);
 
-const currentValue = ref(null);
+const currentValue = ref(value.value);
 const email_to_verify = ref(null);
 const isLoading = ref(false);
-const isDisabled = ref(!!value.value);
 const isConfirmButton = ref(false);
 const isCheckButton = ref(false);
-const isConfirmationSent = ref(false);
-const inputEmail = ref("");
+
+const isConfirmationSent = computed(() => {
+  const user = props.type === "seeker" ? authStore.seeker : authStore.employer;
+  return !!user?.email_to_verify;
+});
+
 const is_email_to_verify_sent = ref(false);
 
 const is_sent_and_verified = computed(() => {
@@ -50,17 +53,10 @@ const updateEmails = (user) => {
   }
 };
 
-const onInputEmail = (e) => {
-  currentValue.value = e.target.value;
-  email_to_verify.value = e.target.value;
-  isConfirmButton.value = currentValue.value !== email.value;
-  isCheckButton.value = currentValue.value === email.value;
-};
-
 const onEmailConfirm = async (e) => {
   e.preventDefault();
   isLoading.value = true;
-  const inputEmailValue = email_to_verify.value || email.value;
+  const inputEmailValue = email_to_verify.value || value.value;
   const resData = await profileStore.confirmEmail({ email: inputEmailValue });
 
   if (resData.status !== "success") {
@@ -75,7 +71,6 @@ const onEmailConfirm = async (e) => {
     isConfirmButton.value = false;
     isConfirmationSent.value = true;
     is_email_to_verify_sent.value = true;
-    setValue(inputEmailValue);
     isLoading.value = false;
   }
 };
@@ -108,19 +103,16 @@ onMounted(() => {
 
 <template>
   <div class="position-relative">
-    <input
-      ref="inputEmail"
+    <VeeCustomTextInput
+      name="email"
       type="email"
-      :disabled="isDisabled"
-      :value="currentValue"
       placeholder="Электронная почта"
-      autocomplete="off"
-      @input="onInputEmail"
-      @blur="setValue(currentValue)"
+      :value="currentValue"
+      :disabled="!isConfirmButton || isConfirmationSent"
     />
 
     <span
-      v-if="isConfirmButton"
+      v-if="isConfirmButton && !isConfirmationSent"
       class="btn btn-outline-primary absolute_button"
       @click="onEmailConfirm"
     >

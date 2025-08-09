@@ -132,7 +132,7 @@ const schema = zod.object({
 const getFields = (newObject) => ({
   first_name: newObject?.first_name || "",
   last_name: newObject?.last_name || "",
-  email: newObject?.email || "",
+  email: newObject?.email || newObject?.email_to_verify || "",
   email_to_verify: newObject?.email_to_verify || "",
   birth_date: newObject?.birth_date || "",
   city_id: newObject?.city_id,
@@ -210,23 +210,27 @@ const handleSubmit = async () => {
   }
   formData.append("_method", "put");
 
-  const resData = await updateSeeker(formData);
+  const resData = await updateSeeker(formData, (result) => {
+    if (result.status === "failed") {
+      setErrors(result.errors);
+    }
+  });
   isLoading.value = false;
 
   if (resData.status !== "success") {
-    errorMessage.value = resData.message || "";
-    setErrors(resData.errors || {});
     return;
   }
   await getUser();
   await refreshSeeker();
-  await Swal.fire({ icon: "success", text: "Успешно сохранено" });
   navigateTo({ name: "profile" });
 };
 </script>
 
 <style>
 input[type="text"]:disabled {
+  background: #ccc;
+}
+input[type="email"]:disabled {
   background: #ccc;
 }
 </style>

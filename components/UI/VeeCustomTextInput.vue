@@ -6,6 +6,7 @@
       :placeholder="props.placeholder"
       :name="props.name"
       :autocomplete="isAutoCompleted"
+      :disabled="props.disabled"
     />
     <span class="text-danger d-block" v-if="errorMessage">
       {{ errorMessage }}
@@ -32,6 +33,11 @@ const props = defineProps({
   },
   value: {
     type: String,
+    required: false,
+    default: null,
+  },
+  disabled: {
+    type: Boolean,
     required: false,
     default: null,
   },
