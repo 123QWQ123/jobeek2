@@ -87,10 +87,12 @@
 <script setup>
 import { useCashBoxStore } from "~/store/cashbox";
 import { useAuthStore } from "~/store/auth";
+import { useProfileStore } from "~/store/profile.js";
 import { toTypedSchema } from "@vee-validate/zod";
 import { zod } from "~/hooks/ru-zod.js";
 
 const { isEmployer, user } = storeToRefs(useAuthStore());
+const { employer, seeker } = storeToRefs(useProfileStore());
 
 const { getReceipts, setEmail } = useCashBoxStore();
 const { receipts } = storeToRefs(useCashBoxStore());

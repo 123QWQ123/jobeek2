@@ -47,7 +47,7 @@ watch(
 
         <ProfileEmployerEditForm />
 
-        <CashBoxList />
+        <CashBoxList v-if="isCompleted" />
       </div>
       <aside class="sidebar">
         <Premium />
