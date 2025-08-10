@@ -49,7 +49,7 @@ const updateEmails = (user) => {
       email_to_verify.value && email_to_verify.value !== user.email;
   } else {
     isCheckButton.value = false;
-    isConfirmButton.value = !user.email;
+    isConfirmButton.value = user.email === null;
   }
 };
 
@@ -68,7 +68,6 @@ const onEmailConfirm = async (e) => {
     } else {
       authStore.employer.email = inputEmailValue;
     }
-    isConfirmButton.value = false;
     isConfirmationSent.value = true;
     is_email_to_verify_sent.value = true;
     isLoading.value = false;
@@ -108,11 +107,11 @@ onMounted(() => {
       type="email"
       placeholder="Электронная почта"
       :value="currentValue"
-      :disabled="!isConfirmButton || isConfirmationSent"
+      :disabled="!isConfirmButton"
     />
 
     <span
-      v-if="isConfirmButton && !isConfirmationSent"
+      v-if="isConfirmButton"
       class="btn btn-outline-primary absolute_button"
       @click="onEmailConfirm"
     >
