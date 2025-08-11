@@ -8,7 +8,7 @@ import { useProfileStore } from "~/store/profile.js";
 import { useDictionaryStore } from "~/store/dictionary.js";
 
 useHead({
-  title: "Создание подписку",
+  title: "Jobeek - Редактирование подписки",
 });
 
 const profileStore = useProfileStore();
@@ -132,7 +132,7 @@ const save = async () => {
         >
           <div class="w-box w-box--main w-box-subscribe">
             <div class="w-box-head">
-              <h1 class="title">Создание подписки</h1>
+              <h1 class="title">Редактирование подписки</h1>
               <div class="descr">
                 Получайте уведомления о новых вакансиях по созданному запросу
               </div>

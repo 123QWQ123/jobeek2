@@ -99,7 +99,7 @@ const pageTitle = computed(() => {
   if (my_vacancy.value?.name) {
     return "Jobeek - " + my_vacancy.value.name;
   }
-  return "Jobeek - ";
+  return "Jobeek";
 });
 useHead({ title: pageTitle });
 

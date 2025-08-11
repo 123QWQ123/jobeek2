@@ -3,7 +3,7 @@ import { useAuthStore } from "~/store/auth";
 import { navigateTo } from "nuxt/app";
 
 useHead({
-  title: "Поиск вакансий - Jobeek",
+  title: "Jobeek - Поиск вакансий",
 });
 
 const authStore = useAuthStore();

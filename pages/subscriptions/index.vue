@@ -1,6 +1,9 @@
 <script setup>
 import { useAuthStore } from "~/store/auth.js";
 const authStore = useAuthStore();
+useHead({
+  title: "Jobeek - Ваши подписки",
+});
 </script>
 
 <template>

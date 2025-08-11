@@ -1,5 +1,4 @@
 <script setup>
-import Swal from "sweetalert2";
 import { useAuthStore } from "~~/store/auth";
 import IMask from "imask";
 import { useVacancyStore } from "~/store/vacancy.js";
@@ -7,7 +6,7 @@ import { useResumeStore } from "~/store/resume.js";
 import { ref } from "vue";
 
 useHead({
-  title: "Авторизация",
+  title: "Jobeek - Авторизация",
 });
 
 const auth = useAuthStore();

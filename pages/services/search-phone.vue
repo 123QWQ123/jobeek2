@@ -4,6 +4,9 @@ import { useScamStore } from "~/store/scam";
 import { useRoute, navigateTo } from "#app";
 import { ref } from "vue";
 
+useHead({
+  title: "Jobeek - Кто звонит?",
+});
 const scamStore = useScamStore();
 const route = useRoute();
 
@@ -77,7 +80,9 @@ watchEffect(async () => {
   <main class="main bg-wrapper scam-phone-page" role="main">
     <div class="head-w-section">
       <div class="wrapper wrapper-1290">
-        <h1 class="head-w-section__title">Введите номер телефона для проверки на мошенничество</h1>
+        <h1 class="head-w-section__title">
+          Введите номер телефона для проверки на мошенничество
+        </h1>
 
         <form class="search-row" @submit.prevent="onPhoneSearch">
           <button class="search-button">

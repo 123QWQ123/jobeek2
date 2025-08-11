@@ -33,7 +33,7 @@ onMounted(async () => {
       navigateTo({
         name: "profile",
         query: {
-          message: "Вы успешно потвердили ваш электронная почта.",
+          message: "Вы успешно подтвердили вашу электронную почту.",
         },
       });
     }, 100);
@@ -53,7 +53,9 @@ onMounted(async () => {
     <div class="wrapper">
       <div class="w-box" v-if="isSuccess">
         <div class="w-box-head">
-          <h2 class="title text-success">Ваш электронная почта подтержден!</h2>
+          <h2 class="title text-success">
+            Ваша электронная почта подтвержденная!
+          </h2>
         </div>
       </div>
       <div class="w-box" v-else>

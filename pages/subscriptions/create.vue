@@ -7,7 +7,7 @@ import { useDictionaryStore } from "~/store/dictionary.js";
 import { useProfileStore } from "~/store/profile.js";
 
 useHead({
-  title: "Создание подписку",
+  title: "Jobeek - Создание подписки",
 });
 const providers = ref([]);
 

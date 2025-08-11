@@ -3,6 +3,9 @@ import { useAuthStore } from "~/store/auth";
 import { useResumeStore } from "~/store/resume";
 import { useAsyncData, navigateTo } from "#app";
 
+useHead({
+  title: "Jobeek - Ваши резюме",
+});
 const authStore = useAuthStore();
 const resumeStore = useResumeStore();
 
