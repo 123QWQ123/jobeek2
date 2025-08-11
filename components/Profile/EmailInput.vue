@@ -56,18 +56,16 @@ const updateEmails = (user) => {
 const onEmailConfirm = async (e) => {
   e.preventDefault();
   isLoading.value = true;
-  const inputEmailValue = email_to_verify.value || value.value;
+  const inputEmailValue = value.value || email_to_verify.value;
   const resData = await profileStore.confirmEmail({ email: inputEmailValue });
 
   if (resData.status !== "success") {
     setErrors(resData.errors?.email || resData.message);
     isLoading.value = false;
   } else {
-    if (props.type === "seeker") {
-      authStore.seeker.email_to_verify = inputEmailValue;
-    } else {
-      authStore.employer.email_to_verify = inputEmailValue;
-    }
+    authStore.seeker.email_to_verify = inputEmailValue;
+    authStore.employer.email_to_verify = inputEmailValue;
+
     isConfirmationSent.value = true;
     is_email_to_verify_sent.value = true;
     isLoading.value = false;

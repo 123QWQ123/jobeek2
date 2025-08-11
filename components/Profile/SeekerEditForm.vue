@@ -89,7 +89,6 @@
 
 <script setup>
 import { useProfileStore } from "~/store/profile";
-import Swal from "sweetalert2";
 import PageLoader from "../UI/PageLoader";
 import { useAuthStore } from "~/store/auth";
 import { navigateTo, useAsyncData } from "#app";
