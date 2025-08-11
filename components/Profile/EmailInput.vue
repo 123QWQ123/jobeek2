@@ -64,9 +64,9 @@ const onEmailConfirm = async (e) => {
     isLoading.value = false;
   } else {
     if (props.type === "seeker") {
-      authStore.seeker.email = inputEmailValue;
+      authStore.seeker.email_to_verify = inputEmailValue;
     } else {
-      authStore.employer.email = inputEmailValue;
+      authStore.employer.email_to_verify = inputEmailValue;
     }
     isConfirmationSent.value = true;
     is_email_to_verify_sent.value = true;
@@ -117,27 +117,6 @@ onMounted(() => {
     >
       Подтверждать
       <Loader class="spinner-border-sm" v-if="isLoading" />
-    </span>
-    <span
-      v-if="isConfirmationSent"
-      class="btn btn-outline-success absolute_button"
-    >
-      <svg
-        style="width: 22px; height: 22px; margin-top: 0"
-        aria-hidden="true"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke="currentColor"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-        />
-      </svg>
-      Отправлено
     </span>
     <span
       v-if="isCheckButton"
