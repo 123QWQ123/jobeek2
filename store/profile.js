@@ -304,20 +304,22 @@ export const useProfileStore = defineStore("profile", {
 
       return this.employer;
     },
-    async updateSeeker(payload) {
+    async updateSeeker(payload, cb = null) {
       const { setUser, setSeeker } = useAuthStore();
       const response = await useApi("seeker/profile", {
         method: "post",
         content_type: "multipart/form-data",
         payload,
+        cb,
       });
       if (response.status === "success") {
         this.seeker = response.data.data;
         this.user = response.data?.data;
         setUser(this.user);
         setSeeker(this.seeker);
+        return this.seeker;
       }
-      return this.seeker;
+      return response;
     },
     async updateEmployer(payload) {
       const { setUser, setEmployer } = useAuthStore();
