@@ -4,7 +4,7 @@ import { useAuthStore } from "~/store/auth";
 import Premium from "~/components/MyVacancies/Premium.vue";
 
 useHead({
-  title: "Ваш аккаунт",
+  title: "Jobeek - Ваш аккаунт",
 });
 
 const authStore = useAuthStore();

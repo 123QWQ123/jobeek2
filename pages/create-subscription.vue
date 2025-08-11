@@ -5,7 +5,7 @@ import { toTypedSchema } from "@vee-validate/zod";
 import useApi from "~/hooks/useApi.js";
 
 useHead({
-  title: "Создание подписку",
+  title: "Jobeek - Создание подписки",
 });
 const getFields = (newObject) => {
   if (!newObject) return {};

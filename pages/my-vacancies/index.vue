@@ -2,6 +2,9 @@
 import { useAuthStore } from "~/store/auth";
 import { useVacancyStore } from "~/store/vacancy.js";
 
+useHead({
+  title: "Jobeek - Ваши вакансии",
+});
 const authStore = useAuthStore();
 
 const isEmployer = computed(() => authStore.isEmployer);
@@ -15,13 +18,10 @@ watch(isEmployer, (new_value) => {
 });
 const vacancyStore = useVacancyStore();
 const isCompleted = computed(() => {
-  if (
+  return (
     vacancyStore.providers.hh === true &&
     vacancyStore.providers.superjob === true
-  ) {
-    return true;
-  }
-  return false;
+  );
 });
 </script>
 <template>

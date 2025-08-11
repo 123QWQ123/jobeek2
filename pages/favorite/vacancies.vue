@@ -2,7 +2,7 @@
 import { useAuthStore } from "~/store/auth";
 
 useHead({
-  title: "Мои избранные вакансии - Jobeek",
+  title: "Jobeek - Мои избранные вакансии",
 });
 
 const authStore = useAuthStore();

@@ -1,5 +1,4 @@
 <script setup>
-import { useVacancyStore } from "~/store/vacancy";
 import useAlert from "~/composables/useAlert";
 import { useAuthStore } from "~/store/auth.js";
 
@@ -10,6 +9,9 @@ const authStore = useAuthStore();
 
 // Константы
 const pageTitle = computed(() => "Создание вакансии");
+useHead({
+  title: "Jobeek - Создание вакансии",
+});
 const draft_el = ref();
 const isLoading = ref(false);
 

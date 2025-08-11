@@ -6,7 +6,7 @@ import { useResumeStore } from "~/store/resume.js";
 import CustomSelect from "~/components/UI/CustomSelect.vue";
 
 useHead({
-  title: "Отклики - Jobeek",
+  title: "Jobeek - Отклики",
 });
 
 const authStore = useAuthStore();
@@ -20,7 +20,6 @@ const { code, email } = route.query;
 
 const resumeStore = useResumeStore();
 const { getMyNegotiations } = resumeStore;
-// const { refreshSeeker, refreshEmployer } = useAuthStore();
 
 onMounted(async () => {
   const resData = await getMyNegotiations({ providers: ["hh"] });

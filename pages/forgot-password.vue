@@ -8,9 +8,8 @@ import { ref } from "vue";
 definePageMeta({
   layout: "custom",
 });
-const title = ref("Востановление пароля");
 useHead({
-  title: title,
+  title: "Jobeek - Восстановление пароля",
 });
 
 const authStore = useAuthStore();

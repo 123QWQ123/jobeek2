@@ -7,7 +7,7 @@ import { useForm, useField } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import { z } from "zod";
 
-useHead({ title: "Регистрация" });
+useHead({ title: "Jobeek - Регистрация" });
 
 const authStore = useAuthStore();
 const { signUp, confirmPhoneCode, signIn } = authStore;

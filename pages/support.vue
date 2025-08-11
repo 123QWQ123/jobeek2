@@ -1,12 +1,10 @@
 <script setup>
-import Swal from "sweetalert2";
-
 definePageMeta({
   layout: "default",
 });
 
 useHead({
-  title: "Обратная связь",
+  title: "Jobeek - Обратная связь",
 });
 
 import { useAuthStore } from "~~/store/auth";
@@ -64,22 +62,6 @@ const { validate, errors, setFieldValue, meta, setErrors, values, resetForm } =
 const { value: phone } = useField("phone");
 const { value: email } = useField("email");
 const { value: message } = useField("message");
-
-function validateForm() {
-  if (state.email.val === "") {
-    state.email.isValid = false;
-    state.isFormValid = false;
-  }
-  if (state.phone.val === "") {
-    state.phone.isValid = false;
-    state.isFormValid = false;
-  }
-  if (state.message.val === "") {
-    state.message.isValid = false;
-    state.isFormValid = false;
-  }
-}
-
 const route = useRoute();
 
 const profileStore = useProfileStore();

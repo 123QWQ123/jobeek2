@@ -1,7 +1,7 @@
 <script setup>
-import { useAuthStore } from "../../store/auth";
+import { useAuthStore } from "~/store/auth.js";
 import { storeToRefs } from "pinia";
-import { useProfileStore } from "../../store/profile";
+import { useProfileStore } from "~/store/profile.js";
 import { useResumeStore } from "~/store/resume";
 import { useVacancyStore } from "~/store/vacancy";
 
@@ -19,35 +19,12 @@ const { getConnectedEmployerProviders } = vacancyStore;
 const { getConnectedSeekerProviders } = resumeStore;
 const { refreshSeeker, refreshEmployer } = useAuthStore();
 
-const timeout = ref();
 onMounted(async () => {
-  // Swal.fire({
-  //   title: 'Успешно!',
-  //   text: "Вы успешно подключили",
-  //   icon: 'success',
-  //   confirmButtonText: 'ОК'
-  // });
-
-  // await getUser();
-  //
   await refreshSeeker();
   await refreshEmployer();
 
   await getConnectedEmployerProviders();
   await getConnectedSeekerProviders();
-
-  timeout.value = setTimeout(() => {
-    // navigateTo({
-    //   name: "profile",
-    //   query: {
-    //     message: "У вас подключенные сервисы!",
-    //   },
-    // });
-  }, 5000);
-});
-
-onUnmounted(() => {
-  clearTimeout(timeout.value);
 });
 </script>
 

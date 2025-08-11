@@ -14,9 +14,11 @@ const providers = ref({
 });
 
 const resumeStore = useResumeStore();
-const { getMyResume } = resumeStore;
 const pageTitle = computed(() => {
   return "Создание резюме";
+});
+useHead({
+  title: "Jobeek - Создание резюме",
 });
 
 const error = computed(() => {
@@ -40,12 +42,6 @@ onMounted(() => {
     navigateTo({ name: "create-vacancy" });
   }
 });
-const saveAsDraft = (e) => {
-  e.preventDefault();
-  isLoading.value = true;
-
-  isLoading.value = false;
-};
 
 const paramProviders = computed(() => {
   if (providers.value.hh && providers.value.superjob) {
@@ -63,11 +59,8 @@ const paramProviders = computed(() => {
 const draft_el = ref();
 
 const errorMessage = ref(null);
-const hhErrorMessage = ref(null);
-const superjobErrorMessage = ref(null);
 const errors = ref([]);
 const isLoading = ref(false);
-// groups[]=
 </script>
 <template>
   <main class="main cabinet create-resume-page bg-wrapper" role="main">
