@@ -1099,9 +1099,11 @@ header.main-header .checker-box .v.active:after {
 
 .note p {
     font-weight: normal;
-    font-size: 12px;
-    line-height: 23px;
+    font-size: 14px;
     color: #5375FD;
+    line-height: 18px;
+    display: flex;
+    align-items: center;
 }
 
 .check-block {

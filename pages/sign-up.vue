@@ -301,10 +301,11 @@ input:disabled {
 }
 .btn-code-send {
   color: #5375fd;
-  font-size: 12px;
+  font-size: 14px;
   margin-top: 10px;
 }
-.enter-form .btn {
-  margin-top: 0 !important;
+.enter-form .error-message {
+  color: red;
+  padding-top: 10px;
 }
 </style>

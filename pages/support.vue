@@ -99,7 +99,7 @@ function close() {
     <base-modal :show="!!state.success" title="Success" @close="close">
       <p>{{ state.success }}</p>
     </base-modal>
-    <main class="main enter-page sign-in" role="main">
+    <main role="main">
       <div class="support-page">
         <img
           alt="#"
