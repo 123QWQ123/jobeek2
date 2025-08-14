@@ -76,7 +76,9 @@
                   >
                 </nuxt-link>
                 <div class="vacancy-card-footer">
-                  <a class="btn button-md" href="#">Откликнуться</a>
+                  <nuxt-link class="btn button-md" :to="{ name: 'sign-in' }">
+                    Откликнуться
+                  </nuxt-link>
                 </div>
               </div>
             </div>

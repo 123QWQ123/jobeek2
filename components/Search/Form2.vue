@@ -1,7 +1,11 @@
 <template>
   <div v-if="props.with_wrapper">
     <div class="wrapper">
-      <form class="search-form form-mobile-search" role="form" autocomplete="off">
+      <form
+        class="search-form form-mobile-search"
+        role="form"
+        autocomplete="off"
+      >
         <div class="search-row">
           <div class="input-wrap has-icon has-label form-mobile-search__one">
             <img class="icon" src="~/assets/img/search.png" alt="#" />
@@ -127,7 +131,7 @@ const onCityChange = (cityItem) => {
   }
 };
 const { searchCities } = profileStore;
-const { getVacancies, getCities } = vacancyStore;
+const { getCities } = vacancyStore;
 
 const updateCityInput = async (newValue = "") => {
   const items = (await searchCities({ search: newValue })) ?? [];
@@ -152,7 +156,7 @@ const isLoading = ref(false);
 const { clearVacancies } = vacancyStore;
 const onSubmit = async (e) => {
   isLoading.value = true;
-  clearVacancies();
+  await clearVacancies();
   const cities = city.value ? [city.value] : undefined;
   const queryParams = {
     cities: JSON.stringify(cities),

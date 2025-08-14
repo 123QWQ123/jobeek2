@@ -43,8 +43,7 @@
 <script setup>
 import { useAuthStore } from "~/store/auth";
 
-import { useVacancyStore } from "../../store/vacancy";
-import { useVacancyForm } from "../../composables/useVacancyForm";
+import { useVacancyStore } from "~/store/vacancy.js";
 import { useResumeStore } from "~/store/resume";
 import { useResumeForm } from "~/composables/useResumeForm";
 
@@ -56,7 +55,6 @@ const auth = useAuthStore();
 
 const search = ref(null);
 const salary = ref(null);
-const region = ref(null);
 const city = ref("*");
 
 const form = ref(useResumeForm());
@@ -103,14 +101,6 @@ const prepareCities = () => {
 
 const page = useRoute();
 
-// watch(region, async(newRegion) => {
-//
-//   if (region.value !== '*'){
-//     await getCities({region_ids: [newRegion]});
-//   }
-//   prepareCities();
-// });
-
 const country = computed(() => {
   if (form.value.countries.length === 0) {
     return form.value.countries[0];
@@ -125,9 +115,8 @@ onMounted(async () => {
 });
 
 const isLoading = ref(false);
-const { clearVacancies } = vacancyStore;
 const onSubmit = (e) => {
-  const params = {name: search.value, cities: JSON.stringify(cities)};);
+  const params = { name: search.value, cities: JSON.stringify(cities) };
   navigateTo({ name: "search-resumes", query: params });
 };
 
