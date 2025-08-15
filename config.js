@@ -21,6 +21,7 @@ const protected_routes = [
   "profile-negotiations",
   "my-subscriptions",
   "services-search-phone",
+  "subscriptions",
 ];
 const search_exception_routes = ["index", "search-vacancies", "search-resumes"];
 const employer_routes = [

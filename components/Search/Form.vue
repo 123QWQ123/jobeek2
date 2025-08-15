@@ -86,7 +86,7 @@ const city_name = ref("");
 //     form.value.cities = [regionItem.value];
 //   }
 // };
-const { getVacancies, getRegions, getCities } = vacancyStore;
+const { getCities } = vacancyStore;
 const vacancies = computed(() => vacancyStore.vacancies);
 
 const searchSelectItemStyles = {
@@ -115,7 +115,6 @@ const prepareCities = () => {
 const page = useRoute();
 
 const isLoading = ref(false);
-const { clearVacancies } = vacancyStore;
 const onSubmit = (e) => {
   const params = useVacancyForm(form.value, "front");
   navigateTo({

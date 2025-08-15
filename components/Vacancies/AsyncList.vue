@@ -73,7 +73,6 @@ const loadMore = async () => {
       icon: "success",
     });
   }
-  // loadMoreButton.value.scrollIntoView({ behavior: "smooth", block: "start" });
 };
 </script>
 

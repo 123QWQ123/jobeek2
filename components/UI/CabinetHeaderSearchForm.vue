@@ -98,7 +98,7 @@ const updateCityInput = async (newValue = "") => {
   }));
 };
 
-const { getVacancies, getCities } = vacancyStore;
+const { getCities } = vacancyStore;
 const vacancies = computed(() => vacancyStore.vacancies);
 
 const { cities } = storeToRefs(vacancyStore);
