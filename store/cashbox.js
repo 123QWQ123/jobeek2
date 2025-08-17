@@ -19,10 +19,7 @@ export const useCashBoxStore = defineStore("cashbox", {
         const { hostname } = useRequestURL();
         host = hostname;
       }
-      console.log("useApi params: ", {
-        phone: phone.replace(/[^0-9]/g, ""),
-        host: host,
-      });
+
       const response = await useApi("cashbox/getReceipts", {
         method: "get",
         params: {

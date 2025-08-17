@@ -29,21 +29,7 @@ onMounted(async () => {
     await refreshSeeker();
     await refreshEmployer();
 
-    setTimeout(() => {
-      navigateTo({
-        name: "profile",
-        query: {
-          message: "Вы успешно подтвердили вашу электронную почту.",
-        },
-      });
-    }, 100);
-
-    setTimeout(() => {
-      navigateTo({
-        name: "profile",
-        query: {},
-      });
-    }, 100);
+    navigateTo({ name: "profile" });
   }
 });
 </script>

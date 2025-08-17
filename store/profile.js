@@ -88,13 +88,13 @@ export const useProfileStore = defineStore("profile", {
   },
   actions: {
     setEmployer(payload) {
-      this.employer = payload;
+      this.employer = Object.assign(this.employer || {}, payload);
     },
     setUser(payload) {
-      this.user = payload;
+      this.user = Object.assign(this.user || {}, payload);
     },
     setSeeker(payload) {
-      this.seeker = payload;
+      this.seeker = Object.assign(this.seeker || {}, payload);
     },
     async getCountries(payload = {}, is_new = false) {
       const response = await useApi("area/countries", {
@@ -321,19 +321,29 @@ export const useProfileStore = defineStore("profile", {
       }
       return response;
     },
-    async updateEmployer(payload) {
+    async updateEmployer(payload, cb = null) {
       const { setUser, setEmployer } = useAuthStore();
       const response = await useApi("employer/profile", {
         method: "post",
         content_type: "multipart/form-data",
         payload,
+        cb,
       });
-      if (response.status === "success") {
-        setEmployer(response.data.data);
-        this.setEmployer(response.data.data);
-        this.setUser(response.data.data);
+      if (response.data.status === "success") {
+        const {
+          data: { data: employer },
+        } = response;
+
+        setEmployer(employer);
+        this.setEmployer(employer);
+        this.setUser(employer);
+        this.setSeeker({
+          email: employer?.email,
+          email_to_verify: employer?.email_to_verify,
+          phone: employer?.phone,
+        });
       }
-      return this.employer;
+      return response;
     },
 
     async sendMessage(payload) {

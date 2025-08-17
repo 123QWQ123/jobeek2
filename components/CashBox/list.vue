@@ -6,8 +6,8 @@
         <VeeCustomTextInput
           type="email"
           name="email"
-          :placeholder="user.email || seeker.email || employer.email"
-          :value="user.email"
+          :placeholder="user?.email || seeker?.email || employer?.email"
+          :value="user?.email || seeker?.email || employer?.email"
         />
         <button @click="addEmail" class="button-accent" type="submit">
           Изменить почту

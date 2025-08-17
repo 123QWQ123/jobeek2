@@ -35,7 +35,11 @@
       <div class="input-row">
         <label for="password">О компании <b>*</b></label>
         <div class="input-wrapper position-relative">
-          <VeeCustomTextInput type="text" name="company_description" />
+          <VeeCustomTextInput
+            type="text"
+            name="company_description"
+            placeholder="О компании"
+          />
         </div>
       </div>
 
@@ -98,32 +102,35 @@ const profileStore = useProfileStore();
 
 const { getUser } = profileStore;
 const authStore = useAuthStore();
-const { refreshEmployer } = authStore;
+const { refreshEmployer, refreshSeeker } = authStore;
 const { employer } = storeToRefs(authStore);
 
 const schema = zod.object({
-  company_name: zod.string().trim().min(1),
-  company_url: zod.string().url().trim().min(1),
-  company_description: zod.string().trim().min(1),
-  email: zod.string().email(),
+  company_name: zod.string().trim().min(1, "Введите название компании"),
+  company_url: zod.string().url().trim().min(1, "Введите URL"),
+  company_description: zod.string().trim().min(1, "Введите описание компании"),
+  email: zod.string().email("Введите ваш E-mail"),
   phone: zod.string(),
+  password: zod
+    .string()
+    .regex(/^(\S{8,})?$/, "Минимум 8 символов")
+    .optional(),
 });
 
 const getFields = (newObject) => {
   if (!newObject) return {};
   return {
     logo: newObject.logo ?? null,
-    company_name: newObject.company_name,
-    company_description: newObject.company_description,
-    email: newObject.email || newObject.email_to_verify || null,
-    company_url: newObject.company_url,
-    phone: newObject.phone,
+    company_name: newObject.company_name || "",
+    company_description: newObject.company_description || "",
+    email: newObject.email || newObject.email_to_verify || "",
+    company_url: newObject.company_url || "",
+    phone: newObject.phone || "",
   };
 };
 const initialValues = getFields(employer.value);
 const { values, errors, meta, setErrors, resetForm, validate } = useForm({
   initialValues,
-  initialTouched: true,
   validationSchema: toTypedSchema(schema),
 });
 watch(
@@ -144,10 +151,11 @@ function getFormData(object) {
 const isLoading = ref(false);
 const errorMessage = ref(null);
 const handleSubmit = async (e) => {
-  isLoading.value = true;
   await validate();
-  setErrors({});
-
+  if (!meta.value.valid) {
+    return;
+  }
+  isLoading.value = true;
   errorMessage.value = "";
   const formData = getFormData(JSON.parse(JSON.stringify(values)));
   if (values.hasOwnProperty("password")) {
@@ -165,9 +173,14 @@ const handleSubmit = async (e) => {
     }
   }
   formData.append("_method", "put");
-  const resData = await updateEmployer(formData);
-  if (resData.status === "success") {
+  const resData = await updateEmployer(formData, (result) => {
+    if (result.status === "failed") {
+      setErrors(result.errors);
+    }
+  });
+  if (resData.data.status === "success") {
     await getUser();
+    await refreshSeeker();
     await refreshEmployer();
     isLoading.value = false;
   } else {

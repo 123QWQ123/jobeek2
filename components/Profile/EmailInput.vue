@@ -18,7 +18,7 @@ const props = defineProps({
 
 const authStore = useAuthStore();
 const profileStore = useProfileStore();
-const { value, setValue, errorMessage, setErrors } = useField(props.name);
+const { value, errorMessage, setErrors } = useField(props.name);
 
 const currentValue = ref(value.value);
 const email_to_verify = ref(null);
@@ -32,11 +32,6 @@ const isConfirmationSent = computed(() => {
 });
 
 const is_email_to_verify_sent = ref(false);
-
-const is_sent_and_verified = computed(() => {
-  const user = props.type === "seeker" ? authStore.seeker : authStore.employer;
-  return !!user?.email_to_verify;
-});
 
 const updateEmails = (user) => {
   email_to_verify.value = user.email_to_verify;
@@ -140,13 +135,7 @@ onMounted(() => {
   </div>
 
   <div class="text-success" v-if="is_email_to_verify_sent">
-    На вашу электронную почту отправлено письмо с кодом подтверждения.
-  </div>
-  <div
-    class="text-primary"
-    v-if="is_sent_and_verified && !is_email_to_verify_sent"
-  >
-    Войдите в электронную почту и откройте письмо с заголовком Jobeek и
+    Войдите в электронную почту, откройте письмо с заголовком Jobeek и
     подтвердите свой адрес электронной почты.
   </div>
   <div class="text-danger">{{ errorMessage }}</div>
