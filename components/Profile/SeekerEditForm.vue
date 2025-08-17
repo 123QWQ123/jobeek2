@@ -100,9 +100,9 @@ import { ref, watch } from "vue";
 // Stores и основные данные
 const profileStore = useProfileStore();
 const authStore = useAuthStore();
-const { seeker } = storeToRefs(authStore);
-const { refreshSeeker } = useAuthStore();
-const { getCountries, getCities, getUser, updateSeeker } = profileStore;
+const { seeker } = storeToRefs(profileStore);
+const { refreshEmployer, refreshSeeker } = useAuthStore();
+const { getCountries, getCities, updateSeeker } = profileStore;
 const { countryOptions, cityOptions } = storeToRefs(profileStore);
 
 // Вспомогательные реактивные переменные
@@ -126,7 +126,11 @@ const schema = zod.object({
   email: zod.string().email("Введите ваш E-mail"),
   city_id: zod.number({ message: "Выберите город из списка" }),
   country_id: zod.number({ message: "Выберите страну из списка" }),
-  phone: zod.string().trim().min(1),
+  phone: zod.string().trim().min(10),
+  password: zod
+    .string()
+    .regex(/^(\S{8,})?$/, "Минимум 8 символов")
+    .optional(),
 });
 const getFields = (newObject) => ({
   first_name: newObject?.first_name || "",
@@ -144,7 +148,6 @@ const initialValues = getFields(seeker.value);
 
 const { values, errors, validate, setErrors, meta } = useForm({
   initialValues,
-  initialTouched: true,
   validationSchema: toTypedSchema(schema),
 });
 const { value: country_id } = useField("country_id");
@@ -188,17 +191,16 @@ function getFormData(object) {
 
 // Основной submit
 const handleSubmit = async () => {
-  isLoading.value = true;
   await validate();
   if (!meta.value.valid) {
-    isLoading.value = false;
     return;
   }
+  isLoading.value = true;
   const formData = getFormData(values);
 
   // Проверки для пароля и фото
   if ("password" in values) {
-    values.password != null
+    !!values.password
       ? formData.append("password_confirmation", values.password)
       : formData.delete("password");
   }
@@ -219,8 +221,9 @@ const handleSubmit = async () => {
   if (resData.status !== "success") {
     return;
   }
-  await getUser();
-  await refreshSeeker();
+
+  refreshSeeker();
+  await refreshEmployer();
   navigateTo({ name: "profile" });
 };
 </script>

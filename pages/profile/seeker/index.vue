@@ -31,7 +31,8 @@ watch(
       <div class="content">
         <div class="w-box bg-white" v-if="!isCompleted">
           <p class="text-danger p-3">
-            Перед использованием сервиса требуется заполнение вашего профиля.
+            Перед использовании сервиса требуется заполнение вашего профиля и
+            подтверждения email-а.
           </p>
         </div>
         <div class="w-box w-box--main">
