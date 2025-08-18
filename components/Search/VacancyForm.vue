@@ -1,43 +1,43 @@
 <template>
-<div class="wrapper wrapper-mb">
-<div class="main-section-title"><h1 class="title">Поиск вакансий</h1></div>
-  <form class="search-form" role="form" autocomplete="off">
-    <div class="search-row" :class="{ wrapper: props.withWrapper }">
-      <div class="input-wrap has-icon has-label">
-        <img class="icon" src="~/assets/img/search.png" alt="#" />
-        <label for="name">Поиск</label>
-        <input
-          type="text"
-          name="name"
-          :placeholder="placeholder"
-          autocomplete="off"
-          v-model="search"
-        />
+  <div class="wrapper wrapper-mb">
+    <div class="main-section-title"><h1 class="title">Поиск вакансий</h1></div>
+    <form class="search-form" role="form" autocomplete="off">
+      <div class="search-row" :class="{ wrapper: props.withWrapper }">
+        <div class="input-wrap has-icon has-label">
+          <img class="icon" src="~/assets/img/search.png" alt="#" />
+          <label for="name">Поиск</label>
+          <input
+            type="text"
+            name="name"
+            :placeholder="placeholder"
+            autocomplete="off"
+            v-model="search"
+          />
+        </div>
+        <div class="input-wrap has-label">
+          <label for="salary">Желаемая зарплата</label>
+          <HeaderSalarySelectInForm v-model="salary" />
+        </div>
+        <div class="input-wrap has-label">
+          <label for="city">Город</label>
+          <SelectWithSearch
+            :options="cityOptions"
+            v-model="city"
+            :placeholder="'Город'"
+            @input="updateCityInput"
+            @change="onCityChange"
+          />
+        </div>
+        <button
+          class="button-accent submit-search-form"
+          type="button"
+          @click="onSubmit"
+        >
+          Поиск
+        </button>
       </div>
-      <div class="input-wrap has-label">
-        <label for="salary">Желаемая зарплата</label>
-        <HeaderSalarySelectInForm v-model="salary" />
-      </div>
-      <div class="input-wrap has-label">
-        <label for="city">Город</label>
-        <SelectWithSearch
-          :options="cityOptions"
-          v-model="city"
-          :placeholder="'Город'"
-          @input="updateCityInput"
-          @change="onCityChange"
-        />
-      </div>
-      <button
-        class="button-accent submit-search-form"
-        type="button"
-        @click="onSubmit"
-      >
-        Поиск
-      </button>
-    </div>
-  </form>
-</div>
+    </form>
+  </div>
 </template>
 <script setup lang="ts">
 import { ref, watch, computed } from "vue";
@@ -83,9 +83,10 @@ function extractCityIdFromQuery(query): number | null {
 
 // При инициализации — если в query есть город, добавляем его в cityOptions
 await useAsyncData("city-from-query", async () => {
+  let allCities = [];
   if (city.value) {
     const arr = JSON.parse(city.value);
-    const allCities = await vacancyStore.getCities({
+    allCities = await vacancyStore.getCities({
       city_ids: Array.isArray(arr) ? arr : [Number(arr)],
     });
     const found = allCities?.find((item) => item.id === city.value);
@@ -93,6 +94,7 @@ await useAsyncData("city-from-query", async () => {
       cityOptions.value = [{ value: found.id, name: found.name }];
     }
   }
+  return allCities;
 });
 
 watch(

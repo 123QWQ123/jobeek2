@@ -90,7 +90,7 @@
 </template>
 <script setup>
 import { useVacancyStore } from "~/store/vacancy";
-import { useAsyncData, useNuxtApp } from "#app";
+import { useAsyncData, useNuxtApp } from "#imports";
 import { useAuthStore } from "~/store/auth.js";
 
 const auth = storeToRefs(useAuthStore());

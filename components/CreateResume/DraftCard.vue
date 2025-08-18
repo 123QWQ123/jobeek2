@@ -166,15 +166,16 @@ const isChanged = ref(false);
 const isUpdated = ref(false);
 
 const dictionaryStore = useDictionaryStore();
-const { getGenders, getBusinessTrips, getWorkTypes, getRelocationTypes } =
-  dictionaryStore;
+const { getDictionaries } = dictionaryStore;
 useAsyncData(
   "dictionary",
   async () => {
-    await getGenders();
-    await getBusinessTrips();
-    await getWorkTypes();
-    await getRelocationTypes();
+    return await getDictionaries([
+      "gender_resume",
+      "business_trip",
+      "work_type",
+      "relocation_type",
+    ]);
   },
   {
     immediate: true,

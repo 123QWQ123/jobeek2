@@ -25,29 +25,31 @@ const vacancyID = computed(() => route.params.id);
 const type = computed(() => route.query.type);
 
 // Грузим справочники SSR-совместимо
-useAsyncData("dictionaries", async () => {
-  await dictionaryStore.getDictionaries([
-    "payment_period",
-    "experience",
-    "vacancy_type",
-    "vacancy_billing_type",
-    "schedule",
-    "working_days",
-    "working_time_intervals",
-    "working_time_modes",
-    "extend_vac",
-    "place_of_work",
-    "education",
-    "marital_status",
-    "children",
-    "gender",
-    "covid_vaccination_requirement",
-    "work_type",
-    "marital_statuses",
-    "lang_level_resume",
-    "driver_license_types",
-  ]);
-});
+useAsyncData(
+  "dictionaries",
+  async () =>
+    await dictionaryStore.getDictionaries([
+      "payment_period",
+      "experience",
+      "vacancy_type",
+      "vacancy_billing_type",
+      "schedule",
+      "working_days",
+      "working_time_intervals",
+      "working_time_modes",
+      "extend_vac",
+      "place_of_work",
+      "education",
+      "marital_status",
+      "children",
+      "gender",
+      "covid_vaccination_requirement",
+      "work_type",
+      "marital_statuses",
+      "lang_level_resume",
+      "driver_license_types",
+    ]),
+);
 
 // Грузим вакансию SSR-совместимо
 const { getMyVacancy, publishDraft, getMyDraft } = vacancyStore;
@@ -77,6 +79,7 @@ const { error: vacancyLoadError } = await useAsyncData(
         });
       }
     }
+    return resData;
   },
 );
 

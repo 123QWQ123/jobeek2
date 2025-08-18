@@ -12,7 +12,7 @@
         @input="onChangeHandler"
         @focusin="onFocus"
       />
-      <ul class="list" :style="listStyles">
+      <ul v-if="options.length > 0" class="list" :style="listStyles">
         <li
           v-for="item in options"
           @click.prevent="onSelect(item.value)"
@@ -93,7 +93,9 @@ const props = defineProps({
 
 const { value } = useField(() => props.name);
 
-const { remove, push, fields, replace } = useFieldArray(() => props.name);
+const { remove, push, fields, replace, update } = useFieldArray(
+  () => props.name,
+);
 const isOpen = ref(false);
 const options = ref(props.options);
 const { sort, sortBubbleBySearch } = useSort();
@@ -123,6 +125,7 @@ function onSelect(selectedOptionValue) {
     push(selectedOptionItem.value);
     selectedOptions.value.push(selectedOptionItem);
   }
+  update();
 }
 
 const getCurrentFieldName = (newValue) => {

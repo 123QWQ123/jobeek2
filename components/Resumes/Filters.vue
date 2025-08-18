@@ -46,7 +46,7 @@
 
 <script setup>
 import { useUIStore } from "~/store/ui";
-import { useNuxtApp } from "#app";
+import { useNuxtApp } from "#imports";
 import { useForm } from "vee-validate";
 
 const uiStore = useUIStore();

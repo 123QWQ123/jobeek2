@@ -4,9 +4,7 @@ import { useAuthStore } from "~/store/auth";
 const authStore = useAuthStore();
 const { getPremium } = authStore;
 
-useAsyncData("getPremium", () => {
-  getPremium();
-});
+useAsyncData("getPremium", () => getPremium());
 
 if (!authStore.isEmployer) {
   navigateTo({ name: "profile-seeker" });

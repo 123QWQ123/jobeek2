@@ -31,7 +31,7 @@
 import { useVacancyStore } from "~/store/vacancy";
 import { useVacancyForm } from "~/composables/useVacancyForm";
 import { useUIStore } from "~/store/ui";
-import { useAsyncData, useNuxtApp } from "#app";
+import { useAsyncData, useNuxtApp } from "#imports";
 import useQueryParams from "~/composables/useQueryParams.js";
 import FilterIcon from "~/components/Vacancies/FilterIcon.vue";
 
@@ -50,9 +50,10 @@ const route = useRoute();
 const { name: search_keyword } = route.query;
 const form = ref(useVacancyForm());
 
-useAsyncData("vacancies", async () => {
-  return await getVacancies(getCurrentQueryParams());
-});
+useAsyncData(
+  "vacancies",
+  async () => await getVacancies(getCurrentQueryParams()),
+);
 
 watch(
   () => ({ ...getCurrentQueryParams() }),

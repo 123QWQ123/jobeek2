@@ -51,7 +51,7 @@
 <script setup>
 import { useVacancyStore } from "~/store/vacancy";
 import { useUIStore } from "~/store/ui";
-import { useNuxtApp } from "#app";
+import { useNuxtApp } from "#imports";
 import { useForm } from "vee-validate";
 
 const vacancyStore = useVacancyStore();

@@ -1,11 +1,13 @@
 <template>
   <footer class="main-footer">
     <div class="main-footer-content wrapper">
-	  <div class="logo">
+      <div class="logo">
         <NuxtLink to="/"
           ><img src="~/assets/img/jobeek-dark.svg" alt="#"
         /></NuxtLink>
-        <span class="copyright-text">© 2018–{{ new Date().getFullYear() }} Jobeek </span>
+        <span class="copyright-text"
+          >© 2018–{{ new Date().getFullYear() }} Jobeek
+        </span>
       </div>
       <div class="footer-navigation navigation" role="navigation">
         <div class="col">
@@ -46,16 +48,14 @@ import { useAuthStore } from "~/store/auth";
 const { isAuthed } = storeToRefs(useAuthStore());
 const uiStore = useUIStore();
 const { getFooterSettings } = uiStore;
-useAsyncData("getFooterSettings", async () => {
-  return await getFooterSettings();
-});
+useAsyncData("getFooterSettings", async () => await getFooterSettings());
 </script>
 
 <style scoped>
-	.copyright-text {
-		margin-top: 8px;
-	    font-size: 12px;
-	    color: #78757e;
-	    display: block;
-	}
+.copyright-text {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #78757e;
+  display: block;
+}
 </style>

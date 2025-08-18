@@ -14,12 +14,11 @@ const providers = ref([]);
 const dictionaryStore = useDictionaryStore();
 const profileStore = useProfileStore();
 // Грузим справочники SSR-совместимо
-useAsyncData("dictionaries", async () => {
-  await dictionaryStore.getDictionaries(["work_type"]);
-});
-await useAsyncData("profileStore ", async () => {
-  await profileStore.getCities();
-});
+useAsyncData(
+  "dictionaries",
+  async () => await dictionaryStore.getDictionaries(["work_type"]),
+);
+await useAsyncData("profileStore ", async () => await profileStore.getCities());
 const getFields = (newObject) => {
   if (!newObject) return {};
   return {

@@ -64,9 +64,9 @@ const filterItems = computed(() => {
 });
 
 // Simplify data fetching. No need for prepare since we use computed properties
-const { data: partTimesData } = useAsyncData("getPartTimes", () => {
-  return dictionaryStore.getPartTimes();
-});
+const { data: partTimesData } = useAsyncData("getPartTimes", () =>
+  dictionaryStore.getPartTimes(),
+);
 </script>
 
 <style scoped>

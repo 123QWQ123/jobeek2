@@ -65,7 +65,7 @@ const isLoading = ref(false);
 <template>
   <main class="main cabinet create-resume-page bg-wrapper" role="main">
     <Head>
-      <Title>{{ pageTitle }} - Jobeek</Title>
+      <Title>Jobeek - {{ pageTitle }}</Title>
     </Head>
     <div class="bg-wrapper pt">
       <PersonalCabinetSearchMobile />
