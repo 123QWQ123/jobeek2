@@ -20,33 +20,25 @@ const authStore = useAuthStore();
 const profileStore = useProfileStore();
 const { value, errorMessage, setErrors } = useField(props.name);
 
+const { refreshEmployer, refreshSeeker } = authStore;
 const currentValue = ref(value.value);
 const email_to_verify = ref(null);
 const isLoading = ref(false);
-const isConfirmButton = ref(false);
-const isCheckButton = ref(false);
-
-const isConfirmationSent = computed(() => {
+const isCheckButton = computed(() => {
   const user = props.type === "seeker" ? authStore.seeker : authStore.employer;
-  return !!user?.email_to_verify;
+  return user.email && !user.email_to_verify;
+});
+
+const isConfirmButton = computed(() => {
+  const user = props.type === "seeker" ? authStore.seeker : authStore.employer;
+
+  return (
+    (!user.is_completed && !!user?.email_to_verify) ||
+    (!user.email && !user.email_to_verify)
+  );
 });
 
 const is_email_to_verify_sent = ref(false);
-
-const updateEmails = (user) => {
-  email_to_verify.value = user.email_to_verify;
-  currentValue.value = user.email ?? user.email_to_verify;
-
-  if (user.is_completed) {
-    isCheckButton.value =
-      currentValue.value && currentValue.value === user.email;
-    isConfirmButton.value =
-      email_to_verify.value && email_to_verify.value !== user.email;
-  } else {
-    isCheckButton.value = false;
-    isConfirmButton.value = user.email === null;
-  }
-};
 
 const onEmailConfirm = async (e) => {
   e.preventDefault();
@@ -57,40 +49,16 @@ const onEmailConfirm = async (e) => {
   if (resData.status !== "success") {
     setErrors(resData.errors?.email || resData.message);
     isLoading.value = false;
+    refreshSeeker();
+    await refreshEmployer();
   } else {
     authStore.seeker.email_to_verify = inputEmailValue;
     authStore.employer.email_to_verify = inputEmailValue;
 
-    isConfirmationSent.value = true;
     is_email_to_verify_sent.value = true;
     isLoading.value = false;
   }
 };
-
-watch(
-  () => currentValue.value,
-  (newValue) => {
-    if (!value.value) {
-      setValue(newValue);
-      setErrors(null);
-    }
-  },
-);
-
-watch(
-  () => props.type,
-  () => {
-    const user =
-      props.type === "seeker" ? authStore.seeker : authStore.employer;
-    if (user) updateEmails(user);
-  },
-  { immediate: true },
-);
-
-onMounted(() => {
-  const user = props.type === "seeker" ? authStore.seeker : authStore.employer;
-  if (user) updateEmails(user);
-});
 </script>
 
 <template>
@@ -108,7 +76,7 @@ onMounted(() => {
       class="btn btn-outline-primary absolute_button"
       @click="onEmailConfirm"
     >
-      Подтверждать
+      Подтвердить
       <Loader class="spinner-border-sm" v-if="isLoading" />
     </span>
     <span

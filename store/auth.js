@@ -41,16 +41,16 @@ export const useAuthStore = defineStore("auth", {
       this.isEmployerMode = !this.isEmployerMode;
     },
     setUser(payload) {
-      this.user = payload;
+      this.user = Object.assign(this.user || {}, payload);
     },
     setSeeker(payload) {
-      this.seeker = payload;
+      this.seeker = Object.assign(this.seeker || {}, payload);
     },
     setToken(payload) {
       this.tokenAuth = payload;
     },
     setEmployer(payload) {
-      this.employer = payload;
+      this.employer = Object.assign(this.employer || {}, payload);
     },
     async signUp(payload, cb = null) {
       return await useApi("auth/register", {
