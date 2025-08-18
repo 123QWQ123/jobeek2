@@ -13,7 +13,7 @@ const route = useRoute();
 const isSuccess = ref(false);
 const errorMessage = ref("");
 const { code, email } = route.query;
-const { verifyEmailConfirmation, getUser } = profileStore;
+const { verifyEmailConfirmation, getUser, seeker, employer } = profileStore;
 const { refreshSeeker, refreshEmployer } = useAuthStore();
 
 onMounted(async () => {
@@ -24,6 +24,10 @@ onMounted(async () => {
   } else {
     isSuccess.value = true;
 
+    seeker.email = email;
+    seeker.email_to_verify = null;
+    employer.email = email;
+    employer.email_to_verify = null;
     await getUser();
 
     await refreshSeeker();

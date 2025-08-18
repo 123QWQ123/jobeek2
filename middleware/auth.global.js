@@ -6,6 +6,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const { value: employer } = computed(() => authStore.employer);
   const { value: seeker } = computed(() => authStore.seeker);
   const { value: isAuthed } = computed(() => authStore.isAuthed);
+  const { value: isEmployerMode } = computed(() => authStore.isEmployerMode);
 
   // Allow access if the route is public
   if (public_routes.includes(to.name)) {
@@ -36,6 +37,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   // Check if employer profile is incomplete
   if (
+    isEmployerMode &&
     employer &&
     isIncompleteProfile(employer) &&
     protected_routes.includes(to.name)
@@ -45,6 +47,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   // Check if seeker profile is incomplete
   if (
+    !isEmployerMode &&
     seeker &&
     isIncompleteProfile(seeker) &&
     protected_routes.includes(to.name)

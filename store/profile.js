@@ -305,7 +305,7 @@ export const useProfileStore = defineStore("profile", {
       return this.employer;
     },
     async updateSeeker(payload, cb = null) {
-      const { setUser, setSeeker } = useAuthStore();
+      const { setUser, setSeeker, setEmployer } = useAuthStore();
       const response = await useApi("seeker/profile", {
         method: "post",
         content_type: "multipart/form-data",
@@ -317,6 +317,16 @@ export const useProfileStore = defineStore("profile", {
         this.user = response.data?.data;
         setUser(this.user);
         setSeeker(this.seeker);
+        this.setEmployer({
+          email: this.seeker?.email,
+          email_to_verify: this.seeker?.email_to_verify,
+          phone: this.seeker?.phone,
+        });
+        setEmployer({
+          email: this.seeker?.email,
+          email_to_verify: this.seeker?.email_to_verify,
+          phone: this.seeker?.phone,
+        });
         return this.seeker;
       }
       return response;

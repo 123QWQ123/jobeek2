@@ -100,7 +100,7 @@ import { ref, watch } from "vue";
 // Stores и основные данные
 const profileStore = useProfileStore();
 const authStore = useAuthStore();
-const { seeker } = storeToRefs(profileStore);
+const { seeker } = storeToRefs(authStore);
 const { refreshEmployer, refreshSeeker } = useAuthStore();
 const { getCountries, getCities, updateSeeker } = profileStore;
 const { countryOptions, cityOptions } = storeToRefs(profileStore);
