@@ -39,7 +39,7 @@ const { sub_premium_url, unsub_premium_url, isSubscribed } =
 
 useAsyncData("premiumUrl", async () => {
   await getSubPremiumUrl();
-  await getUnsubPremiumUrl();
+  return await getUnsubPremiumUrl();
 });
 
 const onClickConnect = () => {

@@ -39,7 +39,7 @@
 <script async setup>
 import { useUIStore } from "~/store/ui";
 
-import { useNuxtApp } from "#app";
+import { useNuxtApp } from "#imports";
 import useQueryParams from "~/composables/useQueryParams.js";
 import { useResumeStore } from "~/store/resume.js";
 import FilterIcon from "~/components/Vacancies/FilterIcon.vue";

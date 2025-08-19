@@ -3,19 +3,19 @@
     class="theme-checker-box cursor-pointer checker-box right__box"
     @click="toggle"
   >
-    <span class="v v1" :class="{ active: !auth.isEmployer }" title="Соискатель"
+    <span class="v v1" :class="{ active: !isEmployer }" title="Соискатель"
       >Соискатель</span
     >
     <div class="theme-checker">
-      <input type="checkbox" id="employer" :checked="!auth.isEmployer" />
-      <div class="theme-checker-ui" :class="{ yellow: !auth.isAuthed }">
+      <input type="checkbox" id="employer" :checked="!isEmployer" />
+      <div class="theme-checker-ui" :class="{ yellow: !isAuthed }">
         <div
           class="circle"
-          :class="{ left: !auth.isEmployer, right: auth.isEmployer }"
+          :class="{ left: !isEmployer, right: isEmployer }"
         ></div>
       </div>
     </div>
-    <span class="v v2" :class="{ active: auth.isEmployer }" title="Работодатель"
+    <span class="v v2" :class="{ active: isEmployer }" title="Работодатель"
       >Работодатель</span
     >
   </div>
@@ -25,12 +25,13 @@
 import { useAuthStore } from "~~/store/auth";
 
 const auth = useAuthStore();
+const { isAuthed } = storeToRefs(auth);
+const isEmployer = computed(() => auth.isEmployer);
 const { toggleUserMode } = auth;
 
 const toggle = () => {
   toggleUserMode();
 };
-
 </script>
 
 <style scoped>

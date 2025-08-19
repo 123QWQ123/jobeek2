@@ -13,7 +13,7 @@ export default {
 <script setup>
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 import { QuillEditor } from "@vueup/vue-quill";
-import { useNuxtApp } from "#app";
+import { useNuxtApp } from "#imports";
 
 const app = useNuxtApp();
 app.vueApp.component("QuillEditor", QuillEditor);
