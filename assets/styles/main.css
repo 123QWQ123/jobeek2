@@ -1872,7 +1872,13 @@ body .main-section-mob {
 	    grid-template-columns: 1fr 23% 20% 130px !important;
 	}
 	.search-row .input-wrap:nth-child(2) .nice-select.n-select.d-select.no_bg {
-		padding-right: 40px;
+		padding-right: 30px;
+	}
+	.search-row .nice-select:after {
+		right: 14px !important;
+	}
+	.search-row .select_arrow {
+		right: 14px !important;
 	}
 }
 @media (max-width: 1280px) {
