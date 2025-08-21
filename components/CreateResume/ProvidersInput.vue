@@ -115,8 +115,6 @@
 </template>
 
 <script setup>
-// To DO default by connected_providers
-import { useDictionaryStore } from "~/store/dictionary";
 import { toast } from "vue3-toastify";
 import { useResumeStore } from "~/store/resume";
 
@@ -137,7 +135,6 @@ const props = defineProps({
 });
 
 const errors = computed(() => props.errors);
-const dictionaryStore = useDictionaryStore();
 
 const route = useRoute();
 
@@ -151,69 +148,27 @@ const { value, errorMessage } = useField(() => props.name);
 
 const isHHEnabled = computed(() => resumeStore.providers.hh);
 const isSuperjobEnabled = computed(() => resumeStore.providers.superjob);
-
-const resetObject = {
-  superjob: false,
-  hh: false,
-};
-const resumeProviders = computed(() => {
-  let selectedProvidersValue = [];
-  if (!resumeStore.my_resume) {
-    return resetObject;
-  }
-  const providersNewValues = { ...resetObject };
-
-  if (selectedProvidersValue.includes("hh")) {
-    providersNewValues.hh = true;
-  } else {
-    providersNewValues.superjob = false;
-  }
-  if (selectedProvidersValue.includes("superjob")) {
-    providersNewValues.superjob = true;
-  } else {
-    providersNewValues.superjob = false;
-  }
-  return providersNewValues;
-});
-
-watch(
-  () => resumeProviders.value,
-  (newValue) => {
-    selectedProviders.value = newValue;
-  },
-);
-const selectedProviders = ref(props.modelValue ?? resetObject);
-watch(
-  () => selectedProviders.value,
-  (newSelectedItems) => {
-    emit("update:modelValue", newSelectedItems);
-  },
-);
+const selectedProviders = ref(resumeStore.providers);
+const provider_auth_urls = computed(() => resumeStore.provider_auth_urls);
 
 const isHHSelected = computed(() => selectedProviders.value.hh);
 const isSuperjobSelected = computed(() => selectedProviders.value.superjob);
-const reset = () => {
-  selectedProviders.value = resetObject;
-};
 
 const toggle = async (provider) => {
   if (provider === "hh" && !isHHEnabled.value) {
     toast.info("Вам нужно подключить HH", { autoClose: 3000 });
-    return;
+    if (provider_auth_urls.value.hh) {
+      window.open(provider_auth_urls.value.hh, "_blank");
+    }
   }
   if (provider === "superjob" && !isSuperjobEnabled.value) {
     toast.info("Вам нужно подключить Superjob", { autoClose: 3000 });
+    if (provider_auth_urls.value.superjob) {
+      window.open(provider_auth_urls.value.superjob, "_blank");
+    }
     return;
   }
   selectedProviders.value[provider] = !selectedProviders.value[provider];
-
-  const providerParams = [];
-  if (selectedProviders.value.hh) {
-    providerParams.push("hh");
-  }
-  if (selectedProviders.value.superjob) {
-    providerParams.push("superjob");
-  }
 
   let selectedProvidersValue = [];
   if (selectedProviders.value.hh) {
@@ -222,6 +177,7 @@ const toggle = async (provider) => {
   if (selectedProviders.value.superjob) {
     selectedProvidersValue.push("superjob");
   }
+
   value.value = selectedProvidersValue;
   emit("update:modelValue", selectedProvidersValue);
 };

@@ -1,7 +1,7 @@
 <template>
   <div class="w-box w-box--main w-box-resume">
     <div class="w-box-head">
-      <h1 class="title">{{ formTitle }}</h1>
+      <h1 class="title">Создание резюме</h1>
       <div class="descr">
         Получайте уведомления о новых по созданному запросу
       </div>
@@ -18,127 +18,126 @@
           {{ errorMessage }}
         </div>
       </div>
-      <form @submit.prevent="onSubmit" :validation-schema="schema">
-        <CreateResumeProvidersInput name="providers" />
-        <div class="input-row">
-          <label for="name">Название вакансии<b>*</b></label>
-          <div class="input-wrapper">
-            <div class="c1 mt-1">
-              <ResumeTextInput name="title" placeholder="Название" />
+      <CreateResumeProvidersInput name="providers" />
+      <div class="input-row">
+        <label for="name">Название вакансии<b>*</b></label>
+        <div class="input-wrapper">
+          <div class="c1 mt-1">
+            <ResumeTextInput name="title" placeholder="Название" />
+          </div>
+        </div>
+      </div>
+
+      <div class="input-row">
+        <label for="name">Имя и фамилия <b>*</b></label>
+        <div class="input-wrapper">
+          <div class="c2">
+            <div class="input-wrapper">
+              <ResumeTextInput name="first_name" placeholder="Имя" />
+            </div>
+            <div class="input-wrapper">
+              <ResumeTextInput name="last_name" placeholder="Фамилия" />
             </div>
           </div>
+          <div class="c1 mt-3">
+            <ResumeTextInput name="middle_name" placeholder="Отчество" />
+          </div>
         </div>
+      </div>
 
-        <div class="input-row">
-          <label for="name">Имя и фамилия <b>*</b></label>
-          <div class="input-wrapper">
-            <div class="c2">
-              <div class="input-wrapper">
-                <ResumeTextInput name="first_name" placeholder="Имя" />
-              </div>
-              <div class="input-wrapper">
-                <ResumeTextInput name="last_name" placeholder="Фамилия" />
-              </div>
-            </div>
-            <div class="c1 mt-3">
-              <ResumeTextInput name="middle_name" placeholder="Отчество" />
-            </div>
-          </div>
+      <div class="input-row">
+        <label for="resume_email">Электронная почта<b>*</b></label>
+        <div class="input-wrapper">
+          <ResumeTextInput
+            name="email"
+            type="email"
+            placeholder="Электронная почта"
+          />
+          <ResumeCheckboxInput
+            class="mt-2"
+            name="is_preferred_email"
+            label="Email является ли предпочтительным способом связи"
+          />
         </div>
+      </div>
 
-        <div class="input-row">
-          <label for="resume_email">Электронная почта<b>*</b></label>
-          <div class="input-wrapper">
-            <ResumeTextInput
-              name="email"
-              type="email"
-              placeholder="Электронная почта"
-            />
-            <ResumeCheckboxInput
-              class="mt-2"
-              v-if="!state.is_preferred_email.is_hidden"
-              name="is_preferred_email"
-              label="Email является ли предпочтительным способом связи"
-            />
+      <div class="input-row">
+        <label>Дата рождения <b>*</b></label>
+        <div class="input-wrapper">
+          <div class="mb-1">
+            <VeeBirthDatePicker name="birth_date" />
           </div>
         </div>
+      </div>
+      <div class="input-row">
+        <label>Город проживания:<b>*</b></label>
+        <div class="input-wrapper mt-2">
+          <VeeSelectWithSearch
+            :options="cityOptions"
+            name="city_id"
+            placeholder="Выберите город"
+            @input="updateCityInput"
+            not_found="Введите название города"
+          />
+        </div>
+      </div>
 
-        <div class="input-row">
-          <label>Дата рождения <b>*</b></label>
-          <div class="input-wrapper">
-            <div class="mb-1">
-              <VeeBirthDatePicker name="birth_date" />
-            </div>
-          </div>
+      <div class="input-row">
+        <label>Пол:<b>*</b></label>
+        <div class="input-wrapper mt-2">
+          <VeeCustomSelect
+            :options="genderOptions"
+            name="gender_id"
+            :label="'Выберите'"
+          />
         </div>
-        <div class="input-row">
-          <label>Город проживания:<b>*</b></label>
-          <div class="input-wrapper mt-2">
-            <VeeSelectWithSearch
-              :options="cityOptions"
-              name="city_id"
-              placeholder="Выберите город"
-              @input="updateCityInput"
-            />
-          </div>
-        </div>
+      </div>
 
-        <div class="input-row">
-          <label>Пол:<b>*</b></label>
-          <div class="input-wrapper mt-2">
-            <LazyVeeCustomSelect
-              :options="genderOptions"
-              name="gender_id"
-              :label="'Выберите'"
-            />
-          </div>
+      <div class="input-row">
+        <label>Готовность к командировкам:<b>*</b></label>
+        <div class="input-wrapper mt-2">
+          <VeeCustomSelect
+            :options="businessTripOptions"
+            name="business_trip_id"
+            :label="'Выберите'"
+          />
         </div>
+      </div>
 
-        <div class="input-row">
-          <label>Готовность к командировкам:<b>*</b></label>
-          <div class="input-wrapper mt-2">
-            <LazyVeeCustomSelect
-              :options="businessTripOptions"
-              name="business_trip_id"
-              :label="'Выберите'"
-            />
-          </div>
+      <div class="input-row">
+        <label>Готовность к релокацию:<b>*</b></label>
+        <div class="input-wrapper mt-2">
+          <VeeCustomSelect
+            :options="relocationTypeOptions"
+            name="relocation_type_id"
+            :label="'Выберите'"
+          />
         </div>
+      </div>
 
-        <div class="input-row">
-          <label>Готовность к релокацию:<b>*</b></label>
-          <div class="input-wrapper mt-2">
-            <LazyVeeCustomSelect
-              :options="relocationTypeOptions"
-              name="relocation_type_id"
-              :label="'Выберите'"
-            />
-          </div>
+      <div class="input-row" v-if="isMovableCitiesEnabled">
+        <label>Города в которые готов переехать:</label>
+        <div class="input-wrapper mt-2">
+          <VeeMultiSelectWithSearch
+            name="move_able_cities"
+            :options="moveableCityOptions"
+            placeholder="Выберите"
+            @input="updateMoveableCityInput"
+            not_found="Введите город"
+          />
         </div>
+      </div>
 
-        <div class="input-row" v-if="isMovableCitiesEnabled">
-          <label>Городов в которым готов переехать:</label>
-          <div class="input-wrapper mt-2">
-            <VeeMultiSelectWithSearch
-              name="move_able_cities"
-              :options="moveableCityOptions"
-              placeholder="Выберите"
-              @input="updateMoveableCityInput"
-            />
-          </div>
+      <div class="input-row pb-4">
+        <label>Тип работы:<b>*</b></label>
+        <div class="input-wrapper mt-2">
+          <VeeMultiSelectWithSearch
+            name="work_types"
+            :options="work_types_formatted"
+            placeholder="Выберите"
+          />
         </div>
-
-        <div class="input-row pb-4">
-          <label>Тип работы:<b>*</b></label>
-          <div class="input-wrapper mt-2">
-            <VeeMultiSelectWithSearch
-              name="work_types"
-              :options="work_types_formatted"
-              placeholder="Выберите"
-            />
-          </div>
-        </div>
-      </form>
+      </div>
     </div>
   </div>
 </template>
@@ -148,7 +147,6 @@ import { useDictionaryStore } from "~/store/dictionary";
 import { useResumeStore } from "~/store/resume";
 
 import { useProfileStore } from "~/store/profile";
-import useFormValidation from "~/composables/useFormValidation";
 import { storeToRefs } from "pinia";
 import ResumeCheckboxInput from "~/components/CreateResume/ResumeCheckboxInput.vue";
 import ResumeTextInput from "~/components/CreateResume/ResumeTextInput.vue";
@@ -159,7 +157,7 @@ const props = defineProps(["title"]);
 
 const resumeStore = useResumeStore();
 const profileStore = useProfileStore();
-const formTitle = computed(() => props.title);
+const { createResume } = resumeStore;
 
 const isSaved = ref(false);
 const isChanged = ref(false);
@@ -184,11 +182,11 @@ useAsyncData(
 
 const schema = zod.object({
   providers: zod.array(zod.string()).nonempty("Выберите хотя бы 1 сервис"),
-  title: zod.string(),
-  first_name: zod.string(),
-  last_name: zod.string(),
+  title: zod.string().min(3, "Введите название вакансии"),
+  first_name: zod.string().min(3, "Введите имя"),
+  last_name: zod.string().min(3, "Введите фамилию"),
   middle_name: zod.string().optional().nullable(),
-  email: zod.string(),
+  email: zod.string().email(),
   is_preferred_email: zod.boolean(),
   birth_date: zod.string(),
   city_id: zod.number(),
@@ -196,31 +194,29 @@ const schema = zod.object({
   business_trip_id: zod.number(),
   relocation_type_id: zod.number(),
   work_types: zod.array(zod.number()).nonempty("Выберите хотя бы 1"),
+  move_able_cities: zod.nullable().or(zod.array(zod.number()).nonempty()),
 });
 
-const { values, errors, validate, meta, setTouched, setErrors, handleSubmit } =
-  useForm({
-    initialValues: {
-      providers: [],
-      title: null,
-      first_name: null,
-      last_name: null,
-      middle_name: null,
-      email: null,
-      is_preferred_email: false,
-      birth_date: null,
-      city_id: null,
-      gender_id: null,
-      business_trip_id: null,
-      relocation_type_id: null,
-      move_able_cities: [],
-      work_types: [],
-    },
-    initialTouched: true,
-    validationSchema: toTypedSchema(schema),
-  });
-
-const { createResume } = resumeStore;
+const { values, errors, validate, meta, setErrors, handleSubmit } = useForm({
+  initialValues: {
+    providers: [],
+    title: "",
+    first_name: "",
+    last_name: "",
+    middle_name: null,
+    email: "",
+    is_preferred_email: false,
+    birth_date: null,
+    city_id: null,
+    gender_id: null,
+    business_trip_id: null,
+    relocation_type_id: null,
+    move_able_cities: null,
+    work_types: null,
+  },
+  initialTouched: true,
+  validationSchema: toTypedSchema(schema),
+});
 
 const state = reactive({
   title: {
@@ -320,20 +316,6 @@ const updateMoveableCityInput = async (newValue = "") => {
   }));
 };
 
-const { errors: serverErrors, handleErrorResponse } = useFormValidation(state);
-
-watch(
-  () => serverErrors.value,
-  (newErrors) => {
-    if (Object.keys(newErrors).length > 0) {
-      const backendErrors = {};
-      Object.keys(newErrors).map(
-        (item) => (backendErrors[item] = newErrors[item]),
-      );
-      setErrors(backendErrors);
-    }
-  },
-);
 const isLoading = ref(false);
 const block_loader = ref();
 
@@ -342,10 +324,7 @@ const errorMessage = ref(null);
 const scrollTop = () => {
   window.scrollTo(0, 0);
 };
-const onSubmit = handleSubmit((submittedValues) => {
-  save();
-});
-const save = async (is_from_parent = false) => {
+const save = async () => {
   await validate();
   if (!meta.value.valid) {
     errorMessage.value = "Вам необходимо заполнить";
@@ -360,7 +339,11 @@ const save = async (is_from_parent = false) => {
   scrollTop();
   errorMessageElement.value.scrollIntoView({ behavior: "smooth" });
 
-  let resData = await createResume(unref(values));
+  let resData = await createResume(unref(values), (response) => {
+    if (response.status !== "success") {
+      setErrors(response.errors);
+    }
+  });
 
   if (resData.status !== "success") {
     errorMessage.value = resData.message;
@@ -368,11 +351,7 @@ const save = async (is_from_parent = false) => {
     return;
   }
   isLoading.value = false;
-  if (is_from_parent) {
-    return new Promise((resolve, reject) => {
-      resolve(true);
-    });
-  }
+
   const resume_id = resData.data.data.id;
   setTimeout(() => {
     navigateTo({ name: "my-resume-id", params: { id: resume_id } });
@@ -387,11 +366,7 @@ const save = async (is_from_parent = false) => {
   isUpdated.value = false;
 };
 
-const blockLoaderStyles = {
-  "border-radius": "0 0 12px 12px",
-};
 defineExpose({
-  onSubmit,
   save,
 });
 </script>

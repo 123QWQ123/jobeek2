@@ -12,8 +12,9 @@
         @input="onChangeHandler"
         @focusin="onFocus"
       />
-      <ul v-if="options.length > 0" class="list" :style="listStyles">
+      <ul class="list" :style="listStyles">
         <li
+          v-if="options.length > 0"
           v-for="item in options"
           @click.prevent="onSelect(item.value)"
           :key="item.value"
@@ -21,6 +22,9 @@
           :style="listItemStyles"
         >
           {{ item.name }}
+        </li>
+        <li v-if="options.length === 0">
+          {{ props.not_found }}
         </li>
       </ul>
     </div>
@@ -89,6 +93,7 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  not_found: { type: String, default: "Не найдено" },
 });
 
 const { value } = useField(() => props.name);

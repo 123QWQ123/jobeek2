@@ -443,6 +443,24 @@ export const useProfileStore = defineStore("profile", {
       return response;
     },
   },
+  share: {
+    // An array of fields that the plugin will ignore.
+    omit: [
+      "specializations",
+      "countries",
+      "regions",
+      "cities",
+      "professional_roles",
+      "professional_roles_list",
+      "hh_professional_roles",
+      "superjob_professional_roles",
+      "artifacts",
+      "my_resume_photo_artifact",
+    ],
+    // Override global config for this store.
+    enable: true,
+    initialize: true,
+  },
 });
 
 if (import.meta.hot) {

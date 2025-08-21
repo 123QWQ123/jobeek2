@@ -762,6 +762,13 @@ export const useDictionaryStore = defineStore("dictionary", {
       return this.preferred_contact_types;
     },
   },
+  share: {
+    // An array of fields that the plugin will ignore.
+    omit: [],
+    // Override global config for this store.
+    enable: false,
+    initialize: false,
+  },
 });
 
 if (import.meta.hot) {

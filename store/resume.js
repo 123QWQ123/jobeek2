@@ -210,10 +210,11 @@ export const useResumeStore = defineStore("resume", {
       return response;
     },
 
-    async createResume(payload) {
+    async createResume(payload, cb = null) {
       const response = await useApi("seeker/resumes/create", {
         method: "post",
         payload,
+        cb,
       });
       return response;
     },
@@ -448,6 +449,13 @@ export const useResumeStore = defineStore("resume", {
       }
       return response;
     },
+  },
+  share: {
+    // An array of fields that the plugin will ignore.
+    omit: [],
+    // Override global config for this store.
+    enable: false,
+    initialize: false,
   },
 });
 

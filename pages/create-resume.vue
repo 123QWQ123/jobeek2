@@ -14,9 +14,7 @@ const providers = ref({
 });
 
 const resumeStore = useResumeStore();
-const pageTitle = computed(() => {
-  return "Создание резюме";
-});
+
 useHead({
   title: "Jobeek - Создание резюме",
 });
@@ -65,17 +63,17 @@ const isLoading = ref(false);
 <template>
   <main class="main cabinet create-resume-page bg-wrapper" role="main">
     <Head>
-      <Title>Jobeek - {{ pageTitle }}</Title>
+      <Title>Jobeek - Создание резюме</Title>
     </Head>
     <div class="bg-wrapper pt">
       <PersonalCabinetSearchMobile />
       <div class="wrapper wrapper-1290">
         <form
           class="create-vacancy"
-          @submit.prevent="omSubmit"
+          @submit.prevent="draft_el.onSubmit"
           name="create-vacancy"
         >
-          <LazyCreateResumeDraftCard ref="draft_el" :title="pageTitle" />
+          <CreateResumeDraftCard ref="draft_el" />
 
           <div class="form-submit-container">
             <button class="btn btn-outline-primary" @click="draft_el.save()">

@@ -14,12 +14,16 @@
       </div>
     </div>-->
     <NuxtLink
-      v-if="can_create_resume_count"
+      v-if="can_create_resume_count && (providers.hh || providers.superjob)"
       class="create-button"
       type="link"
       :to="{ name: 'create-resume' }"
       >Создать резюме
     </NuxtLink>
+    <span v-else class="create-button" type="link"
+      >Подключите минимум 1 провайдер для дальнейшего использования
+      сервиса</span
+    >
     <div class="col d-flex justify-content-between mt-4 margin-bottom-mobile">
       <h1 class="lk-page-title mb-4">Ваши резюме ({{ total }})</h1>
     </div>
@@ -49,7 +53,7 @@ useHead({
 
 const resumeStore = useResumeStore();
 const { getMyResumes, getAvailabilityCreate } = resumeStore;
-const { can_create_resume_count } = storeToRefs(resumeStore);
+const { can_create_resume_count, providers } = storeToRefs(resumeStore);
 const { my_resumes, current_page, my_total } = storeToRefs(resumeStore);
 const route = useRoute();
 const resumes = ref([]);
