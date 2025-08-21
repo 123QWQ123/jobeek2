@@ -184,8 +184,8 @@ input {
   top: 44%;
   right: 24px;
   border-color: #78757e;
-  border-bottom: 1.5px solid #999;
-  border-right: 1.5px solid #999;
+  border-bottom: 1.5px solid #78757e;
+  border-right: 1.5px solid #78757e;
   z-index: 10;
 }
 
