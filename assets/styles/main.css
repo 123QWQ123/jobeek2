@@ -1864,6 +1864,11 @@ body .main-section-mob {
     padding-bottom: 50px;
 }
 
+.support-form.enter-form .error-message {
+	color: red;
+	padding: 3px 0 10px;
+}
+
 @media (max-width: 1540px) {
 	.search-row .n-select .current {
 	    width: 100%;
@@ -1887,6 +1892,9 @@ body .main-section-mob {
     }
     .search-form {
         padding: 40px 20px 20px;
+    }
+    .main.cabinet.my-vacancies-page .search-form.main-section-mob {
+        padding: 0 !important;
     }
     .main-section-mob {
         margin: 39px 15px 20px 15px;
@@ -4139,7 +4147,7 @@ body .main-section-mob {
     .notification .notification-text .title {
         font-size: 19px;
         line-height: 25px;
-        margin-bottom: 10px;
+        margin-bottom: 0;
     }
 
     .notification .notification-text p {
@@ -4165,10 +4173,24 @@ body .main-section-mob {
     .notification .ic {
         display: none;
     }
+    
+    .premium-notification-icon {
+	    margin: 0 auto;
+	}
 
     .notification {
         padding-left: 15px;
     }
+    
+    .notification .notification-text {
+	    display: block;
+	    text-align: center;
+	}
+	
+	.premium-checker {
+	    margin-right: auto;
+	    margin-top: 10px;
+	}
 
     .subs-card-body {
         -webkit-box-orient: vertical;
@@ -7552,7 +7574,7 @@ svg.progress {
 }
 
 .header-wrapper .search-form--widget {
-    margin-right: 40px;
+    margin-right: 89px;
 }
 
 .search-form--widget .search-row {
@@ -8548,6 +8570,15 @@ div.parsed_content {
 	margin-right: 5px;
 }
 
+.services-block-time {
+	margin-bottom: -19px;
+    margin-right: 7px;
+}
+
+.services-block-reload {
+	padding-bottom: 12px;
+}
+
 @media (max-width: 960px) {
 	.arrow {
 	    height: 15px;
@@ -8603,4 +8634,11 @@ div.parsed_content {
 	.plansh-width {
         flex-direction: column;
     }
+}
+
+.nice-select span.select_arrow {
+    border-bottom: 1.5px solid #78757e !important;
+    border-right: 1.5px solid #78757e !important;
+    height: 10px !important;
+    width: 10px !important;
 }

@@ -260,11 +260,11 @@ input.current::-webkit-inner-spin-button {
 }
 
 .select_arrow {
-  border-bottom: 2px solid #999;
-  border-right: 2px solid #999;
+  border-bottom: 1.5px solid #78757e;
+  border-right: 1.5px solid #78757e;
   content: "";
   display: block;
-  height: 8px;
+  height: 10px;
   margin-top: -4px;
   pointer-events: initial;
   position: absolute;
@@ -273,7 +273,7 @@ input.current::-webkit-inner-spin-button {
   transform-origin: 66% 66%;
   transform: rotate(45deg);
   transition: all 0.15s ease-in-out;
-  width: 8px;
+  width: 10px;
 }
 
 .nice-select .custom_input-wrap {
