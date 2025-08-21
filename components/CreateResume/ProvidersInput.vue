@@ -141,8 +141,13 @@ const route = useRoute();
 const resumeID = computed(() => route.params.id);
 
 const resumeStore = useResumeStore();
-const { getConnectedSeekerProviders } = resumeStore;
+const { getConnectedSeekerProviders, getSeekerProvidersAuthEndpoints } =
+  resumeStore;
 await getConnectedSeekerProviders();
+await getSeekerProvidersAuthEndpoints(
+  { providers: ["hh", "superjob"] },
+  useRequestURL(),
+);
 
 const { value, errorMessage } = useField(() => props.name);
 
@@ -160,6 +165,7 @@ const toggle = async (provider) => {
     if (provider_auth_urls.value.hh) {
       window.open(provider_auth_urls.value.hh, "_blank");
     }
+    return;
   }
   if (provider === "superjob" && !isSuperjobEnabled.value) {
     toast.info("Вам нужно подключить Superjob", { autoClose: 3000 });
