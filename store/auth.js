@@ -273,6 +273,19 @@ export const useAuthStore = defineStore("auth", {
       return { status: "error", message: error.message };
     },
   },
+  share: {
+    // An array of fields that the plugin will ignore.
+    omit: [
+      "sub_premium_url",
+      "unsub_premium_url",
+      "tokenType",
+      "expiresAt",
+      "ttl",
+    ],
+    // Override global config for this store.
+    enable: true,
+    initialize: true,
+  },
 });
 
 if (import.meta.hot) {

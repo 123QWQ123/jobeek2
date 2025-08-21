@@ -53,6 +53,13 @@ export const useUIStore = defineStore("ui", {
       return this.footer;
     },
   },
+  share: {
+    // An array of fields that the plugin will ignore.
+    omit: ["footer", "footer_settings"],
+    // Override global config for this store.
+    enable: true,
+    initialize: true,
+  },
 });
 
 if (import.meta.hot) {

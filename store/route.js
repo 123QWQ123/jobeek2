@@ -29,6 +29,13 @@ export const useRoute = defineStore("route", {
       return this.page;
     },
   },
+  share: {
+    // An array of fields that the plugin will ignore.
+    omit: [],
+    // Override global config for this store.
+    enable: false,
+    initialize: false,
+  },
 });
 
 if (import.meta.hot) {

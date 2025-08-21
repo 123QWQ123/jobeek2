@@ -100,7 +100,7 @@ import { ref, watch } from "vue";
 // Stores и основные данные
 const profileStore = useProfileStore();
 const authStore = useAuthStore();
-const { seeker } = storeToRefs(authStore);
+const seeker = computed(() => authStore.seeker);
 const { refreshEmployer, refreshSeeker } = useAuthStore();
 const { getCountries, getCities, updateSeeker } = profileStore;
 const { countryOptions, cityOptions } = storeToRefs(profileStore);
@@ -146,7 +146,7 @@ const getFields = (newObject) => ({
 });
 const initialValues = getFields(seeker.value);
 
-const { values, errors, validate, setErrors, meta } = useForm({
+const { values, errors, validate, setErrors, meta, resetForm } = useForm({
   initialValues,
   validationSchema: toTypedSchema(schema),
 });
@@ -226,6 +226,12 @@ const handleSubmit = async () => {
   await refreshEmployer();
   navigateTo({ name: "profile" });
 };
+watch(
+  () => authStore.seeker,
+  (value) => {
+    resetForm({ values: getFields(value) });
+  },
+);
 </script>
 
 <style>

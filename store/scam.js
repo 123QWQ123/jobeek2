@@ -87,6 +87,13 @@ export const useScamStore = defineStore("scam", {
       return data;
     },
   },
+  share: {
+    // An array of fields that the plugin will ignore.
+    omit: [],
+    // Override global config for this store.
+    enable: false,
+    initialize: false,
+  },
 });
 
 if (import.meta.hot) {
