@@ -432,13 +432,10 @@ export const useResumeStore = defineStore("resume", {
     },
 
     async removeFromFavorite(payload) {
-      const response = await useApi(
-        "employer/resumes/favorites/" + payload.id,
-        {
-          method: "delete",
-          params: payload,
-        },
-      );
+      const response = await useApi("employer/resumes/favorites/", {
+        method: "delete",
+        params: payload,
+      });
       if (response.status === "success") {
         this.resumes = this.resumes.map((resume) => {
           if (resume.id === id) {
