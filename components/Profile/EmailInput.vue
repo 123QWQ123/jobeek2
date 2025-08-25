@@ -33,8 +33,8 @@ const isConfirmButton = computed(() => {
   const user = props.type === "seeker" ? authStore.seeker : authStore.employer;
 
   return (
-    (!user.is_completed && !!user?.email_to_verify) ||
-    (!user.email && !user.email_to_verify)
+    (!user?.is_completed && !!user?.email_to_verify) ||
+    (!user?.email && !user?.email_to_verify)
   );
 });
 
