@@ -194,7 +194,6 @@ const schema = zod.object({
   business_trip_id: zod.number(),
   relocation_type_id: zod.number(),
   work_types: zod.array(zod.number()).nonempty("Выберите хотя бы 1"),
-  move_able_cities: zod.nullable().or(zod.array(zod.number()).nonempty()),
 });
 
 const { values, errors, validate, meta, setErrors, handleSubmit } = useForm({
@@ -309,6 +308,9 @@ const updateCityInput = async (newValue = "") => {
 };
 
 const updateMoveableCityInput = async (newValue = "") => {
+  if (newValue.length < 2) {
+    return;
+  }
   const items = (await searchCities({ search: newValue })) ?? [];
   moveableCityOptions.value = items.map((item) => ({
     value: item.id,
