@@ -153,7 +153,7 @@ const { value, errorMessage } = useField(() => props.name);
 
 const isHHEnabled = computed(() => resumeStore.providers.hh);
 const isSuperjobEnabled = computed(() => resumeStore.providers.superjob);
-const selectedProviders = ref(resumeStore.providers);
+const selectedProviders = ref([]);
 const provider_auth_urls = computed(() => resumeStore.provider_auth_urls);
 
 const isHHSelected = computed(() => selectedProviders.value.hh);
