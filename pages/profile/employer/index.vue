@@ -8,7 +8,7 @@ useHead({
 });
 
 const authStore = useAuthStore();
-const { seeker, employer, isEmployer } = storeToRefs(authStore);
+const { seeker, employer, isEmployer, isSubscribed } = storeToRefs(authStore);
 
 const isCompleted = computed(() => {
   if (!isEmployer.value) return seeker.value?.is_completed ?? false;
@@ -47,7 +47,7 @@ watch(
 
         <ProfileEmployerEditForm />
 
-        <CashBoxList v-if="isCompleted" />
+        <CashBoxList v-if="isCompleted && isSubscribed" />
       </div>
       <aside class="sidebar">
         <Premium />
