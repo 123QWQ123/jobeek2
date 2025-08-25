@@ -544,7 +544,7 @@ export const useVacancyStore = defineStore("vacancy", {
     },
 
     async removeFromFavorite(payload) {
-      return await useApi("seeker/vacancies/favorites/" + payload.id, {
+      return await useApi("seeker/vacancies/favorites/", {
         method: "delete",
         params: payload,
       });
