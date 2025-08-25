@@ -41,19 +41,6 @@ onMounted(() => {
   }
 });
 
-const paramProviders = computed(() => {
-  if (providers.value.hh && providers.value.superjob) {
-    return ["hh", "superjob"];
-  }
-  if (providers.value.hh) {
-    return ["hh"];
-  }
-  if (providers.value.superjob) {
-    return ["superjob"];
-  }
-  return [];
-});
-
 const draft_el = ref();
 
 const errorMessage = ref(null);
