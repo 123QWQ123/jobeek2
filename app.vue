@@ -49,6 +49,14 @@ watch(
     }
   },
 );
+watch(
+  () => isAuthed.value,
+  (value) => {
+    if (!value) {
+      navigateTo("/");
+    }
+  },
+);
 </script>
 
 <style>
