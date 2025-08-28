@@ -84,7 +84,7 @@ const onEmailConfirm = async (e) => {
       class="btn btn-outline-success absolute_button pe-auto"
     >
       <svg
-        style="width: 22px; height: 22px; margin-top: -3px"
+        style="width: 22px; height: 22px; margin-top: 0"
         aria-hidden="true"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
