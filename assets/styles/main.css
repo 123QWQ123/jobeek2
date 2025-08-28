@@ -1893,6 +1893,9 @@ body .main-section-mob {
     .search-form {
         padding: 40px 20px 20px;
     }
+    .main.cabinet.profile-page.bg-wrapper .search-form {
+        padding: 0 !important;
+    }
     .main.cabinet.my-vacancies-page .search-form.main-section-mob {
         padding: 0 !important;
     }
@@ -8625,17 +8628,58 @@ div.parsed_content {
     	top: -4px;
 	}
 }
+@media (max-width: 768px) {
+	.main-footer {
+	    padding-top: 20px;
+	}
+	.lk-header-main .header-wrapper {
+	    min-height: auto;
+	}
+	.services-block-time {
+	    margin-bottom: 0;
+	}
+	.subs-card-options .option+.option {
+	    margin-top: 0;
+	}
+	.provider_buttons .check-block.mb-2.mb-md-1.mb-lg-0.me-lg-3 {
+	    margin-bottom: 0 !important;
+	}
+}
 @media (max-width: 560px) {
 	.services-block-group.services-block-all {
 	    align-items: baseline;
 	    padding: 18px 0;
 	    flex-direction: column;
 	}
-	.plansh-width {
+    .plansh-width {
         flex-direction: column;
+    }
+    .subs-card-options .option+.option {
+        margin-top: 20px;
+    }
+    .provider_buttons.plansh-width .flex-column {
+        display: grid !important;
+        row-gap: 10px !important;
+    }
+    .push_and_context_wrapper {
+        align-items: center;
+        justify-content: space-between;
+    	width: 100%;
+    }
+    .push_and_context_wrapper .d-inline-flex {
+        display: grid !important;
+        row-gap: 10px !important;
+        margin-top: 20px;
+    }
+    .premium-checker {
+        margin-right: auto;
+        margin-left: auto;
     }
 }
 
+.placeholder {
+    font-weight: 600 !important;
+}
 .nice-select span.select_arrow {
     border-bottom: 1.5px solid #78757e !important;
     border-right: 1.5px solid #78757e !important;

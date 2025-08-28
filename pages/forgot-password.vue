@@ -234,7 +234,7 @@ function close() {
 </script>
 
 <template>
-  <div class="row">
+  <div>
     <base-modal
       :show="!!state.error"
       title="Error occured"
