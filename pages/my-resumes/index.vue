@@ -17,11 +17,14 @@ watch(isEmployer, (value) => {
   }
 });
 
-useAsyncData("myResumesData", () =>
-  Promise.all([
-    resumeStore.getMyResumes(),
-    resumeStore.getAvailabilityCreate(),
-  ]),
+await useAsyncData(
+  "myResumesData",
+  async () =>
+    await Promise.all([
+      resumeStore.getMyResumes(),
+      resumeStore.getAvailabilityCreate(),
+      resumeStore.getConnectedSeekerProviders(),
+    ]),
 );
 </script>
 

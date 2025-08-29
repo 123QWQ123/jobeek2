@@ -143,16 +143,17 @@ const isFocused = ref(false);
 const isLoading = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  validate();
-  if (!meta.value.dirty) {
-    return true;
-  }
-  if (!meta.value.valid) {
-    errorMessage.value = "Заполните все поля";
+  if (!isFocused.value || !meta.value.dirty) {
     return false;
   }
+
+  await validate();
+
+  if (!meta.value.valid) {
+    return false;
+  }
+  isFocused.value = false;
   isLoading.value = true;
-  setErrors({});
   errorMessage.value = "";
   let jsonData = { ...values };
   let resData = {};

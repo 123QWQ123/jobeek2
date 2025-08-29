@@ -139,6 +139,10 @@ const props = defineProps({
     },
     required: true,
   },
+  errors: {
+    default: {},
+    required: false,
+  },
 });
 
 const route = useRoute();
@@ -283,12 +287,15 @@ watch(
 const isFocused = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  await validate();
-  if (!isFocused.value || !meta.value.dirty || !meta.value.valid) {
+  if (!isFocused.value || !meta.value.dirty) {
     return false;
   }
 
-  setErrors({});
+  await validate();
+
+  if (!meta.value.valid) {
+    return false;
+  }
   errorMessage.value = "";
   isFocused.value = false;
 
@@ -314,4 +321,12 @@ const save = async (is_from_parent = false) => {
 const isCompleted = computed(() => {
   return my_resume.value?.address?.address && !isCollapsed.value;
 });
+
+watch(
+  () => props.errors,
+  (newVal) => {
+    setErrors(newVal);
+  },
+  { immediate: true },
+);
 </script>

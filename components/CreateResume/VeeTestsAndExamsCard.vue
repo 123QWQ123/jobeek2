@@ -87,6 +87,10 @@ const props = defineProps({
     },
     required: true,
   },
+  errors: {
+    default: {},
+    required: false,
+  },
 });
 
 const educationElement = ref(false);
@@ -171,15 +175,17 @@ watch(
 const isFocused = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
+  if (!isFocused.value || !meta.value.dirty) {
+    return false;
+  }
+
   await validate();
 
-  if (!isFocused.value || !meta.value.dirty) {
-    return true;
-  }
   if (!meta.value.valid) {
     return false;
   }
-  setErrors({});
+  errorMessage.value = "";
+  isFocused.value = false;
   const resData = await updateResume(resumeID.value, {
     form_data: "EDUCATION_DATA",
     educations: {
@@ -204,4 +210,12 @@ const save = async (is_from_parent = false) => {
 const isCompleted = computed(() => {
   return resumeStore.resume?.educations.primary?.length > 0;
 });
+
+watch(
+  () => props.errors,
+  (newVal) => {
+    setErrors(newVal);
+  },
+  { immediate: true },
+);
 </script>

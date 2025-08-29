@@ -303,16 +303,17 @@ const isFocused = ref(false);
 const isLoading = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  await validate();
-  if (!meta.value.dirty) {
-    return true;
-  }
-  if (!meta.value.valid) {
-    errorMessage.value = "Заполните все поля";
+  if (!isFocused.value || !meta.value.dirty) {
     return false;
   }
+
+  await validate();
+
+  if (!meta.value.valid) {
+    return false;
+  }
+  isFocused.value = false;
   state.isLoading = true;
-  // validate();
   errors.value = {};
   state.errorMessage = "";
   const jsonData = useFormData(state);
@@ -332,7 +333,6 @@ const save = async (is_from_parent = false) => {
   isChanged.value = false;
   isSaved.value = false;
   isUpdated.value = false;
-  isFocused.value = false;
 };
 
 const isCompleted = computed(() => {

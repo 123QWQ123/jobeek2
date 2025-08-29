@@ -14,7 +14,7 @@
       </div>
     </div>-->
     <NuxtLink
-      v-if="can_create_resume_count && (providers.hh || providers.superjob)"
+      v-if="can_create_resume_count && (providers?.hh || providers?.superjob)"
       class="create-button"
       type="link"
       :to="{ name: 'create-resume' }"
@@ -52,7 +52,7 @@ useHead({
 });
 
 const resumeStore = useResumeStore();
-const { getMyResumes, getAvailabilityCreate } = resumeStore;
+const { getMyResumes } = resumeStore;
 const { can_create_resume_count, providers } = storeToRefs(resumeStore);
 const { my_resumes, current_page, my_total } = storeToRefs(resumeStore);
 const route = useRoute();
@@ -62,22 +62,6 @@ const form = useMyResumeForm();
 const total = computed(() => {
   return resumeStore.my_resumes.length;
 });
-
-useAsyncData("getMyResumes", async () => await getMyResumes({}));
-useAsyncData(
-  "getAvailabilityCreate",
-  async () => await getAvailabilityCreate(),
-);
-
-watch(
-  () => route.query,
-  async (newQuery) => {
-    if (newQuery.hasOwnProperty("my_provider")) {
-      const params = useMyResumeForm(form.value, "backend");
-      await getMyResumes(params);
-    }
-  },
-);
 
 const onProviderChange = (newProvider) => {
   if (newProvider)

@@ -26,15 +26,21 @@
     <!--        Next-->
     <!--      </button>-->
     <!--    </div>-->
-    
+
     <div v-if="!items.length" class="no-results no-results-mt-20">
-      <p>У вас пока нет вакансий в избранном<br>
-      <span style="font-weight: normal; font-size: 14px;">Сохраняйте вакансии, нажимая на звёздочку</span></p>
+      <p>
+        У вас пока нет вакансий в избранном<br />
+        <span style="font-weight: normal; font-size: 14px"
+          >Сохраняйте вакансии, нажимая на звёздочку</span
+        >
+      </p>
     </div>
-    <NuxtLink v-if="!items.length" class="create-button" :to="{ name: 'search-vacancies' }"
+    <NuxtLink
+      v-if="!items.length"
+      class="create-button"
+      :to="{ name: 'search-vacancies' }"
       >Найти вакансию</NuxtLink
     >
-    
   </div>
 </template>
 
@@ -60,7 +66,7 @@ const isMore = ref(true); // Flag for the availability of additional pages
 useAsyncData("getMyFavoriteVacancies", async () => {
   return await getMyFavoriteVacancies();
 });
-useAsyncData("getMyResumes", async () => {
+await useAsyncData("getMyResumes", async () => {
   return await getMyResumes();
 });
 
@@ -98,7 +104,7 @@ const changePage = (direction) => {
 </script>
 
 <style scoped>
-	.no-results-mt-20 {
-		margin-top: 20px;
-	}
+.no-results-mt-20 {
+  margin-top: 20px;
+}
 </style>

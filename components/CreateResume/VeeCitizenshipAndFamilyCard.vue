@@ -96,6 +96,24 @@ import { zod } from "~/hooks/ru-zod.js";
 import useProviders from "~/composables/useProviders.js";
 import useProviderFields from "~/composables/useProviderFields.js";
 
+const props = defineProps({
+  title: {
+    default: "-",
+    required: false,
+  },
+  providers: {
+    default: {
+      hh: false,
+      superjob: false,
+    },
+    required: false,
+  },
+  errors: {
+    default: {},
+    required: false,
+  },
+});
+
 const resumeStore = useResumeStore();
 const profileStore = useProfileStore();
 
@@ -225,11 +243,16 @@ const isFocused = ref(false);
 const errorMessage = ref(null);
 
 const save = async (is_from_parent = false) => {
-  await validate();
-  if (!isFocused.value) {
-    return;
+  if (!isFocused.value || !meta.value.dirty) {
+    return false;
   }
-  if (!meta.value.dirty || !meta.value.valid) return false;
+
+  await validate();
+
+  if (!meta.value.valid) {
+    return false;
+  }
+  errorMessage.value = "";
 
   const resData = await updateResume(resumeID.value, {
     form_data: "CITIZENSHIP_AND_FAMILY_DATA",
@@ -255,4 +278,12 @@ const isCompleted = computed(() => {
       myResume.children?.id,
   );
 });
+
+watch(
+  () => props.errors,
+  (newVal) => {
+    setErrors(newVal);
+  },
+  { immediate: true },
+);
 </script>

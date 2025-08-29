@@ -19,7 +19,6 @@ const providers = ref({
   hh: vacancyStore.providers.hh,
 });
 const { setProviders } = useProviders();
-const { handleAlert } = useAlert();
 
 const vacancyID = computed(() => route.params.id);
 const type = computed(() => route.query.type);
@@ -105,8 +104,6 @@ const pageTitle = computed(() => {
   return "Jobeek";
 });
 useHead({ title: pageTitle });
-
-watch(() => route.query.message, handleAlert);
 
 const saveAsDraft = (e) => {
   if (e) e.preventDefault();

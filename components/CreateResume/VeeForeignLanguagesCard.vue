@@ -43,6 +43,20 @@ import { useResumeStore } from "~/store/resume";
 import useFormValidation from "~/composables/useFormValidation";
 import { zod } from "~/hooks/ru-zod.js";
 
+const props = defineProps({
+  providers: {
+    default: {
+      hh: false,
+      superjob: false,
+    },
+    required: true,
+  },
+  errors: {
+    default: {},
+    required: false,
+  },
+});
+
 const route = useRoute();
 const resumeStore = useResumeStore();
 const { updateResume } = resumeStore;
@@ -89,13 +103,15 @@ watch(serverErrors, (newErrors) => {
 });
 
 const save = async () => {
-  await validate();
-  if (!isFocused.value) {
-    return;
+  if (!isFocused.value || !meta.value.dirty) {
+    return false;
   }
-  if (!meta.value.dirty) return true;
-  if (!meta.value.valid) return false;
 
+  await validate();
+
+  if (!meta.value.valid) {
+    return false;
+  }
   errorMessage.value = "";
   const jsonData = { ...values, form_data: "LANGUAGES_DATA" };
 
@@ -115,6 +131,14 @@ const isCompleted = computed(() => {
   const address = my_resume.value?.address;
   return Boolean(address?.address && !isCollapsed.value);
 });
+
+watch(
+  () => props.errors,
+  (newVal) => {
+    setErrors(newVal);
+  },
+  { immediate: true },
+);
 </script>
 
 <style></style>

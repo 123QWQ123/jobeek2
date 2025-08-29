@@ -66,7 +66,7 @@
         </div>
 
         <div class="input-row">
-          <label for="position">Ссылка к сертификат</label>
+          <label for="position">Ссылка на сертификат</label>
           <div class="input-wrapper">
             <input
               type="text"
@@ -149,7 +149,7 @@ watch(
   () => props.errors,
   (newErrors) => {
     errors.value = newErrors;
-  }
+  },
 );
 
 const deleteItem = (id = null) => {
@@ -211,7 +211,6 @@ watch(() => useWatchStateValues(state, true, true), save);
 </script>
 
 <style scoped>
-
 .input-row + .input-row {
   margin-top: 2rem;
 }

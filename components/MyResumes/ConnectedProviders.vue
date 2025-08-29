@@ -112,6 +112,14 @@ const isSyncing = ref(false); // Is syncing in progress?
 // Get full URL for redirect
 const route = useRoute(); // Access the current route
 const redirect_url = useRequestURL(); // Nuxt-specific helper to get the full URL including domain
+const { data: authEndpoints, refresh: refreshAuthEndpoints } = useAsyncData(
+  "authEndpoints",
+  () =>
+    getSeekerProvidersAuthEndpoints(
+      {},
+      redirect_url.origin + redirect_url.pathname,
+    ),
+);
 
 // Last synced time formatted using `moment`
 const lastSyncedTime = computed(() => {
@@ -131,17 +139,6 @@ const lastSyncedTime = computed(() => {
   };
 });
 
-// Computed properties for each provider's connection state
-const isSuperjobConnected = computed(
-  () => providers.value.superjob.is_connected,
-);
-const isHHConnected = computed(() => providers.value.hh.is_connected);
-
-const { data: authEndpoints, refresh: refreshAuthEndpoints } = useAsyncData(
-  "authEndpoints",
-  () => getSeekerProvidersAuthEndpoints({}, redirect_url),
-);
-
 /**
  * Handler to synchronize vacancies with connected providers.
  */
@@ -153,8 +150,6 @@ const onSync = async () => {
 
     // Refresh provider data after successful sync
     await Promise.all([refreshConnectedProviders(), refreshAuthEndpoints()]);
-  } catch (error) {
-    toast.error("Synchronization error", { autoClose: 3000 });
   } finally {
     isSyncing.value = false; // Stop syncing state
   }
@@ -165,7 +160,7 @@ const switchProvider = async (providerSlug) => {
     await onDisconnect(providerSlug);
   } else {
     if (provider_auth_urls.value[providerSlug]) {
-      window.open(provider_auth_urls.value[providerSlug], "_blank");
+      window.location.href = provider_auth_urls.value[providerSlug];
     }
   }
   return false;
@@ -174,18 +169,12 @@ const switchProvider = async (providerSlug) => {
  * Disconnect a provider by its slug.
  */
 const onDisconnect = async (providerSlug) => {
-  try {
-    const resData = await disconnectProviders({ providers: [providerSlug] });
-    if (resData.status !== "success") {
-      return;
-    }
-    toast.success(resData.message, { autoClose: 3000 });
-
-    // Refresh provider data after disconnecting
-    await Promise.all([refreshConnectedProviders(), refreshAuthEndpoints()]);
-  } catch (error) {
-    toast.error("Error disconnecting provider", { autoClose: 3000 });
+  const resData = await disconnectProviders({ providers: [providerSlug] });
+  if (resData.status !== "success") {
+    return;
   }
+  // Refresh provider data after disconnecting
+  await Promise.all([refreshConnectedProviders(), refreshAuthEndpoints()]);
 };
 </script>
 

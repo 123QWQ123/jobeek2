@@ -78,6 +78,17 @@ const props = defineProps({
     default: "-",
     required: false,
   },
+  providers: {
+    default: {
+      hh: false,
+      superjob: false,
+    },
+    required: false,
+  },
+  errors: {
+    default: {},
+    required: false,
+  },
 });
 
 const route = useRoute();
@@ -109,6 +120,13 @@ const schema = computed(() => {
             providers.hh || (!providers.hh && !providers.superjob)
               ? zod.string()
               : zod.string().nullish().optional(),
+          certificate_url: zod
+            .string()
+            .url()
+            .trim()
+            .min(1, "Введите URL")
+            .nullable()
+            .optional(),
         }),
       )
       .optional(),
@@ -142,12 +160,16 @@ watch(serverErrors, (newErrors) => {
 });
 
 const save = async () => {
-  await validate();
-  if (!isFocused.value) {
-    return;
+  if (!isFocused.value || !meta.value.dirty) {
+    return false;
   }
-  if (!meta.value.dirty) return true;
-  if (!meta.value.valid) return false;
+
+  await validate();
+
+  if (!meta.value.valid) {
+    return false;
+  }
+  errorMessage.value = "";
 
   const resData = await updateResume(resumeID.value, {
     form_data: "EDUCATION_DATA",
@@ -168,4 +190,12 @@ const save = async () => {
 const isCompleted = computed(() => {
   return my_resume.value?.educations.primary?.length > 0;
 });
+
+watch(
+  () => props.errors,
+  (newVal) => {
+    setErrors(newVal);
+  },
+  { immediate: true },
+);
 </script>
