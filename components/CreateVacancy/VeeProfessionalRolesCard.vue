@@ -152,6 +152,7 @@ const save = async (is_from_parent = false) => {
   if (!meta.value.valid) {
     return false;
   }
+  isFocused.value = false;
   isLoading.value = true;
   errorMessage.value = "";
   let jsonData = { ...values };

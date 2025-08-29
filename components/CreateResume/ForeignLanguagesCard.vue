@@ -149,14 +149,16 @@ const isFocused = ref(false);
 const errorMessage = ref(null);
 const isLoading = ref(false);
 const save = async (is_from_parent = false) => {
-  validate();
-
-  if (!meta.value.dirty) {
-    return true;
+  if (!isFocused.value || !meta.value.dirty) {
+    return false;
   }
+
+  await validate();
+
   if (!meta.value.valid) {
     return false;
   }
+  isFocused.value = false;
   isLoading.value = true;
   errors.value = {};
   errorMessage.value = "";

@@ -266,13 +266,18 @@ const isFocused = ref(false);
 const isLoading = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  validate();
-  if (!meta.value.dirty) {
-    return true;
+  if (!isFocused.value || !meta.value.dirty) {
+    return false;
   }
+
+  await validate();
+
   if (!meta.value.valid) {
     return false;
   }
+  errorMessage.value = "";
+  isFocused.value = false;
+
   const resData = await updateResume(resumeID.value, {
     form_data: "EDUCATION_DATA",
     educations: {
