@@ -45,7 +45,7 @@
     </div>
 
     <div class="input-row" v-show="!state.certificate_url.is_hidden">
-      <label for="position">Ссылка к сертификат</label>
+      <label for="position">Ссылка на сертификат</label>
       <div class="input-wrapper">
         <ResumeTextInput
           :name="`${name}[${idx}].certificate_url`"
@@ -135,6 +135,4 @@ const remove = (id) => {
 </script>
 
 <style></style>
-<style scoped>
-
-</style>
+<style scoped></style>
