@@ -298,7 +298,13 @@ const schema = computed(() => {
       address: zod.string().nullable().optional(),
       business_trip_id: zod.number(),
       relocation_type_id: zod.number().nullable().optional(),
-      social_networks: zod.number().array().optional(),
+      social_networks: zod
+        .string()
+        .url()
+        .trim()
+        .min(1, "Введите URL")
+        .nullable()
+        .optional(),
       phones: zod.array(phoneScheme).nonempty(),
     });
   }

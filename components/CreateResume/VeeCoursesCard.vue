@@ -120,6 +120,13 @@ const schema = computed(() => {
             providers.hh || (!providers.hh && !providers.superjob)
               ? zod.string()
               : zod.string().nullish().optional(),
+          certificate_url: zod
+            .string()
+            .url()
+            .trim()
+            .min(1, "Введите URL")
+            .nullable()
+            .optional(),
         }),
       )
       .optional(),
