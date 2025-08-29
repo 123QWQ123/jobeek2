@@ -18,7 +18,6 @@ import useAlert from "~/composables/useAlert.js";
 const { getConnectedEmployerProviders } = useVacancyStore();
 const { getConnectedSeekerProviders } = useResumeStore();
 const vacancyStore = useVacancyStore();
-const { handleAlert } = useAlert();
 
 const authStore = useAuthStore();
 const { isAuthed, user } = storeToRefs(authStore);
@@ -35,20 +34,7 @@ if (isAuthed.value) {
     return await getConnectedSeekerProviders();
   });
 }
-onMounted(async () => {
-  if (route.query.message) {
-    handleAlert();
-  }
-});
 
-watch(
-  () => route.query.message,
-  () => {
-    if (route.query.message) {
-      handleAlert();
-    }
-  },
-);
 watch(
   () => isAuthed.value,
   (value) => {

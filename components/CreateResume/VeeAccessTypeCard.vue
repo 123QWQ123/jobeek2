@@ -49,7 +49,23 @@ import { useResumeStore } from "~/store/resume";
 import { zod } from "~/hooks/ru-zod.js";
 import useProviders from "~/composables/useProviders.js";
 
-const props = defineProps(["title", "providers"]);
+const props = defineProps({
+  title: {
+    default: "-",
+    required: false,
+  },
+  providers: {
+    default: {
+      hh: false,
+      superjob: false,
+    },
+    required: false,
+  },
+  errors: {
+    default: {},
+    required: false,
+  },
+});
 
 const resumeStore = useResumeStore();
 const profileStore = useProfileStore();
@@ -123,16 +139,16 @@ watch(
 const isFocused = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  await validate();
   if (!isFocused.value || !meta.value.dirty) {
-    return true;
-  }
-  if (!meta.value.valid) {
-    errorMessage.value = "Заполните все поля";
     return false;
   }
-  setErrors({});
-  state.errorMessage = "";
+
+  await validate();
+
+  if (!meta.value.valid) {
+    return false;
+  }
+  errorMessage.value = "";
   const resData = await updateResume(resumeID.value, {
     form_data: "ACCESS_DATA",
     ...values,
@@ -163,6 +179,14 @@ const isCompleted = computed(() => {
   }
   return false;
 });
+
+watch(
+  () => props.errors,
+  (newVal) => {
+    setErrors(newVal);
+  },
+  { immediate: true },
+);
 
 defineExpose({
   save,

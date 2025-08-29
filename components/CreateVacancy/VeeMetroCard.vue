@@ -179,7 +179,7 @@ const isFocused = ref(false);
 const isLoading = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  validate();
+  await validate();
   if (!meta.value.dirty) {
     return true;
   }

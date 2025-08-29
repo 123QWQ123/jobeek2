@@ -44,25 +44,39 @@
 <script setup>
 import useFormValidation from "~/composables/useFormValidation";
 import { useResumeStore } from "~/store/resume";
-import { useDiff } from "~/composables/useDiff";
 import { zod } from "~/hooks/ru-zod.js";
 import { useForm } from "vee-validate";
-import useProviders from "~/composables/useProviders.js";
 import { toTypedSchema } from "@vee-validate/zod";
+
+const props = defineProps({
+  title: {
+    default: "-",
+    required: false,
+  },
+  providers: {
+    default: {
+      hh: false,
+      superjob: false,
+    },
+    required: false,
+  },
+  errors: {
+    default: {},
+    required: false,
+  },
+});
 
 const educationElement = ref(false);
 const route = useRoute();
 const resumeStore = useResumeStore();
 const resumeID = computed(() => route.params.id);
 
-const { my_resume } = storeToRefs(resumeStore);
+const { my_resume, providers } = storeToRefs(resumeStore);
 const experience = ref(my_resume.value?.experience ?? []);
 
 const isCollapsed = ref(false);
-
-const { providers } = useProviders();
 const schema = computed(() => {
-  if (providers.value.hh === true && providers.value.superjob === false) {
+  if (providers.value.hh && !providers.value.superjob) {
     const experienceScheme = zod.object({
       profession: zod.string(),
       responsibilities: zod.string(),
@@ -83,25 +97,27 @@ const schema = computed(() => {
       experience: zod.array(experienceScheme).nonempty(),
     });
   }
-  if (providers.value.hh === false && providers.value.superjob === true) {
-    const experienceScheme = zod.object({
-      profession: zod.string(),
-      responsibilities: zod.string(),
-      company: zod.string(),
-      achievements: zod.string().nullable(),
-      start_year: zod.number(),
-      start_month: zod.string(),
-      end_year: zod.number().nullish().optional(),
-      end_month: zod.string().nullish().optional(),
-      until_today: zod.boolean().nullable().optional(),
-      city_id: zod.number(),
-      // city_name: z.boolean().nullable().optional(),
-      company_url: zod.string().nullish().optional(),
-      industries: zod.number().array().nullable(),
-      company_scope: zod.string().nullish().optional(),
-    });
+  if (!providers.value.hh && providers.value.superjob) {
+    const experienceScheme = zod
+      .object({
+        profession: zod.string(),
+        responsibilities: zod.string(),
+        company: zod.string(),
+        achievements: zod.string().nullable(),
+        start_year: zod.number(),
+        start_month: zod.string(),
+        end_year: zod.number().nullish().optional(),
+        end_month: zod.string().nullish().optional(),
+        until_today: zod.boolean().nullable().optional(),
+        city_id: zod.number(),
+        // city_name: z.boolean().nullable().optional(),
+        company_url: zod.string().nullish().optional(),
+        industries: zod.number().array().nullable(),
+        company_scope: zod.string().nullish().optional(),
+      })
+      .nullable();
     return zod.object({
-      experience: zod.array(experienceScheme).optional(),
+      experience: zod.array(experienceScheme).nullable(),
     });
   }
 
@@ -122,29 +138,31 @@ const schema = computed(() => {
     company_scope: zod.string(),
   });
   return zod.object({
-    experience: zod.array(experienceScheme).nonempty(),
+    experience: zod.array(experienceScheme).nullable(),
   });
 });
 
 const initialValues = ref({
   experience:
-    my_resume.value?.experience.map((item) => {
-      return {
-        industries: item.industries.map((sub_item) => sub_item.id) ?? [],
-        city_id: item.city?.id,
-        end_month: String(item.end_month).padStart(2, 0),
-        start_month: String(item.start_month).padStart(2, 0),
-        profession: item.profession,
-        company: item.company,
-        company_url: item.company_url,
-        company_scope: item.company_scope,
-        start_year: item.start_year,
-        end_year: item.end_year,
-        until_today: item.until_today,
-        responsibilities: item.responsibilities,
-        achievements: item.achievements,
-      };
-    }) ?? [],
+    my_resume.value.experience?.length > 0
+      ? my_resume.value.experience?.map((item) => {
+          return {
+            industries: item.industries.map((sub_item) => sub_item.id) ?? [],
+            city_id: item.city?.id,
+            end_month: String(item.end_month).padStart(2, 0),
+            start_month: String(item.start_month).padStart(2, 0),
+            profession: item.profession,
+            company: item.company,
+            company_url: item.company_url,
+            company_scope: item.company_scope,
+            start_year: item.start_year,
+            end_year: item.end_year,
+            until_today: item.until_today,
+            responsibilities: item.responsibilities,
+            achievements: item.achievements,
+          };
+        })
+      : null,
 });
 const {
   values,
@@ -180,15 +198,16 @@ const isFocused = ref(false);
 const errorMessage = ref(null);
 const isLoading = ref(false);
 const save = async (is_from_parent = false) => {
-  await validate();
   if (!isFocused.value || !meta.value.dirty) {
-    return true;
-  }
-  if (!meta.value.valid) {
-    errorMessage.value = "Неправильные данные!";
     return false;
   }
-  setErrors({});
+
+  await validate();
+
+  if (!meta.value.valid) {
+    return false;
+  }
+
   const payload = {
     form_data: "EXPERIENCE_DATA",
     ...values,
@@ -216,6 +235,14 @@ const save = async (is_from_parent = false) => {
 const isCompleted = computed(() => {
   return resumeStore.resume?.work_histories?.length > 0;
 });
+
+watch(
+  () => props.errors,
+  (newVal) => {
+    setErrors(newVal);
+  },
+  { immediate: true },
+);
 </script>
 
 <style scoped></style>

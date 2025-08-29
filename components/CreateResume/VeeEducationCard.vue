@@ -89,6 +89,24 @@ import useProviders from "~/composables/useProviders.js";
 import useProviderFields from "~/composables/useProviderFields";
 import { zod } from "~/hooks/ru-zod.js";
 
+const props = defineProps({
+  title: {
+    default: "-",
+    required: false,
+  },
+  providers: {
+    default: {
+      hh: false,
+      superjob: false,
+    },
+    required: false,
+  },
+  errors: {
+    default: {},
+    required: false,
+  },
+});
+
 // Сторы
 const resumeStore = useResumeStore();
 const dictionaryStore = useDictionaryStore();
@@ -196,12 +214,16 @@ walkThroughFields(providers.value);
 
 // Логика сохранения формы
 const save = async () => {
+  if (!isFocused.value || !meta.value.dirty) {
+    return false;
+  }
+
   await validate();
 
-  if (!isFocused.value) {
-    return;
+  if (!meta.value.valid) {
+    return false;
   }
-  if (!meta.value.dirty || !meta.value.valid) return;
+  errorMessage.value = "";
 
   const resData = await updateResume(resumeID.value, {
     form_data: "EDUCATION_DATA",
@@ -223,5 +245,13 @@ const save = async () => {
 // Вычисляемые свойства
 const isCompleted = computed(
   () => my_resume.value?.educations.primary?.length > 0,
+);
+
+watch(
+  () => props.errors,
+  (newVal) => {
+    setErrors(newVal);
+  },
+  { immediate: true },
 );
 </script>

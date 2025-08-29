@@ -17,9 +17,6 @@
       ></span>
     </div>
 
-    <div class="text-danger d-block p-4" v-if="errors.message">
-      {{ errors.message }}
-    </div>
     <div class="w-box-body" :class="{ collapse: isCollapsed }">
       <div class="input-row">
         <label for="name">Имя и фамилия <b>*</b></label>
@@ -197,12 +194,9 @@
 
 <script setup>
 import { useProfileStore } from "~/store/profile";
-import useFormValidation from "~/composables/useFormValidation";
-import { useDiff } from "~/composables/useDiff";
 import { useDictionaryStore } from "~/store/dictionary";
 import useProviderFields from "~/composables/useProviderFields";
 import { useResumeStore } from "~/store/resume";
-import useResumeHooks from "~/hooks/useResumeHooks";
 import ResumeTextInput from "~/components/CreateResume/ResumeTextInput.vue";
 import ResumeCheckboxInput from "~/components/CreateResume/ResumeCheckboxInput.vue";
 import { useI18n } from "vue-i18n";
@@ -213,6 +207,17 @@ import useProviders from "~/composables/useProviders.js";
 const props = defineProps({
   title: {
     default: "-",
+    required: false,
+  },
+  providers: {
+    default: {
+      hh: false,
+      superjob: false,
+    },
+    required: false,
+  },
+  errors: {
+    default: {},
     required: false,
   },
 });
@@ -250,6 +255,12 @@ const relocationTypeOptions = computed(() =>
 );
 const businessTripOptions = computed(() =>
   dictionaryStore.business_trips.map((item) => ({
+    name: item.name,
+    value: item.id,
+  })),
+);
+const moveableCityOptions = ref(
+  my_resume.value.move_able_cities?.map((item) => ({
     name: item.name,
     value: item.id,
   })),
@@ -355,7 +366,7 @@ const initialValues = ref({
   other_contacts: my_resume.value?.other_contacts,
   gender_id: my_resume.value?.gender?.id,
   relocation_type_id: my_resume.value?.relocation_type?.id,
-  move_able_cities: my_resume.value?.move_able_cities,
+  move_able_cities: my_resume.value?.move_able_cities.map((item) => item.id),
   social_networks: my_resume.value?.social_networks,
   phones: my_resume.value?.phones.map((item, index) => ({
     id: index,
@@ -495,7 +506,6 @@ const selectedProviders = computed(() => {
   return ["hh", "superjob"];
 });
 
-const moveableCityOptions = ref(profileStore.cityOptions);
 const updateMoveableCityInput = async (newValue = "") => {
   const items = profileStore.cities.filter((item) => {
     return item.name.search(newValue);
@@ -505,28 +515,18 @@ const updateMoveableCityInput = async (newValue = "") => {
     name: item.name,
   }));
 };
-const { errors: serverErrors } = useFormValidation();
-watch(
-  () => serverErrors.value,
-  (newErrors) => {
-    if (Object.keys(newErrors).length > 0) {
-      const backendErrors = {};
-      Object.keys(newErrors).map(
-        (item) => (backendErrors[item] = newErrors[item]),
-      );
-      setErrors(backendErrors);
-    }
-  },
-);
 
 const save = async (is_from_parent = false) => {
-  errorMessage.value = "";
-  await validate();
-
-  if (!isFocused.value || !meta.value.dirty || !meta.value.valid) {
+  if (!isFocused.value || !meta.value.dirty) {
     return false;
   }
-  setErrors({});
+
+  await validate();
+
+  if (!meta.value.valid) {
+    return false;
+  }
+  errorMessage.value = "";
   isFocused.value = false;
   const jsonData = { ...JSON.parse(JSON.stringify(values)) };
 
@@ -563,4 +563,12 @@ const isCompleted = computed(() => {
   }
   return false;
 });
+
+watch(
+  () => props.errors,
+  (newVal) => {
+    setErrors(newVal);
+  },
+  { immediate: true },
+);
 </script>

@@ -4,7 +4,6 @@ import { useAuthStore } from "~/store/auth.js";
 
 // Композиционные API
 const route = useRoute();
-const { handleAlert } = useAlert();
 const authStore = useAuthStore();
 
 // Константы
@@ -34,7 +33,6 @@ watch(isEmployer, (newValue) => {
 
 // Обработка сообщений из URL
 const error = computed(() => route.query.message);
-watch(() => route.query.message, handleAlert);
 
 // Обработчик сохранения
 const handleSave = async () => {

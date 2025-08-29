@@ -52,7 +52,7 @@ const hasNextPage = computed(() => my_favorite_resumes.value.length > 0);
 /**
  * Fetch favorite resumes on component mount
  */
-useAsyncData("myFavoriteResumes", async () => {
+await useAsyncData("myFavoriteResumes", async () => {
   return await getMyFavoriteResumes({ page: current_page.value });
 });
 

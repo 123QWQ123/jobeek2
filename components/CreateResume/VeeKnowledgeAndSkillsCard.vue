@@ -62,6 +62,24 @@ import { toTypedSchema } from "@vee-validate/zod";
 import ResumeTextarea from "~/components/CreateResume/ResumeTextarea.vue";
 import useProviders from "~/composables/useProviders.js";
 
+const props = defineProps({
+  title: {
+    default: "-",
+    required: false,
+  },
+  providers: {
+    default: {
+      hh: false,
+      superjob: false,
+    },
+    required: false,
+  },
+  errors: {
+    default: {},
+    required: false,
+  },
+});
+
 const route = useRoute();
 const resumeStore = useResumeStore();
 const dictionaryStore = useDictionaryStore();
@@ -131,15 +149,16 @@ watch(
 const isFocused = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  await validate();
   if (!isFocused.value || !meta.value.dirty) {
-    return true;
-  }
-  if (!meta.value.valid) {
     return false;
   }
 
-  setErrors({});
+  await validate();
+
+  if (!meta.value.valid) {
+    return false;
+  }
+  errorMessage.value = "";
   const resData = await updateResume(resumeID.value, {
     ...values,
     form_data: "KNOWLEDGE_AND_SKILLS_DATA",
@@ -160,4 +179,12 @@ const save = async (is_from_parent = false) => {
 const isCompleted = computed(() => {
   return resumeStore.resume?.skills?.length > 0;
 });
+
+watch(
+  () => props.errors,
+  (newVal) => {
+    setErrors(newVal);
+  },
+  { immediate: true },
+);
 </script>

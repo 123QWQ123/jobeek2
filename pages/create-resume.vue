@@ -22,8 +22,6 @@ useHead({
 const error = computed(() => {
   return route.query.message;
 });
-const { handleAlert } = useAlert();
-watch(() => route.query.message, handleAlert);
 
 const authStore = useAuthStore();
 

@@ -69,7 +69,7 @@ export const useResumeStore = defineStore("resume", {
       return data;
     },
 
-    async getConnectedSeekerProviders(payload) {
+    async getConnectedSeekerProviders() {
       const { isEmployer, isAuthenticated, seeker } =
         storeToRefs(useAuthStore());
 
@@ -84,9 +84,9 @@ export const useResumeStore = defineStore("resume", {
         if (response.status === "success") {
           this.providers = response.data.data;
         }
-      }
 
-      return this.providers;
+        return response;
+      }
     },
 
     async importResumes() {
@@ -118,7 +118,7 @@ export const useResumeStore = defineStore("resume", {
       // }
       const response = await useApi("services/auth/redirect-url", {
         method: "get",
-        params: { ...payload, redirect_to, profile: "seeker" },
+        params: { ...payload, redirect_to: redirect_to, profile: "seeker" },
       });
       if (response.status === "success") {
         this.provider_auth_urls = response.data.data;

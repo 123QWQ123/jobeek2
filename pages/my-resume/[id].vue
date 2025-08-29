@@ -16,7 +16,7 @@ const resumeID = computed(() => route.params.id);
 const { my_resume } = storeToRefs(resumeStore);
 const isLoading = ref(false);
 const errorMessage = ref(null);
-const errors = ref([]);
+const errors = ref({});
 
 // Инициализация поставщиков
 const providers = ref({
@@ -64,7 +64,7 @@ const loadInitialData = async () => {
 };
 
 // Загрузка данных при монтировании
-useAsyncData("initialDataLoad", loadInitialData);
+await useAsyncData("initialDataLoad", loadInitialData);
 
 // Компьютеды для заголовка страницы
 const pageTitle = computed(() => {
@@ -77,8 +77,8 @@ const pageTitle = computed(() => {
 useHead({ title: pageTitle });
 
 // Компьютеды для публикации
-const hhPublishable = ref(false);
-const superjobPublishable = ref(false);
+const hhPublishable = ref(my_resume.can_published?.hh ?? false);
+const superjobPublishable = ref(my_resume.can_published?.superjob ?? false);
 
 // Обновление состояния возможности публикации при изменении резюме
 watch(
@@ -133,12 +133,11 @@ const saveAndPublishAll = async (event) => {
     const resData = await resumeStore.publishResume(resumeID.value, payload);
 
     if (resData.status !== "success") {
-      await Swal.fire({
-        title: "Ошибка!",
-        text: resData.message,
-        icon: "error",
-        confirmButtonText: "ОК",
-      });
+      errors.value = Object.assign(
+        resData.errors.hh || {},
+        resData.errors.superjob || {},
+        resData.errors || {},
+      );
       errorMessage.value = resData.message;
       return;
     }
@@ -159,12 +158,12 @@ const saveAndPublishAll = async (event) => {
       <PersonalCabinetSearchMobile />
       <div class="wrapper wrapper-1290">
         <div class="update-resume">
-          <div class="errors" v-if="errors.length">
-            <p class="alert alert-info" v-for="item in errors">{{ item }}</p>
+          <div class="errors" v-if="!!errorMessage">
+            <p class="alert alert-info">{{ errorMessage }}</p>
           </div>
           <CreateResumeProviders
             v-model="providers"
-            :providers="resumeStore.my_resume"
+            :providers="resumeStore.my_resume.providers"
           />
 
           <CreateResumeVeePersonalFieldsCard
@@ -172,6 +171,7 @@ const saveAndPublishAll = async (event) => {
             :key="`personal_fields_el_key_${providers.hh + providers.superjob}`"
             ref="personal_fields_el"
             :providers="providers"
+            :errors="errors"
           />
 
           <CreateResumeVeeProfessionDetailsCard
@@ -179,6 +179,7 @@ const saveAndPublishAll = async (event) => {
             v-if="resumeID"
             ref="profession_fields_el"
             :providers="providers"
+            :errors="errors"
           />
 
           <CreateResumeVeeForeignLanguagesCard
@@ -186,6 +187,7 @@ const saveAndPublishAll = async (event) => {
             :key="`languages_el_key_${providers.hh + providers.superjob}`"
             ref="foreign_language_el"
             :providers="providers"
+            :errors="errors"
           />
 
           <CreateResumeVeeDriverLicensesCard
@@ -193,6 +195,7 @@ const saveAndPublishAll = async (event) => {
             :key="`driver_licenses_el_${providers.hh + providers.superjob}`"
             ref="driver_licences_el"
             :providers="providers"
+            :errors="errors"
           />
 
           <CreateResumeVeeKnowledgeAndSkillsCard
@@ -200,6 +203,7 @@ const saveAndPublishAll = async (event) => {
             :key="`knowledge_and_skills_el_${providers.hh + providers.superjob}`"
             ref="knowledge_and_skills_el"
             :providers="providers"
+            :errors="errors"
           />
 
           <CreateResumeVeeEducationCard
@@ -207,6 +211,7 @@ const saveAndPublishAll = async (event) => {
             :key="`education_el_${providers.hh + providers.superjob}`"
             ref="education_el"
             :providers="providers"
+            :errors="errors"
           />
 
           <CreateResumeVeeCoursesCard
@@ -214,6 +219,7 @@ const saveAndPublishAll = async (event) => {
             :key="`courses_el_${providers.hh + providers.superjob}`"
             ref="courses_el"
             :providers="providers"
+            :errors="errors"
           />
 
           <CreateResumeVeeTestsAndExamsCard
@@ -221,13 +227,15 @@ const saveAndPublishAll = async (event) => {
             :key="`tests_el_${providers.hh + providers.superjob}`"
             ref="courses_el"
             :providers="providers"
+            :errors="errors"
           />
 
-          <LazyCreateResumeVeeWorkExperienceCard
+          <CreateResumeVeeWorkExperienceCard
             v-if="resumeID"
             :key="`experience_el_${providers.hh + providers.superjob}`"
             ref="work_experience_el"
             :providers="providers"
+            :errors="errors"
           />
 
           <CreateResumeVeeCitizenshipAndFamilyCard
@@ -235,6 +243,7 @@ const saveAndPublishAll = async (event) => {
             :key="`citizenship_el_${providers.hh + providers.superjob}`"
             ref="citizenship_el"
             :providers="providers"
+            :errors="errors"
           />
 
           <CreateResumeVeeAccessTypeCard
@@ -242,6 +251,7 @@ const saveAndPublishAll = async (event) => {
             v-if="resumeID"
             ref="access_el"
             :providers="providers"
+            :errors="errors"
           />
 
           <p class="text-lg-end">

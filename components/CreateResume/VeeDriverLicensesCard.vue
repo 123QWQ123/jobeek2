@@ -57,6 +57,16 @@ const props = defineProps({
     default: "-",
     required: false,
   },
+  providers: {
+    default: {
+      hh: false,
+      superjob: false,
+    },
+  },
+  errors: {
+    default: {},
+    required: false,
+  },
 });
 
 const resumeStore = useResumeStore();
@@ -147,18 +157,15 @@ watch(
 const isFocused = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
-  await validate();
-  if (!isFocused.value) {
-    return;
+  if (!isFocused.value || !meta.value.dirty) {
+    return false;
   }
 
-  if (!meta.value.dirty) {
-    return true;
-  }
+  await validate();
+
   if (!meta.value.valid) {
     return false;
   }
-  setErrors({});
   errorMessage.value = "";
 
   try {
@@ -188,4 +195,12 @@ const isCompleted = computed(() => {
   }
   return false;
 });
+
+watch(
+  () => props.errors,
+  (newVal) => {
+    setErrors(newVal);
+  },
+  { immediate: true },
+);
 </script>

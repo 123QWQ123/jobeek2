@@ -7,10 +7,13 @@
     <div class="import-grid">
       <div
         class="import-box"
-        :class="getImportBoxClass('hh')"
+        :class="{
+          'import-is-complete': isHHSelected,
+          disabled: !isHHEnabled,
+          'is-connected': isHHEnabled,
+        }"
         @click="handleToggle('hh')"
       >
-        <BlockLoader v-if="isHHLoading" />
         <div class="import-box-dvnld">
           <div class="logo">
             <img src="~/assets/img/logos/hh.svg" alt="#" />
@@ -51,10 +54,13 @@
       </div>
       <div
         class="import-box"
-        :class="getImportBoxClass('superjob')"
+        :class="{
+          'import-is-complete': isSuperjobSelected,
+          disabled: !isSuperjobEnabled,
+          'is-connected': isSuperjobEnabled,
+        }"
         @click="handleToggle('superjob')"
       >
-        <BlockLoader v-if="isSuperjobLoading" />
         <div class="import-box-dvnld">
           <div class="logo">
             <img src="~/assets/img/logos/sb.svg" alt="#" />
@@ -115,53 +121,74 @@ const props = defineProps({
 /**
  * Reactive State Setup
  */
-const isHHLoading = ref(false);
-const isSuperjobLoading = ref(false);
+const isLoading = ref(false);
 const {
   getConnectedSeekerProviders,
   getSeekerProvidersAuthEndpoints,
   updateResume,
 } = useResumeStore();
-const enabledProviders = await getConnectedSeekerProviders();
+const { providers, provider_auth_urls } = storeToRefs(useResumeStore());
+const redirect_url = useRequestURL();
+await getConnectedSeekerProviders();
+await getSeekerProvidersAuthEndpoints(
+  { providers: ["hh", "superjob"] },
+  redirect_url.origin + redirect_url.pathname,
+);
 const route = useRoute();
 
 /**
  * Reactive Helpers
  */
-const isHHEnabled = computed(() => Boolean(enabledProviders?.hh));
-const isSuperjobEnabled = computed(() => Boolean(enabledProviders?.superjob));
-const isHHSelected = ref(false);
-const isSuperjobSelected = ref(false);
+const isHHEnabled = computed(() => providers.value.hh);
+const isSuperjobEnabled = computed(() => providers.value.superjob);
+const isHHSelected = ref(
+  props.providers.filter((provider) => provider.name === "hh").length > 0,
+);
+const isSuperjobSelected = ref(
+  props.providers.filter((provider) => provider.name === "superjob").length > 0,
+);
 
 /**
  * Methods and Handlers
  */
 const handleToggle = async (provider) => {
-  const isLoading = provider === "hh" ? isHHLoading : isSuperjobLoading;
-  const isEnabled =
-    provider === "hh" ? isHHEnabled.value : isSuperjobEnabled.value;
-
-  if (isLoading.value || !isEnabled) return; // Prevent clicks if loading or disabled
+  if (provider === "hh" && !isHHEnabled.value) {
+    toast.info("Вам нужно подключить HH", { autoClose: 3000 });
+    if (provider_auth_urls.value.hh) {
+      window.open(provider_auth_urls.value.hh);
+    }
+    return;
+  }
+  if (provider === "superjob" && !isSuperjobEnabled.value) {
+    toast.info("Вам нужно подключить Superjob", { autoClose: 3000 });
+    if (provider_auth_urls.value.superjob) {
+      window.open(provider_auth_urls.value.superjob);
+    }
+    return;
+  }
 
   isLoading.value = true;
   try {
     // Simulate a call to endpoint based on the selected provider
-    isHHSelected.value = provider === "hh";
-    isSuperjobSelected.value = provider === "superjob";
-
-    const res = await getSeekerProvidersAuthEndpoints(
-      { providers: [provider] },
-      useRequestURL(),
-    );
+    let selectedProvidersValue = [];
+    if (provider === "hh") {
+      isHHSelected.value = !isHHSelected.value;
+      if (isHHSelected.value) {
+        selectedProvidersValue.push("hh");
+      }
+    }
+    if (provider === "superjob") {
+      isSuperjobSelected.value = !isSuperjobSelected.value;
+      if (isSuperjobSelected.value) {
+        selectedProvidersValue.push("superjob");
+      }
+    }
 
     await updateResume(route.params.id, {
-      providers: [provider],
+      providers: selectedProvidersValue,
       form_data: "PROVIDERS_DATA",
     });
 
-    if (res.hasOwnProperty(provider)) {
-      openProviderAuthUrl(res[provider]);
-    }
     // toast.success(`Резюме успешно перенесено на ${provider.toUpperCase()}!`);
   } catch (error) {
     // toast.error(`Не удалось перенести резюме на ${provider.toUpperCase()}.`);
@@ -174,8 +201,6 @@ const handleToggle = async (provider) => {
  * Class Helper
  */
 const getImportBoxClass = (provider) => {
-  const isLoading =
-    provider === "hh" ? isHHLoading.value : isSuperjobLoading.value;
   const isEnabled =
     provider === "hh" ? isHHEnabled.value : isSuperjobEnabled.value;
   const isSelected =
@@ -185,7 +210,6 @@ const getImportBoxClass = (provider) => {
     "import-is-complete": isSelected,
     disabled: !isEnabled,
     "is-connected": isEnabled,
-    "is-loading": isLoading,
   };
 };
 

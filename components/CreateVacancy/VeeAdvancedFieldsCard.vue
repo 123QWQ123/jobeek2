@@ -549,7 +549,7 @@ const isLoading = ref(false);
 const errorMessage = ref(null);
 const save = async (is_from_parent = false) => {
   await validate();
-  console.log(meta.value);
+
   if (!meta.value.dirty) {
     return false;
   }
