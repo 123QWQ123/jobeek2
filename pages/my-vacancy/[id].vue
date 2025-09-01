@@ -167,7 +167,7 @@ const saveAndPublishAll = async (e) => {
       return;
     }
     toast.info(resData.data.message, { autoClose: 3000 });
-    router.push({ name: "my-vacancies" });
+    await router.push({ name: "my-vacancies" });
   } catch (error) {
     errorMessage.value = error.message || "Произошла ошибка";
   } finally {
