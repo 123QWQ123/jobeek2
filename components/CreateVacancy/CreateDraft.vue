@@ -12,7 +12,7 @@
         {{ errors.message || errorMessage }}
       </div>
 
-      <CreateVacancyProvidersInput name="providers" v-model="providers" />
+      <CreateVacancyProvidersInput name="providers" />
 
       <div class="input-row">
         <label for="name">Название вакансии<b>*</b></label>

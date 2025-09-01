@@ -160,8 +160,9 @@ export const useVacancyStore = defineStore("vacancy", {
         if ("data" in response) {
           this.providers = response.data.data;
         }
+
+        return response;
       }
-      return this.providers;
     },
     async synVacancies() {
       const { data } = await useApi("employer/vacancies/sync", {

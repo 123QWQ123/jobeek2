@@ -149,7 +149,7 @@ await getSeekerProvidersAuthEndpoints(
   useRequestURL(),
 );
 
-const { value, errorMessage } = useField(() => props.name);
+const { value, errorMessage, setValue } = useField(() => props.name);
 
 const isHHEnabled = computed(() => resumeStore.providers.hh);
 const isSuperjobEnabled = computed(() => resumeStore.providers.superjob);
@@ -184,7 +184,7 @@ const toggle = async (provider) => {
     selectedProvidersValue.push("superjob");
   }
 
-  value.value = selectedProvidersValue;
+  setValue(selectedProvidersValue);
   emit("update:modelValue", selectedProvidersValue);
 };
 </script>
