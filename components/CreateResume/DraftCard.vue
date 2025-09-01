@@ -164,21 +164,6 @@ const isChanged = ref(false);
 const isUpdated = ref(false);
 
 const dictionaryStore = useDictionaryStore();
-const { getDictionaries } = dictionaryStore;
-useAsyncData(
-  "dictionary",
-  async () => {
-    return await getDictionaries([
-      "gender_resume",
-      "business_trip",
-      "work_type",
-      "relocation_type",
-    ]);
-  },
-  {
-    immediate: true,
-  },
-);
 
 const schema = zod.object({
   providers: zod.array(zod.string()).nonempty("Выберите хотя бы 1 сервис"),

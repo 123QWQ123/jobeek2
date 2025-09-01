@@ -77,16 +77,6 @@ const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
 const schema = computed(() => {
-  // if (providers.value.hh === true && providers.value.superjob === false) {
-  //   return z.object({
-  //     billing_type_id: z.number(),
-  //   });
-  // }
-  // if (providers.value.hh === false && providers.value.superjob === true) {
-  //   return z.object({
-  //     billing_type_id: z.number(),
-  //   });
-  // }
   return zod.object({
     billing_type_id: zod.number(),
   });

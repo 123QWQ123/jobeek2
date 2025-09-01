@@ -1,8 +1,8 @@
 <script setup>
 import { useVacancyStore } from "~/store/vacancy";
-import useAlert from "~/composables/useAlert";
 import { useResumeStore } from "~/store/resume";
 import { useAuthStore } from "~/store/auth.js";
+import { useDictionaryStore } from "~/store/dictionary.js";
 
 const route = useRoute();
 
@@ -38,6 +38,22 @@ onMounted(() => {
     navigateTo({ name: "create-vacancy" });
   }
 });
+const dictionaryStore = useDictionaryStore();
+const { getDictionaries } = dictionaryStore;
+await useAsyncData(
+  "dictionary",
+  async () => {
+    return await getDictionaries([
+      "gender_resume",
+      "business_trip",
+      "work_type",
+      "relocation_type",
+    ]);
+  },
+  {
+    immediate: true,
+  },
+);
 
 const draft_el = ref();
 
