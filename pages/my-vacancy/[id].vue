@@ -182,7 +182,10 @@ const saveAndPublishAll = async (e) => {
       <PersonalCabinetSearchMobile />
       <div class="wrapper wrapper-1290">
         <form class="update-resume pt-4 pb-5">
-          <CreateVacancyProviders v-model="providers" />
+          <CreateVacancyProviders
+            v-model="providers"
+            :providers="my_vacancy.providers"
+          />
 
           <CreateVacancyVeeAdvancedFieldsCard
             ref="advanced_fields_el"
