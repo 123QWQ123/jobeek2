@@ -96,7 +96,7 @@ const vacancyStore = useVacancyStore();
 const {
   getEmployerProvidersAuthEndpoints,
   getConnectedEmployerProviders,
-  syncResumes,
+  syncVacancies,
   disconnectProviders,
 } = vacancyStore;
 
@@ -147,7 +147,7 @@ const lastSyncedTime = computed(() => {
 const onSync = async () => {
   try {
     isSyncing.value = true; // Start syncing state
-    const resData = await syncResumes();
+    const resData = await syncVacancies();
     if (resData.message) toast.info(resData.message, { autoClose: 3000 });
 
     // Refresh provider data after successful sync
