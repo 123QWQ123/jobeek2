@@ -12,7 +12,7 @@
           disabled: !isHHEnabled,
           'is-connected': isHHEnabled,
         }"
-        @click="toggle('hh')"
+        @click="handleToggle('hh')"
       >
         <div class="import-box-dvnld">
           <div class="logo">
@@ -59,7 +59,7 @@
           disabled: !isSuperjobEnabled,
           'is-connected': isSuperjobEnabled,
         }"
-        @click="toggle('superjob')"
+        @click="handleToggle('superjob')"
       >
         <div class="import-box-dvnld">
           <div class="logo">
@@ -104,164 +104,104 @@
 </template>
 
 <script setup>
-// To DO default by connected_providers
-
-import { useDictionaryStore } from "~/store/dictionary";
-import { useVacancyStore } from "~/store/vacancy";
+import { ref, computed } from "vue";
+import { useRoute } from "#imports";
 import { toast } from "vue3-toastify";
+import { useVacancyStore } from "~/store/vacancy";
 
-const emit = defineEmits(["update:modelValue"]);
 const props = defineProps({
-  modelValue: {
-    required: false,
-    default: {},
+  providers: {
+    required: true,
+    default: [],
   },
+  type: String,
+  placeholder: String,
 });
-const dictionaryStore = useDictionaryStore();
 
-const route = useRoute();
-
-const draftID = computed(() => route.query.draft_id);
-const vacancyID = computed(() => route.query.vacancy_id);
-
-const vacancyStore = useVacancyStore();
+/**
+ * Reactive State Setup
+ */
+const isLoading = ref(false);
 const {
   getConnectedEmployerProviders,
   getEmployerProvidersAuthEndpoints,
-  getMyVacancy,
-} = vacancyStore;
-
-await getConnectedEmployerProviders();
-const my_vacancy = computed(() => vacancyStore.my_vacancy);
-const enabledProviders = ref(vacancyStore.providers);
-watch(
-  () => vacancyStore.providers,
-  () => {
-    enabledProviders.value = vacancyStore.providers;
-  },
-);
-
-const isHHEnabled = computed(() => enabledProviders.value?.hh ?? false);
-const isSuperjobEnabled = computed(
-  () => enabledProviders.value?.superjob ?? false,
-);
-
-const resetObject = {
-  superjob: my_vacancy.value.can_publish?.superjob || false,
-  hh: my_vacancy.value.can_publish?.hh || false,
-};
-const vacancyProviders = computed(() => {
-  let selectedProvidersValue = [];
-  if (!vacancyStore.my_vacancy) {
-    return resetObject;
-  }
-  const providersNewValues = { ...resetObject };
-
-  if (!vacancyStore.my_vacancy.hasOwnProperty("providers")) {
-    return providersNewValues;
-  }
-  if (vacancyStore.my_vacancy.providers.length > 0) {
-    selectedProvidersValue = vacancyStore.my_vacancy.providers.map(
-      (item) => item.name,
-    );
-  }
-  // return selectedProvidersValue;
-
-  if (selectedProvidersValue.includes("hh")) {
-    providersNewValues.hh = true;
-  } else {
-    providersNewValues.superjob = false;
-  }
-  if (selectedProvidersValue.includes("superjob")) {
-    providersNewValues.superjob = true;
-  } else {
-    providersNewValues.superjob = false;
-  }
-  return providersNewValues;
-});
-
-watch(
-  () => vacancyProviders.value,
-  (newValue) => {
-    selectedProviders.value = newValue;
-  },
-);
-const selectedProviders = ref(resetObject);
-watch(
-  () => selectedProviders.value,
-  (newSelectedItems) => {
-    emit("update:modelValue", newSelectedItems);
-  },
-);
-
-const errors = computed(() => props.errors);
-const isHHSelected = computed(() => selectedProviders.value.hh);
-const isSuperjobSelected = computed(() => selectedProviders.value.superjob);
-const reset = () => {
-  selectedProviders.value = resetObject;
-};
-
-const { updateVacancy, updateDraft } = vacancyStore;
-// const providers = ref(resetObject);
+  updateVacancy,
+} = useVacancyStore();
+const { providers, provider_auth_urls } = storeToRefs(useVacancyStore());
 const redirect_url = useRequestURL();
-const toggle = async (provider) => {
-  if (!selectedProviders.value[provider]) {
-    if (enabledProviders.value[provider] === false) {
-      const providerParams = new URLSearchParams();
-      providerParams.set("providers[]", provider);
-      const resData = await getEmployerProvidersAuthEndpoints(
-        providerParams,
-        redirect_url,
-      );
-      if (resData.hasOwnProperty(provider)) {
-        openProviderAuthUrl(resData[provider]);
-      } else {
-        alert(resData.message);
+await getConnectedEmployerProviders();
+await getEmployerProvidersAuthEndpoints(
+  { providers: ["hh", "superjob"] },
+  redirect_url.origin + redirect_url.pathname,
+);
+const route = useRoute();
+
+/**
+ * Reactive Helpers
+ */
+const isHHEnabled = computed(() => providers.value.hh);
+const isSuperjobEnabled = computed(() => providers.value.superjob);
+const isHHSelected = ref(
+  props.providers.filter((provider) => provider.name === "hh").length > 0,
+);
+const isSuperjobSelected = ref(
+  props.providers.filter((provider) => provider.name === "superjob").length > 0,
+);
+
+/**
+ * Methods and Handlers
+ */
+const handleToggle = async (provider) => {
+  if (provider === "hh" && !isHHEnabled.value) {
+    toast.info("Вам нужно подключить HH", { autoClose: 3000 });
+    if (provider_auth_urls.value.hh) {
+      window.open(provider_auth_urls.value.hh);
+    }
+    return;
+  }
+  if (provider === "superjob" && !isSuperjobEnabled.value) {
+    toast.info("Вам нужно подключить Superjob", { autoClose: 3000 });
+    if (provider_auth_urls.value.superjob) {
+      window.open(provider_auth_urls.value.superjob);
+    }
+    return;
+  }
+
+  isLoading.value = true;
+  try {
+    // Simulate a call to endpoint based on the selected provider
+    let selectedProvidersValue = [];
+    if (provider === "hh") {
+      isHHSelected.value = !isHHSelected.value;
+      if (isHHSelected.value) {
+        selectedProvidersValue.push("hh");
       }
-      return;
     }
-  }
-
-  const object = { ...selectedProviders.value };
-  object[provider] = !object[provider];
-  selectedProviders.value = object;
-
-  const providerParams = [];
-  if (selectedProviders.value.hh) {
-    providerParams.push("hh");
-  }
-  if (selectedProviders.value.superjob) {
-    providerParams.push("superjob");
-  }
-
-  const data = {
-    providers: providerParams,
-  };
-  data.action = "UpdateProviders";
-  let resData = {};
-  if (object.value) {
-    resData = await updateDraft(draftID.value, data);
-
-    if (resData.status !== "success") {
-      toast.info(resData.message, { autoClose: 3000 });
+    if (provider === "superjob") {
+      isSuperjobSelected.value = !isSuperjobSelected.value;
+      if (isSuperjobSelected.value) {
+        selectedProvidersValue.push("superjob");
+      }
     }
 
-    await getMyVacancy(draftID.value);
-  } else {
-    // resData = await updateVacancy(vacancyID.value, data);
-    // if (resData.status !== 'success'){
-    //   toast.info(resData.message, {autoClose: 3000});
-    // }
+    await updateVacancy(route.params.id, {
+      providers: selectedProvidersValue,
+      form_data: "PROVIDERS_DATA",
+    });
+  } finally {
+    isLoading.value = false;
   }
-};
-const openProviderAuthUrl = (url) => {
-  window.open(url);
 };
 </script>
 
 <style scoped>
 .import-box {
   cursor: pointer;
+}
+
+.import-box.is-loading {
+  align-items: center;
+  justify-content: center;
 }
 
 .is-connected .import-box-dvnld .logo .check {
