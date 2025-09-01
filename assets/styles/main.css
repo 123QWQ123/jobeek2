@@ -2484,7 +2484,7 @@ body .main-section-mob {
     -ms-flex-align: center;
     align-items: center;
     margin-top: auto;
-    margin-bottom: 30px;
+    margin-bottom: 75px;
 }
 
 .enter-form .btn {
@@ -8624,8 +8624,14 @@ div.parsed_content {
 	    top: 26px;
 	}
 	.position-delete-icon.absoluted_icon {
-		right: -32px;
-    	top: -4px;
+	    right: -32px;
+	    top: -4px;
+	}
+	.create-resume-page {
+	    padding-top: 0;
+	}
+	.create-resume-page .search-form, .my-favorite-vacancies-page .search-form, .cabinet.vacansy-page .search-form {
+	    padding: 0;
 	}
 }
 @media (max-width: 768px) {
@@ -8643,6 +8649,25 @@ div.parsed_content {
 	}
 	.provider_buttons .check-block.mb-2.mb-md-1.mb-lg-0.me-lg-3 {
 	    margin-bottom: 0 !important;
+	}
+	.services-block-group.services-block-all .option {
+	    margin-right: 20px;
+	}
+	.push_and_context_wrapper .check-block.mb-2 {
+	    margin-bottom: 0;
+	}
+	.provider_buttons.plansh-width.d-lg-flex.justify-content-between.align-items-center .sort.mx-2.ms-auto {
+	    align-items: normal;
+	}
+	.provider_buttons .check-block label {
+	    align-items: center;
+	}
+	.input-row {
+	    grid-row-gap: 10px;
+	}
+	h1.head-w-section__title {
+	    font-size: 20px;
+	    line-height: 24px;
 	}
 }
 @media (max-width: 560px) {
@@ -8663,7 +8688,7 @@ div.parsed_content {
     }
     .push_and_context_wrapper {
         align-items: center;
-        justify-content: space-between;
+        justify-content: space-between !important;
     	width: 100%;
     }
     .push_and_context_wrapper .d-inline-flex {
