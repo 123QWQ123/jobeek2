@@ -21,7 +21,7 @@
           class="option"
           :style="listItemStyles"
         >
-          {{ item.name }}
+          {{ item.value ? item.name : props.not_found }}
         </li>
         <li v-if="options.length === 0">
           {{ props.not_found }}
@@ -93,7 +93,7 @@ const props = defineProps({
     required: false,
     default: false,
   },
-  not_found: { type: String, default: "Не найдено" },
+  not_found: { type: String, default: null },
 });
 
 const { value } = useField(() => props.name);
@@ -115,6 +115,9 @@ const disabled = ref(props.disabled ?? false);
 function onSelect(selectedOptionValue) {
   if (disabled.value) return true;
   isOpen.value = false;
+  if (selectedOptionValue === null) {
+    return;
+  }
   const selectedOptionItem = props.options.find(
     (item) => String(item.value) === String(selectedOptionValue),
   );

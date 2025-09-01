@@ -123,14 +123,14 @@ const { data: authEndpoints, refresh: refreshAuthEndpoints } = useAsyncData(
 
 // Last synced time formatted using `moment`
 const lastSyncedTime = computed(() => {
-  if (resumeStore.providers?.synchronized.length === 0) {
+  if (resumeStore.providers?.synchronized?.length === 0) {
     return {
       date: null,
       time: null,
     };
   }
   const date = moment(
-    resumeStore.providers?.synchronized.resume?.end_date_time,
+    resumeStore.providers?.synchronized?.resume?.end_date_time,
     "YYYY-MM-DD hh:mm:s",
   );
   return {

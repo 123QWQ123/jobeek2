@@ -115,10 +115,8 @@
 </template>
 
 <script setup>
-// To DO default by connected_providers
-import { useDictionaryStore } from "~/store/dictionary";
 import { toast } from "vue3-toastify";
-import { useVacancyStore } from "~/store/vacancy.js";
+import { useVacancyStore } from "~/store/vacancy";
 
 const emit = defineEmits(["update:modelValue"]);
 const props = defineProps({
@@ -137,104 +135,44 @@ const props = defineProps({
 });
 
 const errors = computed(() => props.errors);
-const dictionaryStore = useDictionaryStore();
 
 const route = useRoute();
-
-const vacancyID = computed(() => route.params.id);
 
 const vacancyStore = useVacancyStore();
 const { getConnectedEmployerProviders, getEmployerProvidersAuthEndpoints } =
   vacancyStore;
 await getConnectedEmployerProviders();
-
-const { value, errorMessage } = useField(() => props.name);
-
-// watch(vacancyProviders.value, (newValues) => {
-//   console.log(newValues);
-//   const providersNewValues = {...resetObject};
-//
-//   if (newValues.includes('hh')){
-//     providersNewValues.hh = true;
-//   }else{
-//     providersNewValues.superjob = false;
-//   }
-//   if (newValues.includes('superjob')){
-//     providersNewValues.superjob = true;
-//   }else{
-//     providersNewValues.superjob = false;
-//   }
-//   console.log(providersNewValues);
-//   selectedProviders.value = providersNewValues;
-// });
-
-const enabledProviders = ref(vacancyStore.providers);
-const isHHEnabled = computed(() => enabledProviders.value.hh);
-const isSuperjobEnabled = computed(() => enabledProviders.value.superjob);
-
-const resetObject = {
-  superjob: false,
-  hh: false,
-};
-const vacancyProviders = computed(() => {
-  let selectedProvidersValue = [];
-  if (!vacancyStore.my_resume) {
-    return resetObject;
-  }
-  const providersNewValues = { ...resetObject };
-
-  if (selectedProvidersValue.includes("hh")) {
-    providersNewValues.hh = true;
-  } else {
-    providersNewValues.superjob = false;
-  }
-  if (selectedProvidersValue.includes("superjob")) {
-    providersNewValues.superjob = true;
-  } else {
-    providersNewValues.superjob = false;
-  }
-  return providersNewValues;
-});
-
-watch(
-  () => vacancyProviders.value,
-  (newValue) => {
-    selectedProviders.value = newValue;
-  },
+await getEmployerProvidersAuthEndpoints(
+  { providers: ["hh", "superjob"] },
+  useRequestURL(),
 );
 
-const selectedProviders = ref(props.modelValue ?? resetObject);
-watch(
-  () => selectedProviders.value,
-  (newSelectedItems) => {
-    emit("update:modelValue", newSelectedItems);
-  },
-);
+const { value, errorMessage, setValue } = useField(() => props.name);
+
+const isHHEnabled = computed(() => vacancyStore.providers.hh);
+const isSuperjobEnabled = computed(() => vacancyStore.providers.superjob);
+const selectedProviders = ref([]);
+const provider_auth_urls = computed(() => vacancyStore.provider_auth_urls);
 
 const isHHSelected = computed(() => selectedProviders.value.hh);
 const isSuperjobSelected = computed(() => selectedProviders.value.superjob);
-const reset = () => {
-  selectedProviders.value = resetObject;
-};
 
 const toggle = async (provider) => {
   if (provider === "hh" && !isHHEnabled.value) {
     toast.info("Вам нужно подключить HH", { autoClose: 3000 });
+    if (provider_auth_urls.value.hh) {
+      window.open(provider_auth_urls.value.hh, "_blank");
+    }
     return;
   }
   if (provider === "superjob" && !isSuperjobEnabled.value) {
     toast.info("Вам нужно подключить Superjob", { autoClose: 3000 });
+    if (provider_auth_urls.value.superjob) {
+      window.open(provider_auth_urls.value.superjob, "_blank");
+    }
     return;
   }
   selectedProviders.value[provider] = !selectedProviders.value[provider];
-
-  const providerParams = [];
-  if (selectedProviders.value.hh) {
-    providerParams.push("hh");
-  }
-  if (selectedProviders.value.superjob) {
-    providerParams.push("superjob");
-  }
 
   let selectedProvidersValue = [];
   if (selectedProviders.value.hh) {
@@ -243,10 +181,9 @@ const toggle = async (provider) => {
   if (selectedProviders.value.superjob) {
     selectedProvidersValue.push("superjob");
   }
-  value.value = selectedProvidersValue;
-};
-const openProviderAuthUrl = (url) => {
-  window.open(url);
+
+  setValue(selectedProvidersValue);
+  emit("update:modelValue", selectedProvidersValue);
 };
 </script>
 

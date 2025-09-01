@@ -2,75 +2,105 @@
   <div>
     <h1 class="lk-page-title mb-4 mb-0 margin-top-mobile">Cервисы</h1>
 
-	<div class="card mb-4 border-0 px-2 py-0" style="border-radius: 12px">
-	   <div class="subs-card-options services-margin">
-	      <div class="services-block-group services-block-all">
-	         <div class="option">
-	            <div class="custom-check-wrap">
-	               <div class="theme-checker theme-checker--blue">
-	                  <input disabled="" type="checkbox" id="hh" value="hh" checked="">
-	                  <div class="theme-checker-ui">
-	                     <div class="circle"></div>
-	                  </div>
-	               </div>
-	               <label for="hh"><img src="~/assets/img/logos/hhmini.svg" alt="#" /><span>Hh.ru</span></label>
-	            </div>
-	         </div>
-	         <div class="option">
-	            <div class="custom-check-wrap">
-	               <div class="theme-checker theme-checker--blue">
-	                  <input disabled="" type="checkbox" id="sj" value="sj">
-	                  <div class="theme-checker-ui">
-	                     <div class="circle"></div>
-	                  </div>
-	               </div>
-	               <label for="sj"><img src="~/assets/img/logos/sj.svg" alt="#" /><span>Superjob.ru </span></label>
-	            </div>
-	         </div>
-	      </div>
-	      <div class="services-block-group reload-block-btn">
-	         <div class="services-block-time">{{ lastSyncedTime.date }} {{ lastSyncedTime.time }}</div>
-	         <div class="services-block-reload"><button
-	            class="logo sync-button"
-	            :class="{ rotating: isSyncing }"
-	            @click="onSync"
-	          >
-	            <svg
-	              xmlns="http://www.w3.org/2000/svg"
-	              width="24"
-	              height="24"
-	              fill="#5375FD"
-	              class="bi bi-arrow-repeat"
-	              viewBox="0 0 16 16"
-	            >
-	              <path
-	                d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"
-	              ></path>
-	              <path
-	                fill-rule="evenodd"
-	                d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"
-	              ></path>
-	            </svg>  Обновить данные
-	          </button></div>
-	      </div>
-	   </div>
-	</div>
+    <div class="card mb-4 border-0 px-2 py-0" style="border-radius: 12px">
+      <div class="subs-card-options services-margin">
+        <div class="services-block-group services-block-all">
+          <div class="option">
+            <div class="custom-check-wrap">
+              <div class="theme-checker theme-checker--blue">
+                <input
+                  :checked="providers.hh"
+                  type="checkbox"
+                  id="hh"
+                  @click.prevent="switchProvider('hh')"
+                />
+                <div class="theme-checker-ui">
+                  <div class="circle"></div>
+                </div>
+              </div>
+              <label for="hh"
+                ><img src="~/assets/img/logos/hhmini.svg" alt="Logo" /><span
+                  >Hh.ru</span
+                ></label
+              >
+            </div>
+          </div>
+          <div class="option">
+            <div class="custom-check-wrap">
+              <div class="theme-checker theme-checker--blue">
+                <input
+                  :checked="providers.superjob"
+                  type="checkbox"
+                  id="superjob"
+                  @click.prevent="switchProvider('superjob')"
+                />
+                <div class="theme-checker-ui">
+                  <div class="circle"></div>
+                </div>
+              </div>
+              <label for="superjob"
+                ><img src="~/assets/img/logos/sj.svg" alt="Logo" /><span
+                  >Superjob.ru
+                </span></label
+              >
+            </div>
+          </div>
+        </div>
+        <div
+          v-if="lastSyncedTime.date"
+          class="services-block-group reload-block-btn"
+        >
+          <div class="services-block-time">
+            {{ lastSyncedTime.date }} {{ lastSyncedTime.time }}
+          </div>
+          <div class="services-block-reload">
+            <button
+              class="logo sync-button"
+              :class="{ rotating: isSyncing }"
+              @click="onSync"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="#5375FD"
+                class="bi bi-arrow-repeat"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"
+                ></path>
+                <path
+                  fill-rule="evenodd"
+                  d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"
+                ></path>
+              </svg>
+              Обновить данные
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
-import { toast } from "vue3-toastify";
-import moment from "moment";
 import { useVacancyStore } from "~/store/vacancy";
+import moment from "moment";
+import { ref, computed } from "vue";
+import { useRoute } from "vue-router";
+import { toast } from "vue3-toastify";
 
-/**
- * Accessing the global store for vacancy-related actions.
- */
+// Resume store provides methods to work with resume-related features
 const vacancyStore = useVacancyStore();
-const { synVacancies, disconnectProviders, getConnectedEmployerProviders } =
-  vacancyStore;
+const {
+  getEmployerProvidersAuthEndpoints,
+  getConnectedEmployerProviders,
+  syncVacancies,
+  disconnectProviders,
+} = vacancyStore;
 
+const { providers, provider_auth_urls } = storeToRefs(vacancyStore);
 /**
  * Fetching connected providers' data and authorization endpoints using `useAsyncData`.
  */
@@ -79,22 +109,30 @@ const { data: connectedData, refresh: refreshConnectedProviders } =
     getConnectedEmployerProviders(),
   );
 
-// Providers state management
-const providers = ref({
-  hh: { slug: "hh", url: null, is_connected: false },
-  superjob: { slug: "superjob", url: null, is_connected: false },
-});
-
 const isSyncing = ref(false); // Is syncing in progress?
 
 // Get full URL for redirect
 const route = useRoute(); // Access the current route
 const redirect_url = useRequestURL(); // Nuxt-specific helper to get the full URL including domain
+const { data: authEndpoints, refresh: refreshAuthEndpoints } = useAsyncData(
+  "authEndpoints",
+  () =>
+    getEmployerProvidersAuthEndpoints(
+      {},
+      redirect_url.origin + redirect_url.pathname,
+    ),
+);
 
 // Last synced time formatted using `moment`
 const lastSyncedTime = computed(() => {
+  if (vacancyStore.providers?.synchronized?.length === 0) {
+    return {
+      date: null,
+      time: null,
+    };
+  }
   const date = moment(
-    vacancyStore.providers?.synchronized.vacancy.end_date_time,
+    vacancyStore.providers?.synchronized?.vacancy?.end_date_time,
     "YYYY-MM-DD hh:mm:s",
   );
   return {
@@ -103,86 +141,42 @@ const lastSyncedTime = computed(() => {
   };
 });
 
-// Computed properties for each provider's connection state
-const isSuperjobConnected = computed(
-  () => providers.value.superjob.is_connected,
-);
-const isHHConnected = computed(() => providers.value.hh.is_connected);
-
-const { data: authEndpoints, refresh: refreshAuthEndpoints } = useAsyncData(
-  "authEndpoints",
-  () => vacancyStore.getEmployerProvidersAuthEndpoints({}, redirect_url),
-);
-
-// Watch for changes in the `connectedData` and `authEndpoints` to update the `providers` state
-watch(
-  [connectedData, authEndpoints],
-  ([connectedDataValue, authEndpointsValue]) => {
-    providers.value.hh = {
-      ...providers.value.hh,
-      url: authEndpointsValue?.hh || null,
-      is_connected: connectedDataValue?.hh || false,
-    };
-    providers.value.superjob = {
-      ...providers.value.superjob,
-      url: authEndpointsValue?.superjob || null,
-      is_connected: connectedDataValue?.superjob || false,
-    };
-  },
-  { immediate: true },
-);
-
 /**
  * Handler to synchronize vacancies with connected providers.
  */
 const onSync = async () => {
   try {
     isSyncing.value = true; // Start syncing state
-    const resData = await synVacancies();
+    const resData = await syncVacancies();
     if (resData.message) toast.info(resData.message, { autoClose: 3000 });
 
     // Refresh provider data after successful sync
     await Promise.all([refreshConnectedProviders(), refreshAuthEndpoints()]);
-  } catch (error) {
-    toast.error("Synchronization error", { autoClose: 3000 });
   } finally {
     isSyncing.value = false; // Stop syncing state
   }
 };
 
+const switchProvider = async (providerSlug) => {
+  if (providers.value[providerSlug]) {
+    await onDisconnect(providerSlug);
+  } else {
+    if (provider_auth_urls.value[providerSlug]) {
+      window.location.href = provider_auth_urls.value[providerSlug];
+    }
+  }
+  return false;
+};
 /**
  * Disconnect a provider by its slug.
  */
 const onDisconnect = async (providerSlug) => {
-  try {
-    const resData = await disconnectProviders({ providers: [providerSlug] });
-    if (resData.status !== "success") {
-      return;
-    }
-    toast.success(resData.message, { autoClose: 3000 });
-
-    // Refresh provider data after disconnecting
-    await Promise.all([refreshConnectedProviders(), refreshAuthEndpoints()]);
-  } catch (error) {
-    toast.error("Error disconnecting provider", { autoClose: 3000 });
-  }
-};
-
-/**
- * Opens the specified provider URL.
- */
-const onOpen = (provider) => {
-  if (provider === "hh" && !isHHConnected.value && providers.value.hh.url) {
-    window.open(providers.value.hh.url, "_blank");
+  const resData = await disconnectProviders({ providers: [providerSlug] });
+  if (resData.status !== "success") {
     return;
   }
-  if (
-    provider === "superjob" &&
-    !isSuperjobConnected.value &&
-    providers.value.superjob.url
-  ) {
-    window.open(providers.value.superjob.url, "_blank");
-  }
+  // Refresh provider data after disconnecting
+  await Promise.all([refreshConnectedProviders(), refreshAuthEndpoints()]);
 };
 </script>
 
@@ -257,7 +251,6 @@ const onOpen = (provider) => {
 
 .sync-button {
   justify-content: flex-end;
-  align-items: baseline;
 }
 
 @keyframes rotation {
