@@ -153,7 +153,7 @@ input {
 }
 
 .placeholder {
-  font-weight: 400 !important;
+  font-weight: 600 !important;
   font-size: 16px;
   line-height: 22px;
   background-color: unset;
