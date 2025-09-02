@@ -128,17 +128,12 @@ const publishableProviderName = computed(() => {
 
 const isLoading = ref(false);
 const errorMessage = ref(null);
+const errors = ref({});
 
 const saveAndPublishAll = async (e) => {
   e.preventDefault();
   if (!canOnlyOnePublished.value) {
     toast.info("Пока вы не можете опубликовать, если не заполнены все поля!", {
-      autoClose: 3000,
-    });
-    return;
-  }
-  if (!providers.value.hh && !providers.value.superjob) {
-    toast.error("Выберите провайдера для публикации!", {
       autoClose: 3000,
     });
     return;
@@ -157,12 +152,11 @@ const saveAndPublishAll = async (e) => {
     const resData = await publishDraft(vacancyID.value, payload);
 
     if (resData?.status !== "success") {
-      await Swal.fire({
-        title: "Ошибка!",
-        text: resData.message || "Ошибка при публикации",
-        icon: "error",
-        confirmButtonText: "ОК",
-      });
+      errors.value = Object.assign(
+        resData.errors.hh || {},
+        resData.errors.superjob || {},
+        resData.errors || {},
+      );
       errorMessage.value = resData.message;
       return;
     }
@@ -191,72 +185,84 @@ const saveAndPublishAll = async (e) => {
             ref="advanced_fields_el"
             :key="`advanced_fields_el_key_${providers.hh + providers.superjob}`"
             :providers="providers"
+            :errors="errors"
           />
 
           <CreateVacancyVeeCitiesCard
             ref="cities_el"
             :key="`cities_el_key_${providers.hh + providers.superjob}`"
             :providers="providers"
+            :errors="errors"
           />
 
           <CreateVacancyVeeMetroCard
             :key="`metro_el_key_${providers.hh + providers.superjob}`"
             ref="metro_el"
             :providers="providers"
+            :errors="errors"
           />
 
           <CreateVacancyVeeProfessionalRolesCard
             ref="prof_roles_el"
             :key="`prof_roles_el_key_${providers.hh + providers.superjob}`"
             :providers="providers"
+            :errors="errors"
           />
 
           <CreateVacancyVeeTypeAndUrlCard
             ref="type_el"
             :key="`type_el_key_${providers.hh + providers.superjob}`"
             :providers="providers"
+            :errors="errors"
           />
 
           <CreateVacancyVeeSalaryCard
             ref="salary_el"
             :providers="providers"
             :key="`salary_el_key_${providers.hh + providers.superjob}`"
+            :errors="errors"
           />
 
           <CreateVacancyVeeSkillsCard
             ref="skills_el"
             :providers="providers"
             :key="`skills_el_key_${providers.hh + providers.superjob}`"
+            :errors="errors"
           />
 
           <CreateVacancyAddressCard
             ref="address_el"
             :providers="providers"
             :key="`skills_el_key_${providers.hh + providers.superjob}`"
+            :errors="errors"
           />
 
           <CreateVacancyVeeDriverLicensesCard
             :key="`driver_licenses_el_${providers.hh + providers.superjob}`"
             ref="driver_licences_el"
             :providers="providers"
+            :errors="errors"
           />
 
           <CreateVacancyVeeContactsCard
             :key="`contacts_el_${providers.hh + providers.superjob}`"
             ref="contacts_el"
             :providers="providers"
+            :errors="errors"
           />
 
           <CreateVacancyVeeLanguagesCard
             :key="`languages_el_${providers.hh + providers.superjob}`"
             ref="languages_el"
             :providers="providers"
+            :errors="errors"
           />
 
           <CreateVacancyVeeBillingTypeCard
             :key="`billing_el_${providers.hh + providers.superjob}`"
             ref="billing_el"
             :providers="providers"
+            :errors="errors"
           />
 
           <p class="text-lg-end">
