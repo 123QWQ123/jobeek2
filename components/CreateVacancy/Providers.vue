@@ -184,10 +184,17 @@ const handleToggle = async (provider) => {
       }
     }
 
-    await updateVacancy(route.params.id, {
-      providers: selectedProvidersValue,
-      form_data: "PROVIDERS_DATA",
-    });
+    if (route.params.type === "draft" && route.params.id) {
+      await updateVacancy(route.params.id, {
+        providers: selectedProvidersValue,
+        form_data: "PROVIDERS_DATA",
+      });
+    } else {
+      await updateVacancy(route.params.id, {
+        providers: selectedProvidersValue,
+        form_data: "PROVIDERS_DATA",
+      });
+    }
   } finally {
     isLoading.value = false;
   }
