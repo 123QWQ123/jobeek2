@@ -82,6 +82,11 @@ const handleResponse = (data, cb) => {
 };
 
 const handleError = (res) => {
+  if (res.response && res.response.status === 401) {
+    useApi("logout").then(
+      (r) => r.status === "success" && useAuthStore().$reset(),
+    );
+  }
   if (res.response && res.response.data) {
     return {
       errors: res.response.data.errors,
