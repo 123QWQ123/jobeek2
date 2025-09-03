@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useAuthStore } from "~/store/auth";
+import { navigateTo } from "#app";
 
 const useApi = async (method, options = {}, nuxtInstance = null) => {
   const { public: publicRuntimeConfig } = nuxtInstance
@@ -61,6 +62,7 @@ const handleResponse = (data, cb) => {
 
   if (result.code === 401) {
     $reset();
+    return navigateTo("/");
   }
 
   if (result.message) {
@@ -82,7 +84,7 @@ const handleResponse = (data, cb) => {
 };
 
 const handleError = (res) => {
-  if (res.response && res.response.status === 401) {
+  if (res.response && res.response.code === 401) {
     useApi("logout").then(
       (r) => r.status === "success" && useAuthStore().$reset(),
     );
