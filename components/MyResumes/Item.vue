@@ -21,6 +21,7 @@
         </div>
         <div class="resume-card-body-col">
           <div class="date">{{ createdDate }}</div>
+          <div class="time">{{ createdTime }}</div>
         </div>
       </div>
       <div class="resume-card-options">
@@ -279,6 +280,9 @@ const currency = computed(
 // Дата обработки с использованием moment.js
 const createdDate = computed(() => {
   return $moment(item.value?.updated_at).locale("ru").format("LL");
+});
+const createdTime = computed(() => {
+  return $moment(item.value?.updated_at).locale("ru").format("LTS");
 });
 
 // Обработчик контекстного меню с проверкой
