@@ -37,8 +37,8 @@
                 <input
                   type="checkbox"
                   id="hh"
+                  :disabled="true"
                   :checked="hhProviderEnabled"
-                  @click="toggle('hh')"
                 />
                 <div class="theme-checker-ui">
                   <div class="circle"></div>
@@ -62,8 +62,8 @@
                 <input
                   type="checkbox"
                   id="sj"
+                  :disabled="true"
                   :checked="superjobProviderEnabled"
-                  @click="toggle('superjob')"
                 />
                 <div class="theme-checker-ui">
                   <div class="circle"></div>
@@ -277,7 +277,6 @@ const currency = computed(
       : "₽", // Стандартное значение
 );
 
-// Дата обработки с использованием moment.js
 const createdDate = computed(() => {
   return $moment(item.value?.updated_at).locale("ru").format("LL");
 });
@@ -365,6 +364,11 @@ const onDelete = async (id) => {
 </script>
 
 <style scoped>
+.option,
+.option * {
+  cursor: default;
+}
+
 .push_and_context_wrapper {
   display: flex;
   justify-content: flex-end;
