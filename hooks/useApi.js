@@ -58,10 +58,9 @@ const useApi = async (method, options = {}, nuxtInstance = null) => {
 
 const handleResponse = (data, cb) => {
   const result = JSON.parse(data);
-  const { $reset } = useAuthStore();
 
   if (result.code === 401) {
-    $reset();
+    useAuthStore().$reset();
     return navigateTo("/");
   }
 
@@ -84,11 +83,6 @@ const handleResponse = (data, cb) => {
 };
 
 const handleError = (res) => {
-  if (res.response && res.response.code === 401) {
-    useApi("logout").then(
-      (r) => r.status === "success" && useAuthStore().$reset(),
-    );
-  }
   if (res.response && res.response.data) {
     return {
       errors: res.response.data.errors,
