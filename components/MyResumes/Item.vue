@@ -21,7 +21,7 @@
         </div>
         <div class="resume-card-body-col">
           <div class="date">{{ createdDate }}</div>
-          <div class="time">{{ createdTime }}</div>
+          <div class="date fs-14">{{ createdTime }}</div>
         </div>
       </div>
       <div class="resume-card-options">
