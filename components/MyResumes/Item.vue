@@ -278,8 +278,7 @@ const currency = computed(
 
 // Дата обработки с использованием moment.js
 const createdDate = computed(() => {
-  const date = $moment(item.value?.published_date).locale("ru");
-  return `в ${date.format("D")} ${date.format("MMMM")}`;
+  return $moment(item.value?.updated_at).locale("ru").format("LL");
 });
 
 // Обработчик контекстного меню с проверкой
