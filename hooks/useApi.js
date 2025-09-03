@@ -61,7 +61,7 @@ const handleResponse = (data, cb) => {
 
   if (result.code === 401) {
     useAuthStore().$reset();
-    return navigateTo("/");
+    return navigateTo("/sign-in");
   }
 
   if (result.message) {
