@@ -1,51 +1,51 @@
 export function useMonthOptions() {
   const items = [
     {
-      name: "январь",
+      name: "Январь",
       value: "01",
     },
     {
-      name: "февраль",
+      name: "Февраль",
       value: "02",
     },
     {
-      name: "март",
+      name: "Март",
       value: "03",
     },
     {
-      name: "апрель",
+      name: "Апрель",
       value: "04",
     },
     {
-      name: "май",
+      name: "Май",
       value: "05",
     },
     {
-      name: "июнь",
+      name: "Июнь",
       value: "06",
     },
     {
-      name: "июль",
+      name: "Июль",
       value: "07",
     },
     {
-      name: "август",
+      name: "Август",
       value: "08",
     },
     {
-      name: "сентябрь",
+      name: "Сентябрь",
       value: "09",
     },
     {
-      name: "октябрь",
+      name: "Октябрь",
       value: "10",
     },
     {
-      name: "ноябрь",
+      name: "Ноябрь",
       value: "11",
     },
     {
-      name: "декабрь",
+      name: "Декабрь",
       value: "12",
     },
   ];
