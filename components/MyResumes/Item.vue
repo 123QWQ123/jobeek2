@@ -254,6 +254,7 @@ const onNotificationToggle = async (type) => {
     [`${type}_notification`]: newValue,
   });
   if (resData.status === "success") {
+    item.value[type + "_notification"] = newValue;
     if (type === "push") pushStatus.value = newValue;
     else emailStatus.value = newValue;
   } else {

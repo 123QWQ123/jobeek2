@@ -33,17 +33,12 @@ import { useResumeStore } from "~/store/resume.js";
 const props = defineProps(["name"]);
 
 const resumeStore = useResumeStore();
-const { modifyNotifications, getMyResumes } = resumeStore;
+const { modifyNotifications, getMyResumes, recomputeNotificationForm } =
+  resumeStore;
 const isFirst = ref(true);
 
 const { values, setValues, resetForm } = useForm({
-  initialValues: {
-    all: false,
-    notifications: {
-      push_notification: false,
-      email_notification: false,
-    },
-  },
+  initialValues: recomputeNotificationForm(),
 });
 const { value: all, setValue } = useField("all");
 // Объект для обработки изменений
@@ -51,6 +46,7 @@ const handleNotificationChange = async (event) => {
   const type = event.target.name.split(".").pop();
   const checked = event.target.checked;
   let notifications = { ...values.notifications };
+  const recalculated = recomputeNotificationForm();
 
   if (type === "all") {
     notifications = {
@@ -63,73 +59,30 @@ const handleNotificationChange = async (event) => {
 
   const resData = await modifyNotifications(notifications);
   if (resData.status === "success") {
-    setValues({
-      all: notifications.push_notification && notifications.email_notification,
-      notifications,
-    });
     resumeStore.my_resumes.forEach((item) => {
       item.push_notification = notifications.push_notification;
       item.email_notification = notifications.email_notification;
     });
-  } else {
-    if (type === "all") {
-      setValues({
-        all: !checked,
-        notifications: {
-          push_notification: !checked,
-          email_notification: !checked,
-        },
-      });
-    } else {
-      notifications[type] = !checked;
-      setValues({
-        all:
-          notifications.push_notification && notifications.email_notification,
-        notifications,
-      });
-    }
   }
-};
-
-const reformat = () => {
-  if (resumeStore.my_resumes.length < 1) {
-    resetForm({
-      values: {
-        all: false,
-        notifications: {
-          push_notification: false,
-          email_notification: false,
-        },
-      },
-    });
-    return;
-  }
-  const is_all_email = resumeStore.my_resumes.every(
-    (item) => item.email_notification === true,
-  );
-  const is_all_push = resumeStore.my_resumes.every(
-    (item) => item.push_notification === true,
-  );
-
-  resetForm({
-    values: {
-      all: is_all_email && is_all_push,
-      notifications: {
-        push_notification: is_all_push,
-        email_notification: is_all_email,
-      },
-    },
+  setValues({
+    all: recalculated.all,
+    notifications: recalculated.notifications,
   });
 };
 watch(
   () => resumeStore.my_resumes,
   () => {
-    reformat();
+    const recalculated = resumeStore.recomputeNotificationForm
+      ? resumeStore.recomputeNotificationForm()
+      : null;
+
+    if (recalculated) {
+      setValues({
+        all: recalculated.all,
+        notifications: recalculated.notifications,
+      });
+    }
   },
+  { deep: true },
 );
-onMounted(() => {
-  if (resumeStore.my_resumes.length > 0) {
-    reformat();
-  }
-});
 </script>

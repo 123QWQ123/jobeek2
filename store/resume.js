@@ -446,6 +446,33 @@ export const useResumeStore = defineStore("resume", {
       }
       return response;
     },
+    recomputeNotificationForm() {
+      // Если резюме ещё нет или список пустой — вернуть базовую форму
+      if (!this.my_resumes || this.my_resumes.length < 1) {
+        return {
+          all: false,
+          notifications: {
+            push_notification: false,
+            email_notification: false,
+          },
+        };
+      }
+
+      const is_all_email = this.my_resumes.every(
+        (item) => item.email_notification === true,
+      );
+      const is_all_push = this.my_resumes.every(
+        (item) => item.push_notification === true,
+      );
+
+      return {
+        all: is_all_email && is_all_push,
+        notifications: {
+          push_notification: is_all_push,
+          email_notification: is_all_email,
+        },
+      };
+    },
   },
   share: {
     // An array of fields that the plugin will ignore.

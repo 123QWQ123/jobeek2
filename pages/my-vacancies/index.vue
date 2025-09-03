@@ -32,7 +32,7 @@ const isCompleted = computed(() => {
         <div class="content mb-4">
           <MyVacanciesConnectedProviders />
 
-          <MyVacanciesList></MyVacanciesList>
+          <MyVacanciesList />
         </div>
       </div>
     </div>
