@@ -194,7 +194,10 @@ export const useAuthStore = defineStore("auth", {
       });
     },
     async logout() {
-      await navigateTo("/");
+      await useApi("logout", {
+        method: "get",
+      });
+      await navigateTo("/sign-in");
       this.$reset();
     },
     async getLocation(payload = {}) {

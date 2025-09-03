@@ -33,6 +33,8 @@ import { useResumeStore } from "~/store/resume.js";
 const props = defineProps(["name"]);
 
 const resumeStore = useResumeStore();
+const { modifyNotifications, getMyResumes } = resumeStore;
+const isFirst = ref(true);
 
 const { values, setValues, resetForm } = useForm({
   initialValues: {
@@ -49,7 +51,7 @@ const handleNotificationChange = async (event) => {
   const type = event.target.name.split(".").pop();
   const checked = event.target.checked;
   let notifications = { ...values.notifications };
-  console.log(type, notifications);
+
   if (type === "all") {
     notifications = {
       push_notification: checked,
@@ -64,6 +66,10 @@ const handleNotificationChange = async (event) => {
     setValues({
       all: notifications.push_notification && notifications.email_notification,
       notifications,
+    });
+    resumeStore.my_resumes.forEach((item) => {
+      item.push_notification = notifications.push_notification;
+      item.email_notification = notifications.email_notification;
     });
   } else {
     if (type === "all") {
@@ -84,8 +90,6 @@ const handleNotificationChange = async (event) => {
     }
   }
 };
-const { modifyNotifications, getMyResumes } = useResumeStore();
-const isFirst = ref(true);
 
 const reformat = () => {
   if (resumeStore.my_resumes.length < 1) {
