@@ -32,7 +32,7 @@ watch(
         <div class="w-box bg-white" v-if="!isCompleted">
           <p class="text-danger p-3">
             Перед использовании сервиса требуется заполнение вашего профиля и
-            подтверждения email-а.
+            подтверждения email.
           </p>
         </div>
         <div class="w-box w-box--main">
