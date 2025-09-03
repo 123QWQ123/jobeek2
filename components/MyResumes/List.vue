@@ -64,9 +64,13 @@ const total = computed(() => {
 });
 
 const onProviderChange = (newProvider) => {
-  if (newProvider)
-    navigateTo({ name: "my-resumes", query: { my_provider: newProvider } });
-  else navigateTo({ name: "my-resumes" });
+  if (newProvider) {
+    getMyResumes({
+      providers: [newProvider],
+    });
+  } else {
+    getMyResumes();
+  }
 };
 </script>
 
