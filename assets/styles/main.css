@@ -4296,7 +4296,7 @@ body .main-section-mob {
     line-height: 22px;
     color: #78757E;
     text-align: right;
-    margin-bottom: 24px;
+    margin-bottom: 0;
 }
 
 .resume-counts {
@@ -4637,7 +4637,7 @@ body .main-section-mob {
     padding-bottom: 80px;
 }
 
-.resume-list li:not(:last-child) {
+.resume-list li {
     margin-bottom: 24px;
 }
 
@@ -8222,7 +8222,10 @@ ul.nav-tabs a.nav-link:hover:after, ul.nav-tabs a.nav-link.active:after {
     }
     .create-subscribe-page {
         padding-bottom: 20px;
-        padding-top: 20px;
+        padding-top: 0;
+    }
+    .favorites-list-container {
+        padding-bottom: 20px;
     }
     .w-box--main {
         margin-bottom: 20px;
