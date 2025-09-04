@@ -126,6 +126,7 @@ const {
   getConnectedEmployerProviders,
   getEmployerProvidersAuthEndpoints,
   updateVacancy,
+  updateDraft,
 } = useVacancyStore();
 const { providers, provider_auth_urls } = storeToRefs(useVacancyStore());
 const redirect_url = useRequestURL();
@@ -184,8 +185,13 @@ const handleToggle = async (provider) => {
       }
     }
 
-    if (route.params.type === "draft" && route.params.id) {
-      await updateVacancy(route.params.id, {
+    if (selectedProvidersValue.length === 0) {
+      toast.error(`Ни один из провайдеров не выбран!`);
+      return;
+    }
+
+    if (route.query.type === "draft" && route.params.id) {
+      await updateDraft(route.params.id, {
         providers: selectedProvidersValue,
         form_data: "PROVIDERS_DATA",
       });

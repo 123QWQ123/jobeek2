@@ -184,14 +184,15 @@ const handleToggle = async (provider) => {
       }
     }
 
+    if (selectedProvidersValue.length === 0) {
+      toast.error(`Ни один из провайдеров не выбран!`);
+      return;
+    }
+
     await updateResume(route.params.id, {
       providers: selectedProvidersValue,
       form_data: "PROVIDERS_DATA",
     });
-
-    // toast.success(`Резюме успешно перенесено на ${provider.toUpperCase()}!`);
-  } catch (error) {
-    // toast.error(`Не удалось перенести резюме на ${provider.toUpperCase()}.`);
   } finally {
     isLoading.value = false;
   }
