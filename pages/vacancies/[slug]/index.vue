@@ -23,6 +23,7 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useVacancyStore } from "~/store/vacancy";
+import { useAuthStore } from "~/store/auth";
 import { useAsyncData } from "#app";
 
 const isOpen = ref(true);
@@ -30,6 +31,7 @@ const route = useRoute();
 const vacancyStore = useVacancyStore();
 const { getVacancy, getMyVacancy } = vacancyStore;
 const { vacancy } = storeToRefs(vacancyStore);
+const { isEmployer } = storeToRefs(useAuthStore());
 
 const { slug } = route.params;
 const { provider } = route.query;
@@ -58,6 +60,11 @@ if (
 
 useHead({
   title: pageTitle.value ?? "Loading",
+});
+watch(isEmployer, (new_value) => {
+  if (new_value) {
+    navigateTo({ name: "my-vacancies" });
+  }
 });
 </script>
 

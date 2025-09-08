@@ -81,7 +81,12 @@
             </NuxtLink>
           </li>
           <li>
-            <NuxtLink :to="{ name: 'subscriptions' }">
+            <NuxtLink
+              :to="{ name: 'subscriptions' }"
+              :class="{
+                'router-link-active': $route.path.startsWith('/subscriptions'),
+              }"
+            >
               <span>Подписки</span></NuxtLink
             >
           </li>
