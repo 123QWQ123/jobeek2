@@ -8,6 +8,7 @@
             name="providers"
             type="checkbox"
             value="hh"
+            :checked="hhProviderEnabled"
             @change="changeProviders"
           />
           <div class="theme-checker-ui">
@@ -26,6 +27,7 @@
             name="providers"
             type="checkbox"
             value="sj"
+            :checked="superjobProviderEnabled"
             @change="changeProviders"
           />
           <div class="theme-checker-ui">
@@ -45,11 +47,14 @@
   </div>
   <div class="input-row">
     <label for="search-words">Что искать</label>
+
     <div class="input-wrapper">
-      <input type="text" name="search_words" @input="searchWordsInput" />
-      <div class="text-danger row">
-        <ErrorMessage name="text" />
-      </div>
+      <VeeCustomTextInput
+        type="text"
+        name="text"
+        placeholder="Что искать"
+        @input="searchWordsInput"
+      />
       <div class="prompt">
         Слова через запятую: найдутся вакансии, где встречается хотя бы одно из
         указанных слов. Слова через пробел: найдутся вакансии, где встречаются
@@ -57,7 +62,7 @@
       </div>
       <div class="check-block">
         <div class="checkbox">
-          <input disabled type="checkbox" id="do-not-show-date" checked />
+          <input type="checkbox" id="do-not-show-date" />
           <div class="checkbox-mask">
             <img src="~/assets/img/svg/check.svg" alt="#" />
           </div>
@@ -69,8 +74,7 @@
   <div class="input-row">
     <label for="exclude-words">Исключать из названия вакансии</label>
     <div class="input-wrapper">
-      <input
-        disabled
+      <VeeCustomTextInput
         type="text"
         name="exclude_words"
         @input="excludeWordsInput"
@@ -82,18 +86,21 @@
 <script setup>
 import { useSetFormValues } from "vee-validate";
 
-let { providers } = defineProps({
-  providers: {
-    required: false,
-    default: {
-      hh: false,
-      sj: false,
-    },
-  },
+const setFormValues = useSetFormValues();
+const { value, setValue } = useField("providers");
+const superjobProviderEnabled = computed(() => {
+  if (value.value) {
+    return !!value.value.find((prov) => prov === "sj");
+  }
+  return false;
+});
+const hhProviderEnabled = computed(() => {
+  if (value.value) {
+    return !!value.value.find((prov) => prov === "hh");
+  }
+  return false;
 });
 
-const setFormValues = useSetFormValues();
-const providersValues = useFieldValue("providers");
 const excludeWordsInput = (event) => {
   setFormValues({ exclude_words: event.target.value });
 };
@@ -102,6 +109,7 @@ const searchWordsInput = (event) => {
 };
 
 const changeProviders = (event) => {
+  const providers = value.value || [];
   if (event.target.checked) {
     providers.push(event.target.value);
   } else {

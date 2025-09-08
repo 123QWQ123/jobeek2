@@ -13,21 +13,25 @@ useHead({
 
 const profileStore = useProfileStore();
 const { getCities, searchProfessionalRoles } = profileStore;
+const { cities, professional_roles } = storeToRefs(profileStore);
 const { getWorkTypes, work_types_formatted } = useDictionaryStore();
 
 const subscribeId = useRoute().params.id;
 const providers = ref(null);
 const authStore = useAuthStore();
 
-if (profileStore.cities.length === 0) {
-  useAsyncData("getCities", () => getCities());
+if (cities.value.length === 0) {
+  await useAsyncData("getCities", async () => await getCities());
 }
-if (profileStore.professional_roles.length === 0) {
-  useAsyncData("searchProfessionalRoles", () => searchProfessionalRoles());
+if (professional_roles.value.length === 0) {
+  useAsyncData(
+    "searchProfessionalRoles",
+    async () => await searchProfessionalRoles(),
+  );
 }
 
 if (work_types_formatted.length === 0) {
-  useAsyncData("getWorkTypes", () => getWorkTypes());
+  useAsyncData("getWorkTypes", async () => await getWorkTypes());
 }
 
 const {
@@ -37,7 +41,7 @@ const {
     },
   },
 } = await useAsyncData(`subscription_${subscribeId}`, async () => {
-  return useApi(`seeker/subscription/${subscribeId}`, {
+  return await useApi(`seeker/subscription/${subscribeId}`, {
     method: "get",
   });
 });
@@ -45,24 +49,28 @@ const {
 const getFields = (newObject) => {
   if (!newObject) return {};
   return {
-    text: "",
-    providers: [],
-    work_types: [], //
-    push_notification: false,
-    email_notification: false,
-    cities: [],
-    professional_roles: [],
+    text: newObject.params?.text || "",
+    exclude_words: newObject.exclude_words || "",
+    providers: newObject.providers || [],
+    work_types:
+      newObject.params?.work_types.map((item) => parseInt(item)) || [], //
+    push_notification: newObject.push_notification || false,
+    email_notification: newObject.email_notification || false,
+    cities: newObject.params.cities.map((item) => parseInt(item)) || [],
+    professional_roles:
+      newObject.params.professional_roles.map((item) => parseInt(item)) || [],
     salary: {
-      from: 0,
-      to: 0,
+      from: newObject.params.salary?.from || 0,
+      to: newObject.params.salary?.to || 0,
     },
   };
 };
-const initialValues = getFields(authStore.seeker);
+const initialValues = getFields(data);
 
 const schema = zod
   .object({
     text: zod.string().nullish(),
+    exclude_words: zod.string().nullish(),
     providers: zod.array(zod.string()).nonempty(),
     work_types: zod.array(zod.number()).nonempty(),
     push_notification: zod.boolean().optional(),
@@ -92,25 +100,6 @@ const { values, meta, setValues, errors } = useForm({
   validationSchema: toTypedSchema(schema),
 });
 
-if (status === "success") {
-  providers.value = data.providers;
-  setValues({
-    text: data.params?.text,
-    providers: data.providers,
-    work_types: data.params?.work_types?.map((item) => parseInt(item)), //
-    push_notification: data.push_notification,
-    email_notification: data.email_notification,
-    cities: data.params?.cities?.map((item) => parseInt(item)),
-    professional_roles: data.params?.professional_roles?.map((item) =>
-      parseInt(item),
-    ),
-    salary: {
-      from: parseInt(data.params?.salary.from),
-      to: parseInt(data.params?.salary.to),
-    },
-  });
-}
-
 const save = async () => {
   if (meta.value.dirty && meta.value.valid) {
     await useApi("seeker/subscription/" + subscribeId, {
@@ -138,7 +127,7 @@ const save = async () => {
               </div>
             </div>
             <div class="w-box-body">
-              <CreateSubscriptionProvidersAndKeywords :providers="providers" />
+              <CreateSubscriptionProvidersAndKeywords />
               <div class="sep" />
               <CreateSubscriptionFieldsAndAreas />
               <div class="sep" />

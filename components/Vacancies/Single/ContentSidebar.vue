@@ -30,34 +30,6 @@
       <!--      <p>Клиент SuperJob с 2003 года</p>-->
       <p>{{ data.open_vacancies ?? 0 }} вакансии</p>
       <p v-html="data.company_activity" />
-      <!--      <div class="count">123 вакансии</div>-->
-      <!--      <div class="grade-box-container">-->
-      <!--        <div class="title">Оценки сотрудников</div>-->
-      <!--        <div class="grade-box">-->
-      <!--          <div class="grade-box-circle">-->
-      <!--            <svg class="progress" data-complete="0.75" viewBox="-1 -1 34 34">-->
-      <!--              <circle-->
-      <!--                cx="16"-->
-      <!--                cy="16"-->
-      <!--                r="15.9155"-->
-      <!--                class="progress-bar__background"-->
-      <!--              />-->
-      <!--              <circle-->
-      <!--                cx="16"-->
-      <!--                cy="16"-->
-      <!--                r="15.9155"-->
-      <!--                class="progress-bar__progress js-progress-bar"-->
-      <!--                style="stroke-dashoffset: 25px"-->
-      <!--              />-->
-      <!--            </svg>-->
-      <!--            <span>7.5</span>-->
-      <!--          </div>-->
-      <!--          <div class="grade-box-text">-->
-      <!--            <strong>Хорошо</strong><a href="#">12 отзывов</a>-->
-      <!--          </div>-->
-      <!--        </div>-->
-      <!--        <span class="txt">55% рекомендуют компанию</span>-->
-      <!--      </div>-->
     </div>
 
     <div class="company-col" v-if="isAuthed && provider">
@@ -193,7 +165,9 @@ const requiredLetter = computed(() => data.response_letter_required ?? false);
 const selectedResumeError = ref("");
 const isContactsShown = computed(() => {
   return (
-    !!data.contacts?.name || !!data.contacts?.phones || !!data.contacts?.email
+    !!data.contacts?.name ||
+    data.contacts?.phones?.length > 0 ||
+    !!data.contacts?.email
   );
 });
 

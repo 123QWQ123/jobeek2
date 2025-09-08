@@ -160,26 +160,11 @@ const onSubmit = async () => {
     return;
   }
 
-  try {
-    const response = await resumeStore.submitResume({
-      vacancy_id: item.id,
-      resume_id: selectedResume.value,
-      providers: ["hh"],
-    });
-
-    if (response.status === "success") {
-      toast.success("Вы успешно откликнулись на вакансию.");
-    } else {
-      throw new Error(response.message);
-    }
-  } catch (error) {
-    await Swal.fire({
-      title: "Ошибка!",
-      text: error.message,
-      icon: "error",
-      confirmButtonText: "OK",
-    });
-  }
+  await resumeStore.submitResume({
+    vacancy_id: item.id,
+    resume_id: selectedResume.value,
+    providers: ["hh"],
+  });
 };
 
 // Toggle the favorite status of the vacancy
@@ -202,14 +187,9 @@ const toggleFavorite = async () => {
       });
     }
     isFavorite.value = !isFavorite.value;
-  } catch (error) {
-    console.error("Exception during toggleFavorite:", error);
-    // можно добавить уведомление для пользователя
   } finally {
     disabled.value = false; // сброс в любом случае
   }
-
-  disabled.value = false;
 };
 
 // Get the employer logo or default to a placeholder
