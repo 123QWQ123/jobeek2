@@ -43,6 +43,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       resume_children: [],
       resume_access_types: [],
       resume_language_levels: [],
+      vacancy_search_fields: [],
     };
   },
   persist: false,
@@ -312,6 +313,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         education: "educations",
         marital_status: "marital_statuses",
         children: "children",
+        vacancy_search_fields: "vacancy_search_fields",
         covid_vaccination_requirement: "covid_vaccination_requirement",
       };
 

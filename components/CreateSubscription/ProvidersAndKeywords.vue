@@ -24,9 +24,10 @@
       <div class="custom-check-wrap">
         <div class="theme-checker theme-checker--blue">
           <input
+            id="superjob"
             name="providers"
             type="checkbox"
-            value="sj"
+            value="superjob"
             :checked="superjobProviderEnabled"
             @change="changeProviders"
           />
@@ -34,7 +35,7 @@
             <div class="circle"></div>
           </div>
         </div>
-        <label for="sj"
+        <label for="superjob"
           ><img src="~/assets/img/logos/sj.svg" alt="#" /><span
             >Superjob.ru
           </span></label
@@ -60,37 +61,53 @@
         указанных слов. Слова через пробел: найдутся вакансии, где встречаются
         все указанные слова.
       </div>
-      <div class="check-block">
+      <div
+        v-for="item in vacancy_search_fields"
+        :key="item.id"
+        class="check-block"
+      >
         <div class="checkbox">
-          <input type="checkbox" id="do-not-show-date" />
+          <input
+            name="search_fields"
+            :id="item.id"
+            type="checkbox"
+            :value="item.id"
+            @change="toggleSearchFields(item.id)"
+          />
           <div class="checkbox-mask">
             <img src="~/assets/img/svg/check.svg" alt="#" />
           </div>
         </div>
-        <label for="do-not-show-date">Только в названии вакансий</label>
+        <label :for="item.id">{{ item.name }}</label>
+      </div>
+      <div class="text-danger row">
+        <ErrorMessage name="search_fields" />
       </div>
     </div>
   </div>
-  <div class="input-row">
-    <label for="exclude-words">Исключать из названия вакансии</label>
-    <div class="input-wrapper">
-      <VeeCustomTextInput
-        type="text"
-        name="exclude_words"
-        @input="excludeWordsInput"
-      />
-    </div>
-  </div>
+  <!--  <div class="input-row">-->
+  <!--    <label for="exclude-words">Исключать из названия вакансии</label>-->
+  <!--    <div class="input-wrapper">-->
+  <!--      <VeeCustomTextInput-->
+  <!--        type="text"-->
+  <!--        name="exclude_words"-->
+  <!--        @input="excludeWordsInput"-->
+  <!--      />-->
+  <!--    </div>-->
+  <!--  </div>-->
 </template>
 
 <script setup>
-import { useSetFormValues } from "vee-validate";
+import { useSetFormValues, useFormValues } from "vee-validate";
+import { useDictionaryStore } from "~/store/dictionary.js";
 
 const setFormValues = useSetFormValues();
+const formValues = useFormValues();
 const { value, setValue } = useField("providers");
+const { vacancy_search_fields } = storeToRefs(useDictionaryStore());
 const superjobProviderEnabled = computed(() => {
   if (value.value) {
-    return !!value.value.find((prov) => prov === "sj");
+    return !!value.value.find((prov) => prov === "superjob");
   }
   return false;
 });
@@ -117,6 +134,14 @@ const changeProviders = (event) => {
     providers.splice(index, 1);
   }
   setFormValues({ providers: providers });
+};
+const toggleSearchFields = (id) => {
+  const index = formValues.value.search_fields.indexOf(id);
+  if (index > -1) {
+    formValues.value.search_fields.splice(index, 1);
+  } else {
+    formValues.value.search_fields.push(id);
+  }
 };
 </script>
 
