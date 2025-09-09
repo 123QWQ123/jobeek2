@@ -32,6 +32,10 @@ const isCheckButton = computed(() => {
 const isConfirmButton = computed(() => {
   const user = props.type === "seeker" ? authStore.seeker : authStore.employer;
 
+  if (!!!user?.email_to_verify) {
+    return false;
+  }
+
   return (
     (!user?.is_completed && !!user?.email_to_verify) ||
     (!user?.email && !user?.email_to_verify)
@@ -68,7 +72,7 @@ const onEmailConfirm = async (e) => {
       type="email"
       placeholder="Электронная почта"
       :value="currentValue"
-      :disabled="!isConfirmButton"
+      :disabled="isCheckButton"
     />
 
     <span
