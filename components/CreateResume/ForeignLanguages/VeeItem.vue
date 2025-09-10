@@ -1,6 +1,6 @@
 <template>
   <div class="row position-relative">
-    <span class="position-absolute absoluted_icon" @click="remove">
+    <span class="position-absolute absoluted_icon delete-icon-item" @click="remove">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="16"

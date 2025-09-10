@@ -8405,6 +8405,17 @@ textarea.form-control {
     fill: #dc3545;
 }
 
+.absoluted_icon.delete-icon-item {
+	right: -15px;
+    top: 21px;
+    background: #dc3545;
+    border-radius: 100%;
+}
+
+.absoluted_icon.delete-icon-item svg {
+    fill: #fff;
+}
+
 .w-box .arrow:after {
 	content: none !important;
 }
