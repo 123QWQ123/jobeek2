@@ -14,7 +14,7 @@ useHead({
 const profileStore = useProfileStore();
 const { getCities, searchProfessionalRoles } = profileStore;
 const { cities, professional_roles } = storeToRefs(profileStore);
-const { getWorkTypes, work_types_formatted } = useDictionaryStore();
+const { getDictionaries } = useDictionaryStore();
 
 const subscribeId = useRoute().params.id;
 const providers = ref(null);
@@ -30,10 +30,10 @@ if (professional_roles.value.length === 0) {
   );
 }
 
-if (work_types_formatted.length === 0) {
-  useAsyncData("getWorkTypes", async () => await getWorkTypes());
-}
-
+useAsyncData(
+  "getDictionaries",
+  async () => await getDictionaries(["work_type", "vacancy_search_fields"]),
+);
 const {
   data: {
     value: {
@@ -52,16 +52,17 @@ const getFields = (newObject) => {
     text: newObject.params?.text || "",
     exclude_words: newObject.exclude_words || "",
     providers: newObject.providers || [],
+    search_fields: newObject.params?.search_fields || [],
     work_types:
       newObject.params?.work_types.map((item) => parseInt(item)) || [], //
     push_notification: newObject.push_notification || false,
     email_notification: newObject.email_notification || false,
-    cities: newObject.params.cities.map((item) => parseInt(item)) || [],
+    cities: newObject.params?.cities.map((item) => parseInt(item)) || [],
     professional_roles:
-      newObject.params.professional_roles.map((item) => parseInt(item)) || [],
+      newObject.params?.professional_roles.map((item) => parseInt(item)) || [],
     salary: {
-      from: newObject.params.salary?.from || 0,
-      to: newObject.params.salary?.to || 0,
+      from: newObject.params?.salary?.from || 0,
+      to: newObject.params?.salary?.to || 0,
     },
   };
 };
@@ -71,8 +72,9 @@ const schema = zod
   .object({
     text: zod.string().nullish(),
     exclude_words: zod.string().nullish(),
-    providers: zod.array(zod.string()).nonempty(),
+    providers: zod.array(zod.string()).nonempty("Выберите провайдера"),
     work_types: zod.array(zod.number()).nonempty(),
+    search_fields: zod.array(zod.number()).nullable().optional(),
     push_notification: zod.boolean().optional(),
     email_notification: zod.boolean().optional(),
     cities: zod.array(zod.number()).optional(),
