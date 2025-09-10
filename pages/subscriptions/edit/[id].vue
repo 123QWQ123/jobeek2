@@ -52,17 +52,17 @@ const getFields = (newObject) => {
     text: newObject.params?.text || "",
     exclude_words: newObject.exclude_words || "",
     providers: newObject.providers || [],
-    search_fields: newObject.search_fields || [],
+    search_fields: newObject.params?.search_fields || [],
     work_types:
       newObject.params?.work_types.map((item) => parseInt(item)) || [], //
     push_notification: newObject.push_notification || false,
     email_notification: newObject.email_notification || false,
-    cities: newObject.params.cities.map((item) => parseInt(item)) || [],
+    cities: newObject.params?.cities.map((item) => parseInt(item)) || [],
     professional_roles:
-      newObject.params.professional_roles.map((item) => parseInt(item)) || [],
+      newObject.params?.professional_roles.map((item) => parseInt(item)) || [],
     salary: {
-      from: newObject.params.salary?.from || 0,
-      to: newObject.params.salary?.to || 0,
+      from: newObject.params?.salary?.from || 0,
+      to: newObject.params?.salary?.to || 0,
     },
   };
 };

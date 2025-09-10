@@ -72,6 +72,7 @@
             :id="item.id"
             type="checkbox"
             :value="item.id"
+            :checked="formValues.search_fields.includes(item.id)"
             @change="toggleSearchFields(item.id)"
           />
           <div class="checkbox-mask">
