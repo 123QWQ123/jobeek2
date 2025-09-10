@@ -36,13 +36,13 @@
       <p>У Вас нет вакансий.</p>
     </div>
 
-    <div class="d-flex mt-4 justify-content-between" v-if="isPaginationVisible">
+    <div class="d-flex mt-4 justify-content-between pagination-btn" v-if="isPaginationVisible">
       <button
         class="btn btn-primary btn-group-sm"
         :class="{ disabled: isPrevDisabled }"
         @click="prevPage"
       >
-        Prev
+        Предыдущая
       </button>
       <p>{{ current_page }}/{{ total_page }}</p>
       <button
@@ -50,7 +50,7 @@
         :class="{ disabled: isNextDisabled }"
         @click="nextPage"
       >
-        Next
+        Следующая
       </button>
     </div>
   </div>
@@ -162,5 +162,9 @@ onMounted(async () => {
 
 .theme-checker input ~ .theme-checker-ui .circle.right {
   transform: translate(30px, -50%);
+}
+
+.pagination-btn {
+  align-items: center;
 }
 </style>

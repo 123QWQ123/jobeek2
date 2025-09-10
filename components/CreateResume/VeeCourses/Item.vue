@@ -1,6 +1,6 @@
 <template>
   <div class="row position-relative empty-area">
-    <span class="position-absolute absoluted_icon" @click="remove(idx)">
+    <span class="position-absolute absoluted_icon delete-icon-item" @click="remove(idx)">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="16"

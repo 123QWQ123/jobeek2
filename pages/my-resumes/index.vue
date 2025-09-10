@@ -31,7 +31,7 @@ await useAsyncData(
 <template>
   <main class="main cabinet my-vacancies-page" role="main">
     <PersonalCabinetSearchMobile />
-    <div class="bg-wrapper position-relative pt-4">
+    <div class="bg-wrapper position-relative pt-4 pb-4">
       <div class="wrapper wrapper-1290">
         <div class="content mb-4">
           <MyResumesConnectedProviders />
