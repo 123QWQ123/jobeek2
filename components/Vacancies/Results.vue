@@ -17,7 +17,6 @@
           Фильтры
         </button>
         <div class="aside-container">
-          <BlockLoader class="position-fixed" v-if="isLoading" />
           <VacanciesFilters></VacanciesFilters>
 
           <VacanciesList :key="$route.fullPath"></VacanciesList>
