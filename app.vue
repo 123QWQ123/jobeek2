@@ -1,5 +1,6 @@
 <template>
   <div>
+    <BlockLoader class="position-fixed" v-if="loading" />
     <NuxtLayout :name="nameLayout">
       <NuxtPage />
     </NuxtLayout>
@@ -13,7 +14,9 @@
 import { useAuthStore } from "~/store/auth";
 import { useVacancyStore } from "~/store/vacancy";
 import { useResumeStore } from "~/store/resume";
-import useAlert from "~/composables/useAlert.js";
+
+const nuxtApp = useNuxtApp();
+const loading = ref(false);
 
 const { getConnectedEmployerProviders } = useVacancyStore();
 const { getConnectedSeekerProviders } = useResumeStore();
@@ -35,6 +38,12 @@ if (isAuthed.value) {
   });
 }
 
+nuxtApp.hook("page:start", () => {
+  loading.value = true;
+});
+nuxtApp.hook("page:finish", () => {
+  loading.value = false;
+});
 watch(
   () => isAuthed.value,
   (value) => {
