@@ -81,10 +81,10 @@
     </div>
     <div class="input-row">
       <div class="input-wrapper">
-        <base-button type="submit">
+        <button class="button-accent" type="submit">
           Сохранить
           <Loader class="text-light spinner-border-sm" v-if="isLoading" />
-        </base-button>
+        </button>
       </div>
     </div>
   </form>
