@@ -10,8 +10,10 @@
           <span class="hamburger-inner"></span>
         </span>
       </button>
-      
-      <div class="header-search-btn"><img class="icon" src="~/assets/img/search.png" alt="#" /></div>
+
+      <div @click="toggleSearch" class="header-search-btn">
+        <img class="icon" src="~/assets/img/search.png" alt="#" />
+      </div>
 
       <nav
         class="main-navigation"
@@ -118,14 +120,22 @@
 
 <script setup>
 import { useAuthStore } from "~/store/auth";
+import { useUIStore } from "~/store/ui";
+import { ref } from "vue";
 
 const auth = useAuthStore();
 const { isAuthed, isEmployer, user } = storeToRefs(auth);
+const { hiddenSearchForm } = storeToRefs(useUIStore());
+const hidden = ref(hiddenSearchForm);
 
 const isMobileNavigationActive = ref(false);
 
 const toggleMobileNavigation = () => {
   isMobileNavigationActive.value = !isMobileNavigationActive.value;
+};
+const toggleSearch = () => {
+  hidden.value = !hidden.value;
+  hiddenSearchForm.value = hidden.value;
 };
 </script>
 

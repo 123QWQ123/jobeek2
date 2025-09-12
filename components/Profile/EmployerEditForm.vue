@@ -9,7 +9,6 @@
       :style="{ overflowY: 'hidden' }"
       autocomplete="off"
     >
-      <PageLoader v-if="isLoading" />
       <div class="input-row">
         <label for="photo">Лого</label>
         <ProfilePhotoInput
@@ -81,7 +80,10 @@
 
       <div class="input-row">
         <div class="input-wrapper">
-          <base-button type="submit">Сохранить</base-button>
+          <button :disabled="isLoading" class="button-accent" type="submit">
+            Сохранить
+            <Loader class="text-light spinner-border-sm" v-if="isLoading" />
+          </button>
         </div>
       </div>
     </form>
@@ -97,6 +99,7 @@ import avatar from "~/assets/img/jobeek-avatar.png";
 import { toTypedSchema } from "@vee-validate/zod";
 import { zod } from "~/hooks/ru-zod.js";
 import { useAuthStore } from "~/store/auth.js";
+import { toast } from "vue3-toastify";
 
 const profileStore = useProfileStore();
 
@@ -176,6 +179,8 @@ const handleSubmit = async (e) => {
   const resData = await updateEmployer(formData, (result) => {
     if (result.status === "failed") {
       setErrors(result.errors);
+    } else {
+      toast.info(result.message);
     }
   });
   if (resData.data.status === "success") {

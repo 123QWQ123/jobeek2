@@ -8,6 +8,7 @@ export const useUIStore = defineStore("ui", {
       footer: null,
       isSidebarOpen: true,
       isMobileMode: false,
+      hiddenSearchForm: true,
       footer_settings: {},
     };
   },
