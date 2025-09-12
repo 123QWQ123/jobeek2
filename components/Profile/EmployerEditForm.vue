@@ -183,19 +183,14 @@ const handleSubmit = async (e) => {
       toast.info(result.message);
     }
   });
-  if (resData.data.status === "success") {
-    await getUser();
-    await refreshSeeker();
-    await refreshEmployer();
-    isLoading.value = false;
-  } else {
-    errorMessage.value = resData.message;
+  isLoading.value = false;
 
-    if (resData?.errors) {
-      setErrors(resData.errors);
-    }
-    isLoading.value = false;
+  if (resData.status !== "success") {
+    return;
   }
+  await getUser();
+  await refreshSeeker();
+  await refreshEmployer();
 };
 </script>
 
