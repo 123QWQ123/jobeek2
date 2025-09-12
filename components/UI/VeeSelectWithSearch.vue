@@ -91,10 +91,14 @@ const filteredOptions = computed(() => {
 watch(
   () => value.value,
   (val) => {
-    const found = props.options.find(
-      (item) => String(item.value) === String(val),
-    );
-    searchInput.value = found ? found.name : searchInput.value;
+    if (val === null) {
+      searchInput.value = "";
+    } else {
+      const found = props.options.find(
+        (item) => String(item.value) === String(val),
+      );
+      searchInput.value = found ? found.name : searchInput.value;
+    }
   },
   { immediate: true },
 );

@@ -70,7 +70,7 @@ const handleSave = async () => {
                 class="ms-2 bg-primary spinner-grow spinner-grow-sm"
                 role="status"
               >
-                <span class="visually-hidden">Загрузка...</span>
+                <span class="visually-hidden">Loading...</span>
               </div>
             </button>
           </div>

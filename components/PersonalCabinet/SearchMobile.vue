@@ -46,6 +46,7 @@
     v-else
     class="search-form main-section-mob"
     role="form"
+    :class="{ hidden: hiddenSearchForm }"
     autocomplete="off"
   >
     <div class="search-row">
@@ -92,6 +93,7 @@ import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "~/store/auth";
 import { useVacancyStore } from "~/store/vacancy";
 import { useProfileStore } from "~/store/profile";
+import { useUIStore } from "~/store/ui";
 import useQueryParams from "~/composables/useQueryParams.js";
 
 const props = defineProps({
@@ -104,6 +106,7 @@ const auth = useAuthStore();
 const vacancyStore = useVacancyStore();
 const profileStore = useProfileStore();
 const { searchCities } = profileStore;
+const { hiddenSearchForm } = storeToRefs(useUIStore());
 
 const router = useRouter();
 const route = useRoute();

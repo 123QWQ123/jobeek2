@@ -1,7 +1,5 @@
 <template>
   <form class="w-box-body" autocomplete="off" @submit.prevent="handleSubmit">
-    <PageLoader v-if="isLoading" />
-
     <div class="input-row">
       <label>Фото</label>
       <ProfilePhotoInput
@@ -81,7 +79,7 @@
     </div>
     <div class="input-row">
       <div class="input-wrapper">
-        <button class="button-accent" type="submit">
+        <button :disabled="isLoading" class="button-accent" type="submit">
           Сохранить
           <Loader class="text-light spinner-border-sm" v-if="isLoading" />
         </button>
@@ -99,6 +97,7 @@ import { toTypedSchema } from "@vee-validate/zod";
 import avatar from "~/assets/img/jobeek-avatar.png";
 import { zod } from "~/hooks/ru-zod.js";
 import { ref, watch } from "vue";
+import { toast } from "vue3-toastify";
 
 // Stores и основные данные
 const profileStore = useProfileStore();
@@ -118,13 +117,16 @@ const route = useRoute();
 // Загрузка списков при инициализации
 useAsyncData("getCountries", () => getCountries());
 useAsyncData("getCities", () =>
-  getCities({ city_id: seeker?.city_id ?? undefined }),
+  getCities({
+    city_id: seeker.value?.city_id ?? undefined,
+    country_ids: [seeker.value.country_id || 1],
+  }),
 );
 
 // Валидация схемы
 const schema = zod.object({
-  first_name: zod.string().trim().min(1, "Введите имя"),
-  last_name: zod.string().trim().min(1, "Введите фамилию"),
+  first_name: zod.string().trim().min(2, "Введите имя"),
+  last_name: zod.string().trim().min(2, "Введите фамилию"),
   birth_date: zod.string().trim().min(1, "Дата рождения должна быть заполнена"),
   email: zod.string().email("Введите ваш E-mail"),
   city_id: zod.number({ message: "Выберите город из списка" }),
@@ -161,7 +163,7 @@ watch(country_id, async (val) => {
   countryError.value = "";
   cityError.value = "";
   await getCities({ country_ids: [val] });
-  setCityId(null);
+  setCityId(undefined);
 });
 
 function updateCountryInput(newValue = "") {
@@ -195,6 +197,7 @@ function getFormData(object) {
 // Основной submit
 const handleSubmit = async () => {
   await validate();
+  console.log(meta, errors, values, "meta, errors, values");
   if (!meta.value.valid) {
     return;
   }
@@ -217,6 +220,8 @@ const handleSubmit = async () => {
   const resData = await updateSeeker(formData, (result) => {
     if (result.status === "failed") {
       setErrors(result.errors);
+    } else {
+      toast.info(result.message);
     }
   });
   isLoading.value = false;
