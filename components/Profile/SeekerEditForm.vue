@@ -103,7 +103,7 @@ const profileStore = useProfileStore();
 const authStore = useAuthStore();
 const seeker = computed(() => authStore.seeker);
 const { refreshEmployer, refreshSeeker } = useAuthStore();
-const { getCountries, getCities, updateSeeker } = profileStore;
+const { getCountries, getCities, updateSeeker, getUser } = profileStore;
 const { countryOptions, cityOptions } = storeToRefs(profileStore);
 
 // Вспомогательные реактивные переменные
@@ -226,6 +226,7 @@ const handleSubmit = async () => {
     return;
   }
 
+  getUser();
   refreshSeeker();
   await refreshEmployer();
   navigateTo({ name: "profile" });
