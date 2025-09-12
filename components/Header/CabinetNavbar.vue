@@ -10,6 +10,8 @@
           <span class="hamburger-inner"></span>
         </span>
       </button>
+      
+      <div class="header-search-btn"><img class="icon" src="~/assets/img/search.png" alt="#" /></div>
 
       <nav
         class="main-navigation"
