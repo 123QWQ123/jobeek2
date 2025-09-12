@@ -163,7 +163,7 @@ watch(country_id, async (val) => {
   countryError.value = "";
   cityError.value = "";
   await getCities({ country_ids: [val] });
-  setCityId(undefined);
+  setCityId(0);
 });
 
 function updateCountryInput(newValue = "") {
@@ -197,7 +197,6 @@ function getFormData(object) {
 // Основной submit
 const handleSubmit = async () => {
   await validate();
-  console.log(meta, errors, values, "meta, errors, values");
   if (!meta.value.valid) {
     return;
   }

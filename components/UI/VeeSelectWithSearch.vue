@@ -91,7 +91,7 @@ const filteredOptions = computed(() => {
 watch(
   () => value.value,
   (val) => {
-    if (val === null) {
+    if (val === 0) {
       searchInput.value = "";
     } else {
       const found = props.options.find(
