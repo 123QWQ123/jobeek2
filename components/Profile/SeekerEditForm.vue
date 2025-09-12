@@ -90,7 +90,6 @@
 
 <script setup>
 import { useProfileStore } from "~/store/profile";
-import PageLoader from "../UI/PageLoader";
 import { useAuthStore } from "~/store/auth";
 import { navigateTo, useAsyncData } from "#app";
 import { toTypedSchema } from "@vee-validate/zod";
@@ -116,12 +115,10 @@ const route = useRoute();
 
 // Загрузка списков при инициализации
 useAsyncData("getCountries", () => getCountries());
-useAsyncData("getCities", () =>
-  getCities({
-    city_id: seeker.value?.city_id ?? undefined,
-    country_ids: [seeker.value.country_id || 1],
-  }),
-);
+await getCities({
+  city_id: seeker.value?.city_id ?? undefined,
+  country_ids: [seeker.value.country_id || 1],
+});
 
 // Валидация схемы
 const schema = zod.object({
