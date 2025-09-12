@@ -1,5 +1,3 @@
-## Me оптимизируй ## AI Assistant Вот оптимизированный вариант вашего скрипта:
-```vue template
 <script setup>
 import { useAuthStore } from "~/store/auth";
 import Premium from "~/components/MyVacancies/Premium.vue";
