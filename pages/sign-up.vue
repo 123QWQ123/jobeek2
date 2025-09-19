@@ -308,4 +308,7 @@ input:disabled {
   color: red;
   padding-top: 10px;
 }
+.enter-form .error-message p {
+  color: red !important;
+}
 </style>

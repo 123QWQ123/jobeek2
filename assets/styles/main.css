@@ -8456,6 +8456,7 @@ textarea.form-control {
 
 .nice-select input.current {
 	padding: 0 !important;
+	border-radius: 0 !important;
 }
 
 .c2.mb2 {
