@@ -1,6 +1,6 @@
 <template>
   <main class="main cabinet vacansy-page" role="main">
-    <div class="bg-wrapper pt">
+    <div class="bg-wrapper pt pb-4">
       <div class="main-section main-section-mob">
         <div class="wrapper wrapper--xl">
           <SearchForm></SearchForm>
