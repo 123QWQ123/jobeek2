@@ -28,12 +28,10 @@ onMounted(async () => {
     seeker.email_to_verify = null;
     employer.email = email;
     employer.email_to_verify = null;
-    await getUser();
+    getUser();
 
-    await refreshSeeker();
+    refreshSeeker();
     await refreshEmployer();
-
-    navigateTo({ name: "profile" });
   }
 });
 </script>

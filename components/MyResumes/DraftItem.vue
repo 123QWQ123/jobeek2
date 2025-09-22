@@ -318,7 +318,6 @@ const onDelete = async (id) => {
     });
     return;
   }
-  toast.info("Успешно удалено!", { autoClose: 3000 });
   await getMyDrafts({ status: "active" });
 };
 
