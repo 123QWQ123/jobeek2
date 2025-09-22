@@ -355,11 +355,8 @@ const onDelete = async (id) => {
       });
       return;
     }
-    toast.info("Успешно удалено!", { autoClose: 3000 });
     await getMyResumes({ status: "active" });
-  } catch (err) {
-    toast.error("Произошла ошибка при удалении.");
-  }
+  } catch (err) {}
 };
 </script>
 

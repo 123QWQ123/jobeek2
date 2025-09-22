@@ -347,7 +347,6 @@ const onDelete = async (id) => {
   if (resData.status !== "success") {
     return;
   }
-  toast.info("Успешно удалено!", { autoClose: 3000 });
   await getMyDrafts({ status: "active" });
 };
 
