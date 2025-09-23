@@ -5,6 +5,7 @@ import { toTypedSchema } from "@vee-validate/zod";
 import useApi from "~/hooks/useApi.js";
 import { useDictionaryStore } from "~/store/dictionary.js";
 import { useProfileStore } from "~/store/profile.js";
+import { useAsyncData } from "#app";
 
 useHead({
   title: "Jobeek - Создание подписки",
@@ -14,9 +15,13 @@ const providers = ref([]);
 const dictionaryStore = useDictionaryStore();
 const profileStore = useProfileStore();
 // Грузим справочники SSR-совместимо
-useAsyncData(
+await useAsyncData(
   "dictionaries",
-  async () => await dictionaryStore.getDictionaries(["work_type"]),
+  async () =>
+    await dictionaryStore.getDictionaries([
+      "work_type",
+      "vacancy_search_fields",
+    ]),
 );
 await useAsyncData("profileStore ", async () => await profileStore.getCities());
 const getFields = (newObject) => {
@@ -41,9 +46,10 @@ const getFields = (newObject) => {
 };
 const schema = zod
   .object({
-    text: zod.string(),
+    text: zod.string().min(1, "Обязательно для заполнения"),
     providers: zod.array(zod.string()).nonempty("Выберите провайдера"),
     work_types: zod.array(zod.number()).nonempty(),
+    search_fields: zod.array(zod.number()).nullable().optional(),
     push_notification: zod.boolean().optional(),
     email_notification: zod.boolean().optional(),
     cities: zod.array(zod.number()).optional(),
@@ -106,7 +112,7 @@ const save = async () => {
               </div>
             </div>
             <div class="w-box-body">
-              <CreateSubscriptionProvidersAndKeywords :providers="providers" />
+              <CreateSubscriptionProvidersAndKeywords />
               <div class="sep"></div>
               <CreateSubscriptionFieldsAndAreas />
               <!--          <div class="sep"></div>-->

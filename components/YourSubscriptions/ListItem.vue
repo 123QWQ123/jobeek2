@@ -66,7 +66,7 @@
                   type="checkbox"
                   value="hh"
                   id="hh"
-                  v-model="notification.providers"
+                  :checked="!!notification.providers.find((p) => p === 'hh')"
                 />
                 <div class="theme-checker-ui">
                   <div class="circle"></div>
@@ -87,7 +87,9 @@
                   type="checkbox"
                   value="sj"
                   id="sj"
-                  v-model="notification.providers"
+                  :checked="
+                    !!notification.providers.find((p) => p === 'superjob')
+                  "
                 />
                 <div class="theme-checker-ui">
                   <div class="circle"></div>

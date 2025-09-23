@@ -2,18 +2,28 @@
 import { useAuthStore } from "~/store/auth";
 import { useResumeStore } from "~/store/resume";
 import { useAsyncData, navigateTo } from "#app";
+import { toast } from "vue3-toastify";
 
 useHead({
   title: "Jobeek - Ваши резюме",
 });
 const authStore = useAuthStore();
 const resumeStore = useResumeStore();
+const route = useRoute();
+const { slug } = route.params;
+const { message, status } = route.query;
 
 const isEmployer = computed(() => authStore.isEmployer);
 
 watch(isEmployer, (value) => {
   if (value) {
     navigateTo({ name: "my-vacancies" });
+  }
+});
+
+onBeforeMount(async () => {
+  if (status === "failed") {
+    toast.error(message, { autoClose: 5000 });
   }
 });
 

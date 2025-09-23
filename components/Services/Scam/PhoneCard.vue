@@ -52,27 +52,21 @@ const frequencyOptions = computed(() =>
     return { name: item.title, value: item.key };
   }),
 );
+const operatorLogo = computed(() => {
+  if (operator.value?.toLowerCase()) {
+    return `/img/operators/${operator.value?.toLowerCase()}.svg`;
+  }
+  return "/img/operators/undefined.svg";
+});
 
 const { addFavorite, removeFavorite, saveComment } = useScamStore();
 const toggleFavorite = async (is_favor) => {
   if (!is_favor) {
-    const resData = await addFavorite({ phone_id: phone_id.value });
+    await addFavorite({ phone_id: phone_id.value });
     isFavoured.value = true;
-    if (resData.status === "success") {
-      await Swal.fire({
-        text: "Вы успешно подписались!",
-        icon: "success",
-      });
-    }
   } else {
-    const resData = await removeFavorite({ phone_id: phone_id.value });
+    await removeFavorite({ phone_id: phone_id.value });
     isFavoured.value = false;
-    if (resData.status === "success") {
-      await Swal.fire({
-        text: "Вы успешно отписались!",
-        icon: "success",
-      });
-    }
   }
 };
 
@@ -94,13 +88,10 @@ const onSubmit = async () => {
   const data = form.value;
   data.category_ids = data.category_ids.map((item) => parseInt(item));
   data.phone_id = phone_id.value;
-  const resData = await saveComment(data);
-  if (resData.status === "success") {
-    await Swal.fire({
-      text: "Ваш коммент успешно добавлено!",
-      icon: "success",
-    });
-  }
+  await saveComment(data);
+};
+const onImgError = (e) => {
+  e.currentTarget.src = "/img/operators/undefined.svg";
 };
 </script>
 
@@ -109,10 +100,13 @@ const onSubmit = async () => {
     <div class="favorites-card-head align-start">
       <div class="company">
         <div class="company-logo">
-          <img
-            :src="'/img/operators/' + operator?.toLowerCase() + '.svg'"
-            :alt="operator?.toLowerCase()"
-          />
+          <client-only>
+            <img
+              :src="operatorLogo"
+              @error="onImgError"
+              :alt="operator?.toLowerCase()"
+            />
+          </client-only>
         </div>
         <div class="company-name">
           <a :href="`tel:${phone}`">{{ format_phone }}</a>

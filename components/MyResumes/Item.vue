@@ -1,4 +1,5 @@
 <template>
+  <PageLoader v-if="isLoading" />
   <li>
     <div class="resume-card">
       <div class="resume-card-body">
@@ -206,10 +207,12 @@
 import Swal from "sweetalert2";
 import { toast } from "vue3-toastify";
 import { useResumeStore } from "~/store/resume";
+import PageLoader from "~/components/UI/PageLoader.vue";
 
 const { $moment, $formatNumber } = useNuxtApp();
 const props = defineProps(["item", "id"]);
 const item = computed(() => props.item);
+const isLoading = ref(false);
 
 const resumeStore = useResumeStore();
 const { updateResume, getMyResumes, deleteResume } = resumeStore;
@@ -249,6 +252,8 @@ watch(
 );
 
 const onNotificationToggle = async (type) => {
+  if (isLoading.value) return;
+  isLoading.value = true;
   const newValue = type === "push" ? !pushStatus.value : !emailStatus.value;
   const resData = await updateResume(item.value.id, {
     form_data: "NOTIFICATION_DATA",
@@ -261,6 +266,7 @@ const onNotificationToggle = async (type) => {
   } else {
     toast.info(resData.message);
   }
+  isLoading.value = false;
 };
 
 const onPushToggle = () => onNotificationToggle("push");

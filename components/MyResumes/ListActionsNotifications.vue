@@ -1,4 +1,5 @@
 <template>
+  <PageLoader v-if="isLoading" />
   <div class="d-inline-flex ms-0 ms-lg-auto">
     <div class="d-inline-flex flex-column flex-lg-row mt-4 mt-lg-0 ms-sm-4">
       <div class="check-block mb-2 mb-md-1 mb-lg-0 me-lg-3">
@@ -29,6 +30,7 @@
 <script setup>
 import { useField, useForm } from "vee-validate";
 import { useResumeStore } from "~/store/resume.js";
+import PageLoader from "~/components/UI/PageLoader.vue";
 
 const props = defineProps(["name"]);
 
@@ -36,6 +38,7 @@ const resumeStore = useResumeStore();
 const { modifyNotifications, getMyResumes, recomputeNotificationForm } =
   resumeStore;
 const isFirst = ref(true);
+const isLoading = ref(false);
 
 const { values, setValues, resetForm } = useForm({
   initialValues: recomputeNotificationForm(),
@@ -43,6 +46,7 @@ const { values, setValues, resetForm } = useForm({
 const { value: all, setValue } = useField("all");
 // Объект для обработки изменений
 const handleNotificationChange = async (event) => {
+  isLoading.value = true;
   const type = event.target.name.split(".").pop();
   const checked = event.target.checked;
   let notifications = { ...values.notifications };
@@ -68,6 +72,7 @@ const handleNotificationChange = async (event) => {
     all: recalculated.all,
     notifications: recalculated.notifications,
   });
+  isLoading.value = false;
 };
 watch(
   () => resumeStore.my_resumes,

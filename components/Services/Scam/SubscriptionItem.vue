@@ -33,22 +33,14 @@ const operatorLogo = computed(() => {
 const { addFavorite, removeFavorite } = useScamStore();
 const toggleFavorite = async (is_favor) => {
   if (!is_favor) {
-    const resData = await addFavorite({ phone_id: phone_id.value });
-    if (resData.status === "success") {
-      Swal.fire({
-        text: "Вы успешно подписались!",
-        icon: "success",
-      });
-    }
+    await addFavorite({ phone_id: phone_id.value });
   } else {
-    const resData = await removeFavorite({ phone_id: phone_id.value });
-    if (resData.status === "success") {
-      Swal.fire({
-        text: "Вы успешно отписались!",
-        icon: "success",
-      });
-    }
+    await removeFavorite({ phone_id: phone_id.value });
   }
+};
+
+const onImgError = (e) => {
+  e.currentTarget.src = "/img/operators/undefined.svg";
 };
 </script>
 
@@ -57,7 +49,13 @@ const toggleFavorite = async (is_favor) => {
     <div class="favorites-card-head">
       <div class="company">
         <div class="company-logo">
-          <img :src="operatorLogo" alt="#" />
+          <client-only>
+            <img
+              :src="operatorLogo"
+              @error="onImgError"
+              :alt="props.phone?.operator?.toLowerCase()"
+            />
+          </client-only>
         </div>
         <div class="company-name">
           <nuxt-link
