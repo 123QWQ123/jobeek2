@@ -29,6 +29,7 @@
     </div>
 
     <MyResumesListActions
+      v-if="my_resumes.length > 0"
       name="provider"
       @onProviderChange="onProviderChange"
     />
@@ -57,7 +58,6 @@ const { can_create_resume_count, providers } = storeToRefs(resumeStore);
 const { my_resumes, current_page, my_total } = storeToRefs(resumeStore);
 const route = useRoute();
 const resumes = ref([]);
-const isLoading = ref(false);
 const form = useMyResumeForm();
 const total = computed(() => {
   return resumeStore.my_resumes.length;

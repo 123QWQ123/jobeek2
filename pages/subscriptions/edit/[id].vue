@@ -24,13 +24,13 @@ if (cities.value.length === 0) {
   await useAsyncData("getCities", async () => await getCities());
 }
 if (professional_roles.value.length === 0) {
-  useAsyncData(
+  await useAsyncData(
     "searchProfessionalRoles",
     async () => await searchProfessionalRoles(),
   );
 }
 
-useAsyncData(
+await useAsyncData(
   "getDictionaries",
   async () => await getDictionaries(["work_type", "vacancy_search_fields"]),
 );
@@ -70,7 +70,7 @@ const initialValues = getFields(data);
 
 const schema = zod
   .object({
-    text: zod.string().nullish(),
+    text: zod.string().min(1, "Обязательно для заполнения"),
     exclude_words: zod.string().nullish(),
     providers: zod.array(zod.string()).nonempty("Выберите провайдера"),
     work_types: zod.array(zod.number()).nonempty(),
