@@ -110,7 +110,7 @@ const { employer } = storeToRefs(authStore);
 
 const schema = zod.object({
   company_name: zod.string().trim().min(2, "Введите название компании"),
-  company_url: zod.string().url().trim().min(2, "Введите URL"),
+  company_url: zod.string().trim().min(2, "Введите URL"),
   company_description: zod.string().trim().min(2, "Введите описание компании"),
   email: zod.string().email("Введите ваш E-mail"),
   phone: zod.string(),

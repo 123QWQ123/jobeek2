@@ -110,6 +110,9 @@ const onEmailConfirm = async (e) => {
     Войдите в электронную почту, откройте письмо с заголовком Jobeek и
     подтвердите свой адрес электронной почты.
   </div>
+  <div class="text-danger" v-if="isConfirmButton && !is_email_to_verify_sent">
+    Перед использовании сервиса требуется подтверждения e-mail.
+  </div>
   <div class="text-danger">{{ errorMessage }}</div>
 </template>
 
