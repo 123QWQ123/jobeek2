@@ -26,6 +26,7 @@ const isPremium = computed(() => auth.isSubscribed);
         <Logo />
         <CabinetHeaderSearchForm v-if="!isCabinetNavbarShown" class="mr-2" />
         <div class="profile-action">
+              <div class="premium-notification-icon"></div>
               <button class="profile-button" type="button" v-if="isPremium">
                 <PremiumIcon />
               </button>
