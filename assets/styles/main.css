@@ -3814,7 +3814,15 @@ body .main-section-mob {
 }
 
 .premium-notification-icon {
-	background: url(../img/premium-noactive.svg) no-repeat;
+    background: url(../img/premium-noactive.svg) no-repeat;
+    width: 38px;
+    height: 37px;
+    display: block;
+    min-width: 38px;
+}
+
+.header-wrapper .premium-notification-icon {
+    background: url(../img/premium-noactive.svg) no-repeat;
     width: 38px;
     height: 37px;
     display: block;
@@ -3822,7 +3830,11 @@ body .main-section-mob {
 }
 
 .notification.active .premium-notification-icon {
-	background: url(../img/premium-active.svg) no-repeat;
+    background: url(../img/premium-active.svg) no-repeat;
+}
+
+.header-wrapper .premium-notification-icon.active {
+    background: url(../img/premium-active.svg) no-repeat;
 }
 
 .sidebar-premium .notification {

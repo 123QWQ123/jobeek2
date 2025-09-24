@@ -39,7 +39,7 @@
     </ul>
     <div class="mt-4 pb-4 justify-content-center" v-else>
       <div class="provider_buttons d-flex mt-4 pb-4 justify-content-center">
-        <p>У Вас нет резюме.</p>
+        <p class="txt-no-resume">У Вас нет резюме.</p>
       </div>
     </div>
   </div>
@@ -81,5 +81,12 @@ const onProviderChange = (newProvider) => {
   padding: 20px;
   font-weight: bold;
   margin-bottom: 40px;
+}
+.txt-no-resume {
+  color: #0a2540;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 25px;
+  padding: 10px 0;
 }
 </style>

@@ -49,6 +49,7 @@ const isPremium = computed(() => auth.isSubscribed);
           <div class="header-wrapper">
             <Logo />
             <div class="profile-action" v-if="auth.isAuthed">
+              <div class="premium-notification-icon"></div>
               <button class="profile-button" type="button" v-if="isPremium">
                 <PremiumIcon />
               </button>
