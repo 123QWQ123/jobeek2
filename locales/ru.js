@@ -3,7 +3,7 @@ export default {
   create_resume: {
     validation: {
       required: "Обязательно для заполнения",
-      invalid_email: "Неверный формат email",
+      invalid_email: "Неверный формат e-mail",
     },
   },
 };

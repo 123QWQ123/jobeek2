@@ -50,7 +50,7 @@
               class="mt-2"
               v-if="!state.is_preferred_email.is_hidden"
               name="is_preferred_email"
-              label="Email является ли предпочтительным способом связи"
+              label="E-mail является ли предпочтительным способом связи"
             />
           </div>
         </div>

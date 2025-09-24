@@ -81,7 +81,7 @@ onMounted(() => {
 
       <form @submit.prevent="onSubmit">
         <div class="input-group">
-          <label for="email">Parent Email</label>
+          <label for="email">Parent E-mail</label>
           <Field id="email" name="email" type="email" />
           <ErrorMessage name="email" />
         </div>
