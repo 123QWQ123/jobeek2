@@ -29,10 +29,7 @@
 
     <div v-if="!items.length" class="no-results no-results-mt-20">
       <p>
-        У вас пока нет вакансий в избранном<br />
-        <span style="font-weight: normal; font-size: 14px"
-          >Сохраняйте вакансии, нажимая на звёздочку</span
-        >
+        У вас пока нет вакансий в избранном
       </p>
     </div>
     <NuxtLink

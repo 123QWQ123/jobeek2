@@ -8761,3 +8761,10 @@ div.parsed_content {
     height: 10px !important;
     width: 10px !important;
 }
+.select2-container.select2-container--default.n-select.d-select {
+    padding: 0 !important;
+}
+.nice-select input.current {
+    min-height: 46px !important;
+    padding: 0 16px !important;
+}

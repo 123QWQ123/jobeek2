@@ -52,7 +52,7 @@ const handleSave = async () => {
     <Head>
       <Title>{{ pageTitle }} - Jobeek</Title>
     </Head>
-    <div class="bg-wrapper pt">
+    <div class="bg-wrapper pt-4 pb-4">
       <PersonalCabinetSearchMobile />
       <div class="wrapper wrapper-1290">
         <form class="create-vacancy" name="create-vacancy">

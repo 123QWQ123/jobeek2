@@ -37,8 +37,8 @@
         :item="item"
       />
     </ul>
-    <div class="d-flex mt-4 pb-4 justify-content-center" v-else>
-      <p>У Вас нет вакансий.</p>
+    <div class="provider_buttons d-flex mt-4 pb-4 justify-content-center" v-else>
+      <p class="txt-no-resume">У Вас нет вакансий.</p></div>
     </div>
 
     <div
