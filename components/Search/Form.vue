@@ -110,7 +110,6 @@ const page = useRoute();
 
 const isLoading = ref(false);
 const onSubmit = async (e) => {
-  console.log(search.value, city.value, salary.value?.min);
   await navigateTo({
     name: !auth.isEmployer ? "search-vacancies" : "search-resumes",
     query: {

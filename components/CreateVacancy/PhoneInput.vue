@@ -32,9 +32,7 @@ onMounted(() => {
       // showSelectedDialCode: true,
       // utilsScript: "intl-tel-input/build/js/utils",
     });
-  } catch (e) {
-    console.log(e);
-  }
+  } catch (e) {}
 
   setTimeout(() => {
     phoneMask.value.setCountry("kz");

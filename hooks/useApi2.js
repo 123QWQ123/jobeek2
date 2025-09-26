@@ -1,6 +1,6 @@
 import { useFetch, useRuntimeConfig } from "nuxt/app";
 import axios from "axios";
-import {useAuthStore} from "~/store/auth";
+import { useAuthStore } from "~/store/auth";
 
 const useApi2 = async (method, options = {}) => {
   // const { data, pending, error, refresh } = await useFetch(url, {
@@ -27,12 +27,11 @@ const useApi2 = async (method, options = {}) => {
   //     }
   // });
   //
-  // console.log(data);
   // return data;
 
   // if request is made from client side
   if (!process.server) {
-    let {tokenAuth} = storeToRefs(useAuthStore())
+    let { tokenAuth } = storeToRefs(useAuthStore());
 
     const headers = {
       Accept: "application/json",
@@ -189,7 +188,6 @@ const useApi2 = async (method, options = {}) => {
           headers: headers,
         });
       }
-      // console.log(response)
       if ("data" in response) {
         return {
           status: "success",

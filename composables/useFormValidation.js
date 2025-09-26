@@ -12,7 +12,6 @@ export default function useFormValidation(state = null) {
     state[inputName] = null;
   };
   const handleErrorResponse = (response, vee = false) => {
-    // console.log(response);
     if (
       response &&
       (response.status === "failed" || response.status === "error")

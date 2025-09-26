@@ -136,7 +136,6 @@ const onSMSSubmit = async () => {
     },
   );
   isLoading.value = false;
-  console.log("onSMSSubmit", response);
   if (response.status !== "success") {
     return;
   }
@@ -241,7 +240,11 @@ function close() {
                 Мы вам еще раз отправили код подтверждения на телефон.
               </span>
               <span class="text-success">{{ phone.val }}</span>
-              <a href="#" class="fw-medium phone-edit-btn" @click.prevent="onChangePhone">
+              <a
+                href="#"
+                class="fw-medium phone-edit-btn"
+                @click.prevent="onChangePhone"
+              >
                 Изменить номер
               </a>
             </p>
