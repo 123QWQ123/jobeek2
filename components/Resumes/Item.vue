@@ -194,7 +194,7 @@ const lastWorkplace = computed(() => {
 });
 
 // Handle favorites
-const isFavorite = ref(props.item.is_favorite || false);
+const isFavorite = ref(props.item.favorite || false);
 
 const toggleFavorite = async () => {
   try {

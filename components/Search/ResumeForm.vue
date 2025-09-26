@@ -6,7 +6,7 @@
         <div class="search-row">
           <div class="input-wrap has-icon has-label">
             <img class="icon" src="~/assets/img/search.png" alt="#" />
-            <label for="name">Поиск </label>
+            <label for="name">Поиск</label>
             <input
               type="text"
               name="name"
@@ -89,6 +89,9 @@ import { useResumeStore } from "~/store/resume";
 
 const props = defineProps({
   withWrapper: { type: Boolean, default: false },
+  with_wrapper: {
+    default: false,
+  },
 });
 
 const router = useRouter();

@@ -2,7 +2,7 @@
   <main class="main cabinet vacansy-page" role="main">
     <div class="bg-wrapper pt pb-4">
       <div class="main-section main-section-mob">
-        <div class="wrapper wrapper--xl">
+        <div :class="{ hidden: hiddenSearchForm }" class="wrapper wrapper--xl">
           <SearchForm></SearchForm>
         </div>
       </div>
@@ -17,11 +17,13 @@
 <script setup>
 import { useResumeStore } from "~/store/resume.js";
 import { storeToRefs } from "pinia";
+import { useUIStore } from "~/store/ui.js";
 
 const route = useRoute();
 const resumeStore = useResumeStore();
 const { getSingleResume } = resumeStore;
 const { resume } = storeToRefs(resumeStore);
+const { hiddenSearchForm } = storeToRefs(useUIStore());
 
 const { slug } = route.params;
 const { provider } = route.query;

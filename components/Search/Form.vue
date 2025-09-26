@@ -53,16 +53,10 @@ const route = useRoute();
 const router = useRouter();
 const auth = useAuthStore();
 
-const search = ref(null);
-const salary = ref(null);
-const region = ref(null);
-const city = ref("*");
+const search = ref(undefined);
+const salary = ref(undefined);
+const city = ref(undefined);
 
-// onMounted(() => {
-//   if (Array.from(form.value.cities).length === 1) {
-//     city.value = form.value.cities[0];
-//   }
-// });
 const profileStore = useProfileStore();
 const { searchCities } = profileStore;
 const updateCityInput = async (newValue = "") => {
@@ -115,14 +109,18 @@ const prepareCities = () => {
 const page = useRoute();
 
 const isLoading = ref(false);
-const onSubmit = (e) => {
-  const params = useVacancyForm(form.value, "front");
-  navigateTo({
-    name: "search-vacancies",
+const onSubmit = async (e) => {
+  await navigateTo({
+    name: !auth.isEmployer ? "search-vacancies" : "search-resumes",
     query: {
-      countries: JSON.stringify([1]),
-      cities: JSON.stringify(form.value.cities),
-      salary: JSON.stringify(form.value.salary),
+      search: search.value,
+      cities: city.value,
+      salary: salary.value
+        ? JSON.stringify({
+            min: salary.value.min,
+            max: salary.value.max,
+          })
+        : undefined,
     },
   });
 };
