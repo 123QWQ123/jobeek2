@@ -24,6 +24,20 @@
       >Подключите минимум 1 провайдер для дальнейшего использования
       сервиса</span
     >
+    <div class="notification-premium">
+      <div class="ic">
+        <img src="~/assets/img/svg/crown2.svg" alt="#" />
+      </div>
+      <div class="notification-premium-text">
+        <strong class="title">Подключите премиум</strong>
+        <p>
+          У вас есть лимит на создание резюме:
+          {{ can_create_resume_count }} шт. Чтобы создавать неограниченное
+          количество резюме, подключите премиум-подписку.
+        </p>
+      </div>
+    </div>
+    
     <div class="col d-flex justify-content-between mt-4 margin-bottom-mobile">
       <h1 class="lk-page-title mb-4">Ваши резюме ({{ total }})</h1>
     </div>

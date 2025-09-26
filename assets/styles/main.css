@@ -8632,7 +8632,16 @@ div.parsed_content {
 	padding-bottom: 12px;
 }
 
+@media (max-width: 1280px) {
+	.mb-title-bottom {
+		margin-bottom: 40px;
+	}
+}
+
 @media (max-width: 960px) {
+	.mb-title-bottom {
+		margin-bottom: 8px;
+	}
 	.arrow {
 	    height: 15px;
 	    right: 20px;
@@ -8719,6 +8728,9 @@ div.parsed_content {
 	    font-size: 20px;
 	    line-height: 24px;
 	}
+	.results-page-content {
+	    padding-top: 20px;
+	}
 }
 @media (max-width: 560px) {
 	.services-block-group.services-block-all {
@@ -8767,4 +8779,74 @@ div.parsed_content {
 .nice-select input.current {
     min-height: 46px !important;
     padding: 0 16px !important;
+}
+
+.notification-premium {
+    position: relative;
+    padding: 27px 40px 27px 223px;
+    background: #FFFFFF;
+    -webkit-box-shadow: 0px 0px 20px rgba(28, 27, 98, 0.04);
+    box-shadow: 0px 0px 20px rgba(28, 27, 98, 0.04);
+    border-radius: 12px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.notification-premium:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 123px;
+    width: 199px;
+    background-image: url(../img/svg/shape1.svg);
+    background-position: left 0 bottom 0;
+    background-repeat: no-repeat;
+}
+
+.notification-premium .ic {
+    margin-right: 39px;
+    position: absolute;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    left: 12px;
+}
+
+.notification-premium .notification-text {
+    max-width: 736px;
+    width: 100%;
+}
+
+.notification-premium .notification-button {
+    margin-left: auto;
+    padding: 12px 19px;
+    font-size: 18px;
+}
+
+.notification-premium>* {
+    position: relative;
+    z-index: 1;
+}
+
+.notification-premium:after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 143px;
+    width: 178px;
+    background-image: url(../img/svg/shape2.svg);
+    background-position: right 0 top 0;
+    background-repeat: no-repeat;
+}
+
+.mb-title-bottom {
+	
 }
