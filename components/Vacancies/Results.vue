@@ -37,7 +37,7 @@ import FilterIcon from "~/components/Vacancies/FilterIcon.vue";
 const { $format_number } = useNuxtApp();
 const vacancyStore = useVacancyStore();
 const uiStore = useUIStore();
-const { getVacancies } = vacancyStore;
+const { getVacancies, clearVacancies } = vacancyStore;
 const { total } = storeToRefs(vacancyStore);
 const { getCurrentQueryParams } = useQueryParams();
 const isLoading = ref(false);
@@ -59,6 +59,7 @@ watch(
   async (newValues, oldValues) => {
     if (JSON.stringify(newValues) !== JSON.stringify(oldValues)) {
       isLoading.value = true;
+      await clearVacancies();
       await getVacancies(newValues);
       isLoading.value = false;
     }

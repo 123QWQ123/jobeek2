@@ -36,7 +36,10 @@
       <p>У Вас нет вакансий.</p>
     </div>
 
-    <div class="d-flex mt-4 justify-content-between pagination-btn" v-if="isPaginationVisible">
+    <div
+      class="d-flex mt-4 justify-content-between pagination-btn"
+      v-if="isPaginationVisible"
+    >
       <button
         class="btn btn-primary btn-group-sm"
         :class="{ disabled: isPrevDisabled }"
@@ -144,7 +147,9 @@ const nextPage = async (e) => {
 };
 
 onMounted(async () => {
-  await getMyDrafts({});
+  await getMyDrafts({
+    page: route.query.page ?? 1,
+  });
 });
 </script>
 

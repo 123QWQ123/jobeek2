@@ -65,7 +65,7 @@ watch(
 const loadMore = async () => {
   isLoading.value = true;
   const res = await getResumes(
-    { ...params.value, page: parseInt(current_page.value) + 1 },
+    { ...params.value, page: parseInt(current_page.value ?? 0) + 1 },
     true,
     false,
   );

@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper wrapper-mb">
-  <div class="main-section-title"><h1 class="title">Поиск резюме</h1></div>
-  	<div v-if="with_wrapper">
+    <div class="main-section-title"><h1 class="title">Поиск резюме</h1></div>
+    <div v-if="with_wrapper">
       <form class="search-form" role="form" autocomplete="off">
         <div class="search-row">
           <div class="input-wrap has-icon has-label">
@@ -40,43 +40,43 @@
       </form>
     </div>
 
-  <form v-else class="search-form" role="form" autocomplete="off">
-    <div class="search-row">
-      <div class="input-wrap has-icon has-label">
-        <img class="icon" src="~/assets/img/search.png" alt="#" />
-        <label for="name">Поиск </label>
-        <input
-          type="text"
-          name="name"
-          placeholder="Какую вакансию вы ищете?"
-          autocomplete="off"
-          v-model="search"
-        />
+    <form v-else class="search-form" role="form" autocomplete="off">
+      <div class="search-row">
+        <div class="input-wrap has-icon has-label">
+          <img class="icon" src="~/assets/img/search.png" alt="#" />
+          <label for="name">Поиск </label>
+          <input
+            type="text"
+            name="name"
+            placeholder="Какую вакансию вы ищете?"
+            autocomplete="off"
+            v-model="search"
+          />
+        </div>
+        <div class="input-wrap has-label">
+          <label for="salary">Желаемая зарплата</label>
+          <HeaderSalarySelectInForm v-model="salary" />
+        </div>
+        <div class="input-wrap has-label">
+          <label for="salary">Город</label>
+          <SelectWithSearch
+            :options="cityOptions"
+            v-model.number="city"
+            placeholder="Город"
+            class="no_bg"
+            @input="updateCityInput"
+            @change="onCityChange"
+          />
+        </div>
+        <button
+          class="button-accent submit-search-form"
+          type="button"
+          @click="onSubmit"
+        >
+          Поиск
+        </button>
       </div>
-      <div class="input-wrap has-label">
-        <label for="salary">Желаемая зарплата</label>
-        <HeaderSalarySelectInForm v-model="salary" />
-      </div>
-      <div class="input-wrap has-label">
-        <label for="salary">Город</label>
-        <SelectWithSearch
-          :options="cityOptions"
-          v-model.number="city"
-          placeholder="Город"
-          class="no_bg"
-          @input="updateCityInput"
-          @change="onCityChange"
-        />
-      </div>
-      <button
-        class="button-accent submit-search-form"
-        type="button"
-        @click="onSubmit"
-      >
-        Поиск
-      </button>
-    </div>
-  </form>
+    </form>
   </div>
 </template>
 
@@ -96,7 +96,6 @@ const route = useRoute();
 const resumeStore = useResumeStore();
 const profileStore = useProfileStore();
 const { searchCities } = profileStore;
-const { clearResumes } = resumeStore;
 const { getQueryParam } = useQueryParams();
 
 const search = ref(route.query?.search ?? "");
@@ -172,7 +171,6 @@ const updateCityInput = async (newValue = "") => {
 };
 const onSubmit = async (e) => {
   isLoading.value = true;
-  clearResumes();
   const cities = city.value ? [city.value] : undefined;
   const queryParams = {
     cities: JSON.stringify(cities),

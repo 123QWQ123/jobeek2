@@ -20,7 +20,6 @@
           Фильтры
         </button>
         <div class="aside-container">
-          <BlockLoader class="position-fixed" v-if="isLoading" />
           <ResumesFilters></ResumesFilters>
 
           <div class="content">
@@ -60,7 +59,7 @@ const { name: search_keyword } = route.query;
 
 const isLoading = ref(false);
 
-const { getResumes } = resumeStore;
+const { getResumes, clearResumes } = resumeStore;
 const { getCurrentQueryParams } = useQueryParams();
 
 await useAsyncData("getResumes", async () => {
@@ -71,6 +70,7 @@ watch(
   async (newValues, oldValues) => {
     if (JSON.stringify(newValues) !== JSON.stringify(oldValues)) {
       isLoading.value = true;
+      clearResumes();
       await getResumes({ ...getCurrentQueryParams() }, false, true);
       isLoading.value = false;
     }
