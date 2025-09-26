@@ -126,7 +126,6 @@ import { ref } from "vue";
 const auth = useAuthStore();
 const { isAuthed, isEmployer, user } = storeToRefs(auth);
 const { hiddenSearchForm } = storeToRefs(useUIStore());
-const hidden = ref(hiddenSearchForm);
 
 const isMobileNavigationActive = ref(false);
 
@@ -134,8 +133,7 @@ const toggleMobileNavigation = () => {
   isMobileNavigationActive.value = !isMobileNavigationActive.value;
 };
 const toggleSearch = () => {
-  hidden.value = !hidden.value;
-  hiddenSearchForm.value = hidden.value;
+  hiddenSearchForm.value = !hiddenSearchForm.value;
 };
 </script>
 
