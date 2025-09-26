@@ -305,7 +305,7 @@ const schema = computed(() => {
         .min(1, "Введите URL")
         .nullable()
         .optional(),
-      phones: zod.array(phoneScheme).nonempty(),
+      phones: zod.array(phoneScheme).nonempty("Введите номер телефона"),
     });
   }
   if (providers.value.hh === false && providers.value.superjob === true) {

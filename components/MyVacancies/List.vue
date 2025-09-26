@@ -22,81 +22,85 @@
       >Создать вакансию
     </NuxtLink>
     <div v-else></div>
-    <div class="col d-flex justify-content-between mt-4">
-      <h1 class="lk-page-title">Ваши вакансии</h1>
-    </div>
     <div
-      class="col d-flex justify-content-between align-items-center py-4 pt-0"
+      v-if="!!totalDrafts || !!totalActiveVacancies || !!totalArchivedVacancies"
     >
-      <ul class="nav nav-tabs vacancy_tabs w-100">
-        <li
-          class="nav-item"
-          :class="{ active: form.status === 'draft' }"
-          @click="onFilterChange('draft')"
-        >
-          <a
-            class="nav-link"
-            :to="{ name: 'my-vacancies', query: { status: 'draft' } }"
+      <div class="col d-flex justify-content-between mt-4">
+        <h1 class="lk-page-title">Ваши вакансии</h1>
+      </div>
+      <div
+        class="col d-flex justify-content-between align-items-center py-4 pt-0"
+      >
+        <ul class="nav nav-tabs vacancy_tabs w-100">
+          <li
+            class="nav-item"
             :class="{ active: form.status === 'draft' }"
-            >Черновик ({{ totalDrafts }})</a
+            @click="onFilterChange('draft')"
           >
-        </li>
-        <li
-          class="nav-item"
-          :class="{ active: form.status === 'active' }"
-          @click="onFilterChange('active')"
-        >
-          <a
-            class="nav-link"
-            :to="{ name: 'my-vacancies', query: { status: 'active' } }"
+            <a
+              class="nav-link"
+              :to="{ name: 'my-vacancies', query: { status: 'draft' } }"
+              :class="{ active: form.status === 'draft' }"
+              >Черновик ({{ totalDrafts }})</a
+            >
+          </li>
+          <li
+            class="nav-item"
             :class="{ active: form.status === 'active' }"
-            >Активные ({{ totalActiveVacancies }})</a
+            @click="onFilterChange('active')"
           >
-        </li>
-        <li
-          class="nav-item"
-          :class="{ active: form.status === 'archived' }"
-          @click="onFilterChange('archived')"
-        >
-          <a
-            class="nav-link"
-            :to="{ name: 'my-vacancies', query: { status: 'archived' } }"
+            <a
+              class="nav-link"
+              :to="{ name: 'my-vacancies', query: { status: 'active' } }"
+              :class="{ active: form.status === 'active' }"
+              >Активные ({{ totalActiveVacancies }})</a
+            >
+          </li>
+          <li
+            class="nav-item"
             :class="{ active: form.status === 'archived' }"
-            >В архиве ({{ totalArchivedVacancies }})</a
+            @click="onFilterChange('archived')"
           >
-        </li>
-      </ul>
-      <div class="d-inline-flex">
-        <!--              <form class="sort mx-2 ms-auto" action="#">-->
-        <!--                <span>Поставщик:</span>-->
-        <!--                <CustomSelect :options="providerOptions" v-model="form.provider" @change="onProviderChange" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>-->
-        <!--              </form>-->
+            <a
+              class="nav-link"
+              :to="{ name: 'my-vacancies', query: { status: 'archived' } }"
+              :class="{ active: form.status === 'archived' }"
+              >В архиве ({{ totalArchivedVacancies }})</a
+            >
+          </li>
+        </ul>
+        <div class="d-inline-flex">
+          <!--              <form class="sort mx-2 ms-auto" action="#">-->
+          <!--                <span>Поставщик:</span>-->
+          <!--                <CustomSelect :options="providerOptions" v-model="form.provider" @change="onProviderChange" class="bg-white w-auto" :listStyles="listStyles"></CustomSelect>-->
+          <!--              </form>-->
+        </div>
+
+        <!--      <form class="sort">-->
+        <!--        <span>Фильтр:</span>-->
+        <!--        <CustomSelect-->
+        <!--          :options="filterOptions"-->
+        <!--          v-model="form.status"-->
+        <!--          @change="onFilterChange"-->
+        <!--          class="bg-white w-auto"-->
+        <!--          :listStyles="listStyles"-->
+        <!--        ></CustomSelect>-->
+        <!--      </form>-->
       </div>
 
-      <!--      <form class="sort">-->
-      <!--        <span>Фильтр:</span>-->
-      <!--        <CustomSelect-->
-      <!--          :options="filterOptions"-->
-      <!--          v-model="form.status"-->
-      <!--          @change="onFilterChange"-->
-      <!--          class="bg-white w-auto"-->
-      <!--          :listStyles="listStyles"-->
-      <!--        ></CustomSelect>-->
-      <!--      </form>-->
+      <MyVacanciesDraftList
+        v-if="form.status === 'draft'"
+        :items="vacancyStore.my_drafts"
+      />
+      <MyVacanciesActiveList
+        v-else-if="form.status === 'active'"
+        :items="vacancyStore.my_vacancies"
+      />
+      <MyVacanciesArchivedList
+        v-else
+        :items="vacancyStore.my_archived_vacancies"
+      />
     </div>
-
-    <MyVacanciesDraftList
-      v-if="form.status === 'draft'"
-      :items="vacancyStore.my_drafts"
-    />
-    <MyVacanciesActiveList
-      v-else-if="form.status === 'active'"
-      :items="vacancyStore.my_vacancies"
-    />
-    <MyVacanciesArchivedList
-      v-else
-      :items="vacancyStore.my_archived_vacancies"
-    />
   </div>
 </template>
 

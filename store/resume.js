@@ -284,7 +284,7 @@ export const useResumeStore = defineStore("resume", {
         method: "get",
         params: payload,
       });
-      if (response.status === "success" && response.data.data.length > 0) {
+      if (response.status === "success") {
         this.my_favorite_resumes = response.data.data;
         if (payload.page) {
           this.current_page = payload.page;

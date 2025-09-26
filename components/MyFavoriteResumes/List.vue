@@ -27,6 +27,20 @@
     <!--        Next-->
     <!--      </button>-->
     <!--    </div>-->
+    <div v-if="!my_favorite_resumes.length" class="no-results no-results-mt-20">
+      <p>
+        У вас пока нет резюме в избранном<br />
+        <span style="font-weight: normal; font-size: 14px"
+          >Сохраняйте резюме, нажимая на звёздочку</span
+        >
+      </p>
+    </div>
+    <NuxtLink
+      v-if="!my_favorite_resumes.length"
+      class="create-button"
+      :to="{ name: 'search-resumes' }"
+      >Найти резюме</NuxtLink
+    >
   </div>
 </template>
 
@@ -63,12 +77,6 @@ const fetchFavorites = async (page = current_page.value) => {
   isLoading.value = true;
   try {
     return await getMyFavoriteResumes({ page });
-  } catch (error) {
-    console.error("Error fetching favorite resumes:", error);
-    await Swal.fire({
-      title: "Ошибка загрузки данных!",
-      icon: "error",
-    });
   } finally {
     isLoading.value = false;
   }
@@ -85,13 +93,6 @@ const prevPage = async () => {
 const nextPage = async () => {
   if (!hasNextPage.value) return;
   const res = await fetchFavorites(current_page.value + 1);
-  if (!res?.items?.length) {
-    await Swal.fire({
-      title: "Больше вакансий не найдено!",
-      icon: "info",
-      timer: 3000,
-    });
-  }
 };
 </script>
 

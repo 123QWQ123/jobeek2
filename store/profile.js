@@ -339,7 +339,7 @@ export const useProfileStore = defineStore("profile", {
         payload,
         cb,
       });
-      if (response.data.status === "success") {
+      if (response.status === "success") {
         const {
           data: { data: employer },
         } = response;

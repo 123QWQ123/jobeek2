@@ -61,7 +61,6 @@ const route = useRoute();
 const vacancyStore = useVacancyStore();
 const profileStore = useProfileStore();
 const { searchCities } = profileStore;
-const { clearVacancies } = vacancyStore;
 const { getQueryParam } = useQueryParams();
 
 const search = ref(route.query?.search ?? "");
@@ -138,7 +137,6 @@ const updateCityInput = async (newValue = "") => {
 };
 
 const onSubmit = async () => {
-  await clearVacancies();
   await router.push({
     name: "search-vacancies",
     query: {

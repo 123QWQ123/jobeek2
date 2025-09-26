@@ -29,7 +29,6 @@
     </div>
 
     <MyResumesListActions
-      v-if="my_resumes.length > 0"
       name="provider"
       @onProviderChange="onProviderChange"
     />

@@ -2,8 +2,10 @@
 import { useAuthStore } from "~/store/auth";
 import { storeToRefs } from "pinia";
 import { useProfileStore } from "~/store/profile";
-import { navigateTo } from "nuxt/app";
 
+useHead({
+  title: "Jobeek - Подтверждение E-mail",
+});
 const authStore = useAuthStore();
 const profileStore = useProfileStore();
 
