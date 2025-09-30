@@ -1,6 +1,5 @@
 <template>
   <form class="search-form" role="form" autocomplete="off">
-    <div class="wrapper">
       <div class="search-row">
         <div class="input-wrap has-icon has-label">
           <img class="icon" src="~/assets/img/search.png" alt="#" />
@@ -36,7 +35,6 @@
           Поиск
         </button>
       </div>
-    </div>
   </form>
 </template>
 
