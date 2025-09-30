@@ -11,7 +11,7 @@
       @input="onChangeHandler"
       @focusin="onFocus"
       :placeholder="placeholder"
-      :class="{ placeholder: placeholderClass }"
+      :class="{ placeholder: !selectedOption }"
     />
     <span class="select_arrow" @click="toggle"></span>
     <ul class="list" :style="listStyles" v-if="isOpen">
@@ -54,18 +54,13 @@ const isFirstOpen = ref(true);
 const isOpen = ref(false);
 
 const selectedOption = computed(() =>
-  props.options.find((item) => String(item.value) === String(props.modelValue)),
+  props.options?.find(
+    (item) => String(item.value) === String(props.modelValue),
+  ),
 );
 
 // searchInput управляется вручную и инициализируется через watch для синхронизации с выбранным значением
 const searchInput = ref(selectedOption.value?.name ?? props.placeholder);
-
-watch(
-  () => selectedOption.value,
-  (val) => {
-    searchInput.value = val ? val.name : "";
-  },
-);
 
 const filteredOptions = computed(() => {
   if (!searchInput.value) return props.options;
@@ -73,10 +68,6 @@ const filteredOptions = computed(() => {
   return props.options.filter((item) =>
     String(item.name).toLowerCase().includes(search),
   );
-});
-
-const placeholderClass = computed(() => {
-  return !selectedOption.value;
 });
 
 function toggle() {
@@ -94,6 +85,8 @@ watch(
 );
 
 function onSelect(id) {
+  searchInput.value =
+    props.options.find((item) => String(item.value) === String(id))?.name ?? "";
   emit("update:modelValue", id);
   isOpen.value = false;
 }

@@ -80,7 +80,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, watch, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useProfileStore } from "~/store/profile";
@@ -101,14 +101,14 @@ const profileStore = useProfileStore();
 const { searchCities } = profileStore;
 const { getQueryParam } = useQueryParams();
 
-const search = ref(route.query?.search ?? "");
-const salary = ref(getQueryParam("salary") ?? "");
-const cityOptions = ref<{ value: number; name: string }[]>([]);
-const city = ref<number | null>(extractCityIdFromQuery(route.query));
+const search = ref(route.query?.search ?? undefined);
+const salary = ref(getQueryParam("salary") ?? undefined);
+const cityOptions = ref([]);
+const city = ref(extractCityIdFromQuery(route.query));
 const isLoading = ref(false);
 
 // Специальная функция для извлечения id города из query-параметра
-function extractCityIdFromQuery(query): number | null {
+function extractCityIdFromQuery(query) {
   const raw = query?.cities;
   if (!raw) return null;
   try {
@@ -120,39 +120,17 @@ function extractCityIdFromQuery(query): number | null {
 }
 
 // При инициализации — если в query есть город, добавляем его в cityOptions
-await useAsyncData("city-from-query", async () => {
-  if (city.value) {
-    const arr = JSON.parse(city.value);
-    const allCities = await resumeStore.getCities({
-      city_ids: Array.isArray(arr) ? arr : [Number(arr)],
-    });
-    const found = allCities?.find((item) => item.id === city.value);
-    if (found) {
-      cityOptions.value = [{ value: found.id, name: found.name }];
-    }
+let allCities = [];
+if (city.value) {
+  const id = extractCityIdFromQuery({ cities: city.value });
+  allCities = await searchCities({
+    city_ids: Array.isArray(id) ? id : [Number(id)],
+  });
+  const found = allCities?.find((item) => item.id === city.value);
+  if (found) {
+    cityOptions.value = [{ name: found.name, value: found.id }];
   }
-});
-
-watch(
-  () => route.query?.cities,
-  async (newCities) => {
-    const id = extractCityIdFromQuery({ cities: newCities });
-    if (id) {
-      const arr = JSON.parse(city.value);
-      const allCities = await resumeStore.getCities({
-        city_ids: Array.isArray(arr) ? arr : [Number(arr)],
-      });
-      const found = allCities?.find((item) => item.id === id);
-      if (found) {
-        cityOptions.value = [{ value: found.id, name: found.name }];
-        city.value = found.id;
-      }
-    } else {
-      city.value = null;
-      cityOptions.value = [];
-    }
-  },
-);
+}
 
 watch(
   () => getQueryParam("salary"),
@@ -178,12 +156,9 @@ const onSubmit = async (e) => {
   const queryParams = {
     cities: JSON.stringify(cities),
     salary: JSON.stringify(salary.value),
-    name: search.value,
+    search: search.value,
   };
-  await router.push({
-    name: "search-resumes",
-    query: queryParams,
-  });
+  await navigateTo({ name: "search-resumes", query: queryParams });
 
   isLoading.value = false;
 };

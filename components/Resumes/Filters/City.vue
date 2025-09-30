@@ -51,10 +51,15 @@ import { computed, ref, watch } from "vue";
 
 const resumeStore = useResumeStore();
 const { getCities } = resumeStore;
+const { cities_formatted } = storeToRefs(resumeStore);
 
 const { updateQueryParam, getQueryParam } = useQueryParams();
-const cities = ref(getQueryParam("cities") ?? []);
-const regions = ref(getQueryParam("regions") ?? []);
+const cities = computed(() => getQueryParam("cities") ?? []);
+const regions = computed(() => getQueryParam("regions") ?? []);
+await useAsyncData(
+  "cities",
+  async () => await getCities({ region_ids: regions.value }),
+);
 
 const search = ref("");
 const filterClass = ref(true);
@@ -62,14 +67,12 @@ const filterClass = ref(true);
 const { sortBubbleBySearch } = useSort();
 
 const selectedItems = computed(() =>
-  resumeStore.cities_formatted.filter((item) =>
-    cities.value.includes(item.value),
-  ),
+  cities_formatted.value.filter((item) => cities.value.includes(item.value)),
 );
 
 const filteredItems = computed(() => {
   const query = search.value.toLowerCase();
-  const availableItems = resumeStore.cities_formatted.filter(
+  const availableItems = cities_formatted.value.filter(
     (item) => !cities.value.includes(item.value),
   );
 
@@ -116,11 +119,6 @@ const toggleCity = (id) => {
 watch(regions, () => {
   getCities({ region_ids: regions.value });
 });
-
-useAsyncData(
-  "cities",
-  async () => await getCities({ region_ids: regions.value }),
-);
 </script>
 
 <style scoped>

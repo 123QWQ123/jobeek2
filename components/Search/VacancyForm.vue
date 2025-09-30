@@ -65,8 +65,8 @@ const { getQueryParam } = useQueryParams();
 
 const search = ref(route.query?.search ?? "");
 const salary = ref(getQueryParam("salary") ?? "");
-const cityOptions = ref<{ value: number; name: string }[]>([]);
-const city = ref<number | null>(extractCityIdFromQuery(route.query));
+const cityOptions = ref([]);
+const city = ref(extractCityIdFromQuery(route.query));
 
 // Специальная функция для извлечения id города из query-параметра
 function extractCityIdFromQuery(query): number | null {
@@ -81,41 +81,17 @@ function extractCityIdFromQuery(query): number | null {
 }
 
 // При инициализации — если в query есть город, добавляем его в cityOptions
-await useAsyncData("city-from-query", async () => {
-  let allCities = [];
-  if (city.value) {
-    const arr = JSON.parse(city.value);
-    allCities = await vacancyStore.getCities({
-      city_ids: Array.isArray(arr) ? arr : [Number(arr)],
-    });
-    const found = allCities?.find((item) => item.id === city.value);
-    if (found) {
-      cityOptions.value = [{ value: found.id, name: found.name }];
-    }
+let allCities = [];
+if (city.value) {
+  const id = extractCityIdFromQuery({ cities: city.value });
+  allCities = await searchCities({
+    city_ids: Array.isArray(id) ? id : [Number(id)],
+  });
+  const found = allCities?.find((item) => item.id === city.value);
+  if (found) {
+    cityOptions.value = [{ name: found.name, value: found.id }];
   }
-  return allCities;
-});
-
-watch(
-  () => route.query?.cities,
-  async (newCities) => {
-    const id = extractCityIdFromQuery({ cities: newCities });
-    if (id) {
-      const arr = JSON.parse(city.value);
-      const allCities = await vacancyStore.getCities({
-        city_ids: Array.isArray(arr) ? arr : [Number(arr)],
-      });
-      const found = allCities?.find((item) => item.id === id);
-      if (found) {
-        cityOptions.value = [{ value: found.id, name: found.name }];
-        city.value = found.id;
-      }
-    } else {
-      city.value = null;
-      cityOptions.value = [];
-    }
-  },
-);
+}
 
 watch(
   () => getQueryParam("salary"),
