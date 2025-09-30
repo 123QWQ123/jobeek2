@@ -8794,7 +8794,8 @@ div.parsed_content {
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: center;
-    margin-bottom: 40px;
+    margin-top: 25px;
+    margin-bottom: 25px;
 }
 
 .notification-premium:before {
@@ -8847,6 +8848,45 @@ div.parsed_content {
     background-repeat: no-repeat;
 }
 
+.notification-premium .notification-premium-text .title {
+    display: block;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 33px;
+    color: #0A2540;
+    margin-bottom: 12px;
+}
+
+.notification .notification-text p {
+    font-size: 16px;
+    line-height: 140%;
+    color: #78757E;
+}
+
 .mb-title-bottom {
 	
+}
+
+@media (max-width: 560px) {
+	.notification-premium {
+        background-image: none;
+    }
+    .notification-premium .ic {
+        display: none;
+    }
+    .notification-premium .notification-premium-text {
+        margin-right: 20px;
+    }
+    .notification-premium .notification-text .title {
+        font-size: 20px;
+        line-height: 26px;
+        margin-bottom: 10px;
+    }
+    .notification-premium .notification-text p {
+        font-size: 14px;
+    }
+    .notification-premium .notification-button {
+        font-size: 16px;
+        white-space: nowrap;
+    }
 }

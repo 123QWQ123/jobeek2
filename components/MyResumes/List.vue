@@ -36,6 +36,7 @@
           количество резюме, подключите премиум-подписку.
         </p>
       </div>
+      <a class="notification-premium-button button-accent" href="#">Подключить </a>
     </div>
     
     <div class="col d-flex justify-content-between mt-4 margin-bottom-mobile">
