@@ -59,6 +59,7 @@ watch(vacancies, (newValues) => {
   }
 });
 const loadMore = async () => {
+  if (isLoading.value) return;
   isLoading.value = true;
   const res = await getVacancies(
     { ...params.value, page: parseInt(current_page.value ?? 0) + 1 },

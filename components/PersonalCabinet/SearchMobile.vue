@@ -159,7 +159,7 @@ const onSubmit = async () => {
   await vacancyStore.clearVacancies();
   const query = buildQueryParams();
   const routeName = isEmployer.value ? "search-resumes" : "search-vacancies";
-  await router.push({ name: routeName, query });
+  await navigateTo({ name: routeName, query: query });
 };
 
 // Подгружаем города при открытии

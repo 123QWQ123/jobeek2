@@ -27,7 +27,6 @@ if (isEmployer.value) {
 <template>
   <div class="main cabinet profile-page bg-wrapper margin-top-none search-page">
     <SearchVacancyForm :withWrapper="false" />
-
-    <VacanciesResults></VacanciesResults>
+    <VacanciesResults />
   </div>
 </template>

@@ -8,6 +8,7 @@
       <button
         ref="loadMoreButton"
         v-if="isMore"
+        :disabled="isLoading"
         id="load_more_button"
         class="create-button show-more"
         @click="loadMore"
@@ -63,6 +64,7 @@ watch(
   },
 );
 const loadMore = async () => {
+  if (isLoading.value) return;
   isLoading.value = true;
   const res = await getResumes(
     { ...params.value, page: parseInt(current_page.value ?? 0) + 1 },

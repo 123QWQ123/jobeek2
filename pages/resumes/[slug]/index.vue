@@ -1,11 +1,7 @@
 <template>
   <main class="main cabinet vacansy-page" role="main">
     <div class="bg-wrapper pt pb-4">
-      <div class="main-section main-section-mob">
-        <div :class="{ hidden: hiddenSearchForm }" class="wrapper wrapper--xl">
-          <SearchForm></SearchForm>
-        </div>
-      </div>
+      <PersonalCabinetSearchMobile></PersonalCabinetSearchMobile>
       <div class="wrapper wrapper-1290" v-if="resumeData">
         <ResumesSingleContent :item="resumeData" />
       </div>

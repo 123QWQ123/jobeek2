@@ -158,7 +158,10 @@ export const useProfileStore = defineStore("profile", {
       return response.data.data ?? [];
     },
     async searchCities(payload = {}) {
-      if (!payload.search) {
+      if (
+        (payload.hasOwnProperty("city_ids") && !payload.city_ids) ||
+        (payload.hasOwnProperty("search") && !payload.search)
+      ) {
         return [];
       }
 

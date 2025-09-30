@@ -137,6 +137,7 @@ export const useResumeStore = defineStore("resume", {
           ? [...this.resumes, ...response.data.items]
           : response.data.items;
         this.total = response.data.found;
+        this.current_page = response.data.current_page;
       }
       return this.resumes;
     },
@@ -307,10 +308,6 @@ export const useResumeStore = defineStore("resume", {
         method: "get",
         params: payload,
       });
-
-      if (data && "data" in data && Object.keys(payload).length !== 0) {
-        return data.data ?? [];
-      }
 
       if (data && "data" in data) {
         this.cities = data.data ?? [];
