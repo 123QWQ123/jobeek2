@@ -11,7 +11,7 @@
               :to="{
                 name: 'vacancies-slug',
                 params: { slug: item.provider_vacancy_id || item.id },
-                query: { provider: 'hh' },
+                query: { provider: item.provider },
               }"
             >
               {{ item.name }}

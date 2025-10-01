@@ -11,7 +11,7 @@
               :to="{
                 name: 'resumes-slug',
                 params: { slug: item.id },
-                query: { provider: 'superjob' },
+                query: { provider: item.provider },
               }"
             >
               {{ item.name }}
