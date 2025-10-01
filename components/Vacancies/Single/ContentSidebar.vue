@@ -192,7 +192,7 @@ const onSubmit = async (e) => {
   const response = await submitResume({
     vacancy_id: data.id,
     resume_id: selectedResume.value,
-    providers: ["hh"],
+    providers: [data.provider],
   });
 
   if (response.status !== "success") {
@@ -210,7 +210,7 @@ const toggleContactsVisibility = () => {
 };
 
 const employerLogo = computed(
-  () => data.logo ?? new URL("/assets/img/logos/superjob.svg", import.meta.url),
+  () => data.logo ?? new URL("/img/operators/undefined.svg", import.meta.url),
 );
 </script>
 

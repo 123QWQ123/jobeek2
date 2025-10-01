@@ -48,7 +48,7 @@ const schema = zod
   .object({
     text: zod.string().min(1, "Обязательно для заполнения"),
     providers: zod.array(zod.string()).nonempty("Выберите провайдера"),
-    work_types: zod.array(zod.number()).nonempty(),
+    work_types: zod.array(zod.number()).nonempty("Обязательно для заполнения"),
     search_fields: zod.array(zod.number()).nullable().optional(),
     push_notification: zod.boolean().optional(),
     email_notification: zod.boolean().optional(),
