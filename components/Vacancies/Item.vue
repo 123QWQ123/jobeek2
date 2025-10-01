@@ -196,7 +196,7 @@ const toggleFavorite = async () => {
 const employerLogo = computed(() =>
   item.logo
     ? item.logo
-    : new URL("/assets/img/logos/superjob.svg", import.meta.url),
+    : new URL("/img/operators/undefined.svg", import.meta.url),
 );
 </script>
 
