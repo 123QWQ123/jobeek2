@@ -8,8 +8,12 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const { value: isAuthed } = computed(() => authStore.isAuthed);
   const { value: isEmployerMode } = computed(() => authStore.isEmployerMode);
 
+  if (to.name === "index" && isAuthed) {
+    return false;
+  }
+
   // Allow access if the route is public
-  if (public_routes.includes(to.name)) {
+  if (!isAuthed && public_routes.includes(to.name)) {
     return true;
   }
 

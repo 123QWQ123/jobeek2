@@ -9,6 +9,7 @@
         <VacanciesRadio
           class="check-block"
           v-for="item in filterItems"
+          :key="item.id"
           :modelValue="salary_id"
           @update:modelValue="onUpdated"
           :value="item.value"
@@ -43,7 +44,11 @@ const onUpdated = (newValue) => {
     salary.value = found;
     salary_id.value = newValue;
     prepare([...salaryOptions.value]);
-    updateQueryParam("salary", { ...found });
+    updateQueryParam("salary", {
+      value: found.value,
+      from: found.from,
+      to: found.to,
+    });
   } else {
     updateQueryParam("salary", undefined);
   }

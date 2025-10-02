@@ -111,7 +111,7 @@ watch(
   () => getQueryParam("cities") ?? [],
   (newValues, oldValues) => {
     if (JSON.stringify(newValues) !== JSON.stringify(oldValues)) {
-      getMetros({ region_ids: newValues });
+      getMetros({ city_ids: newValues });
       prepare(vacancyStore.metros_formatted);
     }
   },
@@ -226,10 +226,7 @@ const prepare = (items) => {
 
 const { getMetros } = vacancyStore;
 watch(() => vacancyStore.metros_formatted, prepare);
-useAsyncData(
-  "metros",
-  async () => await getMetros({ region_ids: cities.value }),
-);
+useAsyncData("metros", async () => await getMetros({ city_ids: cities.value }));
 </script>
 
 <style scoped>

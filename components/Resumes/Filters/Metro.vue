@@ -227,7 +227,7 @@ const prepare = (items) => {
 const { getMetros } = vacancyStore;
 watch(() => vacancyStore.metros_formatted, prepare);
 useAsyncData("metros", async () => {
-  return await getMetros({ region_ids: cities.value });
+  return await getMetros({ city_ids: cities.value });
 });
 </script>
 
