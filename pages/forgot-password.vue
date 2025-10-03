@@ -101,12 +101,6 @@ const tabs = reactive({
 const onSubmit = async () => {
   validateForm();
   if (!state.isFormValid) {
-    Swal.fire({
-      title: "Ошибка!",
-      text: "Неправильные данные ввели.",
-      icon: "error",
-      confirmButtonText: "ОК",
-    });
     return;
   }
   isLoading.value = true;
@@ -118,21 +112,6 @@ const onSubmit = async () => {
 
   isLoading.value = false;
   if (response.status !== "success") {
-    if (response.data && "errors" in response.data) {
-      Swal.fire({
-        title: "Ошибка!",
-        text: response.data.errors.phone[0],
-        icon: "error",
-        confirmButtonText: "ОК",
-      });
-    } else {
-      Swal.fire({
-        title: "Ошибка!",
-        text: response.data.message,
-        icon: "error",
-        confirmButtonText: "ОК",
-      });
-    }
     return;
   }
 
@@ -154,22 +133,6 @@ const onSMSSubmit = async () => {
   isLoading.value = false;
 
   if (response.status !== "success") {
-    if ("errors" in response && response.message) {
-      Swal.fire({
-        title: "Ошибка!",
-        text: response.data.message,
-        icon: "error",
-        confirmButtonText: "ОК",
-      });
-    } else {
-      Swal.fire({
-        title: "Ошибка!",
-        text: response.data.message,
-        icon: "error",
-        confirmButtonText: "ОК",
-      });
-    }
-    isLoading.value = false;
     return;
   }
 
@@ -194,21 +157,6 @@ const onPasswordSubmit = async () => {
   isLoading.value = false;
 
   if (response.status !== "success") {
-    if ("errors" in response && response.message) {
-      Swal.fire({
-        title: "Ошибка!",
-        text: response.message,
-        icon: "error",
-        confirmButtonText: "ОК",
-      });
-    } else {
-      Swal.fire({
-        title: "Ошибка!",
-        text: response.data.message,
-        icon: "error",
-        confirmButtonText: "ОК",
-      });
-    }
     return;
   }
   navigateTo({
