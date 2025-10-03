@@ -140,7 +140,7 @@ const save = async (is_from_parent = false) => {
     state.errorMessage = "";
     let resData = {};
     const jsonData = useFormData(state);
-    jsonData.action = "UpdateKeySkills";
+    jsonData.form_data = "SKILLS_DATA";
     if (draftID.value) {
       resData = await updateDraft(draftID.value, jsonData);
     } else {

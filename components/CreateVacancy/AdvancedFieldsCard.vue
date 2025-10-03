@@ -1,24 +1,28 @@
 <template>
-
   <div class="w-box" v-click-outside="save" @click="isFocused = true">
     <div class="w-box-head">
       <h3 class="title">Детали вакансии({{ isChanged }})</h3>
-      <span class="arrow" :class="{up: isCollapsed, 'is-completed': isCompleted}" @click="isCollapsed = !isCollapsed"></span>
-
+      <span
+        class="arrow"
+        :class="{ up: isCollapsed, 'is-completed': isCompleted }"
+        @click="isCollapsed = !isCollapsed"
+      ></span>
     </div>
 
     <div class="text-danger d-block p-4" v-if="errors.message">
       {{ errors.message }}
     </div>
     <transition>
-      <div class="w-box-body" :class="{collapse: isCollapsed}">
-
+      <div class="w-box-body" :class="{ collapse: isCollapsed }">
         <div class="input-row" v-if="!state.name.is_hidden">
           <label>Название:<b>*</b></label>
           <div class="input-wrapper mt-2">
-            <input  v-model="state.name.val"  @focusin="() => errors.name = ''"/>
+            <input
+              v-model="state.name.val"
+              @focusin="() => (errors.name = '')"
+            />
             <div class="text-danger d-block" v-if="errors.name">
-              {{errors.name}}
+              {{ errors.name }}
             </div>
           </div>
         </div>
@@ -26,9 +30,12 @@
         <div class="input-row">
           <label for="description">Описание:<b>*</b></label>
           <div class="input-wrapper">
-            <RichEditor  v-model="state.description.val" v-if="!state.description.is_hidden"/>
+            <RichEditor
+              v-model="state.description.val"
+              v-if="!state.description.is_hidden"
+            />
             <div class="text-danger d-block" v-if="errors.description">
-              {{errors.description}}
+              {{ errors.description }}
             </div>
           </div>
         </div>
@@ -36,9 +43,14 @@
         <div class="input-row" v-if="!state.work_type_id.is_hidden">
           <label>Тип работы:</label>
           <div class="input-wrapper mt-2">
-            <CustomSelect :options="workTypeOptions" v-model="state.work_type_id.val" :label="'Выберите'"  @focusin="() => errors.work_type_id = ''"></CustomSelect>
+            <CustomSelect
+              :options="workTypeOptions"
+              v-model="state.work_type_id.val"
+              :label="'Выберите'"
+              @focusin="() => (errors.work_type_id = '')"
+            ></CustomSelect>
             <div class="text-danger d-block" v-if="errors.work_type_id">
-              {{errors.work_type_id}}
+              {{ errors.work_type_id }}
             </div>
           </div>
         </div>
@@ -46,72 +58,90 @@
         <div class="input-row" v-if="!state.experience_id.is_hidden">
           <label>Опыт:</label>
           <div class="input-wrapper mt-2">
-            <CustomSelect :options="experienceOptions" v-model="state.experience_id.val" :label="'Выберите'"  @focusin="() => errors.experience_id = ''"></CustomSelect>
+            <CustomSelect
+              :options="experienceOptions"
+              v-model="state.experience_id.val"
+              :label="'Выберите'"
+              @focusin="() => (errors.experience_id = '')"
+            ></CustomSelect>
             <div class="text-danger d-block" v-if="errors.experience_id">
-              {{errors.experience_id}}
+              {{ errors.experience_id }}
             </div>
           </div>
         </div>
 
-
         <CreateVacancyCustomCheckbox
-            v-if="!state.accept_kids.is_hidden"
-            v-model="state.accept_kids.val" :label="'Соискатель старше 14 лет'"
-            :description="'Соискатель старше 14 лет.\n'+'Указание, что вакансия доступна для соискателей старше 14 лет'"
-            :for="'accept_kids'"
-            :errors="errors"
+          v-if="!state.accept_kids.is_hidden"
+          v-model="state.accept_kids.val"
+          :label="'Соискатель старше 14 лет'"
+          :description="
+            'Соискатель старше 14 лет.\n' +
+            'Указание, что вакансия доступна для соискателей старше 14 лет'
+          "
+          :for="'accept_kids'"
+          :errors="errors"
         />
 
         <CreateVacancyCustomCheckbox
-            v-if="!state.accept_temporary.is_hidden"
-            v-model="state.accept_temporary.val" :label="'Временное трудоустройство'"
-            :description="'Временное трудоустройство. указание, что вакансия доступна с временным трудоустройством'"
-            :for="'accept_temporary'"
-            :errors="errors"
+          v-if="!state.accept_temporary.is_hidden"
+          v-model="state.accept_temporary.val"
+          :label="'Временное трудоустройство'"
+          :description="'Временное трудоустройство. указание, что вакансия доступна с временным трудоустройством'"
+          :for="'accept_temporary'"
+          :errors="errors"
         />
         <CreateVacancyCustomCheckbox
-            v-if="!state.accept_incomplete_resumes.is_hidden"
-            v-model="state.accept_incomplete_resumes.val" :label="'Неполное резюме'"
-            :description="'Неполное резюме. разрешен ли отклик на вакансию неполным резюме.'"
-            :for="'accept_incomplete_resumes'"
-            :errors="errors"
+          v-if="!state.accept_incomplete_resumes.is_hidden"
+          v-model="state.accept_incomplete_resumes.val"
+          :label="'Неполное резюме'"
+          :description="'Неполное резюме. разрешен ли отклик на вакансию неполным резюме.'"
+          :for="'accept_incomplete_resumes'"
+          :errors="errors"
         />
 
         <CreateVacancyCustomCheckbox
-            v-if="!state.accept_handicapped.is_hidden"
-            v-model="state.accept_handicapped.val" :label="'Соискатель с инвалидностью'"
-            :description="'Соискатель с инвалидностью. Указание, что вакансия доступна для соискателей с инвалидностью'"
-            :for="'accept_handicapped'"
-            :errors="errors"
+          v-if="!state.accept_handicapped.is_hidden"
+          v-model="state.accept_handicapped.val"
+          :label="'Соискатель с инвалидностью'"
+          :description="'Соискатель с инвалидностью. Указание, что вакансия доступна для соискателей с инвалидностью'"
+          :for="'accept_handicapped'"
+          :errors="errors"
         />
         <CreateVacancyCustomCheckbox
-            v-if="!state.response_letter_required.is_hidden"
-            v-model="state.response_letter_required.val" :label="'Сопроводительное письмо'"
-            :description="'Сопроводительное письмо Обязательно ли заполнять сообщение при отклике на вакансию'"
-            :for="'response_letter_required'"
-            :errors="errors"
+          v-if="!state.response_letter_required.is_hidden"
+          v-model="state.response_letter_required.val"
+          :label="'Сопроводительное письмо'"
+          :description="'Сопроводительное письмо Обязательно ли заполнять сообщение при отклике на вакансию'"
+          :for="'response_letter_required'"
+          :errors="errors"
         />
         <CreateVacancyCustomCheckbox
-            v-if="!state.allow_messages.is_hidden"
-            v-model="state.allow_messages.val" :label="'Разрешение сообщений'"
-            :description="'Разрешение сообщений. возможность переписки с кандидатами по данной вакансии'"
-            :for="'allow_messages'"
-            :errors="errors"
+          v-if="!state.allow_messages.is_hidden"
+          v-model="state.allow_messages.val"
+          :label="'Разрешение сообщений'"
+          :description="'Разрешение сообщений. возможность переписки с кандидатами по данной вакансии'"
+          :for="'allow_messages'"
+          :errors="errors"
         />
 
         <CreateVacancyCustomCheckbox
-            v-if="!state.response_notifications.is_hidden"
-            v-model="state.response_notifications.val" :label="'Уведомлять ли менеджера'"
-            :description="'Уведомлять ли менеджера о новых откликах'"
-            :for="'response_notifications'"
-            :errors="errors"
+          v-if="!state.response_notifications.is_hidden"
+          v-model="state.response_notifications.val"
+          :label="'Уведомлять ли менеджера'"
+          :description="'Уведомлять ли менеджера о новых откликах'"
+          :for="'response_notifications'"
+          :errors="errors"
         />
-
 
         <div class="input-row" v-if="!state.schedule_id.is_hidden">
           <label>график работы:</label>
           <div class="input-wrapper mt-2">
-            <CustomSelect :options="scheduleOptions" v-model="state.schedule_id.val" :label="'Выберите'"  @focusin="() => errors.schedule_id = ''"></CustomSelect>
+            <CustomSelect
+              :options="scheduleOptions"
+              v-model="state.schedule_id.val"
+              :label="'Выберите'"
+              @focusin="() => (errors.schedule_id = '')"
+            ></CustomSelect>
             <div class="text-danger d-block" v-if="errors.schedule_id">
               {{ errors.schedule_id }}
             </div>
@@ -121,7 +151,12 @@
         <div class="input-row" v-if="!state.working_days_id.is_hidden">
           <label>Рабочие дни:</label>
           <div class="input-wrapper mt-2">
-            <CustomSelect :options="workingDaysOptions" v-model="state.working_days_id.val" :label="'Выберите'"  @focusin="() => errors.working_days_id = ''"></CustomSelect>
+            <CustomSelect
+              :options="workingDaysOptions"
+              v-model="state.working_days_id.val"
+              :label="'Выберите'"
+              @focusin="() => (errors.working_days_id = '')"
+            ></CustomSelect>
             <div class="text-danger d-block" v-if="errors.working_days_id">
               {{ errors.working_days_id }}
             </div>
@@ -129,18 +164,30 @@
         </div>
 
         <CreateVacancyCustomCheckbox
-            v-if="!state.with_zp.is_hidden"
-            v-model="state.with_zp.val" :label="'Зарплата.ру'"
-            :description="'Вашу вакансию увидят больше людей. Мы разместим ее дополнительно на сервисе Зарплата.ру'"
-            :for="'with_zp'"
-            :errors="errors"
+          v-if="!state.with_zp.is_hidden"
+          v-model="state.with_zp.val"
+          :label="'Зарплата.ру'"
+          :description="'Вашу вакансию увидят больше людей. Мы разместим ее дополнительно на сервисе Зарплата.ру'"
+          :for="'with_zp'"
+          :errors="errors"
         />
 
-        <div class="input-row" v-if="!state.working_time_intervals_id.is_hidden">
+        <div
+          class="input-row"
+          v-if="!state.working_time_intervals_id.is_hidden"
+        >
           <label>временной интервал работы из справочника:</label>
           <div class="input-wrapper mt-2">
-            <CustomSelect :options="workingTimeIntervalOptions" v-model="state.working_time_intervals_id.val" :label="'Выберите'"  @focusin="() => errors.working_time_intervals_id = ''"></CustomSelect>
-            <div class="text-danger d-block" v-if="errors.working_time_intervals_id">
+            <CustomSelect
+              :options="workingTimeIntervalOptions"
+              v-model="state.working_time_intervals_id.val"
+              :label="'Выберите'"
+              @focusin="() => (errors.working_time_intervals_id = '')"
+            ></CustomSelect>
+            <div
+              class="text-danger d-block"
+              v-if="errors.working_time_intervals_id"
+            >
               {{ errors.working_time_intervals_id }}
             </div>
           </div>
@@ -149,26 +196,39 @@
         <div class="input-row" v-if="!state.working_time_modes_id.is_hidden">
           <label>режимы времени работы из справочника:</label>
           <div class="input-wrapper mt-2">
-            <CustomSelect :options="workingTimeModesOptions" v-model="state.working_time_modes_id.val" :label="'Выберите'"  @focusin="() => errors.working_time_modes_id = ''"></CustomSelect>
-            <div class="text-danger d-block" v-if="errors.working_time_modes_id">
+            <CustomSelect
+              :options="workingTimeModesOptions"
+              v-model="state.working_time_modes_id.val"
+              :label="'Выберите'"
+              @focusin="() => (errors.working_time_modes_id = '')"
+            ></CustomSelect>
+            <div
+              class="text-danger d-block"
+              v-if="errors.working_time_modes_id"
+            >
               {{ errors.working_time_modes_id }}
             </div>
           </div>
         </div>
 
-
         <CreateVacancyCustomCheckbox
-            v-if="!state.refresh_vac.is_hidden"
-            v-model="state.refresh_vac.val" :label="'Обновлять автоматически'"
-            :description="'Обновлять ли вакансию автоматически'"
-            :for="'refresh_vac'"
-            :errors="errors"
+          v-if="!state.refresh_vac.is_hidden"
+          v-model="state.refresh_vac.val"
+          :label="'Обновлять автоматически'"
+          :description="'Обновлять ли вакансию автоматически'"
+          :for="'refresh_vac'"
+          :errors="errors"
         />
 
         <div class="input-row" v-if="!state.extend_vac_id.is_hidden">
           <label>Продлевать ли вакансию :</label>
           <div class="input-wrapper mt-2">
-            <CustomSelect :options="extendVacOptions" v-model="state.extend_vac_id.val" :label="'Выберите'"  @focusin="() => errors.extend_vac_id = ''"></CustomSelect>
+            <CustomSelect
+              :options="extendVacOptions"
+              v-model="state.extend_vac_id.val"
+              :label="'Выберите'"
+              @focusin="() => (errors.extend_vac_id = '')"
+            ></CustomSelect>
             <div class="text-danger d-block" v-if="errors.extend_vac_id">
               {{ errors.extend_vac_id }}
             </div>
@@ -176,23 +236,29 @@
         </div>
 
         <CreateVacancyCustomCheckbox
-            v-if="!state.resume_subscription_status.is_hidden"
-            v-model="state.resume_subscription_status.val" :label="'подписку на резюме'"
-            :description="'Включить ли подписку на резюме'"
-            :for="'resume_subscription_status'"
-            :errors="errors"
+          v-if="!state.resume_subscription_status.is_hidden"
+          v-model="state.resume_subscription_status.val"
+          :label="'подписку на резюме'"
+          :description="'Включить ли подписку на резюме'"
+          :for="'resume_subscription_status'"
+          :errors="errors"
         />
 
         <CreateVacancySubscriptionKeywords
-            v-if="!state.subscriptionKeywords.is_hidden"
-            v-model="state.subscriptionKeywords.val"
-            :errors="errors"
+          v-if="!state.subscriptionKeywords.is_hidden"
+          v-model="state.subscriptionKeywords.val"
+          :errors="errors"
         />
 
         <div class="input-row" v-if="!state.place_of_work_id.is_hidden">
           <label>Место работы:</label>
           <div class="input-wrapper mt-2">
-            <CustomSelect :options="placeOfWorkOptions" v-model="state.place_of_work_id.val" :label="'Выберите'"  @focusin="() => errors.place_of_work_id = ''"></CustomSelect>
+            <CustomSelect
+              :options="placeOfWorkOptions"
+              v-model="state.place_of_work_id.val"
+              :label="'Выберите'"
+              @focusin="() => (errors.place_of_work_id = '')"
+            ></CustomSelect>
             <div class="text-danger d-block" v-if="errors.place_of_work_id">
               {{ errors.place_of_work_id }}
             </div>
@@ -202,7 +268,12 @@
         <div class="input-row" v-if="!state.education_id.is_hidden">
           <label>Образование:</label>
           <div class="input-wrapper mt-2">
-            <CustomSelect :options="educationOptions" v-model="state.education_id.val" :label="'Выберите'"  @focusin="() => errors.education_id = ''"></CustomSelect>
+            <CustomSelect
+              :options="educationOptions"
+              v-model="state.education_id.val"
+              :label="'Выберите'"
+              @focusin="() => (errors.education_id = '')"
+            ></CustomSelect>
             <div class="text-danger d-block" v-if="errors.education_id">
               {{ errors.education_id }}
             </div>
@@ -212,7 +283,12 @@
         <div class="input-row" v-if="!state.marital_status_id.is_hidden">
           <label>Семейное положение:</label>
           <div class="input-wrapper mt-2">
-            <CustomSelect :options="maritalStatusOptions" v-model="state.marital_status_id.val" :label="'Выберите'"  @focusin="() => errors.marital_status_id = ''"></CustomSelect>
+            <CustomSelect
+              :options="maritalStatusOptions"
+              v-model="state.marital_status_id.val"
+              :label="'Выберите'"
+              @focusin="() => (errors.marital_status_id = '')"
+            ></CustomSelect>
             <div class="text-danger d-block" v-if="errors.marital_status_id">
               {{ errors.marital_status_id }}
             </div>
@@ -222,7 +298,12 @@
         <div class="input-row" v-if="!state.children_id.is_hidden">
           <label>Наличие детей:</label>
           <div class="input-wrapper mt-2">
-            <CustomSelect :options="childrenOptions" v-model="state.children_id.val" :label="'Выберите'"  @focusin="() => errors.children_id = ''"></CustomSelect>
+            <CustomSelect
+              :options="childrenOptions"
+              v-model="state.children_id.val"
+              :label="'Выберите'"
+              @focusin="() => (errors.children_id = '')"
+            ></CustomSelect>
             <div class="text-danger d-block" v-if="errors.children_id">
               {{ errors.children_id }}
             </div>
@@ -232,57 +313,78 @@
         <div class="input-row" v-if="!state.gender_id.is_hidden">
           <label>Пол:</label>
           <div class="input-wrapper mt-2">
-            <CustomSelect :options="genderOptions" v-model="state.gender_id.val" :label="'Выберите'"  @focusin="() => errors.gender_id = ''"></CustomSelect>
+            <CustomSelect
+              :options="genderOptions"
+              v-model="state.gender_id.val"
+              :label="'Выберите'"
+              @focusin="() => (errors.gender_id = '')"
+            ></CustomSelect>
             <div class="text-danger d-block" v-if="errors.gender_id">
               {{ errors.gender_id }}
             </div>
           </div>
         </div>
 
-        <div class="input-row" v-if="!state.covid_vaccination_requirement_id.is_hidden">
+        <div
+          class="input-row"
+          v-if="!state.covid_vaccination_requirement_id.is_hidden"
+        >
           <label>Требования к вакцинации COVID-19:</label>
           <div class="input-wrapper mt-2">
-            <CustomSelect :options="covidVacReqOptions" v-model="state.covid_vaccination_requirement_id.val" :label="'Выберите'"  @focusin="() => errors.covid_vaccination_requirement_id = ''"></CustomSelect>
-            <div class="text-danger d-block" v-if="errors.covid_vaccination_requirement_id">
+            <CustomSelect
+              :options="covidVacReqOptions"
+              v-model="state.covid_vaccination_requirement_id.val"
+              :label="'Выберите'"
+              @focusin="() => (errors.covid_vaccination_requirement_id = '')"
+            ></CustomSelect>
+            <div
+              class="text-danger d-block"
+              v-if="errors.covid_vaccination_requirement_id"
+            >
               {{ errors.covid_vaccination_requirement_id }}
             </div>
           </div>
         </div>
 
         <CreateVacancyCustomCheckbox
-            v-if="!state.move_able.is_hidden"
-            v-model="state.move_able.val" :label="'Релокация'"
-            :description="'Рассматриваются соискатели из других городов'"
-            :for="'move_able'"
-            :errors="errors"
+          v-if="!state.move_able.is_hidden"
+          v-model="state.move_able.val"
+          :label="'Релокация'"
+          :description="'Рассматриваются соискатели из других городов'"
+          :for="'move_able'"
+          :errors="errors"
         />
 
-
         <div class="input-row" v-if="!state.video_url.is_hidden">
-          <label>Ссылка на видеовакансию (поддерживаются ссылки на Youtube и Vimeo):</label>
+          <label
+            >Ссылка на видеовакансию (поддерживаются ссылки на Youtube и
+            Vimeo):</label
+          >
           <div class="input-wrapper mt-2">
-            <input  v-model="state.video_url.val"  @focusin="() => errors.video_url = ''"/>
+            <input
+              v-model="state.video_url.val"
+              @focusin="() => (errors.video_url = '')"
+            />
             <div class="text-danger d-block" v-if="errors.video_url">
-              {{errors.video_url}}
+              {{ errors.video_url }}
             </div>
           </div>
 
-<!--          <youtube-iframe v-if="state.video_url.val" :video-id="videoUrlID" />-->
-
+          <!--          <youtube-iframe v-if="state.video_url.val" :video-id="videoUrlID" />-->
         </div>
 
-        <CreateVacancyAge v-model="age" :errors="errors" :providers="props.providers"/>
-
+        <CreateVacancyAge
+          v-model="age"
+          :errors="errors"
+          :providers="props.providers"
+        />
       </div>
     </transition>
-
   </div>
-
-
 </template>
 
 <script setup>
-import {useVacancyStore} from "~/store/vacancy";
+import { useVacancyStore } from "~/store/vacancy";
 
 const props = defineProps({
   title: {
@@ -298,13 +400,13 @@ const props = defineProps({
   },
 });
 
-import {useProfileStore} from "~/store/profile";
-import {useFormData} from "~/composables/useFormData";
-import {useRuntimeConfig} from "#app";
+import { useProfileStore } from "~/store/profile";
+import { useFormData } from "~/composables/useFormData";
+import { useRuntimeConfig } from "#app";
 import useFormValidation from "~/composables/useFormValidation";
-import {useWatchStateValues} from "~/composables/useWatchStateValues";
-import {useDiff} from "~/composables/useDiff";
-import {useDictionaryStore} from "~/store/dictionary";
+import { useWatchStateValues } from "~/composables/useWatchStateValues";
+import { useDiff } from "~/composables/useDiff";
+import { useDictionaryStore } from "~/store/dictionary";
 import useProviderFields from "~/composables/useProviderFields";
 const vacancyStore = useVacancyStore();
 const profileStore = useProfileStore();
@@ -313,183 +415,183 @@ const route = useRoute();
 
 const draftID = computed(() => route.query.draft_id);
 const vacancyID = computed(() => route.query.vacancy_id);
-const {updateVacancy, updateDraft, getMyVacancy} = vacancyStore;
+const { updateVacancy, updateDraft, getMyVacancy } = vacancyStore;
 
-const {employer} = profileStore;
+const { employer } = profileStore;
 const my_vacancy = computed(() => vacancyStore.my_vacancy);
-function youtube_parser(url){
-  var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+function youtube_parser(url) {
+  var regExp =
+    /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
   var match = url.match(regExp);
-  return (match&&match[7].length==11)? match[7] : false;
+  return match && match[7].length == 11 ? match[7] : false;
 }
-function YouTubeGetID(url){
+function YouTubeGetID(url) {
   url = url.split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
-  return (url[2] !== undefined) ? url[2].split(/[^0-9a-z_\-]/i)[0] : url[0];
+  return url[2] !== undefined ? url[2].split(/[^0-9a-z_\-]/i)[0] : url[0];
 }
 const videoUrlID = computed(() => {
   return YouTubeGetID(state.video_url.val);
-})
+});
 const isSaved = ref(false);
 const isChanged = ref(false);
 const isFirst = ref(true);
 const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
-
 const state = reactive({
   name: {
-    val:  null,
+    val: null,
     isValid: true,
     is_hidden: false,
   },
   description: {
-    val:  "",
+    val: "",
     isValid: true,
     is_hidden: false,
   },
   work_type_id: {
-    val:  null,
+    val: null,
     isValid: true,
     is_hidden: false,
   },
   experience_id: {
-    val:  null,
+    val: null,
     isValid: true,
     is_hidden: false,
   },
   accept_kids: {
-    val:  false,
+    val: false,
     isValid: true,
     is_hidden: false,
   },
   accept_temporary: {
-    val:  false,
+    val: false,
     isValid: true,
     is_hidden: false,
   },
   accept_incomplete_resumes: {
-    val:  false,
+    val: false,
     isValid: true,
     is_hidden: false,
   },
   accept_handicapped: {
-    val:  false,
+    val: false,
     isValid: true,
     is_hidden: false,
   },
   allow_messages: {
-    val:  false,
+    val: false,
     isValid: true,
-    is_hidden: false
+    is_hidden: false,
   },
   schedule_id: {
-    val:  null,
+    val: null,
     isValid: true,
     is_hidden: false,
   },
   response_notifications: {
-    val:  false,
+    val: false,
     isValid: true,
     is_hidden: false,
   },
   working_days_id: {
-    val:  null,
+    val: null,
     isValid: true,
     is_hidden: false,
   },
   with_zp: {
-    val:  false,
+    val: false,
     isValid: true,
     is_hidden: false,
   },
   response_letter_required: {
-    val:  false,
+    val: false,
     isValid: true,
     is_hidden: false,
   },
   working_time_intervals_id: {
-    val:  false,
+    val: false,
     isValid: true,
     is_hidden: false,
   },
   working_time_modes_id: {
-    val:  false,
+    val: false,
     isValid: true,
     is_hidden: false,
   },
   refresh_vac: {
-    val:  false,
+    val: false,
     isValid: true,
     is_hidden: false,
   },
   extend_vac_id: {
-    val:  false,
+    val: false,
     isValid: true,
     is_hidden: false,
   },
   resume_subscription_status: {
-    val:  false,
+    val: false,
     isValid: true,
     is_hidden: false,
   },
   subscriptionKeywords: {
-    val:  [
+    val: [
       {
         keyword: null,
         srws: null,
-        skwc: null
-      }
+        skwc: null,
+      },
     ],
     isValid: true,
     is_hidden: false,
   },
   place_of_work_id: {
-    val:  false,
+    val: false,
     isValid: true,
     is_hidden: false,
   },
   education_id: {
-    val:  false,
+    val: false,
     isValid: true,
     is_hidden: false,
   },
   marital_status_id: {
-    val:  false,
+    val: false,
     isValid: true,
     is_hidden: false,
   },
   children_id: {
-    val:  false,
+    val: false,
     isValid: true,
     is_hidden: false,
   },
   gender_id: {
-    val:  false,
+    val: false,
     isValid: true,
     is_hidden: false,
   },
   covid_vaccination_requirement_id: {
-    val:  false,
+    val: false,
     isValid: true,
     is_hidden: false,
   },
   move_able: {
-    val:  false,
+    val: false,
     isValid: true,
     is_hidden: false,
   },
   video_url: {
-    val:  null,
+    val: null,
     isValid: true,
     is_hidden: false,
   },
   age_from: {
-    val:  null,
+    val: null,
     isValid: true,
     is_hidden: false,
   },
   age_to: {
-    val:  null,
+    val: null,
     isValid: true,
     is_hidden: false,
   },
@@ -499,7 +601,6 @@ const state = reactive({
   error: null,
   success: null,
 });
-
 
 const fields = ref({
   hh: {
@@ -531,117 +632,137 @@ const fields = ref({
     subscriptionKeywords: false,
     move_able: false,
     gender_id: false,
-  }
+  },
 });
 
-const {walkThroughFields} = useProviderFields(state, fields);
+const { walkThroughFields } = useProviderFields(state, fields);
 watch(() => props.providers, walkThroughFields);
 
 onMounted(() => {
   walkThroughFields(props.providers);
-})
+});
 
 const age = ref({
   from: state.age_from.val,
-  to: state.age_to.val
+  to: state.age_to.val,
 });
 
-watch(() => age.value, (newAge) => {
-  state.age_from.val = newAge.from;
-  state.age_to.val = newAge.to;
-})
+watch(
+  () => age.value,
+  (newAge) => {
+    state.age_from.val = newAge.from;
+    state.age_to.val = newAge.to;
+  },
+);
 
-watch(() => state.age_from.val, (newData) => {
-  age.value.from = newData;
-});
-watch(() => state.age_to.val, (newData) => {
-  age.value.to = newData;
-});
+watch(
+  () => state.age_from.val,
+  (newData) => {
+    age.value.from = newData;
+  },
+);
+watch(
+  () => state.age_to.val,
+  (newData) => {
+    age.value.to = newData;
+  },
+);
 const set = (key, val) => {
   state[key].val = val;
-}
+};
 
-watch(() => useWatchStateValues(state, true, true),   (newState, oldState) => {
-  if (!isFirst.value){
-    isChanged.value = true;
-  }else{
-    isFirst.value = false;
-  }
-});
+watch(
+  () => useWatchStateValues(state, true, true),
+  (newState, oldState) => {
+    if (!isFirst.value) {
+      isChanged.value = true;
+    } else {
+      isFirst.value = false;
+    }
+  },
+);
 
 const sectionData = ref({});
-watch(() => vacancyStore.my_vacancy, (newVacancy) => {
-  if (isUpdated.value){
-    isUpdated.value = false;
-    return;
-  }
-  if (newVacancy){
-    sectionData.value = {
-      name: newVacancy.name,
-      description: newVacancy.description,
-      accept_kids: newVacancy.accept_kids,
-      accept_handicapped: newVacancy.accept_handicapped,
-      accept_incomplete_resumes: newVacancy.accept_incomplete_resumes,
-      response_letter_required: newVacancy.response_letter_required,
-      allow_messages: newVacancy.allow_messages,
-      response_notifications: newVacancy.response_notifications,
-      work_type_id: newVacancy.work_type?.id,
-      experience_id: newVacancy.experience?.id,
-      accept_temporary: newVacancy.accept_temporary,
-      schedule_id: newVacancy.schedule?.id,
-      working_days_id: newVacancy.working_days?.id,
-      working_time_intervals_id: newVacancy.working_time_intervals?.id,
-      working_time_modes_id: newVacancy.working_time_modes?.id,
-      refresh_vac: newVacancy.refresh_vac,
-      extend_vac_id: newVacancy.extend_vac?.id,
-      resume_subscription_status: newVacancy.resume_subscription_status,
-      place_of_work_id: newVacancy.place_of_work?.id,
-      education_id: newVacancy.education?.id,
-      marital_status_id: newVacancy.marital_status?.id,
-      children_id: newVacancy.children?.id,
-      gender_id: newVacancy.gender?.id,
-      covid_vaccination_requirement_id: newVacancy.covid_vaccination_requirement?.id,
-      move_able: newVacancy.move_able,
-      video_url: newVacancy.video_url,
-      age_from: newVacancy.age_from,
-      age_to: newVacancy.age_to,
-    };
-  }
-})
+watch(
+  () => vacancyStore.my_vacancy,
+  (newVacancy) => {
+    if (isUpdated.value) {
+      isUpdated.value = false;
+      return;
+    }
+    if (newVacancy) {
+      sectionData.value = {
+        name: newVacancy.name,
+        description: newVacancy.description,
+        accept_kids: newVacancy.accept_kids,
+        accept_handicapped: newVacancy.accept_handicapped,
+        accept_incomplete_resumes: newVacancy.accept_incomplete_resumes,
+        response_letter_required: newVacancy.response_letter_required,
+        allow_messages: newVacancy.allow_messages,
+        response_notifications: newVacancy.response_notifications,
+        work_type_id: newVacancy.work_type?.id,
+        experience_id: newVacancy.experience?.id,
+        accept_temporary: newVacancy.accept_temporary,
+        schedule_id: newVacancy.schedule?.id,
+        working_days_id: newVacancy.working_days?.id,
+        working_time_intervals_id: newVacancy.working_time_intervals?.id,
+        working_time_modes_id: newVacancy.working_time_modes?.id,
+        refresh_vac: newVacancy.refresh_vac,
+        extend_vac_id: newVacancy.extend_vac?.id,
+        resume_subscription_status: newVacancy.resume_subscription_status,
+        place_of_work_id: newVacancy.place_of_work?.id,
+        education_id: newVacancy.education?.id,
+        marital_status_id: newVacancy.marital_status?.id,
+        children_id: newVacancy.children?.id,
+        gender_id: newVacancy.gender?.id,
+        covid_vaccination_requirement_id:
+          newVacancy.covid_vaccination_requirement?.id,
+        move_able: newVacancy.move_able,
+        video_url: newVacancy.video_url,
+        age_from: newVacancy.age_from,
+        age_to: newVacancy.age_to,
+      };
+    }
+  },
+);
 
-watch(() => sectionData.value, (newData, oldData) => {
-  const diffData =  useDiff(newData, oldData);
-  if (Object.keys(diffData).length){
-    state.name.val = newData.name;
-    state.description.val = newData.description;
-    state.accept_kids.val = newData.accept_kids;
-    state.accept_handicapped.val = newData.accept_handicapped;
-    state.accept_incomplete_resumes.val = newData.accept_incomplete_resumes;
-    state.response_letter_required.val = newData.response_letter_required;
-    state.allow_messages.val = newData.allow_messages;
-    state.response_notifications.val = newData.response_notifications;
-    state.work_type_id.val = newData.work_type_id;
-    state.experience_id.val = newData.experience_id;
-    state.accept_temporary.val = newData.accept_temporary;
-    state.schedule_id.val = newData.schedule_id;
-    state.working_days_id.val = newData.working_days_id;
-    state.working_time_intervals_id.val = newData.working_time_intervals_id;
-    state.working_time_modes_id.val = newData.working_time_modes_id;
-    state.refresh_vac.val = newData.refresh_vac;
-    state.extend_vac_id.val = newData.extend_vac_id;
-    state.resume_subscription_status.val = newData.resume_subscription_status;
-    state.place_of_work_id.val = newData.place_of_work_id;
-    state.education_id.val = newData.education_id;
-    state.marital_status_id.val = newData.marital_status_id;
-    state.children_id.val = newData.children_id;
-    state.gender_id.val = newData.gender_id;
-    state.covid_vaccination_requirement_id.val = newData.covid_vaccination_requirement_id;
-    state.move_able.val = newData.move_able;
-    state.video_url.val = newData.video_url;
-    state.age_from.val = newData.age_from;
-    state.age_to.val = newData.age_to;
-  }
-})
+watch(
+  () => sectionData.value,
+  (newData, oldData) => {
+    const diffData = useDiff(newData, oldData);
+    if (Object.keys(diffData).length) {
+      state.name.val = newData.name;
+      state.description.val = newData.description;
+      state.accept_kids.val = newData.accept_kids;
+      state.accept_handicapped.val = newData.accept_handicapped;
+      state.accept_incomplete_resumes.val = newData.accept_incomplete_resumes;
+      state.response_letter_required.val = newData.response_letter_required;
+      state.allow_messages.val = newData.allow_messages;
+      state.response_notifications.val = newData.response_notifications;
+      state.work_type_id.val = newData.work_type_id;
+      state.experience_id.val = newData.experience_id;
+      state.accept_temporary.val = newData.accept_temporary;
+      state.schedule_id.val = newData.schedule_id;
+      state.working_days_id.val = newData.working_days_id;
+      state.working_time_intervals_id.val = newData.working_time_intervals_id;
+      state.working_time_modes_id.val = newData.working_time_modes_id;
+      state.refresh_vac.val = newData.refresh_vac;
+      state.extend_vac_id.val = newData.extend_vac_id;
+      state.resume_subscription_status.val = newData.resume_subscription_status;
+      state.place_of_work_id.val = newData.place_of_work_id;
+      state.education_id.val = newData.education_id;
+      state.marital_status_id.val = newData.marital_status_id;
+      state.children_id.val = newData.children_id;
+      state.gender_id.val = newData.gender_id;
+      state.covid_vaccination_requirement_id.val =
+        newData.covid_vaccination_requirement_id;
+      state.move_able.val = newData.move_able;
+      state.video_url.val = newData.video_url;
+      state.age_from.val = newData.age_from;
+      state.age_to.val = newData.age_to;
+    }
+  },
+);
 
 const dictionaryStore = useDictionaryStore();
 const {
@@ -660,49 +781,87 @@ const {
   getCovidVacRequirements,
 } = dictionaryStore;
 const workTypeOptions = computed(() => {
-  return dictionaryStore.work_types.map((item) => ({name: item.name, value: item.id}));
+  return dictionaryStore.work_types.map((item) => ({
+    name: item.name,
+    value: item.id,
+  }));
 });
-
 
 const experienceOptions = computed(() => {
-  return dictionaryStore.experiences.map((item) => ({name: item.name, value: item.id}));
+  return dictionaryStore.experiences.map((item) => ({
+    name: item.name,
+    value: item.id,
+  }));
 });
 const scheduleOptions = computed(() => {
-  return dictionaryStore.schedules.map((item) => ({name: item.name, value: item.id}));
+  return dictionaryStore.schedules.map((item) => ({
+    name: item.name,
+    value: item.id,
+  }));
 });
 const workingDaysOptions = computed(() => {
-  return dictionaryStore.working_days.map((item) => ({name: item.name, value: item.id}));
+  return dictionaryStore.working_days.map((item) => ({
+    name: item.name,
+    value: item.id,
+  }));
 });
 const workingTimeIntervalOptions = computed(() => {
-  return dictionaryStore.working_time_intervals.map((item) => ({name: item.name, value: item.id}));
+  return dictionaryStore.working_time_intervals.map((item) => ({
+    name: item.name,
+    value: item.id,
+  }));
 });
 const workingTimeModesOptions = computed(() => {
-  return dictionaryStore.working_time_modes.map((item) => ({name: item.name, value: item.id}));
+  return dictionaryStore.working_time_modes.map((item) => ({
+    name: item.name,
+    value: item.id,
+  }));
 });
 const extendVacOptions = computed(() => {
-  return dictionaryStore.extend_vac.map((item) => ({name: item.name, value: item.id}));
+  return dictionaryStore.extend_vac.map((item) => ({
+    name: item.name,
+    value: item.id,
+  }));
 });
 const placeOfWorkOptions = computed(() => {
-  return dictionaryStore.place_of_works.map((item) => ({name: item.name, value: item.id}));
+  return dictionaryStore.place_of_works.map((item) => ({
+    name: item.name,
+    value: item.id,
+  }));
 });
 const educationOptions = computed(() => {
-  return dictionaryStore.educations.map((item) => ({name: item.name, value: item.id}));
+  return dictionaryStore.educations.map((item) => ({
+    name: item.name,
+    value: item.id,
+  }));
 });
 const maritalStatusOptions = computed(() => {
-  return dictionaryStore.marital_statuses.map((item) => ({name: item.name, value: item.id}));
+  return dictionaryStore.marital_statuses.map((item) => ({
+    name: item.name,
+    value: item.id,
+  }));
 });
 const childrenOptions = computed(() => {
-  return dictionaryStore.children.map((item) => ({name: item.name, value: item.id}));
+  return dictionaryStore.children.map((item) => ({
+    name: item.name,
+    value: item.id,
+  }));
 });
 const genderOptions = computed(() => {
-  return dictionaryStore.genders.map((item) => ({name: item.name, value: item.id}));
+  return dictionaryStore.genders.map((item) => ({
+    name: item.name,
+    value: item.id,
+  }));
 });
 const covidVacReqOptions = computed(() => {
-  return dictionaryStore.covid_vaccination_requirement.map((item) => ({name: item.name, value: item.id}));
+  return dictionaryStore.covid_vaccination_requirement.map((item) => ({
+    name: item.name,
+    value: item.id,
+  }));
 });
 
 onMounted(() => {
-  setTimeout(async() => {
+  setTimeout(async () => {
     await getWorkTypes();
     await getExperiences();
     await getSchedules();
@@ -716,75 +875,65 @@ onMounted(() => {
     await getChildren();
     await getGenders();
     await getCovidVacRequirements();
-  }, 500)
-})
-const onAddressSearch  = async(newString) => {
-}
-const {errors, handleErrorResponse} = useFormValidation();
+  }, 500);
+});
+const onAddressSearch = async (newString) => {};
+const { errors, handleErrorResponse } = useFormValidation();
 const isFocused = ref(false);
 const save = async (is_from_parent = false) => {
-  if (is_from_parent === true){
+  if (is_from_parent === true) {
     isFocused.value = true;
   }
-  if (!isFocused.value){
+  if (!isFocused.value) {
     return true;
   }
 
-  if (isChanged.value){
+  if (isChanged.value) {
     state.isLoading = true;
     // validate();
     errors.value = {};
     state.errorMessage = "";
     let resData = {};
-    const jsonData = {...useFormData(state)};
+    const jsonData = { ...useFormData(state) };
 
-    jsonData.action = 'UpdateAdvancedField';
-    if (draftID.value){
+    jsonData.form_data = "ADVANCED_DATA";
+    if (draftID.value) {
       resData = await updateDraft(draftID.value, jsonData);
-    }else{
+    } else {
       resData = await updateVacancy(vacancyID.value, jsonData);
     }
 
-
-
     isUpdated.value = true;
-    if (resData.status !== 'success'){
+    if (resData.status !== "success") {
       return handleErrorResponse(resData.data);
     }
     isChanged.value = false;
     isSaved.value = false;
     isUpdated.value = false;
-    if (is_from_parent)
-    {
+    if (is_from_parent) {
       return new Promise((resolve, reject) => {
         resolve(true);
       });
     }
-
-  }
-  else{
+  } else {
     return true;
   }
-}
+};
 
 const isCompleted = computed(() => {
   const myVacancy = my_vacancy.value;
-  if (myVacancy && !isCollapsed.value){
-    return (myVacancy.address && myVacancy.address.address);
+  if (myVacancy && !isCollapsed.value) {
+    return myVacancy.address && myVacancy.address.address;
   }
   return false;
 });
 
-
 defineExpose({
-  save
-})
+  save,
+});
 </script>
 
 <style>
-
-.from-to-block{
-
+.from-to-block {
 }
-
 </style>

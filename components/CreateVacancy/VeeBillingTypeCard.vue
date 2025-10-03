@@ -173,7 +173,7 @@ const save = async (is_from_parent = false) => {
   errorMessage.value = "";
   let jsonData = { ...JSON.parse(JSON.stringify(values)) };
   let resData = {};
-  jsonData.action = "UpdateBillingType";
+  jsonData.form_data = "BILLING_DATA";
   if (type.value === "draft") {
     resData = await updateDraft(ID.value, jsonData);
   } else {

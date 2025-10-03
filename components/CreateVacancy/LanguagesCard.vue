@@ -133,7 +133,7 @@ const save = async (is_from_parent = false) => {
         language_id: item.language_id,
         level_id: item.level_id,
       })) ?? [];
-    jsonData.action = "UpdateLanguages";
+    jsonData.form_data = "LANGUAGES_DATA";
     if (draftID.value) {
       resData = await updateDraft(draftID.value, jsonData);
     } else {

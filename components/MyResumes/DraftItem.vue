@@ -345,7 +345,7 @@ const toggle = async (provider) => {
   const data = {
     providers: providerParams,
   };
-  data.action = "UpdateProviders";
+  data.form_data = "PROVIDERS_DATA";
   const resData = await updateVacancy(item.value.id, data);
   if (resData.status !== "success") {
     toast.info(resData.message, { autoClose: 3000 });

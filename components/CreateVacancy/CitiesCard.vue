@@ -151,7 +151,7 @@ const save = async (is_from_parent = false) => {
     state.errorMessage = "";
     let resData = {};
     const jsonData = useFormData(state);
-    jsonData.action = "UpdateCities";
+    jsonData.form_data = "CITIES_DATA";
     resData = await updateDraft(draftID.value, jsonData);
     isUpdated.value = true;
     if (resData.status !== "success") {

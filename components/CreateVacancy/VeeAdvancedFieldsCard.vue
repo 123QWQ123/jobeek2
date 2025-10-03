@@ -564,7 +564,7 @@ const save = async (is_from_parent = false) => {
   let jsonData = { ...values };
   let resData = {};
 
-  jsonData.action = "UpdateAdvancedField";
+  jsonData.form_data = "ADVANCED_DATA";
   if (type.value === "draft") {
     resData = await updateDraft(objectID.value, jsonData);
   } else {

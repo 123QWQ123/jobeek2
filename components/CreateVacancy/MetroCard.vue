@@ -166,7 +166,7 @@ const save = async (is_from_parent = false) => {
     state.errorMessage = "";
     let resData = {};
     const jsonData = useFormData(state);
-    jsonData.action = "UpdateMetro";
+    jsonData.form_data = "METRO_DATA";
     if (draftID.value) {
       resData = await updateDraft(draftID.value, jsonData);
     } else {
