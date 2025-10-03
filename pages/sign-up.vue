@@ -274,11 +274,7 @@ function close() {
           </button>
           <span class="col-auto px-3 btn-code-send" type="button" disabled>
             Не получили код?
-            <a
-              class="link link-primary"
-              @click.prevent="onSendOneMoreTime"
-              v-if="!isFirstTimeCodeSent"
-            >
+            <a class="link link-primary" @click.prevent="onSendOneMoreTime">
               Отправить еще раз
             </a>
           </span>
