@@ -5,12 +5,13 @@
         <div class="checkbox">
           <input
             type="checkbox"
+            :disabled="props.disabled"
             :name="props.name"
             :id="props.name"
             :checked="value"
             @change="toggle"
           />
-          <div class="checkbox-mask" :class="{ checked }">
+          <div class="checkbox-mask" :class="{ checked: value }">
             <img src="~/assets/img/svg/check.svg" alt="#" />
           </div>
         </div>
@@ -27,6 +28,11 @@ import { useField } from "vee-validate";
 const props = defineProps({
   name: String,
   label: String,
+  disabled: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 const emit = defineEmits(["change"]);
 

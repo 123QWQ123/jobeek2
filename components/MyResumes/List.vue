@@ -36,16 +36,19 @@
           количество резюме, подключите премиум-подписку.
         </p>
       </div>
-      <a class="notification-premium-button button-accent" href="#">Подключить </a>
+      <a class="notification-premium-button button-accent" href="#"
+        >Подключить
+      </a>
     </div>
-    
+
     <div class="col d-flex justify-content-between mt-4 margin-bottom-mobile">
-      <h1 class="lk-page-title mb-4">Ваши резюме ({{ total }})</h1>
+      <h1 class="lk-page-title mb-4">Ваши резюме ({{ my_total }})</h1>
     </div>
 
     <MyResumesListActions
       name="provider"
       @onProviderChange="onProviderChange"
+      :disabled="my_total === 0"
     />
 
     <ul class="resume-list mt-4" v-if="my_resumes.length > 0">
@@ -73,9 +76,6 @@ const { my_resumes, current_page, my_total } = storeToRefs(resumeStore);
 const route = useRoute();
 const resumes = ref([]);
 const form = useMyResumeForm();
-const total = computed(() => {
-  return resumeStore.my_resumes.length;
-});
 
 const onProviderChange = (newProvider) => {
   if (newProvider) {

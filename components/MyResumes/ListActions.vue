@@ -17,12 +17,12 @@
       </div>
     </div>
 
-    <MyResumesListActionsNotifications />
+    <MyResumesListActionsNotifications :disabled="disabled" />
   </div>
 </template>
 
 <script setup>
-const props = defineProps(["name"]);
+const props = defineProps(["name", "disabled"]);
 const emit = defineEmits(["onProviderChange"]);
 
 const providerOptions = ref([
@@ -76,20 +76,20 @@ const listStyles = {
 }
 
 .check-block label {
-    display: flex;
+  display: flex;
 }
 
 @media (max-width: 1280px) {
-	.plansh-width {
-		display: flex;
-	}
-	.plansh-width .flex-column {
-		display: flex !important;
-    	flex-direction: row !important;
-	}
-	.plansh-width .check-block {
-	    display: flex;
-	    margin: 0 5px;
-	}
+  .plansh-width {
+    display: flex;
+  }
+  .plansh-width .flex-column {
+    display: flex !important;
+    flex-direction: row !important;
+  }
+  .plansh-width .check-block {
+    display: flex;
+    margin: 0 5px;
+  }
 }
 </style>
