@@ -5,12 +5,14 @@
       <div class="check-block mb-2 mb-md-1 mb-lg-0 me-lg-3">
         <MyResumesCheckbox
           name="all"
+          :disabled="disabled"
           label="Подключить все уведомления"
           @change="handleNotificationChange"
         />
       </div>
       <div class="check-block mb-2 mb-md-1 mb-lg-0 me-lg-3">
         <MyResumesCheckbox
+          :disabled="disabled"
           name="notifications.push_notification"
           label="Push"
           @change="handleNotificationChange"
@@ -18,6 +20,7 @@
       </div>
       <div class="check-block">
         <MyResumesCheckbox
+          :disabled="disabled"
           name="notifications.email_notification"
           label="E-mail"
           @change="handleNotificationChange"
@@ -32,7 +35,7 @@ import { useField, useForm } from "vee-validate";
 import { useResumeStore } from "~/store/resume.js";
 import PageLoader from "~/components/UI/PageLoader.vue";
 
-const props = defineProps(["name"]);
+const props = defineProps(["name", "disabled"]);
 
 const resumeStore = useResumeStore();
 const { modifyNotifications, getMyResumes, recomputeNotificationForm } =
