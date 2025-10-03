@@ -213,7 +213,7 @@ const save = async (is_from_parent = false) => {
   errorMessage.value = "";
   let jsonData = { ...JSON.parse(JSON.stringify(values)) };
   let resData = {};
-  jsonData.action = "UpdateType";
+  jsonData.form_data = "TYPE_DATA";
   if (type.value === "draft") {
     resData = await updateDraft(ID.value, jsonData);
   } else {

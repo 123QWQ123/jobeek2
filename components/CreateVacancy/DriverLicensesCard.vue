@@ -144,7 +144,7 @@ const save = async (is_from_parent = false) => {
     state.errorMessage = "";
     let resData = {};
     const jsonData = useFormData(state);
-    jsonData.action = "UpdateDriverLicenseTypes";
+    jsonData.form_data = "DRIVER_LICENSES_DATA";
     if (draftID.value) {
       resData = await updateDraft(draftID.value, jsonData);
     } else {

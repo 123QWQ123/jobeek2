@@ -224,7 +224,7 @@ const save = async (is_from_parent = false) => {
     let resData = {};
     const jsonData = { address: useFormData(state) };
 
-    jsonData.action = "UpdateAddress";
+    jsonData.form_data = "ADDRESS_DATA";
     if (draftID.value) {
       resData = await updateDraft(draftID.value, jsonData);
     } else {
