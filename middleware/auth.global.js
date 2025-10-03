@@ -1,7 +1,7 @@
 import { useAuthStore } from "~/store/auth";
 import { protected_routes, public_routes } from "~/config";
 
-export default defineNuxtRouteMiddleware(async (to) => {
+export default defineNuxtRouteMiddleware(async (to, from) => {
   const authStore = useAuthStore();
   const { value: employer } = computed(() => authStore.employer);
   const { value: seeker } = computed(() => authStore.seeker);
@@ -9,6 +9,11 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const { value: isEmployerMode } = computed(() => authStore.isEmployerMode);
 
   if (to.name === "index" && isAuthed) {
+    if (!from.redirectedFrom) {
+      return navigateTo({
+        name: authStore.isEmployerMode ? "profile-employer" : "profile-seeker",
+      });
+    }
     return false;
   }
 
