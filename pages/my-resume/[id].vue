@@ -43,7 +43,7 @@ const loadInitialData = async () => {
       "gender",
       "relocation_type",
       "business_trip",
-      "lang_level_resume",
+      "language_level_resume",
       "marital_status_resume",
       "travel_time",
       "children_resume",

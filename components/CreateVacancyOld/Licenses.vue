@@ -34,7 +34,7 @@ const toggle = (id) => {
     const deleteIndex = selected_licenses.value.indexOf(id);
     selected_licenses.value.splice(deleteIndex, 1);
   }
-  emit("set", "driver_license_type", selected_licenses.value);
+  emit("set", "driver_license_types", selected_licenses.value);
 };
 </script>
 

@@ -301,19 +301,19 @@ export const useDictionaryStore = defineStore("dictionary", {
         gender: "genders",
         relocation_type: "relocation_types",
         business_trip: "business_trips",
-        lang_level_resume: "resume_language_levels",
+        language_level_resume: "resume_language_levels",
         marital_status_resume: "resume_marital_statuses",
         travel_time: "travel_times",
         children_resume: "resume_children",
         experience: "experiences",
         working_days: "working_days",
-        working_time_intervals: "working_time_intervals",
-        working_time_modes: "working_time_modes",
-        extend_vac: "extend_vac",
+        working_time_interval: "working_time_intervals",
+        working_time_mode: "working_time_modes",
+        extend_vacancy: "extend_vac",
         education: "educations",
         marital_status: "marital_statuses",
         children: "children",
-        vacancy_search_fields: "vacancy_search_fields",
+        vacancy_search_field: "vacancy_search_fields",
         covid_vaccination_requirement: "covid_vaccination_requirement",
       };
 
@@ -485,12 +485,12 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (this.resume_language_levels.length > 0) {
         return this.resume_language_levels;
       }
-      const { data } = await useApi("dictionaries?groups[]=lang_level_resume", {
+      const { data } = await useApi("dictionaries?groups[]=language_level_resume", {
         method: "get",
         payload,
       });
       if (data && "data" in data) {
-        this.resume_language_levels = data.data?.lang_level_resume ?? [];
+        this.resume_language_levels = data.data?.language_level_resume ?? [];
       }
       return this.resume_language_levels;
     },
@@ -581,14 +581,14 @@ export const useDictionaryStore = defineStore("dictionary", {
         return this.working_time_intervals;
       }
       const { data } = await useApi(
-        "dictionaries?groups[]=working_time_intervals",
+        "dictionaries?groups[]=working_time_interval",
         {
           method: "get",
           payload,
         },
       );
       if (data && "data" in data) {
-        this.working_time_intervals = data.data?.working_time_intervals ?? [];
+        this.working_time_intervals = data.data?.working_time_interval ?? [];
       }
       return this.working_time_intervals;
     },
@@ -597,14 +597,14 @@ export const useDictionaryStore = defineStore("dictionary", {
         return this.working_time_modes;
       }
       const { data } = await useApi(
-        "dictionaries?groups[]=working_time_modes",
+        "dictionaries?groups[]=working_time_mode",
         {
           method: "get",
           payload,
         },
       );
       if (data && "data" in data) {
-        this.working_time_modes = data.data?.working_time_modes ?? [];
+        this.working_time_modes = data.data?.working_time_mode ?? [];
       }
       return this.working_time_modes;
     },
@@ -612,12 +612,12 @@ export const useDictionaryStore = defineStore("dictionary", {
       if (this.extend_vac.length > 0) {
         return this.extend_vac;
       }
-      const { data } = await useApi("dictionaries?groups[]=extend_vac", {
+      const { data } = await useApi("dictionaries?groups[]=extend_vacancy", {
         method: "get",
         payload,
       });
       if (data && "data" in data) {
-        this.extend_vac = data.data?.extend_vac ?? [];
+        this.extend_vac = data.data?.extend_vacancy ?? [];
       }
       return this.extend_vac;
     },
@@ -692,7 +692,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         return this.subscription_keywords_srws;
       }
       const { data } = await useApi(
-        "dictionaries?groups[]=subscriptionKeywords_srws",
+        "dictionaries?groups[]=srws",
         {
           method: "get",
           payload,
@@ -700,7 +700,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       );
       if (data && "data" in data) {
         this.subscription_keywords_srws =
-          data.data?.subscriptionKeywords_srws ?? [];
+          data.data?.srws ?? [];
       }
       return this.subscription_keywords_srws;
     },
@@ -709,7 +709,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         return this.subscription_keywords_skwc;
       }
       const { data } = await useApi(
-        "dictionaries?groups[]=subscriptionKeywords_skwc",
+        "dictionaries?groups[]=skwc",
         {
           method: "get",
           payload,
@@ -717,7 +717,7 @@ export const useDictionaryStore = defineStore("dictionary", {
       );
       if (data && "data" in data) {
         this.subscription_keywords_skwc =
-          data.data?.subscriptionKeywords_skwc ?? [];
+          data.data?.skwc ?? [];
       }
       return this.subscription_keywords_skwc;
     },

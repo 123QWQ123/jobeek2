@@ -20,7 +20,7 @@ await useAsyncData(
   async () =>
     await dictionaryStore.getDictionaries([
       "work_type",
-      "vacancy_search_fields",
+      "vacancy_search_field",
     ]),
 );
 await useAsyncData("profileStore ", async () => await profileStore.getCities());

@@ -32,7 +32,7 @@ if (professional_roles.value.length === 0) {
 
 await useAsyncData(
   "getDictionaries",
-  async () => await getDictionaries(["work_type", "vacancy_search_fields"]),
+  async () => await getDictionaries(["work_type", "vacancy_search_field"]),
 );
 const {
   data: {

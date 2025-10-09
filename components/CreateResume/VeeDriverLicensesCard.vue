@@ -27,7 +27,7 @@
         :class="{ collapse: isCollapsed }"
         @click="isFocused = true"
       >
-        <CreateResumeDriverLicensesForm name="driver_license_type" />
+        <CreateResumeDriverLicensesForm name="driver_license_types" />
 
         <div class="mt-4" v-show="!state.has_vehicle.is_hidden">
           <ResumeCheckboxInput
@@ -42,8 +42,6 @@
 
 <script setup>
 import { zod } from "~/hooks/ru-zod.js";
-import { useProfileStore } from "~/store/profile";
-import { useRuntimeConfig } from "#app";
 import useFormValidation from "~/composables/useFormValidation";
 import { useResumeStore } from "~/store/resume";
 import { toTypedSchema } from "@vee-validate/zod";
@@ -70,14 +68,11 @@ const props = defineProps({
 });
 
 const resumeStore = useResumeStore();
-const profileStore = useProfileStore();
-const CONFIG = useRuntimeConfig();
 const route = useRoute();
 
 const resumeID = computed(() => route.params.id);
-const { updateResume, getMyResume } = resumeStore;
+const { updateResume } = resumeStore;
 
-const { employer } = profileStore;
 const my_resume = computed(() => resumeStore.my_resume);
 
 const isCollapsed = ref(false);
@@ -86,24 +81,22 @@ const schema = computed(() => {
   return toTypedSchema(
     zod.object({
       has_vehicle: zod.boolean().nullable(),
-      driver_license_type: zod.number().array().optional(),
+      driver_license_types: zod.number().array().optional(),
     }),
   );
 });
 
 const initialValues = ref({
   has_vehicle: my_resume.value?.has_vehicle ?? false,
-  driver_license_type:
-    my_resume.value?.driver_license_type.map((item) => item.id) ?? [],
+  driver_license_types:
+    my_resume.value?.driver_license_types.map((item) => item.id) ?? [],
 });
 const {
   values,
   errors,
   meta,
   resetForm,
-  setValues,
   setErrors,
-  handleSubmit,
   validate,
 } = useForm({
   initialValues: initialValues,
@@ -113,17 +106,17 @@ const {
 
 const fields = ref({
   hh: {
-    driver_license_type: false,
+    driver_license_types: false,
     has_vehicle: false,
   },
   superjob: {
-    driver_license_type: false,
+    driver_license_types: false,
     has_vehicle: null,
   },
 });
 
 const state = reactive({
-  driver_license_type: {
+  driver_license_types: {
     is_hidden: false,
   },
   has_vehicle: {
@@ -141,7 +134,7 @@ watch(
 );
 
 walkThroughFields(providers.value);
-const { errors: serverErrors, handleErrorResponse } = useFormValidation();
+const { errors: serverErrors } = useFormValidation();
 watch(
   () => serverErrors.value,
   (newErrors) => {
@@ -191,7 +184,7 @@ const save = async (is_from_parent = false) => {
 const isCompleted = computed(() => {
   const myResume = my_resume.value;
   if (myResume && !isCollapsed.value) {
-    return myResume.driver_license_type.length > 0;
+    return myResume.driver_license_types.length > 0;
   }
   return false;
 });

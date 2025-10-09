@@ -18,7 +18,7 @@
         :class="{ collapse: isCollapsed }"
         @click="isFocused = true"
       >
-        <CreateResumeDriverLicensesForm name="driver_license_type" />
+        <CreateResumeDriverLicensesForm name="driver_license_types" />
 
         <div class="mt-4">
           <ResumeCheckboxInput
@@ -79,7 +79,7 @@ const schema = computed(() => {
   const s = toTypedSchema(
     zod.object({
       has_vehicle: zod.boolean().nullable(),
-      driver_license_type: zod.number().array().optional(),
+      driver_license_types: zod.number().array().optional(),
     }),
   );
   return s;
@@ -87,7 +87,7 @@ const schema = computed(() => {
 
 const initialValues = ref({
   has_vehicle: false,
-  driver_license_type: [],
+  driver_license_types: [],
 });
 const {
   values,
@@ -105,7 +105,7 @@ const {
 });
 
 const state = reactive({
-  driver_license_type: {
+  driver_license_types: {
     val: [],
     isValid: true,
   },
@@ -140,7 +140,7 @@ watch(
     if (Object.keys(diffData).length) {
       resetForm({
         values: {
-          driver_license_type: newData.driver_license_type,
+          driver_license_types: newData.driver_license_types,
           has_vehicle: newData.has_vehicle,
         },
       });
@@ -156,8 +156,8 @@ watch(
     }
     if (newData) {
       sectionData.value = {
-        driver_license_type:
-          newData.driver_license_type.map((item) => item.id) ?? [],
+        driver_license_types:
+          newData.driver_license_types.map((item) => item.id) ?? [],
         has_vehicle: newData.has_vehicle ?? false,
       };
     }
@@ -229,7 +229,7 @@ const save = async (is_from_parent = false) => {
 const isCompleted = computed(() => {
   const myResume = my_resume.value;
   if (myResume && !isCollapsed.value) {
-    return myResume.driver_license_type.length > 0;
+    return myResume.driver_license_types.length > 0;
   }
   return false;
 });

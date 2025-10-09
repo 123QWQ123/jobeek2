@@ -14,7 +14,7 @@
     </div>
     <transition>
       <div class="w-box-body" :class="{ collapse: isCollapsed }">
-        <CreateResumeDriverLicensesForm name="driver_license_type" />
+        <CreateResumeDriverLicensesForm name="driver_license_types" />
       </div>
     </transition>
   </div>
@@ -55,12 +55,12 @@ const isUpdated = ref(false);
 
 const schema = computed(() => {
   return zod.object({
-    driver_license_type: zod.array(zod.number()).nonempty(),
+    driver_license_types: zod.array(zod.number()).nonempty(),
   });
 });
 
 const initialValues = {
-  driver_license_type: my_vacancy.value.driver_license_type.map(
+  driver_license_types: my_vacancy.value.driver_license_types.map(
     (item) => item.id,
   ),
 };
@@ -80,17 +80,17 @@ const {
 });
 
 const state = reactive({
-  driver_license_type: {
+  driver_license_types: {
     is_hidden: false,
   },
 });
 
 const fields = ref({
   hh: {
-    driver_license_type: true,
+    driver_license_types: true,
   },
   superjob: {
-    driver_license_type: true,
+    driver_license_types: true,
   },
 });
 
@@ -104,7 +104,7 @@ onMounted(() => {
 const sectionData = ref({});
 const getFields = (newObject) => {
   return {
-    driver_license_type: newObject.driver_license_type.map((item) => item.id),
+    driver_license_types: newObject.driver_license_types.map((item) => item.id),
   };
 };
 watch(
