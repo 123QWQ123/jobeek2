@@ -28,7 +28,7 @@
       </div>
       <h3 class="title">{{ data.company }}</h3>
       <!--      <p>Клиент SuperJob с 2003 года</p>-->
-      <p>{{ data.open_vacancies ?? 0 }} вакансии</p>
+      <p>{{ data.vacancy_count ?? 0 }} вакансии</p>
       <p v-html="data.company_activity" />
     </div>
 
@@ -192,7 +192,7 @@ const onSubmit = async (e) => {
   const response = await submitResume({
     vacancy_id: data.id,
     resume_id: selectedResume.value,
-    providers: [data.provider],
+    provider: data.provider,
   });
 
   if (response.status !== "success") {

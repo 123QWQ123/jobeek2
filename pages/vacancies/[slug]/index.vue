@@ -8,13 +8,11 @@
       </div>
       <div
         class="wrapper wrapper-1290"
-        v-if="provider && vacancyData && vacancyData[provider]"
+        v-if="provider && vacancyData && vacancyData"
       >
-        <VacanciesItemSearchContent :data="vacancyData[provider]" />
+        <VacanciesItemSearchContent :data="vacancyData?.data" />
       </div>
-      <div class="wrapper wrapper-1290" v-else-if="!provider && vacancyData">
-        <VacanciesItemContent :data="vacancyData" />
-      </div>
+
       <div class="wrapper wrapper-1290" v-else>Not Found</div>
     </div>
   </main>
@@ -50,11 +48,11 @@ if (!vacancyData.value) {
 let pageTitle = ref("Not found  - Jobeek");
 
 if (
-  (vacancyData.value && vacancyData.value[provider]?.name) ||
+  (vacancyData.value && vacancyData.value?.name) ||
   vacancyData.value?.name
 ) {
   pageTitle.value =
-    (vacancyData.value[provider]?.name || vacancyData.value?.name) +
+    (vacancyData.value?.name || vacancyData.value?.name) +
     " - Jobeek";
 }
 
