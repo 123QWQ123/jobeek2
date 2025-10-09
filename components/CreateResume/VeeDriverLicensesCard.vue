@@ -27,7 +27,7 @@
         :class="{ collapse: isCollapsed }"
         @click="isFocused = true"
       >
-        <CreateResumeDriverLicensesForm name="driver_license_types" />
+        <CreateResumeDriverLicensesForm name="driver_license_type" />
 
         <div class="mt-4" v-show="!state.has_vehicle.is_hidden">
           <ResumeCheckboxInput
@@ -86,15 +86,15 @@ const schema = computed(() => {
   return toTypedSchema(
     zod.object({
       has_vehicle: zod.boolean().nullable(),
-      driver_license_types: zod.number().array().optional(),
+      driver_license_type: zod.number().array().optional(),
     }),
   );
 });
 
 const initialValues = ref({
   has_vehicle: my_resume.value?.has_vehicle ?? false,
-  driver_license_types:
-    my_resume.value?.driver_license_types.map((item) => item.id) ?? [],
+  driver_license_type:
+    my_resume.value?.driver_license_type.map((item) => item.id) ?? [],
 });
 const {
   values,
@@ -113,17 +113,17 @@ const {
 
 const fields = ref({
   hh: {
-    driver_license_types: false,
+    driver_license_type: false,
     has_vehicle: false,
   },
   superjob: {
-    driver_license_types: false,
+    driver_license_type: false,
     has_vehicle: null,
   },
 });
 
 const state = reactive({
-  driver_license_types: {
+  driver_license_type: {
     is_hidden: false,
   },
   has_vehicle: {
@@ -191,7 +191,7 @@ const save = async (is_from_parent = false) => {
 const isCompleted = computed(() => {
   const myResume = my_resume.value;
   if (myResume && !isCollapsed.value) {
-    return myResume.driver_license_types.length > 0;
+    return myResume.driver_license_type.length > 0;
   }
   return false;
 });

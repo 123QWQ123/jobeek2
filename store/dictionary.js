@@ -295,7 +295,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         education_type_resume: "resume_educations",
         preferred_contact_type: "preferred_contact_types",
         education_form_resume: "resume_education_forms",
-        driver_license_types: "driver_licenses",
+        driver_license_type: "driver_licenses",
         resume_access_type_merge: "resume_access_types",
         gender_resume: "resume_genders",
         gender: "genders",
@@ -499,14 +499,14 @@ export const useDictionaryStore = defineStore("dictionary", {
         return this.driver_licenses;
       }
       const { data } = await useApi(
-        "dictionaries?groups[]=driver_license_types",
+        "dictionaries?groups[]=driver_license_type",
         {
           method: "get",
           payload,
         },
       );
       if (data && "data" in data) {
-        this.driver_licenses = data.data?.driver_license_types ?? [];
+        this.driver_licenses = data.data?.driver_license_type ?? [];
       }
       return this.driver_licenses;
     },

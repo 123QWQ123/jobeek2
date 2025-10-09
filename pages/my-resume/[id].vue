@@ -37,7 +37,7 @@ const loadInitialData = async () => {
       "education_type_resume",
       "preferred_contact_type",
       "education_form_resume",
-      "driver_license_types",
+      "driver_license_type",
       "resume_access_type_merge",
       "gender_resume",
       "gender",

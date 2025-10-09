@@ -46,7 +46,7 @@ useAsyncData(
       "work_type",
       "marital_statuses",
       "lang_level_resume",
-      "driver_license_types",
+      "driver_license_type",
     ]),
 );
 

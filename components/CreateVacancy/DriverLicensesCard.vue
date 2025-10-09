@@ -16,8 +16,8 @@
       <div class="w-box-body" :class="{ collapse: isCollapsed }">
         <CreateVacancyDriverLicensesForm
           v-if="my_vacancy"
-          v-model="state.driver_license_types.val"
-          :errors="errors.driver_license_types"
+          v-model="state.driver_license_type.val"
+          :errors="errors.driver_license_type"
         />
       </div>
     </transition>
@@ -71,8 +71,8 @@ const isHidden = computed(() => {
   return true;
 });
 const state = reactive({
-  driver_license_types: {
-    val: vacancyStore.my_vacancy?.driver_license_types ?? [],
+  driver_license_type: {
+    val: vacancyStore.my_vacancy?.driver_license_type ?? [],
     isValid: true,
   },
   isFormValid: true,
@@ -99,7 +99,7 @@ watch(
   (newData, oldData) => {
     const diffData = useDiff(newData, oldData);
     if (Object.keys(diffData).length) {
-      state.driver_license_types.val = newData.driver_license_types ?? [];
+      state.driver_license_type.val = newData.driver_license_type ?? [];
     }
   },
 );
@@ -112,7 +112,7 @@ watch(
     }
     if (newVacancy) {
       sectionData.value = {
-        driver_license_types: newVacancy.driver_license_types?.map(
+        driver_license_type: newVacancy.driver_license_type?.map(
           (item) => item.name,
         ),
       };
@@ -171,7 +171,7 @@ const save = async (is_from_parent = false) => {
 const isCompleted = computed(() => {
   const myVacancy = my_vacancy.value;
   if (myVacancy && !isCollapsed.value) {
-    return myVacancy.driver_license_types.length > 0;
+    return myVacancy.driver_license_type.length > 0;
   }
   return false;
 });
