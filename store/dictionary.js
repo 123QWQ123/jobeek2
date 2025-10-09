@@ -216,14 +216,14 @@ export const useDictionaryStore = defineStore("dictionary", {
         return this.resume_access_types;
       }
       const { data } = await useApi(
-        "dictionaries?groups[]=resume_access_type_merge",
+        "dictionaries?groups[]=resume_merged_access_type",
         {
           method: "get",
           payload,
         },
       );
       if (data && "data" in data) {
-        this.resume_access_types = data.data?.resume_access_type_merge ?? [];
+        this.resume_access_types = data.data?.resume_merged_access_type ?? [];
       }
       return this.resume_access_types;
     },
@@ -296,7 +296,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         preferred_contact_type: "preferred_contact_types",
         education_form_resume: "resume_education_forms",
         driver_license_type: "driver_licenses",
-        resume_access_type_merge: "resume_access_types",
+        resume_merged_access_type: "resume_access_types",
         gender_resume: "resume_genders",
         gender: "genders",
         relocation_type: "relocation_types",
