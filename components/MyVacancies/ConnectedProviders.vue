@@ -171,7 +171,7 @@ const switchProvider = async (providerSlug) => {
  * Disconnect a provider by its slug.
  */
 const onDisconnect = async (providerSlug) => {
-  const resData = await disconnectProviders({ providers: [providerSlug] });
+  const resData = await disconnectProviders({ provider: providerSlug });
   if (resData.status !== "success") {
     return;
   }
