@@ -76,7 +76,7 @@ const periodOptions = computed(() => {
 
 const schema = computed(() => {
   return zod.object({
-    key_skills: zod.array(zod.string()).nonempty(),
+    key_skills: zod.array(zod.string()).min(1, "Обязательное поле"),
   });
 });
 

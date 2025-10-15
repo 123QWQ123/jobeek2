@@ -90,11 +90,11 @@ const schema = computed(() => {
       city_id: zod.number(),
       // city_name: z.boolean().nullable().optional(),
       company_url: zod.string().nullish().optional(),
-      industries: zod.number().array().nonempty(),
+      industries: zod.number().array().min(1, "Обязательное поле"),
       company_scope: zod.string().nullish().optional(),
     });
     return zod.object({
-      experience: zod.array(experienceScheme).nonempty(),
+      experience: zod.array(experienceScheme).min(1, "Обязательное поле"),
     });
   }
   if (!providers.value.hh && providers.value.superjob) {
@@ -134,7 +134,7 @@ const schema = computed(() => {
     city_id: zod.number(),
     // city_name: z.boolean().nullable().optional(),
     company_url: zod.string(),
-    industries: zod.number().array().nonempty(),
+    industries: zod.number().array().min(1, "Обязательное поле"),
     company_scope: zod.string(),
   });
   return zod.object({

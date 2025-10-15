@@ -81,7 +81,7 @@ const schema = computed(() => {
     });
   }
   return zod.object({
-    skills: zod.string().array().nonempty(),
+    skills: zod.string().array().min(1, "Обязательное поле"),
     other_skills: zod.string(),
   });
 });

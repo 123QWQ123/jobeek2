@@ -56,6 +56,14 @@ export const useResumeStore = defineStore("resume", {
         value: item.id,
       }));
     },
+    industries_without_parent: (state) => {
+      let flattenedIndustries = [];
+      state.industries.forEach((item) => {
+        flattenedIndustries.push(...item.industries);
+      });
+
+      return flattenedIndustries;
+    },
   },
   actions: {
     async getAreas(payload) {

@@ -194,15 +194,14 @@ const vacancyStore = useVacancyStore();
 const resumeStore = useResumeStore();
 
 const { getIndustries } = resumeStore;
-const { industries } = resumeStore;
+const { industries_without_parent } = resumeStore;
 const { value: until_today } = useField(
   () => `${props.name}[${props.idx}].until_today`,
 );
 
 const updateIndustryInput = async (newValue = "") => {
-  industries.filter((item) => item.title.includes(newValue));
-  industryOptions.value = industries
-    .filter((item) => item.title.includes(newValue))
+  industryOptions.value = industries_without_parent
+    .filter((item) => item.title.toLowerCase().includes(newValue.toLowerCase()))
     .map((item) => ({
       value: item.id,
       name: item.title,
@@ -211,7 +210,7 @@ const updateIndustryInput = async (newValue = "") => {
 const profileStore = useProfileStore();
 const { searchCities } = profileStore;
 const industryOptions = ref(
-  industries.map((item) => ({
+    industries_without_parent.map((item) => ({
     value: item.id,
     name: item.title,
   })),
