@@ -133,7 +133,7 @@
         <div class="input-wrapper mt-2">
           <VeeMultiSelectWithSearch
             name="work_types"
-            :options="work_types_formatted"
+            :options="resume_work_type_formatted"
             placeholder="Выберите"
           />
         </div>
@@ -261,7 +261,7 @@ const { searchCities } = profileStore;
 
 const cityOptions = ref([]);
 const moveableCityOptions = ref([]);
-const { work_types_formatted } = storeToRefs(dictionaryStore);
+const { resume_work_type_formatted } = storeToRefs(dictionaryStore);
 const genderOptions = computed(() => {
   return dictionaryStore.resume_genders.map((item) => ({
     name: item.name,

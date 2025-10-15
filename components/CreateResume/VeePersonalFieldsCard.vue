@@ -355,7 +355,7 @@ const schema = computed(() => {
     business_trip_id: zod.number(),
     relocation_type_id: zod.number().nullable().optional(),
     social_networks: zod.number().array().optional(),
-    phones: zod.array(phoneScheme).nonempty(),
+    phones: zod.array(phoneScheme).nonempty("Введите номер телефона"),
   });
 });
 

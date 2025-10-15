@@ -219,6 +219,13 @@ export const useResumeStore = defineStore("resume", {
       });
       return response;
     },
+    async getResumesPublishedNegotiations(payload) {
+      const response = await useApi("/seeker/negotiations/resumes", {
+        method: "get",
+        payload,
+      });
+      return response.data;
+    },
     async submitResume(payload) {
       const response = await useApi("seeker/negotiations", {
         method: "post",

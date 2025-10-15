@@ -153,10 +153,8 @@ const toggleFavorite = async () => {
 };
 
 const resumeStore = useResumeStore();
-const { getMyResumes, submitResume } = resumeStore;
+const { getResumesPublishedNegotiations, submitResume } = resumeStore;
 const { my_resumes } = storeToRefs(resumeStore);
-
-onMounted(getMyResumes);
 
 const areContactsShown = ref(false);
 const selectedResume = ref(null);
@@ -202,7 +200,10 @@ const onSubmit = async (e) => {
 };
 
 const myResumeOptions = computed(() =>
-  my_resumes.value.map((item) => ({ name: item.title, value: item.id })),
+    getResumesPublishedNegotiations({
+      provider: data.provider,
+      vacancy_id: data.id,
+    }).map((item) => ({ name: item.title, value: item.id })),
 );
 
 const toggleContactsVisibility = () => {

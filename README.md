@@ -47,6 +47,7 @@ Build the application for production:
 yarn install
 yarn run build
 pm2 restart JobeekOnline
+pm2 start ecosystem.config.cjs
 ```
 
 Locally preview production build:

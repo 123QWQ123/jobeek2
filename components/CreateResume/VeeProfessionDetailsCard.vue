@@ -192,9 +192,7 @@ const initialValues = {
   title: my_resume.value?.title ?? "",
   professional_roles:
     my_resume.value?.professional_roles.map((item) => item.id) ?? [],
-  work_types: my_resume.value?.work_types
-    ? Object.keys(my_resume.value.work_types).map(Number)
-    : [],
+  work_types: my_resume.value?.work_types.map((item) => item.id) ?? [],
   schedules: my_resume.value?.schedules
     ? Object.keys(my_resume.value.schedules).map(Number)
     : [],

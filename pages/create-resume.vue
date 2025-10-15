@@ -46,7 +46,7 @@ await useAsyncData(
     return await getDictionaries([
       "gender_resume",
       "business_trip",
-      "work_type",
+      "resume_work_type",
       "relocation_type",
     ]);
   },
