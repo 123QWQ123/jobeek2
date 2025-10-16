@@ -61,7 +61,7 @@ watch(
       industry_ids.value = newValues;
       items.value = getCheckedItems(items, newValues);
 
-      prepare(items);
+      prepare(items.value);
     }
   },
 );
@@ -93,7 +93,7 @@ const toggleSelect = (event, id) => {
   selected_ids = selected_ids.length === 0 ? undefined : selected_ids;
 
   updateQueryParam(
-    "industries",
+    props.name,
     JSON.stringify(Array.from(new Set(selected_ids))),
   );
   firstItems.value = dynItems;
@@ -119,7 +119,7 @@ const prepare = (newItems, oldItems) => {
 };
 
 const getCheckedItems = (items, ids_from_url) => {
-  return items.map((item) => {
+  return items.value.map((item) => {
     if (ids_from_url && ids_from_url.includes(item.id)) {
       item.checked = true;
       item.items = item.items.map((sub_item) => {

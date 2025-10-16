@@ -142,6 +142,16 @@ export const useVacancyStore = defineStore("vacancy", {
         value: item.id,
       }));
     },
+    metros_stations_formatted: (state) => {
+      let stations = [];
+      state.metros.forEach((item) => {
+        stations.push(...item.stations);
+      });
+      return stations.map((item) => ({
+        name: item.name,
+        value: item.id,
+      }));
+    },
   },
   actions: {
     async getConnectedEmployerProviders() {

@@ -32,6 +32,7 @@
               :rules="{ url: true }"
             />
           </div>
+          <ErrorMessage :name="props.name + '[' + [idx] + ']'" />
         </div>
 
         <button
@@ -80,8 +81,4 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
-
-
-
-</style>
+<style scoped></style>
