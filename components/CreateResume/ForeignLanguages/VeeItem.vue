@@ -1,6 +1,9 @@
 <template>
   <div class="row position-relative">
-    <span class="position-absolute absoluted_icon delete-icon-item" @click="remove">
+    <span
+      class="position-absolute absoluted_icon delete-icon-item"
+      @click="remove"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="16"
@@ -39,7 +42,6 @@
 import { useDictionaryStore } from "~/store/dictionary.js";
 
 const props = defineProps(["idx", "name"]);
-const { idx, name } = toRefs(props);
 const emit = defineEmits(["remove"]);
 
 const dictionaryStore = useDictionaryStore();
@@ -55,13 +57,9 @@ const languageOptions = computed(() => {
     value: item.id,
   }));
 });
-const remove = (id) => {
-  emit("remove", id);
+const remove = () => {
+  emit("remove", props.idx);
 };
 </script>
 
-<style scoped>
-
-
-
-</style>
+<style scoped></style>

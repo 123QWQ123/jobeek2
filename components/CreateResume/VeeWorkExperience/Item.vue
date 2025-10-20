@@ -1,6 +1,9 @@
 <template>
   <div class="row position-relative empty-area">
-    <span class="position-absolute absoluted_icon delete-icon-item" @click="deleteItem">
+    <span
+      class="position-absolute absoluted_icon delete-icon-item"
+      @click="deleteItem"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="16"
@@ -208,9 +211,8 @@ const updateIndustryInput = async (newValue = "") => {
     }));
 };
 const profileStore = useProfileStore();
-const { searchCities } = profileStore;
 const industryOptions = ref(
-    industries_without_parent.map((item) => ({
+  industries_without_parent.map((item) => ({
     value: item.id,
     name: item.title,
   })),
@@ -256,7 +258,7 @@ onMounted(() => {
 const isNew = ref(props.isNew);
 
 const deleteItem = (id = null) => {
-  emit("delete", props.id);
+  emit("delete", props.idx);
 };
 
 const { providers } = useProviders();
@@ -353,7 +355,7 @@ const yearOptions = computed(() => useYearOptions());
 const monthOptions = computed(() => useMonthOptions());
 
 const save = () => {
-  emit("update", props.id, useFormData(state));
+  emit("update", props.idx, useFormData(state));
 };
 watch(() => useWatchStateValues(state), save);
 </script>

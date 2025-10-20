@@ -2,7 +2,7 @@
   <div>
     <div :key="field.key" v-for="(field, idx) in fields">
       <CreateResumeVeeWorkExperienceItem
-        @remove="remove"
+        @delete="remove"
         :name="props.name"
         :providers="props.providers"
         :idx="idx"
