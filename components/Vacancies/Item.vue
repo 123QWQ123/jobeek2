@@ -36,7 +36,12 @@
                 <CustomSelectWithRadio
                   label="Выберите резюме"
                   v-model="selectedResume"
-                  :options="myResumeOptions"
+                  :options="
+                    myResumeOptions.map((option) => ({
+                      name: option.title,
+                      value: option.id,
+                    }))
+                  "
                 />
                 <button
                   id="apply-button"
@@ -131,11 +136,14 @@ const resumeStore = useResumeStore();
 const isAuthenticated = computed(() => useAuthStore().isAuthed);
 
 // Generate resume options to be displayed in the dropdown
-const myResumeOptions = computed(() =>
-  resumeStore.my_resumes.map((res) => ({
-    name: res.title,
-    value: res.id,
-  })),
+const { data: myResumeOptions } = await useAsyncData(
+  "getResumesPublishedNegotiations",
+  async () => {
+    return await resumeStore.getResumesPublishedNegotiations({
+      provider: data.provider,
+      vacancy_id: data.id,
+    });
+  },
 );
 
 // Generate a concise description for the vacancy

@@ -8,8 +8,6 @@ useHead({
 const authStore = useAuthStore();
 
 const isEmployer = computed(() => authStore.isEmployer);
-const user = computed(() => authStore.user);
-const employer = computed(() => authStore.employer);
 
 watch(isEmployer, (new_value) => {
   if (new_value === true) {

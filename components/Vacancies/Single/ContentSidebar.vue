@@ -39,7 +39,12 @@
           <CustomSelectWithRadio
             label="Выберите резюме"
             v-model="selectedResume"
-            :options="myResumeOptions"
+            :options="
+              myResumeOptions.map((item) => ({
+                name: item.title,
+                value: item.id,
+              }))
+            "
           />
           <button
             class="btn apply-button button-accent"
@@ -168,6 +173,15 @@ const isContactsShown = computed(() => {
     !!data.contacts?.email
   );
 });
+const { data: myResumeOptions } = await useAsyncData(
+  "getResumesPublishedNegotiations",
+  async () => {
+    return await getResumesPublishedNegotiations({
+      provider: data.provider,
+      vacancy_id: data.id,
+    });
+  },
+);
 
 const onSubmit = async (e) => {
   e.preventDefault();
@@ -198,13 +212,6 @@ const onSubmit = async (e) => {
     console.error("Failed to submit resume:", response.message);
   }
 };
-
-const myResumeOptions = computed(() =>
-    getResumesPublishedNegotiations({
-      provider: data.provider,
-      vacancy_id: data.id,
-    }).map((item) => ({ name: item.title, value: item.id })),
-);
 
 const toggleContactsVisibility = () => {
   areContactsShown.value = !areContactsShown.value;

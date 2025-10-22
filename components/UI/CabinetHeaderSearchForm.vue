@@ -25,7 +25,7 @@
         <SelectWithSearch
           :options="cityOptions"
           v-model.number="city"
-          :placeholder="'Город'"
+          placeholder="Город"
           @input="updateCityInput"
         ></SelectWithSearch>
       </div>
