@@ -8867,6 +8867,35 @@ div.parsed_content {
 	
 }
 
+.provider-status {
+	position: absolute;
+    top: -16px;
+    right: 20px;
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+.provider-status.white {
+    background: #fff;
+    color: #000;
+}
+
+.provider-status.gray {
+    background: #bcbcbc;
+    color: #000;
+}
+
+.provider-status.red {
+    background: #ff0432;
+}
+
+.provider-status.green {
+    background: #00aa87;
+}
+
+
 @media (max-width: 560px) {
 	.notification-premium {
         background-image: none;

@@ -50,6 +50,7 @@
               />
             </svg>
           </button>
+          <div class="provider-status white">Не опубликован</div>
         </div>
 
         <div class="text-danger d-block" v-if="errors.hh">
@@ -101,6 +102,7 @@
               />
             </svg>
           </button>
+          <div class="provider-status green">Опубликован</div>
         </div>
 
         <div class="text-danger d-block" v-if="errors.superjob">
