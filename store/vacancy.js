@@ -307,11 +307,11 @@ export const useVacancyStore = defineStore("vacancy", {
       return response;
     },
 
-    async createDraft(payload, content_type = "application/json") {
+    async createDraft(payload, cb) {
       const response = await useApi("employer/vacancy/draft/create", {
         method: "post",
-        content_type,
         payload,
+        cb,
       });
       // if ('data' in response){
       //   this.resume = response.data;
@@ -319,22 +319,20 @@ export const useVacancyStore = defineStore("vacancy", {
       return response;
     },
 
-    async updateDraft(id, payload, content_type = "application/json") {
+    async updateDraft(id, payload, cb = null) {
       const response = await useApi("employer/vacancy/draft/" + id, {
         method: "PUT",
-        content_type,
         payload,
+        cb,
       });
       if ("data" in response && response.data.hasOwnProperty("data")) {
         this.my_vacancy = response.data.data;
       }
       return response;
     },
-    async createDraftFromActiveVacancy(id, content_type = "application/json") {
-      const response = await useApi("employer/vacancy/create/draft/" + id, {
+    async createDraftFromActiveVacancy(id) {
+      const response = await useApi("employer/vacancy/draft/create/" + id, {
         method: "POST",
-        content_type,
-        payload: {},
       });
       // if ('data' in response && response.data.hasOwnProperty('data')){
       //   this.my_vacancy = response.data.data;
