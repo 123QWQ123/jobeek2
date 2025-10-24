@@ -1,6 +1,9 @@
 <template>
   <div class="row position-relative empty-area">
-    <span class="position-absolute absoluted_icon delete-icon-item" @click="deleteItem">
+    <span
+      class="position-absolute absoluted_icon delete-icon-item"
+      @click="deleteItem"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="16"
@@ -194,24 +197,22 @@ const vacancyStore = useVacancyStore();
 const resumeStore = useResumeStore();
 
 const { getIndustries } = resumeStore;
-const { industries } = resumeStore;
+const { industries_without_parent } = resumeStore;
 const { value: until_today } = useField(
   () => `${props.name}[${props.idx}].until_today`,
 );
 
 const updateIndustryInput = async (newValue = "") => {
-  industries.filter((item) => item.title.includes(newValue));
-  industryOptions.value = industries
-    .filter((item) => item.title.includes(newValue))
+  industryOptions.value = industries_without_parent
+    .filter((item) => item.title.toLowerCase().includes(newValue.toLowerCase()))
     .map((item) => ({
       value: item.id,
       name: item.title,
     }));
 };
 const profileStore = useProfileStore();
-const { searchCities } = profileStore;
 const industryOptions = ref(
-  industries.map((item) => ({
+  industries_without_parent.map((item) => ({
     value: item.id,
     name: item.title,
   })),
@@ -257,7 +258,7 @@ onMounted(() => {
 const isNew = ref(props.isNew);
 
 const deleteItem = (id = null) => {
-  emit("delete", props.id);
+  emit("delete", props.idx);
 };
 
 const { providers } = useProviders();
@@ -354,7 +355,7 @@ const yearOptions = computed(() => useYearOptions());
 const monthOptions = computed(() => useMonthOptions());
 
 const save = () => {
-  emit("update", props.id, useFormData(state));
+  emit("update", props.idx, useFormData(state));
 };
 watch(() => useWatchStateValues(state), save);
 </script>

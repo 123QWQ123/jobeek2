@@ -56,6 +56,14 @@ export const useResumeStore = defineStore("resume", {
         value: item.id,
       }));
     },
+    industries_without_parent: (state) => {
+      let flattenedIndustries = [];
+      state.industries.forEach((item) => {
+        flattenedIndustries.push(...item.industries);
+      });
+
+      return flattenedIndustries;
+    },
   },
   actions: {
     async getAreas(payload) {
@@ -218,6 +226,13 @@ export const useResumeStore = defineStore("resume", {
         cb,
       });
       return response;
+    },
+    async getResumesPublishedNegotiations(payload) {
+      const response = await useApi("seeker/negotiations/resumes", {
+        method: "get",
+        params: payload,
+      });
+      return response.data.data ?? [];
     },
     async submitResume(payload) {
       const response = await useApi("seeker/negotiations", {

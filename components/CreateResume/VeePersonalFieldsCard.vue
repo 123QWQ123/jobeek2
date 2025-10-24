@@ -177,6 +177,7 @@
       <CreateResumeVeeSocialNetworksForm
         v-show="!state.social_networks.is_hidden"
         name="social_networks"
+        :value="my_resume?.social_networks"
       />
 
       <CreateResumeVeePhoneFieldsForm
@@ -299,10 +300,7 @@ const schema = computed(() => {
       business_trip_id: zod.number(),
       relocation_type_id: zod.number().nullable().optional(),
       social_networks: zod
-        .string()
-        .url()
-        .trim()
-        .min(1, "Введите URL")
+        .array(zod.string().url("Введите URL"))
         .nullable()
         .optional(),
       phones: zod.array(phoneScheme).nonempty("Введите номер телефона"),
@@ -328,7 +326,10 @@ const schema = computed(() => {
       address: zod.string().nullable().optional(),
       business_trip_id: zod.number().nullable(),
       relocation_type_id: zod.number().nullable().optional(),
-      social_networks: zod.number().array().optional(),
+      social_networks: zod
+        .array(zod.string().url("Введите URL"))
+        .nullable()
+        .optional(),
       phones: zod.array(phoneScheme).optional(),
     });
   }
@@ -354,8 +355,11 @@ const schema = computed(() => {
     address: zod.string().nullable().optional(),
     business_trip_id: zod.number(),
     relocation_type_id: zod.number().nullable().optional(),
-    social_networks: zod.number().array().optional(),
-    phones: zod.array(phoneScheme).nonempty(),
+    social_networks: zod
+      .array(zod.string().url("Введите URL"))
+      .nullable()
+      .optional(),
+    phones: zod.array(phoneScheme).nonempty("Введите номер телефона"),
   });
 });
 
@@ -373,7 +377,7 @@ const initialValues = ref({
   gender_id: my_resume.value?.gender?.id,
   relocation_type_id: my_resume.value?.relocation_type?.id,
   move_able_cities: my_resume.value?.move_able_cities.map((item) => item.id),
-  social_networks: my_resume.value?.social_networks,
+  social_networks: my_resume.value?.social_networks.map((item) => item.url),
   phones: my_resume.value?.phones.map((item, index) => ({
     id: index,
     type_id: item.type?.id,
@@ -502,14 +506,6 @@ const canBeRelocated = computed(() => {
     parseInt(values.relocation_type_id) === 148 ||
     parseInt(values.relocation_type_id) === 149
   );
-});
-
-const selectedProviders = computed(() => {
-  if (providers.value.hh === true && providers.value.superjob === false)
-    return ["hh"];
-  if (providers.value.hh === false && providers.value.superjob === true)
-    return ["superjob"];
-  return ["hh", "superjob"];
 });
 
 const updateMoveableCityInput = async (newValue = "") => {

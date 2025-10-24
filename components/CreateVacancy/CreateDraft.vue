@@ -104,6 +104,7 @@ import useProviders from "~/composables/useProviders.js";
 import { zod } from "~/hooks/ru-zod.js";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useCurrencyOptions } from "~/composables/useCurrencyOptions.js";
+import { toast } from "vue3-toastify";
 
 // Определение пропсов и состояний
 const props = defineProps({
@@ -130,11 +131,13 @@ const errorMessage = ref(null);
 
 // Схема валидации формы
 const validationSchema = zod.object({
-  providers: zod.array(zod.string()).nonempty("Выберите хотя бы 1 сервис"),
+  providers: zod.array(zod.string()).nonempty("Обязательное поле"),
   name: zod.string(),
-  cities: zod.array(zod.number()).nonempty("Выберите хотя бы 1"),
-  description: zod.string(),
-  professional_roles: zod.array(zod.number()).nonempty("Выберите хотя бы 1"),
+  cities: zod.array(zod.number()).nonempty("Обязательное поле"),
+  description: zod
+    .string()
+    .min(150, "Количество символов должно быть не меньше 150"),
+  professional_roles: zod.array(zod.number()).nonempty("Обязательное поле"),
   salary: zod.object({
     currency: zod.string(),
     from: zod.number(),
@@ -200,7 +203,13 @@ const save = async (is_from_parent = false) => {
     errorMessage.value = "";
     isLoading.value = true;
 
-    const resData = await createDraft(unref(values));
+    const resData = await createDraft(unref(values), (result) => {
+      if (result.status === "failed") {
+        setErrors(result.errors);
+      } else {
+        toast.info(result.message);
+      }
+    });
 
     if (resData.status !== "success") {
       errorMessage.value = resData.message;
@@ -217,7 +226,6 @@ const save = async (is_from_parent = false) => {
       params: { id: vacancy_id },
       query: { type: "draft" },
     });
-
     return true;
   } catch (error) {
     errorMessage.value = "Произошла ошибка при сохранении";

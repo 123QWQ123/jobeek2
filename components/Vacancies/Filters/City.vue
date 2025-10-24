@@ -116,9 +116,12 @@ const toggleCity = (id) => {
   updateQueryParam("cities", cities.value.length ? cities.value : undefined);
 };
 
-watch(regions, () => {
-  getCities({ region_ids: regions.value });
-});
+watch(
+  () => getQueryParam("regions"),
+  () => {
+    getCities({ region_ids: regions.value });
+  },
+);
 </script>
 
 <style scoped>

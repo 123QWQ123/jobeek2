@@ -10,27 +10,8 @@
       ></VacanciesItem>
     </ul>
 
-    <!--    <div class="footer mt-3" v-if="items.length">-->
-    <!--      <button-->
-    <!--        class="btn btn-primary"-->
-    <!--        @click="changePage(-1)"-->
-    <!--        :disabled="current_page <= 1"-->
-    <!--      >-->
-    <!--        Prev-->
-    <!--      </button>-->
-    <!--      <button-->
-    <!--        class="btn btn-primary ms-2"-->
-    <!--        @click="changePage(1)"-->
-    <!--        :disabled="!isMore"-->
-    <!--      >-->
-    <!--        Next-->
-    <!--      </button>-->
-    <!--    </div>-->
-
     <div v-if="!items.length" class="no-results no-results-mt-20">
-      <p>
-        У вас пока нет вакансий в избранном
-      </p>
+      <p>У вас пока нет вакансий в избранном</p>
     </div>
     <NuxtLink
       v-if="!items.length"

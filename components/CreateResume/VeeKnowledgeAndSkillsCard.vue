@@ -93,7 +93,7 @@ const { my_resume } = storeToRefs(resumeStore);
 const schema = computed(() => {
   if (providers.value.hh === true && providers.value.superjob === false) {
     return zod.object({
-      skills: zod.string().array().nonempty(),
+      skills: zod.string().array().min(1, "Обязательное поле"),
       other_skills: zod.string(),
     });
   }
@@ -104,13 +104,13 @@ const schema = computed(() => {
     });
   }
   return zod.object({
-    skills: zod.string().array().nonempty(),
+    skills: zod.string().array().min(1, "Обязательное поле"),
     other_skills: zod.string(),
   });
 });
 
 const initialValues = ref({
-  skills: Object.values(my_resume.value?.skills || {}) ?? [],
+  skills: my_resume.value?.skills?.map((item) => item.name) ?? [],
   other_skills: my_resume.value?.other_skills ?? null,
 });
 const { errors, values, setErrors, meta, setValues, resetForm, validate } =

@@ -47,6 +47,7 @@ const loadInitialData = async () => {
       "marital_status_resume",
       "travel_time",
       "children_resume",
+      "resume_work_type",
     ]),
     resumeStore.getIndustries(),
     resumeStore.getConnectedSeekerProviders(),

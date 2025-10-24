@@ -9,8 +9,9 @@
           <div class="resume-card-name">
             <nuxt-link
               :to="{
-                name: 'vacancies-slug',
-                params: { slug: item.id },
+                name: 'my-vacancy-id',
+                params: { id: item.id },
+                query: { type: 'draft' },
               }"
               class="title"
             >
@@ -36,16 +37,11 @@
             <div class="custom-check-wrap">
               <div
                 class="theme-checker theme-checker--blue"
-                :class="{ disabled: !canHHBeEnabled }"
+                :class="{ disabled: !hhProviderEnabled }"
               >
                 <div :class="{ animated: isHHLoading }"></div>
 
-                <input
-                  type="checkbox"
-                  id="hh"
-                  :checked="hhProviderEnabled"
-                  @click="toggle('hh')"
-                />
+                <input type="checkbox" id="hh" :checked="hhProviderEnabled" />
                 <div class="theme-checker-ui">
                   <div class="circle"></div>
                 </div>
@@ -61,7 +57,7 @@
               <div
                 class="theme-checker theme-checker--blue"
                 :class="{
-                  disabled: !canSuperjobBeEnabled,
+                  disabled: !superjobProviderEnabled,
                 }"
               >
                 <div :class="{ animated: isSuperjobLoading }"></div>
@@ -69,7 +65,6 @@
                   type="checkbox"
                   id="sj"
                   :checked="superjobProviderEnabled"
-                  @click="toggle('superjob')"
                 />
                 <div class="theme-checker-ui">
                   <div class="circle"></div>
@@ -88,10 +83,7 @@
             <div class="check-block mb-2 mb-md-1 mb-lg-0 me-lg-3">
               <label for="enable-push">Подключить уведомления: </label>
             </div>
-            <div
-              class="check-block mb-2 mb-md-1 mb-lg-0 me-lg-3"
-              @click="onPushToggle"
-            >
+            <div class="check-block mb-2 mb-md-1 mb-lg-0 me-lg-3">
               <div class="checkbox mx-2">
                 <input
                   type="checkbox"
@@ -105,7 +97,7 @@
               </div>
               <label for="enable-push">Push</label>
             </div>
-            <div class="check-block" @click="onEmailToggle">
+            <div class="check-block">
               <div class="checkbox mx-2">
                 <input
                   type="checkbox"
@@ -201,22 +193,15 @@
 import moment from "moment";
 import "moment/locale/ru";
 import { useVacancyStore } from "~/store/vacancy";
-import Swal from "sweetalert2";
 import { toast } from "vue3-toastify";
 
 const props = defineProps(["item"]);
 const { item } = props;
 const superjobProviderEnabled = computed(() => {
-  if (item.value && item.value.providers) {
-    return !!item.value.providers.find((prov) => prov.name === "superjob");
-  }
-  return false;
+  return !!item.providers?.find((prov) => prov.name === "superjob");
 });
 const hhProviderEnabled = computed(() => {
-  if (item.value && item.value.providers) {
-    return !!item.value.providers.find((prov) => prov.name === "hh");
-  }
-  return false;
+  return !!item?.providers?.find((prov) => prov.name === "hh");
 });
 const resetObject = computed(() => {
   return {
@@ -227,14 +212,18 @@ const resetObject = computed(() => {
 const selectedProviders = ref(resetObject.value);
 const isSuperjobLoading = ref(false);
 const isHHLoading = ref(false);
-const pushStatus = ref(item.value?.push_notification ?? false);
-const emailStatus = ref(item.value?.email_notification ?? false);
+const pushStatus = ref(item?.push_notification ?? false);
+const emailStatus = ref(item?.email_notification ?? false);
 
 const { $moment } = useNuxtApp();
 
 const { providers } = storeToRefs(useVacancyStore());
-const { deleteVacancy, createDraftFromActiveVacancy, getArchivedVacancies } =
-  useVacancyStore();
+const {
+  deleteVacancy,
+  updateDraft,
+  createDraftFromActiveVacancy,
+  getArchivedVacancies,
+} = useVacancyStore();
 const { $formatNumber } = useNuxtApp();
 const hhIncluded = computed(() => {
   if (props.item.providers.length) {
@@ -257,26 +246,12 @@ const hhProviderConnected = computed(() => {
 });
 
 const createdDate = computed(() => {
-  if (!item.value) return "";
-  let date = $moment(item.value.published_date);
+  if (!item) return "";
+  let date = $moment(item.published_date);
 
   date = "в " + date.format("D") + " " + date.format("MMMM");
 
   return date;
-});
-
-const canHHBeEnabled = computed(() => {
-  if (item.value) {
-    return providers.value.hh;
-  }
-  return false;
-});
-
-const canSuperjobBeEnabled = computed(() => {
-  if (item.value) {
-    return vacancyStore.providers.superjob;
-  }
-  return false;
 });
 
 const superjobProviderConnected = computed(() => {
@@ -320,7 +295,7 @@ const toggle = async (provider) => {
     providers: providerParams,
   };
   data.form_data = "PROVIDERS_DATA";
-  const resData = await updateDraft(item.value.id, data);
+  const resData = await updateDraft(item.id, data);
   if (resData.status !== "success") {
     selectedProviders.value[provider] = !selectedProviders.value[provider];
     isSuperjobLoading.value = false;
@@ -400,7 +375,7 @@ const onRestore = async (id) => {
 const onPushToggle = async (e) => {
   e.preventDefault();
   const newValue = !pushStatus.value;
-  const resData = await updateDraft(item.value.id, {
+  const resData = await updateDraft(item.id, {
     form_data: "NOTIFICATION_DATA",
     push_notification: newValue,
   });
@@ -413,7 +388,7 @@ const onPushToggle = async (e) => {
 const onEmailToggle = async (e) => {
   e.preventDefault();
   const newValue = !emailStatus.value;
-  const resData = await updateDraft(item.value.id, {
+  const resData = await updateDraft(item.id, {
     form_data: "NOTIFICATION_DATA",
     email_notification: newValue,
   });

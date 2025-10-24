@@ -17,8 +17,6 @@ const { cities, professional_roles } = storeToRefs(profileStore);
 const { getDictionaries } = useDictionaryStore();
 
 const subscribeId = useRoute().params.id;
-const providers = ref(null);
-const authStore = useAuthStore();
 
 if (cities.value.length === 0) {
   await useAsyncData("getCities", async () => await getCities());
@@ -32,12 +30,13 @@ if (professional_roles.value.length === 0) {
 
 await useAsyncData(
   "getDictionaries",
-  async () => await getDictionaries(["work_type", "vacancy_search_field"]),
+  async () =>
+    await getDictionaries(["resume_work_type", "vacancy_search_field"]),
 );
 const {
   data: {
     value: {
-      data: { data, status },
+      data: { data },
     },
   },
 } = await useAsyncData(`subscription_${subscribeId}`, async () => {
@@ -53,8 +52,7 @@ const getFields = (newObject) => {
     exclude_words: newObject.exclude_words || "",
     providers: newObject.providers || [],
     search_fields: newObject.params?.search_fields || [],
-    work_types:
-      newObject.params?.work_types.map((item) => parseInt(item)) || [], //
+    work_types: newObject.params?.work_types || [], //
     push_notification: newObject.push_notification || false,
     email_notification: newObject.email_notification || false,
     cities: newObject.params?.cities.map((item) => parseInt(item)) || [],
@@ -96,7 +94,7 @@ const schema = zod
     return value.push_notification || value.email_notification;
   });
 
-const { values, meta, setValues, errors } = useForm({
+const { values, meta } = useForm({
   initialValues,
   initialTouched: true,
   validationSchema: toTypedSchema(schema),

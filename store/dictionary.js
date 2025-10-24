@@ -6,6 +6,7 @@ export const useDictionaryStore = defineStore("dictionary", {
   state: () => {
     return {
       work_types: [],
+      resume_work_type: [],
       hh_work_types: [],
       superjob_work_types: [],
       schedules: [],
@@ -68,6 +69,12 @@ export const useDictionaryStore = defineStore("dictionary", {
     },
     work_types_formatted() {
       return this.work_types.map((item) => ({
+        name: item.name,
+        value: item.id,
+      }));
+    },
+    resume_work_type_formatted() {
+      return this.resume_work_type.map((item) => ({
         name: item.name,
         value: item.id,
       }));
@@ -315,6 +322,7 @@ export const useDictionaryStore = defineStore("dictionary", {
         children: "children",
         vacancy_search_field: "vacancy_search_fields",
         covid_vaccination_requirement: "covid_vaccination_requirement",
+        resume_work_type: "resume_work_type",
       };
 
       for (const group of groups) {
