@@ -1,7 +1,10 @@
 <template>
   <div class="row position-relative">
     <div>
-      <span class="position-absolute absoluted_icon delete-icon-item" @click="remove(idx)">
+      <span
+        class="position-absolute absoluted_icon delete-icon-item"
+        @click="remove(idx)"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -25,11 +28,13 @@
       />
     </div>
 
-    <PhoneInputWithCaptchaAndConfirmation
-      v-show="!state.phone.is_hidden"
-      :name="`${name}[${idx}].phone`"
-      :required="providers.hh"
-    />
+    <client-only>
+      <PhoneInputWithCaptchaAndConfirmation
+        v-show="!state.phone.is_hidden"
+        :name="`${name}[${idx}].phone`"
+        :required="providers.hh"
+      />
+    </client-only>
 
     <div class="row" v-show="!state.is_preferred.is_hidden">
       <ResumeCheckboxInput
