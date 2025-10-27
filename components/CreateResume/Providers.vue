@@ -22,6 +22,7 @@
             </div>
           </div>
           <span>Опубликовать на HeadHunters.ru</span>
+          <div :class="getClass('hh')">{{ getText("hh") }}</div>
         </div>
         <div class="import-complete">
           <div class="logo logo-fake"></div>
@@ -69,6 +70,7 @@
             </div>
           </div>
           <span>Опубликовать на Superjob.ru </span>
+          <div :class="getClass('superjob')">{{ getText("superjob") }}</div>
         </div>
         <div class="import-complete">
           <div class="logo logo-fake"></div>
@@ -147,6 +149,47 @@ const isHHSelected = ref(
 const isSuperjobSelected = ref(
   props.providers.filter((provider) => provider.name === "superjob").length > 0,
 );
+const STATUS_MAP = {
+  1: "NOT_PUBLISHED",
+  2: "PUBLISHED",
+  3: "BLOCKED",
+  4: "ON_MODERATION",
+  5: "REJECTED",
+};
+const providersProps = ref({
+  hh: {
+    classList: {
+      NOT_PUBLISHED: ["provider-status", "white"],
+      PUBLISHED: ["provider-status", "green"],
+      BLOCKED: ["provider-status", "red"],
+      ON_MODERATION: ["provider-status", "orange"],
+      REJECTED: ["provider-status", "red"],
+    },
+    textContent: {
+      NOT_PUBLISHED: "Не опубликован",
+      PUBLISHED: "Опубликован",
+      BLOCKED: "Заблокирован",
+      ON_MODERATION: "На модерации",
+      REJECTED: "Отклонен",
+    },
+  },
+  superjob: {
+    classList: {
+      NOT_PUBLISHED: ["provider-status", "white"],
+      PUBLISHED: ["provider-status", "green"],
+      BLOCKED: ["provider-status", "red"],
+      ON_MODERATION: ["provider-status", "orange"],
+      REJECTED: ["provider-status", "red"],
+    },
+    textContent: {
+      NOT_PUBLISHED: "Не опубликован",
+      PUBLISHED: "Опубликован",
+      BLOCKED: "Заблокирован",
+      ON_MODERATION: "На модерации",
+      REJECTED: "Отклонен",
+    },
+  },
+});
 
 /**
  * Methods and Handlers
@@ -201,22 +244,36 @@ const handleToggle = async (provider) => {
 /**
  * Class Helper
  */
-const getImportBoxClass = (provider) => {
-  const isEnabled =
-    provider === "hh" ? isHHEnabled.value : isSuperjobEnabled.value;
-  const isSelected =
-    provider === "hh" ? isHHSelected.value : isSuperjobSelected.value;
+// In `components/CreateResume/Providers.vue` <script setup>
+const getProviderState = (provider) => {
+  const publishedProvider = props.providers.find(
+    ({ name }) => name === provider,
+  );
+  const providerConfig = providersProps.value?.[provider];
+
+  const fallback = {
+    classList: ["provider-status", "white"],
+    text: "Не опубликован",
+  };
+
+  if (!providerConfig) return fallback;
+
+  const statusKey =
+    (publishedProvider && STATUS_MAP[publishedProvider.status]) ??
+    "NOT_PUBLISHED";
 
   return {
-    "import-is-complete": isSelected,
-    disabled: !isEnabled,
-    "is-connected": isEnabled,
+    classList:
+      providerConfig.classList[statusKey] ??
+      providerConfig.classList["NOT_PUBLISHED"],
+    text:
+      providerConfig.textContent[statusKey] ??
+      providerConfig.textContent["NOT_PUBLISHED"],
   };
 };
 
-const openProviderAuthUrl = (url) => {
-  window.open(url);
-};
+const getClass = (provider) => getProviderState(provider).classList;
+const getText = (provider) => getProviderState(provider).text;
 </script>
 
 <style scoped>

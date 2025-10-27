@@ -138,10 +138,6 @@ const props = defineProps({
 
 const errors = computed(() => props.errors);
 
-const route = useRoute();
-
-const resumeID = computed(() => route.params.id);
-
 const resumeStore = useResumeStore();
 const { getConnectedSeekerProviders, getSeekerProvidersAuthEndpoints } =
   resumeStore;
@@ -151,7 +147,7 @@ await getSeekerProvidersAuthEndpoints(
   useRequestURL(),
 );
 
-const { value, errorMessage, setValue } = useField(() => props.name);
+const { errorMessage, setValue } = useField(() => props.name);
 
 const isHHEnabled = computed(() => resumeStore.providers.hh);
 const isSuperjobEnabled = computed(() => resumeStore.providers.superjob);
