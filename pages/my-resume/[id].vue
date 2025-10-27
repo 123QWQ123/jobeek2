@@ -1,11 +1,4 @@
 <script setup>
-import Swal from "sweetalert2";
-import { toast } from "vue3-toastify";
-import { useResumeStore } from "~/store/resume";
-import useProviders from "~/composables/useProviders.js";
-import { useDictionaryStore } from "~/store/dictionary.js";
-import { useProfileStore } from "~/store/profile.js";
-
 const route = useRoute();
 const resumeStore = useResumeStore();
 const profileStore = useProfileStore();
@@ -78,8 +71,10 @@ const pageTitle = computed(() => {
 useHead({ title: pageTitle });
 
 // Компьютеды для публикации
-const hhPublishable = ref(my_resume.can_published?.hh ?? false);
-const superjobPublishable = ref(my_resume.can_published?.superjob ?? false);
+const hhPublishable = ref(my_resume.value.can_published?.hh ?? false);
+const superjobPublishable = ref(
+  my_resume.value.can_published?.superjob ?? false,
+);
 
 // Обновление состояния возможности публикации при изменении резюме
 watch(
@@ -109,7 +104,7 @@ const publishableProviderName = computed(() => {
   return null;
 });
 
-const canOnlyOnePublished = computed(
+const canBePublishedToAnyProvider = computed(
   () => hhPublishable.value || superjobPublishable.value,
 );
 
@@ -121,8 +116,8 @@ const saveAsDraft = (e) => {
 const saveAndPublishAll = async (event) => {
   event.preventDefault();
 
-  if (!canOnlyOnePublished.value) {
-    toast.info("Пока вы не можете опубликовать если не заполняйте все поля!", {
+  if (!canBePublishedToAnyProvider.value) {
+    toast.info("Для публикации необходимо заполнить все обязательные поля!", {
       autoClose: 3000,
     });
     return;
@@ -135,8 +130,8 @@ const saveAndPublishAll = async (event) => {
 
     if (resData.status !== "success") {
       errors.value = Object.assign(
-        resData.errors.hh || {},
-        resData.errors.superjob || {},
+        resData.errors?.hh || {},
+        resData.errors?.superjob || {},
         resData.errors || {},
       );
       errorMessage.value = resData.message;
@@ -226,7 +221,7 @@ const saveAndPublishAll = async (event) => {
           <CreateResumeVeeTestsAndExamsCard
             v-if="resumeID"
             :key="`tests_el_${providers.hh + providers.superjob}`"
-            ref="courses_el"
+            ref="tests_el"
             :providers="providers"
             :errors="errors"
           />
@@ -290,7 +285,7 @@ const saveAndPublishAll = async (event) => {
 
           <p
             class="float-end text-primary-secondary mt-2"
-            v-if="canOnlyOnePublished && publishableProviderName"
+            v-if="canBePublishedToAnyProvider && publishableProviderName"
           >
             Будет опубликовано только на
             <span class="text-primary">{{
