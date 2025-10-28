@@ -8875,6 +8875,7 @@ div.parsed_content {
     padding: 5px;
     border-radius: 5px;
     font-size: 12px;
+    z-index: 3;
 }
 
 .provider-status.white {
@@ -8893,6 +8894,10 @@ div.parsed_content {
 
 .provider-status.green {
     background: #00aa87;
+}
+
+.provider-status.orange {
+    background: #ef8010;
 }
 
 
