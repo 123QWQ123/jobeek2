@@ -1,4 +1,9 @@
 <script setup>
+import { toast } from "vue3-toastify";
+import { useResumeStore } from "~/store/resume.js";
+import { useProfileStore } from "~/store/profile.js";
+import { useDictionaryStore } from "~/store/dictionary.js";
+
 const route = useRoute();
 const resumeStore = useResumeStore();
 const profileStore = useProfileStore();
