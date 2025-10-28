@@ -149,13 +149,7 @@ const isHHSelected = ref(
 const isSuperjobSelected = ref(
   props.providers.filter((provider) => provider.name === "superjob").length > 0,
 );
-const STATUS_MAP = {
-  1: "NOT_PUBLISHED",
-  2: "PUBLISHED",
-  3: "BLOCKED",
-  4: "ON_MODERATION",
-  5: "REJECTED",
-};
+
 const providersProps = ref({
   hh: {
     classList: {
@@ -259,8 +253,7 @@ const getProviderState = (provider) => {
   if (!providerConfig) return fallback;
 
   const statusKey =
-    (publishedProvider && STATUS_MAP[publishedProvider.status]) ??
-    "NOT_PUBLISHED";
+    (publishedProvider && publishedProvider.status) ?? "NOT_PUBLISHED";
 
   return {
     classList:
