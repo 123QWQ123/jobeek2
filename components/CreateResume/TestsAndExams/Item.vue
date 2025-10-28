@@ -1,6 +1,9 @@
 <template>
   <div class="row position-relative empty-area">
-    <span class="position-absolute absoluted_icon delete-icon-item" @click="deleteItem">
+    <span
+      class="position-absolute absoluted_icon delete-icon-item"
+      @click="deleteItem"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="16"
@@ -129,7 +132,7 @@ watch(
   () => props.errors,
   (newErrors) => {
     errors.value = newErrors;
-  }
+  },
 );
 
 const deleteItem = (id = null) => {
@@ -173,8 +176,6 @@ watch(() => useWatchStateValues(state, true, true), save);
 </script>
 
 <style scoped>
-
-
 .input-row + .input-row {
   margin-top: 2rem;
 }
