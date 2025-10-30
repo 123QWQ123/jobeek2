@@ -145,8 +145,7 @@ const lastSyncedTime = computed(() => {
 const onSync = async () => {
   try {
     isSyncing.value = true; // Start syncing state
-    const resData = await syncResumes();
-    if (resData.message) toast.info(resData.message, { autoClose: 3000 });
+    await syncResumes();
 
     // Refresh provider data after successful sync
     await Promise.all([refreshConnectedProviders(), refreshAuthEndpoints()]);
