@@ -24,11 +24,9 @@ import { useVacancyStore } from "~/store/vacancy";
 import { useAuthStore } from "~/store/auth";
 import { useAsyncData } from "#app";
 
-const isOpen = ref(true);
 const route = useRoute();
 const vacancyStore = useVacancyStore();
 const { getVacancy, getMyVacancy } = vacancyStore;
-const { vacancy } = storeToRefs(vacancyStore);
 const { isEmployer } = storeToRefs(useAuthStore());
 
 const { slug } = route.params;
@@ -47,13 +45,8 @@ if (!vacancyData.value) {
 
 let pageTitle = ref("Not found  - Jobeek");
 
-if (
-  (vacancyData.value && vacancyData.value?.name) ||
-  vacancyData.value?.name
-) {
-  pageTitle.value =
-    (vacancyData.value?.name || vacancyData.value?.name) +
-    " - Jobeek";
+if (vacancyData.value?.name) {
+  pageTitle.value = vacancyData.value?.name + " - Jobeek";
 }
 
 useHead({

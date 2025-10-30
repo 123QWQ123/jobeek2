@@ -5,13 +5,13 @@
         <div class="vacancy-single-head">
           <h1 class="title">{{ data.name }}</h1>
           <div class="adress">
-            <span>{{ data.address }}</span>
+            <span>{{ data.address.raw }}</span>
           </div>
           <div class="requirements">
-            {{ data.experience && data.experience + "," }}
-            {{ data.education && data.education + "," }}
-            {{ data.work_type }},
-            {{ moment.unix(data.published_date).format("YYYY.MM.DD") }}
+            {{ data.experience?.name ? data.experience.name + "," : "" }}
+            {{ data.education?.name ? data.education.name + "," : "" }}
+            {{ data.work_type.name }},
+            {{ moment(data.published_date).format("YYYY.MM.DD") }}
           </div>
           <div class="salary" v-if="data.salary_to && data.salary_from">
             {{ salary_from }} — {{ salary_to }} {{ data.currency }}/месяц

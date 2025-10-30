@@ -24,9 +24,9 @@
       </div>
 
       <div class="company-logo">
-        <img class="w-100" :src="employerLogo" :alt="data.company" />
+        <img class="w-100" :src="employerLogo" :alt="data.company.name" />
       </div>
-      <h3 class="title">{{ data.company }}</h3>
+      <h3 class="title">{{ data.company.name }}</h3>
       <!--      <p>Клиент SuperJob с 2003 года</p>-->
       <p>{{ data.vacancy_count ?? 0 }} вакансии</p>
       <p v-html="data.company_activity" />
@@ -218,7 +218,9 @@ const toggleContactsVisibility = () => {
 };
 
 const employerLogo = computed(
-  () => data.logo ?? new URL("/img/operators/undefined.svg", import.meta.url),
+  () =>
+    data.company.logo ??
+    new URL("/img/operators/undefined.svg", import.meta.url),
 );
 </script>
 

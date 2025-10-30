@@ -37,7 +37,7 @@
                   label="Выберите резюме"
                   v-model="selectedResume"
                   :options="
-                    myResumeOptions.map((option) => ({
+                    myResumeOptions?.map((option) => ({
                       name: option.title,
                       value: option.id,
                     }))
@@ -97,8 +97,6 @@
 // Import core libraries and dependencies
 import moment from "moment";
 import { useVacancyStore } from "~/store/vacancy";
-import Swal from "sweetalert2";
-import { toast } from "vue3-toastify";
 import { ref, computed } from "vue";
 import { useResumeStore } from "~/store/resume.js";
 import { useAuthStore } from "~/store/auth.js";
@@ -133,15 +131,16 @@ const selectedResume = ref(null);
 
 // Access the resume store and the current authentication state
 const resumeStore = useResumeStore();
+const { getResumesPublishedNegotiations } = resumeStore;
 const isAuthenticated = computed(() => useAuthStore().isAuthed);
 
 // Generate resume options to be displayed in the dropdown
 const { data: myResumeOptions } = await useAsyncData(
   "getResumesPublishedNegotiations",
-  async () => {
-    return await resumeStore.getResumesPublishedNegotiations({
-      provider: data.provider,
-      vacancy_id: data.id,
+  () => {
+    return getResumesPublishedNegotiations({
+      provider: item.provider,
+      vacancy_id: item.id,
     });
   },
 );

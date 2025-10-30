@@ -61,17 +61,6 @@
           </div>
         </div>
 
-        <!--        <div class="input-row" v-show="!state.company.is_hidden">-->
-        <!--          <label for="position">Город<b>*</b></label>-->
-        <!--          <div class="input-wrapper">-->
-        <!--            <VeeCustomSelect-->
-        <!--              :options="cityOptions"-->
-        <!--              :name="`${props.name}[${props.idx}].city_id`"-->
-        <!--              label="Начало года"-->
-        <!--            />-->
-        <!--          </div>-->
-        <!--        </div>-->
-
         <div class="input-row" v-show="!state.company_scope.is_hidden">
           <label for="position">Деятельность компании</label>
           <div class="input-wrapper">
@@ -167,23 +156,17 @@
 </template>
 
 <script setup>
-import { useDictionaryStore } from "~/store/dictionary";
 import { useWatchStateValues } from "~/composables/useWatchStateValues";
-import { useVacancyStore } from "~/store/vacancy";
-import ResumeTextInput from "~/components/CreateResume/ResumeTextInput.vue";
 import ResumeTextarea from "~/components/CreateResume/ResumeTextarea.vue";
 import ResumeCheckboxInput from "~/components/CreateResume/ResumeCheckboxInput.vue";
 import useProviderFields from "~/composables/useProviderFields.js";
 import useProviders from "~/composables/useProviders.js";
 import { useProfileStore } from "~/store/profile.js";
 import { useResumeStore } from "~/store/resume.js";
+import ResumeTextInput from "~/components/CreateResume/ResumeTextInput.vue";
 
 const emit = defineEmits(["delete", "update"]);
 const props = defineProps(["idx", "name"]);
-
-const { value: city_id } = useField(
-  () => `${props.name}[${props.idx}].city_id`,
-);
 
 const errors = ref(props.errors);
 watch(
@@ -192,11 +175,8 @@ watch(
     errors.value = newErrors;
   },
 );
-const dictionaryStore = useDictionaryStore();
-const vacancyStore = useVacancyStore();
 const resumeStore = useResumeStore();
 
-const { getIndustries } = resumeStore;
 const { industries_without_parent } = resumeStore;
 const { value: until_today } = useField(
   () => `${props.name}[${props.idx}].until_today`,
