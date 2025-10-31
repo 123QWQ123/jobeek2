@@ -2,12 +2,26 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import useApi from "~/hooks/useApi";
 import { useAuthStore } from "~/store/auth.js";
-import { parse, stringify } from "zipson/lib";
-
+/**
+ * @typedef {Object} Resume
+ * @property {number|null} id
+ * @property {string} title
+ * @property {string} [summary]
+ * @property {Array<Object>} [experiences]
+ * @property {Array<Object>} [work_types]
+ * @property {Array<Object>} [education_documents]
+ * @property {Array<string>} [skills]
+ * @property {Object} [contacts]
+ * @property {string} [contacts.email]
+ * @property {string} [contacts.phone]
+ * @property {boolean} [is_published]
+ * @property {Object} [meta]
+ */
 export const useResumeStore = defineStore("resume", {
   state: () => {
     return {
       resumes: [],
+      /** @type {Resume|null} */
       resume: null,
       my_resume: null,
       total: 0,

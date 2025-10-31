@@ -42,7 +42,7 @@ const loadMoreButton = ref();
 const isLoading = ref(false);
 const isMore = ref(false);
 
-const { getQueryParam, getCurrentQueryParams } = useQueryParams();
+const { getCurrentQueryParams } = useQueryParams();
 
 const params = ref(getCurrentQueryParams() ?? {});
 watch(
