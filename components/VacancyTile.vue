@@ -12,10 +12,10 @@
   >
     <h4 class="tile-card-title">{{ vacancy.name }}</h4>
     <span class="tile-card-dop-info" v-if="vacancy.salary_to">
-      До {{ $format_number(vacancy.salary_to, {}) }} ₽ / месяц
+      До {{ $format_number(vacancy.salary.to, {}) }} ₽ / месяц
     </span>
     <span v-else class="tile-card-dop-info">
-      От {{ $format_number(vacancy.salary_from, {}) }} ₽ / месяц
+      От {{ $format_number(vacancy.salary.from, {}) }} ₽ / месяц
     </span>
   </NuxtLink>
 </template>

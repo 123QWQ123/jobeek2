@@ -63,16 +63,16 @@
                       />
                     </div>
                     <div class="company-name">
-                      <strong>{{ item.company }}</strong>
-                      <span class="location">{{ item.city }}</span>
+                      <strong>{{ item.company.name }}</strong>
+                      <span class="location">{{ item.city.name }}</span>
                     </div>
                   </div>
                   <span class="vacancy-card-title">{{ item.name }} </span>
-                  <span class="vacancy-card-dop-info" v-if="item.salary_from"
-                    >От {{ $format_number(item.salary_from) }} ₽</span
+                  <span class="vacancy-card-dop-info" v-if="item.salary.from"
+                    >От {{ $format_number(item.salary.from) }} ₽</span
                   >
                   <span class="vacancy-card-dop-info" v-else
-                    >До {{ $format_number(item.salary_to) }} ₽</span
+                    >До {{ $format_number(item.salary.to) }} ₽</span
                   >
                 </nuxt-link>
                 <div class="vacancy-card-footer">

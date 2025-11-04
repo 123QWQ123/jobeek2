@@ -4,7 +4,11 @@
       <div class="favorites-card-head">
         <div class="company">
           <div class="company-logo">
-            <img class="w-100 h-100" :src="employerLogo" :alt="item.company" />
+            <img
+              class="w-100 h-100"
+              :src="employerLogo"
+              :alt="item.company.name"
+            />
           </div>
           <div class="company-name">
             <NuxtLink
@@ -16,17 +20,23 @@
             >
               {{ item.name }}
             </NuxtLink>
-            <span class="count">{{ item.company }}</span>
+            <span class="count">{{ item.company.name }}</span>
           </div>
         </div>
         <div class="salary">{{ salaryText }}</div>
       </div>
       <div class="favorites-card-body">
         <div class="time-location">
-          <span>{{ moment(item.published_date).format("hh:mm") }}</span>
-          <strong>{{ item.city }}</strong>
+          <span>{{
+            moment(item.published_date).format("YYYY-MM-DD hh:mm")
+          }}</span>
+          <strong>{{ item.city.name }}</strong>
         </div>
-        <p>{{ vacancyDescription }}</p>
+        <div v-if="item.address?.raw" class="time-location">
+          <small>{{ item.address.raw }}</small>
+        </div>
+
+        <p>{{ vacancyDescriptionText }}</p>
       </div>
       <div class="favorites-card-footer">
         <div class="favorites-card-footer-row">
@@ -34,10 +44,11 @@
             <div class="select-resume-row" v-if="isAuthenticated">
               <div class="custom-select-wrapper">
                 <CustomSelectWithRadio
+                  v-if="myResumeOptions?.length > 0"
                   label="Выберите резюме"
                   v-model="selectedResume"
                   :options="
-                    myResumeOptions?.map((option) => ({
+                    myResumeOptions.map((option) => ({
                       name: option.title,
                       value: option.id,
                     }))
@@ -111,14 +122,14 @@ const disabled = ref(false);
 
 // Compute the formatted salary text to be displayed
 const salaryText = computed(() => {
-  if (item.salary_from && item.salary_to) {
-    return `${$format_number(item.salary_from)} - ${$format_number(
-      item.salary_to,
-    )} ${item.currency}`;
-  } else if (item.salary_from) {
-    return `От ${$format_number(item.salary_from)} ${item.currency}`;
-  } else if (item.salary_to) {
-    return `До ${$format_number(item.salary_to)} ${item.currency}`;
+  if (item.salary.from && item.salary.to) {
+    return `${$format_number(item.salary.from)} - ${$format_number(
+      item.salary.to,
+    )} ${item.salary.currency}`;
+  } else if (item.salary.from) {
+    return `От ${$format_number(item.salary.from)} ${item.salary.currency}`;
+  } else if (item.salary.to) {
+    return `До ${$format_number(item.salary.to)} ${item.salary.currency}`;
   }
   return "По договору"; // Default text if no salary is defined
 });
@@ -134,27 +145,28 @@ const resumeStore = useResumeStore();
 const { getResumesPublishedNegotiations } = resumeStore;
 const isAuthenticated = computed(() => useAuthStore().isAuthed);
 
-// Generate resume options to be displayed in the dropdown
-const { data: myResumeOptions } = await useAsyncData(
-  "getResumesPublishedNegotiations",
-  () => {
-    return getResumesPublishedNegotiations({
-      provider: item.provider,
-      vacancy_id: item.id,
-    });
-  },
-);
+if (isAuthenticated.value) {
+  // Generate resume options to be displayed in the dropdown
+  const { data: myResumeOptions } = await useAsyncData(
+    "getResumesPublishedNegotiations",
+    () => {
+      return getResumesPublishedNegotiations({
+        provider: item.provider,
+        vacancy_id: item.id,
+      });
+    },
+  );
+}
 
 // Generate a concise description for the vacancy
-const vacancyDescription = computed(() => {
-  if (item.description) {
-    let text = item.description.slice(0, 150);
-    if (item.description.length > 150) {
-      text += "...";
-    }
-    return text;
+const vacancyDescriptionText = computed(() => {
+  const raw = item.description || "";
+  // Удаляем HTML-теги (простая и быстрая очистка)
+  const plain = raw.replace(/<[^>]*>/g, "").trim();
+  if (plain.length > 150) {
+    return plain.slice(0, 150) + "...";
   }
-  return item.description;
+  return plain;
 });
 
 // Manage the error message for resume selection
@@ -201,8 +213,8 @@ const toggleFavorite = async () => {
 
 // Get the employer logo or default to a placeholder
 const employerLogo = computed(() =>
-  item.logo
-    ? item.logo
+  item.company.logo
+    ? item.company.logo
     : new URL("/img/operators/undefined.svg", import.meta.url),
 );
 </script>
