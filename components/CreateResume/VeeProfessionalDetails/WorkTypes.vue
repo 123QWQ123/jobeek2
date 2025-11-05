@@ -1,14 +1,14 @@
 <script setup>
 import { useDictionaryStore } from "~/store/dictionary.js";
 
-const { work_types_formatted } = storeToRefs(useDictionaryStore());
+const { resume_work_type_formatted } = storeToRefs(useDictionaryStore());
 </script>
 
 <template>
   <VeeMultiSelectWithSearch
     name="work_types"
     sort_by="none"
-    :options="work_types_formatted"
+    :options="resume_work_type_formatted"
     placeholder="Выберите"
   />
 </template>

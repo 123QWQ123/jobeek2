@@ -157,7 +157,7 @@ const currencyOptions = useCurrencyOptions();
 const schema = computed(() => {
   const baseSchema = {
     professional_roles: zod.array(zod.number()).nonempty(),
-    work_types: zod.array(zod.number()).nonempty(),
+    work_types: zod.array(zod.number()).nonempty("Обязательное поле"),
     schedules: zod.array(zod.number()).optional(),
     place_of_work_id: zod.number().nullable(),
     salary: zod.number().nullable(),
@@ -189,7 +189,8 @@ const schema = computed(() => {
 
 const initialValues = {
   title: my_resume.value?.title ?? "",
-  professional_roles: my_resume.value?.professional_roles.map((item) => item.id) ?? [],
+  professional_roles:
+    my_resume.value?.professional_roles.map((item) => item.id) ?? [],
   work_types: my_resume.value?.work_types.map((item) => item.id) ?? [],
   schedules: my_resume.value?.schedules.map((item) => item.id) ?? [],
 

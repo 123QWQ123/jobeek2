@@ -43,7 +43,10 @@
             <div class="input-row">
               <label for="description">Дополнительная информация:</label>
               <div class="input-wrapper">
-                <ResumeTextarea name="other_skills" />
+                <ResumeTextarea
+                  name="other_skills"
+                  :value="values.other_skills"
+                />
               </div>
             </div>
           </div>
@@ -56,7 +59,6 @@
 <script setup>
 import useFormValidation from "~/composables/useFormValidation";
 import { useResumeStore } from "~/store/resume";
-import { useDictionaryStore } from "~/store/dictionary";
 import { zod } from "~/hooks/ru-zod.js";
 import { toTypedSchema } from "@vee-validate/zod";
 import ResumeTextarea from "~/components/CreateResume/ResumeTextarea.vue";
@@ -82,7 +84,6 @@ const props = defineProps({
 
 const route = useRoute();
 const resumeStore = useResumeStore();
-const dictionaryStore = useDictionaryStore();
 const resumeID = computed(() => route.params.id);
 
 const isCollapsed = ref(false);
@@ -113,26 +114,14 @@ const initialValues = ref({
   skills: my_resume.value?.skills?.map((item) => item.name) ?? [],
   other_skills: my_resume.value?.other_skills ?? null,
 });
-const { errors, values, setErrors, meta, setValues, resetForm, validate } =
-  useForm({
-    initialValues: initialValues,
-    validationSchema: toTypedSchema(schema.value),
-  });
 
-const state = reactive({
-  skills: {
-    is_hidden: false,
-  },
-  other_skills: {
-    is_hidden: false,
-  },
-});
-const sectionData = ref({
-  skills: [],
+const { values, setErrors, meta, resetForm, validate } = useForm({
+  initialValues: initialValues,
+  validationSchema: toTypedSchema(schema.value),
 });
 
-const { getResume, updateResume } = resumeStore;
-const { errors: serverErrors, handleErrorResponse } = useFormValidation();
+const { updateResume } = resumeStore;
+const { errors: serverErrors } = useFormValidation();
 watch(
   () => serverErrors.value,
   (newErrors) => {
@@ -148,7 +137,7 @@ watch(
 
 const isFocused = ref(false);
 const errorMessage = ref(null);
-const save = async (is_from_parent = false) => {
+const save = async () => {
   if (!isFocused.value || !meta.value.dirty) {
     return false;
   }

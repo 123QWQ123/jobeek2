@@ -4,6 +4,7 @@
       <CreateResumeVeeWorkExperienceItem
         @delete="remove"
         :name="props.name"
+        :value="field.value"
         :providers="props.providers"
         :idx="idx"
       />
@@ -28,7 +29,6 @@
 </template>
 
 <script setup>
-import { useDictionaryStore } from "~/store/dictionary.js";
 import { useFieldArray } from "vee-validate";
 
 const props = defineProps(["name", "parent_type_id", "providers"]);

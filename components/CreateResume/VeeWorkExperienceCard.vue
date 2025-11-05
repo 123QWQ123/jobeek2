@@ -66,13 +66,11 @@ const props = defineProps({
   },
 });
 
-const educationElement = ref(false);
 const route = useRoute();
 const resumeStore = useResumeStore();
 const resumeID = computed(() => route.params.id);
 
 const { my_resume, providers } = storeToRefs(resumeStore);
-const experience = ref(my_resume.value?.experience ?? []);
 
 const isCollapsed = ref(false);
 const schema = computed(() => {
@@ -83,9 +81,9 @@ const schema = computed(() => {
       company: zod.string(),
       achievements: zod.string(),
       start_year: zod.number(),
-      start_month: zod.string(),
-      end_year: zod.number(),
-      end_month: zod.string(),
+      start_month: zod.number(),
+      end_year: zod.number().nullable().optional(),
+      end_month: zod.number().nullable().optional(),
       until_today: zod.boolean().nullable().optional(),
       city_id: zod.number(),
       // city_name: z.boolean().nullable().optional(),
@@ -105,9 +103,9 @@ const schema = computed(() => {
         company: zod.string(),
         achievements: zod.string().nullable(),
         start_year: zod.number(),
-        start_month: zod.string(),
+        start_month: zod.number(),
         end_year: zod.number().nullish().optional(),
-        end_month: zod.string().nullish().optional(),
+        end_month: zod.number().nullish().optional(),
         until_today: zod.boolean().nullable().optional(),
         city_id: zod.number(),
         // city_name: z.boolean().nullable().optional(),
@@ -127,9 +125,9 @@ const schema = computed(() => {
     company: zod.string(),
     achievements: zod.string(),
     start_year: zod.number(),
-    start_month: zod.string(),
-    end_year: zod.number(),
-    end_month: zod.string(),
+    start_month: zod.number(),
+    end_year: zod.number().nullable().optional(),
+    end_month: zod.number().nullable().optional(),
     until_today: zod.boolean().nullable().optional(),
     city_id: zod.number(),
     // city_name: z.boolean().nullable().optional(),
@@ -149,8 +147,8 @@ const initialValues = ref({
           return {
             industries: item.industries.map((sub_item) => sub_item.id) ?? [],
             city_id: item.city?.id,
-            end_month: String(item.end_month).padStart(2, 0),
-            start_month: String(item.start_month).padStart(2, 0),
+            end_month: item.end_month,
+            start_month: item.start_month,
             profession: item.profession,
             company: item.company,
             company_url: item.company_url,
@@ -164,16 +162,7 @@ const initialValues = ref({
         })
       : null,
 });
-const {
-  values,
-  errors,
-  meta,
-  resetForm,
-  setValues,
-  setErrors,
-  handleSubmit,
-  validate,
-} = useForm({
+const { values, meta, resetForm, setErrors, validate } = useForm({
   initialValues: initialValues,
   initialTouched: true,
   validationSchema: toTypedSchema(schema.value),
@@ -181,7 +170,7 @@ const {
 
 const { updateResume } = resumeStore;
 
-const { errors: serverErrors, handleErrorResponse } = useFormValidation();
+const { errors: serverErrors } = useFormValidation();
 watch(
   () => serverErrors.value,
   (newErrors) => {
@@ -196,7 +185,6 @@ watch(
 );
 const isFocused = ref(false);
 const errorMessage = ref(null);
-const isLoading = ref(false);
 const save = async (is_from_parent = false) => {
   if (!isFocused.value || !meta.value.dirty) {
     return false;
@@ -226,7 +214,7 @@ const save = async (is_from_parent = false) => {
   setErrors({});
   resetForm({ values });
   if (is_from_parent) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       resolve(true);
     });
   }

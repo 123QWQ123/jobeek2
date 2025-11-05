@@ -8,8 +8,6 @@ useHead({
 const authStore = useAuthStore();
 
 const isEmployer = computed(() => authStore.isEmployer);
-const user = computed(() => authStore.user);
-const employer = computed(() => authStore.employer);
 
 watch(isEmployer, (new_value) => {
   if (new_value === false) {
@@ -17,12 +15,6 @@ watch(isEmployer, (new_value) => {
   }
 });
 const vacancyStore = useVacancyStore();
-const isCompleted = computed(() => {
-  return (
-    vacancyStore.providers.hh === true &&
-    vacancyStore.providers.superjob === true
-  );
-});
 </script>
 <template>
   <main class="main cabinet my-vacancies-page" role="main">

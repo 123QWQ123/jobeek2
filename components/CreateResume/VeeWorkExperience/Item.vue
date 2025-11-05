@@ -101,7 +101,12 @@
               </div>
               <div v-show="!state.start_month.is_hidden">
                 <VeeCustomSelect
-                  :options="monthOptions"
+                  :options="
+                    monthOptions.map((item) => ({
+                      ...item,
+                      value: parseInt(item.value),
+                    }))
+                  "
                   :name="`${props.name}[${props.idx}].start_month`"
                   label="Начало месяца"
                 />
@@ -117,7 +122,12 @@
               </div>
               <div v-show="!state.end_month.is_hidden">
                 <VeeCustomSelect
-                  :options="monthOptions"
+                  :options="
+                    monthOptions.map((item) => ({
+                      ...item,
+                      value: parseInt(item.value),
+                    }))
+                  "
                   :name="`${props.name}[${props.idx}].end_month`"
                   label="Окончание месяца"
                 />
@@ -137,6 +147,7 @@
           <div class="input-wrapper">
             <ResumeTextarea
               :name="`${props.name}[${props.idx}].responsibilities`"
+              :value="props.value?.responsibilities"
               placeholder="Опишите, какие обязанности у вас были в этой компании, что именно вы делали"
             />
           </div>
@@ -166,7 +177,7 @@ import { useResumeStore } from "~/store/resume.js";
 import ResumeTextInput from "~/components/CreateResume/ResumeTextInput.vue";
 
 const emit = defineEmits(["delete", "update"]);
-const props = defineProps(["idx", "name"]);
+const props = defineProps(["idx", "name", "value"]);
 
 const errors = ref(props.errors);
 watch(

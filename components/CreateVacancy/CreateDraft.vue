@@ -136,7 +136,7 @@ const validationSchema = zod.object({
   cities: zod.array(zod.number()).nonempty("Обязательное поле"),
   description: zod
     .string()
-    .min(150, "Количество символов должно быть не меньше 150"),
+    .min(200, "Количество символов должно быть не меньше 200"),
   professional_roles: zod.array(zod.number()).nonempty("Обязательное поле"),
   salary: zod.object({
     currency: zod.string(),
