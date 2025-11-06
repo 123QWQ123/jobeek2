@@ -373,7 +373,6 @@ export const useVacancyStore = defineStore("vacancy", {
     },
     async getMyVacancies(payload) {
       const response = await this.getUserVacancies({
-        status: "active",
         ...payload,
       });
       if (response.hasOwnProperty("data") && "data" in response.data) {
@@ -386,7 +385,6 @@ export const useVacancyStore = defineStore("vacancy", {
     },
     async getArchivedVacancies(payload = {}) {
       const response = await this.getUserVacancies({
-        status: "archived",
         ...payload,
       });
       if (response.hasOwnProperty("data") && "data" in response.data) {

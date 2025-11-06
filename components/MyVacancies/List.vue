@@ -124,9 +124,9 @@ const filterOptions = ref(useMyVacanciesFilterOptions());
 // Загрузка данных при монтировании
 await useAsyncData("initialDataLoad", async () => {
   return await Promise.all([
-    getMyDrafts({ status: "draft" }),
-    getMyVacancies({ status: "active" }),
-    getArchivedVacancies({ status: "archived" }),
+    getMyDrafts(),
+    getMyVacancies(),
+    getArchivedVacancies(),
     getCreateAvailability(),
   ]);
 });

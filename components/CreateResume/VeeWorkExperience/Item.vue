@@ -101,12 +101,7 @@
               </div>
               <div v-show="!state.start_month.is_hidden">
                 <VeeCustomSelect
-                  :options="
-                    monthOptions.map((item) => ({
-                      ...item,
-                      value: parseInt(item.value),
-                    }))
-                  "
+                  :options="monthOptions"
                   :name="`${props.name}[${props.idx}].start_month`"
                   label="Начало месяца"
                 />
@@ -122,12 +117,7 @@
               </div>
               <div v-show="!state.end_month.is_hidden">
                 <VeeCustomSelect
-                  :options="
-                    monthOptions.map((item) => ({
-                      ...item,
-                      value: parseInt(item.value),
-                    }))
-                  "
+                  :options="monthOptions"
                   :name="`${props.name}[${props.idx}].end_month`"
                   label="Окончание месяца"
                 />
@@ -343,7 +333,12 @@ watch(
 );
 
 const yearOptions = computed(() => useYearOptions());
-const monthOptions = computed(() => useMonthOptions());
+const monthOptions = ref(
+  useMonthOptions().map((item) => ({
+    ...item,
+    value: parseInt(item.value),
+  })),
+);
 
 const save = () => {
   emit("update", props.idx, useFormData(state));

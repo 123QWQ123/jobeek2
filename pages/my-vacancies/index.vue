@@ -14,7 +14,6 @@ watch(isEmployer, (new_value) => {
     navigateTo({ name: "my-resumes" });
   }
 });
-const vacancyStore = useVacancyStore();
 </script>
 <template>
   <main class="main cabinet my-vacancies-page" role="main">
