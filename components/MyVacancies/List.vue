@@ -106,11 +106,13 @@
 
 <script setup>
 import { useVacancyStore } from "~/store/vacancy";
+import useQueryParams from "~/composables/useQueryParams.js";
 import { storeToRefs } from "pinia";
 import PageLoader from "~/components/UI/PageLoader.vue";
 import { useMyVacancyForm } from "~/composables/useMyVacancyForm";
 import { useMyVacanciesFilterOptions } from "~/composables/useMyVacanciesFilterOptions";
 
+const { stripQuery } = useQueryParams();
 const vacancyStore = useVacancyStore();
 const {
   getMyVacancies,
@@ -131,7 +133,7 @@ await useAsyncData("initialDataLoad", async () => {
   ]);
 });
 
-const { can_create_vacancy_count, current_page } = storeToRefs(vacancyStore);
+const { can_create_vacancy_count } = storeToRefs(vacancyStore);
 
 const form = ref(useMyVacancyForm());
 
@@ -169,13 +171,12 @@ watch(
     }
     form.value.status = newStatus;
     isLoading.value = true;
-    const params = { status: newStatus };
     if (newStatus === "draft") {
-      await getMyDrafts(params);
+      await getMyDrafts(stripQuery(route.query, ["status"]));
     } else if (newStatus === "active") {
-      await getMyVacancies(params);
+      await getMyVacancies(stripQuery(route.query, ["status"]));
     } else {
-      await getArchivedVacancies(route.query);
+      await getArchivedVacancies(stripQuery(route.query, ["status"]));
     }
     isLoading.value = false;
   },

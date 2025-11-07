@@ -44,10 +44,35 @@ export default function useQueryParams(initialValues) {
     return { ...initialValues, ...query };
   }
 
+  // Универсальная утилита для удаления одного или нескольких ключей из query.
+  // - query: объект query (по умолчанию текущий route.query)
+  // - keysToRemove: строка или массив строк ключей для удаления
+  // Возвращает новый объект с распарсенными значениями.
+  function stripQuery(
+    query = router.currentRoute.value.query,
+    keysToRemove = [],
+  ) {
+    const keys = Array.isArray(keysToRemove) ? keysToRemove : [keysToRemove];
+    const src = { ...(query || {}) };
+    for (const k of keys) {
+      delete src[k];
+    }
+    const parsed = {};
+    for (const [k, v] of Object.entries(src)) {
+      try {
+        parsed[k] = JSON.parse(v);
+      } catch (e) {
+        parsed[k] = v;
+      }
+    }
+    return parsed;
+  }
+
   return {
     updateQueryParam,
     removeQueryParam,
     getCurrentQueryParams,
     getQueryParam,
+    stripQuery,
   };
 }

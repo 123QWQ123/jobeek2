@@ -2,28 +2,28 @@
   <div>
     <PageLoader v-if="isLoading" />
 
-    <div class="d-inline-flex">
-      <form class="sort mx-1" action="#">
-        <span>Показать:</span>
-        <CustomSelect
-          v-model="per_page"
-          :options="perPageOptions"
-          @change="onChangePerPage"
-          class="bg-white w-auto"
-          :listStyles="listStyles"
-        ></CustomSelect>
-      </form>
-      <form class="sort mx-1" action="#">
-        <span>Сортировать:</span>
-        <CustomSelect
-          v-model="order_by"
-          :options="sortingOptions"
-          @change="onChangeSorting"
-          class="bg-white w-auto"
-          :listStyles="listStyles"
-        ></CustomSelect>
-      </form>
-    </div>
+    <!--    <div class="d-inline-flex">-->
+    <!--      <form class="sort mx-1" action="#">-->
+    <!--        <span>Показать:</span>-->
+    <!--        <CustomSelect-->
+    <!--          v-model="per_page"-->
+    <!--          :options="perPageOptions"-->
+    <!--          @change="onChangePerPage"-->
+    <!--          class="bg-white w-auto"-->
+    <!--          :listStyles="listStyles"-->
+    <!--        ></CustomSelect>-->
+    <!--      </form>-->
+    <!--      <form class="sort mx-1" action="#">-->
+    <!--        <span>Сортировать:</span>-->
+    <!--        <CustomSelect-->
+    <!--          v-model="order_by"-->
+    <!--          :options="sortingOptions"-->
+    <!--          @change="onChangeSorting"-->
+    <!--          class="bg-white w-auto"-->
+    <!--          :listStyles="listStyles"-->
+    <!--        ></CustomSelect>-->
+    <!--      </form>-->
+    <!--    </div>-->
 
     <ul class="resume-list mt-4" v-if="my_drafts.length > 0">
       <MyVacanciesDraftItem
@@ -32,7 +32,10 @@
         :item="item"
       />
     </ul>
-    <div class="provider_buttons d-flex mt-4 pb-4 justify-content-center" v-else>
+    <div
+      class="provider_buttons d-flex mt-4 pb-4 justify-content-center"
+      v-else
+    >
       <p class="txt-no-resume">У Вас нет вакансий.</p>
     </div>
 
@@ -145,12 +148,6 @@ const nextPage = async (e) => {
   isLoading.value = true;
   updateQueryParam("page", parseInt(current_page.value) + 1);
 };
-
-onMounted(async () => {
-  await getMyDrafts({
-    page: route.query.page ?? 1,
-  });
-});
 </script>
 
 <style scoped>

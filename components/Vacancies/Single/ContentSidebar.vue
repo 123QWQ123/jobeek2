@@ -37,6 +37,7 @@
       <div class="select-resume-row">
         <div class="custom-select-wrapper">
           <CustomSelectWithRadio
+            v-if="myResumeOptions"
             label="Выберите резюме"
             v-model="selectedResume"
             :options="
@@ -47,12 +48,14 @@
             "
           />
           <button
+            v-if="myResumeOptions && myResumeOptions.length > 0"
             class="btn apply-button button-accent"
             :disabled="!selectedResume"
             @click.prevent="onSubmit"
           >
             Откликнуться
           </button>
+          <p v-else class="text">У Вас нет опубликованных резюме для отклика</p>
         </div>
         <span class="text text-danger">{{ selectedResumeError }}</span>
       </div>
@@ -110,7 +113,7 @@ import { useVacancyStore } from "~/store/vacancy";
 import { useAuthStore } from "~/store/auth";
 import { useResumeStore } from "~/store/resume.js";
 import { toast } from "vue3-toastify";
-import { ref, computed, onMounted } from "vue";
+import { ref, computed } from "vue";
 
 const { data } = defineProps({
   data: {
@@ -173,15 +176,17 @@ const isContactsShown = computed(() => {
     !!data.contacts?.email
   );
 });
-const { data: myResumeOptions } = await useAsyncData(
-  "getResumesPublishedNegotiations",
-  async () => {
-    return await getResumesPublishedNegotiations({
-      provider: data.provider,
-      vacancy_id: data.id,
-    });
-  },
-);
+if (isAuthed.value) {
+  const { data: myResumeOptions } = await useAsyncData(
+    "getResumesPublishedNegotiations",
+    async () => {
+      return await getResumesPublishedNegotiations({
+        provider: data.provider,
+        vacancy_id: data.id,
+      });
+    },
+  );
+}
 
 const onSubmit = async (e) => {
   e.preventDefault();
