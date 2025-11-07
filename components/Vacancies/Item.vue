@@ -122,14 +122,14 @@ const disabled = ref(false);
 
 // Compute the formatted salary text to be displayed
 const salaryText = computed(() => {
-  if (item.salary.from && item.salary.to) {
-    return `${$format_number(item.salary.from)} - ${$format_number(
-      item.salary.to,
-    )} ${item.salary.currency}`;
-  } else if (item.salary.from) {
-    return `От ${$format_number(item.salary.from)} ${item.salary.currency}`;
+  if (item.salary?.from && item.salary?.to) {
+    return `${$format_number(item.salary?.from)} - ${$format_number(
+      item.salary?.to,
+    )} ${item.salary?.currency}`;
+  } else if (item.salary?.from) {
+    return `От ${$format_number(item.salary?.from)} ${item.salary?.currency}`;
   } else if (item.salary.to) {
-    return `До ${$format_number(item.salary.to)} ${item.salary.currency}`;
+    return `До ${$format_number(item.salary?.to)} ${item.salary?.currency}`;
   }
   return "По договору"; // Default text if no salary is defined
 });

@@ -273,7 +273,7 @@ const totalViewCount = computed(() => {
 });
 const salary_from = computed(() => {
   if (props.item.salary && props.item.salary.hasOwnProperty("from")) {
-    return props.item.salary.from;
+    return props.item.salary?.from;
   }
   return false;
 });

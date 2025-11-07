@@ -2,28 +2,28 @@
   <div>
     <PageLoader v-if="isLoading" />
 
-    <div class="d-inline-flex">
-      <form class="sort mx-1" action="#">
-        <span>Показать:</span>
-        <CustomSelect
-          v-model="per_page"
-          :options="perPageOptions"
-          @change="onChangePerPage"
-          class="bg-white w-auto"
-          :listStyles="listStyles"
-        ></CustomSelect>
-      </form>
-      <form class="sort mx-1" action="#">
-        <span>Сортировать:</span>
-        <CustomSelect
-          v-model="order_by"
-          :options="sortingOptions"
-          @change="onChangeSorting"
-          class="bg-white w-auto"
-          :listStyles="listStyles"
-        ></CustomSelect>
-      </form>
-    </div>
+    <!--    <div class="d-inline-flex">-->
+    <!--      <form class="sort mx-1" action="#">-->
+    <!--        <span>Показать:</span>-->
+    <!--        <CustomSelect-->
+    <!--          v-model="per_page"-->
+    <!--          :options="perPageOptions"-->
+    <!--          @change="onChangePerPage"-->
+    <!--          class="bg-white w-auto"-->
+    <!--          :listStyles="listStyles"-->
+    <!--        ></CustomSelect>-->
+    <!--      </form>-->
+    <!--      <form class="sort mx-1" action="#">-->
+    <!--        <span>Сортировать:</span>-->
+    <!--        <CustomSelect-->
+    <!--          v-model="order_by"-->
+    <!--          :options="sortingOptions"-->
+    <!--          @change="onChangeSorting"-->
+    <!--          class="bg-white w-auto"-->
+    <!--          :listStyles="listStyles"-->
+    <!--        ></CustomSelect>-->
+    <!--      </form>-->
+    <!--    </div>-->
 
     <ul class="resume-list mt-4" v-if="my_vacancies.length > 0">
       <MyVacanciesActiveItem
@@ -32,27 +32,35 @@
         :item="item"
       />
     </ul>
-    <div class="provider_buttons d-flex mt-4 pb-4 justify-content-center" v-else>
+    <div
+      class="provider_buttons d-flex mt-4 pb-4 justify-content-center"
+      v-else
+    >
       <p class="txt-no-resume">У Вас нет вакансий.</p>
     </div>
 
-    <div class="d-flex mt-4 justify-content-between pagination-btn" v-if="isPaginationVisible">
-      <button
-        class="btn btn-primary btn-group-sm"
-        :class="{ disabled: isPrevDisabled }"
-        @click="prevPage"
+    <client-only>
+      <div
+        class="d-flex mt-4 justify-content-between pagination-btn"
+        v-if="isPaginationVisible"
       >
-        Предыдущая
-      </button>
-      <p>{{ current_page }}/{{ total_page }}</p>
-      <button
-        class="btn btn-primary btn-group-sm"
-        :class="{ disabled: isNextDisabled }"
-        @click="nextPage"
-      >
-        Следующая
-      </button>
-    </div>
+        <button
+          class="btn btn-primary btn-group-sm"
+          :class="{ disabled: isPrevDisabled }"
+          @click="prevPage"
+        >
+          Предыдущая
+        </button>
+        <p>{{ current_page }}/{{ total_page }}</p>
+        <button
+          class="btn btn-primary btn-group-sm"
+          :class="{ disabled: isNextDisabled }"
+          @click="nextPage"
+        >
+          Следующая
+        </button>
+      </div>
+    </client-only>
   </div>
 </template>
 
@@ -69,9 +77,10 @@ const props = defineProps({
     default: [],
   },
 });
+const route = useRoute();
 const my_vacancies = computed(() => props.items);
 const vacancyStore = useVacancyStore();
-const current_page = ref(vacancyStore.my_current_page ?? 1);
+const current_page = ref(route.query.page ?? 1);
 const total_page = computed(() => vacancyStore.my_last_page);
 const isPrevDisabled = computed(() => {
   if (parseInt(current_page.value) === 1) return true;
@@ -81,7 +90,7 @@ const isNextDisabled = computed(
   () => vacancyStore.my_last_page === vacancyStore.my_current_page,
 );
 const isPaginationVisible = computed(() => vacancyStore.my_last_page !== 1);
-const route = useRoute();
+
 const { getMyVacancies, getMyDrafts } = vacancyStore;
 watch(
   () => route.query.page,
@@ -133,19 +142,13 @@ const { updateQueryParam } = useQueryParams();
 
 const prevPage = async (e) => {
   e.preventDefault();
-  isLoading.value = true;
   updateQueryParam("page", parseInt(current_page.value) - 1);
 };
 
 const nextPage = async (e) => {
   e.preventDefault();
-  isLoading.value = true;
   updateQueryParam("page", parseInt(current_page.value) + 1);
 };
-
-onMounted(async () => {
-  await getMyVacancies({});
-});
 </script>
 
 <style scoped>

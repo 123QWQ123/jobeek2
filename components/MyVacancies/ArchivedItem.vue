@@ -236,7 +236,7 @@ const hhIncluded = computed(() => {
 
 const salaryAmount = computed(() => {
   if (props.item.salary) {
-    return props.item.salary.from;
+    return props.item.salary?.from;
   }
   return 0;
 });
