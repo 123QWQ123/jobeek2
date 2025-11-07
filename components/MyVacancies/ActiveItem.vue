@@ -279,7 +279,7 @@ const salary_from = computed(() => {
 });
 const salary_to = computed(() => {
   if (props.item.salary && props.item.salary.hasOwnProperty("to")) {
-    return props.item.salary.to;
+    return props.item.salary?.to;
   }
   return false;
 });

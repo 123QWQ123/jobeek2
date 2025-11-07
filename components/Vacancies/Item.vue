@@ -128,7 +128,7 @@ const salaryText = computed(() => {
     )} ${item.salary?.currency}`;
   } else if (item.salary?.from) {
     return `От ${$format_number(item.salary?.from)} ${item.salary?.currency}`;
-  } else if (item.salary.to) {
+  } else if (item.salary?.to) {
     return `До ${$format_number(item.salary?.to)} ${item.salary?.currency}`;
   }
   return "По договору"; // Default text if no salary is defined
