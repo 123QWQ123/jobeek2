@@ -63,7 +63,7 @@ const schema = computed(() => {
           level_id: zod.number(),
         }),
       )
-      .nonempty(),
+      .nonempty("Обязательное поле"),
   });
 });
 

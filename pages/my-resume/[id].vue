@@ -125,6 +125,26 @@ const saveAndPublishAll = async (event) => {
     toast.info("Для публикации необходимо заполнить все обязательные поля!", {
       autoClose: 3000,
     });
+    // Формируем объект обязательных полей из resData.mandatory
+    let mandatoryErrors;
+    let mandatory = {};
+    if (providers.value.superjob) {
+      mandatory = my_resume.value.mandatory.superjob || {};
+    }
+    if (providers.value.hh) {
+      Object.assign(mandatory, my_resume.value.mandatory.hh || {});
+    }
+    Object.values(mandatory).forEach((providerObj) => {
+      if (providerObj && typeof providerObj === "object") {
+        Object.keys(providerObj).forEach((key) => {
+          // Сообщение можно заменить на любое другое при необходимости
+          mandatoryErrors[key] = "Обязательное поле";
+        });
+      }
+    });
+
+    // Объединяем серверные ошибки и mandatoryErrors
+    errors.value = Object.assign({}, mandatoryErrors);
     return;
   }
 
@@ -139,11 +159,9 @@ const saveAndPublishAll = async (event) => {
         resData.errors?.superjob || {},
         resData.errors || {},
       );
-      errorMessage.value = resData.message;
       return;
     }
 
-    toast.info(resData.data.message, { autoClose: 3000 });
     navigateTo({ name: "my-resumes" });
   } catch (error) {
     errorMessage.value = error.message || "Произошла ошибка";

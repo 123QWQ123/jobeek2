@@ -1,8 +1,6 @@
 <script setup async>
 import { ref, computed, watch } from "vue";
 import { useRoute, useRouter, useAsyncData, useHead } from "#imports";
-import useAlert from "~/composables/useAlert";
-import Swal from "sweetalert2";
 import { toast } from "vue3-toastify";
 import useProviders from "~/composables/useProviders.js";
 import { useVacancyStore } from "~/store/vacancy.js";

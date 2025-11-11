@@ -55,7 +55,7 @@ const isUpdated = ref(false);
 
 const schema = computed(() => {
   return zod.object({
-    driver_license_types: zod.array(zod.number()).nonempty(),
+    driver_license_types: zod.array(zod.number()).nonempty("Обязательное поле"),
   });
 });
 

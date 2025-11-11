@@ -72,16 +72,6 @@ watch(
   },
 );
 const schema = computed(() => {
-  if (providers.value.hh === true && providers.value.superjob === false) {
-    return zod.object({
-      resume_access_type_id: zod.number(),
-    });
-  }
-  if (providers.value.hh === false && providers.value.superjob === true) {
-    return zod.object({
-      resume_access_type_id: zod.number().optional(),
-    });
-  }
   return zod.object({
     resume_access_type_id: zod.number(),
   });

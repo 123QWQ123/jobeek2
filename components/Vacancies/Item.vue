@@ -119,6 +119,7 @@ const { $format_number } = useNuxtApp();
 const props = defineProps(["item"]);
 const { item } = props;
 const disabled = ref(false);
+const myResumeOptions = ref([]);
 
 // Compute the formatted salary text to be displayed
 const salaryText = computed(() => {
@@ -147,15 +148,13 @@ const isAuthenticated = computed(() => useAuthStore().isAuthed);
 
 if (isAuthenticated.value) {
   // Generate resume options to be displayed in the dropdown
-  const { data: myResumeOptions } = await useAsyncData(
-    "getResumesPublishedNegotiations",
-    () => {
-      return getResumesPublishedNegotiations({
-        provider: item.provider,
-        vacancy_id: item.id,
-      });
-    },
-  );
+  const res = await useAsyncData("getResumesPublishedNegotiations", () => {
+    return getResumesPublishedNegotiations({
+      provider: item.provider,
+      vacancy_id: item.id,
+    });
+  });
+  myResumeOptions.value = res.data;
 }
 
 // Generate a concise description for the vacancy

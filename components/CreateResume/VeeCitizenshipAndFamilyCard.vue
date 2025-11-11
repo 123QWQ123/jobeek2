@@ -195,8 +195,8 @@ walkThroughFields(providers.value);
 
 const schema = computed(() => {
   return zod.object({
-    citizenship: zod.array(zod.number()).nonempty(),
-    work_tickets: zod.number().array().nonempty(),
+    citizenship: zod.array(zod.number()).nonempty("Обязательное поле"),
+    work_tickets: zod.number().array().nonempty("Обязательное поле"),
     marital_status_id: zod.number().optional(),
     travel_time_id: zod.number(),
     children_id: zod.number().nullable().optional(),

@@ -30,8 +30,8 @@ const getFields = (newObject) => {
 const schema = zod
   .object({
     text: zod.string(),
-    providers: zod.array(zod.string()).nonempty(),
-    work_types: zod.array(zod.number()).nonempty(),
+    providers: zod.array(zod.string()).nonempty("Обязательное поле"),
+    work_types: zod.array(zod.number()).nonempty("Обязательное поле"),
     push_notification: zod.boolean().optional(),
     email_notification: zod.boolean().optional(),
     cities: zod.array(zod.number()).optional(),

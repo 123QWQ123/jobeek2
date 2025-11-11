@@ -130,13 +130,11 @@ const route = useRoute();
 
 const resumeID = computed(() => route.params.id);
 
-const { seeker } = profileStore;
 const my_resume = computed(() => resumeStore.my_resume);
 
 const isShown = ref(false);
 const isSaved = ref(false);
 const isChanged = ref(false);
-const isFirst = ref(true);
 const isCollapsed = ref(false);
 const isUpdated = ref(false);
 
@@ -193,8 +191,8 @@ onMounted(() => {
 const schema = computed(() => {
   if (providers.value.hh === true && providers.value.superjob === false) {
     return zod.object({
-      citizenship: zod.number().array().nonempty(),
-      work_tickets: zod.number().array().nonempty(),
+      citizenship: zod.number().array().nonempty("Обязательное поле"),
+      work_tickets: zod.number().array().nonempty("Обязательное поле"),
       marital_status_id: zod.number().optional(),
       travel_time_id: zod.number().optional(),
       children_id: zod.number().optional(),
@@ -202,16 +200,26 @@ const schema = computed(() => {
   }
   if (providers.value.hh === false && providers.value.superjob === true) {
     return zod.object({
-      citizenship: zod.number().array().nonempty().optional().nullable(),
-      work_tickets: zod.number().array().nonempty().nullable().optional(),
+      citizenship: zod
+        .number()
+        .array()
+        .nonempty("Обязательное поле")
+        .optional()
+        .nullable(),
+      work_tickets: zod
+        .number()
+        .array()
+        .nonempty("Обязательное поле")
+        .nullable()
+        .optional(),
       marital_status_id: zod.number().optional().nullable(),
       travel_time_id: zod.number().nullish().optional(),
       children_id: zod.number().nullable().optional(),
     });
   }
   return zod.object({
-    citizenship: zod.number().array().nonempty(),
-    work_tickets: zod.number().array().nonempty(),
+    citizenship: zod.number().array().nonempty("Обязательное поле"),
+    work_tickets: zod.number().array().nonempty("Обязательное поле"),
     marital_status_id: zod.number().optional(),
     travel_time_id: zod.number().optional().nullable(),
     children_id: zod.number().optional().nullable(),
@@ -224,22 +232,11 @@ const initialValues = ref({
   travel_time_id: null,
   children_id: null,
 });
-const {
-  values,
-  errors,
-  meta,
-  resetForm,
-  setValues,
-  setErrors,
-  handleSubmit,
-  validate,
-} = useForm({
+const { values, errors, meta, resetForm, setErrors, validate } = useForm({
   initialValues: initialValues,
   initialTouched: true,
   validationSchema: toTypedSchema(schema.value),
 });
-
-const { getMyResume } = resumeStore;
 
 const sectionData = ref({});
 watch(
@@ -300,9 +297,7 @@ watch(
   },
 );
 const isFocused = ref(false);
-const isLoading = ref(false);
-const errorMessage = ref(null);
-const save = async (is_from_parent = false) => {
+const save = async () => {
   if (!isFocused.value || !meta.value.dirty) {
     return false;
   }

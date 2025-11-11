@@ -156,7 +156,7 @@ const currencyOptions = useCurrencyOptions();
 
 const schema = computed(() => {
   const baseSchema = {
-    professional_roles: zod.array(zod.number()).nonempty(),
+    professional_roles: zod.array(zod.number()).nonempty("Обязательное поле"),
     work_types: zod.array(zod.number()).nonempty("Обязательное поле"),
     schedules: zod.array(zod.number()).optional(),
     place_of_work_id: zod.number().nullable(),

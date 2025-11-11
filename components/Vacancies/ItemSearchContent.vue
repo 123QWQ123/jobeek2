@@ -5,11 +5,12 @@
         <div class="vacancy-single-head">
           <h1 class="title">{{ data.name }}</h1>
           <div class="adress">
-            <span>{{ data.address?.raw }}</span>
+            <span>{{ data.address?.raw ?? data.city?.name }}</span>
           </div>
           <div class="requirements">
             {{ data.experience?.name ? data.experience.name + "," : "" }}
             {{ data.education?.name ? data.education.name + "," : "" }}
+            {{ data.schedule?.name ? data.schedule.name + "," : "" }}
             {{ data.work_type.name }},
             {{ moment(data.published_date).format("YYYY.MM.DD") }}
           </div>
